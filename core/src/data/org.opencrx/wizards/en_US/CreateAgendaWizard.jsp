@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateAgendaWizard.jsp,v 1.20 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: CreateAgendaWizard.jsp,v 1.21 2010/12/10 16:34:21 cmu Exp $
  * Description: CreateAgendaWizard
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2010/12/10 16:34:21 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -218,6 +218,27 @@ org.openmdx.base.naming.*
 		    	Activities.getInstance().initActivityType(
 		    	    Activities.ACTIVITY_TYPE_NAME_ABSENCES,
 		    	    Activities.ACTIVITY_CLASS_ABSENCE,
+		    	    Activities.getInstance().findActivityProcess(
+		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
+		    	        activitySegment,
+		    	        pm
+		    	    ),
+		    	    pm,
+		    	    providerName,
+		    	    segmentName
+		    	),
+	    	    (List)Arrays.asList(new Object[]{activityTracker}),
+	    	    allUsers,
+	    	    pm,
+	    	    providerName,
+	    	    segmentName
+	    	);
+	    	// ActivityCreator Task
+	    	Activities.getInstance().initActivityCreator(
+	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_TASKS,
+		    	Activities.getInstance().initActivityType(
+		    	    Activities.ACTIVITY_TYPE_NAME_TASKS,
+		    	    Activities.ACTIVITY_CLASS_TASK,
 		    	    Activities.getInstance().findActivityProcess(
 		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
 		    	        activitySegment,

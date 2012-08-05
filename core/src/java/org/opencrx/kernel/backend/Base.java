@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.39 2010/06/28 17:27:38 wfro Exp $
+ * Name:        $Id: Base.java,v 1.41 2010/11/30 21:35:22 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.39 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/28 17:27:38 $
+ * Date:        $Date: 2010/11/30 21:35:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,11 +66,13 @@ import java.util.StringTokenizer;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.AlertQuery;
 import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.TinyUrlUtils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
@@ -78,6 +80,8 @@ import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.persistence.cci.UserObjects;
+import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.WebKeys;
 
 public class Base extends AbstractImpl {
 
@@ -235,6 +239,95 @@ public class Base extends AbstractImpl {
     }
         
     //-------------------------------------------------------------------------
+    public String getAccessUrl(
+    	Object context,
+    	String contextPattern,
+    	RefObject_1_0 object
+    ) {
+    	return this.getAccessUrl(
+    		context, 
+    		contextPattern, 
+    		object, 
+    		false
+    	);
+    }
+    
+    //-------------------------------------------------------------------------
+    public String getAccessUrl(
+    	Object context,
+    	String contextPattern,
+    	RefObject_1_0 object,
+    	boolean asTinyUrl
+    ) {
+    	if(context instanceof HttpServletRequest) {
+    		HttpServletRequest req = (HttpServletRequest)context;
+    		String urlPrefix = req.getScheme()+ "://" + req.getServerName() + ":" + req.getServerPort();		
+            Action selectObjectAction = 
+                new Action(
+                    Action.EVENT_SELECT_OBJECT, 
+                    new Action.Parameter[]{
+                        new Action.Parameter(Action.PARAMETER_OBJECTXRI, object.refMofId())
+                    },
+                    "",
+                    true
+                );        
+            String fullUrl =
+                urlPrefix + 
+                req.getContextPath().replace(contextPattern, "-core-") +  "/" + 
+                WebKeys.SERVLET_NAME + 
+                "?event=" + Action.EVENT_SELECT_OBJECT + 
+                "&parameter=" + selectObjectAction.getParameter();
+            String url = fullUrl;
+            if(asTinyUrl) {
+	            String tinyUrl = TinyUrlUtils.getTinyUrl(fullUrl);
+	            url = tinyUrl != null ? tinyUrl : fullUrl;
+            }
+            return url;
+    	}
+    	else if(context instanceof UserHome) {
+    		UserHome userHome = (UserHome)context;
+    		String urlPrefix = userHome.getWebAccessUrl();
+    		if(urlPrefix != null) {
+    	        Action selectObjectAction = 
+    	            new Action(
+    	                Action.EVENT_SELECT_OBJECT, 
+    	                new Action.Parameter[]{
+    	                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, object.refMofId())
+    	                },
+    	                "",
+    	                true
+    	            );
+    	        String fullUrl =
+    	            urlPrefix + (urlPrefix.endsWith("/") ? "" : "/") + 
+    	            WebKeys.SERVLET_NAME + 
+    	            "?event=" + Action.EVENT_SELECT_OBJECT + 
+    	            "&parameter=" + selectObjectAction.getParameter();
+    	        String url = fullUrl;
+    	        if(asTinyUrl) {
+	    	        String tinyUrl = TinyUrlUtils.getTinyUrl(fullUrl);
+	    	        url = tinyUrl != null ? tinyUrl : fullUrl;
+    	        }
+    	        return url;
+    		}
+    		else {
+    			return null;
+    		}
+    	}
+    	else {
+    		return null;
+    	}
+    }
+
+	//-------------------------------------------------------------------------
+    public boolean isAccessUrl(
+    	String url
+    ) {
+    	return
+        	url.indexOf(WebKeys.SERVLET_NAME) > 0 || 
+        	url.startsWith(TinyUrlUtils.PREFIX);    	
+    }
+    
+	//-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     public static final short IMPORT_EXPORT_OK = 0;

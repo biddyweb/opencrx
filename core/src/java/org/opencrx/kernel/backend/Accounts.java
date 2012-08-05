@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.73 2010/07/07 17:24:42 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.81 2010/11/23 15:54:01 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.73 $
+ * Revision:    $Revision: 1.81 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/07 17:24:42 $
+ * Date:        $Date: 2010/11/23 15:54:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,7 +65,6 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.account1.cci2.AccountAddressQuery;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
-import org.opencrx.kernel.account1.cci2.ContactMembershipQuery;
 import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.cci2.PhoneNumberQuery;
 import org.opencrx.kernel.account1.cci2.PostalAddressQuery;
@@ -74,7 +73,6 @@ import org.opencrx.kernel.account1.cci2.WebAddressQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
 import org.opencrx.kernel.account1.jmi1.AbstractFilterAddress;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
-import org.opencrx.kernel.account1.jmi1.AbstractOrganizationalUnit;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.AddressCategoryFilterProperty;
@@ -85,7 +83,6 @@ import org.opencrx.kernel.account1.jmi1.AddressQueryFilterProperty;
 import org.opencrx.kernel.account1.jmi1.AddressTypeFilterProperty;
 import org.opencrx.kernel.account1.jmi1.AddressUsageFilterProperty;
 import org.opencrx.kernel.account1.jmi1.Contact;
-import org.opencrx.kernel.account1.jmi1.ContactMembership;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
@@ -104,6 +101,8 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
+import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.log.SysLog;
 
 public class Accounts extends AbstractImpl {
 
@@ -131,45 +130,21 @@ public class Accounts extends AbstractImpl {
     	account.setAccountRating(account.getAccountRating());
     }
     	
-    //-------------------------------------------------------------------------
-    public List<AbstractOrganizationalUnit> getOuMembership(
-        org.opencrx.kernel.account1.jmi1.Contact contact
+    //-----------------------------------------------------------------------
+    public String getVCardUid(
+    	String vcard
     ) {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(contact);
-    	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-    			contact.refGetPath().getPrefix(5)
-    		);
-    	// Memberships to OuContainer
-    	ContactMembershipQuery membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
-    	membershipQuery.identity().like(
-    		accountSegment.refGetPath().getDescendant("organization", ":*", "contactMembership", ":*").toXRI()    	
-    	);
-    	membershipQuery.contact().equalTo(contact);
-    	List<ContactMembership> memberships = accountSegment.getExtent(membershipQuery);
-    	List<AbstractOrganizationalUnit> ouMemberships = new ArrayList<AbstractOrganizationalUnit>();
-    	for(ContactMembership membership: memberships) {
-    		AbstractOrganizationalUnit ou = (AbstractOrganizationalUnit)pm.getObjectById(
-    			membership.refGetPath().getParent().getParent()
-    		);
-    		ouMemberships.add(ou);
-    	}
-    	// Memberships to Ou
-    	membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
-    	membershipQuery.identity().like(
-    		accountSegment.refGetPath().getDescendant("organization", ":*", "organizationalUnit", ":*", "contactMembership", ":*").toXRI()
-    	);
-    	membershipQuery.contact().equalTo(contact);
-    	memberships = accountSegment.getExtent(membershipQuery);
-    	for(ContactMembership membership: memberships) {
-    		AbstractOrganizationalUnit ou = (AbstractOrganizationalUnit)pm.getObjectById(
-    			membership.refGetPath().getParent().getParent()
-    		);
-    		ouMemberships.add(ou);
+    	String uid = null;
+    	if(vcard.indexOf("UID:") > 0) {
+    		int start = vcard.indexOf("UID:");
+    		int end = vcard.indexOf("\n", start);
+    		if(end > start) {
+    			uid = vcard.substring(start + 4, end).trim();
+    		}
     	}    	
-    	return ouMemberships;
+    	return uid;
     }
-    
+
     //-------------------------------------------------------------------------
     public void initContract(
         AbstractContract contract,
@@ -438,20 +413,6 @@ public class Accounts extends AbstractImpl {
             account 
         );
         List<String> statusMessage = new ArrayList<String>();
-        // externalLink for VCARD
-        boolean hasVcardUid = false;
-        List<String> externalLinks = account.getExternalLink();
-        for(int i = 0; i < externalLinks.size(); i++) {
-            if(externalLinks.get(i).startsWith(VCard.VCARD_SCHEMA)) {
-            	hasVcardUid = true;
-            	break;
-            }
-        }
-        if(!hasVcardUid) {
-            externalLinks.add(
-                VCard.VCARD_SCHEMA + account.refGetPath().getBase()    
-            );
-        }           
         String vcard = VCard.getInstance().mergeVcard(
             account,
             account.getVcard(),
@@ -460,8 +421,38 @@ public class Accounts extends AbstractImpl {
         account.setVcard(
             vcard == null ? "" : vcard
         );
+        // Assertion externalLink().contains(vcard uid)
+        String uid = this.getVCardUid(vcard);
+        boolean vcardLinkMatches = false;
+        boolean hasVCardLink = false;
+        for(String externalLink: account.getExternalLink()) {
+        	if(externalLink.startsWith(VCard.VCARD_SCHEMA)) {
+        		hasVCardLink = true;
+        		if(externalLink.endsWith(uid)) {
+	        		vcardLinkMatches = true;
+	        		break;
+        		}
+        	}
+        }
+        if(!hasVCardLink) {
+        	account.getExternalLink().add(
+        		VCard.VCARD_SCHEMA + uid
+        	);
+        }
+        else if(!vcardLinkMatches) {
+        	ServiceException e = new ServiceException(
+        		BasicException.Code.DEFAULT_DOMAIN,
+        		BasicException.Code.ASSERTION_FAILURE,
+        		"Accounts's external link does not contain vcard UID",
+        		new BasicException.Parameter("activity", account),
+        		new BasicException.Parameter("externalLink", account.getExternalLink()),
+        		new BasicException.Parameter("vcard", vcard)
+        	);
+        	SysLog.warning("Accounts's external link does not contain vcard UID", account.refGetPath());
+        	SysLog.detail(e.getMessage(), e.getCause());
+        }
     }
-    
+
     //-------------------------------------------------------------------------
     public int countFilteredAccount(
     	AbstractFilterAccount accountFilter
@@ -475,7 +466,7 @@ public class Accounts extends AbstractImpl {
     	List<Account> accounts = accountFilter.getFilteredAccount(query);
         return accounts.size();
     }
-            
+
     //-----------------------------------------------------------------------
     /**
      * @return Returns the accountSegment.
@@ -486,10 +477,10 @@ public class Accounts extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.account1.jmi1.Segment) pm.getObjectById(
-            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+            new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
         );
     }
-        
+
     //-----------------------------------------------------------------------
     /**
      * Search accounts containing the given email address.
@@ -500,15 +491,13 @@ public class Accounts extends AbstractImpl {
      * @param emailAddress     The email address
      * @return                 A List of accounts containing the email address
      */
-    public List<org.opencrx.kernel.account1.jmi1.EMailAddress> lookupEmailAddress(
+    public List<EMailAddress> lookupEmailAddress(
         PersistenceManager pm,
         String providerName,
         String segmentName,
-        String emailAddress,
-        boolean caseInsensitive,
-        boolean ignoreDisabled
+        String emailAddress
     ) {
-        org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+        EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
             this.getAccountSegment(
                 pm,
@@ -516,16 +505,25 @@ public class Accounts extends AbstractImpl {
                 segmentName
             );
         query.thereExistsEmailAddress().like(
-           caseInsensitive ? 
-               "(?i).*" + emailAddress.replace(".", "\\.") + ".*": 
-               emailAddress
+           "(?i).*" + emailAddress.replace(".", "\\.") + ".*" 
         );
-        if(ignoreDisabled) {
-        	query.forAllDisabled().isFalse();
-        }
-        return accountSegment.getAddress(query);        
+       	query.forAllDisabled().isFalse();
+       	List<EMailAddress> addresses = accountSegment.getAddress(query);
+       	if(addresses.isEmpty() || addresses.size() == 1) {
+       		return addresses;
+       	}
+       	else {
+       		List<EMailAddress> activeAddresses = new ArrayList<EMailAddress>();
+       		for(EMailAddress address: addresses) {
+       			Account account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
+       			if(account.isDisabled() == null || !account.isDisabled()) {
+       				activeAddresses.add(address);
+       			}
+       		}
+       		return activeAddresses;
+       	}
     }
-        
+
     //-------------------------------------------------------------------------
     private static List<org.opencrx.kernel.account1.jmi1.AccountAddress> getAccountAddresses(
     	PersistenceManager pm,
@@ -615,8 +613,12 @@ public class Accounts extends AbstractImpl {
         );
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof WebAddress) {
-                int orderHomeWeb = 1;
                 WebAddress webAddress = (WebAddress)address;
+                boolean isMain = false;
+                try {
+                    isMain = webAddress.isMain();
+                } catch(Exception e) {}
+                int orderHomeWeb = isMain ? 3 : 1;
                 if(orderHomeWeb > currentOrderHomeWeb) {
                     mainAddresses[WEB_HOME] = webAddress;
                     currentOrderHomeWeb = orderHomeWeb;
@@ -627,8 +629,7 @@ public class Accounts extends AbstractImpl {
                 boolean isMain = false;
                 try {
                     isMain = phoneNumber.isMain();
-                } 
-                catch(Exception e) {}
+                } catch(Exception e) {}
                 int orderHomePhone = isMain ? 3 : 1;
                 if(orderHomePhone > currentOrderHomePhone) {
                     mainAddresses[PHONE_HOME] = phoneNumber;
@@ -636,16 +637,24 @@ public class Accounts extends AbstractImpl {
                 }
             }
             else if (address instanceof PostalAddress) {
-                int orderHomePostal = 1;
                 PostalAddress postalAddress = (PostalAddress)address;
+                boolean isMain = false;
+                try {
+                    isMain = postalAddress.isMain();
+                } catch(Exception e) {}
+                int orderHomePostal = isMain ? 3 : 1;
                 if(orderHomePostal > currentOrderHomePostal) {       
                     mainAddresses[POSTAL_HOME] = postalAddress;
                     currentOrderHomePostal = orderHomePostal;
                 }
             }
             else if(address instanceof EMailAddress) {
-                int orderHomeMail = 1;
                 EMailAddress mailAddress = (EMailAddress)address;
+                boolean isMain = false;
+                try {
+                    isMain = mailAddress.isMain();
+                } catch(Exception e) {}
+                int orderHomeMail = isMain ? 3 : 1;
                 if(orderHomeMail > currentOrderHomeMail) {
                     mainAddresses[MAIL_HOME] = mailAddress;
                     currentOrderHomeMail = orderHomeMail;
@@ -661,7 +670,12 @@ public class Accounts extends AbstractImpl {
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof WebAddress) {
                 WebAddress webAddress = (WebAddress)address;
-                int orderBusinessWeb = 1;
+                boolean isMain = false;
+                try {
+                    isMain = webAddress.isMain();
+                } 
+                catch(Exception e) {}
+                int orderBusinessWeb = isMain ? 3 : 1;
                 if(orderBusinessWeb > currentOrderBusinessWeb) {
                     mainAddresses[WEB_BUSINESS] = webAddress;
                     currentOrderBusinessWeb = orderBusinessWeb;
@@ -682,7 +696,12 @@ public class Accounts extends AbstractImpl {
             }
             else if (address instanceof PostalAddress) {
                 PostalAddress postalAddress = (PostalAddress)address;
-                int orderBusinessPostal = 1;
+                boolean isMain = false;
+                try {
+                    isMain = postalAddress.isMain();
+                } 
+                catch(Exception e) {}
+                int orderBusinessPostal = isMain ? 3 : 1;
                 if(orderBusinessPostal > currentOrderBusinessPostal) {
                     mainAddresses[POSTAL_BUSINESS] = postalAddress;
                     currentOrderBusinessPostal = orderBusinessPostal;
@@ -690,7 +709,12 @@ public class Accounts extends AbstractImpl {
             }
             else if(address instanceof EMailAddress) {
                 EMailAddress mailAddress = (EMailAddress)address;
-                int orderBusinessMail = 1;
+                boolean isMain = false;
+                try {
+                    isMain = mailAddress.isMain();
+                } 
+                catch(Exception e) {}
+                int orderBusinessMail = isMain ? 3 : 1;
                 if(orderBusinessMail > currentOrderBusinessMail) {
                     mainAddresses[MAIL_BUSINESS] = mailAddress;
                     currentOrderBusinessMail = orderBusinessMail;
@@ -706,7 +730,11 @@ public class Accounts extends AbstractImpl {
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                
-                int orderOtherPhone = 1;
+                boolean isMain = false;
+                try {
+                    isMain = phoneNumber.isMain();
+                } catch(Exception e) {}
+                int orderOtherPhone = isMain ? 3 : 1;
                 if(orderOtherPhone > currentOrderOtherPhone) {
                     mainAddresses[PHONE_OTHER] = phoneNumber;
                     currentOrderOtherPhone = orderOtherPhone;
@@ -722,7 +750,11 @@ public class Accounts extends AbstractImpl {
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                
-                int orderHomeFax = 1;
+                boolean isMain = false;
+                try {
+                    isMain = phoneNumber.isMain();
+                } catch(Exception e) {}
+                int orderHomeFax = isMain ? 3 : 1;
                 if(orderHomeFax > currentOrderHomeFax) {           
                     mainAddresses[FAX_HOME] = phoneNumber;
                     currentOrderHomeFax = orderHomeFax;
@@ -738,7 +770,11 @@ public class Accounts extends AbstractImpl {
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                                
-                int orderBusinessFax = 1;
+                boolean isMain = false;
+                try {
+                    isMain = phoneNumber.isMain();
+                } catch(Exception e) {}
+                int orderBusinessFax = isMain ? 3 : 1;
                 if(orderBusinessFax > currentOrderBusinessFax) {
                     mainAddresses[FAX_BUSINESS] = phoneNumber;
                     currentOrderBusinessFax = orderBusinessFax;
@@ -753,8 +789,12 @@ public class Accounts extends AbstractImpl {
         );
         for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
-                PhoneNumber phoneNumber = (PhoneNumber)address;                                
-                int orderMobile = 1;
+                PhoneNumber phoneNumber = (PhoneNumber)address;     
+                boolean isMain = false;
+                try {
+                    isMain = phoneNumber.isMain();
+                } catch(Exception e) {}                
+                int orderMobile = isMain ? 3 : 1;
                 if(orderMobile > currentOrderMobile) { 
                     mainAddresses[MOBILE] = phoneNumber;
                     currentOrderMobile = orderMobile;
@@ -773,7 +813,7 @@ public class Accounts extends AbstractImpl {
         List<String> report = new ArrayList<String>();
         String vcard = VCard.getInstance().mergeVcard(
             account,
-            null, 
+            account.getVcard(), 
             messages
         );        
         byte[] item = null;

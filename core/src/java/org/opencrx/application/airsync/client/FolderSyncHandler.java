@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FolderSyncHandler.java,v 1.13 2010/07/16 12:49:00 wfro Exp $
+ * Name:        $Id: FolderSyncHandler.java,v 1.14 2010/09/08 23:21:22 wfro Exp $
  * Description: AirSync Client FolderSyncHandler
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/16 12:49:00 $
+ * Date:        $Date: 2010/09/08 23:21:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -99,7 +99,7 @@ public class FolderSyncHandler extends AbstractClientHandler {
 	    	org.w3c.dom.Document requestDoc = DOMUtils.parse(
 	    		new ByteArrayInputStream(requestXml.getBytes("UTF-8"))
 	    	);	    	
-	    	org.w3c.dom.Document docResponse = target.perform(
+	    	org.w3c.dom.Document docResponse = (org.w3c.dom.Document)target.perform(
 	    		"FolderSync", 
 	    		clientProfile.getPolicyKey() == null ? "0" : clientProfile.getPolicyKey(),
 	    		clientProfile.getUserAgent(),

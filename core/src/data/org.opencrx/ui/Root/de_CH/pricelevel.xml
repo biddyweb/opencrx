@@ -137,10 +137,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:20" _operation="create">
                     <_object>
                       <label>
-                        <_item>Vertragsfilter</_item>
+                        <_item>Suchkriterien Verträge</_item>
                       </label>
                       <toolTip>
-                        <_item>Vertragsfilter</_item>
+                        <_item>Suchkriterien Verträge</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -148,10 +148,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractPriceLevel:Pane:Attr:Tab:0:Group:30" _operation="create">
                     <_object>
                       <label>
-                        <_item>Preisfilter</_item>
+                        <_item>Suchkriterien Preise</_item>
                       </label>
                       <toolTip>
-                        <_item>Preisfilter</_item>
+                        <_item>Suchkriterien Preise</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -192,10 +192,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:productFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Produkt Filter</_item>
+                        <_item>Suchkriterien Produkte</_item>
                       </label>
                       <toolTip>
-                        <_item>Produkt Filter</_item>
+                        <_item>Suchkriterien Produkte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -203,10 +203,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Produkte (Filterselektiert)</_item>
+                        <_item>Produkte (gemäss Suchkriterien)</_item>
                       </label>
                       <toolTip>
-                        <_item>Produkte (Filterselektiert)</_item>
+                        <_item>Produkte (gemäss Suchkriterien)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -214,10 +214,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kontakt Filter</_item>
+                        <_item>Suchkriterien Kontakte</_item>
                       </label>
                       <toolTip>
-                        <_item>Kontakt Filter</_item>
+                        <_item>Suchkriterien Kontakte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -225,10 +225,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kontakte (Filterselektiert)</_item>
+                        <_item>Kontakte (gemäss Suchkriterien)</_item>
                       </label>
                       <toolTip>
-                        <_item>Kontakte (Filterselektiert)</_item>
+                        <_item>Kontakte (gemäss Suchkriterien)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -325,10 +325,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:productFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Produkt Filter</_item>
+                        <_item>Suchkriterien Produkte</_item>
                       </label>
                       <toolTip>
-                        <_item>Produkt Filter</_item>
+                        <_item>Suchkriterien Produkte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -336,10 +336,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredProduct" _operation="create">
                     <_object>
                       <label>
-                        <_item>Produkte (Filterselektiert)</_item>
+                        <_item>Produkte (gemäss Suchkriterien)</_item>
                       </label>
                       <toolTip>
-                        <_item>Produkte (Filterselektiert)</_item>
+                        <_item>Produkte (gemäss Suchkriterien)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -347,10 +347,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kontakt Filter</_item>
+                        <_item>Suchkriterien Kontakte</_item>
                       </label>
                       <toolTip>
-                        <_item>Kontakt Filter</_item>
+                        <_item>Suchkriterien Kontakte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -358,10 +358,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductPhasePriceLevel:filteredAccount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kontakte (Filterselektiert)</_item>
+                        <_item>Kontakte (gemäss Suchkriterien)</_item>
                       </label>
                       <toolTip>
-                        <_item>Kontakte (Filterselektiert)</_item>
+                        <_item>Kontakte (gemäss Suchkriterien)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -492,7 +492,7 @@
                         <_item>Preismultiplikator</_item>
                       </label>
                       <toolTip>
-                        <_item>Preismultiplikator</_item>
+                        <_item>ROUND(x*Rundungsfaktor*Preismultiplikator,0) / Rundungsfaktor</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -514,7 +514,7 @@
                         <_item>Rundungsfaktor</_item>
                       </label>
                       <toolTip>
-                        <_item>Rundungsfaktor</_item>
+                        <_item>ROUND(x*Rundungsfaktor*Preismultiplikator,0) / Rundungsfaktor</_item>
                       </toolTip>
                     </_object>
                     <_content/>

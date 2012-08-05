@@ -733,14 +733,6 @@
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.activity1.uml#_HAuWAG4-Edq2_7SCieKOqA"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_97H5ski5Ed-hZsNYMNcVzA" points="[0, 30, -845, -245]$[0, 212, -845, -63]$[865, 212, 20, -63]$[865, 245, 20, -30]"/>
   </edges>
-  <edges xmi:type="notation:Connector" xmi:id="_97IgwEi5Ed-hZsNYMNcVzA" type="4001" source="_KyDlUEi5Ed-hZsNYMNcVzA" target="_96iD0Ei5Ed-hZsNYMNcVzA" routing="Tree" lineColor="2763429">
-    <children xmi:type="notation:DecorationNode" xmi:id="_97JH0ki5Ed-hZsNYMNcVzA" type="6018">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_97JH00i5Ed-hZsNYMNcVzA" y="40"/>
-    </children>
-    <styles xmi:type="notation:FontStyle" xmi:id="_97JH0Ei5Ed-hZsNYMNcVzA" fontName="Arial" fontHeight="11"/>
-    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D4242C53C0017"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_97JH0Ui5Ed-hZsNYMNcVzA" points="[0, 30, 220, -245]$[0, 212, 220, -63]$[-200, 212, 20, -63]$[-200, 245, 20, -30]"/>
-  </edges>
   <edges xmi:type="notation:Connector" xmi:id="_Kp6ggEi6Ed-hZsNYMNcVzA" type="4001" source="_OdDF0Ei4Ed-hZsNYMNcVzA" target="_KpgQ0Ei6Ed-hZsNYMNcVzA" routing="Tree" lineColor="2763429">
     <children xmi:type="notation:DecorationNode" xmi:id="_Kp6gg0i6Ed-hZsNYMNcVzA" type="6018">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_Kp6ghEi6Ed-hZsNYMNcVzA" y="40"/>
@@ -788,13 +780,5 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_Kp-K4Ui6Ed-hZsNYMNcVzA" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.activity1.uml#_Gate4G4-Edq2_7SCieKOqA"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Kp-K4ki6Ed-hZsNYMNcVzA" points="[0, 30, -694, -388]$[0, 354, -694, -64]$[697, 354, 3, -64]$[697, 388, 3, -30]"/>
-  </edges>
-  <edges xmi:type="notation:Connector" xmi:id="_Kp-x8Ui6Ed-hZsNYMNcVzA" type="4001" source="_KyDlUEi5Ed-hZsNYMNcVzA" target="_KpgQ0Ei6Ed-hZsNYMNcVzA" routing="Tree" lineColor="2763429">
-    <children xmi:type="notation:DecorationNode" xmi:id="_Kp_ZAEi6Ed-hZsNYMNcVzA" type="6018">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_Kp_ZAUi6Ed-hZsNYMNcVzA" y="40"/>
-    </children>
-    <styles xmi:type="notation:FontStyle" xmi:id="_Kp-x8ki6Ed-hZsNYMNcVzA" fontName="Arial" fontHeight="11"/>
-    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D424D8591004F"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Kp-x80i6Ed-hZsNYMNcVzA" points="[0, 30, 371, -388]$[0, 354, 371, -64]$[-368, 354, 3, -64]$[-368, 388, 3, -30]"/>
   </edges>
 </notation:Diagram>

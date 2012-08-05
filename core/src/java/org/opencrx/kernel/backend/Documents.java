@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Documents.java,v 1.4 2010/04/29 15:02:44 wfro Exp $
+ * Name:        $Id: Documents.java,v 1.5 2010/11/16 14:02:24 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/29 15:02:44 $
+ * Date:        $Date: 2010/11/16 14:02:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -211,5 +211,6 @@ public class Documents extends AbstractImpl {
 	}
 
 	//-------------------------------------------------------------------------
+	public static final String PRIVATE_DOCUMENTS_FOLDER_SUFFIX = "~Private";
 	
 }

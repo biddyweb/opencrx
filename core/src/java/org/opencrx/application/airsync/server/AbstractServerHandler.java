@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AbstractServerHandler.java,v 1.5 2010/08/10 16:21:01 wfro Exp $
+ * Name:        $Id: AbstractServerHandler.java,v 1.6 2010/12/06 10:25:09 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/10 16:21:01 $
+ * Date:        $Date: 2010/12/06 10:25:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -113,7 +113,11 @@ public abstract class AbstractServerHandler implements ServerHandler {
 					logger.finest("=-=-=-= Request =-=-=-= ");
 				}
 			} catch(Exception e) {
-				SysLog.warning("Exception occurred when reading WBXML message. For more info see detail log.", e.getMessage());
+				// null occurs in case of empty messages. Log at level FINE. Others at WARNING
+				SysLog.log(
+					"null".equals(e.getMessage()) ? Level.FINE : Level.WARNING,
+					"Exception occurred when reading WBXML message. For more info see detail log.", e.getMessage()
+				);
 				SysLog.detail(e.getMessage(), e.getCause());
 			}
 		}

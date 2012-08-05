@@ -1075,6 +1075,74 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:linkToAndFollowUp" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Verbinden mit Aktivität und als Arbeitsschritt hinzufügen</_item>
+											</toolTip>
+											<label>
+												<_item>Verbinden mit Aktivität und als Arbeitsschritt hinzufügen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:linkToAndFollowUp:Group:in" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpParams:activity" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Verbinden mit Aktivität</_item>
+											</toolTip>
+											<label>
+												<_item>Verbinden mit Aktivität</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpParams:transition" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Transition</_item>
+											</toolTip>
+											<label>
+												<_item>Transition</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:linkToAndFollowUp:Group:result" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpResult:followUp" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Arbeitsschritt</_item>
+											</toolTip>
+											<label>
+												<_item>Arbeitsschritt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo" _operation="create">
                     <_object>
                       <label>

@@ -17,10 +17,10 @@
                     <_object>
                       <active>true</active>
                       <toolTip>
-                        <_item>Address Filters</_item>
+                        <_item>Saved Searches - Adresses</_item>
                       </toolTip>
                       <label>
-                        <_item>»Address Filters</_item>
+                        <_item>»Saved Searches - Adresses</_item>
                       </label>
                       <order>
                         <_item>0</_item>
@@ -39,10 +39,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria</_item>
 											</toolTip>
 											<label>
-												<_item>Filter Properties</_item>
+												<_item>Search Criteria</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -59,10 +59,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered addresses</_item>
+												<_item>Addresses (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Addresses</_item>
+												<_item>Addresses (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -127,10 +127,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Address Type Filter Property</_item>
+												<_item>Search Criteria - Address Type</_item>
 											</toolTip>
 											<label>
-												<_item>Address Type Filter Property</_item>
+												<_item>Search Criteria - Address Type</_item>
 											</label>
 											<iconKey>AddressTypeFilterProperty</iconKey>
 										</_object>
@@ -164,10 +164,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Address Category Filter Property</_item>
+												<_item>Search Criteria - Address Category</_item>
 											</toolTip>
 											<label>
-												<_item>Address Category Filter Property</_item>
+												<_item>Search Criteria - Address Category</_item>
 											</label>
 											<iconKey>AddressCategoryFilterProperty</iconKey>
 										</_object>
@@ -201,10 +201,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Address Usage Filter Property</_item>
+												<_item>Search Criteria - Address Usage</_item>
 											</toolTip>
 											<label>
-												<_item>Address Usage Filter Property</_item>
+												<_item>Search Criteria - Address Usage</_item>
 											</label>
 											<iconKey>AddressUsageFilterProperty</iconKey>
 										</_object>
@@ -238,10 +238,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Address Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</toolTip>
 											<label>
-												<_item>Address Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</label>
 											<iconKey>DisabledFilterProperty</iconKey>
 										</_object>
@@ -274,10 +274,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Address Main Filter Property</_item>
+												<_item>Search Criteria - Main Address</_item>
 											</toolTip>
 											<label>
-												<_item>Address Main Filter Property</_item>
+												<_item>Search Criteria - Main Address</_item>
 											</label>
 											<iconKey>AddressMainFilterProperty</iconKey>
 										</_object>
@@ -310,10 +310,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Address Filter</_item>
+												<_item>Saved Search - Addresses</_item>
 											</toolTip>
 											<label>
-												<_item>Address Filter</_item>
+												<_item>Saved Search - Addresses</_item>
 											</label>
 											<iconKey>AddressFilterGlobal</iconKey>
 										</_object>
@@ -364,10 +364,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</label>
 											<order>
 												<_item>0</_item>

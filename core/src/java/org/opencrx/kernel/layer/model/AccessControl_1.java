@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.139 2010/08/10 14:05:47 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.146 2010/12/10 11:42:41 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.139 $
+ * Revision:    $Revision: 1.146 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/10 14:05:47 $
+ * Date:        $Date: 2010/12/10 11:42:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -90,6 +90,7 @@ import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.cci.SharedConfigurationEntries;
 import org.openmdx.application.dataprovider.layer.model.Standard_1;
 import org.openmdx.application.dataprovider.spi.Layer_1;
+import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.accessor.rest.DataManagerFactory_1;
@@ -223,7 +224,7 @@ public class AccessControl_1 extends Standard_1 {
     	SecurityContext.CachedPrincipal requestingPrincipal,
         Path requestingUser    	
     ) throws ServiceException {
-    	 Set<String> memberships = new HashSet<String>();    	
+    	Set<String> memberships = new HashSet<String>();    	
         if(parentFacade.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
         	SysLog.error("Missing attribute value for accessLevelBrowse", parentFacade);
         }
@@ -237,15 +238,31 @@ public class AccessControl_1 extends Standard_1 {
         }	            
         // allowedPrincipals == null --> global access. Do not restrict to allowed subjects
         if(memberships != null) {
-            request.addAttributeFilterProperty(
-                new FilterProperty(
-                    Quantifier.THERE_EXISTS.code(),
-                    "owner",
-                    ConditionType.IS_IN.code(),
-                    memberships.toArray()
-                )
-            );
-        }	        			    	
+        	// Optimize query
+        	FilterProperty ownerFilterProperty = null;
+        	for(FilterProperty p: request.attributeFilter()) {
+        		if("owner".equals(p.name())) {
+        			ownerFilterProperty = p;
+        			break;
+        		}
+        	}
+        	if(ownerFilterProperty != null) {
+        		memberships.removeAll(
+        			ownerFilterProperty.values()
+        		);
+        	}
+    		// Add condition for owner
+        	if(!memberships.isEmpty()) {
+	            request.addAttributeFilterProperty(
+	                new FilterProperty(
+	                    Quantifier.THERE_EXISTS.code(),
+	                    "owner",
+	                    ConditionType.IS_IN.code(),
+	                    memberships.toArray()
+	                )
+	            );
+        	}
+        }
     }
     
     //-------------------------------------------------------------------------
@@ -375,7 +392,7 @@ public class AccessControl_1 extends Standard_1 {
 	        Path parentPath = reference.getParent();
 	        Object[] entry = objectCache.get(parentPath);
 	        MappedRecord parent = null;
-	        if(entry == null) {        
+	        if(entry == null) {
 	            parent = this.retrieveObject(
 	                parentPath
 	            );
@@ -440,36 +457,28 @@ public class AccessControl_1 extends Standard_1 {
 	        Path requestingUser = AccessControl_1.this.getUser(requestingPrincipal);
 	        // Check permission. Must have update permission for parent
 	        MappedRecord parent = null;
+	        Object_2Facade parentFacade = null;
 	        if(request.path().size() >= 7) {
 		        parent = this.getCachedObject(
 	                header, 
 	                request.path()
 	            );
+		        parentFacade = ResourceHelper.getObjectFacade(parent);
 		        if(AccessControl_1.this.isSecureObject(parent)) {
 		            Set<String> memberships = new HashSet<String>();
-		            try {
-		                if(Object_2Facade.newInstance(parent).attributeValuesAsList("accessLevelUpdate").size() < 1) {
-		                	SysLog.error("missing attribute value for accessLevelUpdate", parent);
-		                }
-		                else {
-		                    memberships = securityContext.getMemberships(
-		                        requestingPrincipal,
-		                        requestingUser,
-		                        ((Number)Object_2Facade.newInstance(parent).attributeValue("accessLevelUpdate")).shortValue(),
-		                        AccessControl_1.this.useExtendedAccessLevelBasic
-		                    );
-		                }
+	                if(parentFacade.attributeValuesAsList("accessLevelUpdate").size() < 1) {
+	                	SysLog.error("missing attribute value for accessLevelUpdate", parent);
 	                }
-	                catch (ResourceException e) {
-	                	throw new ServiceException(e);
+	                else {
+	                    memberships = securityContext.getMemberships(
+	                        requestingPrincipal,
+	                        requestingUser,
+	                        ((Number)parentFacade.attributeValue("accessLevelUpdate")).shortValue(),
+	                        AccessControl_1.this.useExtendedAccessLevelBasic
+	                    );
 	                }
 		            if(memberships != null) {
-		                try {
-		                    memberships.retainAll(Object_2Facade.newInstance(parent).attributeValuesAsList("owner"));
-	                    }
-	                    catch (ResourceException e) {
-	                    	throw new ServiceException(e);
-	                    }
+	                    memberships.retainAll(parentFacade.attributeValuesAsList("owner"));
 			            if(memberships.isEmpty()) {
 			                throw new ServiceException(
 			                    OpenCrxException.DOMAIN,
@@ -477,7 +486,7 @@ public class AccessControl_1 extends Standard_1 {
 			                    "No permission to create object.",
 	                            new BasicException.Parameter("object", request.path()),
 	                            new BasicException.Parameter("param0", request.path()),
-	                            new BasicException.Parameter("param1", requestingPrincipal)                                
+	                            new BasicException.Parameter("param1", requestingPrincipal.getIdentity())                                
 			                );
 			            }
 		            }
@@ -487,13 +496,6 @@ public class AccessControl_1 extends Standard_1 {
 	        MappedRecord newObject = request.object();
 	        // Set owner in case of secure objects
 	        if(AccessControl_1.this.isSecureObject(newObject)) {
-		        Object_2Facade parentFacade;
-	            try {
-		            parentFacade = Object_2Facade.newInstance(parent);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }        	
 	            Object_2Facade newObjectFacade;
 	            try {
 		            newObjectFacade = Object_2Facade.newInstance(newObject);
@@ -570,7 +572,7 @@ public class AccessControl_1 extends Standard_1 {
 		        newObjectFacade.getValue().keySet().remove("owningGroup");
 	            // Access levels
 	            for(
-	                Iterator<String> i = Arrays.asList(new String[]{"accessLevelBrowse", "accessLevelUpdate", "accessLevelDelete"}).iterator();
+	                Iterator<String> i = Arrays.asList("accessLevelBrowse", "accessLevelUpdate", "accessLevelDelete").iterator();
 	                i.hasNext();
 	            ) {
 	                String mode = i.next();
@@ -1022,7 +1024,7 @@ public class AccessControl_1 extends Standard_1 {
 	        	AccessControl_1.this.getSecurityContext(
 	                header,
 	                request
-	            );    
+	            );
 	            String principalName;
 	            try {
 		            principalName = (String)Object_2Facade.newInstance(request.object()).attributeValue("principalName");
@@ -1289,7 +1291,7 @@ public class AccessControl_1 extends Standard_1 {
     }
 
     //-------------------------------------------------------------------------
-    public PersistenceManager getDelegatingPersistenceManager(
+    public PersistenceManager newDelegatingPersistenceManager(
     ) {
         if(!this.connectionFactories.isEmpty()) {
         	ConnectionFactoryAdapter connectionFactoryAdapter = (ConnectionFactoryAdapter)this.connectionFactories.get(0);
@@ -1421,7 +1423,7 @@ public class AccessControl_1 extends Standard_1 {
                 new BasicException.Parameter("principal", header.getPrincipalChain()),
                 new BasicException.Parameter("param0", header.getPrincipalChain()),
                 new BasicException.Parameter("param1", this.realmIdentity)
-            );            
+            );
         }
         SysLog.detail("requesting principal", requestingPrincipal);
         return securityContext;

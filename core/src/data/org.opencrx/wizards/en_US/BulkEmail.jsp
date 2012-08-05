@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BulkEmail.jsp,v 1.6 2010/04/28 08:24:08 cmu Exp $
+ * Name:        $Id: BulkEmail.jsp,v 1.8 2010/10/20 17:16:22 cmu Exp $
  * Description: create Bulk E-mail (e.g. for campaign)
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/28 08:24:08 $
+ * Date:        $Date: 2010/10/20 17:16:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -408,7 +408,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
           }
 
         	mpparams = (String[])parameterMap.get("messageSubject");
-        	String messageSubject = (mpparams == null) || (mpparams.length == 0) ? "" : mpparams[0];
+        	String messageSubject = (mpparams == null) || (mpparams.length == 0) ? " - ${#}" : mpparams[0];
 
         	mpparams = (String[])parameterMap.get("messageBody");
         	String messageBody = (mpparams == null) || (mpparams.length == 0) ? "" : mpparams[0];
@@ -488,7 +488,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
             pm.currentTransaction().begin();
             org.opencrx.kernel.activity1.jmi1.EMail newActivity  = (org.opencrx.kernel.activity1.jmi1.EMail)pm.getObjectById(result.getActivity().refGetPath());
-            newActivity.setMessageSubject(messageSubject);
+
+            newActivity.setMessageSubject(messageSubject.replace("${#}", "#" + newActivity.getActivityNumber()));
             newActivity.setMessageBody(messageBody);
             newActivity.setAssignedTo(contact);
             if (commitAndSend) {
@@ -826,7 +827,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                     </td>
                   </tr>
                   <tr>
-                    <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "messageSubject", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                    <td class="label" title="\${#} will be replace with activity number"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "messageSubject", app.getCurrentLocaleAsIndex()) %>&nbsp;&nbsp;&mdash;&nbsp;\${#}:</span></td>
                     <td>
                       <input type="text" id="messageSubject" name="messageSubject" class="valueL" style="font-family:courier;" tabindex="70" value="<%= messageSubject %>" />
                     </td>

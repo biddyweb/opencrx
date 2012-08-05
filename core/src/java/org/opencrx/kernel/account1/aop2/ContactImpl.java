@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ContactImpl.java,v 1.6 2009/04/21 00:10:36 wfro Exp $
+ * Name:        $Id: ContactImpl.java,v 1.7 2010/11/01 12:39:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 00:10:36 $
+ * Date:        $Date: 2010/11/01 12:39:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,12 +55,7 @@
  */
 package org.opencrx.kernel.account1.aop2;
 
-import java.util.List;
-
 import javax.jdo.listener.StoreCallback;
-
-import org.opencrx.kernel.backend.Accounts;
-import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 
 public class ContactImpl
 	<S extends org.opencrx.kernel.account1.jmi1.Contact,N extends org.opencrx.kernel.account1.cci2.Contact,C extends Void>
@@ -73,19 +68,6 @@ public class ContactImpl
         N next
     ) {
     	super(same, next);
-    }
-    
-    //-----------------------------------------------------------------------
-    public List<org.opencrx.kernel.account1.jmi1.AbstractOrganizationalUnit> getOuMembership(
-    ) {
-    	try {
-	    	return Accounts.getInstance().getOuMembership(
-	    		this.sameObject()
-	    	);
-    	}
-    	catch(Exception e) {
-    		throw new JmiServiceException(e);
-    	}
     }
     
     //-----------------------------------------------------------------------

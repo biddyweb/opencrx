@@ -21,7 +21,7 @@
 												<_item>all Organizations</_item>
 											</toolTip>
 											<label>
-												<_item>Organizations</_item>
+												<_item>»Organizations</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -531,7 +531,7 @@
 												<_item>Org Unit Memberships</_item>
 											</toolTip>
 											<label>
-												<_item>Org Unit Memberships</_item>
+												<_item>»Org Unit Memberships</_item>
 											</label>
 											<order>
 												<_item>0</_item>

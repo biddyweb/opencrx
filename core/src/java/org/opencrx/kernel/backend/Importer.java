@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.21 2009/12/17 14:42:45 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.22 2010/10/19 11:25:15 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/17 14:42:45 $
+ * Date:        $Date: 2010/10/19 11:25:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -160,7 +160,7 @@ public class Importer extends AbstractImpl {
                         } 
                         catch(Exception e) {}
                         if(parent != null) {
-                            RefContainer container = (RefContainer)parent.refGetValue(
+                            RefContainer<?> container = (RefContainer<?>)parent.refGetValue(
                             	entryPath.get(entryPath.size() - 2)
                             );
                             container.refAdd(
@@ -168,7 +168,7 @@ public class Importer extends AbstractImpl {
                                 entryPath.get(entryPath.size() - 1), 
                                 newEntry
                             );
-                        }                                    
+                        }
                         loadedObjects.put(
                         	entryPath, 
                             newEntry

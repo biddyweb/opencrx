@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImporterImpl.java,v 1.9 2009/06/16 21:19:18 wfro Exp $
+ * Name:        $Id: ImporterImpl.java,v 1.10 2010/09/16 00:17:51 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/16 21:19:18 $
+ * Date:        $Date: 2010/09/16 00:17:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -109,15 +109,12 @@ public class ImporterImpl
             }
             else if(ICalendar.MIME_TYPE.equals(itemMimeType)) {
             	if(this.sameObject() instanceof Activity) {
-                	org.opencrx.kernel.aop2.Configuration config = (org.opencrx.kernel.aop2.Configuration)this.sameManager().getUserObject(org.opencrx.kernel.aop2.Configuration.class.getSimpleName());            		
 	            	importedObject = ICalendar.getInstance().importItem(
 	            		item, 
 	            		(Activity)this.sameObject(), 
 	            		locale, 
 	            		errors, 
-	            		report,
-	            		config.isEMailAddressLookupCaseInsensitive(),
-	            		config.isEMailAddressLookupIgnoreDisabled()
+	            		report
 	            	);
             	}
             }

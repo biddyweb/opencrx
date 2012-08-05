@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.57 2010/05/27 21:48:02 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.59 2010/11/30 13:56:22 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.57 $
+ * Revision:    $Revision: 1.59 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/27 21:48:02 $
+ * Date:        $Date: 2010/11/30 13:56:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -261,6 +261,8 @@ public class OpenCrxSecurity_1 extends Standard_1 {
             changedPasswordCredentialFacade.attributeValuesAsList("password").add(
 	            Base64.encode((byte[])changePasswordParamsFacade.attributeValue("password"))
 	        );
+            changedPasswordCredentialFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();
+            changedPasswordCredentialFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());            
 	        delegation.addReplaceRequest(
 	            changedPasswordCredential
 	        );
@@ -268,38 +270,6 @@ public class OpenCrxSecurity_1 extends Standard_1 {
     	catch(ResourceException e) {
     		throw new ServiceException(e);
     	}
-    }
-    
-    //-------------------------------------------------------------------------
-    protected void checkPermission(
-        ServiceHeader header,
-        DataproviderRequest request
-    ) throws ServiceException {
-        
-        short operation = request.operation();
-        
-        // read allowed for everybody
-        if(
-            operation == DataproviderOperations.OBJECT_RETRIEVAL ||
-            operation == DataproviderOperations.ITERATION_START
-        ) {
-            return;
-        }
-        // 1) All other operations only allowed for admin principals
-        // 2) Principal is allowed to update its principal objects
-        String principalName = this.getPrincipalName(header);
-        if((
-            !principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) &&
-            !(request.path().getParent().isLike(PATH_PATTERN_PRINCIPALS) && request.path().getBase().equals(principalName)))
-        ) {
-            throw new ServiceException(
-                OpenCrxException.DOMAIN,
-                OpenCrxException.AUTHORIZATION_FAILURE_UPDATE, 
-                "No permission for " + DataproviderOperations.toString(operation) + " on object",
-                new BasicException.Parameter("object", request.path()),
-                new BasicException.Parameter("param0", request.path())
-            );
-        }        
     }
     
     //-------------------------------------------------------------------------
@@ -379,6 +349,38 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         	}
         }
 
+        //-------------------------------------------------------------------------
+        protected void checkPermission(
+            ServiceHeader header,
+            DataproviderRequest request
+        ) throws ServiceException {
+            
+            short operation = request.operation();
+            
+            // read allowed for everybody
+            if(
+                operation == DataproviderOperations.OBJECT_RETRIEVAL ||
+                operation == DataproviderOperations.ITERATION_START
+            ) {
+                return;
+            }
+            // 1) All other operations only allowed for admin principals
+            // 2) Principal is allowed to update its principal objects
+            String principalName = OpenCrxSecurity_1.this.getPrincipalName(header);
+            if((
+                !principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) &&
+                !(request.path().getParent().isLike(PATH_PATTERN_PRINCIPALS) && request.path().getBase().equals(principalName)))
+            ) {
+                throw new ServiceException(
+                    OpenCrxException.DOMAIN,
+                    OpenCrxException.AUTHORIZATION_FAILURE_UPDATE, 
+                    "No permission for " + DataproviderOperations.toString(operation) + " on object",
+                    new BasicException.Parameter("object", request.path()),
+                    new BasicException.Parameter("param0", request.path())
+                );
+            }        
+        }
+                
 	    //-------------------------------------------------------------------------
 	    @Override
 	    public boolean delete(
@@ -388,7 +390,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	    ) throws ServiceException {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
-	        OpenCrxSecurity_1.this.checkPermission(
+	        this.checkPermission(
 	            header,
 	            request
 	        );
@@ -412,7 +414,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	    ) throws ServiceException {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
-            OpenCrxSecurity_1.this.checkPermission(
+            this.checkPermission(
 	            header,
 	            request
 	        );
@@ -443,7 +445,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-            OpenCrxSecurity_1.this.checkPermission(
+            this.checkPermission(
 	            header,
 	            request
 	        );
@@ -504,7 +506,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-            OpenCrxSecurity_1.this.checkPermission(
+            this.checkPermission(
 	            header,
 	            request
 	        );
@@ -529,7 +531,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	    ) throws ServiceException {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
-            OpenCrxSecurity_1.this.checkPermission(
+            this.checkPermission(
 	            header,
 	            request
 	        );
@@ -584,7 +586,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
             DataproviderReply reply = this.newDataproviderReply(output);
-            OpenCrxSecurity_1.this.checkPermission(
+            this.checkPermission(
 	            header,
 	            request
 	        );

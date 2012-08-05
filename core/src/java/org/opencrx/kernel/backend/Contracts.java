@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.108 2010/08/12 08:47:49 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.118 2010/12/09 12:45:56 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.108 $
+ * Revision:    $Revision: 1.118 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/12 08:47:49 $
+ * Date:        $Date: 2010/12/09 12:45:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,9 +64,11 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -86,7 +88,6 @@ import org.opencrx.kernel.contract1.jmi1.AbstractQuotePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractRemovedPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.CalculationRule;
-import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.DeliveryInformation;
 import org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult;
 import org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult;
@@ -110,6 +111,14 @@ import org.opencrx.kernel.depot1.jmi1.Depot;
 import org.opencrx.kernel.depot1.jmi1.DepotEntity;
 import org.opencrx.kernel.depot1.jmi1.DepotPosition;
 import org.opencrx.kernel.depot1.jmi1.DepotReference;
+import org.opencrx.kernel.forecast1.cci2.BrokerAssignmentQuery;
+import org.opencrx.kernel.forecast1.cci2.CustomerAssignmentQuery;
+import org.opencrx.kernel.forecast1.cci2.SalesRepAssignmentQuery;
+import org.opencrx.kernel.forecast1.cci2.SalesVolumeBudgetQuery;
+import org.opencrx.kernel.forecast1.jmi1.BrokerAssignment;
+import org.opencrx.kernel.forecast1.jmi1.CustomerAssignment;
+import org.opencrx.kernel.forecast1.jmi1.SalesRepAssignment;
+import org.opencrx.kernel.forecast1.jmi1.SalesVolumeBudget;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.jmi1.CrxObject;
@@ -122,6 +131,7 @@ import org.opencrx.kernel.product1.jmi1.ConfiguredProduct;
 import org.opencrx.kernel.product1.jmi1.PricingRule;
 import org.opencrx.kernel.product1.jmi1.Product;
 import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
+import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.RuntimeServiceException;
@@ -161,10 +171,9 @@ public class Contracts extends AbstractImpl {
         org.opencrx.kernel.contract1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = org.opencrx.kernel.utils.Utils.getContractPackage(pm);
-        org.opencrx.kernel.contract1.cci2.CalculationRuleQuery calculationRuleQuery = contractPkg.createCalculationRuleQuery();
+        CalculationRuleQuery calculationRuleQuery = (CalculationRuleQuery)pm.newQuery(CalculationRule.class);
         calculationRuleQuery.name().equalTo(name);
-        List<org.opencrx.kernel.contract1.jmi1.CalculationRule> calculationRules = segment.getCalculationRule(calculationRuleQuery);
+        List<CalculationRule> calculationRules = segment.getCalculationRule(calculationRuleQuery);
         return calculationRules.isEmpty() ? 
             null : 
             calculationRules.iterator().next();
@@ -195,7 +204,6 @@ public class Contracts extends AbstractImpl {
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
-        Contract1Package contractPkg = Utils.getContractPackage(pm);
         org.opencrx.kernel.contract1.jmi1.Segment contractSegment = this.getContractSegment(
             pm, 
             providerName, 
@@ -206,7 +214,8 @@ public class Contracts extends AbstractImpl {
             return calculationRule;            
         }                
         pm.currentTransaction().begin();
-        calculationRule = contractPkg.getCalculationRule().createCalculationRule();
+        calculationRule = pm.newInstance(CalculationRule.class);
+        calculationRule.refInitialize(false, false);
         calculationRule.setName(calculationRuleName);
         calculationRule.setDescription(description);
         calculationRule.setGetPositionAmountsScript(getPositionAmountsScript);
@@ -422,7 +431,7 @@ public class Contracts extends AbstractImpl {
     protected BigDecimal getSalesTaxRate(
         org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position
     ) {
-        BigDecimal salesTaxRate = new BigDecimal(0);
+        BigDecimal salesTaxRate = BigDecimal.ZERO;
         try {
             if(position.getSalesTaxType() != null) {
                 if(position.getSalesTaxType().getRate() != null) {
@@ -436,22 +445,22 @@ public class Contracts extends AbstractImpl {
 
     //-------------------------------------------------------------------------
     protected BigDecimal getMinMaxAdjustedQuantity(
-        org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position
+        AbstractContractPosition position
     ) {
         // quantity
-        BigDecimal quantity = position.getQuantity() != null 
-            ? position.getQuantity()
-            : new BigDecimal(0);
+        BigDecimal quantity = position.getQuantity() != null ? 
+        	position.getQuantity() : 
+        		BigDecimal.ZERO;
         BigDecimal minMaxAdjustedQuantity = quantity;
-        BigDecimal minQuantity = position.getMinQuantity() != null 
-            ? position.getMinQuantity()
-            : new BigDecimal(0);
-        BigDecimal maxQuantity = position.getMaxQuantity() != null 
-            ? position.getMaxQuantity()
-            : new BigDecimal(Double.MAX_VALUE);
-        BigDecimal offsetQuantity = position.getOffsetQuantity() != null 
-            ? position.getOffsetQuantity()
-            : new BigDecimal(0);
+        BigDecimal minQuantity = position.getMinQuantity() != null ? 
+        	position.getMinQuantity() : 
+        		BigDecimal.ZERO;
+        BigDecimal maxQuantity = position.getMaxQuantity() != null ? 
+        	position.getMaxQuantity() : 
+        		new BigDecimal(Double.MAX_VALUE);
+        BigDecimal offsetQuantity = position.getOffsetQuantity() != null ?  
+        	position.getOffsetQuantity() : 
+        		BigDecimal.ZERO;        		
         short minMaxQuantityHandling = MIN_MAX_QUANTITY_HANDLING_NA;
         try {
             minMaxQuantityHandling = position.getMinMaxQuantityHandling(); 
@@ -459,7 +468,7 @@ public class Contracts extends AbstractImpl {
         catch(Exception e) {}
         if(minMaxQuantityHandling == MIN_MAX_QUANTITY_HANDLING_LIMIT) {
             // Adjust min/max handling when quantity is negative
-            if(quantity.compareTo(new BigDecimal(0.0)) < 0) {
+            if(quantity.compareTo(BigDecimal.ZERO) < 0) {
                 minMaxAdjustedQuantity = minMaxAdjustedQuantity.add(offsetQuantity).max(maxQuantity.negate()).min(minQuantity.negate());              
             }
             else {
@@ -470,9 +479,9 @@ public class Contracts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
-        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position
+    public GetPositionAmountsResult getPositionAmounts(
+        CalculationRule calculationRule,
+        AbstractContractPosition position
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
         String script = (calculationRule.getGetPositionAmountsScript() == null) || (calculationRule.getGetPositionAmountsScript().length() == 0) ? 
@@ -567,8 +576,8 @@ public class Contracts extends AbstractImpl {
 
     //-------------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(
-        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
+        CalculationRule calculationRule,
+        AbstractContract contract,
         List<?> lineItemNumbers,
         List<?> positionBaseAmounts,
         List<?> positionDiscountAmounts,
@@ -736,11 +745,11 @@ public class Contracts extends AbstractImpl {
                position.getDiscount();
             // Discount is per piece in case of !discountIsPercentage
             discountAmount = discountIsPercentage.booleanValue() ? 
-                baseAmount.multiply(discount.divide(new BigDecimal(100.0), BigDecimal.ROUND_UP)) : 
+                baseAmount.multiply(discount.divide(HUNDRED, BigDecimal.ROUND_UP)) : 
                 minMaxAdjustedQuantity.multiply(discount.multiply(uomScaleFactor));
             // taxAmount
             taxAmount = baseAmount.subtract(discountAmount).multiply(
-                salesTaxRate.divide(new BigDecimal(100), BigDecimal.ROUND_UP)
+                salesTaxRate.divide(HUNDRED, BigDecimal.ROUND_UP)
             );    
             // amount
             amount = baseAmount.subtract(discountAmount).add(taxAmount);      
@@ -759,7 +768,7 @@ public class Contracts extends AbstractImpl {
     ) {
         BigDecimal minMaxAdjustedQuantity = this.getMinMaxAdjustedQuantity(position);
         Collection<DeliveryInformation> deliveryInformations = position.getDeliveryInformation();
-        BigDecimal quantityShipped = new BigDecimal(0);
+        BigDecimal quantityShipped = BigDecimal.ZERO;
         for(DeliveryInformation deliveryInformation: deliveryInformations) {
             quantityShipped = quantityShipped.add(
                 deliveryInformation.getQuantityShipped()
@@ -776,10 +785,9 @@ public class Contracts extends AbstractImpl {
     	AbstractContractPosition position
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
-        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
-        		position.refGetPath().getParent().getParent()
-        	);    	
+       AbstractContract contract = (AbstractContract)pm.getObjectById(
+    		position.refGetPath().getParent().getParent()
+    	);    	
     	short contractLanguage = contract.getContractLanguage();
     	String description = "N/A";
     	String detailedDescription = "N/A";
@@ -813,10 +821,9 @@ public class Contracts extends AbstractImpl {
     	AbstractContractPosition position
     ) {    	
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
-        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
-        		position.refGetPath().getParent().getParent()
-        	);    	
+        AbstractContract contract = (AbstractContract)pm.getObjectById(
+    		position.refGetPath().getParent().getParent()
+    	);    	
     	short contractLanguage = contract.getContractLanguage();
     	String description = "N/A";
     	String detailedDescription = "N/A";
@@ -850,10 +857,9 @@ public class Contracts extends AbstractImpl {
     	AbstractContractPosition position
     ) {    	
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
-        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
-        		position.refGetPath().getParent().getParent()
-        	);    	
+       AbstractContract contract = (AbstractContract)pm.getObjectById(
+    		position.refGetPath().getParent().getParent()
+    	);    	
     	short contractLanguage = contract.getContractLanguage();
     	String description = "N/A";
     	String detailedDescription = "N/A";
@@ -891,10 +897,9 @@ public class Contracts extends AbstractImpl {
     	AbstractContractPosition position
     ) {    	
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
-        	(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
-        		position.refGetPath().getParent().getParent()
-        	);    	
+        AbstractContract contract = (AbstractContract)pm.getObjectById(
+    		position.refGetPath().getParent().getParent()
+    	);    	
     	short contractLanguage = contract.getContractLanguage();
     	String description = "N/A";
     	String detailedDescription = "N/A";
@@ -931,6 +936,30 @@ public class Contracts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    public List<AbstractContractPosition> getPositions(
+    	AbstractContract contract
+    ) {
+        List<AbstractContractPosition> positions = new ArrayList<AbstractContractPosition>();
+        if(contract instanceof Opportunity) {
+        	Collection<AbstractOpportunityPosition> p = ((Opportunity)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof Quote) {
+        	Collection<AbstractQuotePosition> p = ((Quote)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof SalesOrder) {
+        	Collection<AbstractSalesOrderPosition> p = ((SalesOrder)contract).getPosition();
+        	positions.addAll(p);
+        }
+        else if(contract instanceof Invoice) {
+        	Collection<AbstractInvoicePosition> p = ((Invoice)contract).getPosition();
+        	positions.addAll(p);
+        }
+        return positions;    	
+    }
+    
+    //-------------------------------------------------------------------------
     public BigDecimal[] calculateAmounts(
         AbstractContract contract
     ) throws ServiceException {        
@@ -955,23 +984,7 @@ public class Contracts extends AbstractImpl {
         	totalSalesCommission = BigDecimal.ZERO;
         }
         else {
-	        List<AbstractContractPosition> positions = new ArrayList<AbstractContractPosition>();
-	        if(contract instanceof Opportunity) {
-	        	Collection<AbstractOpportunityPosition> p = ((Opportunity)contract).getPosition();
-	        	positions.addAll(p);
-	        }
-	        else if(contract instanceof Quote) {
-	        	Collection<AbstractQuotePosition> p = ((Quote)contract).getPosition();
-	        	positions.addAll(p);
-	        }
-	        else if(contract instanceof SalesOrder) {
-	        	Collection<AbstractSalesOrderPosition> p = ((SalesOrder)contract).getPosition();
-	        	positions.addAll(p);
-	        }
-	        else if(contract instanceof Invoice) {
-	        	Collection<AbstractInvoicePosition> p = ((Invoice)contract).getPosition();
-	        	positions.addAll(p);
-	        }
+        	List<AbstractContractPosition> positions = this.getPositions(contract);
 	        List<Integer> lineItemNumbers = new ArrayList<Integer>();
 	        List<BigDecimal> positionBaseAmounts = new ArrayList<BigDecimal>();
 	        List<BigDecimal> positionDiscountAmounts = new ArrayList<BigDecimal>();
@@ -1062,7 +1075,7 @@ public class Contracts extends AbstractImpl {
 	                totalSalesCommission = totalSalesCommission.add(
 	                  (salesCommissionIsPercentages.get(i) != null) &&
 	                  ((salesCommissionIsPercentages.get(i)).booleanValue()) ? 
-	                	  baseAmount.subtract(discountAmount).multiply(salesCommission.divide(new BigDecimal(100), BigDecimal.ROUND_UP)) : 
+	                	  baseAmount.subtract(discountAmount).multiply(salesCommission.divide(HUNDRED, BigDecimal.ROUND_UP)) : 
 	                	  salesCommission
 	                );
 	            }
@@ -1494,17 +1507,17 @@ public class Contracts extends AbstractImpl {
                             discountIsPercentage = Boolean.TRUE;
                             discount =
                                 BigDecimal.ONE.subtract(
-                                    BigDecimal.ONE.subtract(listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR)).multiply(
-                                        BigDecimal.ONE.subtract(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
+                                    BigDecimal.ONE.subtract(listPriceDiscount.divide(HUNDRED, BigDecimal.ROUND_FLOOR)).multiply(
+                                        BigDecimal.ONE.subtract(customerDiscount.divide(HUNDRED, BigDecimal.ROUND_FLOOR))
                                     )
-                                ).multiply(new BigDecimal(100.0));
+                                ).multiply(HUNDRED);
                         }
                         // listPriceDiscountIsPercentage=true, customerDiscountIsPercentage=false
                         // totalDiscount = price*listPriceDiscount + customerDiscount
                         else {
                             discountIsPercentage = Boolean.FALSE;
                             discount = price.multiply(
-                                listPriceDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_DOWN)
+                                listPriceDiscount.divide(HUNDRED, BigDecimal.ROUND_DOWN)
                             ).add(customerDiscount);
                         }
                     }
@@ -1518,7 +1531,7 @@ public class Contracts extends AbstractImpl {
                         ) {
                             discountIsPercentage = Boolean.FALSE;
                             discount = listPriceDiscount.add(
-                                price.subtract(listPriceDiscount).multiply(customerDiscount.divide(new BigDecimal(100.0), BigDecimal.ROUND_FLOOR))
+                                price.subtract(listPriceDiscount).multiply(customerDiscount.divide(HUNDRED, BigDecimal.ROUND_FLOOR))
                             );
                         }
                         // listPriceDiscountIsPercentage=false, customerDiscountIsPercentage=false
@@ -1640,15 +1653,15 @@ public class Contracts extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public AbstractContractPosition createContractPosition(
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
+        AbstractContract contract,
         Boolean isIgnoreProductConfiguration,
         String name,
         BigDecimal quantity,
         Date pricingDate,
-        org.opencrx.kernel.product1.jmi1.Product product,
-        org.opencrx.kernel.uom1.jmi1.Uom uom,
-        org.opencrx.kernel.uom1.jmi1.Uom priceUom,
-        org.opencrx.kernel.product1.jmi1.PricingRule pricingRule
+        Product product,
+        Uom uom,
+        Uom priceUom,
+        PricingRule pricingRule
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
     	AbstractContractPosition position = null;
@@ -1795,10 +1808,9 @@ public class Contracts extends AbstractImpl {
         boolean preDelete
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-    	org.opencrx.kernel.contract1.jmi1.AbstractContract contract =
-    		(org.opencrx.kernel.contract1.jmi1.AbstractContract)pm.getObjectById(
-    			position.refGetPath().getParent().getParent()
-    		);
+    	AbstractContract contract = (AbstractContract)pm.getObjectById(
+			position.refGetPath().getParent().getParent()
+		);
         // Make a copy of the removed position
         Marshaller positionMarshaller = new Marshaller() {
             public Object marshal(
@@ -1877,14 +1889,15 @@ public class Contracts extends AbstractImpl {
      * final booking or null if no inventory booking is set on the contract
      */
     public CompoundBooking removePendingInventoryBookings(
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract
+        AbstractContract contract
     ) throws ServiceException {
-    	List<CompoundBooking> inventoryCbs = contract.getInventoryCb();
+    	// List of bookings is ordered by booking date
+    	List<CompoundBooking> inventoryCbs = contract.getInventoryCb();    	
     	List<CompoundBooking> removedInventoryCbs = new ArrayList<CompoundBooking>();
     	CompoundBooking lastFinalInventoryCb = null;
     	for(CompoundBooking cb: inventoryCbs) {
             short bookingStatus = cb.getBookingStatus();
-            if(bookingStatus != Depots.BOOKING_STATUS_PROCESSED) {
+            if(bookingStatus == Depots.BOOKING_STATUS_PENDING) {
                 Depots.getInstance().removeCompoundBooking(
                     cb,
                     false
@@ -1893,7 +1906,6 @@ public class Contracts extends AbstractImpl {
             }
             else {
                 lastFinalInventoryCb = cb;
-                break;
             }
         }
     	contract.getInventoryCb().removeAll(removedInventoryCbs);
@@ -1902,7 +1914,7 @@ public class Contracts extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public CompoundBooking updateInventory(
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract
+        AbstractContract contract
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
         CompoundBooking lastFinalInventoryCb = 
@@ -1964,19 +1976,37 @@ public class Contracts extends AbstractImpl {
         int ii = 0;
         for(Iterator<AbstractContractPosition> i = allPositions.iterator(); i.hasNext(); ii++) {
         	AbstractContractPosition position = i.next();
-        	depotReferences = position.getDepotReference();
             Depot issueDepot = null;
             Depot returnDepot =  null;
             boolean holderQualifiesPosition = false;
+            // Depot references at contract-level
+        	depotReferences = contract.getDepotReference();
             for(DepotReference depotReference: depotReferences) {
                 short depotUsage = depotReference.getDepotUsage();
-                if((depotReference.getDepot() != null) && (depotUsage == Depots.DEPOT_USAGE_GOODS_ISSUE)) {
-                    issueDepot = depotReference.getDepot();
-                    // The issue depot determines the useDepotPositionQualifier 
-                    holderQualifiesPosition = depotReference.isHolderQualifiesPosition();
+                if(depotReference.getDepot() != null) {
+	                if(depotUsage == Depots.DEPOT_USAGE_GOODS_ISSUE) {
+	                    issueDepot = depotReference.getDepot();
+	                    // The issue depot determines the useDepotPositionQualifier 
+	                    holderQualifiesPosition = depotReference.isHolderQualifiesPosition();
+	                }
+	                if(depotUsage == Depots.DEPOT_USAGE_GOODS_RETURN) {
+	                    returnDepot = depotReference.getDepot();
+	                }
                 }
-                if((depotReference.getDepot() != null) && (depotUsage == Depots.DEPOT_USAGE_GOODS_RETURN)) {
-                    returnDepot = depotReference.getDepot();
+            }
+            // Depot references at position-level override depot references at contract-level
+        	depotReferences = position.getDepotReference();
+            for(DepotReference depotReference: depotReferences) {
+                short depotUsage = depotReference.getDepotUsage();
+                if(depotReference.getDepot() != null) {
+	                if(depotUsage == Depots.DEPOT_USAGE_GOODS_ISSUE) {
+	                    issueDepot = depotReference.getDepot();
+	                    // The issue depot determines the useDepotPositionQualifier 
+	                    holderQualifiesPosition = depotReference.isHolderQualifiesPosition();
+	                }
+	                if(depotUsage == Depots.DEPOT_USAGE_GOODS_RETURN) {
+	                    returnDepot = depotReference.getDepot();
+	                }
                 }
             }
             if(issueDepot == null) {
@@ -2011,49 +2041,60 @@ public class Contracts extends AbstractImpl {
                     );
                 }
             }
-            // delivery depot position
+            Product product = position instanceof ConfiguredProduct ?
+            	((ConfiguredProduct)position).getProduct() :
+            		null;
+            if(product == null) {
+                throw new ServiceException(
+                    OpenCrxException.DOMAIN,
+                    OpenCrxException.DEPOT_MISSING_PRODUCT,
+                    "Missing product.",
+                    new BasicException.Parameter("param0", position.getLineItemNumber())   
+                );            	
+            }
+            // Delivery depot position
             deliveryDepotPositions.add( 
                 Depots.getInstance().openDepotPosition(
                     deliveryDepot,
-                    null,
-                    null,
+                    null, // positionName
+                    null, // positionDescription
                     new Date(),
-                    holderQualifiesPosition ? 
+                    holderQualifiesPosition ? // positionQualifier
                     	position.getPositionNumber() : 
                     	null,
-                    null,
+                    product,
                     Boolean.FALSE
                 )
             );
-            // issue depot position
+            // Issue depot position
             issueDepotPositions.add( 
                 Depots.getInstance().openDepotPosition(
                     issueDepot,
-                    null,
-                    null,
+                    null, // positionName
+                    null, // positionDescription
                     new Date(),
-                    holderQualifiesPosition ? 
+                    holderQualifiesPosition ?  // positionQualifier
                     	position.getPositionNumber() : 
                     	null,
-                    null,
+                    product,
                     Boolean.FALSE
                 )
             );
-            // return depot position
+            // Return depot position
             returnDepotPositions.add(
                 Depots.getInstance().openDepotPosition(
                     returnDepot,
-                    null,
-                    null,
+                    null, // positionName
+                    null, // positionDescription
                     new Date(),
-                    holderQualifiesPosition ? 
+                    holderQualifiesPosition ? // positionQualifier
                     	position.getPositionNumber() : 
                     	null,
-                    null,
+                    product,
                     Boolean.FALSE
                 )
             );
-        }        
+        }
         // Create booking        
         List<DepotPosition> creditPositions = new ArrayList<DepotPosition>();
         List<DepotPosition> debitPositions = new ArrayList<DepotPosition>();
@@ -2073,7 +2114,7 @@ public class Contracts extends AbstractImpl {
             }
             positionModificationQuery.orderByCreatedAt().ascending();            
             List<PositionModification> positionModifications = contract.getPositionModification(positionModificationQuery);
-            BigDecimal quantityBeforeFirstModification = new BigDecimal(0.0);
+            BigDecimal quantityBeforeFirstModification = BigDecimal.ZERO;
             for(PositionModification positionModification: positionModifications) {
                 if(positionModification instanceof QuantityModification) {
                 	QuantityModification quantityModification = (QuantityModification)positionModification;
@@ -2135,13 +2176,13 @@ public class Contracts extends AbstractImpl {
                     Depots.BOOKING_TYPE_STANDARD,
                     quantities.toArray(new BigDecimal[quantities.size()]),
                     bookingTextNames.toArray(new String[bookingTextNames.size()]),
-                    null,
+                    null, // bookingTexts
                     creditPositions.toArray(new DepotPosition[creditPositions.size()]),
                     debitPositions.toArray(new DepotPosition[debitPositions.size()]),
                     origins.toArray(new BookingOrigin[origins.size()]),
-                    null,
-                    null
-                );        
+                    null, // reversalOf
+                    null // errors
+                );
             contract.getInventoryCb().add(
                 inventoryCb
             );
@@ -2195,8 +2236,7 @@ public class Contracts extends AbstractImpl {
     	AbstractContractPosition position
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-        AbstractContract contract = 
-        	(AbstractContract)pm.getObjectById(
+        AbstractContract contract = (AbstractContract)pm.getObjectById(
             position.refGetPath().getParent().getParent()
         );
         if(position instanceof ConfiguredProduct) {
@@ -2220,10 +2260,9 @@ public class Contracts extends AbstractImpl {
         org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(position);
-    	AbstractContract contract = 
-    		(AbstractContract)pm.getObjectById(
-    			position.refGetPath().getParent().getParent()
-    		);
+    	AbstractContract contract = (AbstractContract)pm.getObjectById(
+			position.refGetPath().getParent().getParent()
+		);
     	short pricingState = 0;
         if(position instanceof ConfiguredProduct) {
         	Product product = ((ConfiguredProduct)position).getProduct();
@@ -2291,10 +2330,10 @@ public class Contracts extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
+    public static GetPositionAmountsResult getPositionAmounts(
         org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
-        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position,
+        CalculationRule calculationRule,
+        AbstractContractPosition position,
         java.math.BigDecimal minMaxAdjustedQuantity,
         java.math.BigDecimal uomScaleFactor,
         java.math.BigDecimal salesTaxRate
@@ -2313,49 +2352,51 @@ public class Contracts extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(
-        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position,
-        java.math.BigDecimal minMaxAdjustedQuantity,
-        java.math.BigDecimal uomScaleFactor,
-        java.math.BigDecimal salesTaxRate
+    public GetPositionAmountsResult getPositionAmounts(
+        CalculationRule calculationRule,
+        AbstractContractPosition position,
+        BigDecimal minMaxAdjustedQuantity,
+        BigDecimal uomScaleFactor,
+        BigDecimal salesTaxRate
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
-        java.math.BigDecimal pricePerUnit = position.getPricePerUnit() == null ?
-            java.math.BigDecimal.ZERO :
+        BigDecimal pricePerUnit = position.getPricePerUnit() == null ?
+            BigDecimal.ZERO :
             	position.getPricePerUnit();
-        java.math.BigDecimal baseAmount = minMaxAdjustedQuantity.multiply(pricePerUnit.multiply(uomScaleFactor));
+        BigDecimal baseAmount = minMaxAdjustedQuantity.multiply(pricePerUnit.multiply(uomScaleFactor));
         // discount
         Boolean discountIsPercentage = position.isDiscountIsPercentage() != null ? 
             position.isDiscountIsPercentage() : 
             Boolean.FALSE;
-        java.math.BigDecimal discount = position.getDiscount() != null ? 
+        BigDecimal discount = position.getDiscount() != null ? 
             position.getDiscount() : 
-            	java.math.BigDecimal.ZERO;
+            	BigDecimal.ZERO;
         // Discount is per piece in case of !discountIsPercentage
-        java.math.BigDecimal discountAmount = discountIsPercentage.booleanValue() ? 
-            baseAmount.multiply(discount.divide(new java.math.BigDecimal(100.0), java.math.BigDecimal.ROUND_UP)) : 
+        BigDecimal discountAmount = discountIsPercentage.booleanValue() ? 
+            baseAmount.multiply(discount.divide(HUNDRED, BigDecimal.ROUND_UP)) : 
             minMaxAdjustedQuantity.multiply(discount.multiply(uomScaleFactor));
         // taxAmount
-        java.math.BigDecimal taxAmount = baseAmount.subtract(discountAmount).multiply(
-            salesTaxRate.divide(new java.math.BigDecimal(100), java.math.BigDecimal.ROUND_UP)
+        BigDecimal taxAmount = baseAmount.subtract(discountAmount).multiply(
+            salesTaxRate.divide(HUNDRED, BigDecimal.ROUND_UP)
         );    
         // amount
-        java.math.BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
-        org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = Utils.getContractPackage(pm).createGetPositionAmountsResult(
-            amount, baseAmount, discountAmount,
-            (short)0,
-            null,
+        BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
+        GetPositionAmountsResult result = Utils.getContractPackage(pm).createGetPositionAmountsResult(
+            amount, 
+            baseAmount, 
+            discountAmount,
+            (short)0, // statusCode
+            null, // statusMessage
             taxAmount
         );
         return result;
     }
 
     //-------------------------------------------------------------------------
-    public static org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult getContractAmounts(
+    public static GetContractAmountsResult getContractAmounts(
         org.openmdx.base.accessor.jmi.cci.RefPackage_1_0 rootPkg,
-        org.opencrx.kernel.contract1.jmi1.CalculationRule calculationRule,
-        org.opencrx.kernel.contract1.jmi1.AbstractContract contract,
+        CalculationRule calculationRule,
+        AbstractContract contract,
         java.lang.Integer[] lineItemNumbers,
         java.math.BigDecimal[] positionBaseAmounts,
         java.math.BigDecimal[] positionDiscountAmounts,
@@ -2391,9 +2432,9 @@ public class Contracts extends AbstractImpl {
             		  salesCommission
             );
         }
-        java.math.BigDecimal totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
-        java.math.BigDecimal totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
-        org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = org.opencrx.kernel.utils.Utils.getContractPackage(pm).createGetContractAmountsResult(
+        BigDecimal totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
+        BigDecimal totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
+        GetContractAmountsResult result = org.opencrx.kernel.utils.Utils.getContractPackage(pm).createGetContractAmountsResult(
             (short)0,
             null,
             totalAmount, 
@@ -2406,6 +2447,174 @@ public class Contracts extends AbstractImpl {
         return result;
     }
     
+    //-------------------------------------------------------------------------
+    public void assignSalesVolumeBudgets(
+    	AbstractContract contract
+    ) throws ServiceException {
+    	Collection<AbstractContractPosition> positions = this.getPositions(contract);
+    	List<SalesVolumeBudget> budgets = this.findSalesVolumeBudgets(contract);
+    	for(AbstractContractPosition position: positions) {
+    		for(SalesVolumeBudget budget: budgets) {
+    			if(!position.getBudget().contains(budget)) {
+    				position.getBudget().add(budget);
+    			}
+    		}
+    	}
+    }
+    
+    //-------------------------------------------------------------------------
+    public void assignSalesVolumeBudgets(
+    	AbstractContractPosition contractPosition
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(contractPosition);
+    	AbstractContract contract = (AbstractContract)pm.getObjectById(contractPosition.refGetPath().getParent().getParent());
+    	List<SalesVolumeBudget> budgets = this.findSalesVolumeBudgets(contract);    	
+		for(SalesVolumeBudget budget: budgets) {
+			if(!contractPosition.getBudget().contains(budget)) {
+				contractPosition.getBudget().add(budget);
+			}
+		}
+    }
+
+    //-----------------------------------------------------------------------
+    protected SalesVolumeBudgetQuery getFindSalesVolumeBudgetsQuery(
+    	AbstractContract contract
+    ) {		
+		PersistenceManager pm = JDOHelper.getPersistenceManager(contract);    	
+		SalesVolumeBudgetQuery salesVolumeBudgetQuery = (SalesVolumeBudgetQuery)pm.newQuery(SalesVolumeBudget.class);
+		salesVolumeBudgetQuery.forAllDisabled().isFalse();
+		salesVolumeBudgetQuery.contractType().equalTo(
+			contract instanceof Opportunity ?
+				CONTRACT_TYPE_OPPORTUNITY :
+					contract instanceof Quote ?
+						CONTRACT_TYPE_QUOTE :
+							contract instanceof SalesOrder ?
+								CONTRACT_TYPE_SALES_ORDER :
+									contract instanceof Invoice ?
+										CONTRACT_TYPE_INVOICE :
+											(short)0
+		);
+		// Only include budgets which are valid during [activeOn, Min(expiresOn, cancelOn, closedOn))
+		Date startingFrom = contract.getActiveOn();
+		if(startingFrom != null) {
+			salesVolumeBudgetQuery.thereExistsEndingAt().greaterThanOrEqualTo(startingFrom);
+		}
+		Date endingAt = contract.getExpiresOn();
+		if(endingAt == null || (contract.getCancelOn() != null && contract.getCancelOn().compareTo(endingAt) < 0)) {
+			endingAt = contract.getCancelOn();
+		}
+		if(endingAt == null || (contract.getClosedOn() != null && contract.getClosedOn().compareTo(endingAt) < 0)) {
+			endingAt = contract.getClosedOn();
+		}
+		if(endingAt != null) {
+			salesVolumeBudgetQuery.thereExistsStartingFrom().lessThanOrEqualTo(endingAt);			
+		}
+		return salesVolumeBudgetQuery;
+    }
+    
+    //-----------------------------------------------------------------------
+	public List<SalesVolumeBudget> findSalesVolumeBudgets(
+		AbstractContract contract
+	) throws ServiceException  {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(contract);
+		String providerName = contract.refGetPath().get(2);
+		String segmentName = contract.refGetPath().get(4);
+		org.opencrx.kernel.forecast1.jmi1.Segment forecastSegment = 
+			(org.opencrx.kernel.forecast1.jmi1.Segment)pm.getObjectById(
+				new Path("xri://@openmdx*org.opencrx.kernel.forecast1").getDescendant("provider", providerName, "segment", segmentName)
+			);
+		Set<SalesVolumeBudget> budgets = new HashSet<SalesVolumeBudget>();
+		// 1. Query by Customer
+		if(contract.getCustomer() != null) {
+			SalesVolumeBudgetQuery salesVolumeBudgetQuery = this.getFindSalesVolumeBudgetsQuery(contract);
+			salesVolumeBudgetQuery.thereExistsCustomer().thereExistsAccount().equalTo(contract.getCustomer());
+			List<SalesVolumeBudget> candidateBudgets = forecastSegment.getBudget(salesVolumeBudgetQuery);
+			for(SalesVolumeBudget candidateBudget: candidateBudgets) {
+				boolean matches = true;
+				// Match SalesRep
+				if(!candidateBudget.getSalesRep().isEmpty()) {
+					if(contract.getSalesRep() != null) {
+						SalesRepAssignmentQuery query = (SalesRepAssignmentQuery)pm.newQuery(SalesRepAssignment.class);
+						query.thereExistsAccount().equalTo(contract.getSalesRep());
+						matches = !candidateBudget.getSalesRep(query).isEmpty();
+					}
+				}
+				// Match Broker
+				if(matches) {
+					if(!candidateBudget.getBroker().isEmpty()) {
+						if(contract.getBroker() != null) {
+							BrokerAssignmentQuery query = (BrokerAssignmentQuery)pm.newQuery(BrokerAssignment.class);
+							query.thereExistsAccount().equalTo(contract.getBroker());
+							matches = !candidateBudget.getBroker(query).isEmpty();
+						}
+					}
+				}
+				if(matches) {
+					budgets.add(candidateBudget);
+				}
+			}
+		}
+		// 2. Query by SalesRep
+		if(contract.getSalesRep() != null) {
+			SalesVolumeBudgetQuery salesVolumeBudgetQuery = this.getFindSalesVolumeBudgetsQuery(contract);
+			salesVolumeBudgetQuery.thereExistsSalesRep().thereExistsAccount().equalTo(contract.getSalesRep());
+			List<SalesVolumeBudget> candidateBudgets = forecastSegment.getBudget(salesVolumeBudgetQuery);
+			for(SalesVolumeBudget candidateBudget: candidateBudgets) {
+				boolean matches = true;
+				// Match Customer
+				if(!candidateBudget.getCustomer().isEmpty()) {
+					if(contract.getCustomer() != null) {
+						CustomerAssignmentQuery query = (CustomerAssignmentQuery)pm.newQuery(CustomerAssignment.class);
+						query.thereExistsAccount().equalTo(contract.getCustomer());
+						matches = !candidateBudget.getCustomer(query).isEmpty();
+					}
+				}
+				// Match Broker
+				if(matches) {
+					if(!candidateBudget.getBroker().isEmpty()) {
+						if(contract.getBroker() != null) {
+							BrokerAssignmentQuery query = (BrokerAssignmentQuery)pm.newQuery(BrokerAssignment.class);
+							query.thereExistsAccount().equalTo(contract.getBroker());
+							matches = !candidateBudget.getBroker(query).isEmpty();
+						}
+					}
+				}
+				if(matches) {
+					budgets.add(candidateBudget);
+				}
+			}
+		}
+		// 3. Query by Broker
+		if(contract.getBroker() != null) {
+			SalesVolumeBudgetQuery salesVolumeBudgetQuery = this.getFindSalesVolumeBudgetsQuery(contract);
+			salesVolumeBudgetQuery.thereExistsBroker().thereExistsAccount().equalTo(contract.getBroker());
+			List<SalesVolumeBudget> candidateBudgets = forecastSegment.getBudget(salesVolumeBudgetQuery);
+			for(SalesVolumeBudget candidateBudget: candidateBudgets) {
+				boolean matches = true;
+				// Match Customer
+				if(!candidateBudget.getCustomer().isEmpty()) {
+					if(contract.getCustomer() != null) {
+						CustomerAssignmentQuery query = (CustomerAssignmentQuery)pm.newQuery(CustomerAssignment.class);
+						query.thereExistsAccount().equalTo(contract.getCustomer());
+						matches = !candidateBudget.getCustomer(query).isEmpty();
+					}
+				}
+				// Match SalesRep
+				if(!candidateBudget.getSalesRep().isEmpty()) {
+					if(contract.getSalesRep() != null) {
+						SalesRepAssignmentQuery query = (SalesRepAssignmentQuery)pm.newQuery(SalesRepAssignment.class);
+						query.thereExistsAccount().equalTo(contract.getSalesRep());
+						matches = !candidateBudget.getSalesRep(query).isEmpty();
+					}
+				}
+				if(matches) {
+					budgets.add(candidateBudget);
+				}
+			}
+		}
+		return new ArrayList<SalesVolumeBudget>(budgets);
+	}
+	
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -2427,6 +2636,14 @@ public class Contracts extends AbstractImpl {
             
     public static final String CALCULATION_RULE_NAME_DEFAULT = "Default";
         
+    // Contract types
+    public static final short CONTRACT_TYPE_OPPORTUNITY = 1;
+    public static final short CONTRACT_TYPE_QUOTE = 2;
+    public static final short CONTRACT_TYPE_SALES_ORDER = 3;
+    public static final short CONTRACT_TYPE_INVOICE = 4;
+    
+    public static final BigDecimal HUNDRED = new BigDecimal("100.0");
+    
     public static final String DEFAULT_GET_POSITION_AMOUNTS_SCRIPT = 
         "//<pre>\n" + 
         "public static org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult getPositionAmounts(\n" + 

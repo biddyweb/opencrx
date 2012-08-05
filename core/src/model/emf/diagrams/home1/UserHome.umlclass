@@ -365,6 +365,36 @@
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.home1.uml#_mwXNsIFeEdywlJ9dlV3tmA"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_UOfaskzDEd-LLraCh8Tbyw" x="616" y="724"/>
   </children>
+  <children xmi:type="notation:Shape" xmi:id="_N40VUOXSEd-XquPOMEGJEw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_N4-GUOXSEd-XquPOMEGJEw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_N4-GUeXSEd-XquPOMEGJEw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_N41jcOXSEd-XquPOMEGJEw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_N45N0OXSEd-XquPOMEGJEw" bold="true" italic="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_N41jceXSEd-XquPOMEGJEw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_N42KgOXSEd-XquPOMEGJEw" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_N42KgeXSEd-XquPOMEGJEw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_N42KguXSEd-XquPOMEGJEw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_N42Kg-XSEd-XquPOMEGJEw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_N42KhOXSEd-XquPOMEGJEw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_N42KheXSEd-XquPOMEGJEw" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_N42KhuXSEd-XquPOMEGJEw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_N42Kh-XSEd-XquPOMEGJEw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_N42KiOXSEd-XquPOMEGJEw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_N42KieXSEd-XquPOMEGJEw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_N42KiuXSEd-XquPOMEGJEw" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_N42Ki-XSEd-XquPOMEGJEw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_N42KjOXSEd-XquPOMEGJEw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_N42KjeXSEd-XquPOMEGJEw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_N42KjuXSEd-XquPOMEGJEw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_N40VUeXSEd-XquPOMEGJEw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_o8_YMOXQEd-XquPOMEGJEw"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_N40VUuXSEd-XquPOMEGJEw" x="1119" y="436" width="197"/>
+  </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_xhFAcUzCEd-LLraCh8Tbyw"/>
   <styles xmi:type="uml2tools.notation:U2TDiagramCanonicalStyle" xmi:id="_xhFAckzCEd-LLraCh8Tbyw" syncNodes="false"/>
   <styles xmi:type="notation:FilteringStyle" xmi:id="_xhFAc0zCEd-LLraCh8Tbyw"/>
@@ -408,5 +438,15 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_Ffw8cUzDEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.home1.uml#_6HMDUKHREdu_d_nrk2Vfag"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_Ffw8ckzDEd-LLraCh8Tbyw" points="[-300, -128, 175, 74]$[-475, -202, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_QNl0UOXSEd-XquPOMEGJEw" type="4001" source="_4OWwwEzCEd-LLraCh8Tbyw" target="_N40VUOXSEd-XquPOMEGJEw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_QNl0U-XSEd-XquPOMEGJEw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_QNl0VOXSEd-XquPOMEGJEw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_QNl0UeXSEd-XquPOMEGJEw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.home1.uml#_QNixAOXSEd-XquPOMEGJEw"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_QNl0UuXSEd-XquPOMEGJEw" points="[17, -2, -94, 1]$[112, -22, 1, -19]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_QNnpgOXSEd-XquPOMEGJEw" id="(0.9725343320848939,0.8888888888888888)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_QNnpgeXSEd-XquPOMEGJEw" id="(0.2131979695431472,0.43333333333333335)"/>
   </edges>
 </notation:Diagram>

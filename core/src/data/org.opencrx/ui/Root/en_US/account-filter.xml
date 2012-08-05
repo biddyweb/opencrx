@@ -17,10 +17,10 @@
                     <_object>
                       <active>true</active>
                       <toolTip>
-                        <_item>Account Filters</_item>
+                        <_item>Saved Searches - Accounts</_item>
                       </toolTip>
                       <label>
-                        <_item>»Account Filters</_item>
+                        <_item>»Saved Searches - Accounts</_item>
                       </label>
                       <order>
                         <_item>0</_item>
@@ -39,10 +39,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria</_item>
 											</toolTip>
 											<label>
-												<_item>Filter Properties</_item>
+												<_item>Search Criteria</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -59,10 +59,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered accounts</_item>
+												<_item>Accounts (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Accounts</_item>
+												<_item>Accounts (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -126,10 +126,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Account Type Filter Property</_item>
+												<_item>Search Criteria - Account Type</_item>
 											</toolTip>
 											<label>
-												<_item>Account Type Filter Property</_item>
+												<_item>Search Criteria - Account Type</_item>
 											</label>
 											<iconKey>AccountTypeFilterProperty</iconKey>
 										</_object>
@@ -163,10 +163,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Account Category Filter Property</_item>
+												<_item>Search Criteria - Account Category</_item>
 											</toolTip>
 											<label>
-												<_item>Account Category Filter Property</_item>
+												<_item>Search Criteria - Account Category</_item>
 											</label>
 											<iconKey>AccountCategoryFilterProperty</iconKey>
 										</_object>
@@ -200,10 +200,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Category Filter Property</_item>
+												<_item>Search Criteria - Category</_item>
 											</toolTip>
 											<label>
-												<_item>Category Filter Property</_item>
+												<_item>Search Criteria - Category</_item>
 											</label>
 											<iconKey>CategoryFilterProperty</iconKey>
 										</_object>
@@ -237,10 +237,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</toolTip>
 											<label>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</label>
 											<iconKey>DisabledFilterProperty</iconKey>
 										</_object>
@@ -273,10 +273,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Account Filter</_item>
+												<_item>Saved Search - Accounts</_item>
 											</toolTip>
 											<label>
-												<_item>Account Filter</_item>
+												<_item>Saved Search - Accounts</_item>
 											</label>
 											<iconKey>AccountFilterGlobal</iconKey>
 										</_object>
@@ -327,10 +327,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</label>
 											<order>
 												<_item>0</_item>

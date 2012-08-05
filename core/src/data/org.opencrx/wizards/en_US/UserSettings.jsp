@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.54 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.60 2010/11/16 12:15:49 cmu Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.54 $
+ * Revision:    $Revision: 1.60 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2010/11/16 12:15:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -304,9 +304,12 @@ org.openmdx.base.exception.*
 			String fTopNavigationShowMax = request.getParameter("topNavigationShowMax");
 			String fShowTopNavigationSublevel = request.getParameter("showTopNavigationSublevel");
 			List<String> fRootObjects = new ArrayList<String>();
-			fRootObjects.add("1"); // always show root object 0
+			fRootObjects.add("1");
 			for(int i = 1; i < 20; i++) {
 				String state = request.getParameter("rootObject" + i);
+				if(i < app.getRootObject().length && app.getRootObject()[i] instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
+					state = "1";
+				}
 				fRootObjects.add(
 					state == null ? "0" : "1"
 				);
@@ -333,6 +336,7 @@ org.openmdx.base.exception.*
 					pm.currentTransaction().begin();
 					org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
 						userHome,
+						app.getCurrentPerspective(),
 						userSettings,
 						currentUserIsAdmin,
 						!currentUserOwnsHome,
@@ -379,7 +383,7 @@ org.openmdx.base.exception.*
     									timezoneID = timezoneID.replace(":", "");
     									timezoneID = timezoneID.replace(" Greenwich Mean Time", "-0000");
     									if(!"NA".equals(timezoneID)) {
-    										String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
+    										String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))
     											? "selected"
     											: "";
     %>
@@ -393,7 +397,7 @@ org.openmdx.base.exception.*
                                 String[] timezones = java.util.TimeZone.getAvailableIDs();
                                 for(int i = 0; i < timezones.length; i++) {
                                   String timezoneID = timezones[i].trim();
-                                  String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
+                                  String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))
                                     ? "selected"
                                     : "";
 %>
@@ -406,17 +410,16 @@ org.openmdx.base.exception.*
 						<tr><td><label for="storeSettingsOnLogoff">Store settings on logoff:</label></td>
 						<td><input type="checkbox" <%= userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "checked" : "" %> id="storeSettingsOnLogoff" name="storeSettingsOnLogoff"/></td></tr>
 <%
-						org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = null;
-						for(Iterator i = userHome.getEMailAccount().iterator(); i.hasNext(); ) {
-							org.opencrx.kernel.home1.jmi1.EMailAccount emailAccount = (org.opencrx.kernel.home1.jmi1.EMailAccount)i.next();
-							if((emailAccount.isDefault() != null) && emailAccount.isDefault().booleanValue()) {
-								defaultEmailAccount = emailAccount;
-								 break;
-							}
-						}
+						org.opencrx.kernel.home1.cci2.EMailAccountQuery emailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
+						emailAccountQuery.thereExistsIsActive().isTrue();
+						emailAccountQuery.thereExistsIsDefault().isTrue();
+						List<org.opencrx.kernel.home1.jmi1.EMailAccount> emailAccounts = userHome.getEMailAccount(emailAccountQuery);
+						org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = emailAccounts.isEmpty() ?
+							null :
+								emailAccounts.iterator().next();
 %>
 						<tr><td><label for="emailAccount">Email:</label></td>
-						<td><input type="text" id="emailAccount" name="emailAccount"  value="<%= defaultEmailAccount == null || defaultEmailAccount.getEMailAddress() == null ? "" :  defaultEmailAccount.getEMailAddress() %>"/></td></tr>
+						<td><input type="text" id="emailAccount" name="emailAccount"  value="<%= defaultEmailAccount == null || defaultEmailAccount.getName() == null ? "" :  defaultEmailAccount.getName() %>"/></td></tr>
 						<tr><td><label for="sendmailSubjectPrefix">Sendmail subject prefix:</label></td>
 						<td><input type="text" id="sendmailSubjectPrefix" name="sendmailSubjectPrefix"  value="<%= userHome.getSendMailSubjectPrefix() == null ? "[" + providerName + ":" + segmentName + "]" : userHome.getSendMailSubjectPrefix() %>"/>
 						<tr><td><label for="webAccessUrl">Web access URL:</label></td>
@@ -436,17 +439,17 @@ org.openmdx.base.exception.*
 							if(action.getParameter(Action.PARAMETER_REFERENCE).length() == 0) {
 %>
 								<tr><td><label for="rootObject<%= n %>"><%= action.getTitle() %>:</label></td><td>
-								<input type="checkbox" <%= userSettings.getProperty("RootObject." + n + ".State", "1").equals("1") ? "checked" : "" %> id="rootObject<%= n %>" name="rootObject<%= n %>"/></td></tr>
+								<input type="checkbox" <%= userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE + (app.getCurrentPerspective() == 0 ? "" : "[" + Integer.toString(app.getCurrentPerspective()) + "]") + "." + n + ".State", "1").equals("1") ? "checked" : "" %> id="rootObject<%= n %>" name="rootObject<%= n %>"/></td></tr>
 <%
 								n++;
 							}
 						}
 %>
 						<tr><td><label for="topNavigationShowMax">Show max items in top navigation:</label></td><td>
-						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty(RootMenuControl.TOP_NAVIGATION_SHOW_MAX, "6") %>"/></td></tr>
+						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX, "6") %>"/></td></tr>
 
 						<tr><td><label for="showTopNavigationSublevel">Show top navigation sub-levels:</label></td>
-						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(RootMenuControl.TOP_NAVIGATION_SHOW_SUBLEVEL)) ? "checked" : "" %> id="showTopNavigationSublevel" name="showTopNavigationSublevel"/></td></tr>
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL)) ? "checked" : "" %> id="showTopNavigationSublevel" name="showTopNavigationSublevel"/></td></tr>
 					</table>
 				</fieldset>
 			</div>

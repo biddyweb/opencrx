@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractSession.java,v 1.2 2010/04/16 12:48:47 wfro Exp $
+ * Name:        $Id: AbstractSession.java,v 1.3 2010/09/22 10:32:31 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/16 12:48:47 $
+ * Date:        $Date: 2010/09/22 10:32:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +58,7 @@ package org.opencrx.application.adapter;
 import java.net.Socket;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
@@ -88,6 +89,18 @@ public abstract class AbstractSession implements Runnable {
     		} catch(Exception e) {}    		
     	}
     }
+
+    //-----------------------------------------------------------------------
+    public static PersistenceManager newPersistenceManager(
+    	PersistenceManagerFactory pmf,
+    	String username
+    ) {
+        String principalName = username.substring(0, username.indexOf("@"));            
+        return pmf.getPersistenceManager(
+            principalName, 
+            UUIDs.getGenerator().next().toString()
+        );                                	
+    }
     
     //-----------------------------------------------------------------------
     protected boolean login(
@@ -105,7 +118,7 @@ public abstract class AbstractSession implements Runnable {
                 );                
                 org.opencrx.security.realm1.jmi1.Principal principal = 
                     (org.opencrx.security.realm1.jmi1.Principal)rootPm.getObjectById(
-                        new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + this.server.getProviderName() + "/segment/Root/realm/Default/principal/" + principalName)
+                        new Path("xri://@openmdx*org.openmdx.security.realm1/provider/" + this.server.getProviderName() + "/segment/Root/realm/Default/principal/" + principalName)
                     );
                 if(principal != null) {
                     org.openmdx.security.realm1.jmi1.Credential credential = principal.getCredential();                
@@ -113,12 +126,6 @@ public abstract class AbstractSession implements Runnable {
                         boolean success = Utils.getPasswordDigest(password, PASSWORD_ENCODING_ALGORITHM).equals(
                             "{" + PASSWORD_ENCODING_ALGORITHM + "}" + ((Password)credential).getPassword()
                         );
-                        if(success) {
-                            this.pm = this.server.getPersistenceManagerFactory().getPersistenceManager(
-                                principalName, 
-                                UUIDs.getGenerator().next().toString()
-                            );                            
-                        }
                         return success;
                     }
                 }
@@ -134,12 +141,6 @@ public abstract class AbstractSession implements Runnable {
     //-----------------------------------------------------------------------
     protected void logout(
     ) {
-    	if(this.pm != null) {
-    		try {
-    			pm.close();
-    		} catch(Exception e) {}
-    		this.pm = null;
-    	}
     }
     
     //-----------------------------------------------------------------------
@@ -147,7 +148,6 @@ public abstract class AbstractSession implements Runnable {
     //-----------------------------------------------------------------------    
     public static final String PASSWORD_ENCODING_ALGORITHM = "MD5";
     
-    protected PersistenceManager pm = null;
     protected final AbstractServer server;
     protected Socket socket;
     protected String username = null;

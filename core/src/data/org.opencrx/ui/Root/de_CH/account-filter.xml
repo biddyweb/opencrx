@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Kontaktfilter</_item>
+                        <_item>Suchlisten Kontakte</_item>
                       </label>
                       <toolTip>
-                        <_item>Kontaktfilter</_item>
+                        <_item>Suchlisten Kontakte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtereigenschaften</_item>
+                        <_item>Suchkriterien</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtereigenschaften</_item>
+                        <_item>Suchkriterien</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -81,10 +81,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Kontakt-Typ</_item>
+                        <_item>Suchkriterium Kontakt-Typ</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Kontakt-Typ</_item>
+                        <_item>Suchkriterium Kontakt-Typ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -103,10 +103,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountCategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Kontakt-Kategorie</_item>
+                        <_item>Suchkriterium Kontakt-Kategorie</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Kontakt-Kategorie</_item>
+                        <_item>Suchkriterium Kontakt-Kategorie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -125,10 +125,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Kategorie</_item>
+                        <_item>Suchkriterium Kategorie</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Kategorie</_item>
+                        <_item>Suchkriterium Kategorie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -147,10 +147,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:DisabledFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Deaktiviert</_item>
+                        <_item>Suchkriterium Deaktiviert</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Deaktiviert</_item>
+                        <_item>Suchkriterium Deaktiviert</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -170,10 +170,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal">
 										<_object>
 											<toolTip>
-												<_item>Kontaktfilter</_item>
+												<_item>Suchliste Kontakte</_item>
 											</toolTip>
 											<label>
-												<_item>Kontaktfilter</_item>
+												<_item>Suchliste Kontakte</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -203,10 +203,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountQueryFilterProperty">
 										<_object>
 											<toolTip>
-												<_item>Query Filter</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter</_item>
+												<_item>SQL Query</_item>
 											</label>
 										</_object>
 										<_content/>

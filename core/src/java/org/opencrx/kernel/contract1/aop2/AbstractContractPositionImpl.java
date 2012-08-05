@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractPositionImpl.java,v 1.3 2010/07/09 10:22:33 wfro Exp $
+ * Name:        $Id: AbstractContractPositionImpl.java,v 1.4 2010/11/03 18:30:56 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/09 10:22:33 $
+ * Date:        $Date: 2010/11/03 18:30:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -120,6 +120,20 @@ public class AbstractContractPositionImpl
     	super(same, next);
     }
 
+    //-----------------------------------------------------------------------
+    public org.openmdx.base.jmi1.Void assignSalesVolumeBudgets(
+    ) {
+    	try {
+    		Contracts.getInstance().assignSalesVolumeBudgets(
+	            this.sameObject()
+	        );
+	        return this.newVoid();
+    	}
+    	catch(Exception e) {
+    		throw new JmiServiceException(e);
+    	}    	
+    }
+    
     //-----------------------------------------------------------------------
     public java.math.BigDecimal getQuantityShipped(
     ) {

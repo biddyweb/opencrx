@@ -535,6 +535,9 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_h19f8XKzEd2HfbwuP5YrMA" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_h19f8HKzEd2HfbwuP5YrMA"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_CisskPfkEd-L0uqyouwIWw" name="assignmentRole" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_ac7hEHKsEd2HfbwuP5YrMA" name="AssignmentHasAssignedDocumentFolder" memberEnd="_ac7hEXKsEd2HfbwuP5YrMA _ac7hEnKsEd2HfbwuP5YrMA">
             <ownedEnd xmi:id="_ac7hEnKsEd2HfbwuP5YrMA" name="documentFolderAssignment" type="_MCssIHKsEd2HfbwuP5YrMA" association="_ac7hEHKsEd2HfbwuP5YrMA">
@@ -557,7 +560,7 @@
           <packagedElement xmi:type="uml:Association" xmi:id="_jPL94HJ0EdylWqtQBgZPMA" name="DocumentContainsPropertySet" memberEnd="_jPL94XJ0EdylWqtQBgZPMA _jPL94nJ0EdylWqtQBgZPMA">
             <ownedEnd xmi:id="_jPL94nJ0EdylWqtQBgZPMA" name="document" type="_3UFgUHKxEd2HfbwuP5YrMA" association="_jPL94HJ0EdylWqtQBgZPMA"/>
           </packagedElement>
-          <packagedElement xmi:type="uml:Class" xmi:id="_TlDWYHLEEd2WA-RgduuTcA" name="DocumentFolderEntry">
+          <packagedElement xmi:type="uml:Class" xmi:id="_TlDWYHLEEd2WA-RgduuTcA" name="DocumentFolderEntry" isAbstract="true">
             <generalization xmi:id="_YyGDAHLEEd2WA-RgduuTcA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
             </generalization>
@@ -602,6 +605,9 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fBdEQEySEd-pv4i2u0urCw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fBdrUEySEd-pv4i2u0urCw"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_UaTAQPfkEd-L0uqyouwIWw" name="assignmentRole" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_Xma20HOEEd2hgOYTHcFvHA" name="FolderAssignment">
             <generalization xmi:id="_mtzssHOEEd2hgOYTHcFvHA" general="_MCssIHKsEd2HfbwuP5YrMA"/>
@@ -634,6 +640,12 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_gfvAIEySEd-pv4i2u0urCw" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_gfvnMEySEd-pv4i2u0urCw"/>
             </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_cq3IQPfkEd-L0uqyouwIWw" name="DocumentBasedFolderEntry">
+            <generalization xmi:id="_uh8pIPflEd-L0uqyouwIWw" general="_TlDWYHLEEd2WA-RgduuTcA"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_eKmcsPfkEd-L0uqyouwIWw" name="AssignmentBasedFolderEntry">
+            <generalization xmi:id="_st54oPflEd-L0uqyouwIWw" general="_TlDWYHLEEd2WA-RgduuTcA"/>
           </packagedElement>
         </packagedElement>
       </packagedElement>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AirSyncSyncIncognitoWizard.jsp,v 1.2 2010/07/15 13:53:03 wfro Exp $
+ * Name:        $Id: AirSyncSyncIncognitoWizard.jsp,v 1.4 2010/09/16 16:27:24 wfro Exp $
  * Description: AirSyncSyncWizard
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/15 13:53:03 $
+ * Date:        $Date: 2010/09/16 16:27:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -115,6 +115,7 @@ org.opencrx.application.airsync.datatypes.*
 	<meta name="toolTip" content="AirSync - Synchronize Items (Incognito)">
 	<meta name="targetType" content="_self">
 	<meta name="forClass" content="org:opencrx:kernel:home1:AirSyncClientProfile">
+	<meta name="order" content="80">
 -->
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -122,11 +123,11 @@ org.opencrx.application.airsync.datatypes.*
   <body>
 <%
     try {
-    	org.opencrx.application.airsync.backend.cci.SyncBackend syncBackend = 
+    	org.opencrx.application.airsync.backend.cci.SyncBackend syncBackend =
     		new org.opencrx.application.airsync.backend.impl.OpenCrxSyncBackend(
     			pm.getPersistenceManagerFactory(),
     			syncProfile.refGetPath().get(2)
-    		);    	
+    		);
     	org.opencrx.application.airsync.client.ClientHandler syncHandler =
     		new org.opencrx.application.airsync.client.SyncHandler(syncBackend);
     	syncHandler.handle(
@@ -136,7 +137,7 @@ org.opencrx.application.airsync.datatypes.*
 				syncProfile.getDomain(),
 				syncProfile.getPassword(),
 				syncProfile.refGetPath().getBase()
-			),    			
+			),
    			syncProfile.refGetPath().get(4) + org.opencrx.application.airsync.backend.cci.SyncBackend.DOMAIN_SEPARATOR + syncProfile.refGetPath().get(6),
    			syncProfile.getName(),
    			null // no instance context

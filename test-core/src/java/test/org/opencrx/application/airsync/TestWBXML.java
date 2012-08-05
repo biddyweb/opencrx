@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestWBXML.java,v 1.9 2010/07/15 13:53:29 wfro Exp $
+ * Name:        $Id: TestWBXML.java,v 1.10 2010/09/09 10:35:07 wfro Exp $
  * Description: TestWBXML
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/15 13:53:29 $
+ * Date:        $Date: 2010/09/09 10:35:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -216,7 +216,8 @@ public class TestWBXML {
 		"test/org/opencrx/application/airsync/settingsRequest.wbxml",
 		"test/org/opencrx/application/airsync/settingsResponse.wbxml",
 		"test/org/opencrx/application/airsync/sync_request_wm61.wbxml",
-		"test/org/opencrx/application/airsync/tom_prov_resp.wbxml"
+		"test/org/opencrx/application/airsync/tom_prov_resp.wbxml",
+		"test/org/opencrx/application/airsync/SyncRequest-1.wbxml"
 	};
 	
 	protected static String[] XML_RESOURCES = {

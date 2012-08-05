@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.44 2010/09/06 12:14:38 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.48 2010/11/03 15:47:19 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.44 $
+ * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/06 12:14:38 $
+ * Date:        $Date: 2010/11/03 15:47:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -134,7 +134,9 @@ public class CopyDb {
         Connection conn,
         String dbObject,
         String columnName,
-        Object columnValue
+        Object columnValue,
+        String providerNameSource,
+        String providerNameTarget
     ) throws ServiceException, SQLException {
         String databaseProductName = conn.getMetaData().getDatabaseProductName();        
         if(BOOLEAN_COLUMNS.contains(columnName.toUpperCase())) {
@@ -166,7 +168,19 @@ public class CopyDb {
             }
         }
         else {
-            return columnValue;
+        	if(columnValue instanceof String) {
+        		Object targetValue = columnValue;
+        		if(providerNameSource != null && providerNameSource.length() > 0 && providerNameTarget != null && providerNameTarget.length() > 0) {
+            		String sourceValue = (String)columnValue;
+            		int pos = sourceValue.indexOf("/" + providerNameSource + "/");
+            		if(pos > 0) {
+            			targetValue = sourceValue.substring(0, pos) + "/" + providerNameTarget + "/" + sourceValue.substring(pos + providerNameSource.length() + 2); 
+            		}
+        		}
+        		return targetValue;
+        	} else {
+        		return columnValue;
+        	}
         }
     }
     
@@ -177,7 +191,9 @@ public class CopyDb {
         String dbObject,
         boolean useSuffix,
         Connection connSource,
-        Connection connTarget
+        Connection connTarget,
+        String providerNameSource,
+        String providerNameTarget
     ) throws SQLException {
 
         String currentStatement = null;
@@ -267,7 +283,9 @@ public class CopyDb {
                                         connSource,
                                         dbObject,
                                         columnName,
-                                        frs.getObject(columnName)
+                                        frs.getObject(columnName),
+                                        providerNameSource,
+                                        providerNameTarget
                                     )
                                 );
                             }
@@ -346,7 +364,9 @@ public class CopyDb {
         String[] namespaceTarget,
         List<String> dbObjects,
         int startFromDbObject,
-        int endWithDbObject
+        int endWithDbObject,
+        String providerNameSource,
+        String providerNameTarget
     ) {
         String currentStatement = null;           
         try {
@@ -373,7 +393,9 @@ public class CopyDb {
                             dbObject,
                             false,
                             connSource,
-                            connTarget
+                            connTarget,
+                            providerNameSource,
+                            providerNameTarget
                         );
                         CopyDb.copyDbObject(
                             namespaceSource,
@@ -381,7 +403,9 @@ public class CopyDb {
                             dbObject,
                             true,
                             connSource,
-                            connTarget
+                            connTarget,
+                            providerNameSource,
+                            providerNameTarget
                         );
                     }
                     else {
@@ -429,10 +453,9 @@ public class CopyDb {
                         
             String kernelStartFromDbObject = env.getProperty("kernel.startFromDbObject");
             String securityStartFromDbObject = env.getProperty("security.startFromDbObject");
-            String formatSource = env.getProperty("formatSource");
-            String formatTarget = env.getProperty("formatTarget");
+            String providerNameSource = env.getProperty("providerNameSource");
+            String providerNameTarget = env.getProperty("providerNameTarget");
             if(
-                formatSource.equals(formatTarget) &&
                 (kernelStartFromDbObject != null) &&
                 (Integer.valueOf(kernelStartFromDbObject).intValue() == 0) &&
                 (securityStartFromDbObject != null) &&
@@ -444,7 +467,9 @@ public class CopyDb {
                     "Preference",
                     false,
                     connSource,
-                    connTarget
+                    connTarget,
+                    providerNameSource,
+                    providerNameTarget
                 );
             }
             // Namespace kernel
@@ -456,7 +481,9 @@ public class CopyDb {
                 new String[]{"OOCKE1", "_"},
                 Arrays.asList(DBOBJECTS_KERNEL),
                 kernelStartFromDbObject == null ? 0 : Integer.valueOf(kernelStartFromDbObject).intValue(),
-                endWithDbObject == null ? Integer.MAX_VALUE : Integer.valueOf(endWithDbObject).intValue()
+                endWithDbObject == null ? Integer.MAX_VALUE : Integer.valueOf(endWithDbObject).intValue(),
+                providerNameSource,
+                providerNameTarget
             );
             // Namespace security
             endWithDbObject = env.getProperty("security.endWithDbObject");
@@ -467,7 +494,9 @@ public class CopyDb {
                 new String[]{"OOMSE2", "_"},
                 Arrays.asList(DBOBJECTS_SECURITY),
                 securityStartFromDbObject == null ? 0 : Integer.valueOf(securityStartFromDbObject).intValue(),
-                endWithDbObject == null ? Integer.MAX_VALUE : Integer.valueOf(endWithDbObject).intValue()
+                endWithDbObject == null ? Integer.MAX_VALUE : Integer.valueOf(endWithDbObject).intValue(),
+                providerNameSource,
+                providerNameTarget
             );            
         }
         catch (ClassNotFoundException e) {
@@ -508,6 +537,7 @@ public class CopyDb {
         "BOOKINGPERIOD",
         "BOOKINGTEXT",
         "BUDGET",
+        "BUDGETPOSITION",
         "BUILDINGUNIT",
         "CALCULATIONRULE",
         "CALENDAR",
@@ -644,7 +674,6 @@ public class CopyDb {
                 "EXT_BOOLEAN7",
                 "EXT_BOOLEAN8",
                 "EXT_BOOLEAN9",
-                "USER_BOOLEAN4",
                 "DISABLED",
                 "DISCOUNT_IS_PERCENTAGE",
                 "USER_BOOLEAN4",
@@ -678,7 +707,6 @@ public class CopyDb {
                 "ALLOW_DEBIT_BOOKINGS",
                 "IS_DEFAULT",
                 "IS_ACTIVE",
-                "IS_MAIN",
                 "BOOLEAN_PARAM",
                 "IS_CHANGEABLE",
                 "IS_QUERY",
@@ -708,7 +736,10 @@ public class CopyDb {
                 "IS_SYNCHRONOUS",
                 "FAILED",
                 "IS_BILLABLE",
-                "LOCKED"
+                "IS_REIMBURSABLE",
+                "LOCKED",
+                "ALLOW_ADD_DELETE",
+                "ALLOW_CHANGE"
             }
         )
     );

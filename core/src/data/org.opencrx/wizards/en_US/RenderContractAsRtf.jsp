@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RenderContractAsRtf.jsp,v 1.13 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: RenderContractAsRtf.jsp,v 1.14 2010/12/06 18:28:23 wfro Exp $
  * Description: RenderContractAsRtf
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2010/12/06 18:28:23 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -240,8 +240,8 @@ org.openmdx.kernel.log.*
 	       	document.appendTableRow("ContractPositions");
 		}
 		document.setBookmarkContent("quantity", decimalFormatter.format(position.getQuantity()), true);
-  	    document.setBookmarkContent("product", app.getPortalExtension().getTitle(((org.opencrx.kernel.product1.jmi1.ConfiguredProduct)position).getProduct(), app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), app), true);
-		document.setBookmarkContent("uom", app.getPortalExtension().getTitle(position.getUom(), app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), app), true);
+  	    document.setBookmarkContent("product", app.getPortalExtension().getTitle(((org.opencrx.kernel.product1.jmi1.ConfiguredProduct)position).getProduct(), app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), true, app), true);
+		document.setBookmarkContent("uom", app.getPortalExtension().getTitle(position.getUom(), app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), true, app), true);
 		document.setBookmarkContent("pricePerUnit", decimalFormatter.format(position.getPricePerUnit()), true);
 		document.setBookmarkContent("discountAmount", decimalFormatter.format(position.getDiscountAmount()), true);
 		document.setBookmarkContent("salesTaxType", decimalFormatter.format(position.getSalesTaxType() == null ? BigDecimal.ZERO : position.getSalesTaxType().getRate()), true);
@@ -286,7 +286,7 @@ org.openmdx.kernel.log.*
 	        }
 	    }
     }
-    String billingAddressTitle = app.getPortalExtension().getTitle(billingAddress, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), app);
+    String billingAddressTitle = app.getPortalExtension().getTitle(billingAddress, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), true, app);
     String[] addressLines = billingAddressTitle.split("<br />");
     for(int i = 0; i < 8; i++) {
 	    document.setBookmarkContent(
@@ -294,7 +294,7 @@ org.openmdx.kernel.log.*
 	   		i < addressLines.length ? addressLines[i] : ""
 	   	);
     }
-    String shippingAddressTitle = app.getPortalExtension().getTitle(shippingAddress, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), app);
+    String shippingAddressTitle = app.getPortalExtension().getTitle(shippingAddress, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), true, app);
     addressLines = shippingAddressTitle.split("<br />");
     for(int i = 0; i < 8; i++) {
 	    document.setBookmarkContent(

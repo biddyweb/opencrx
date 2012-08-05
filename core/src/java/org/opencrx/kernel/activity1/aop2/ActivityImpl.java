@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityImpl.java,v 1.34 2010/08/23 17:12:16 wfro Exp $
+ * Name:        $Id: ActivityImpl.java,v 1.37 2010/09/16 00:16:58 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/23 17:12:16 $
+ * Date:        $Date: 2010/09/16 00:16:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -253,11 +253,8 @@ public class ActivityImpl
     public org.openmdx.base.jmi1.Void updateIcal(
     ) {
         try {
-        	org.opencrx.kernel.aop2.Configuration config = (org.opencrx.kernel.aop2.Configuration)this.sameManager().getUserObject(org.opencrx.kernel.aop2.Configuration.class.getSimpleName());
             Activities.getInstance().updateIcal(
-                this.sameObject(),
-                config.isEMailAddressLookupCaseInsensitive(),
-                config.isEMailAddressLookupIgnoreDisabled()
+                this.sameObject()
             );
             return super.newVoid();            
         }
@@ -342,6 +339,25 @@ public class ActivityImpl
         catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
+    }
+
+    //-----------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.LinkToAndFollowUpResult linkToAndFollowUp(
+        org.opencrx.kernel.activity1.jmi1.LinkToAndFollowUpParams params
+    ) {
+        try {
+            ActivityFollowUp followUp = Activities.getInstance().linkToAndFollowUp(
+                this.sameObject(),
+                params.getTransition(),
+                params.getActivity()
+            );
+            return Utils.getActivityPackage(this.sameManager()).createLinkToAndFollowUpResult(
+            	followUp
+            );
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }
     }
     
     //-----------------------------------------------------------------------

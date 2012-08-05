@@ -32,6 +32,7 @@
 												<_item>org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:rateCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:ResourceAddExpenseRecordParams:rateCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:ResourceAddWorkRecordParams:rateCurrency</_item>
+												<_item>org:opencrx:kernel:forecast1:ValueBasedSalesVolumeBudgetPosition:currency</_item>
 											</name>
 										</_object>
 										<_content>

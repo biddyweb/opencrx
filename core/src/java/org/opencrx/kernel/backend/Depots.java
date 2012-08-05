@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.43 2010/05/19 16:07:53 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.45 2010/12/09 12:45:56 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/19 16:07:53 $
+ * Date:        $Date: 2010/12/09 12:45:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -267,7 +267,7 @@ public class Depots extends AbstractImpl {
     	CreditBookingQuery creditBookingQuery = (CreditBookingQuery)pm.newQuery(CreditBooking.class);
     	creditBookingQuery.thereExistsCb().equalTo(cb);
     	List<CreditBooking> creditBookings = depotSegment.getBooking(creditBookingQuery);
-        BigDecimal compoundBalance = new BigDecimal(0);
+        BigDecimal compoundBalance = BigDecimal.ZERO;
     	for(CreditBooking booking: creditBookings) {
             compoundBalance = compoundBalance.add(
                 booking.getQuantityCredit()
@@ -335,7 +335,10 @@ public class Depots extends AbstractImpl {
         // Set default valueDate to current date
         if(valueDate == null) {
             valueDate = new Date();
-        }        
+        }
+        if(bookingTexts == null && bookingTextNames != null) {
+        	bookingTexts = new BookingText[bookingTextNames.length];
+        }
         // Assert open positions
         for(int i = 0; i < creditPositions.length; i++) {
         	this.testForOpenPosition(
@@ -350,7 +353,7 @@ public class Depots extends AbstractImpl {
             );
         }        
         // Test for matching balance
-        BigDecimal balance = new BigDecimal(0);
+        BigDecimal balance = BigDecimal.ZERO;
         for(int i = 0; i < quantities.length; i++) {
             if(quantities[i] == null) {
                 throw new ServiceException(
@@ -384,7 +387,8 @@ public class Depots extends AbstractImpl {
                throw new ServiceException(
                    OpenCrxException.DOMAIN,
                    OpenCrxException.DEPOT_MISSING_BOOKING_TEXT,
-                   "Missing booking text"
+                   "Missing booking text",
+                   new BasicException.Parameter("param0", bookingTextNames[i])                   
                );
             }
         }
@@ -800,13 +804,13 @@ public class Depots extends AbstractImpl {
                         balanceSimple = itemPosition.getBalanceSimple();
                     }
                 }
-                balanceBop = balanceBop == null ? new BigDecimal(0) : balanceBop;
-                balanceDebitBop = balanceDebitBop == null ? new BigDecimal(0) : balanceDebitBop;
-                balanceCreditBop = balanceCreditBop == null ? new BigDecimal(0) : balanceCreditBop;
-                balanceCredit = balanceCredit == null ? new BigDecimal(0) : balanceCredit;
-                balanceDebit = balanceDebit == null ? new BigDecimal(0) : balanceDebit;                
-                balanceSimpleBop = balanceSimpleBop == null ? new BigDecimal(0) : balanceSimpleBop;
-                balanceSimple = balanceSimple == null ? new BigDecimal(0) : balanceSimple;
+                balanceBop = balanceBop == null ? BigDecimal.ZERO : balanceBop;
+                balanceDebitBop = balanceDebitBop == null ? BigDecimal.ZERO : balanceDebitBop;
+                balanceCreditBop = balanceCreditBop == null ? BigDecimal.ZERO : balanceCreditBop;
+                balanceCredit = balanceCredit == null ? BigDecimal.ZERO : balanceCredit;
+                balanceDebit = balanceDebit == null ? BigDecimal.ZERO : balanceDebit;                
+                balanceSimpleBop = balanceSimpleBop == null ? BigDecimal.ZERO : balanceSimpleBop;
+                balanceSimple = balanceSimple == null ? BigDecimal.ZERO : balanceSimple;
                 // Create depot report item for position
                 DepotReportItemPosition itemPosition = pm.newInstance(DepotReportItemPosition.class);
                 itemPosition.setPositionName(position.getName());
@@ -920,8 +924,8 @@ public class Depots extends AbstractImpl {
         List<String> errors
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(cb);    	
-        boolean isProcessed = cb.getBookingStatus() == BOOKING_STATUS_PROCESSED;
-        if(!isProcessed) {
+        boolean isFinal = cb.getBookingStatus() == BOOKING_STATUS_FINAL;
+        if(!isFinal) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.BOOKING_STATUS_MUST_BE_PROCESSED,
@@ -1057,9 +1061,9 @@ public class Depots extends AbstractImpl {
                 booking.getBookingType(),
                 booking.getPosition()
             );
-            booking.setBookingStatus(new Short(BOOKING_STATUS_PROCESSED));
+            booking.setBookingStatus(new Short(BOOKING_STATUS_FINAL));
         }
-        cb.setBookingStatus(new Short(BOOKING_STATUS_PROCESSED));        
+        cb.setBookingStatus(new Short(BOOKING_STATUS_FINAL));        
     }
 
     //-----------------------------------------------------------------------
@@ -1372,13 +1376,15 @@ public class Depots extends AbstractImpl {
         String name = 
             positionName != null ? 
             	positionName : 
-            	product != null ? 
-        			product.getProductNumber() : 
-        			""; 
+            	product != null ?
+        			product.getProductNumber() != null ?
+        				product.getProductNumber() :
+        					product.getName() :
+        						"N/A";
         if(depotPositionQualifier != null) {
             depotPosition.setQualifier(depotPositionQualifier);
             name += " #" + depotPositionQualifier;
-        }            
+        }
         depotPosition.setName(name);
         // description
         depotPosition.setDescription(
@@ -1464,7 +1470,7 @@ public class Depots extends AbstractImpl {
     public static final short BOOKING_TYPE_REVERSAL = 30;
     
     public static final short BOOKING_STATUS_PENDING = 1;
-    public static final short BOOKING_STATUS_PROCESSED = 2;
+    public static final short BOOKING_STATUS_FINAL = 2;
         
     // Goods are issued to delivery.
     // Goods are returned from delivery

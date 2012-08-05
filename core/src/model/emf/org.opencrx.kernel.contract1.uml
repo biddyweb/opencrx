@@ -202,6 +202,9 @@
             <generalization xmi:id="_XtHkMEv3EdqPqv9AK0JcmA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.depot1.uml#_3C7B8A60016D42964FD10360"/>
             </generalization>
+            <generalization xmi:id="_KBxiQOdGEd-MqvhFuwCU1g">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.forecast1.uml#_Vy1eIOaZEd-CcIMKJoq29Q"/>
+            </generalization>
             <ownedAttribute xmi:id="_3C7B8A60016D3F4FF6D8026C" name="lineItemNumber">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B631401F0"/>
             </ownedAttribute>
@@ -415,6 +418,11 @@
             </ownedAttribute>
             <ownedOperation xmi:id="_80zUsLhkEdqLOvgpfwvg1Q" name="reprice">
               <ownedParameter xmi:id="_-kES4LhkEdqLOvgpfwvg1Q" name="ReturnResultParameter1" direction="return">
+                <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
+              </ownedParameter>
+            </ownedOperation>
+            <ownedOperation xmi:id="_tcz64OdvEd-c2OkllwFQhg" name="assignSalesVolumeBudgets">
+              <ownedParameter xmi:id="_d7yVoOdyEd-c2OkllwFQhg" direction="return">
                 <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
               </ownedParameter>
             </ownedOperation>
@@ -707,6 +715,14 @@
               <ownedParameter xmi:id="_uStKcO9dEdqpSY3G-VB6jA" name="ReturnResultParameter1" direction="return">
                 <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
               </ownedParameter>
+            </ownedOperation>
+            <ownedOperation xmi:id="_sXHawOdGEd-MqvhFuwCU1g" name="assignSalesVolumeBudgets">
+              <ownedParameter xmi:id="_bgibMOdyEd-c2OkllwFQhg" direction="return">
+                <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
+              </ownedParameter>
+            </ownedOperation>
+            <ownedOperation xmi:id="_hBIV8OdyEd-c2OkllwFQhg" name="findSalesVolumeBudgets" isQuery="true">
+              <ownedParameter xmi:id="_jkaLAOdyEd-c2OkllwFQhg" type="_lP9t4OdyEd-c2OkllwFQhg" direction="return"/>
             </ownedOperation>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D3F4FF50D0199" name="ProductApplication">
@@ -1935,6 +1951,16 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Ab604EwPEd-6CJxjpCYODw" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Ab604UwPEd-6CJxjpCYODw"/>
             </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_lP9t4OdyEd-c2OkllwFQhg" name="FindSalesVolumeBudgetsResult">
+            <eAnnotations xmi:id="_7biYMOdyEd-c2OkllwFQhg" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_8P8QoOdyEd-c2OkllwFQhg" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_nyLL8OdyEd-c2OkllwFQhg" name="budgets" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.forecast1.uml#_l74-oOaUEd-XquPOMEGJEw"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_sHwFEOdyEd-c2OkllwFQhg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_rlGD8OdyEd-c2OkllwFQhg"/>
+            </ownedAttribute>
           </packagedElement>
         </packagedElement>
       </packagedElement>

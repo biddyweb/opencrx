@@ -17,10 +17,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all product filters</_item>
+												<_item>Saved Searches - Products</_item>
 											</toolTip>
 											<label>
-												<_item>Product Filters</_item>
+												<_item>Saved Searches - Products</_item>
 											</label>
 											<order>
 												<_item>20</_item>
@@ -38,10 +38,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Product Filter</_item>
+												<_item>Saved Search - Products</_item>
 											</toolTip>
 											<label>
-												<_item>Product Filter</_item>
+												<_item>Saved Search - Products</_item>
 											</label>
 											<iconKey>ProductFilter</iconKey>
 										</_object>
@@ -95,10 +95,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered products</_item>
+												<_item>Products (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Products</_item>
+												<_item>Products (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -114,10 +114,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria</_item>
 											</toolTip>
 											<label>
-												<_item>Filter Properties</_item>
+												<_item>Search Criteria</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -182,10 +182,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Product Classification Filter Property</_item>
+												<_item>Search Criteria - Product Classification</_item>
 											</toolTip>
 											<label>
-												<_item>Product Classification Filter Property</_item>
+												<_item>Search Criteria - Product Classification</_item>
 											</label>
 											<iconKey>ProductClassificationFilterProperty</iconKey>
 											<order>
@@ -229,10 +229,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Category Filter Property</_item>
+												<_item>Search Criteria - Product Category</_item>
 											</toolTip>
 											<label>
-												<_item>Category Filter Property</_item>
+												<_item>Search Criteria - Product Category</_item>
 											</label>
 											<iconKey>CategoryFilterProperty</iconKey>
 											<order>
@@ -271,10 +271,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>UOM (Price) Filter Property</_item>
+												<_item>Search Criteria - Price UOM</_item>
 											</toolTip>
 											<label>
-												<_item>UOM (Price) Filter Property</_item>
+												<_item>Search Criteria - Price UOM</_item>
 											</label>
 											<iconKey>PriceUomFilterProperty</iconKey>
 											<order>
@@ -318,10 +318,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Default Sales Tax Type Filter Property</_item>
+												<_item>Search Criteria - Default Sales Tax Type</_item>
 											</toolTip>
 											<label>
-												<_item>Default Sales Tax Type Filter Property</_item>
+												<_item>Search Criteria - Default Sales Tax Type</_item>
 											</label>
 											<iconKey>DefaultSalesTaxTypeFilterProperty</iconKey>
 											<order>
@@ -365,10 +365,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</toolTip>
 											<label>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -406,10 +406,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</label>
 											<order>
 												<_item>0</_item>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestUtils.java,v 1.2 2010/06/25 15:04:57 wfro Exp $
+ * Name:        $Id: TestUtils.java,v 1.3 2010/10/15 14:46:45 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/25 15:04:57 $
+ * Date:        $Date: 2010/10/15 14:46:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,7 +68,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
+import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
@@ -111,7 +116,7 @@ public class TestUtils {
         public void run(
         ) throws ServiceException, IOException, ParseException{
             this.testTraverseObjectTree();
-            //this.testQueryFilters();
+            this.testSecureObject();
         }
 		
 	    protected void testTraverseObjectTree(
@@ -147,6 +152,31 @@ public class TestUtils {
 	        }
 	    }
 
+	    protected void testSecureObject(
+	    ) throws ServiceException {
+        	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
+        		(org.opencrx.kernel.account1.jmi1.Segment)this.pm.getObjectById(
+	        		new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+	        	);
+        	Collection<Account> accounts = accountSegment.getAccount();
+        	int count = 0;
+        	for(Account account: accounts) {
+        		org.opencrx.security.realm1.jmi1.User user = account.getOwningUser();
+        		String principalNameUser = user.refGetPath().getBase();
+        		String principalName = principalNameUser.endsWith("." + SecurityKeys.USER_SUFFIX) ?
+        			principalNameUser.substring(0, principalNameUser.indexOf(".")) :
+        				principalNameUser;
+        		UserHome userHome = UserHomes.getInstance().getUserHome(
+        			principalName, 
+        			accountSegment.refGetPath(), 
+        			this.pm
+        		);
+        		Contact contact = userHome.getContact();
+        		System.out.println("contact=" + contact);
+        		count++;
+        		if(count > 10) break;
+        	}
+	    }
     }
     
     //-----------------------------------------------------------------------

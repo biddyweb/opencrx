@@ -2,20 +2,25 @@
 	path="/opencrx-vcard-CRX"
 	docBase="${catalina.home}/apps/opencrx-core-CRX/opencrx-vcard-CRX.war"
 >	
-	<Realm  className="org.openmdx.catalina.realm.ExtendedJDBCRealm" 
-		debug="0"
-		digest="MD5"
-		digestEncoding="UTF-8"
-		digestFormat="base64"
-		flag="sufficient"
-		driverName="${opencrx.CRX.jdbc.driverName}"
-		connectionURL="${opencrx.CRX.jdbc.url}"
-		connectionName="${opencrx.CRX.jdbc.userName}" 
-		connectionPassword="${opencrx.CRX.jdbc.password}"
-		userTable="OOMSE2_TOBJ_USERS" 
-		userNameCol="principal_name" 
-		userCredCol="passwd"
-		userRoleTable="OOMSE2_TOBJ_ROLES" 
-		roleNameCol="role_name" 
-	/>	
+	<Realm className="org.apache.catalina.realm.CombinedRealm">
+		<Realm className="org.openmdx.catalina.realm.ExtendedJDBCRealm" 
+			debug="0"
+			digest="MD5"
+			digestEncoding="UTF-8"
+			digestFormat="base64"
+			driverName="${opencrx.CRX.jdbc.driverName}"
+			connectionURL="${opencrx.CRX.jdbc.url}"
+			connectionName="${opencrx.CRX.jdbc.userName}" 
+			connectionPassword="${opencrx.CRX.jdbc.password}"
+			userTable="OOMSE2_TOBJ_USERS" 
+			userNameCol="principal_name" 
+			userCredCol="passwd"
+			userRoleTable="OOMSE2_TOBJ_ROLES" 
+			roleNameCol="role_name" 
+		/>
+		<Realm 
+			className="org.apache.catalina.realm.UserDatabaseRealm" 
+			resourceName="UserDatabase"
+		/>	
+	</Realm>
 </Context>

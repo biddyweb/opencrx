@@ -40,6 +40,8 @@
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[9]" value="org.opencrx.kernel.model1.aop2"/>
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[10]" value="org:opencrx:kernel:generic"/>
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[10]" value="org.opencrx.kernel.generic.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[11]" value="org:opencrx:kernel:forecast1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[11]" value="org.opencrx.kernel.forecast1.aop2"/>
     </persistence-manager-factory>
 
     <!-- Data manager -->

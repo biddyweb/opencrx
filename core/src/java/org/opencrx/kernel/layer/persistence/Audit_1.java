@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.64 2010/05/27 21:48:04 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.66 2010/10/02 22:13:52 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.64 $
+ * Revision:    $Revision: 1.66 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/27 21:48:04 $
+ * Date:        $Date: 2010/10/02 22:13:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,6 @@
  */
 package org.opencrx.kernel.layer.persistence;
 
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,6 +81,7 @@ import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.spi.Layer_1;
+import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -148,6 +148,40 @@ public class Audit_1 extends Indexed_1 {
         return accessPath.get(4) + ":" + principalName;
     }
     
+    //-------------------------------------------------------------------------
+    @SuppressWarnings("unchecked")
+    private boolean areEqual(
+        Object v1,
+        Object v2
+    ) {
+        if(v1 == null) return v2 == null;
+        if(v2 == null) return v1 == null;
+        if(
+        	(v1 instanceof Number) && 
+        	(v2 instanceof Number)
+        ) {
+        	if(v1 instanceof Short || v2 instanceof Short) {
+        		return ((Number)v1).shortValue() == ((Number)v2).shortValue();
+        	} else if(v1 instanceof Integer || v2 instanceof Integer) {
+        		return ((Number)v1).intValue() == ((Number)v2).intValue();        		
+        	} else if(v1 instanceof Long || v2 instanceof Long) {
+        		return ((Number)v1).longValue() == ((Number)v2).longValue();        		
+        	} else {
+                return ((Comparable)v1).compareTo(v2) == 0;        		
+        	}
+        }
+        else if(
+            (v1 instanceof Comparable) && 
+            (v2 instanceof Comparable) &&
+            (v1.getClass().equals(v2.getClass()))
+        ) {
+            return ((Comparable)v1).compareTo(v2) == 0;
+        }
+        else {
+        	return v1.equals(v2);
+        }
+    }
+
     //-------------------------------------------------------------------------
     protected void setSecurityAttributes(
     	MappedRecord auditEntry
@@ -843,20 +877,8 @@ public class Audit_1 extends Indexed_1 {
         if(o2 == null) {
           return new HashSet<String>();
         }
-        Object_2Facade o1Facade;
-        try {
-	        o1Facade = Object_2Facade.newInstance(o1);
-        }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }
-        Object_2Facade o2Facade;
-        try {
-	        o2Facade = Object_2Facade.newInstance(o2);
-        }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }        
+        Object_2Facade o1Facade = ResourceHelper.getObjectFacade(o1);
+        Object_2Facade o2Facade = ResourceHelper.getObjectFacade(o2);
         // touch all o1 attributes in o2
         for(
           Iterator<String> i = o1Facade.getValue().keySet().iterator();
@@ -881,20 +903,7 @@ public class Audit_1 extends Indexed_1 {
                 boolean isEqual = v1.size() == v2.size();
                 if(isEqual) {
                     for(int j = 0; j < v1.size(); j++) {
-                        if(v1.get(j) instanceof BigDecimal) {
-                            if(v2.get(j) instanceof BigDecimal) {
-                                isEqual = ((BigDecimal)v1.get(j)).compareTo(((BigDecimal)v2.get(j))) == 0;
-                            }
-                            else {
-                                isEqual = false;
-                            }
-                        }
-                        else if(v1.get(j) == null) {
-                            isEqual = v2.get(j) == null;
-                        }
-                        else {
-                            isEqual = v1.get(j).equals(v2.get(j));
-                        }
+                    	isEqual = this.areEqual(v1.get(j), v2.get(j));
                         if(!isEqual) break;
                     }
                 }
@@ -912,13 +921,7 @@ public class Audit_1 extends Indexed_1 {
     	MappedRecord beforeImage
     ) throws ServiceException {
         String beforeImageAsString = "";
-        Object_2Facade beforeImageFacade;
-        try {
-	        beforeImageFacade = Object_2Facade.newInstance(beforeImage);
-        }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }
+        Object_2Facade beforeImageFacade = ResourceHelper.getObjectFacade(beforeImage);
         for(
             Iterator<String> i = beforeImageFacade.getValue().keySet().iterator();
             i.hasNext();

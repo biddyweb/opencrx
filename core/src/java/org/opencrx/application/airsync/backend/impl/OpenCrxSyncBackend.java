@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSyncBackend.java,v 1.31 2010/08/26 07:16:56 wfro Exp $
+ * Name:        $Id: OpenCrxSyncBackend.java,v 1.43 2010/11/23 12:25:14 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/26 07:16:56 $
+ * Date:        $Date: 2010/11/23 12:25:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,7 +73,6 @@ import java.util.Set;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.MimeMessage;
@@ -86,9 +85,11 @@ import org.opencrx.application.airsync.backend.cci.SyncBackend;
 import org.opencrx.application.airsync.datatypes.AttachmentDataT;
 import org.opencrx.application.airsync.datatypes.ContactT;
 import org.opencrx.application.airsync.datatypes.DataType;
+import org.opencrx.application.airsync.datatypes.EmailT;
 import org.opencrx.application.airsync.datatypes.EventT;
 import org.opencrx.application.airsync.datatypes.FolderType;
 import org.opencrx.application.airsync.datatypes.IData;
+import org.opencrx.application.airsync.datatypes.NoteT;
 import org.opencrx.application.airsync.datatypes.SyncCollection;
 import org.opencrx.application.airsync.datatypes.SyncDataItem;
 import org.opencrx.application.airsync.datatypes.SyncFolder;
@@ -120,8 +121,14 @@ import org.opencrx.kernel.activity1.jmi1.Task;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.backend.Documents;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.UserHomes;
+import org.opencrx.kernel.document1.cci2.DocumentQuery;
+import org.opencrx.kernel.document1.cci2.FolderAssignmentQuery;
+import org.opencrx.kernel.document1.jmi1.Document;
+import org.opencrx.kernel.document1.jmi1.DocumentFolder;
+import org.opencrx.kernel.document1.jmi1.FolderAssignment;
 import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.opencrx.kernel.generic.jmi1.GenericAccount;
 import org.opencrx.kernel.home1.cci2.AirSyncClientProfileQuery;
@@ -134,6 +141,7 @@ import org.opencrx.kernel.home1.jmi1.AirSyncClientProfile;
 import org.opencrx.kernel.home1.jmi1.AirSyncProfile;
 import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.ContactsFeed;
+import org.opencrx.kernel.home1.jmi1.DocumentFeed;
 import org.opencrx.kernel.home1.jmi1.SyncData;
 import org.opencrx.kernel.home1.jmi1.SyncFeed;
 import org.opencrx.kernel.home1.jmi1.SyncProfile;
@@ -408,6 +416,17 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							((Alert)refObj).setAlertState(UserHomes.ALERT_STATE_ACCEPTED);
 							pm.currentTransaction().commit();
 						} 
+						// In case of Document folders disable folder assignment 
+						else if(folder instanceof DocumentFolder && refObj instanceof Document) {							
+							FolderAssignmentQuery folderAssignmentQuery = (FolderAssignmentQuery)pm.newQuery(FolderAssignment.class);
+							folderAssignmentQuery.thereExistsDocumentFolder().equalTo(folder);
+							List<FolderAssignment> folderAssignments = ((Document)refObj).getDocumentFolderAssignment(folderAssignmentQuery);
+							pm.currentTransaction().begin();
+							for(FolderAssignment folderAssignment: folderAssignments) {
+								folderAssignment.setDisabled(true);
+							}
+							pm.currentTransaction().commit();
+						}
 						// Mark object as disabled. Physical deletion is 
 						// not supported by this backend
 						else if(refObj instanceof CrxObject) {
@@ -503,6 +522,31 @@ public class OpenCrxSyncBackend implements SyncBackend {
 			}
 		}
 		return activity;
+	}
+	
+	protected Document createDocument(
+		DocumentFolder documentFolder,
+		String name
+	) throws ServiceException {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(documentFolder);
+		String providerName = documentFolder.refGetPath().get(2);
+		String segmentName = documentFolder.refGetPath().get(4);
+		org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
+			(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
+				new Path("xri://@openmdx*org.opencrx.kernel.document1").getDescendant("provider", providerName, "segment", segmentName)
+			);		
+		Document document = pm.newInstance(Document.class);
+		document.refInitialize(false, false);
+		document.setName(name);
+		document.setTitle(name);
+		document.getOwningGroup().addAll(
+			documentFolder.getOwningGroup()
+		);
+		documentSegment.addDocument(
+			Documents.getInstance().getUidAsString(), 
+			document
+		);
+		return document;
 	}
 	
 	@Override
@@ -610,7 +654,30 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							);									
 						}
 						break;
-					
+
+					case Email:
+						if(folderAddDelete instanceof ActivityGroup) {
+							EmailT emailT = (EmailT)data;
+							object = this.createActivity(
+								(ActivityGroup)folderAddDelete,
+								Activities.ACTIVITY_CLASS_EMAIL,
+								emailT.getSubject(),
+								null, // detailedDescription
+								emailT.getDateReceived()
+							);
+						}
+						break;	
+						
+					case Notes:
+						if(folderAddDelete instanceof DocumentFolder) {
+							NoteT noteT = (NoteT)data;
+							object = this.createDocument(
+								(DocumentFolder)folderAddDelete,
+								noteT.getSubject()
+							);
+						}
+						break;
+						
 				}
 			}
 			// Change
@@ -650,7 +717,28 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								}
 								break;
 							case Calendar:
+								break;
 							case Tasks:
+								break;
+							case Notes:
+								// Assert that folder assignment exists
+								Document document = (Document)object;
+								DocumentFolder documentFolder = (DocumentFolder)folderChange;
+								FolderAssignmentQuery folderAssignmentQuery = (FolderAssignmentQuery)pm.newQuery(FolderAssignment.class);
+								folderAssignmentQuery.thereExistsDocumentFolder().equalTo(documentFolder);
+								List<FolderAssignment> assignments = document.getDocumentFolderAssignment(folderAssignmentQuery);
+								if(assignments.isEmpty()) {
+									pm.currentTransaction().begin();
+									FolderAssignment folderAssignment = pm.newInstance(FolderAssignment.class);
+									folderAssignment.refInitialize(false, false);
+									folderAssignment.setName(documentFolder.getName());
+									folderAssignment.setDocumentFolder(documentFolder);
+									document.addDocumentFolderAssignment(
+										Base.getInstance().getUidAsString(),
+										folderAssignment
+									);
+									pm.currentTransaction().commit();										
+								}
 								break;
 						}
 					}
@@ -995,6 +1083,59 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					}
 				}
 			}
+			// Notes
+			else if(folder instanceof DocumentFolder) {
+				DocumentFolder documentFolder = (DocumentFolder)folder;
+				Set<Path> changedDocuments = new HashSet<Path>();
+				// Get all changed documents
+				DocumentQuery query = (DocumentQuery)pm.newQuery(Document.class);				
+				query.forAllDisabled().isFalse();
+				query.thereExistsDocumentFolderAssignment().forAllDisabled().isFalse();
+				query.thereExistsDocumentFolderAssignment().thereExistsDocumentFolder().equalTo(documentFolder);
+				query.thereExistsContentType().equalTo(NOTE_MIME_TYPE);
+				if(state == SyncDataItem.State.NEW) {
+					query.createdAt().greaterThan(since);
+					query.orderByCreatedAt().ascending();
+				} else {
+					query.modifiedAt().greaterThan(since);
+					query.orderByModifiedAt().ascending();						
+				}
+				String providerName = documentFolder.refGetPath().get(2);
+				String segmentName = documentFolder.refGetPath().get(4);
+				org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
+					(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
+						new Path("xri://@openmdx*org.opencrx.kernel.document1").getDescendant("provider", providerName, "segment", segmentName)
+					);
+				List<Document> documents = documentSegment.getDocument(query);
+				int n = 0;
+				for(Document document: documents) {
+					if(!changedDocuments.contains(document.refGetPath())) {
+						String syncKey = Long.toString(
+							state == SyncDataItem.State.NEW ?
+								document.getCreatedAt().getTime() :
+									document.getModifiedAt().getTime()										
+						);
+						// !syncKey.equals(newSyncKey) asserts that next batch has different syncKey
+						if(n >= windowSize && !syncKey.equals(newSyncKey)) {
+							hasMore = true;
+							break;
+						} else {
+							SyncDataItem dataItem = this.datatypeMapper.toDataItem(
+								document, 
+								noData,
+								user,
+								requestContext
+							);
+							if(!excludes.contains(dataItem.getServerId())) {
+								changedDataItems.add(dataItem);
+								changedDocuments.add(document.refGetPath());
+								n++;
+							}
+							newSyncKey = syncKey;
+						}
+					}
+				}
+			}
 			pm.close();
 		}
 		return new GetChangedDataItemsResult(
@@ -1098,6 +1239,34 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					);
 				}
 			}
+			// Notes
+			else if(folder instanceof DocumentFolder) {
+				DocumentFolder documentFolder = (DocumentFolder)folder;
+				Set<Path> deletedDocuments = new HashSet<Path>();
+				// Get documents where folder assignment is disabled
+				DocumentQuery query = (DocumentQuery)pm.newQuery(Document.class);
+				query.thereExistsDocumentFolderAssignment().thereExistsDisabled().isTrue();
+				query.thereExistsDocumentFolderAssignment().thereExistsDocumentFolder().equalTo(documentFolder);
+				query.thereExistsDocumentFolderAssignment().modifiedAt().greaterThan(since);
+				query.thereExistsDocumentFolderAssignment().modifiedAt().lessThanOrEqualTo(to);
+				query.thereExistsContentType().equalTo(NOTE_MIME_TYPE);
+				query.orderByModifiedAt().ascending();
+				String providerName = documentFolder.refGetPath().get(2);
+				String segmentName = documentFolder.refGetPath().get(4);
+				org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
+					(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
+						new Path("xri://@openmdx*org.opencrx.kernel.document1").getDescendant("provider", providerName, "segment", segmentName)
+					);				
+				List<Document> documents = documentSegment.getDocument(query);
+				for(Document document: documents) {
+					if(!deletedDocuments.contains(document.refGetPath())) {
+						deletedDataItems.add(
+							this.datatypeMapper.toObjectId(document)
+						);
+						deletedDocuments.add(document.refGetPath());
+					}
+				}
+			}
 			pm.close();
 		}
 		return deletedDataItems;
@@ -1170,7 +1339,11 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						// Meeting
 						syncFolder = new SyncFolder();
 						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_MEETING);
-						syncFolder.setFolderType(FolderType.USER_CREATED_CALENDAR_FOLDER);
+						syncFolder.setFolderType(
+							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+								FolderType.DEFAULT_CALENDAR_FOLDER :
+									FolderType.USER_CREATED_CALENDAR_FOLDER
+						);
 						syncFolder.setDisplayName(feed.getName() + " - Calendar");
 						syncFolder.setParentId("0");
 						changedFolders.add(syncFolder);
@@ -1184,7 +1357,11 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						// Tasks
 						syncFolder = new SyncFolder();
 						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_TASK);
-						syncFolder.setFolderType(FolderType.USER_CREATED_TASKS_FOLDER);
+						syncFolder.setFolderType(
+							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+								FolderType.DEFAULT_TASKS_FOLDER :
+									FolderType.USER_CREATED_TASKS_FOLDER
+						);
 						syncFolder.setDisplayName(feed.getName() + " - Tasks");
 						syncFolder.setParentId("0");
 						changedFolders.add(syncFolder);						
@@ -1200,7 +1377,11 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							if(activityClass == Activities.ACTIVITY_CLASS_MEETING) {
 								syncFolder = new SyncFolder();
 								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_MEETING);
-								syncFolder.setFolderType(FolderType.USER_CREATED_CALENDAR_FOLDER);
+								syncFolder.setFolderType(
+									feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+										FolderType.DEFAULT_CALENDAR_FOLDER :
+											FolderType.USER_CREATED_CALENDAR_FOLDER
+								);
 								syncFolder.setDisplayName(feed.getName() + " - Calendar");
 								syncFolder.setParentId("0");
 								changedFolders.add(syncFolder);
@@ -1214,7 +1395,11 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							} else if(activityClass == Activities.ACTIVITY_CLASS_TASK) {
 								syncFolder = new SyncFolder();
 								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + Activities.ACTIVITY_CLASS_TASK);
-								syncFolder.setFolderType(FolderType.USER_CREATED_TASKS_FOLDER);
+								syncFolder.setFolderType(
+									feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+										FolderType.DEFAULT_TASKS_FOLDER :
+											FolderType.USER_CREATED_TASKS_FOLDER
+								);
 								syncFolder.setDisplayName(feed.getName() + " - Tasks");
 								syncFolder.setParentId("0");
 								changedFolders.add(syncFolder);
@@ -1226,11 +1411,24 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						syncFolder = new SyncFolder();
 						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed));
 						syncFolder.setFolderType(
-							feed.getName().endsWith("~Private") ?
+							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
 								FolderType.DEFAULT_CONTACTS_FOLDER :
 									FolderType.USER_CREATED_CONTACTS_FOLDER
 						);
 						syncFolder.setDisplayName(feed.getName() + " - Contacts");
+						syncFolder.setParentId("0");
+						changedFolders.add(syncFolder);						
+					}
+					// Notes
+					else if(feed instanceof DocumentFeed) {
+						syncFolder = new SyncFolder();
+						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed));
+						syncFolder.setFolderType(
+							feed.getName().endsWith(Documents.PRIVATE_DOCUMENTS_FOLDER_SUFFIX) ?
+								FolderType.DEFAULT_NOTES_FOLDER :
+									FolderType.USER_CREATED_NOTES_FOLDER
+						);
+						syncFolder.setDisplayName(feed.getName() + " - Notes");
 						syncFolder.setParentId("0");
 						changedFolders.add(syncFolder);						
 					}
@@ -1345,16 +1543,11 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					);
 					if(emailCreator != null && message != null) {
 						Activities.getInstance().importMimeMessage(
+							pm,
 							providerName, 
 							segmentName, 
 							message, 
-							emailCreator, 
-                            message.getFrom(),
-                            message.getRecipients(Message.RecipientType.TO),
-                            message.getRecipients(Message.RecipientType.CC),
-                            message.getRecipients(Message.RecipientType.BCC),
-							false, // isEMailAddressLookupCaseInsensitive 
-							true // isEMailAddressLookupIgnoreDisabled
+							emailCreator 
 						);
 					}
 				} catch(Exception e) {
@@ -1621,12 +1814,13 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								case DEFAULT_CALENDAR_FOLDER:
 								case USER_CREATED_CALENDAR_FOLDER:
 								case USER_CREATED_TASKS_FOLDER:
+								case USER_CREATED_EMAIL_FOLDER:
 									feed = pm.newInstance(org.opencrx.kernel.home1.jmi1.ActivityGroupCalendarFeed.class);
-									break;								
+									break;
 								case DEFAULT_CONTACTS_FOLDER:
 								case USER_CREATED_CONTACTS_FOLDER:
 									feed = pm.newInstance(org.opencrx.kernel.home1.jmi1.ContactsFeed.class);
-									break;									
+									break;
 							}
 							if(feed != null) {
 								feed.refInitialize(false, false);
@@ -1672,7 +1866,8 @@ public class OpenCrxSyncBackend implements SyncBackend {
 	// Members
 	//-----------------------------------------------------------------------
 	private static final String INITIAL_SYNC_KEY = "0";
-	private static final String FIRST_SYNC_KEY = "1";	
+	private static final String FIRST_SYNC_KEY = "1";
+	private static final String NOTE_MIME_TYPE = "text/plain";
 	private static final Map<String,SyncFolder> DEFAULT_FOLDERS;
 
 	static {

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IMAPServer.java,v 1.13 2010/02/10 16:36:34 wfro Exp $
+ * Name:        $Id: IMAPServer.java,v 1.14 2010/09/24 15:54:28 wfro Exp $
  * Description: IMAPServer
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/10 16:36:34 $
+ * Date:        $Date: 2010/09/24 15:54:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,11 +56,22 @@
 package org.opencrx.application.imap;
 
 import java.net.Socket;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.mail.MessagingException;
 
 import org.opencrx.application.adapter.AbstractServer;
 import org.opencrx.application.adapter.AbstractSession;
+import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
+import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.generic.SecurityKeys;
+import org.openmdx.base.naming.Path;
 
 public class IMAPServer extends AbstractServer {
     
@@ -105,7 +116,98 @@ public class IMAPServer extends AbstractServer {
     }
 	
     //-----------------------------------------------------------------------
+    private String encodeFolderName(
+        String name
+    ) {
+        // Slash is qualified name separator. Do not allow in folder names
+        name = name.replace("/", ".");
+        StringBuilder encodedName = new StringBuilder();
+        for(int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            if((c <= 127) && (c != '&')) {
+                encodedName.append(c);
+            }
+            else if(c == '&') {
+            	encodedName.append("&-");
+            }
+            else {
+                String base64EncodedChar = org.openmdx.base.text.conversion.Base64.encode(new byte[]{(byte)(c / 256), (byte)(c % 256)});
+                encodedName.append("&" + base64EncodedChar.substring(0, base64EncodedChar.length()-1) + "-");
+            }
+        }
+        return encodedName.toString();      
+    }
+    
+    //-----------------------------------------------------------------------
+    /**
+     * Return all folders which the user is allowed to subscribe.
+     */
+    public Map<String,String> getAvailableFolders(
+    	String segmentName    	
+    ) throws MessagingException {     
+    	if(
+    		(System.currentTimeMillis() > this.refreshFoldersAt) || 
+    		(this.availableFolders.get(segmentName) == null)
+    	) {
+    		PersistenceManager pm = AbstractSession.newPersistenceManager(
+    			this.getPersistenceManagerFactory(), 
+    			SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName
+    		);
+    		try {
+	            Map<String,String> folders = new HashMap<String,String>();    		
+		        String providerName = this.getProviderName();
+		        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
+		            (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+		                new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+		            );
+		        Collection<ActivityTracker> trackers = activitySegment.getActivityTracker();
+		        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: trackers) {
+		            String groupUri = "/" + providerName + "/" + segmentName + "/tracker/";
+		            folders.put(
+		                "INBOX" + groupUri + this.encodeFolderName(group.getName()),
+		                groupUri + group.getName()
+		            );
+		        }
+		        Collection<ActivityMilestone> milestones = activitySegment.getActivityMilestone();
+		        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: milestones) {
+		            String groupUri = "/" + providerName + "/" + segmentName + "/milestone/";
+		            folders.put(
+		                "INBOX" + groupUri + this.encodeFolderName(group.getName()),
+		                groupUri + group.getName()
+		            );
+		        }
+		        Collection<ActivityCategory> categories = activitySegment.getActivityCategory();
+		        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: categories) {
+		            String groupUri = "/" + providerName + "/" + segmentName + "/category/";
+		            folders.put(
+		                "INBOX" + groupUri + this.encodeFolderName(group.getName()),
+		                groupUri + group.getName()
+		            );
+		        }
+		        this.availableFolders.put(
+		        	segmentName, 
+		        	folders
+		        );
+		        this.refreshFoldersAt = System.currentTimeMillis() + FOLDER_REFRESH_PERIOD_MILLIS;
+    		}
+    		finally {
+    			if(pm != null) {
+    				pm.close();
+    			}
+    		}
+    	}
+        return this.availableFolders.get(segmentName);
+    }
+  	
+    //-----------------------------------------------------------------------
 	// Members
     //-----------------------------------------------------------------------
+    private static final long FOLDER_REFRESH_PERIOD_MILLIS = 300000L;
+    
+    /**
+     * Cache available folders per segment
+     */
+    protected Map<String,Map<String,String>> availableFolders = new ConcurrentHashMap<String,Map<String,String>>();
+    protected long refreshFoldersAt = System.currentTimeMillis();
     
 }

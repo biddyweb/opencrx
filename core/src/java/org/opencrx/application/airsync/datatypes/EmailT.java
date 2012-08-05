@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EmailT.java,v 1.7 2010/03/03 14:51:28 wfro Exp $
+ * Name:        $Id: EmailT.java,v 1.9 2010/09/09 15:18:13 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/03 14:51:28 $
+ * Date:        $Date: 2010/09/09 15:18:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,6 +61,7 @@ import java.util.List;
 
 public class EmailT implements IData {
 
+	private String mimeData;
 	private String subject;
 	private EmailBodyT body;
 	private Date dateReceived;
@@ -74,6 +75,7 @@ public class EmailT implements IData {
 	private List<AddressT> bcc;
 	private AddressT replyTo;
 	private boolean isRead;
+	private List<String> categories;	
 
 	@Override
 	public DataType getType() {
@@ -83,6 +85,17 @@ public class EmailT implements IData {
 	@Override
 	public boolean isRead() {
 		return isRead;
+	}
+	
+	public void setMimeData(
+		String mimeData
+	) {
+		this.mimeData = mimeData;
+	}
+	
+	public String getMimeData(
+	) {
+		return this.mimeData;
 	}
 	
 	public AddressT getReplyTo() {
@@ -199,6 +212,14 @@ public class EmailT implements IData {
 	public void setAttachements(List<AttachmentT> attachements) {
 		this.attachements = attachements;
 	}
-		
+
+	public List<String> getCategories() {
+		return categories;
+	}
+
+	public void setCategories(List<String> categories) {
+		this.categories = categories;
+	}
+	
 }
 

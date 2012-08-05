@@ -272,12 +272,12 @@
 															<_item>Memberships</_item>
 														</toolTip>
 														<label>
-															<_item>Memberships</_item>
+															<_item>»Memberships</_item>
 														</label>
 														<order>
 															<_item>10</_item>
 															<_item>0</_item>
-															<_item>50</_item>
+															<_item>5</_item>
 														</order>
 														<maxMember>10</maxMember>
                             <showMemberRange>
@@ -297,7 +297,7 @@
 														<order>
 															<_item>10</_item>
 															<_item>0</_item>
-															<_item>30</_item>
+															<_item>3</_item>
 														</order>
 														<maxMember>11</maxMember>
                             <showMemberRange>
@@ -317,7 +317,7 @@
 														<order>
 															<_item>10</_item>
 															<_item>0</_item>
-															<_item>40</_item>
+															<_item>4</_item>
 														</order>
 														<maxMember>12</maxMember>
                             <showMemberRange>

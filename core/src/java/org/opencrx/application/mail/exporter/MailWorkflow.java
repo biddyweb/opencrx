@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.17 2010/04/21 16:13:27 wfro Exp $
+ * Name:        $Id: MailWorkflow.java,v 1.19 2010/10/02 09:25:30 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/21 16:13:27 $
+ * Date:        $Date: 2010/10/02 09:25:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,6 +59,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.jdo.JDOHelper;
@@ -82,11 +83,11 @@ import org.opencrx.kernel.base.jmi1.IntegerProperty;
 import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.base.jmi1.UriProperty;
+import org.opencrx.kernel.home1.cci2.EMailAccountQuery;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
-import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.utils.WorkflowHelper;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
@@ -150,11 +151,11 @@ public abstract class MailWorkflow
             );
             // recipients
             recipients = InternetAddress.parse(
-                eMailAccount.getEMailAddress() == null ? 
+                eMailAccount.getName() == null ? 
                 	defaultReplyEMailAddress == null ?
                 		"noreply@localhost" :
                 			defaultReplyEMailAddress : 
-                				eMailAccount.getEMailAddress()
+                				eMailAccount.getName()
             );
             message.setRecipients(
                 Message.RecipientType.TO,
@@ -168,35 +169,6 @@ public abstract class MailWorkflow
             throw new ServiceException(e);
         }
         return recipients;
-    }
-    
-    //-----------------------------------------------------------------------
-    private void createLogEntry(        
-        WfProcessInstance wfProcessInstance,
-        String name,
-        String description,
-        PersistenceManager pm
-    ) throws ServiceException  {
-        if(wfProcessInstance == null) return;
-        org.opencrx.kernel.home1.jmi1.Home1Package home1Pkg = Utils.getHomePackage(pm);
-        WfActionLogEntry logEntry = home1Pkg.getWfActionLogEntry().createWfActionLogEntry();
-        try {
-            pm.currentTransaction().begin();
-            wfProcessInstance.addActionLog(
-                false,
-                org.opencrx.kernel.backend.Workflows.getInstance().getUidAsString(),
-                logEntry
-            );
-            logEntry.setName(name);
-            logEntry.setDescription(description);
-            pm.currentTransaction().commit();
-        }
-        catch(Exception e) {
-            new ServiceException(e).log();
-            try {
-                pm.currentTransaction().rollback();                
-            } catch(Exception e0) {}
-        }
     }
     
     //-----------------------------------------------------------------------
@@ -254,14 +226,13 @@ public abstract class MailWorkflow
             } catch(Exception e) {}
             
             // Find default email account
-            Collection<EMailAccount> eMailAccounts = userHome.getEMailAccount();
-            EMailAccount eMailAccountUser = null;
-            for(EMailAccount obj: eMailAccounts) {
-                if((obj.isDefault() != null) && obj.isDefault().booleanValue()) {
-                   eMailAccountUser = obj;
-                   break;
-                }
-            }
+            EMailAccountQuery emailAccountQuery = (EMailAccountQuery)pm.newQuery(EMailAccount.class);
+            emailAccountQuery.thereExistsIsDefault().isTrue();
+            emailAccountQuery.thereExistsIsActive().isTrue();
+            List<EMailAccount> eMailAccounts = userHome.getEMailAccount(emailAccountQuery);
+            EMailAccount eMailAccountUser = eMailAccounts.isEmpty() ?
+            	null :
+            		eMailAccounts.iterator().next();
             String subject = null;
             String text = null;
             
@@ -368,11 +339,10 @@ public abstract class MailWorkflow
                     }
                     // No recipients. Can not send message
                     else {
-                        this.createLogEntry(
+                        WorkflowHelper.createLogEntry(
                             wfProcessInstance,
                             "Can not send mail: No recipients",
-                            "#recipients must be > 0",
-                            pm
+                            "#recipients must be > 0"
                         );
                     }
                 } 
@@ -383,22 +353,20 @@ public abstract class MailWorkflow
                     text = "ERROR: email not sent. Can not get mail session " + mailServiceName + ":\n" + e0.getMessage();
                 }                
             }
-            this.createLogEntry(
+            WorkflowHelper.createLogEntry(
                 wfProcessInstance,
                 subject,
-                text,
-                pm
+                text
             );
         }        
         catch(AuthenticationFailedException e) {
         	SysLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
-            this.createLogEntry(
+            WorkflowHelper.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: AuthenticationFailedException",
-                e.getMessage(),
-                pm
+                e.getMessage()
             );
             throw e0;
         }
@@ -406,11 +374,10 @@ public abstract class MailWorkflow
         	SysLog.warning("Can not send message to recipients (reason=AddressException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
-            this.createLogEntry(
+            WorkflowHelper.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: AddressException",
-                e.getMessage(),
-                pm
+                e.getMessage()
             );
             throw e0;
         }
@@ -418,11 +385,10 @@ public abstract class MailWorkflow
         	SysLog.warning("Can not send message to recipients (reason=MessagingException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
-            this.createLogEntry(
+            WorkflowHelper.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: MessagingException",
-                e.getMessage(),
-                pm
+                e.getMessage()
             );
             throw e0;
         }
@@ -430,11 +396,10 @@ public abstract class MailWorkflow
         	SysLog.warning("Can not send message to recipients (reason=Exception)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
-            this.createLogEntry(
+            WorkflowHelper.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: Exception",
-                e.getMessage(),
-                pm
+                e.getMessage()
             );
             throw e0;        	
         }

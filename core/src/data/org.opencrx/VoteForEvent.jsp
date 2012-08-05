@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.15 2010/02/23 12:44:41 wfro Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.17 2010/12/06 19:31:24 wfro Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.15 $
+ * Revision:	$Revision: 1.17 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2010/02/23 12:44:41 $
+ * Date:		$Date: 2010/12/06 19:31:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -181,7 +181,7 @@ java.text.*"
 		if(userHome != null) {
 		   	org.opencrx.kernel.home1.cci2.EMailAccountQuery emailAccountQuery =
 		   		(org.opencrx.kernel.home1.cci2.EMailAccountQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
-			emailAccountQuery.thereExistsEMailAddress().equalTo(emailAddress);
+			emailAccountQuery.name().equalTo(emailAddress);
 			isOwner = !userHome.getEMailAccount(emailAccountQuery).isEmpty();
 			if(!isOwner && userHome.getContact() != null) {
 				org.opencrx.kernel.account1.cci2.EMailAddressQuery emailAddressQuery =
@@ -264,9 +264,15 @@ java.text.*"
 	}
 
 	// verify whether chosen locale is supported (set to default locale if necessary)
-%>
-<%@ include file="localeSettings.jsp" %>
-<%
+	String defaultLocale = "en_US";
+	List activeLocales = new ArrayList();
+%><%@ include file="login-locales.jsp" %><%
+	if(!activeLocales.contains(defaultLocale)) {
+		activeLocales.add(defaultLocale);
+	}
+	if((localeStr == null) || !activeLocales.contains(localeStr)) {
+		localeStr = defaultLocale;
+	}
 	Locale locale = new Locale(
 		localeStr.substring(0,2),
 		localeStr.substring(3,5)

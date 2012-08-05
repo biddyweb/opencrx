@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.17 2010/08/18 14:35:24 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.22 2010/12/20 13:21:41 wfro Exp $
  * = Description: openCRX/Core Test build.xml
- * = Revision:    $Revision: 1.17 $
- * = Date:        $Date: 2010/08/18 14:35:24 $
+ * = Revision:    $Revision: 1.22 $
+ * = Date:        $Date: 2010/12/20 13:21:41 $
  * = Copyright:   (c) 2003-2010 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,14 +61,14 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.7.0"/>
+	<property name="openmdx.version" value="2.8.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<!-- classpath -->
 	<path id="project.lib.classpath">
 		<path refid="openmdx.core.lib"/>
-		<path refid="java2.enterprise.api"/>
-		<path refid="java2.extension.lib"/>
+		<path refid="osgi.enterprise.api"/>
+		<path refid="osgi.extension.lib"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-kernel.jar"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-security.jar"/>
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-application.jar"/>
@@ -81,14 +81,14 @@
 		<pathelement location="${basedir}/src/resource"/>
 		<pathelement location="${build.dir}/bin"/>
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
-		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-8/lib/postgresql-8.3.jdbc3.jar"/>
+		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-9/lib/postgresql-9.0.jdbc4.jar"/>
 		<pathelement location="../opt/hsqldb/${build.java.platform}/hsqldb-2/lib/hsqldb.jar"/>
 		<pathelement location="../codehaus/${build.java.platform}/janino/lib/janino.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/openjpa.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/commons-lang.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/commons-collections.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/commons-collections-extendedproperties.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/java2/${build.java.platform}/extension/lib/serp.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/openjpa.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-lang.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections-extendedproperties.jar"/>
+		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/serp.jar"/>
 	</path>
 	<property name="junit.test.datasource.name" value="jdbc_opencrx_CRX" />	
 	<patternset id="project.junit.test.case">

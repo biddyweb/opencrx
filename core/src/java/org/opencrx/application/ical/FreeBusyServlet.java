@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.17 2010/08/27 08:56:46 wfro Exp $
+ * Name:        $Id: FreeBusyServlet.java,v 1.28 2010/12/15 11:52:35 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/27 08:56:46 $
+ * Date:        $Date: 2010/12/15 11:52:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,8 +58,11 @@ package org.opencrx.application.ical;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -78,12 +81,18 @@ import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.utils.ActivitiesFilterHelper;
+import org.opencrx.kernel.home1.cci2.EMailAccountQuery;
+import org.opencrx.kernel.home1.cci2.UserHomeQuery;
+import org.opencrx.kernel.home1.jmi1.EMailAccount;
+import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 import org.w3c.format.DateTimeFormat;
 
 public class FreeBusyServlet extends HttpServlet {
@@ -174,10 +183,6 @@ public class FreeBusyServlet extends HttpServlet {
             try {
                 Utils.getModel();
                 this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
-                this.rootPm = this.persistenceManagerFactory.getPersistenceManager(
-                    SecurityKeys.ROOT_PRINCIPAL,
-                    UUIDs.getGenerator().next().toString()
-                );
             }
             catch (NamingException e) {
                 throw new ServletException( 
@@ -195,31 +200,38 @@ public class FreeBusyServlet extends HttpServlet {
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
-        String providerName
+    protected PersistenceManager getRootPersistenceManager(
     ) {
-        if(this.componentConfiguration == null) {
-            this.componentConfiguration = ComponentConfigHelper.getComponentConfiguration(
-                CONFIGURATION_ID,
-                providerName,
-                this.rootPm,
-                false,
-                null
-            );
-        }
-        return this.componentConfiguration;
+        return this.persistenceManagerFactory.getPersistenceManager(
+            SecurityKeys.ROOT_PRINCIPAL,
+            UUIDs.getGenerator().next().toString()
+        );    	
     }
     
     //-----------------------------------------------------------------------
-    protected ActivitiesFilterHelper getActivitiesHelper(
+    protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
+        String providerName,
+        PersistenceManager rootPm
+    ) {
+		return ComponentConfigHelper.getComponentConfiguration(
+			CONFIGURATION_ID,
+			providerName,
+			rootPm,
+			false,
+			null
+		);
+    }
+    
+    //-----------------------------------------------------------------------
+    protected ActivityQueryHelper getActivitiesHelper(
         PersistenceManager pm,
         String filterId,
         String isDisabledFilter
     ) {
-        ActivitiesFilterHelper activitiesHelper = new ActivitiesFilterHelper(pm);
+        ActivityQueryHelper activitiesHelper = new ActivityQueryHelper(pm);
         if(filterId != null) {
             try {
-                activitiesHelper.parseFilteredActivitiesUri(                        
+                activitiesHelper.parseQueryId(                        
                     (filterId.startsWith("/") ? "" : "/") + filterId
                 );
                 activitiesHelper.parseDisabledFilter(
@@ -232,50 +244,119 @@ public class FreeBusyServlet extends HttpServlet {
     }
     
     //-----------------------------------------------------------------------
+    protected boolean matches(
+    	String token,
+    	List<String> strings
+    ) {
+    	for(String str: strings) {
+    		if(token.indexOf(str) >= 0) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    //-----------------------------------------------------------------------
     @Override
     protected void doGet(
         HttpServletRequest req, 
         HttpServletResponse resp
     ) throws ServletException, IOException {
-        PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
-            "guest",
-            null
-        );
-        String filterId = req.getParameter(PARAMETER_NAME_ID);
+        String id = req.getParameter(PARAMETER_NAME_ID);
+        if(id == null) {
+    		resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    		return;
+        } 
+       	String[] ids = id.split("/");
+    	if(ids.length < 2) {
+    		resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+    		return;
+    	}
+    	String providerName = ids[0];
+    	String segmentName = ids[1];
+    	String user = null;
+    	for(int i = 0; i < ids.length; i++) {
+    		if("home".equals(ids[i]) || "userhome".equals(ids[i])) {
+    			user = ids[i+1];
+    			break;
+    		}
+    	}
+    	if(user == null) {
+    		user = req.getParameter(PARAMETER_NAME_USER);
+    		if(user == null) {
+        		resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        		return;    			
+    		}
+    	}    	
+    	PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+    		SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+    		null
+    	);
+    	org.opencrx.kernel.home1.jmi1.Segment userHomeSegment =
+    		(org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
+    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName)
+    		);
+    	UserHome userHome = null;
+    	if(user.indexOf("@") > 0) {
+    		UserHomeQuery query = (UserHomeQuery)pm.newQuery(UserHome.class);
+    		query.thereExistsEMailAccount().name().equalTo(user);
+    		List<UserHome> userHomes = userHomeSegment.getUserHome(query);
+    		if(!userHomes.isEmpty()) {
+    			userHome = userHomes.iterator().next();
+    		}    		
+    	} else {
+    		userHome = userHomeSegment.getUserHome(user);
+    	}
+    	String userId = null;
+    	List<String> userEMails = new ArrayList<String>();
+    	if(userHome != null) {
+    		userId = userHome.refGetPath().getBase();
+			EMailAccountQuery query = (EMailAccountQuery)pm.newQuery(EMailAccount.class);
+			query.thereExistsIsActive().isTrue();
+			query.thereExistsIsDefault().isTrue();
+			List<EMailAccount> emailAccounts = userHome.getEMailAccount(query);
+			for(EMailAccount emailAccount: emailAccounts) {
+				userEMails.add(emailAccount.getName());
+			}
+    	}
+    	if(userId == null || userEMails.isEmpty()) {
+    		SysLog.warning("Invalid user", Arrays.asList(id, user));
+    	}
+        pm.close();
+    	pm = this.persistenceManagerFactory.getPersistenceManager(
+    		userId,
+    		null
+    	);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
-        ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
+        ActivityQueryHelper activitiesHelper = this.getActivitiesHelper(
             pm, 
-            filterId,
+            id,
             isDisabledFilter
         );
-        if(activitiesHelper.getUserHome() != null) {
-        	// Switch to user home's principal
-        	pm = this.persistenceManagerFactory.getPersistenceManager(
-        		activitiesHelper.getUserHome().refGetPath().getBase(),
-        		null
-        	);
-        	activitiesHelper = this.getActivitiesHelper(
-                pm, 
-                filterId,
-                isDisabledFilter
-            );        	
-        }
         // Return all activities in FreeBusy format
         if((req.getRequestURI().endsWith("/freebusy"))) {        	            
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setCharacterEncoding("UTF-8");    
             resp.setContentType("text/plain");
             PrintWriter p = resp.getWriter();
-            p.write("BEGIN:VCALENDAR\n");
-            p.write("PRODID:-" + ICalendar.PROD_ID + "\n");
-            p.write("VERSION:1.1\n");
-            p.write("METHOD:PUBLISH\n");
-            p.write("BEGIN:VFREEBUSY\n");
-            p.write("ORGANIZER:" + activitiesHelper.getCalendarName() + "\n");
-            ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
-            PersistenceHelper.setClasses(activityQuery, Meeting.class, PhoneCall.class, Absence.class, ExternalActivity.class);
+            boolean isTypeICS = RESOURCE_TYPE_ICS.equals(req.getParameter(PARAMETER_NAME_TYPE));
             Date dtStart = new Date(System.currentTimeMillis() - 7*86400000L);
             Date dtEnd = new Date(System.currentTimeMillis() + 60*86400000L);
+            p.write("BEGIN:VCALENDAR\n");
+            p.write("PRODID:-" + ICalendar.PROD_ID + "\n");
+            p.write("VERSION:2.0\n");
+            p.write("METHOD:PUBLISH\n");
+            if(isTypeICS) {
+            	//
+            } else {
+            	p.write("BEGIN:VFREEBUSY\n");
+                p.write("ORGANIZER:" + activitiesHelper.getCalendarName() + "\n");
+	            p.write("DTSTAMP:" + ActivityQueryHelper.formatDateTime(ActivityQueryHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
+	            p.write("DTSTART:" + ActivityQueryHelper.formatDateTime(dtStart) + "\n");
+	            p.write("DTEND:" + ActivityQueryHelper.formatDateTime(dtEnd) + "\n");
+            }
+            ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+            PersistenceHelper.setClasses(activityQuery, Meeting.class, PhoneCall.class, Absence.class, ExternalActivity.class);
             if(activitiesHelper.isDisabledFilter()) {
                 activityQuery.thereExistsDisabled().isTrue();                    
             }
@@ -285,46 +366,80 @@ public class FreeBusyServlet extends HttpServlet {
             activityQuery.ical().isNonNull();
             activityQuery.thereExistsScheduledStart().lessThanOrEqualTo(dtEnd);
             activityQuery.thereExistsScheduledEnd().greaterThanOrEqualTo(dtStart);
-            activityQuery.orderByScheduledStart().ascending();       
-            p.write("DTSTAMP:" + ActivitiesFilterHelper.formatDate(ActivitiesFilterHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
-            p.write("DTSTART:" + ActivitiesFilterHelper.formatDate(dtStart) + "\n");
-            p.write("DTEND:" + ActivitiesFilterHelper.formatDate(dtEnd) + "\n");
-            for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
+            activityQuery.orderByScheduledStart().ascending();
+            for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {            	
                 String ical = activity.getIcal();
-                RRule rrule = new RRule();
-                if((ical != null) && (ical.indexOf("RRULE:") > 0)) {
-                    rrule.parse(ical.substring(ical.indexOf("RRULE:")));
-                }
-                GregorianCalendar scheduledStart = new GregorianCalendar();
-                scheduledStart.setTime(activity.getScheduledStart());
-                GregorianCalendar scheduledEnd = new GregorianCalendar();
-                scheduledEnd.setTime(activity.getScheduledEnd());
-                int i = 0;
-                while(
-                	(rrule.getUntil() != null && scheduledStart.getTime().compareTo(rrule.getUntil()) <= 0) ||
-                    (i < rrule.getCount())
-                ) {
-                    p.write("FREEBUSY:" + ActivitiesFilterHelper.formatDate(scheduledStart.getTime()) + "/" + ActivitiesFilterHelper.formatDate(scheduledEnd.getTime()) + "\n");
-                    if("DAILY".equals(rrule.getFreq())) {
-                        scheduledStart.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
-                        scheduledEnd.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
-                    }
-                    else if("WEEKLY".equals(rrule.getFreq())) {
-                        scheduledStart.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());
-                        scheduledEnd.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());                                    
-                    }
-                    else if("MONTHLY".equals(rrule.getFreq())) {
-                        scheduledStart.add(GregorianCalendar.MONTH, rrule.getInterval());
-                        scheduledEnd.add(GregorianCalendar.MONTH, rrule.getInterval());                                                                        
-                    }
-                    else if("YEARLY".equals(rrule.getFreq())) {
-                        scheduledStart.add(GregorianCalendar.YEAR, rrule.getInterval());
-                        scheduledEnd.add(GregorianCalendar.YEAR, rrule.getInterval());                                                                                                            
-                    }
-                    i++;
-                }
+            	if(ical.indexOf("TRANSP:TRANSPARENT") < 0) {
+            		boolean isBusy = false;
+            		String[] tokens = ical.split("\n");
+            		for(String token: tokens) {
+            			if(token.indexOf("ORGANIZER") >= 0 && this.matches(token, userEMails)) {
+            				isBusy = true;
+            				break;
+            			} else if(token.indexOf("ATTENDEE") >= 0 && this.matches(token, userEMails) && token.indexOf("PARTSTAT=DECLINED") < 0) {
+            				isBusy = true;
+            				break;
+            			}
+            		}
+            		if(isBusy) {
+		                RRule rrule = new RRule();
+		                if((ical != null) && (ical.indexOf("RRULE:") > 0)) {
+		                    rrule.parse(ical.substring(ical.indexOf("RRULE:")));
+		                }
+		                GregorianCalendar scheduledStart = new GregorianCalendar();
+		                scheduledStart.setTime(activity.getScheduledStart());
+		                GregorianCalendar scheduledEnd = new GregorianCalendar();
+		                scheduledEnd.setTime(activity.getScheduledEnd());
+		                int i = 0;
+		                while(
+		                	(rrule.getUntil() != null && scheduledStart.getTime().compareTo(rrule.getUntil()) <= 0) ||
+		                    (i < rrule.getCount())
+		                ) {
+		                	if(isTypeICS) {
+		                		p.write("BEGIN:VEVENT\n");
+		                		p.write("UID:" + activity.refGetPath().getBase() + "-" + i + "\n");
+		                		p.write("CLASS:PUBLIC\n");
+			    	            p.write("DTSTAMP:" + ActivityQueryHelper.formatDateTime(ActivityQueryHelper.getActivityGroupModifiedAt(activitiesHelper.getActivityGroup())) + "\n");
+			                    p.write("ORGANIZER:" + activitiesHelper.getCalendarName() + "\n");
+			                    p.write("SUMMARY:***\n");
+			                    if(activity.isAllDayEvent()) {
+				                    p.write("DTSTART;VALUE=DATE:" + ActivityQueryHelper.formatDate(scheduledStart.getTime()) + "\n");                		
+				                    p.write("DTEND;VALUE=DATE:" + ActivityQueryHelper.formatDate(scheduledEnd.getTime()) + "\n");
+			                    } else {
+				                    p.write("DTSTART:" + ActivityQueryHelper.formatDateTime(scheduledStart.getTime()) + "\n");                		
+				                    p.write("DTEND:" + ActivityQueryHelper.formatDateTime(scheduledEnd.getTime()) + "\n");	                    	
+			                    }
+		                		p.write("END:VEVENT\n");
+		                	}
+		                	else {
+		               			p.write("FREEBUSY:" + ActivityQueryHelper.formatDateTime(scheduledStart.getTime()) + "/" + ActivityQueryHelper.formatDateTime(scheduledEnd.getTime()) + "\n");                			
+		                	}
+		                    if("DAILY".equals(rrule.getFreq())) {
+		                        scheduledStart.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
+		                        scheduledEnd.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
+		                    }
+		                    else if("WEEKLY".equals(rrule.getFreq())) {
+		                        scheduledStart.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());
+		                        scheduledEnd.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());                                    
+		                    }
+		                    else if("MONTHLY".equals(rrule.getFreq())) {
+		                        scheduledStart.add(GregorianCalendar.MONTH, rrule.getInterval());
+		                        scheduledEnd.add(GregorianCalendar.MONTH, rrule.getInterval());                                                                        
+		                    }
+		                    else if("YEARLY".equals(rrule.getFreq())) {
+		                        scheduledStart.add(GregorianCalendar.YEAR, rrule.getInterval());
+		                        scheduledEnd.add(GregorianCalendar.YEAR, rrule.getInterval());                                                                                                            
+		                    }
+		                    i++;
+		                }
+            		}
+            	}
             }
-            p.write("END:VFREEBUSY\n");
+            if(isTypeICS) {
+            	//
+            } else {
+            	p.write("END:VFREEBUSY\n");
+            }
             p.write("END:VCALENDAR\n");
             p.flush();
         }
@@ -345,14 +460,20 @@ public class FreeBusyServlet extends HttpServlet {
 
     protected final static String PARAMETER_NAME_ID = "id";
     protected final static String PARAMETER_NAME_DISABLED = "disabled";
+    protected final static String PARAMETER_NAME_USER = "user";
     protected final static String PARAMETER_NAME_USER_LOCALE = "user.locale";
     protected final static String PARAMETER_NAME_USER_TZ = "user.tz";
     protected final static String PARAMETER_NAME_TYPE = "type";
     protected final static String PARAMETER_NAME_RESOURCE = "resource";
     protected final static String PARAMETER_NAME_HEIGHT = "height";
 
+    protected final static String RESOURCE_TYPE_ICS = "ics";
+    protected final static String RESOURCE_TYPE_HTML = "html";
+    protected final static String RESOURCE_TYPE_XML = "xml";
+
+    protected static final String PROPERTY_MAX_ACTIVITIES = "maxActivities";
+    protected static final int DEFAULT_MAX_ACTIVITIES = 500;
+    
     protected PersistenceManagerFactory persistenceManagerFactory = null;
-    protected PersistenceManager rootPm = null;
-    protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;    
     
 }

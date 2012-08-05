@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.10 2010/06/08 19:25:20 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.16 2010/11/30 00:16:12 wfro Exp $
  * = Description: openCRX/icons build.xml
- * = Revision:    $Revision: 1.10 $
- * = Date:        $Date: 2010/06/08 19:25:20 $
+ * = Revision:    $Revision: 1.16 $
+ * = Date:        $Date: 2010/11/30 00:16:12 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,7 +62,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.6.0+"/>
+	<property name="openmdx.version" value="2.7.2+"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<mkdir dir="src/java"/>
@@ -153,6 +153,7 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Asset.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AssetContext.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/AssignedToFilterProperty.gif"/>
+      <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/AssignmentBasedFolderEntry.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Association.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AssociationEnd.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Attribute.gif"/>
@@ -166,6 +167,7 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/BookingText.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/BooleanProperty.gif"/>
 	  <copy file="src/data/images/lib1/Replacement.gif" tofile="${build.dir}/data/images/lib1/BooleanReplacement.gif"/>
+	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/BrokerAssignment.gif"/>		
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Budget.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/BudgetMilestone.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Building.gif"/>
@@ -179,6 +181,7 @@
 	  <copy file="src/data/images/lib1/Calendar.gif" tofile="${build.dir}/data/images/lib1/Calendar.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/CalendarDay.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/CalendarProfile.gif"/>
+	  <copy file="src/data/images/lib1/Person.gif" tofile="${build.dir}/data/images/lib1/CardProfile.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/CategoryFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Cell.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Certificate.gif"/>
@@ -212,6 +215,7 @@
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ContractTypeFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/CreditBooking.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/CreditLimit.gif"/>
+	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/CustomerAssignment.gif"/>		
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/CustomerContractRole.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/CustomerFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Date.gif" tofile="${build.dir}/data/images/lib1/DateProperty.gif"/>
@@ -245,11 +249,13 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/DiscountPriceModifier.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/DiscountType.gif"/>
 	  <copy file="src/data/images/lib1/Documents.gif" tofile="${build.dir}/data/images/lib1/Document.gif"/>
+	  <copy file="src/data/images/lib1/Documents.gif" tofile="${build.dir}/data/images/lib1/DocumentBasedFolderEntry.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/DocumentFolder.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/DocumentFolderAssignment.gif"/>
-	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/DocumentFolderEntry.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/DocumentLink.gif"/>
 	  <copy file="src/data/images/lib1/Lock.gif" tofile="${build.dir}/data/images/lib1/DocumentLock.gif"/>
+	  <copy file="src/data/images/lib1/Documents.gif" tofile="${build.dir}/data/images/lib1/DocumentProfile.gif"/>
+	  <copy file="src/data/images/lib1/Documents.gif" tofile="${build.dir}/data/images/lib1/DocumentFeed.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/EditableAttribute.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/EditableClass.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/EditableOperation.gif"/>
@@ -383,6 +389,7 @@
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/Property.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/PropertySet.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/PStreet.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/QuantityBasedSalesVolumeBudgetPosition.gif"/>				
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/QuantityModification.gif"/>
 	  <copy file="src/data/images/lib1/Favorite.gif" tofile="${build.dir}/data/images/lib1/QuickAccess.gif"/>
 	  <copy file="src/data/images/lib1/Quotes.gif" tofile="${build.dir}/data/images/lib1/Quote.gif"/>
@@ -392,6 +399,8 @@
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ReferenceProperty.gif"/>
 	  <copy file="src/data/images/lib1/Replacement.gif" tofile="${build.dir}/data/images/lib1/ReferenceReplacement.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/RelatedProduct.gif"/>
+	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ReportedByContactFilterProperty.gif"/>
+	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ReportedByAccountFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/RequirementDiagram.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/RequirementModel.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Resource.gif"/>
@@ -406,9 +415,11 @@
 	  <copy file="src/data/images/lib1/ACLRoles.gif" tofile="${build.dir}/data/images/lib1/Role.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Room.gif"/>
 	  <copy file="src/data/images/lib1/SalesOrder.gif" tofile="${build.dir}/data/images/lib1/SalesOrder.gif"/>
+	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/SalesRepAssignment.gif"/>		
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/SalesRepFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/TaxRates.gif" tofile="${build.dir}/data/images/lib1/SalesTaxType.gif"/>
 	  <copy file="src/data/images/lib1/Appointment.gif" tofile="${build.dir}/data/images/lib1/SalesVisit.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/SalesVolumeBudget.gif"/>		
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ScheduledEndFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ScheduledStartFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/SearchIndexEntry.gif"/>
@@ -433,6 +444,7 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/TestModel.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Topic.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/TotalAmountFilterProperty.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/TwitterAccount.gif"/>
 	  <copy file="src/data/images/lib1/Company.gif" tofile="${build.dir}/data/images/lib1/UnspecifiedAccount.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Uom.gif"/>
 	  <copy file="src/data/images/lib1/Currencies.gif" tofile="${build.dir}/data/images/lib1/UomSchedule.gif"/>
@@ -441,6 +453,7 @@
 	  <copy file="src/data/images/lib1/Users.gif" tofile="${build.dir}/data/images/lib1/User.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/UserGroup.gif"/>
 	  <copy file="src/data/images/lib1/Home.gif" tofile="${build.dir}/data/images/lib1/UserHome.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ValueBasedSalesVolumeBudgetPosition.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/VariabilityPoint.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/VoteByMember.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Warehouse.gif"/>
@@ -539,6 +552,7 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Asset.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AssetContext.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/AssignedToFilterProperty.gif"/>		
+      <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/AssignmentBasedFolderEntry.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Association.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AssociationEnd.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Attribute.gif"/>
@@ -552,6 +566,7 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/BookingText.gif"/>
 	  <copy file="src/data/images/lib2/Boolean.gif" tofile="${build.dir}/data/images/lib2/BooleanProperty.gif"/>
 	  <copy file="src/data/images/lib2/Replacement.gif" tofile="${build.dir}/data/images/lib2/BooleanReplacement.gif"/>
+	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/BrokerAssignment.gif"/>		
 	  <copy file="src/data/images/lib2/Budget.gif" tofile="${build.dir}/data/images/lib2/Budget.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/BudgetMilestone.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Building.gif"/>
@@ -565,6 +580,7 @@
 	  <copy file="src/data/images/lib2/Calendar.gif" tofile="${build.dir}/data/images/lib2/Calendar.gif"/>
 	  <copy file="src/data/images/lib2/ProjectDay.gif" tofile="${build.dir}/data/images/lib2/CalendarDay.gif"/>
 	  <copy file="src/data/images/lib2/Date.gif" tofile="${build.dir}/data/images/lib2/CalendarProfile.gif"/>
+	  <copy file="src/data/images/lib2/Person.gif" tofile="${build.dir}/data/images/lib2/CardProfile.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/CategoryFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Cell.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Certificate.gif"/>
@@ -598,6 +614,7 @@
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ContractTypeFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/CreditBooking.gif" tofile="${build.dir}/data/images/lib2/CreditBooking.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/CreditLimit.gif"/>
+	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/CustomerAssignment.gif"/>		
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/CustomerContractRole.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/CustomerFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/DateProperty.gif" tofile="${build.dir}/data/images/lib2/DateProperty.gif"/>
@@ -631,11 +648,13 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/DiscountPriceModifier.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/DiscountType.gif"/>
 	  <copy file="src/data/images/lib2/Documents.gif" tofile="${build.dir}/data/images/lib2/Document.gif"/>
+	  <copy file="src/data/images/lib2/Documents.gif" tofile="${build.dir}/data/images/lib2/DocumentBasedFolderEntry.gif"/>
 	  <copy file="src/data/images/lib2/DocumentFolder.gif" tofile="${build.dir}/data/images/lib2/DocumentFolder.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/DocumentFolderAssignment.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/DocumentFolderEntry.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/DocumentLink.gif"/>
 	  <copy file="src/data/images/lib2/Lock.gif" tofile="${build.dir}/data/images/lib2/DocumentLock.gif"/>
+	  <copy file="src/data/images/lib2/Documents.gif" tofile="${build.dir}/data/images/lib2/DocumentProfile.gif"/>
+	  <copy file="src/data/images/lib2/Documents.gif" tofile="${build.dir}/data/images/lib2/DocumentFeed.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/EditableAttribute.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/EditableClass.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/EditableOperation.gif"/>
@@ -769,6 +788,7 @@
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/Property.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/PropertySet.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/PStreet.gif"/>
+	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/QuantityBasedSalesVolumeBudgetPosition.gif"/>						
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/QuantityModification.gif"/>
 	  <copy file="src/data/images/lib2/Favorites.gif" tofile="${build.dir}/data/images/lib2/QuickAccess.gif"/>
 	  <copy file="src/data/images/lib2/Quotes.gif" tofile="${build.dir}/data/images/lib2/Quote.gif"/>
@@ -778,6 +798,8 @@
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ReferenceProperty.gif"/>
 	  <copy file="src/data/images/lib2/Replacement.gif" tofile="${build.dir}/data/images/lib2/ReferenceReplacement.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/RelatedProduct.gif"/>
+	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ReportedByContactFilterProperty.gif"/>
+	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ReportedByAccountFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/RequirementDiagram.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/RequirementModel.gif"/>
 	  <copy file="src/data/images/lib2/Resource.gif" tofile="${build.dir}/data/images/lib2/Resource.gif"/>
@@ -792,9 +814,11 @@
 	  <copy file="src/data/images/lib2/UserRole.gif" tofile="${build.dir}/data/images/lib2/Role.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Room.gif"/>
 	  <copy file="src/data/images/lib2/SalesOrder.gif" tofile="${build.dir}/data/images/lib2/SalesOrder.gif"/>
+	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/SalesRepAssignment.gif"/>		
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/SalesRepFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/TaxRates.gif" tofile="${build.dir}/data/images/lib2/SalesTaxType.gif"/>
 	  <copy file="src/data/images/lib2/Appointment.gif" tofile="${build.dir}/data/images/lib2/SalesVisit.gif"/>
+	  <copy file="src/data/images/lib2/Forecasts.gif" tofile="${build.dir}/data/images/lib2/SalesVolumeBudget.gif"/>		
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ScheduledEndFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ScheduledStartFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/SearchIndexEntry.gif"/>
@@ -819,6 +843,7 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/TestModel.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Topic.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/TotalAmountFilterProperty.gif"/>
+	  <copy file="src/data/images/lib2/Twitter.gif" tofile="${build.dir}/data/images/lib2/TwitterAccount.gif"/>	  
 	  <copy file="src/data/images/lib2/Company.gif" tofile="${build.dir}/data/images/lib2/UnspecifiedAccount.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Uom.gif"/>
 	  <copy file="src/data/images/lib2/Currencies.gif" tofile="${build.dir}/data/images/lib2/UomSchedule.gif"/>
@@ -827,6 +852,7 @@
 	  <copy file="src/data/images/lib2/Users.gif" tofile="${build.dir}/data/images/lib2/User.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/UserGroup.gif"/>
 	  <copy file="src/data/images/lib2/Home.gif" tofile="${build.dir}/data/images/lib2/UserHome.gif"/>
+	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ValueBasedSalesVolumeBudgetPosition.gif"/>		
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/VariabilityPoint.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/VoteByMember.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Warehouse.gif"/>

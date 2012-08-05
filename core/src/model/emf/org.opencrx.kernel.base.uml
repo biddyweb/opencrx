@@ -208,7 +208,7 @@
             <eAnnotations xmi:id="_IJVV_d7NEdmKapscEl8OLg" source="http://www.eclipse.org/uml2/2.0.0/UML">
               <details xmi:id="_IJVV_t7NEdmKapscEl8OLg" key="root"/>
             </eAnnotations>
-            <ownedAttribute xmi:id="_3C7B8A60016D4155CDBC0200" name="owner" isReadOnly="true">
+            <ownedAttribute xmi:id="_3C7B8A60016D4155CDBC0200" name="owner">
               <eAnnotations xmi:id="_IJVV-N7NEdmKapscEl8OLg" source="http://www.eclipse.org/uml2/2.0.0/UML">
                 <details xmi:id="_IJVV-d7NEdmKapscEl8OLg" key="list"/>
               </eAnnotations>

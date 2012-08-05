@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.48 2010/08/10 14:05:20 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.53 2010/10/15 09:42:52 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.48 $
+ * Revision:    $Revision: 1.53 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/10 14:05:20 $
+ * Date:        $Date: 2010/10/15 09:42:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -102,10 +102,10 @@ import org.openmdx.base.persistence.cci.ConfigurableProperty;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.openmdx.portal.servlet.ApplicationContext;
+import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.attribute.DateValue;
 
-public class Utils {
+public abstract class Utils {
 
     //-----------------------------------------------------------------------
     public static Model_1_0 getModel(
@@ -463,8 +463,8 @@ public class Utils {
 		catch(Exception e) {}
 		// Locale
 		Locale userLocale = Locale.getDefault();
-		if(userSettings.getProperty(ApplicationContext.PROPERTY_LOCALE_NAME) != null) {
-			String localeAsString = userSettings.getProperty(ApplicationContext.PROPERTY_LOCALE_NAME); 
+		if(userSettings.getProperty(UserSettings.LOCALE_NAME) != null) {
+			String localeAsString = userSettings.getProperty(UserSettings.LOCALE_NAME); 
 	        userLocale = new Locale(
 	        	localeAsString.substring(0, 2), 
 	        	localeAsString.substring(localeAsString.indexOf("_") + 1)
@@ -477,11 +477,11 @@ public class Utils {
         );
         DateValue.assert4DigitYear(dateTimeFormat);
         // TimeZone
-		if(userSettings.getProperty(ApplicationContext.PROPERTY_TIMEZONE_NAME) != null) {
+		if(userSettings.getProperty(UserSettings.TIMEZONE_NAME) != null) {
 			try {
 	    		dateTimeFormat.setTimeZone(
 	    			TimeZone.getTimeZone(
-	    				userSettings.getProperty(ApplicationContext.PROPERTY_TIMEZONE_NAME)
+	    				userSettings.getProperty(UserSettings.TIMEZONE_NAME)
 	    			)
 	            );
     		}
@@ -561,7 +561,7 @@ public class Utils {
         return newContext;
     }
 
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     // Members
 	//-------------------------------------------------------------------------
     private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();

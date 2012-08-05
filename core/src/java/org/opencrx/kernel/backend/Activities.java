@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.169 2010/06/25 14:26:57 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.189 2010/12/25 11:54:04 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.169 $
+ * Revision:    $Revision: 1.189 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/25 14:26:57 $
+ * Date:        $Date: 2010/12/25 11:54:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,6 +75,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -101,11 +102,11 @@ import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
 
 import org.omg.mof.spi.Names;
-import org.opencrx.application.imap.MimeMessageImpl;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
+import org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessActionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
@@ -164,7 +165,6 @@ import org.opencrx.kernel.generic.jmi1.PropertySet;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.utils.ActivitiesFilterHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
@@ -370,7 +370,6 @@ public class Activities extends AbstractImpl {
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
@@ -381,7 +380,7 @@ public class Activities extends AbstractImpl {
             return calendar;            
         }                        
         pm.currentTransaction().begin();                    
-        calendar = activityPkg.getCalendar().createCalendar();
+        calendar = pm.newInstance(Calendar.class);
         calendar.refInitialize(false, false);
         calendar.setName(calendarName);
         calendar.getOwningGroup().addAll(
@@ -393,7 +392,7 @@ public class Activities extends AbstractImpl {
             calendar
         );
         // Sunday
-        WeekDay weekDay = activityPkg.getWeekDay().createWeekDay();
+        WeekDay weekDay = pm.newInstance(WeekDay.class);
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)1);
         weekDay.setWorkingDay(false);
@@ -406,7 +405,8 @@ public class Activities extends AbstractImpl {
             weekDay
         );
         // Monday
-        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay = pm.newInstance(WeekDay.class);
+        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)2);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -420,7 +420,7 @@ public class Activities extends AbstractImpl {
             weekDay
         );
         // Tuesday
-        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay = pm.newInstance(WeekDay.class);
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)3);
         weekDay.setWorkingDay(true);
@@ -435,7 +435,7 @@ public class Activities extends AbstractImpl {
             weekDay
         );
         // Wednesday
-        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay = pm.newInstance(WeekDay.class);
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)4);
         weekDay.setWorkingDay(true);
@@ -450,7 +450,7 @@ public class Activities extends AbstractImpl {
             weekDay
         );
         // Thursday
-        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay = pm.newInstance(WeekDay.class);
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)5);
         weekDay.setWorkingDay(true);
@@ -465,7 +465,7 @@ public class Activities extends AbstractImpl {
             weekDay
         );
         // Friday
-        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay = pm.newInstance(WeekDay.class);
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)6);
         weekDay.setWorkingDay(true);
@@ -480,7 +480,7 @@ public class Activities extends AbstractImpl {
             weekDay
         );
         // Saturday
-        weekDay = activityPkg.getWeekDay().createWeekDay();
+        weekDay = pm.newInstance(WeekDay.class);
         weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)7);
         weekDay.setWorkingDay(false);
@@ -503,7 +503,6 @@ public class Activities extends AbstractImpl {
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
@@ -515,7 +514,7 @@ public class Activities extends AbstractImpl {
         }                
         // Create email process
         pm.currentTransaction().begin();                    
-        process = activityPkg.getActivityProcess().createActivityProcess();
+        process = pm.newInstance(ActivityProcess.class);
         process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_EMAILS);
         process.getOwningGroup().addAll(
@@ -527,7 +526,7 @@ public class Activities extends AbstractImpl {
             process
         );
         // State New
-        ActivityProcessState newState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState newState = pm.newInstance(ActivityProcessState.class);
         newState.refInitialize(false, false);
         newState.setName("New");
         newState.getOwningGroup().addAll(
@@ -539,7 +538,7 @@ public class Activities extends AbstractImpl {
             newState
         );
         // State Open
-        ActivityProcessState openState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState openState = pm.newInstance(ActivityProcessState.class);
         openState.refInitialize(false, false);
         openState.setName("Open");
         openState.getOwningGroup().addAll(
@@ -551,7 +550,7 @@ public class Activities extends AbstractImpl {
             openState
         );
         // State Closed
-        ActivityProcessState closedState = activityPkg.getActivityProcessState().createActivityProcessState();
+        ActivityProcessState closedState = pm.newInstance(ActivityProcessState.class);
         closedState.refInitialize(false, false);
         closedState.setName("Closed");
         closedState.getOwningGroup().addAll(
@@ -567,7 +566,7 @@ public class Activities extends AbstractImpl {
         pm.currentTransaction().begin();
         process.setStartState(newState);                    
         // Transition Assign: New->Open
-        ActivityProcessTransition processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        ActivityProcessTransition processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Assign");
         processTransition.setPrevState(newState);
@@ -583,7 +582,7 @@ public class Activities extends AbstractImpl {
             processTransition
         );
         // Create SetAssignedToAction
-        SetAssignedToAction setAssignedToAction = activityPkg.getSetAssignedToAction().createSetAssignedToAction();
+        SetAssignedToAction setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
         setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
@@ -596,7 +595,7 @@ public class Activities extends AbstractImpl {
             setAssignedToAction
         );
         // Create SetActualStartAction
-        SetActualStartAction setActualStartAction = activityPkg.getSetActualStartAction().createSetActualStartAction();
+        SetActualStartAction setActualStartAction = pm.newInstance(SetActualStartAction.class);
         setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
@@ -609,7 +608,7 @@ public class Activities extends AbstractImpl {
             setActualStartAction
         );
         // Transition Add Note: Open->Open
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Add Note");
         processTransition.setPrevState(openState);
@@ -625,7 +624,7 @@ public class Activities extends AbstractImpl {
             processTransition
         );
         // Transition Export: Open->Open
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Export as mail attachment");
         processTransition.setPrevState(openState);
@@ -641,7 +640,7 @@ public class Activities extends AbstractImpl {
             processTransition
         );
         // Create WorkflowAction for ExportMail
-        WfAction wfAction = activityPkg.getWfAction().createWfAction();
+        WfAction wfAction = pm.newInstance(WfAction.class);
         wfAction.refInitialize(false, false);
         wfAction.setName("Export Mail");
         wfAction.setName("Export Mail as attachment to current user");
@@ -659,7 +658,7 @@ public class Activities extends AbstractImpl {
             wfAction
         );
         // Transition Send: Open->Open
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Send as mail");
         processTransition.setPrevState(openState);
@@ -675,7 +674,7 @@ public class Activities extends AbstractImpl {
             processTransition
         );
         // Create WorkflowAction for SendMail
-        wfAction = activityPkg.getWfAction().createWfAction();
+        wfAction = pm.newInstance(WfAction.class);
         wfAction.refInitialize(false, false);
         wfAction.setName("Send Mail");
         wfAction.setName("Send as mail");
@@ -693,7 +692,7 @@ public class Activities extends AbstractImpl {
             wfAction
         );
         // Transition Close: Open->Closed
-        processTransition = activityPkg.getActivityProcessTransition().createActivityProcessTransition();
+        processTransition = pm.newInstance(ActivityProcessTransition.class);
         processTransition.refInitialize(false, false);
         processTransition.setName("Close");
         processTransition.setPrevState(openState);
@@ -709,7 +708,7 @@ public class Activities extends AbstractImpl {
             processTransition
         );
         // Create SetActualEndAction
-        SetActualEndAction setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        SetActualEndAction setActualEndAction = pm.newInstance(SetActualEndAction.class);
         setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
@@ -1000,7 +999,6 @@ public class Activities extends AbstractImpl {
         String segmentName
     ) {
         UUIDGenerator uuids = UUIDs.getGenerator();
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
@@ -1011,7 +1009,7 @@ public class Activities extends AbstractImpl {
             return activityType;            
         }                
         pm.currentTransaction().begin();
-        activityType = activityPkg.getActivityType().createActivityType();
+        activityType = pm.newInstance(ActivityType.class);
         activityType.refInitialize(false, false);
         activityType.setName(activityTypeName);
         activityType.setActivityClass(activityClass);
@@ -1118,9 +1116,8 @@ public class Activities extends AbstractImpl {
         );
         ActivityCreator activityCreator = null;
         if((activityCreator = this.findActivityCreator(creatorName, activitySegment)) == null) {
-            Activity1Package activityPkg = Utils.getActivityPackage(pm);
             pm.currentTransaction().begin();
-            activityCreator = activityPkg.getActivityCreator().createActivityCreator();
+            activityCreator = pm.newInstance(ActivityCreator.class);
             activityCreator.refInitialize(false, false);
             activityCreator.setName(creatorName);
             activityCreator.setPriority((short)0);
@@ -1328,9 +1325,7 @@ public class Activities extends AbstractImpl {
                 	null 
                 );                	
                 this.updateIcal(
-                    newActivity,
-                    false,
-                    true
+                    newActivity
                 );
                 return newActivity;
             }
@@ -1408,6 +1403,52 @@ public class Activities extends AbstractImpl {
 		}
 		activity.setScheduledStart(scheduledStart.getTime());
 		activity.setScheduledEnd(scheduledEnd.getTime());
+    }
+    
+    //-------------------------------------------------------------------------
+    public ActivityFollowUp linkToAndFollowUp(
+        Activity activity,
+        ActivityProcessTransition processTransition,
+    	Activity linkTo
+    ) throws ServiceException {
+    	if(linkTo == null) return null;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
+    	String followUpTitle = null;
+    	String followUpText = null;
+    	// Append activity number to linkTo.name if not already present
+    	if(linkTo.getName() != null && ((linkTo.getName().indexOf(" [#") < 0) || !linkTo.getName().endsWith("]"))) {
+    		linkTo.setName(linkTo.getName() + " [#" + activity.getActivityNumber() + "]");
+    	}
+    	if(linkTo instanceof EMail) {
+    		EMail email = (EMail)linkTo;
+    		// append activity number to linkTo.messageSubject if not already present
+    		if(email.getMessageSubject() != null && ((email.getMessageSubject().indexOf(" [#") < 0) || !email.getMessageSubject().endsWith("]"))) {
+    			email.setMessageSubject(email.getMessageSubject() + " [#" + activity.getActivityNumber() + "]");
+    		}
+    		followUpTitle = email.getMessageSubject();
+    		followUpText = email.getMessageBody();
+    	} else {
+    		followUpTitle = linkTo.getName();
+    		followUpText = linkTo.getDetailedDescription();
+    	}
+    	ActivityFollowUp followUp = this.doFollowUp(
+    		activity, 
+    		followUpTitle, 
+    		followUpText, 
+    		processTransition, 
+    		linkTo.getReportingContact()
+    	);
+    	followUp.setActivity(linkTo);
+    	ActivityLinkTo activityLink = pm.newInstance(ActivityLinkTo.class);
+    	activityLink.refInitialize(false, false);
+    	activityLink.setName("#" + linkTo.getActivityNumber() + ": " + activity.getName());
+    	activityLink.setActivityLinkType(ACTIVITY_LINK_TYPE_RELATES_TO);
+    	activityLink.setLinkTo(linkTo);
+    	activity.addActivityLinkTo(
+    		this.getUidAsString(),
+    		activityLink
+    	);
+    	return followUp;
     }
     
     //-------------------------------------------------------------------------
@@ -1866,7 +1907,7 @@ public class Activities extends AbstractImpl {
         // Default amount is endedAt - startedAt in hours/minutes
         if(quantity == null && endedAt != null && startedAt != null) {
         	workRecord.setQuantity(
-        		new BigDecimal(Math.abs(endedAt.getTime() - startedAt.getTime()) / 60000L).divide(new BigDecimal(60.0), RoundingMode.FLOOR)
+        		new BigDecimal(Math.abs(endedAt.getTime() - startedAt.getTime()) / 60000L).divide(new BigDecimal("60.0"), RoundingMode.FLOOR)
         	);
         	Uom uomHour = null;
         	try {
@@ -2005,15 +2046,26 @@ public class Activities extends AbstractImpl {
         );
         // Assertion externalLink().contains(ical uid)
         String uid = this.getICalUid(ical);
-        boolean externalLinkMatchesUid = false;
+        boolean icalLinkMatches = false;
+        boolean hasICalLink = false;
         for(String externalLink: activity.getExternalLink()) {
-        	if(externalLink.startsWith(ICalendar.ICAL_SCHEMA) && externalLink.endsWith(uid)) {
-        		externalLinkMatchesUid = true;
-        		break;
+        	if(externalLink.startsWith(ICalendar.ICAL_SCHEMA)) {
+        		hasICalLink = true;
+        		if(externalLink.endsWith(uid)) {
+	        		icalLinkMatches = true;
+	        		break;
+        		}
         	}
         }
-        if(!externalLinkMatchesUid) {
-        	// Should never happen. Log warning.
+        if(!hasICalLink) {
+        	activity.getExternalLink().add(
+        		ICalendar.ICAL_SCHEMA + uid
+        	);
+        }
+        else if(!icalLinkMatches) {
+        	// Should not happen. Log warning.
+        	// Activity must be fixed manually with updateICal() operation
+        	SysLog.warning("Activity's external link does not contain ical UID", Arrays.asList(activity.refGetPath().toString(), activity.getActivityNumber()));
         	ServiceException e = new ServiceException(
         		BasicException.Code.DEFAULT_DOMAIN,
         		BasicException.Code.ASSERTION_FAILURE,
@@ -2022,7 +2074,7 @@ public class Activities extends AbstractImpl {
         		new BasicException.Parameter("externalLink", activity.getExternalLink()),
         		new BasicException.Parameter("ical", ical)        		
         	);
-        	e.log();
+        	SysLog.detail(e.getMessage(), e.getCause());
         }
     }
         
@@ -2097,13 +2149,26 @@ public class Activities extends AbstractImpl {
                     // Replace owning groups. The owning groups of the activity is the
                     // the union of all owning groups of the assigned activity groups. 
                     // This way it is guaranteed that the activity can be viewed in all
-                    // assigned activity groups.
+                    // assigned activity groups. 
+                	// In case of private folders (name ends with suffix PRIVATE_FOLDER_SUFFIX) 
+                	// only add principal groups matching the activity groups' name. 
+                	// This way - by default - only the creator of the activity and the
+                	// owner of the activity group have access to the activity.
                     List<ActivityGroup> activityGroups = activityCreator.getActivityGroup();
                     Set<PrincipalGroup> owningGroups = new HashSet<PrincipalGroup>();
                     for(ActivityGroup activityGroup: activityGroups) {
                         List<PrincipalGroup> groups = activityGroup.getOwningGroup();
                         for(PrincipalGroup group: groups) {
-                            owningGroups.add(group);
+                            if(activityGroup.getName().endsWith(PRIVATE_GROUP_SUFFIX)) {
+                            	String activityGroupName = activityGroup.getName().substring(0, activityGroup.getName().indexOf("~"));
+                            	String principalGroupName = group.getName().substring(0, group.getName().indexOf("."));
+                            	if(activityGroupName.equals(principalGroupName)) {
+                            		owningGroups.add(group);
+                            	}
+                            }
+                            else {                         	
+                            	owningGroups.add(group);
+                            }
                         }
                     }
                     activity.getOwningGroup().clear();
@@ -2316,9 +2381,7 @@ public class Activities extends AbstractImpl {
 
     //-------------------------------------------------------------------------
     public void updateIcal(
-        Activity activity,
-        boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled        
+        Activity activity
     ) throws ServiceException {
         List<String> messages = new ArrayList<String>();
         List<String> errors = new ArrayList<String>();
@@ -2340,9 +2403,7 @@ public class Activities extends AbstractImpl {
             activity, 
             (short)0, 
             errors, 
-            report,
-            isEMailAddressLookupCaseInsensitive,
-            isEMailAddressLookupIgnoreDisabled            
+            report
         );
     }
 
@@ -2514,8 +2575,8 @@ public class Activities extends AbstractImpl {
         Activity activity
     ) throws ServiceException {
         Collection<EffortEstimate> estimates = activity.getEffortEstimate();
-        BigDecimal estimateEffortHours = new BigDecimal(0);
-        BigDecimal effortEstimateMinutes = new BigDecimal(0);
+        BigDecimal estimateEffortHours = BigDecimal.ZERO;
+        BigDecimal effortEstimateMinutes = BigDecimal.ZERO;
         for(EffortEstimate estimate: estimates) {
             if(
                 (estimate.isMain() != null) &&
@@ -2566,9 +2627,12 @@ public class Activities extends AbstractImpl {
         EMailAddress address,
         Message.RecipientType type
     ) {
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        pm.currentTransaction().begin();
-        EMailRecipient recipient = activityPkg.getEMailRecipient().createEMailRecipient();
+        boolean isTxLocal = !pm.currentTransaction().isActive();
+        if(isTxLocal) {
+        	pm.currentTransaction().begin();
+        }
+        EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
+        recipient.refInitialize(false, false);
         emailActivity.addEmailRecipient(
             false,
             UUIDs.getGenerator().next().toString(),
@@ -2588,7 +2652,9 @@ public class Activities extends AbstractImpl {
         recipient.getOwningGroup().addAll(
             emailActivity.getOwningGroup()
         );
-        pm.currentTransaction().commit();
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
     }
     
     //-----------------------------------------------------------------------
@@ -2655,9 +2721,7 @@ public class Activities extends AbstractImpl {
     public void mapAddressesToEMailRecipients(
         EMail emailActivity,
         String[] addresses,
-        Message.RecipientType type,
-        boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled        
+        Message.RecipientType type
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
     	String providerName = emailActivity.refGetPath().get(2);
@@ -2682,18 +2746,14 @@ public class Activities extends AbstractImpl {
                     pm,
                     providerName,
                     segmentName,
-                    address,
-                    isEMailAddressLookupCaseInsensitive,
-                    isEMailAddressLookupIgnoreDisabled
+                    address
                 );
             if(emailAddresses.isEmpty()) {
                 emailAddresses = Accounts.getInstance().lookupEmailAddress(
                     pm,
                     providerName,
                     segmentName,
-                    Addresses.UNASSIGNED_ADDRESS,
-                    isEMailAddressLookupCaseInsensitive,
-                    isEMailAddressLookupIgnoreDisabled
+                    Addresses.UNASSIGNED_ADDRESS
                 );
             }
             if(!emailAddresses.isEmpty()) {
@@ -2816,10 +2876,8 @@ public class Activities extends AbstractImpl {
         String[] from,
         String[] to,
         String[] cc,
-        String[] bcc,
-        boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled        
-    ) throws ServiceException, MessagingException {
+        String[] bcc
+    ) throws ServiceException {
         StringBuffer text = new StringBuffer();  
 
         // add 'FROM's to the note
@@ -2831,9 +2889,7 @@ public class Activities extends AbstractImpl {
 	                    pm,
 	                    providerName,
 	                    segmentName,
-	                    addresses[i],
-	                    isEMailAddressLookupCaseInsensitive,
-	                    isEMailAddressLookupIgnoreDisabled                    
+	                    addresses[i]
 	                );
 	            text.append(
 	            	"FROM: " + 
@@ -2853,9 +2909,7 @@ public class Activities extends AbstractImpl {
 	                    pm,
 	                    providerName,
 	                    segmentName,
-	                    addresses[i],
-	                    isEMailAddressLookupCaseInsensitive,
-	                    isEMailAddressLookupIgnoreDisabled                    
+	                    addresses[i]
 	                );
 	            text.append(
 	            	"TO: " + 
@@ -2875,9 +2929,7 @@ public class Activities extends AbstractImpl {
 	                    pm,
 	                    providerName,
 	                    segmentName,
-	                    addresses[i],
-	                    isEMailAddressLookupCaseInsensitive,
-	                    isEMailAddressLookupIgnoreDisabled                                        
+	                    addresses[i]
 	                );
 	            text.append(
 	            	"CC: " + 
@@ -2897,9 +2949,7 @@ public class Activities extends AbstractImpl {
 	                    pm,
 	                    providerName,
 	                    segmentName,
-	                    addresses[i],
-	                    isEMailAddressLookupCaseInsensitive,
-	                    isEMailAddressLookupIgnoreDisabled                    
+	                    addresses[i]
 	                );
 	            text.append(
 	            	"BCC: " + 
@@ -2927,8 +2977,12 @@ public class Activities extends AbstractImpl {
         String title,
         String content
     ) {
-        pm.currentTransaction().begin();
-        Note note = Utils.getGenericPackage(pm).getNote().createNote();
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
+    	if(isTxLocal) {
+    		pm.currentTransaction().begin();
+    	}
+        Note note = pm.newInstance(Note.class);
+        note.refInitialize(false, false);
         emailActivity.addNote(
             false,
             UUIDs.getGenerator().next().toString(),
@@ -2940,7 +2994,9 @@ public class Activities extends AbstractImpl {
         note.getOwningGroup().addAll(
             emailActivity.getOwningGroup()
         );
-        pm.currentTransaction().commit();
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
     }
     
     //-------------------------------------------------------------------------  
@@ -3082,17 +3138,15 @@ public class Activities extends AbstractImpl {
      * returned in addition.
      */
     public InputStream mapMessageContent(
-        org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
+        EMail email,
         Message message
     ) throws MessagingException {
-        String originalMessageMediaName = emailActivity.getActivityNumber().trim() + ".eml.zip";
+        String originalMessageMediaName = email.getActivityNumber().trim() + ".eml.zip";
         InputStream originalMessageStream = null;
         Multipart multipart = new MimeMultipart();
         MimeBodyPart messageBodyPart = new MimeBodyPart();
-        String text = emailActivity.getMessageBody();
-        text = text == null
-            ? ""
-            : text;
+        String text = email.getMessageBody();
+        text = text == null ? "" : text;
         if(text.startsWith("<!DOCTYPE html")) {
             String charset = null;
             if (!this.isAllAscii(text)) {
@@ -3110,7 +3164,7 @@ public class Activities extends AbstractImpl {
             messageBodyPart.setText(text);            
         }
         multipart.addBodyPart(messageBodyPart);    
-        Collection<org.opencrx.kernel.generic.jmi1.Media> medias = emailActivity.getMedia();
+        Collection<org.opencrx.kernel.generic.jmi1.Media> medias = email.getMedia();
         for(org.opencrx.kernel.generic.jmi1.Media media: medias) {
             if(media.getContentName() != null) {
                 try {
@@ -3127,8 +3181,7 @@ public class Activities extends AbstractImpl {
                     // Test whether media is zipped original mail. 
                     // If yes return as original message
                     if(originalMessageMediaName.equals(media.getContentName())) {
-                        ZipInputStream zippedMessageStream = 
-                            new ZipInputStream(mediaContent.toInputStream());
+                        ZipInputStream zippedMessageStream = new ZipInputStream(mediaContent.toInputStream());
                         zippedMessageStream.getNextEntry();
                         originalMessageStream = zippedMessageStream;
                     }
@@ -3192,17 +3245,17 @@ public class Activities extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public List<Address> mapMessageRecipients(
-        org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
+        org.opencrx.kernel.activity1.jmi1.EMail email,
         Message message            
     ) throws AddressException, MessagingException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
-        String gateway = emailActivity.getGateway() == null ?
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
+        String gateway = email.getGateway() == null ?
             null : 
-            emailActivity.getGateway().getEmailAddress();
+            email.getGateway().getEmailAddress();
         List<Address> recipients = new ArrayList<Address>();        
         AccountAddress sender = null;
         try {
-            sender = emailActivity.getSender();
+            sender = email.getSender();
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
@@ -3221,7 +3274,7 @@ public class Activities extends AbstractImpl {
             	}
             }
         }
-        Collection<AbstractEMailRecipient> emailRecipients = emailActivity.getEmailRecipient();
+        Collection<AbstractEMailRecipient> emailRecipients = email.getEmailRecipient();
         for(AbstractEMailRecipient recipient: emailRecipients) {
             RecipientType recipientType = null;
             if(recipient.getPartyType() == PARTY_TYPE_TO) {
@@ -3266,7 +3319,7 @@ public class Activities extends AbstractImpl {
 	                            }
 	                        }
 	                        catch(Exception e) {
-	                        	SysLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
+	                        	SysLog.warning("Invalid recipient", Arrays.asList(email, inetAddress));
 	                        }
 	                    }
                 	}
@@ -3309,7 +3362,7 @@ public class Activities extends AbstractImpl {
 	                                    }
 	                                }
 	                                catch(Exception e) {
-	                                	SysLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
+	                                	SysLog.warning("Invalid recipient", Arrays.asList(email, inetAddress));
 	                                }
 	                            }
 	                        }
@@ -3322,17 +3375,21 @@ public class Activities extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
-    public InputStream mapToMessage(
-        org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
+    /**
+     * Maps email to mime message. Either returns message or an input stream
+     * which contains a mime message.
+     */
+    public Object mapToMessage(
+        EMail email,
         Message message
     ) throws MessagingException {
         try {
-            InputStream originalMessageStream = this.mapMessageContent(
-                emailActivity, 
+            InputStream messageStream = this.mapMessageContent(
+                email, 
                 message
             );
-            if(originalMessageStream != null) {
-                return originalMessageStream;
+            if(messageStream != null) {
+                return messageStream;
             }
         }
         catch(Exception e) {
@@ -3340,94 +3397,29 @@ public class Activities extends AbstractImpl {
         }
         try {
         	this.mapMessageRecipients(
-                emailActivity, 
+                email, 
                 message
             );
         }
         catch(Exception e) {
             new ServiceException(e).log();
-        }        
-        if(emailActivity.getMessageSubject() != null) {
-            message.setSubject(emailActivity.getMessageSubject());
         }
-        SimpleDateFormat dateFormatter = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(java.text.DateFormat.SHORT, java.text.DateFormat.SHORT, new Locale("US"));
-        dateFormatter.applyPattern("EEE, dd MMM yyyy HH:mm:ss Z");
+        message.setSubject(
+        	email.getMessageSubject() != null ?
+        		email.getMessageSubject() :
+        			email.getName()
+        );
         message.setHeader(
             "Date", 
-            dateFormatter.format(
-                emailActivity.getSendDate() != null ? 
-                    emailActivity.getSendDate() : 
-                    emailActivity.getCreatedAt()
+            DATEFORMAT_MESSAGE_HEADER.format(
+                email.getSendDate() != null ? 
+                    email.getSendDate() : 
+                    	email.getCreatedAt()
             )
         );
-        return null;
+        return message;
     }
         
-    //-----------------------------------------------------------------------
-//    public Activity findActivity(
-//        PersistenceManager pm,
-//        ActivitiesFilterHelper activitiesHelper,
-//        String uid
-//    ) {
-//    	return this.findActivity(
-//    		pm, 
-//    		activitiesHelper, 
-//    		uid, 
-//    		null
-//    	);
-//    }
-    
-    //-----------------------------------------------------------------------
-    public Activity findActivity(
-        PersistenceManager pm,
-        ActivitiesFilterHelper activitiesHelper,
-        String icalUid,
-        String icalRecurrenceId 
-    ) {
-        Activity1Package activityPkg = Utils.getActivityPackage(pm);
-        ActivityQuery query = activityPkg.createActivityQuery();
-        query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + icalUid);
-        if(icalRecurrenceId == null) {
-        	query.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
-        }
-        else {
-            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId);       
-        }
-        List<Activity> activities = activitiesHelper.getActivitySegment().getActivity(query);
-        if(activities.isEmpty()) {
-            query = activityPkg.createActivityQuery();
-            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + icalUid.replace('.', '+'));
-            if(icalRecurrenceId == null) {
-            	query.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
-            }            
-            else {
-            	query.thereExistsExternalLink().equalTo(ICalendar.ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId);    
-            }
-            activities = activitiesHelper.getActivitySegment().getActivity(query);
-            if(activities.isEmpty()) {
-                return null;
-            }
-            else {
-                if(activities.size() > 1) {
-                	SysLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
-                    return null;
-                }
-                else {
-                    return activities.iterator().next();
-                }
-            }
-        }
-        else {
-            if(activities.size() > 1) {
-            	SysLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
-                return null;
-            }
-            else {
-                return activities.iterator().next();
-            }
-        }
-    }
-            
     //-----------------------------------------------------------------------
     public ActivityCreator findActivityCreator(
         Collection<ActivityCreator> activityCreators,
@@ -3493,9 +3485,9 @@ public class Activities extends AbstractImpl {
     }
     
     //-----------------------------------------------------------------------
-    public void addMimeMessageAsMedia(
+    public void addAttachments(
         MimeMessage mimeMessage,
-        EMail emailActivity
+        EMail email
     ) throws IOException, MessagingException, ServiceException {
         if(mimeMessage.getContent() instanceof MimeMultipart) {
             MimeMultipart multipart = (MimeMultipart)mimeMessage.getContent();
@@ -3503,76 +3495,58 @@ public class Activities extends AbstractImpl {
                 MimeBodyPart part = (MimeBodyPart)multipart.getBodyPart(i);
                 String[] contentType = this.parseContentType(part.getContentType());
                 if(contentType[1] == null) contentType[1] = part.getContentID();
-            	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
-            	pm.currentTransaction().begin();
+            	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
+            	boolean isTxLocal = !pm.currentTransaction().isActive();
+            	if(isTxLocal) {
+            		pm.currentTransaction().begin();
+            	}
                 Activities.getInstance().createOrUpdateMedia(
-                    emailActivity,
+                    email,
                     contentType[0],
                     contentType[1],
                     part.getInputStream()
                 );
-                pm.currentTransaction().commit();
+                if(isTxLocal) {
+                	pm.currentTransaction().commit();
+                }
             }
         }
     }
         
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.activity1.jmi1.EMail importMimeMessage(
-    	String providerName,
-    	String segmentName,
+    public void importMimeMessage(
+    	org.opencrx.kernel.activity1.jmi1.EMail email,
     	MimeMessage mimeMessage,
-    	ActivityCreator emailCreator,
-    	javax.mail.Address[] addressesFrom,
-    	javax.mail.Address[] addressesTo,
-    	javax.mail.Address[] addressesCc,
-    	javax.mail.Address[] addressesBcc,
-        boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled    	
+    	boolean isNew
     ) throws ServiceException, MessagingException, IOException, ParseException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailCreator);
-        MailDateFormat mailDateFormat = new MailDateFormat();    	
-        List<org.opencrx.kernel.activity1.jmi1.Activity> activities = this.lookupEmailActivity(
-            pm,
-            providerName,
-            segmentName,
-            mimeMessage.getMessageID()
-        );
-        EMail emailActivity = null;
-        if(activities.isEmpty()) {
-            pm.currentTransaction().begin();                            
-            Activity1Package activityPkg = Utils.getActivityPackage(pm);
-            NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
-                null, // description
-                null, // detailedDescription
-                null, // dueBy
-                ICalendar.ICAL_TYPE_NA, // icalType
-                mimeMessage.getSubject(),
-                this.getMessagePriority(mimeMessage),
-                null, // reportingContract
-                null, // scheduledEnd
-                null  // scheduledStart
-            );
-            NewActivityResult newActivityResult = emailCreator.newActivity(
-                newActivityParams
-            );
-            pm.currentTransaction().commit();                  
-            emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
+    	String providerName = email.refGetPath().get(2);
+    	String segmentName = email.refGetPath().get(4);
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
+        MailDateFormat mailDateFormat = new MailDateFormat();
+        javax.mail.Address[] addressesFrom = mimeMessage.getFrom();
+        javax.mail.Address[] addressesTo = mimeMessage.getRecipients(Message.RecipientType.TO);
+        javax.mail.Address[] addressesCc = mimeMessage.getRecipients(Message.RecipientType.CC);
+        javax.mail.Address[] addressesBcc = mimeMessage.getRecipients(Message.RecipientType.BCC);        
+    	if(isNew) {
             // Update activity step 1
-            pm.currentTransaction().begin();
-            String subject = mimeMessage.getSubject();                
-            emailActivity.setMessageSubject(
+    		if(isTxLocal) {
+    			pm.currentTransaction().begin();
+    		}
+            String subject = mimeMessage.getSubject();
+            email.setMessageSubject(
                 subject == null ? "" : subject
             );
-            emailActivity.getExternalLink().clear();
+            email.getExternalLink().clear();
             if(mimeMessage.getMessageID() != null) {
             	String messageId = mimeMessage.getMessageID(); 
-                emailActivity.getExternalLink().add(messageId);
+                email.getExternalLink().add(messageId);
                 // Update ICALs UID
-                emailActivity.getExternalLink().add(
+                email.getExternalLink().add(
                     ICalendar.ICAL_SCHEMA + messageId
                 );
-                if(emailActivity.getIcal() != null) {
-                	String ical = emailActivity.getIcal();
+                if(email.getIcal() != null) {
+                	String ical = email.getIcal();
                 	int pos1 = ical.indexOf("UID:");
                 	int pos2 = ical.indexOf("\n", pos1);
                 	if(pos2 > pos1) {
@@ -3580,14 +3554,16 @@ public class Activities extends AbstractImpl {
                 			ical.substring(0, pos1) + 
                 			"UID:" + messageId +
                 			ical.substring(pos2);
-                		emailActivity.setIcal(ical);
+                		email.setIcal(ical);
                 	}
                 }
             }
-            pm.currentTransaction().commit();
+            if(isTxLocal) {
+            	pm.currentTransaction().commit();
+            }
             // Update activity step 2
             // Append original email as media attachment
-            String mimeMessageName = emailActivity.getActivityNumber().trim() + ".eml";
+            String mimeMessageName = email.getActivityNumber().trim() + ".eml";
             QuotaByteArrayOutputStream mimeMessageBytes = new QuotaByteArrayOutputStream(Activities.class.getName());
             ZipOutputStream mimeMessageZipped = new ZipOutputStream(mimeMessageBytes);
             mimeMessageZipped.putNextEntry(
@@ -3595,31 +3571,39 @@ public class Activities extends AbstractImpl {
             );
             mimeMessage.writeTo(mimeMessageZipped);
             mimeMessageZipped.close();
-            pm.currentTransaction().begin();
+            if(isTxLocal) {
+            	pm.currentTransaction().begin();
+            }
             this.createOrUpdateMedia(
-                emailActivity, 
+                email, 
                 "application/zip", 
                 mimeMessageName + ".zip", 
                 mimeMessageBytes.toInputStream()
             );
-            pm.currentTransaction().commit();
+            if(isTxLocal) {
+            	pm.currentTransaction().commit();
+            }
             // Update activity step 3
-            pm.currentTransaction().begin();
+            if(isTxLocal) {
+            	pm.currentTransaction().begin();
+            }
             String body = this.getMessageBody(mimeMessage);
-            emailActivity.setMessageBody(
+            email.setMessageBody(
                 body == null ? "" : body
             );
             String[] date = mimeMessage.getHeader("Date");
             if(date.length > 0) {
-                emailActivity.setSendDate(
+                email.setSendDate(
                     mailDateFormat.parse(date[0])
                 );
             }
-            pm.currentTransaction().commit();
+            if(isTxLocal) {
+            	pm.currentTransaction().commit();
+            }
             // Add originator and recipients to a note
             this.addNote(
                 pm,
-                emailActivity,
+                email,
                 "Recipients",
                 this.getRecipientsAsNoteText(
                     pm,
@@ -3628,28 +3612,66 @@ public class Activities extends AbstractImpl {
                     this.getInternetAddresses(addressesFrom),
                     this.getInternetAddresses(addressesTo),
                     this.getInternetAddresses(addressesCc),
-                    this.getInternetAddresses(addressesBcc),
-                    isEMailAddressLookupCaseInsensitive,
-                    isEMailAddressLookupIgnoreDisabled
+                    this.getInternetAddresses(addressesBcc)
                 )
             );                  
             // Add headers as Note
             Activities.getInstance().addNote(
                 pm,
-                emailActivity,
+                email,
                 "Message-Header",
                 MimeMessageImpl.getHeadersAsRFC822(
                      mimeMessage, 
                      null
                 )
             );
-            this.addMimeMessageAsMedia(
+            this.addAttachments(
                 mimeMessage, 
-                emailActivity
+                email
             );
-        }
-        else {
-            emailActivity = (EMail)activities.iterator().next();
+    	}
+        // linkToAndFollowUp()
+    	String subject = email.getMessageSubject();
+        if(subject.indexOf("#") >= 0) {
+        	StringTokenizer tokenizer = new StringTokenizer(subject, " .,()[]", false);
+        	while(tokenizer.hasMoreTokens()) {
+        		String split = tokenizer.nextToken();
+        		if(split.startsWith("#")) {
+        			String activityNumber = split.substring(1);
+        			// Try to match activity if we have a potential activity number
+        			if(activityNumber != null && activityNumber.length() >= 6) {
+        				org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
+        				ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+        				activityQuery.thereExistsActivityNumber().like(".*" + activityNumber + ".*");
+        				List<Activity> activities = activitySegment.getActivity(activityQuery);
+        				for(Activity activity: activities) {
+        					ActivityLinkToQuery linkToQuery = (ActivityLinkToQuery)pm.newQuery(ActivityLinkTo.class);
+        					linkToQuery.thereExistsLinkTo().equalTo(email);
+        					List<ActivityLinkTo> links = activity.getActivityLinkTo(linkToQuery);
+        					// Only add link if not already there
+        					if(links.isEmpty()) {
+	        					try {
+	        						ActivityProcess activityProcess = activity.getActivityType().getControlledBy();
+	        						ActivityProcessTransitionQuery processTransitionQuery = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
+	        						processTransitionQuery.thereExistsPrevState().equalTo(activity.getProcessState());
+	        						processTransitionQuery.orderByNewPercentComplete().ascending();
+	        						List<ActivityProcessTransition> processTransitions = activityProcess.getTransition(processTransitionQuery);
+	        						if(!processTransitions.isEmpty()) {
+		            					this.linkToAndFollowUp(
+		            						activity, 
+		            						processTransitions.iterator().next(), 
+		            						email
+		            					);
+	        						}
+	        					} catch(Exception e) {
+	        						// Log and ignore
+	        						new ServiceException(e).log();
+	        					}
+        					}
+        				}
+        			}
+        		}
+        	}
         }
         // Add FROM as sender
         List<org.opencrx.kernel.account1.jmi1.EMailAddress> addresses = 
@@ -3657,43 +3679,231 @@ public class Activities extends AbstractImpl {
                 pm,
                 providerName,
                 segmentName,
-                this.getInternetAddresses(addressesFrom)[0],
-                isEMailAddressLookupCaseInsensitive,
-                isEMailAddressLookupIgnoreDisabled                                
+                this.getInternetAddresses(addressesFrom)[0]
             );
         if(addresses.isEmpty()) {
             addresses = Accounts.getInstance().lookupEmailAddress(
                 pm,
                 providerName,
                 segmentName,
-                Addresses.UNASSIGNED_ADDRESS,
-                isEMailAddressLookupCaseInsensitive,
-                isEMailAddressLookupIgnoreDisabled                                
+                Addresses.UNASSIGNED_ADDRESS
             );                            
         }
         EMailAddress from = null;
         if(!addresses.isEmpty()) {
             from = addresses.iterator().next();
-            pm.currentTransaction().begin();
-            pm.refresh(emailActivity);
-            emailActivity.setSender(from);
-            pm.currentTransaction().commit();
+            if(isTxLocal) {
+            	pm.currentTransaction().begin();
+                pm.refresh(email);
+            }
+            email.setSender(from);
+            if(isTxLocal) {
+            	pm.currentTransaction().commit();
+            }
         } 
         Activities.getInstance().mapAddressesToEMailRecipients(
-            emailActivity,
+            email,
             this.getInternetAddresses(addressesTo),
-            Message.RecipientType.TO,
-            isEMailAddressLookupCaseInsensitive,
-            isEMailAddressLookupIgnoreDisabled                            
+            Message.RecipientType.TO
         );
         Activities.getInstance().mapAddressesToEMailRecipients(
-            emailActivity,
+            email,
             this.getInternetAddresses(addressesCc),
-            Message.RecipientType.CC,
-            isEMailAddressLookupCaseInsensitive,
-            isEMailAddressLookupIgnoreDisabled                            
-        );
-        return emailActivity;
+            Message.RecipientType.CC
+        );    	
+    }
+    
+    //-------------------------------------------------------------------------
+    public List<EMail> importMimeMessage(
+    	PersistenceManager pm,
+    	String providerName,
+    	String segmentName,
+    	MimeMessage mimeMessage,
+    	ActivityCreator emailCreator
+    ) throws ServiceException, MessagingException, IOException, ParseException {
+    	if(emailCreator != null) {
+    		emailCreator = (ActivityCreator)pm.getObjectById(emailCreator.refGetPath());
+    	}
+    	List<MimeMessage> messages = new ArrayList<MimeMessage>();
+    	// mimeMessage is a wrapper message which contains messages to be 
+    	// imported. The wrapper message is mapped to an activity. Create or lookup. 
+    	String activityNumber = null;
+    	if(mimeMessage.getSubject().startsWith("> ")) {
+    		String subject = mimeMessage.getSubject().substring(2);
+    		String specifier = subject;
+    		if(subject.indexOf("  ") > 0) {
+    			int pos = subject.indexOf("  ");
+    			specifier = subject.substring(0, pos);
+    			subject = subject.substring(pos + 2);
+    		} else {
+    			subject = null;
+    		}
+    		org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(pm, providerName, segmentName);
+    		// Subject line is of the form
+    		// > @<email creator name> [#<activity creator name or activity#>]  <subject>
+    		// The activity creator name / activity# is optional. If specified an activity is created
+    		// and the imported E-Mails are linked to this activity
+    		// Derive email creator from subject line
+    		if(emailCreator == null) {
+    			int pos = specifier.indexOf("@");
+    			if(pos >= 0) {    				
+    				String creatorName = specifier.substring(pos + 1);
+    				pos = creatorName.indexOf("  #");
+    				if(pos > 0) {
+    					creatorName = creatorName.substring(0, pos);
+    				}
+    				creatorName = creatorName.trim();    				
+    				emailCreator = this.findActivityCreator(creatorName, activitySegment);
+    			} else {
+    				SysLog.warning("E-Mail creator not specified", specifier);
+    			}
+    		}
+    		// Default Email creator
+    		if(emailCreator == null) {
+    			SysLog.warning("E-Mail creator not found. Using default creator", Activities.ACTIVITY_CREATOR_NAME_EMAILS);
+    			emailCreator = this.findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_EMAILS, activitySegment);
+    		}
+    		Activity activity = null;
+    		// Derive activity / activity creator from subject line
+    		if(specifier.indexOf("#") >= 0) {
+    			int pos = specifier.indexOf("#");
+    			String activityQualifier = specifier.substring(pos + 1);
+    			pos = activityQualifier.indexOf(" @");
+    			if(pos > 0) {
+    				activityQualifier = activityQualifier.substring(0, pos);
+    			}
+    			activityQualifier = activityQualifier.trim();
+    			// Try to find activity where the activity number matches the activity qualifier
+    			if(activityQualifier.length() >= 6) {
+	    			ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+	    			activityQuery.thereExistsActivityNumber().like(".*" + activityQualifier + ".*");
+	    			List<Activity> activities = activitySegment.getActivity(activityQuery);
+	    			if(!activities.isEmpty()) {
+	    				activity = activities.iterator().next();
+	    			}
+    			}
+    			// Try to find activity creator based on the activity qualifier
+    			if(activity == null) {
+    				ActivityCreator creator = this.findActivityCreator(activityQualifier, activitySegment);
+    				if(creator == null) {
+    					SysLog.warning("Activity creator not found. No activity will be created", activityQualifier);
+    				} 
+    				else {
+    					if(subject == null || subject.length() <= 5) {
+        					SysLog.warning("Subject line must have at least five characters", subject);    						
+    					} 
+    					else {
+				            pm.currentTransaction().begin();                            
+				            Activity1Package activityPkg = Utils.getActivityPackage(pm);
+				            NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
+				                null, // description
+				                this.getMessageBody(mimeMessage), // detailedDescription
+				                null, // dueBy
+				                ICalendar.ICAL_TYPE_NA, // icalType
+				                subject,
+				                this.getMessagePriority(mimeMessage),
+				                null, // reportingContract
+				                null, // scheduledEnd
+				                null  // scheduledStart
+				            );
+				            NewActivityResult newActivityResult = creator.newActivity(
+				                newActivityParams
+				            );
+				            pm.currentTransaction().commit();                  
+				            activity = (Activity)pm.getObjectById(newActivityResult.getActivity().refGetPath());
+    					}
+					}
+    			}    			
+    		}
+    		else {
+    			SysLog.warning("Activity creator not specified. No activity will be created", specifier);
+    		}
+    		if(activity != null) {
+    			activityNumber = activity.getActivityNumber();
+    		}
+    		// Get attachments as mime messages
+            if(mimeMessage.getContent() instanceof MimeMultipart) {
+                MimeMultipart multipart = (MimeMultipart)mimeMessage.getContent();
+                for(int i = 1; i < multipart.getCount(); i++) {
+                	// Ignore attachments which are not a mime message
+                    try {
+                        MimeBodyPart part = (MimeBodyPart)multipart.getBodyPart(i);
+	                	MimeMessage message = new MimeMessageImpl(part.getInputStream());
+	                	messages.add(message);
+                    } catch(Exception e) {}
+                }
+            }    	
+    	}
+    	else {
+    		messages.add(mimeMessage);
+    	}
+    	List<EMail> emails = new ArrayList<EMail>();
+    	for(MimeMessage message: messages) {
+	        List<Activity> activities = this.lookupEmailActivity(
+	            pm,
+	            providerName,
+	            segmentName,
+	            message.getMessageID()
+	        );
+	        EMail email = null;
+	        String activityRefTag = activityNumber == null ? null : " [#" + activityNumber + "]";
+	        // Create new E-Mail
+	        if(activities.isEmpty()) {
+	    		if(activityRefTag != null) {
+	    			message.setSubject(
+	    				message.getSubject() + activityRefTag
+	    			);
+	    		}
+	            pm.currentTransaction().begin();                            
+	            Activity1Package activityPkg = Utils.getActivityPackage(pm);
+	            NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
+	                null, // description
+	                null, // detailedDescription
+	                null, // dueBy
+	                ICalendar.ICAL_TYPE_NA, // icalType
+	                message.getSubject(),
+	                this.getMessagePriority(message),
+	                null, // reportingContract
+	                null, // scheduledEnd
+	                null  // scheduledStart
+	            );
+	            NewActivityResult newActivityResult = emailCreator.newActivity(
+	                newActivityParams
+	            );
+	            pm.currentTransaction().commit();                  
+	            email = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
+		        pm.currentTransaction().begin();
+		        this.importMimeMessage(
+		        	email, 
+		        	message, 
+		        	true // isNew 
+		        );
+		        pm.currentTransaction().commit();
+	        }
+	        // Update existing E-Mail
+	        else {
+	            email = (EMail)activities.iterator().next();
+		        pm.currentTransaction().begin();
+	            if(activityRefTag != null && email.getName() != null && email.getName().indexOf(activityRefTag) < 0) {
+            		email.setName(email.getName() + activityRefTag);
+            		email.setMessageSubject(email.getMessageSubject() + activityRefTag);
+	            }
+		        pm.currentTransaction().commit();
+		        pm.currentTransaction().begin();
+		        this.importMimeMessage(
+		        	email, 
+		        	message, 
+		        	false // isNew 
+		        );
+	            if(activityRefTag != null && email.getName() != null && email.getName().indexOf(activityRefTag) < 0) {
+            		email.setName(email.getName() + activityRefTag);
+            		email.setMessageSubject(email.getMessageSubject() + activityRefTag);
+	            }
+		        pm.currentTransaction().commit();
+	        }
+	        emails.add(email);
+    	}
+	    return emails;
     }
 
     //-------------------------------------------------------------------------
@@ -3714,9 +3924,7 @@ public class Activities extends AbstractImpl {
 					pm, 
 					providerName,
 					segmentName,
-					sender, 
-					false, // caseSensitive 
-					false // ignoreDisabled
+					sender 
 				);        	
 			if(!emailAddresses.isEmpty()) {
 				email.setSender(emailAddresses.iterator().next());
@@ -3729,9 +3937,7 @@ public class Activities extends AbstractImpl {
 					pm, 
 					providerName,
 					segmentName,
-					recipientAddress, 
-					false, // caseSensitive 
-					false // ignoreDisabled
+					recipientAddress 
 				);        	
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
@@ -3751,9 +3957,7 @@ public class Activities extends AbstractImpl {
 					pm, 
 					providerName,
 					segmentName,
-					recipientAddress, 
-					false, // caseSensitive 
-					false // ignoreDisabled
+					recipientAddress 
 				);        	
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
@@ -3773,9 +3977,7 @@ public class Activities extends AbstractImpl {
 					pm, 
 					providerName,
 					segmentName,
-					recipientAddress, 
-					false, // caseSensitive 
-					false // ignoreDisabled
+					recipientAddress 
 				);        	
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
@@ -3846,6 +4048,29 @@ public class Activities extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    public enum ActivityState {
+    	
+    	NA(0),
+    	OPEN(10),
+    	CLOSED(20),
+    	CANCELLED(30);
+    	
+    	private final int value;
+    	    	
+    	private ActivityState(
+    		int value
+    	) {
+    		this.value = value;
+    	}
+    	
+    	public int getValue(
+    	) {
+    		return this.value;
+    	}
+    	
+    }
+    
+    //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     private static final String[] ACTIVITY_TYPES = 
@@ -3880,6 +4105,7 @@ public class Activities extends AbstractImpl {
     public final static short PARTY_TYPE_BCC = 240;
     
     // LINK_TYPE
+    public static final short ACTIVITY_LINK_TYPE_RELATES_TO = 6;
     public static final short ACTIVITY_LINK_TYPE_IS_DERIVED_FROM = 97;
     
     // WORKRECORD_TYPE
@@ -3941,7 +4167,18 @@ public class Activities extends AbstractImpl {
     public static final String ACTIVITY_TRACKER_NAME_MEETING_ROOMS = "Meeting Rooms";
 
     public static final String UNSPECIFIED_ADDRESS = "NO_ADDRESS_SPECIFIED";
+
+	public static final String PRIVATE_GROUP_SUFFIX = "~Private";
     
+	private static final SimpleDateFormat DATEFORMAT_MESSAGE_HEADER = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(
+		java.text.DateFormat.SHORT, 
+		java.text.DateFormat.SHORT, 
+		new Locale("US")
+	);
+	static {
+		DATEFORMAT_MESSAGE_HEADER.applyPattern("d-MMM-yyyy HH:mm:ss Z");
+	}
+	
 }
 
 //--- End of File -----------------------------------------------------------

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ClientHandler.java,v 1.7 2010/07/15 13:50:14 wfro Exp $
+ * Name:        $Id: ClientHandler.java,v 1.8 2010/09/08 23:21:22 wfro Exp $
  * Description: AirSync Client ClientHandler
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/15 13:50:14 $
+ * Date:        $Date: 2010/09/08 23:21:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,17 @@ public interface ClientHandler {
 
 	public interface SyncTarget {
     
-    	public org.w3c.dom.Document perform(
+		/**
+		 * Invokes the target and performs the cmd.
+		 * 
+		 * @param cmd
+		 * @param policyKey
+		 * @param userAgent
+		 * @param requestDoc
+		 * @return org.w3c.dom.Document or AttachmentDataT
+		 * @throws ServiceException
+		 */
+    	public Object perform(
     		String cmd,
     		String policyKey,
     		String userAgent,

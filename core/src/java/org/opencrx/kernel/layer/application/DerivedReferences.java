@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DerivedReferences.java,v 1.72 2010/06/01 23:49:28 wfro Exp $
+ * Name:        $Id: DerivedReferences.java,v 1.75 2010/11/03 15:47:19 wfro Exp $
  * Description: DerivedReferences
- * Revision:    $Revision: 1.72 $
+ * Revision:    $Revision: 1.75 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/01 23:49:28 $
+ * Date:        $Date: 2010/11/03 15:47:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,9 +79,11 @@ import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
@@ -139,9 +141,30 @@ public class DerivedReferences {
 	        if(
 	            request.path().isLike(GLOBAL_FILTER_INCLUDES_ACTIVITY)
 	        ) {
+	        	MappedRecord globalFilter = this.requestHelper.retrieveObject(request.path().getPrefix(7));
+	        	Object_2Facade globalFilterFacade = ResourceHelper.getObjectFacade(globalFilter);	        	
+	        	Path reference = request.path().getPrefix(5).getChild("activity");
+	        	if(globalFilterFacade.attributeValue("activitiesSource") != null) {
+	        		Path activitiesSourceIdentity = (Path)globalFilterFacade.attributeValue("activitiesSource");
+	        		MappedRecord activitiesSource = this.requestHelper.retrieveObject(activitiesSourceIdentity);
+	        		Object_2Facade activitiesSourceFacade = ResourceHelper.getObjectFacade(activitiesSource);
+	        		Model_1_0 model = this.requestHelper.getModel();
+		        	if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:ActivityGroup")) {
+		        		reference = activitiesSourceIdentity.getChild("filteredActivity");		        		
+		        	} 
+		        	else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:Segment")) {
+		        		reference = activitiesSourceIdentity.getChild("activity");		        		
+		        	} 
+		        	else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:home1:UserHome")) {
+		        		reference = activitiesSourceIdentity.getChild("assignedActivity");		        		
+		        	} 
+		        	else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:account1:Account")) {
+		        		reference = activitiesSourceIdentity.getChild("assignedActivity");
+		        	}
+	        	}
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
-	                request.path().getPrefix(5).getChild("activity"),
+	                reference,
 	                DerivedReferences.getActivityFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
 	                    this.requestHelper.getDelegatingInteraction()
@@ -284,9 +307,10 @@ public class DerivedReferences {
 	            );
 	            return true;
 	        }
-	        // PriceLevelHasFilteredProduct
+	        // FilterIncludesProduct
 	        else if(
-	            request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_FILTERED_PRODUCT)
+	            request.path().isLike(PRODUCT_PRICE_LEVEL_INCLUDES_FILTERED_PRODUCT) ||
+	            request.path().isLike(SALES_VOLUME_BUDGET_POSITION_INCLUDES_FILTERED_PRODUCT)
 	        ) {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
@@ -300,7 +324,7 @@ public class DerivedReferences {
 	            );      
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
-	                new Path("xri:@openmdx:org.opencrx.kernel.product1/provider").getDescendant(
+	                new Path("xri://@openmdx*org.opencrx.kernel.product1/provider").getDescendant(
 	                   new String[]{request.path().get(2), "segment", request.path().get(4), "product"}
 	                ),
 	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
@@ -748,13 +772,7 @@ public class DerivedReferences {
     public static FilterProperty[] mapObjectFinderToFilter(
     	MappedRecord objectFinder
     ) throws ServiceException {
-    	Object_2Facade objectFinderFacade;
-        try {
-	        objectFinderFacade = Object_2Facade.newInstance(objectFinder);
-        }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }
+    	Object_2Facade objectFinderFacade = ResourceHelper.getObjectFacade(objectFinder);
         List<FilterProperty> filter = new ArrayList<FilterProperty>();
         String allWords = (String)objectFinderFacade.attributeValue("allWords");
         if((allWords != null) && (allWords.length() > 0)) {
@@ -829,13 +847,7 @@ public class DerivedReferences {
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        boolean hasQueryFilterClause = false;        
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade;
-	            try {
-		            filterPropertyFacade = Object_2Facade.newInstance(filterProperty);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
+	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();    
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1060,13 +1072,7 @@ public class DerivedReferences {
 	        MappedRecord[] filterProperties = findReply.getObjects();
 	        List filter = new ArrayList();
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade;
-	            try {
-		            filterPropertyFacade = Object_2Facade.newInstance(filterProperty);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }        	
+	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();    
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1296,15 +1302,8 @@ public class DerivedReferences {
 	    	);
 	        MappedRecord[] filterProperties = findReply.getObjects();
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        boolean hasQueryFilterClause = false;
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade;
-	            try {
-		            filterPropertyFacade = Object_2Facade.newInstance(filterProperty);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }        	        	
+	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1404,7 +1403,6 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                    hasQueryFilterClause = true;
 	                }
 	                // Attribute filter
 	                else {
@@ -1526,6 +1524,26 @@ public class DerivedReferences {
 	                            )
 	                        );
 	                    }
+	                    else if("org:opencrx:kernel:activity1:ReportedByContactFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "reportingContact",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("contact").toArray()
+	                            )
+	                        );
+	                    }
+	                    else if("org:opencrx:kernel:activity1:ReportedByAccountFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "reportingAccount",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("account").toArray()
+	                            )
+	                        );
+	                    }
 	                    else if("org:opencrx:kernel:activity1:ActivityNumberFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1579,15 +1597,8 @@ public class DerivedReferences {
 	    	);
 	        MappedRecord[] filterProperties = findReply.getObjects();    	
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        boolean hasQueryFilterClause = false;
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade;
-	            try {
-		            filterPropertyFacade = Object_2Facade.newInstance(filterProperty);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }        	        	        	
+	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1687,7 +1698,6 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                    hasQueryFilterClause = true;
 	                }
 	                // Attribute filter
 	                else {
@@ -1795,15 +1805,8 @@ public class DerivedReferences {
 	    	);
 	        MappedRecord[] filterProperties = findReply.getObjects();    	
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        boolean hasQueryFilterClause = false;
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade;
-	            try {
-		            filterPropertyFacade = Object_2Facade.newInstance(filterProperty);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }        	        	        	        	
+	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();    
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1903,7 +1906,6 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                    hasQueryFilterClause = true;
 	                }
 	                // Attribute filter
 	                else {
@@ -1989,7 +1991,7 @@ public class DerivedReferences {
     private static final Path GLOBAL_FILTER_INCLUDES_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/filteredProduct");
     private static final Path ACTIVITY_GROUP_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
     private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredAccount");
-    private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredProduct");
+    private static final Path PRODUCT_PRICE_LEVEL_INCLUDES_FILTERED_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredProduct");
     private static final Path PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/priceListEntry");
     private static final Path CONTRACT_POSITION_HAS_MODIFICATION = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/position/:*/positionModification");
     private static final Path REMOVED_CONTRACT_POSITION_HAS_MODIFICATION = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/:*/:*/removedPosition/:*/positionModification");
@@ -2000,6 +2002,7 @@ public class DerivedReferences {
     private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDocument");
     private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryBuilding");
     private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDepot");
+    private static final Path SALES_VOLUME_BUDGET_POSITION_INCLUDES_FILTERED_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/position/:*/filteredProduct");
     
     private final RequestHelper requestHelper;
 

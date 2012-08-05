@@ -17,10 +17,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all contract filters</_item>
+												<_item>Saved Searches - Contracts</_item>
 											</toolTip>
 											<label>
-												<_item>Contract Filters</_item>
+												<_item>Saved Searches - Contracts</_item>
 											</label>
 											<order>
 												<_item>20</_item>
@@ -38,10 +38,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Contract Filter</_item>
+												<_item>Saved Search - Contracts</_item>
 											</toolTip>
 											<label>
-												<_item>Contract Filter</_item>
+												<_item>Saved Search - Contracts</_item>
 											</label>
 											<iconKey>ContractFilter</iconKey>
 										</_object>
@@ -93,10 +93,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria</_item>
 											</toolTip>
 											<label>
-												<_item>Filter Properties</_item>
+												<_item>Search Criteria</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -113,10 +113,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered contracts</_item>
+												<_item>Contracts (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Contracts</_item>
+												<_item>Contracts (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -181,10 +181,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Contract Priority Filter Property</_item>
+												<_item>Search Criteria - Contract Priority</_item>
 											</toolTip>
 											<label>
-												<_item>Contract Priority Filter Property</_item>
+												<_item>Search Criteria - Contract Priority</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -223,10 +223,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Contract State Filter Property</_item>
+												<_item>Search Criteria - Contract State</_item>
 											</toolTip>
 											<label>
-												<_item>Contract State Filter Property</_item>
+												<_item>Search Criteria - Contract State</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -265,10 +265,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Contract Type Filter Property</_item>
+												<_item>Search Criteria - Contract Type</_item>
 											</toolTip>
 											<label>
-												<_item>Contract Type Filter Property</_item>
+												<_item>Search Criteria - Contract Type</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -307,10 +307,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Total Amount Filter Property</_item>
+												<_item>Search Criteria - Total Amount</_item>
 											</toolTip>
 											<label>
-												<_item>Total Amount Filter Property</_item>
+												<_item>Search Criteria - Total Amount</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -349,10 +349,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Customer Filter Property</_item>
+												<_item>Search Criteria - Customer</_item>
 											</toolTip>
 											<label>
-												<_item>Customer Filter Property</_item>
+												<_item>Search Criteria - Customer</_item>
 											</label>
 											<iconKey>CustomerFilterProperty</iconKey>
 											<order>
@@ -391,10 +391,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Sales Rep Filter Property</_item>
+												<_item>Search Criteria - Sales Rep</_item>
 											</toolTip>
 											<label>
-												<_item>Sales Rep State Filter Property</_item>
+												<_item>Search Criteria - Sales Rep</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -433,10 +433,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Supplier Filter Property</_item>
+												<_item>Search Criteria - Supplier</_item>
 											</toolTip>
 											<label>
-												<_item>Supplier State Filter Property</_item>
+												<_item>Search Criteria - Supplier</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -475,10 +475,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</toolTip>
 											<label>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -517,10 +517,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</label>
 											<order>
 												<_item>0</_item>

@@ -16,25 +16,23 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.PersistenceManagerFactory;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.UIDFolder;
 import javax.mail.internet.MimeMessage;
+import javax.mail.search.SearchTerm;
 
+import org.opencrx.application.adapter.AbstractSession;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
-import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
+import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
-import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
-import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
-import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.backend.Activities;
-import org.opencrx.kernel.base.cci2.AuditEntryQuery;
-import org.opencrx.kernel.base.jmi1.AuditEntry;
-import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
-import org.opencrx.kernel.utils.ActivitiesFilterHelper;
-import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.backend.MimeMessageImpl;
+import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.format.DateTimeFormat;
@@ -44,28 +42,108 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     //-----------------------------------------------------------------------
     public IMAPFolderImpl(
         String name,
+        String folderId,
         String username,
-        ActivitiesFilterHelper activitiesHelper
+        PersistenceManagerFactory pmf
     ) {
         super(null);
         this.name = name;
         this.folderDir = new File(
         	IMAPFolderImpl.getMailDir(username),
-            name.replace(":", "~")
+            name.toUpperCase().replace(":", "~")
         );
-        if(System.getProperty(EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE_PROPERTY_NAME) != null) {
-        	this.isEMailAddressLookupCaseInsensitive = Boolean.valueOf(
-        		System.getProperty(EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE_PROPERTY_NAME)
-        	);
-        }
-        if(System.getProperty(EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME) != null) {
-        	this.isEMailAddressLookupIgnoreDisabled = Boolean.valueOf(
-        		System.getProperty(EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME)
-        	);
-        }
         this.folderDir.mkdirs();
-        this.activitiesHelper = activitiesHelper;        
+        this.username = username;
+        this.pmf = pmf;
+        this.folderId = folderId;
     }
+
+    //-------------------------------------------------------------------------
+    static class MimeFileDescr {
+    
+    	public MimeFileDescr(
+    		int messageNumber,
+    		long uid,
+    		File file
+    	) {
+    		this.messageNumber = messageNumber;
+    		this.uid = uid;
+    		this.file = file;
+    	}
+    	
+    	public int getMessageNumber(
+    	) {
+    		return this.messageNumber;
+    	}
+    	
+    	public long getUID(
+    	) {
+    		return this.uid;
+    	}
+    	
+    	public File getFile(
+    	) {
+    		return this.file;
+    	}
+    	
+    	private final int messageNumber;
+    	private final long uid;
+    	private final File file;
+    }
+    
+    //-----------------------------------------------------------------------
+	public Object[] loadMetaInf(
+	) {
+        File metainfFile = new File(this.folderDir, METAINF_FILE_NAME);
+        Object[] metainf = null;
+        if(metainfFile.exists()) {
+        	BufferedReader reader = null;
+        	try {
+                reader = new BufferedReader(
+                    new InputStreamReader(
+                        new FileInputStream(metainfFile)
+                    )
+                );
+                Date createdAt = DateTimeFormat.BASIC_UTC_FORMAT.parse(reader.readLine());
+                Date lastSynchronizedAt = DateTimeFormat.BASIC_UTC_FORMAT.parse(reader.readLine());
+                Long nextUID = Long.valueOf(reader.readLine());
+                metainf = new Object[]{createdAt, lastSynchronizedAt, nextUID}; 
+        	} 
+        	catch(Exception e) {}
+        	finally {
+        		if(reader != null) {
+        			try {
+        				reader.close();
+        			} catch(Exception e) {}
+        		}
+        	}            	
+        }
+        return metainf;
+	}
+
+    //-----------------------------------------------------------------------
+	public void storeMetaInf(
+		Object[] metainf
+	) {
+        File metainfFile = new File(this.folderDir, METAINF_FILE_NAME);
+        try {            
+            PrintStream out = new PrintStream(metainfFile);
+            for(int i = 0; i < metainf.length; i++) {
+            	Object value = metainf[i];
+            	if(value instanceof Date) {
+            		out.println(DateTimeFormat.BASIC_UTC_FORMAT.format((Date)value));
+            	}
+            	else {
+            		out.println(value.toString());            		
+            	}
+            }
+            out.close();
+        }
+        catch(Exception e) {
+        	SysLog.error("Can not read index file " + metainfFile, e.getMessage());
+        	new ServiceException(e).log();
+        }            
+	}
 
     //-------------------------------------------------------------------------
     public static File getMailDir(
@@ -81,205 +159,291 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     }
     
     //-----------------------------------------------------------------------
+    private long getUID(
+    	File mimeFile
+    ) {
+    	int pos = mimeFile.getName().indexOf("-");
+    	if(pos > 0) {
+    		return Long.valueOf(mimeFile.getName().substring(0, pos));
+    	} else {
+    		return -1;
+    	}
+    }
+    
+    //-----------------------------------------------------------------------
+    private Map<Long,File> getMimeFiles(
+    ) {
+    	Map<Long,File> sortedFiles = new TreeMap<Long,File>();    	
+    	File[] files = this.folderDir.listFiles();
+    	if(files != null) {
+	    	// Order files by UID
+	    	for(int i = 0; i < files.length; i++) {
+	    		if(files[i].getName().endsWith(".eml")) {
+	    			sortedFiles.put(
+	    				getUID(files[i]), 
+	    				files[i]
+	    			);
+	    		}
+	    	}
+    	}
+    	return sortedFiles;
+    }
+    
+    //-----------------------------------------------------------------------
+    private MimeFileDescr getMimeFileDescr(
+    	Activity activity
+    ) {
+    	String activityNumber = activity.getActivityNumber().trim();
+    	Map<Long,File> mimeFiles = this.getMimeFiles();
+    	int messageNumber = 1;
+    	for(Map.Entry<Long,File> entry: mimeFiles.entrySet()) {
+    		if(entry.getValue().getName().indexOf("-" + activityNumber) > 0) {
+    			return new MimeFileDescr(
+    				messageNumber,
+    				this.getUID(entry.getValue()),
+    				entry.getValue()
+    			);
+    		}
+    	}
+    	return null;
+    }
+    
+    //-----------------------------------------------------------------------
+    private MimeFileDescr getMimeFileDescr(
+    	long uid
+    ) {
+    	Map<Long,File> mimeFiles = this.getMimeFiles();
+    	int messageNumber = 1;
+    	for(Map.Entry<Long,File> entry: mimeFiles.entrySet()) {
+    		if(this.getUID(entry.getValue()) == uid) {
+    			return new MimeFileDescr(
+    				messageNumber,
+    				uid,
+    				entry.getValue()
+    			);
+    		}
+    		messageNumber++;
+    	}
+    	return null;
+    }
+    
+    //-----------------------------------------------------------------------
+    private MimeFileDescr getMimeFileDescr(
+    	int messageNumber
+    ) {
+    	Map<Long,File> mimeFiles = this.getMimeFiles();
+    	int index = 1;
+    	for(Map.Entry<Long,File> entry: mimeFiles.entrySet()) {
+    		if(index == messageNumber) {
+    			return new MimeFileDescr(
+    				messageNumber,
+    				this.getUID(entry.getValue()),
+    				entry.getValue()
+    			);
+    		}
+    		index++;
+    	}
+    	return null;
+    }
+    
+    //-----------------------------------------------------------------------
+    protected ActivityQueryHelper getActivitiesHelper(
+    ) {
+    	ActivityQueryHelper activitiesHelper = new ActivityQueryHelper(
+    		AbstractSession.newPersistenceManager(this.pmf, this.username)
+    	);
+    	try {
+    		activitiesHelper.parseQueryId(this.folderId);
+    	} catch(Exception e) {}
+    	return activitiesHelper;
+    }
+    
+    //-----------------------------------------------------------------------
     @Override
     public void appendMessages(
         Message[] newMessages
     ) throws MessagingException {
-        if((this.activitiesHelper != null) && (this.activitiesHelper.getActivityGroup() != null)) {
-            // Find a creator which creates Email activities
-            ActivityCreator emailCreator = null;
-            Collection<ActivityCreator> activityCreators = this.activitiesHelper.getActivityGroup().getActivityCreator();
-            for(ActivityCreator creator: activityCreators) {
-                if(
-                    (creator.getActivityType() != null) && 
-                    (creator.getActivityType().getActivityClass() == Activities.ACTIVITY_CLASS_EMAIL)
-                ) {
-                    emailCreator = creator;
-                    break;
-                }
-            }
-            if(emailCreator != null) {
-                PersistenceManager pm = this.activitiesHelper.getPersistenceManager();
-                String providerName = emailCreator.refGetPath().get(2);
-                String segmentName = emailCreator.refGetPath().get(4);
-                for(Message message: newMessages) {
-                    MimeMessage mimeMessage = (MimeMessage)message;
-                    try {
-                    	 Activities.getInstance().importMimeMessage(
-                    		providerName, 
-                    		segmentName, 
-                    		mimeMessage, 
-                    		emailCreator, 
-                            mimeMessage.getFrom(),
-                            mimeMessage.getRecipients(Message.RecipientType.TO),
-                            mimeMessage.getRecipients(Message.RecipientType.CC),
-                            mimeMessage.getRecipients(Message.RecipientType.BCC),
-                    		this.isEMailAddressLookupCaseInsensitive, 
-                    		this.isEMailAddressLookupIgnoreDisabled
-                    	);
-                    }
-                    catch (Exception e) {
-                        try {
-                            pm.currentTransaction().rollback();
-                        } 
-                        catch(Exception e0) {}
-                        SysLog.warning("Can not create email activity", e.getMessage());
-                        new ServiceException(e).log();                        
-                    }                                
-                }
-            }
-            // Force synch
-            this.synchronizeNextAt = 0;
-        }
+    	ActivityQueryHelper activitiesHelper = this.getActivitiesHelper();
+    	try {
+	        if(activitiesHelper.getActivityGroup() != null) {
+	            // Find a creator which creates Email activities
+	            ActivityCreator emailCreator = null;
+	            Collection<ActivityCreator> activityCreators = activitiesHelper.getActivityGroup().getActivityCreator();
+	            for(ActivityCreator creator: activityCreators) {
+	                if(
+	                    (creator.getActivityType() != null) && 
+	                    (creator.getActivityType().getActivityClass() == Activities.ACTIVITY_CLASS_EMAIL)
+	                ) {
+	                    emailCreator = creator;
+	                    break;
+	                }
+	            }
+	            if(emailCreator != null) {
+	                PersistenceManager pm = activitiesHelper.getPersistenceManager();
+	                String providerName = emailCreator.refGetPath().get(2);
+	                String segmentName = emailCreator.refGetPath().get(4);
+	                for(Message message: newMessages) {
+	                    MimeMessage mimeMessage = (MimeMessage)message;
+	                    try {
+	                    	Activities.getInstance().importMimeMessage(
+	                    		pm,
+	                    		providerName, 
+	                    		segmentName, 
+	                    		mimeMessage, 
+	                    		emailCreator 
+	                    	);
+	                    }
+	                    catch (Exception e) {
+	                        try {
+	                            pm.currentTransaction().rollback();
+	                        } 
+	                        catch(Exception e0) {}
+	                        SysLog.warning("Can not create email activity", e.getMessage());
+	                        new ServiceException(e).log();                        
+	                    }                                
+	                }
+	            }
+	        }
+    	}
+    	finally {
+    		activitiesHelper.close();
+    	}
     }
 
     //-----------------------------------------------------------------------
     synchronized void synchronizeMailDir(
     ) {                
-        // Synchronize
-        if(this.synchronizeNextAt < System.currentTimeMillis()) {            
-            // Get index
-            File indexFile = new File(this.folderDir, INDEX_FILE_NAME);
-            Date lastSynchronizedAt = null;
-            if(indexFile.exists()) {
-                try {
-                    BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(
-                            new FileInputStream(indexFile)
-                        )
-                    );
-                    lastSynchronizedAt = DateTimeFormat.BASIC_UTC_FORMAT.parse(reader.readLine());
-                    this.messageUIDs.clear();
-                    this.messageXRIs.clear();
-                    while(reader.ready()) {
-                        String l = reader.readLine();
-                        String[] ids = l.split(" ");
-                        // A line has format activity.number activity.xri
-                        // In case of a syntax error reset the index
-                        if(ids.length != 2) {
-                            lastSynchronizedAt = null;
-                            break;
-                        }
-                        Long uid = Long.parseLong(ids[0]);
-                        this.messageUIDs.add(uid);
-                        this.messageXRIs.put(
-                            uid,
-                            ids[1]
-                        ); 
-                    }
-                    reader.close();
-                }
-                catch(Exception e) {
-                	SysLog.error("Can not read index file " + indexFile, e.getMessage());
-                }
-            }
-            // Get activities which are newer than synchronizedAt
-            if(this.activitiesHelper != null) {
-                PersistenceManager pm = this.activitiesHelper.getPersistenceManager();
-                pm.evictAll();
-                EMailQuery query = Utils.getActivityPackage(pm).createEMailQuery();
-                query.activityNumber().isNonNull();            
-                query.orderByActivityNumber().ascending();
-                if(lastSynchronizedAt == null) {
-                	this.messageUIDs.clear();
-                	this.messageXRIs.clear();
-                }
+    	ActivityQueryHelper activitiesHelper = this.getActivitiesHelper();
+    	try {
+            if(activitiesHelper.getActivityGroup() != null) {
+                PersistenceManager pm = activitiesHelper.getPersistenceManager();
+                // Get .METAINF
+                Date lastSynchronizedAt = null;
+                Date createdAt = null;
+                Long nextUID = null;
+                Object[] metainf = this.loadMetaInf();
+                if(metainf == null) {
+                	File[] files = this.folderDir.listFiles();
+                	for(int i = 0; i < files.length; i++) {
+                		if(files[i].isFile()) {
+                			try {
+                				files[i].delete();
+                			} catch(Exception e) {}
+                		}
+                	}
+                	createdAt = new Date();
+                	nextUID = 1L;
+                } 
                 else {
-                    query.modifiedAt().greaterThan(lastSynchronizedAt);
+                	createdAt = (Date)metainf[META_INF_CREATED_AT];
+                	lastSynchronizedAt = (Date)metainf[META_INF_LAST_SYNCHRONIZED_AT];
+                	nextUID = (Long)metainf[META_INF_NEXT_UID];
                 }
-                Collection<org.opencrx.kernel.activity1.jmi1.Activity> activities = 
-                    this.activitiesHelper.getFilteredActivities(query);
+                // Create MIME files for new activities
+                EMailQuery query = (EMailQuery)pm.newQuery(EMail.class);
+                if(lastSynchronizedAt != null) {
+                	query.modifiedAt().greaterThanOrEqualTo(lastSynchronizedAt);
+                }
+                query.activityNumber().isNonNull();
+                query.forAllDisabled().isFalse();
+                query.orderByActivityNumber().ascending();
+                Collection<Activity> activities = activitiesHelper.getFilteredActivities(query);
                 for(org.opencrx.kernel.activity1.jmi1.Activity activity: activities) {
-                    Long uid = Long.valueOf(activity.getActivityNumber().trim());                    
-                    try {
-                        MimeMessageImpl mimeMessage = new MimeMessageImpl();
-                        InputStream originalMessageStream = Activities.getInstance().mapToMessage(
-                            (org.opencrx.kernel.activity1.jmi1.EMail)activity, 
-                            mimeMessage
-                        );
-                        File mimeMessageFile = new File(
-                            this.folderDir, 
-                            Long.toString(uid) + ".eml"
-                        );
-                        OutputStream out = new FileOutputStream(mimeMessageFile);
-                        if(originalMessageStream != null) {
-                            int b;
-                            while((b = originalMessageStream.read()) != -1) {
-                                out.write(b);
-                            }
-                            originalMessageStream.close();
-                        }
-                        else {
-                            mimeMessage.setUid(uid);
-                            mimeMessage.writeTo(out);
-                        }
-                        out.close();             
-                        this.messageUIDs.add(uid);
-                        this.messageXRIs.put(
-                            uid,
-                            activity.refMofId()
-                        );                     
-                    }
-                    catch(Exception e) {
-                    	SysLog.warning("Unable to map activity to mime message", uid);
-                        new ServiceException(e).log();
-                    }
+                	MimeFileDescr mimeFileDescr = this.getMimeFileDescr(activity);
+                	if(mimeFileDescr == null) {
+	                    String activityNumber = activity.getActivityNumber().trim();
+	                    long uid = nextUID++;
+	                    File mimeMessageFile = new File(
+	                        this.folderDir, 
+	                        uid + "-" + activityNumber + ".eml"
+	                    );
+	                    try {
+	                        MimeMessageImpl mimeMessage = new MimeMessageImpl();
+	                        Object mappedMessage = Activities.getInstance().mapToMessage(
+	                            (EMail)activity, 
+	                            mimeMessage
+	                        );
+	                        if(mappedMessage instanceof InputStream) {
+	                        	mimeMessage = new MimeMessageImpl((InputStream)mappedMessage);
+	                        	// Update message subject
+	                        	mimeMessage.setSubject(((EMail)activity).getMessageSubject());
+	                        }
+                            OutputStream out = new FileOutputStream(mimeMessageFile);
+	                        mimeMessage.setUid(uid);
+	                        mimeMessage.writeTo(out);
+	                        out.close();
+	                    }
+	                    catch(Exception e) {
+	                    	SysLog.warning("Unable to map activity to mime message", activityNumber);
+	                        new ServiceException(e).log();
+	                    }
+                	}
                 }
-                pm.evictAll();
-            }
-            // Update index for removed activities
-            if(lastSynchronizedAt != null) {
-                org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(
-                    this.activitiesHelper.getPersistenceManager()
+                if(lastSynchronizedAt != null) {
+	                // Remove MIME files for disabled activities                
+	                query = (EMailQuery)pm.newQuery(EMail.class);
+	                query.activityNumber().isNonNull();
+	                query.thereExistsDisabled().isTrue();
+	                query.orderByActivityNumber().ascending();                
+	                query.modifiedAt().greaterThan(lastSynchronizedAt);
+	                activities = activitiesHelper.getFilteredActivities(query);
+	                for(org.opencrx.kernel.activity1.jmi1.Activity activity: activities) {
+	                    MimeFileDescr mimeFileDescr = this.getMimeFileDescr(activity);
+	                    if(mimeFileDescr != null) {
+	                    	try {
+	                    		mimeFileDescr.getFile().delete();
+	                    	} catch(Exception e) {}
+	                    }
+	                }
+	                // Create MIME files for enabled activities	                
+	                query = (EMailQuery)pm.newQuery(EMail.class);
+	                query.activityNumber().isNonNull();
+	                query.forAllDisabled().isFalse();
+	                query.orderByActivityNumber().ascending();                
+                    query.modifiedAt().greaterThan(lastSynchronizedAt);
+	                activities = activitiesHelper.getFilteredActivities(query);
+	                for(org.opencrx.kernel.activity1.jmi1.Activity activity: activities) {
+	                    String activityNumber = activity.getActivityNumber().trim();
+	                    MimeFileDescr mimeFileDescr = this.getMimeFileDescr(activity);
+	                    if(mimeFileDescr == null) {
+		                    long uid = nextUID++;
+		                    File mimeMessageFile = new File(
+		                        this.folderDir, 
+		                        uid + "-" + activityNumber + ".eml"
+		                    );
+		                    try {
+		                        MimeMessageImpl mimeMessage = new MimeMessageImpl();
+		                        Object mappedMessage = Activities.getInstance().mapToMessage(
+		                            (EMail)activity, 
+		                            mimeMessage
+		                        );
+		                        if(mappedMessage instanceof InputStream) {
+		                        	mimeMessage = new MimeMessageImpl((InputStream)mappedMessage);
+		                        	// Update message subject
+		                        	mimeMessage.setSubject(((EMail)activity).getMessageSubject());
+		                        }
+	                            OutputStream out = new FileOutputStream(mimeMessageFile);
+		                        mimeMessage.setUid(uid);
+		                        mimeMessage.writeTo(out);
+		                        out.close();
+		                    }
+		                    catch(Exception e) {
+		                    	SysLog.warning("Unable to map activity to mime message", activityNumber);
+		                        new ServiceException(e).log();
+		                    }
+	                    }
+	                }
+                }
+                // Update .METAINF
+                lastSynchronizedAt = new Date();
+                this.storeMetaInf(                	
+                	new Object[]{createdAt, lastSynchronizedAt, nextUID}
                 );
-                AuditEntryQuery query = basePackage.createObjectRemovalAuditEntryQuery();
-                query.createdAt().greaterThan(lastSynchronizedAt);
-                query.auditee().like(
-                    this.activitiesHelper.getActivitySegment().refGetPath().getDescendant("activity", "**").toResourcePattern()
-                );
-                try {
-                    List<AuditEntry> auditEntries = this.activitiesHelper.getActivitySegment().getAudit(query);
-                    for(AuditEntry auditEntry: auditEntries) {
-                        try {
-                            if(auditEntry instanceof ObjectRemovalAuditEntry) {
-                                // Lookup entry which matches the removed activity's xri.
-                                // Update index and remove message file
-                                for(Map.Entry<Long,String> entry: this.messageXRIs.entrySet()) {
-                                    if(auditEntry.getAuditee().equals(entry.getValue())) {
-                                        File mimeMessageFile = new File(
-                                            this.folderDir, 
-                                            entry.getKey() + ".eml"
-                                        );                         
-                                        try {
-                                            mimeMessageFile.delete();
-                                        } 
-                                        catch(Exception e) {}
-                                        this.messageUIDs.remove(entry.getKey());
-                                        this.messageXRIs.remove(entry.getKey());
-                                        break;
-                                    }
-                                }
-                            }
-                        } 
-                        catch(Exception e) {}
-                    }
-                }
-                catch(Exception e) {}
-            }            
-            // Write index
-            try {
-                PrintStream out = new PrintStream(indexFile);
-                out.println(DateTimeFormat.BASIC_UTC_FORMAT.format(new Date()));
-                for(Map.Entry<Long,String> entry: this.messageXRIs.entrySet()) {
-                    out.println(Long.toString(entry.getKey()) + " " + entry.getValue());
-                }
-                out.close();
             }
-            catch(Exception e) {
-            	SysLog.error("Can not write index file " + indexFile, e.getMessage());            
-            }
-            this.synchronizeNextAt = System.currentTimeMillis() + SYNCHRONIZE_REFRESH_RATE;
-        }
+    	}
+    	finally {
+    		activitiesHelper.close();
+    	}
     }
     
     //-----------------------------------------------------------------------
@@ -329,26 +493,26 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     public Message getMessage(
         int messageNumber
     ) throws MessagingException {
-        if(this.activitiesHelper != null) {
-            this.synchronizeMailDir();
-            Long uid = messageNumber <= this.messageUIDs.size() ? 
-            	this.messageUIDs.get(messageNumber - 1) : 
-            	null;
-            if(uid != null) {
-                File mimeMessageFile = new File(this.folderDir, uid + ".eml");
-                try {
-                    FileInputStream in = new FileInputStream(mimeMessageFile);
-                    MimeMessageImpl mimeMessage = new MimeMessageImpl(in);
-                    in.close();
-                    mimeMessage.setUid(uid);
-                    mimeMessage.setMessageNumber(messageNumber);
-                    return mimeMessage;
-                }
-                catch(Exception e) {
-                	SysLog.error("Can not read message " + mimeMessageFile, e.getMessage());
-                }
-            }
+    	ActivityQueryHelper activitiesHelper = this.getActivitiesHelper();
+    	try {
+    		MimeFileDescr mimeFileDescr = this.getMimeFileDescr(messageNumber);
+    		if(mimeFileDescr != null) {
+	            try {
+	                FileInputStream in = new FileInputStream(mimeFileDescr.getFile());
+	                MimeMessageImpl mimeMessage = new MimeMessageImpl(in);
+	                in.close();
+	                mimeMessage.setUid(mimeFileDescr.getUID());
+	                mimeMessage.setMessageNumber(messageNumber);
+	                return mimeMessage;
+	            }
+	            catch(Exception e) {
+	            	SysLog.error("Can not read message " + mimeFileDescr.getFile(), e.getMessage());
+	            }
+    		}
         }
+    	finally {
+    		activitiesHelper.close();
+    	}
         return null;
     }
 
@@ -356,13 +520,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     @Override
     public int getMessageCount(
     ) throws MessagingException {
-        if(this.activitiesHelper != null) {
-            this.synchronizeMailDir();
-            return this.messageUIDs.size();
-        }
-        else {
-            return 0;
-        }
+        this.synchronizeMailDir();
+        Map<Long,File> mimeFiles = this.getMimeFiles();
+        return mimeFiles.size();
     }
 
     //-----------------------------------------------------------------------
@@ -448,31 +608,29 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     //-----------------------------------------------------------------------
     // UIDFolder
     //-----------------------------------------------------------------------
+    @Override
     public Message getMessageByUID(
         long uid
     ) throws MessagingException {
-        if(this.activitiesHelper != null) {
-            this.synchronizeMailDir();
-            File mimeMessageFile = new File(this.folderDir, uid + ".eml");
-            try {
-                FileInputStream in = new FileInputStream(mimeMessageFile);
-                MimeMessageImpl mimeMessage = new MimeMessageImpl(in);
-                in.close();
-                mimeMessage.setUid(uid);
-                int messageIndex = this.messageUIDs.indexOf(uid);
-                if(messageIndex != -1) {
-                    mimeMessage.setMessageNumber(messageIndex + 1);
-                }
-                return mimeMessage;
-            }
-            catch(Exception e) {
-            	SysLog.error("Can not read message " + mimeMessageFile, e.getMessage());
-            }
-        }
+    	MimeFileDescr mimeFileDescr = this.getMimeFileDescr(uid);
+    	if(mimeFileDescr != null) {
+	        try {
+	            FileInputStream in = new FileInputStream(mimeFileDescr.getFile());
+	            MimeMessageImpl mimeMessage = new MimeMessageImpl(in);
+	            in.close();
+	            mimeMessage.setUid(uid);
+	            mimeMessage.setMessageNumber(mimeFileDescr.getMessageNumber());
+	            return mimeMessage;
+	        }
+	        catch(Exception e) {
+	        	SysLog.error("Can not read message " + mimeFileDescr.getFile(), e.getMessage());
+	        }
+    	}
         return null;
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public Message[] getMessagesByUID(
         long[] uids
     ) throws MessagingException {
@@ -480,23 +638,24 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public Message[] getMessagesByUID(
         long start, 
         long end
     ) throws MessagingException {
         List<Message> result = new ArrayList<Message>();
-        if(this.activitiesHelper != null) {
-            this.synchronizeMailDir();
-            for(Long uid: this.messageXRIs.keySet()) {
-                if(uid >= start && uid <= end) {
-                    result.add(this.getMessageByUID(uid));
-                }
+        Map<Long,File> mimeFiles = this.getMimeFiles();
+        for(Map.Entry<Long,File> entry: mimeFiles.entrySet()) {
+        	long uid = this.getUID(entry.getValue());
+            if(uid >= start && uid <= end) {
+                result.add(this.getMessageByUID(uid));
             }
         }
         return result.toArray(new Message[result.size()]);
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public long getUID(
         Message message
     ) throws MessagingException {
@@ -504,41 +663,68 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     }
 
     //-----------------------------------------------------------------------
+    @Override
     public long getUIDValidity(
     ) throws MessagingException {
-        if((this.activitiesHelper != null) && (this.activitiesHelper.getActivityGroup() != null)) {
-            ActivityGroup group = this.activitiesHelper.getActivityGroup();
-            Date createdAt = new Date();
-            if(group instanceof ActivityTracker) {
-                createdAt = ((ActivityTracker)group).getModifiedAt();
-            }
-            else if(group instanceof ActivityMilestone) {
-                createdAt = ((ActivityMilestone)group).getModifiedAt();
-            }
-            else if(group instanceof ActivityCategory) {
-                createdAt = ((ActivityCategory)group).getModifiedAt();
-            }
-            return createdAt.getTime() / 1000L;
-        }
-        return 123987L;
+    	ActivityQueryHelper activitiesHelper = this.getActivitiesHelper();
+    	try {
+    		Object[] metainf = this.loadMetaInf();
+    		if(metainf == null) {
+    			this.synchronizeMailDir();
+    		}
+    		metainf = this.loadMetaInf();
+    		return metainf == null ?
+    			System.currentTimeMillis() / 1000L :
+    				((Date)metainf[META_INF_CREATED_AT]).getTime() / 1000L;
+    	}
+    	finally {
+    		activitiesHelper.close();
+    	}
     }
     
-    //-----------------------------------------------------------------------
+	//-----------------------------------------------------------------------
+    @Override
+    public Message[] search(
+    	SearchTerm searchTerm
+    ) throws MessagingException {
+    	List<Message> messages = new ArrayList<Message>();
+    	Map<Long,File> mimeFiles = this.getMimeFiles();
+    	int messageNumber = 1;
+    	for(Map.Entry<Long,File> mimeFile: mimeFiles.entrySet()) {
+    		try {
+	            FileInputStream in = new FileInputStream(mimeFile.getValue());
+	            MimeMessageImpl mimeMessage = new MimeMessageImpl(in);
+	            in.close();
+	            mimeMessage.setUid(this.getUID(mimeFile.getValue()));
+	            mimeMessage.setMessageNumber(messageNumber);
+	            mimeMessage.setFlag(Flags.Flag.SEEN, true);
+	            mimeMessage.setFlag(Flags.Flag.DELETED, false);
+	            mimeMessage.setFlag(Flags.Flag.ANSWERED, false);
+	            mimeMessage.setFlag(Flags.Flag.RECENT, false);
+	            mimeMessage.setFlag(Flags.Flag.DRAFT, false);
+	    		if(searchTerm == null || searchTerm.match(mimeMessage)) {
+	    			messages.add(mimeMessage);
+	    		}
+    		} catch(Exception e) {}
+    		messageNumber++;
+    	}
+    	return messages.toArray(new Message[messages.size()]);
+    }
+    
+	//-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static final String INDEX_FILE_NAME = ".INDEX";
+    protected static final String METAINF_FILE_NAME = ".METAINF";
     protected static final long SYNCHRONIZE_REFRESH_RATE = 60000;
     public static final String MAILDIR_PROPERTY_NAME = "org.opencrx.maildir";
-    public static final String EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE_PROPERTY_NAME = "org.opencrx.eMailAddressLookupCaseInsensitive";
-    public static final String EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED_PROPERTY_NAME = "org.opencrx.eMailAddressLookupIgnoreDisabled";
-    
+	public static final int META_INF_CREATED_AT = 0;
+	public static final int META_INF_LAST_SYNCHRONIZED_AT = 1;
+	public static final int META_INF_NEXT_UID = 2;
+	    
     protected final String name;
-    protected final ActivitiesFilterHelper activitiesHelper;
-    protected final List<Long> messageUIDs = new ArrayList<Long>();
-    protected final Map<Long,String> messageXRIs = new TreeMap<Long,String>();
     protected File folderDir;
-	protected boolean isEMailAddressLookupCaseInsensitive = true;
-	protected boolean isEMailAddressLookupIgnoreDisabled = true;
-    protected long synchronizeNextAt = 0;
+    protected final String username;
+    protected final String folderId;
+    protected final PersistenceManagerFactory pmf;
 
 }

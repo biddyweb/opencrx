@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.31 2010/03/18 18:23:37 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.34 2010/11/28 15:43:35 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/18 18:23:37 $
+ * Date:        $Date: 2010/11/28 15:43:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,6 +70,7 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.application.mail.exporter.ExportMailWorkflow;
 import org.opencrx.application.mail.exporter.SendMailNotificationWorkflow;
 import org.opencrx.application.mail.exporter.SendMailWorkflow;
+import org.opencrx.application.twitter.SendDirectMessageWorkflow;
 import org.opencrx.kernel.base.jmi1.BooleanProperty;
 import org.opencrx.kernel.base.jmi1.DecimalProperty;
 import org.opencrx.kernel.base.jmi1.IntegerProperty;
@@ -82,6 +83,8 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.workflow.PrintConsole;
+import org.opencrx.kernel.workflow.SendAlert;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
 import org.openmdx.base.exception.ServiceException;
@@ -310,11 +313,25 @@ public class Workflows extends AbstractImpl {
             Boolean.TRUE,
             null
         );
+        // SendDirectMessage
+        WfProcess sendDirectMessageWorkflow = this.initWorkflow(
+            pm,
+            workflowPackage,
+            workflowSegment,
+            WORKFLOW_SEND_DIRECT_MESSAGE_TWITTER,
+            org.opencrx.application.twitter.SendDirectMessageWorkflow.class.getName(),
+            "Send direct message to Twitter",
+            Boolean.TRUE,
+            null
+        );
         WfProcess[] sendAlertActions = new WfProcess[]{
             sendAlertWorkflow
         };
         WfProcess[] sendMailNotificationsActions = new WfProcess[]{
             sendMailNotificationWorkflow
+        };
+        WfProcess[] sendDirectMessageToTwitterActions = new WfProcess[]{
+            sendDirectMessageWorkflow
         };
         this.initTopic(
             pm,
@@ -451,13 +468,23 @@ public class Workflows extends AbstractImpl {
             workflowPackage,
             workflowSegment,
             "AlertModifications",            
-            TOPIC_NAME_ALERT_MODIFICATIONS,
+            TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL,
             "Send mail for new alerts",
             "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/alert/:*",
             sendMailNotificationsActions
         );
+        this.initTopic(
+            pm,
+            workflowPackage,
+            workflowSegment,
+            "AlertModificationsTwitter",            
+            TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER,
+            "Send direct message for new alerts to Twitter",
+            "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/alert/:*",
+            sendDirectMessageToTwitterActions
+        );
     }
-        
+
     //-------------------------------------------------------------------------
     public WfProcessInstance executeWorkflow(
         WorkflowTarget wfTarget,
@@ -731,11 +758,13 @@ public class Workflows extends AbstractImpl {
     public static final String WORKFLOW_SEND_MAIL_NOTIFICATION = "SendMailNotification";
     public static final String WORKFLOW_SEND_ALERT = "SendAlert";
     public static final String WORKFLOW_PRINT_CONSOLE = "PrintConsole";
-        
+    public static final String WORKFLOW_SEND_DIRECT_MESSAGE_TWITTER = "SendDirectMessage";
+
     public static final String TOPIC_NAME_ACCOUNT_MODIFICATIONS = "Account Modifications";
     public static final String TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS = "Activity Follow Up Modifications";
     public static final String TOPIC_NAME_ACTIVITY_MODIFICATIONS = "Activity Modifications";
-    public static final String TOPIC_NAME_ALERT_MODIFICATIONS = "Alert Modifications";
+    public static final String TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL = "Alert Modifications";
+    public static final String TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER = "Alert Modifications (Twitter)";
     public static final String TOPIC_NAME_BOOKING_MODIFICATIONS = "Booking Modifications";
     public static final String TOPIC_NAME_COMPETITOR_MODIFICATIONS = "Competitor Modifications";
     public static final String TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS = "Compound Booking Modifications";
@@ -747,11 +776,12 @@ public class Workflows extends AbstractImpl {
     public static final String TOPIC_NAME_QUOTE_MODIFICATIONS = "Quote Modifications";
     public static final String TOPIC_NAME_SALES_ORDER_MODIFICATIONS = "SalesOrder Modifications";
     
-    public static final String WORKFLOW_NAME_PRINT_CONSOLE = "org.opencrx.kernel.workflow.PrintConsole";
-    public static final String WORKFLOW_NAME_SEND_ALERT = "org.opencrx.kernel.workflow.SendAlert";
-    public static final String WORKFLOW_NAME_EXPORT_MAIL = "org.opencrx.application.mail.exporter.ExportMailWorkflow";
-    public static final String WORKFLOW_NAME_SEND_MAIL_NOTIFICATION = "org.opencrx.application.mail.exporter.SendMailNotificationWorkflow";
-    public static final String WORKFLOW_NAME_SEND_MAIL = "org.opencrx.application.mail.exporter.SendMailWorkflow";
+    public static final String WORKFLOW_NAME_PRINT_CONSOLE = PrintConsole.class.getName();
+    public static final String WORKFLOW_NAME_SEND_ALERT = SendAlert.class.getName();
+    public static final String WORKFLOW_NAME_EXPORT_MAIL = ExportMailWorkflow.class.getName();
+    public static final String WORKFLOW_NAME_SEND_MAIL_NOTIFICATION = SendMailNotificationWorkflow.class.getName();
+    public static final String WORKFLOW_NAME_SEND_MAIL = SendMailWorkflow.class.getName();
+    public static final String WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER = SendDirectMessageWorkflow.class.getName();
         
 }
 

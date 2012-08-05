@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.43 2010/04/01 11:28:20 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.54 2010/12/15 11:53:22 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/01 11:28:20 $
+ * Date:        $Date: 2010/12/15 11:53:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,12 +77,14 @@ import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Accounts;
+import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.utils.AccountsFilterHelper;
-import org.opencrx.kernel.utils.ActivitiesFilterHelper;
+import org.opencrx.kernel.utils.AccountQueryHelper;
+import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.id.UUIDs;
@@ -128,31 +130,28 @@ public class ICalServlet extends FreeBusyServlet {
             );
     }
     
-	//-----------------------------------------------------------------------
-    protected String getAccountUrl(
-	    HttpServletRequest req,
-	    org.opencrx.kernel.account1.jmi1.Account account,
-	    boolean htmlEncoded
- 	) {
-	    Action selectAccountAction =
-	        new Action(
-	            Action.EVENT_SELECT_OBJECT,
-	            new Action.Parameter[]{
-	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, account.refMofId())
-	            },
-	            "",
-	            true
-	        );
-	    return htmlEncoded ?
-	        req.getContextPath().replace("-ical-", "-core-") +  "/" + WebKeys.SERVLET_NAME + "?event=" + Action.EVENT_SELECT_OBJECT + "&amp;parameter=" + selectAccountAction.getParameterEncoded() :
-	        req.getContextPath().replace("-ical-", "-core-") +  "/" + WebKeys.SERVLET_NAME + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectAccountAction.getParameter();
-	}
-
+    //-----------------------------------------------------------------------
+    protected AccountQueryHelper getAccountsHelper(
+        PersistenceManager pm,
+        String filterId,
+        String isDisabledFilter
+    ) {
+    	AccountQueryHelper accountsHelper = new AccountQueryHelper(pm);
+        if(filterId != null) {
+            try {
+            	accountsHelper.parseQueryId(                        
+                    (filterId.startsWith("/") ? "" : "/") + filterId
+                );
+            }
+            catch(Exception  e) {}
+        }        
+        return accountsHelper;
+    }
+    
 	//-----------------------------------------------------------------------
     protected String getActivityUrl(        
         HttpServletRequest req,
-        Activity activity,
-        boolean htmlEncoded
+        Activity activity
     ) {
         Action selectActivityAction = 
             new Action(
@@ -163,27 +162,11 @@ public class ICalServlet extends FreeBusyServlet {
                 "",
                 true
             );        
-        return htmlEncoded ? 
-            req.getContextPath().replace("-ical-", "-core-") +  "/" + WebKeys.SERVLET_NAME + "?event=" + Action.EVENT_SELECT_OBJECT + "&amp;parameter=" + selectActivityAction.getParameterEncoded() : 
-            req.getContextPath().replace("-ical-", "-core-") +  "/" + WebKeys.SERVLET_NAME + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectActivityAction.getParameter();
-    }
-    
-    //-----------------------------------------------------------------------
-    protected AccountsFilterHelper getAccountsHelper(
-        PersistenceManager pm,
-        String filterId,
-        String isDisabledFilter
-    ) {
-    	AccountsFilterHelper accountsHelper = new AccountsFilterHelper(pm);
-        if(filterId != null) {
-            try {
-            	accountsHelper.parseFilteredAccountsUri(                        
-                    (filterId.startsWith("/") ? "" : "/") + filterId
-                );
-            }
-            catch(Exception  e) {}
-        }        
-        return accountsHelper;
+        return 
+        	req.getContextPath().replace("-ical-", "-core-") + "/" + 
+        	WebKeys.SERVLET_NAME + 
+        	"?event=" + Action.EVENT_SELECT_OBJECT + 
+        	"&amp;parameter=" + selectActivityAction.getParameterEncoded(); 
     }
     
     //-----------------------------------------------------------------------
@@ -207,9 +190,23 @@ public class ICalServlet extends FreeBusyServlet {
             }
             p.write(vevent);
             SysLog.detail("VEVENT #", index);
-            SysLog.detail(vevent);            
+            SysLog.detail(vevent);           
+            if(vevent.indexOf("TRANSP:") < 0) {
+	        	try {
+	        		String transp = "OPAQUE";
+	        		if(transp != null) {
+	        			p.write("TRANSP:" + transp + "\n");
+	        		}
+	        	} catch(Exception e) {}
+            }
             if(vevent.indexOf("URL:") < 0) {
-                p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, activity, false) + "\n");
+            	String url = null;
+            	try {
+            		url = Base.getInstance().getAccessUrl(req, "-ical-", activity);
+            	} catch(Exception e) {}
+            	if(url != null) {
+            		p.write("URL:" + url + "\n");
+            	}
             }
             p.write("END:VEVENT\n");
         }
@@ -225,12 +222,18 @@ public class ICalServlet extends FreeBusyServlet {
             }
             p.write(vtodo);
             SysLog.detail("VTODO #", index);
-            SysLog.detail(vtodo);            
+            SysLog.detail(vtodo);
             if(vtodo.indexOf("URL:") < 0) {
-                p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, activity, false) + "\n");
+            	String url = null;
+            	try {
+            		url = Base.getInstance().getAccessUrl(req, "-ical-", activity);
+            	} catch(Exception e) {}
+            	if(url != null) {
+            		p.write("URL:" + url + "\n");
+            	}
             }
             p.write("END:VTODO\n");                        
-        }        
+        }
     }
     
     //-----------------------------------------------------------------------
@@ -240,6 +243,7 @@ public class ICalServlet extends FreeBusyServlet {
         HttpServletResponse resp
     ) throws ServletException, IOException {
         PersistenceManager pm = this.getPersistenceManager(req);
+        PersistenceManager rootPm = this.getRootPersistenceManager();
         if(pm == null) {
             resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             return;
@@ -247,7 +251,7 @@ public class ICalServlet extends FreeBusyServlet {
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
         if(req.getRequestURI().endsWith("/ical") || req.getRequestURI().endsWith("/activities")) {        
-	        ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
+	        ActivityQueryHelper activitiesHelper = this.getActivitiesHelper(
 	            pm, 
 	            filterId,
 	            isDisabledFilter
@@ -280,16 +284,18 @@ public class ICalServlet extends FreeBusyServlet {
 	            dateFormatEnUs.setTimeZone(timeZone);
 	            org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = 
 	                this.getComponentConfiguration(
-	                    activitiesHelper.getActivitySegment().refGetPath().get(2)
+	                    activitiesHelper.getActivitySegment().refGetPath().get(2),
+	                    rootPm
 	                );
 	            String maxActivitiesValue = componentConfiguration == null ? 
 	                null : 
-	                ComponentConfigHelper.getComponentConfigProperty("maxActivities", componentConfiguration).getStringValue();
-	            int maxActivities = Integer.valueOf(
-	                maxActivitiesValue == null ? 
-	                    "500" : 
-	                    maxActivitiesValue
-	            ).intValue();
+	                ComponentConfigHelper.getComponentConfigProperty(
+	                	PROPERTY_MAX_ACTIVITIES, 
+	                	componentConfiguration
+	                ).getStringValue();
+	            int maxActivities = maxActivitiesValue == null ? 
+	            	DEFAULT_MAX_ACTIVITIES : 
+	                    Integer.valueOf(maxActivitiesValue);
 	            // Return all activities in ICS format
 	            if(
 	                RESOURCE_TYPE_ICS.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
@@ -315,7 +321,8 @@ public class ICalServlet extends FreeBusyServlet {
 	                // Event serving as calendar guard. Required to allow
 	                // creation of events in doPut
 	                p.write("BEGIN:VEVENT\n");
-	                p.write("UID:" + activitiesHelper.getFilteredActivitiesParentId() + "\n");
+	                BasicObject source = activitiesHelper.getSource();
+	                p.write("UID:" + (source == null ? "-" : source.refGetPath().getBase()) + "\n");
 	                p.write("CLASS:PUBLIC\n");
 	                p.write("DTSTART:19000101T000000Z\n");
 	                p.write("DTEND:19000101T000000Z\n");
@@ -358,7 +365,7 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.write("<data>\n");
 	                int n = 0;
 	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
-	                    p.write("  <event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getActivityUrl(req, activity, true) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">\n");
+	                    p.write("  <event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getActivityUrl(req, activity) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">\n");
 	                    String description = (activity.getDescription() == null) || (activity.getDescription().trim().length() == 0) ? 
 	                        activity.getName() : 
 	                        activity.getDescription();
@@ -497,7 +504,7 @@ public class ICalServlet extends FreeBusyServlet {
         else if(req.getRequestURI().endsWith("/bdays")) {
         	final int YEARS_BEFORE_SELECTED_YEAR = 1;
         	final int YEARS_AFTER_SELECTED_YEAR = 1;        	
-	        AccountsFilterHelper accountsHelper = this.getAccountsHelper(
+	        AccountQueryHelper accountsHelper = this.getAccountsHelper(
 	            pm, 
 	            filterId,
 	            isDisabledFilter
@@ -524,7 +531,7 @@ public class ICalServlet extends FreeBusyServlet {
 			// max
             int max = req.getParameter("max") != null ?
             	Integer.valueOf(req.getParameter("max")) :
-            	500;
+            		DEFAULT_MAX_ACTIVITIES;
             // categories
             String categories = req.getParameter("categories") != null ?
             	req.getParameter("categories") :
@@ -636,7 +643,8 @@ public class ICalServlet extends FreeBusyServlet {
 								        p.write("PRIORITY:6\n");
 								        p.write("STATUS:CONFIRMED\n");
 								        p.write("CLASS:PUBLIC\n");
-								        p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getAccountUrl(req, contact, false) + "\n");
+								        String url = Base.getInstance().getAccessUrl(req, "-ical-", contact);
+							        	p.write("URL:" + url + "\n");
 								        p.write(icalType == ICalendar.ICAL_TYPE_VTODO ? "END:VTODO\n" : "END:VEVENT\n");
 							 		} 
 								    catch (Exception e) {
@@ -660,9 +668,13 @@ public class ICalServlet extends FreeBusyServlet {
             super.doGet(req, resp);
         }
         try {
-            pm.close();
-        } 
-        catch(Exception e) {}
+        	if(pm != null) {
+        		pm.close();
+        	}
+        	if(rootPm != null) {
+        		rootPm.close();
+        	}
+        } catch(Exception e) {}
     }
     
     //-----------------------------------------------------------------------
@@ -679,7 +691,7 @@ public class ICalServlet extends FreeBusyServlet {
         }        
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);        
-        ActivitiesFilterHelper activitiesHelper = this.getActivitiesHelper(
+        ActivityQueryHelper activitiesHelper = this.getActivitiesHelper(
             pm, 
             filterId,
             isDisabledFilter
@@ -719,8 +731,5 @@ public class ICalServlet extends FreeBusyServlet {
     protected final static String RESOURCE_NAME_ACTIVITIES_ICS = "activities.ics";
     protected final static String RESOURCE_NAME_ACTIVITIES_HTML = "activities.html";
     protected final static String RESOURCE_NAME_ACTIVITIES_XML = "activities.xml";
-    protected final static String RESOURCE_TYPE_ICS = "ics";
-    protected final static String RESOURCE_TYPE_HTML = "html";
-    protected final static String RESOURCE_TYPE_XML = "xml";
         
 }

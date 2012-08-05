@@ -1,11 +1,11 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.18 2010/04/16 13:51:22 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.21 2010/09/17 13:06:04 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.18 $
+   * Revision:    $Revision: 1.21 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2010/04/16 13:51:22 $
+   * Date:        $Date: 2010/09/17 13:06:04 $
    * ====================================================================
    *
    * This software is published under the BSD license
@@ -58,14 +58,14 @@ package org.opencrx.application.mail.importer;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.mail.Flags;
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -73,9 +73,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
-import org.opencrx.kernel.activity1.jmi1.Activity1Package;
-import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
@@ -92,10 +89,15 @@ import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 
 /**
- * The EMailImporterServlet imports E-Mails from a configured Mail server
+ * The MailImporterServlet imports E-Mails from a configured Mail server
  * and folder as openCRX EMail activities. Activities are created either
  * with a default EMail activity creator or by the activity creator defined
  * by the EMail subject.
+ * 
+ * The subject line of the wrapper message must be of the form
+ * > @<email creator name> [#<activity creator name or activity#>]  <subject>
+ * The activity creator name / activity# is optional. If specified an activity is
+ * created and the imported E-Mails are linked to this activity.
  */
 public class MailImporterServlet 
     extends HttpServlet {
@@ -137,7 +139,7 @@ public class MailImporterServlet
     ) {
         try {
             Path adminHomeIdentity = new Path(
-                "xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
+                "xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
             );
             UserHome userHome = (UserHome)pm.getObjectById(adminHomeIdentity);
             try {
@@ -166,184 +168,54 @@ public class MailImporterServlet
         }        
     }
     
-    // -----------------------------------------------------------------------
-    private void importMimeMessage(
-        PersistenceManager pm,
-        String providerName,
-        String segmentName,
-        String creatorCriteria,
-        MimeMessage mimeMessage,
-        MailImporterConfig config
-    ) throws ServiceException {
-    	try {
-            ActivityCreator emailCreator = this.getEmailCreator(
-                pm,
-                providerName,
-                segmentName,
-                creatorCriteria
-            );    		
-    		Activities.getInstance().importMimeMessage(
-	     		providerName, 
-	     		segmentName, 
-	     		mimeMessage, 
-	     		emailCreator, 
-                mimeMessage.getFrom(),
-                mimeMessage.getRecipients(Message.RecipientType.TO),
-                mimeMessage.getRecipients(Message.RecipientType.CC),
-                mimeMessage.getRecipients(Message.RecipientType.BCC),
-                config.isEMailAddressLookupCaseInsensitive(),
-                config.isEMailAddressLookupIgnoreDisabled()    		
-            );
-    	} catch (Exception e) {
-            try {
-                pm.currentTransaction().rollback();
-            } 
-            catch(Exception e0) {}
-            this.notifyAdmin(
-                pm,
-                providerName,
-                segmentName,
-                Activities.PRIORITY_HIGH,
-                "Can not create email activity",
-                e.getMessage(),
-                new String[]{}
-            );
-            SysLog.warning("Can not create email activity", e.getMessage());
-            new ServiceException(e).log();                        
-        }                                
-    }
-
     //-----------------------------------------------------------------------
-    /**
-     * Search the appropriate ActivityCreator according to the email message.
-     * Currently only the default inbound email creator is active. If no
-     * creator can be found a new default one is created.
-     * 
-     * @param rootPkg          The root package to be used for this request
-     * @param providerName     The name of the current provider
-     * @param segmentName      The name of the current segment
-     * @param message          The email to be imported as openCRX EMailActivity
-     */
-    private ActivityCreator getEmailCreator(
+    private void importMessages(
         PersistenceManager pm,
         String providerName,
         String segmentName,
-        String criteria
-    ) {
-        try {
-            Activity1Package activityPkg = Utils.getActivityPackage(pm);
-            org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(
-                pm, 
-                providerName, 
-                segmentName
-            );            
-            ActivityCreator emailCreator = null;
-            if((criteria != null) && (criteria.length() > 0)) {
-                // Try to get activity creator which's name matches the message subject
-                ActivityCreatorQuery query = activityPkg.createActivityCreatorQuery();
-                query.name().equalTo(
-                    criteria
-                );
-                List<ActivityCreator> activityCreators = activitySegment.getActivityCreator(query);
-                for(ActivityCreator creator: activityCreators) {
-                    if((creator.getActivityType() != null) && (creator.getActivityType().getActivityClass() == Activities.ACTIVITY_CLASS_EMAIL)) {
-                        emailCreator = creator;
-                        break;
-                    }
-                }
-            }
-            // If  not found get default creator for inbound email activities.
-            if(emailCreator == null) {
-                emailCreator = activitySegment.getActivityCreator(Activities.DEFAULT_EMAIL_CREATOR_ID);
-            }
-            return emailCreator;
-        }
-        catch(Exception e) {
-        	SysLog.info("Can not retrieve config from external task configuration", e.getMessage());
-        }
-        return null;
-    }
-    
-    //-----------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
-    private void importNestedMessages(
-        PersistenceManager pm,
-        String providerName,
-        String segmentName,
-        SimpleMimeMessage message,
+        MimeMessage message,
         MailImporterConfig config
     ) {        
     	SysLog.info("Importing Message (" + providerName + "/" + segmentName + "): ", message);
         String messageId = "NA";
         try {
-            messageId = message.getMimeMessage().getMessageID();
+            messageId = message.getMessageID();
         } 
         catch(Exception e) {}
-        if(message.containsNestedMessage()) {
-            boolean successful = true;
-            for(
-                Iterator i = message.getBinaryContents().iterator(); 
-                i.hasNext(); 
-            ) {
-                MessageContent content = (MessageContent)i.next();
-                if(content.getContent() instanceof SimpleMimeMessage) {
-                    try {
-                        this.importMimeMessage(
-                            pm,
-                            providerName,
-                            segmentName,
-                            message.getSubject(),
-                            ((SimpleMimeMessage)content.getContent()).getMimeMessage(),
-                            config
-                        );
-                    }
-                    catch(Exception e) {
-                    	SysLog.info(e.getMessage(), e.getCause());                        
-                        this.notifyAdmin(
-                            pm,
-                            providerName,
-                            segmentName,
-                            Activities.PRIORITY_NORMAL,
-                            "Error importing message. Retrying (" + e.getMessage() + ")",
-                            new ServiceException(e).toString(),
-                            new String[]{messageId}
-                        );
-                        successful = false;
-                    }
-                }
-                else {
-                    this.notifyAdmin(
-                        pm,
-                        providerName,
-                        segmentName,
-                        Activities.PRIORITY_NORMAL,
-                        "Content not of type SimpleMimeMessage. Ignoring",
-                        "",
-                        new String[]{
-                            messageId, 
-                            (content.getContent() == null ? "N/A" : content.getContent().getClass().getName())
-                        }
-                    );
-                }
-            }
-            if(successful && config.deleteImportedMessages()) {
-                // Delete message after successful import
-                message.markAsDeleted();
-            }
+        boolean success = true;
+        try {
+    		if(!message.getSubject().startsWith("> ")) {
+    			message.setSubject("> " + message.getSubject());
+    		}
+    		Activities.getInstance().importMimeMessage(
+    			pm,
+	     		providerName, 
+	     		segmentName, 
+	     		message, 
+	     		null // derive E-Mail creator from subject line 
+            );
         }
-        else {
-            if(config.deleteImportedMessages()) {
-                message.markAsDeleted();
-            }
+        catch(Exception e) {
+        	SysLog.info(e.getMessage(), e.getCause());                        
             this.notifyAdmin(
                 pm,
                 providerName,
                 segmentName,
-                Activities.PRIORITY_LOW,
-                "Message does not contain nested messages",
-                "",
-                new String[]{messageId, "delete=" + config.deleteImportedMessages()}
+                Activities.PRIORITY_NORMAL,
+                "Exception occurred when importing message (" + e.getMessage() + ")",
+                new ServiceException(e).toString(),
+                new String[]{messageId}
             );
+            success = false;
+        }
+        if(success && config.deleteImportedMessages()) {
+    		try {
+	            message.setFlag(
+	            	Flags.Flag.DELETED,
+	            	true
+	            );
+            }
+            catch (MessagingException e) {}
         }
     }
 
@@ -411,14 +283,11 @@ public class MailImporterServlet
                     String messageId = "NA";
                     try {
                         messageId = mimeMessage.getMessageID();
-                        SimpleMimeMessage simpleMimeMessage = new SimpleMimeMessage(
-                            mimeMessage 
-                        );
-                        this.importNestedMessages(
+                        this.importMessages(
                             pm,
                             providerName,
                             segmentName,
-                            simpleMimeMessage,
+                            mimeMessage,
                             mailImporterConfig
                         );
                     }
@@ -464,8 +333,8 @@ public class MailImporterServlet
     /**
      * Process an email import request.
      * 
-     * @param req      The servlet request
-     * @param res      The servlet response
+     * @param req the servlet request
+     * @param res the servlet response
      * @throws ServletException
      * @throws IOException
      */

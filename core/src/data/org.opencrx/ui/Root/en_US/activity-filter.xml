@@ -17,17 +17,17 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all activity filters</_item>
+												<_item>Saved Searches - Activities</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Filters</_item>
+												<_item>Saved Searches - Activities</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>50</_item>
 											</order>
-											<maxMember>2</maxMember>
+											<maxMember>3</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -38,10 +38,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Filter Group</_item>
+												<_item>Saved Search - Activities</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Filter Group</_item>
+												<_item>Saved Search - Activities</_item>
 											</label>
 											<iconKey>ActivityFilterGroup</iconKey>
 										</_object>
@@ -92,10 +92,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Filter</_item>
+												<_item>Saved Search - Activities</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Filter</_item>
+												<_item>Saved Search - Activities</_item>
 											</label>
 											<iconKey>ActivityFilter</iconKey>
 										</_object>
@@ -139,6 +139,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:activitiesSource">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Source of activities</_item>
+											</toolTip>
+											<label>
+												<_item>Source</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- AbstractActivityFilter-->
 									<!--Inspector Definitions-->
@@ -147,10 +164,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria</_item>
 											</toolTip>
 											<label>
-												<_item>Filter Properties</_item>
+												<_item>Search Criteria</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -167,10 +184,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered activities</_item>
+												<_item>Activities (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Activities</_item>
+												<_item>Activities (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -189,10 +206,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Count Filtered Activities</_item>
+												<_item>Count Activities</_item>
 											</toolTip>
 											<label>
-												<_item>Count Filtered Activities</_item>
+												<_item>Count Activities</_item>
 											</label>
 											<iconKey>Account</iconKey>
 											<order>
@@ -284,10 +301,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Process State Filter Property</_item>
+												<_item>Search Criteria - Activity Process State</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Process State Filter Property</_item>
+												<_item>Search Criteria - Activity Process State</_item>
 											</label>
 											<iconKey>ActivityProcessStateFilterProperty</iconKey>
 										</_object>
@@ -321,10 +338,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity State Filter Property</_item>
+												<_item>Search Criteria - Activity State</_item>
 											</toolTip>
 											<label>
-												<_item>Activity State Filter Property</_item>
+												<_item>Search Criteria - Activity State</_item>
 											</label>
 											<iconKey>ActivityStateFilterProperty</iconKey>
 										</_object>
@@ -358,10 +375,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Number Filter Property</_item>
+												<_item>Search Criteria - Activity Number</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Number Filter Property</_item>
+												<_item>Search Criteria - Activity Number</_item>
 											</label>
 											<iconKey>ActivityNumberFilterProperty</iconKey>
 										</_object>
@@ -383,7 +400,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>10</_item>
+												<_item>11</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -395,10 +412,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</toolTip>
 											<label>
-												<_item>Disabled Filter Property</_item>
+												<_item>Search Criteria - Disabled</_item>
 											</label>
 											<iconKey>DisabledFilterProperty</iconKey>
 										</_object>
@@ -431,10 +448,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Types Filter Property</_item>
+												<_item>Search Criteria - Activity Types</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Types Filter Property</_item>
+												<_item>Search Criteria - Activity Types</_item>
 											</label>
 											<iconKey>ActivityTypeFilterProperty</iconKey>
 										</_object>
@@ -452,8 +469,8 @@
 											</label>
 											<order>
 												<_item>0</_item>
-												<_item>0</_item>
 												<_item>10</_item>
+												<_item>12</_item>
 											</order>
 											<maxMember>4</maxMember>
 										</_object>
@@ -468,10 +485,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Assigned to Filter Property</_item>
+												<_item>Search Criteria - Assigned to</_item>
 											</toolTip>
 											<label>
-												<_item>Assigned to  Filter Property</_item>
+												<_item>Search Criteria - Assigned to</_item>
 											</label>
 											<iconKey>AssignedToFilterProperty</iconKey>
 										</_object>
@@ -487,10 +504,90 @@
 											<label>
 												<_item>Assigned To</_item>
 											</label>
+											<shortLabel>
+												<_item>Reported by / Assigned to</_item>
+											</shortLabel>
 											<order>
 												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>6</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+
+									<!-- ReportedByContactFilterProperty-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Search Criteria - Reported by contact</_item>
+											</toolTip>
+											<label>
+												<_item>Search Criteria - Reported by contact</_item>
+											</label>
+											<iconKey>ReportedByContactFilterProperty</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty:contact">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reported by</_item>
+											</toolTip>
+											<label>
+												<_item>Reported by</_item>
+											</label>
+											<shortLabel>
+												<_item>Reported by / Assigned to</_item>
+											</shortLabel>
+											<order>
 												<_item>0</_item>
 												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>6</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+
+									<!-- ReportedByAccountFilterProperty-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Search Criteria - Reported by account</_item>
+											</toolTip>
+											<label>
+												<_item>Search Criteria - Reported by account</_item>
+											</label>
+											<iconKey>ReportedByAccountFilterProperty</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty:account">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reported by</_item>
+											</toolTip>
+											<label>
+												<_item>Reported by</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>19</_item>
 											</order>
 											<maxMember>6</maxMember>
 										</_object>
@@ -505,10 +602,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Scheduled End Filter Property</_item>
+												<_item>Search Criteria - Scheduled End</_item>
 											</toolTip>
 											<label>
-												<_item>Scheduled End Filter Property</_item>
+												<_item>Search Criteria - Scheduled End</_item>
 											</label>
 											<iconKey>ScheduledEndFilterProperty</iconKey>
 										</_object>
@@ -530,7 +627,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>10</_item>
+												<_item>14</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -560,10 +657,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Scheduled Start Filter Property</_item>
+												<_item>Search Criteria - Scheduled Start</_item>
 											</toolTip>
 											<label>
-												<_item>Scheduled Start Filter Property</_item>
+												<_item>Search Criteria - Scheduled Start</_item>
 											</label>
 											<iconKey>ScheduledStartFilterProperty</iconKey>
 										</_object>
@@ -585,7 +682,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>10</_item>
+												<_item>13</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -615,10 +712,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter Property</_item>
+												<_item>SQL Query</_item>
 											</label>
 											<order>
 												<_item>0</_item>

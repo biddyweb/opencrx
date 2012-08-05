@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LDAPSession.java,v 1.8 2010/04/16 12:48:47 wfro Exp $
+ * Name:        $Id: LDAPSession.java,v 1.11 2010/11/19 23:41:39 wfro Exp $
  * Description: LDAPSession
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/16 12:48:47 $
+ * Date:        $Date: 2010/11/19 23:41:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -84,7 +84,7 @@ import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.backend.Accounts;
-import org.opencrx.kernel.utils.AccountsFilterHelper;
+import org.opencrx.kernel.utils.AccountQueryHelper;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -240,17 +240,13 @@ public class LDAPSession extends AbstractSession {
 
     //-----------------------------------------------------------------------
     protected Codes getCodes(
+    	PersistenceManager pm
     ) {
-    	if(this.codes == null) {
-			try {
-				this.codes = new Codes(
-					(RefObject_1_0)pm.getObjectById(
-						new Path("xri://@openmdx*org.opencrx.kernel.code1/provider/" +  LDAPSession.this.getProviderName() + "/segment/Root")
-					)
-				);
-			} catch(Exception e) {}
-    	}
-    	return this.codes;    	
+    	return new Codes(
+			(RefObject_1_0)pm.getObjectById(
+				new Path("xri://@openmdx*org.opencrx.kernel.code1/provider/" +  LDAPSession.this.getProviderName() + "/segment/Root")
+			)
+		);
     }
     
     //-----------------------------------------------------------------------
@@ -258,6 +254,10 @@ public class LDAPSession extends AbstractSession {
     	BerDecoder reqBer
     ) throws IOException {
         int currentMessageId = 0;
+        PersistenceManager pm = AbstractSession.newPersistenceManager(
+        	this.server.getPersistenceManagerFactory(), 
+        	this.username
+        );
         try {
             reqBer.parseSeq(null);
             currentMessageId = reqBer.parseInt();
@@ -290,7 +290,7 @@ public class LDAPSession extends AbstractSession {
             else if (requestOperation == LDAP_REQ_SEARCH) {
                 reqBer.parseSeq(null);
                 String dn = reqBer.parseString(isLdapV3());
-                if(this.pm != null && !this.pm.isClosed()) {
+                if(pm != null) {
                     int scope = reqBer.parseEnumeration();
                     reqBer.parseEnumeration();
                     int sizeLimit = reqBer.parseInt();
@@ -301,7 +301,8 @@ public class LDAPSession extends AbstractSession {
                     reqBer.parseBoolean();
 	                LDAPQuery ldapQuery = this.parseQuery(
 	                	dn,
-	                	reqBer
+	                	reqBer,
+	                	pm
 	                );
 	                if(ldapQuery != null) {
 	                	ldapQuery.process(
@@ -339,19 +340,25 @@ public class LDAPSession extends AbstractSession {
             }
             throw e;
         }
+        finally {
+        	if(pm != null) {
+        		pm.close();
+        	}
+        }
     }
 
     //-----------------------------------------------------------------------
     protected LDAPQuery parseQuery(
     	String dn,
-    	BerDecoder reqBer
+    	BerDecoder reqBer,
+    	PersistenceManager pm
     ) throws IOException {
     	Matcher personsMatcher = PERSONS_PATTERN.matcher(dn);
     	// Get accounts
     	if(personsMatcher.matches()) {
-    		AccountsFilterHelper accountsFilterHelper = new AccountsFilterHelper(this.pm);
+    		AccountQueryHelper accountsFilterHelper = new AccountQueryHelper(pm);
     		try {
-	    		accountsFilterHelper.parseFilteredAccountsUri(
+	    		accountsFilterHelper.parseQueryId(
 	    			"/" + this.server.getProviderName() + "/" + this.segmentName + "/filter/" + personsMatcher.group(1)
 	    		);
 	    		LDAPFilter filter = this.parseFilter(reqBer);
@@ -578,7 +585,7 @@ public class LDAPSession extends AbstractSession {
     class LDAPAccountQuery implements LDAPQuery {
     	
     	public LDAPAccountQuery(
-    		AccountsFilterHelper accountsFilterHelper,
+    		AccountQueryHelper accountsFilterHelper,
     		LDAPFilter ldapFilter
     	) {
     		this.accountsFilterHelper = accountsFilterHelper;
@@ -594,7 +601,7 @@ public class LDAPSession extends AbstractSession {
     	private String getCountryName(
     		PostalAddress postalAddress
     	) {
-    		Codes codes = LDAPSession.this.getCodes();
+    		Codes codes = LDAPSession.this.getCodes(this.accountsFilterHelper.getPersistenceManager());
         	return codes == null ? 
         		Short.toString(postalAddress.getPostalCountry()) :
         			(String)codes.getLongText(
@@ -803,7 +810,7 @@ public class LDAPSession extends AbstractSession {
 			}	        
         }
 		
-		private final AccountsFilterHelper accountsFilterHelper;
+		private final AccountQueryHelper accountsFilterHelper;
 		private final LDAPFilter ldapFilter;
 		
 	}
@@ -1074,6 +1081,5 @@ public class LDAPSession extends AbstractSession {
 
     protected OutputStream out = null;
     protected InputStream in = null;
-    protected Codes codes = null;    
     
 }

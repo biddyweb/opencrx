@@ -172,6 +172,28 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:AssignmentBasedFolderEntry">
+										<_object>
+											<toolTip>
+												<_item>Ordnereintrag (Zuweisung)</_item>
+											</toolTip>
+											<label>
+												<_item>Ordnereintrag</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentBasedFolderEntry">
+										<_object>
+											<toolTip>
+												<_item>Ordnereintrag (Dokument)</_item>
+											</toolTip>
+											<label>
+												<_item>Ordnereintrag</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document">
 										<_object>
 											<toolTip>
@@ -201,6 +223,17 @@
 											</toolTip>
 											<label>
 												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:assignmentRole">
+										<_object>
+											<toolTip>
+												<_item>Rolle</_item>
+											</toolTip>
+											<label>
+												<_item>Rolle</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -1020,6 +1053,17 @@
                       </toolTip>
                       <label>
                         <_item>Ordner</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:assignmentRole">
+                    <_object>
+                      <toolTip>
+                        <_item>Rolle</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Rolle</_item>
                       </label>
                     </_object>
                     <_content/>

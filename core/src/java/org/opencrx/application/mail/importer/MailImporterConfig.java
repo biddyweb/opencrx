@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailImporterConfig.java,v 1.6 2009/06/16 21:19:20 wfro Exp $
+ * Name:        $Id: MailImporterConfig.java,v 1.8 2010/09/16 11:55:48 wfro Exp $
  * Description: MailImporterConfig
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/16 21:19:20 $
+ * Date:        $Date: 2010/09/16 11:55:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,14 +82,12 @@ public class MailImporterConfig {
         String mailServiceName = null;
         String mailbox = null;
         Boolean deleteImportedMessages = null;     
-    	Boolean isEMailAddressLookupCaseInsensitive = null;
-    	Boolean isEMailAddressLookupIgnoreDisabled = null;
         try {
             Admin1Package adminPkg = Utils.getAdminPackage(pm);
             org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getBasePackage(pm);
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
+                    new Path("xri://@openmdx*org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
                 );
             org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
             // Get component configuration
@@ -183,12 +181,6 @@ public class MailImporterConfig {
                     else if((optionPrefix + MailImporterConfig.OPTION_MAIL_DELETE_IMPORTED_MESSAGES + suffix).equals(property.getName())) {
                         deleteImportedMessages = new Boolean(((org.opencrx.kernel.base.jmi1.BooleanProperty)property).isBooleanValue());
                     }
-                    else if((optionPrefix + MailImporterConfig.OPTION_EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE + suffix).equals(property.getName())) {
-                    	isEMailAddressLookupCaseInsensitive = new Boolean(((org.opencrx.kernel.base.jmi1.BooleanProperty)property).isBooleanValue());
-                    }
-                    else if((optionPrefix + MailImporterConfig.OPTION_EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED + suffix).equals(property.getName())) {
-                    	isEMailAddressLookupIgnoreDisabled = new Boolean(((org.opencrx.kernel.base.jmi1.BooleanProperty)property).isBooleanValue());
-                    }
                 }
             }
             if(mailServiceName == null) {
@@ -214,12 +206,6 @@ public class MailImporterConfig {
         this.deleteImportedMessages = deleteImportedMessages == null ? 
         	false : 
         	deleteImportedMessages.booleanValue();
-        this.isEMailAddressLookupCaseInsensitive = isEMailAddressLookupCaseInsensitive == null ? 
-        	true : 
-        	isEMailAddressLookupCaseInsensitive.booleanValue();
-        this.isEMailAddressLookupIgnoreDisabled = isEMailAddressLookupIgnoreDisabled == null ? 
-        	false : 
-        	isEMailAddressLookupIgnoreDisabled.booleanValue();
       }
     
     //-----------------------------------------------------------------------
@@ -255,18 +241,6 @@ public class MailImporterConfig {
     }
   
     //-------------------------------------------------------------------------
-	public boolean isEMailAddressLookupCaseInsensitive(
-	) {
-		return this.isEMailAddressLookupCaseInsensitive;
-	}
-
-    //-------------------------------------------------------------------------
-	public boolean isEMailAddressLookupIgnoreDisabled(
-	) {
-		return this.isEMailAddressLookupIgnoreDisabled;
-	}
-		
-    //-------------------------------------------------------------------------
     private static final String COMPONENT_CONFIGURATION_ID = "MailImporterServlet";
         
     private static final String OPTION_MAIL_BOX = "mailbox";
@@ -278,7 +252,5 @@ public class MailImporterConfig {
     protected final String mailServiceName;
     protected final String mailbox;
     protected final boolean deleteImportedMessages;
-	private boolean isEMailAddressLookupCaseInsensitive = true;
-	private boolean isEMailAddressLookupIgnoreDisabled = false;
   
 }

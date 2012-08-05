@@ -26,7 +26,7 @@ org.openmdx.base.accessor.jmi.cci.RefPackage_1_0"
 		}
 	}
 	catch(Exception e) {
-		throw new ServletException("can not get OpenCrxContext", e);
+		throw new javax.servlet.ServletException("can not get OpenCrxContext", e);
 	}
 %>
 <jsp:include page="TemplateBegin.jsp" />

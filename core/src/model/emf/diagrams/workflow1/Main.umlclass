@@ -285,7 +285,7 @@
     </children>
     <styles xmi:type="notation:FontStyle" xmi:id="_XaCkgU0iEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.workflow1.uml#_cP5n0JGQEdqMLoewFDFMBQ"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XaCkgk0iEd-LLraCh8Tbyw" points="[0, 0, -265, -304]$[215, 247, -50, -57]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_XaCkgk0iEd-LLraCh8Tbyw" points="[0, -30, -135, 145]$[0, -49, -135, 126]$[129, -49, -6, 126]$[129, -99, -6, 76]"/>
   </edges>
   <edges xmi:type="notation:Connector" xmi:id="_YRcGkE0iEd-LLraCh8Tbyw" type="4001" source="_YRPSQE0iEd-LLraCh8Tbyw" target="_PVzoUE0iEd-LLraCh8Tbyw" routing="Tree" lineColor="2763429">
     <children xmi:type="notation:DecorationNode" xmi:id="_YRcGk00iEd-LLraCh8Tbyw" type="6018">
@@ -293,7 +293,7 @@
     </children>
     <styles xmi:type="notation:FontStyle" xmi:id="_YRcGkU0iEd-LLraCh8Tbyw" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.workflow1.uml#_yD_mQJGQEdqMLoewFDFMBQ"/>
-    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_YRcGkk0iEd-LLraCh8Tbyw" points="[11, -63, 80, 229]$[11, -216, 80, 76]"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_YRcGkk0iEd-LLraCh8Tbyw" points="[123, -63, 114, 229]$[123, -166, 114, 126]$[3, -166, -6, 126]$[3, -216, -6, 76]"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_YRctoE0iEd-LLraCh8Tbyw" type="4005" source="_YRPSQE0iEd-LLraCh8Tbyw" target="_ToOfwE0iEd-LLraCh8Tbyw">
     <children xmi:type="notation:DecorationNode" xmi:id="_YRctpE0iEd-LLraCh8Tbyw" type="6003">

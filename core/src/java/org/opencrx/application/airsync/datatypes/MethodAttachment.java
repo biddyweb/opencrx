@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: MethodAttachment.java,v 1.2 2010/03/01 16:40:46 wfro Exp $
+ * Name:        $Id: MethodAttachment.java,v 1.3 2010/09/08 23:21:22 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/01 16:40:46 $
+ * Date:        $Date: 2010/09/08 23:21:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,6 +72,17 @@ public enum MethodAttachment {
 	public int getValue(
 	) {
 		return this.value;
+	}
+	
+	public static MethodAttachment toMethodAttachment(
+		int value
+	) {
+		switch(value) {
+			case 1: return NormalAttachment;
+			case 5: return EmbeddedMessage;
+			case 6: return AttachOLE;
+			default: return NormalAttachment;
+		}
 	}
 	
 }

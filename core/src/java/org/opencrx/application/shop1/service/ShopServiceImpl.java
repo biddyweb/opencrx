@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceImpl.java,v 1.48 2010/06/30 11:43:55 wfro Exp $
+ * Name:        $Id: ShopServiceImpl.java,v 1.49 2010/11/04 18:15:42 wfro Exp $
  * Description: ShopServiceImpl
- * Revision:    $Revision: 1.48 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/30 11:43:55 $
+ * Date:        $Date: 2010/11/04 18:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -866,6 +866,7 @@ public class ShopServiceImpl
         if(postalAddressInvoiceT != null) {
             org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressInvoice = 
                 this.getContractPackage().getPostalAddress().createPostalAddress();
+            postalAddressInvoice.refInitialize(false, false);
             this.datatypeMappers.mapPostalAddress(
                 postalAddressInvoiceT, 
                 postalAddressInvoice
@@ -884,6 +885,7 @@ public class ShopServiceImpl
         if(postalAddressDeliveryT != null) {
             org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressDelivery = 
                 this.getContractPackage().getPostalAddress().createPostalAddress();
+            postalAddressDelivery.refInitialize(false, false);
             this.datatypeMappers.mapPostalAddress(
                 postalAddressDeliveryT,
                 postalAddressDelivery

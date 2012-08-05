@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.60 2010/08/12 16:03:15 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.65 2010/11/30 18:31:30 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.60 $
+ * Revision:    $Revision: 1.65 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/12 16:03:15 $
+ * Date:        $Date: 2010/11/30 18:31:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,21 +73,26 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
+import org.opencrx.kernel.base.jmi1.ImportParams;
 import org.opencrx.kernel.generic.jmi1.Note;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.BasicObject;
@@ -433,28 +438,18 @@ public class VCard extends AbstractImpl {
             return null;
         }        
         if((sourceVcard == null) || (sourceVcard.length() == 0)) {
-            String uid = null;
-        	// Get from externalLink
-        	for(int i = 0; i < account.getExternalLink().size(); i++) {
-        		if(account.getExternalLink().get(i).startsWith(VCARD_SCHEMA)) {
-        			uid = account.getExternalLink().get(i).substring(VCARD_SCHEMA.length());
-        			break;
-        		}
-        	}
-        	if(uid == null) {
-	            // Derive from qualifier
-	            try {
-	                uid = account.refGetPath().getBase();
-	            }
-	            catch(Exception e) {
-	            	// Generate new
-	                uid = UUIDConversion.toUID(UUIDs.getGenerator().next());
-	            }
-        	}
+            // Empty template
+            UUID uid = null;
+            try {
+                uid = UUIDConversion.fromString(account.refGetPath().getBase());
+            }
+            catch(Exception e) {
+                uid = UUIDs.getGenerator().next();
+            }
             sourceVcard = 
                 "BEGIN:VCARD\n" +
                 "VERSION:2.1\n" +
-                "UID:" + uid.toString() + "\n" +
+                "UID:" + UUIDConversion.toUID(uid) + "\n" +
                 "REV:" + rev.substring(0, 15) + "Z\n" +
                 "N:\n" +
                 "FN:\n" + 
@@ -771,33 +766,35 @@ public class VCard extends AbstractImpl {
 
     //-------------------------------------------------------------------------
     public Map<String,String> parseVCard(
-        BufferedReader reader
+        BufferedReader reader,
+        StringBuilder vcard
     ) throws IOException {
-        Map<String,String> vcard = new HashMap<String,String>();
+        Map<String,String> vcardFields = new HashMap<String,String>();
         String line = null;
         boolean lineCont = false;
         String currentName = null;
         while((line = reader.readLine()) != null) {
+            vcard.append(line).append("\n");        	
             int pos;
             if(lineCont) {
-                vcard.put(
+                vcardFields.put(
                     currentName,
-                    vcard.get(currentName) + line
+                    vcardFields.get(currentName) + line
                 );
                 lineCont = false;
             }
             else if((pos = line.indexOf(":")) >= 0) {
                 currentName = line.substring(0, pos).toUpperCase();
                 lineCont = (currentName.indexOf("ENCODING=QUOTED-PRINTABLE") >= 0) && line.endsWith("=");
-                vcard.put(
+                vcardFields.put(
                     currentName,
                     line.substring(pos + 1, lineCont ? line.length() - 1 : line.length())
                 );
             }
         }    
-        return vcard;
+        return vcardFields;
     }
-    
+
     //-------------------------------------------------------------------------
     public BasicObject importItem(
         byte[] item,
@@ -811,10 +808,15 @@ public class VCard extends AbstractImpl {
             BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, "UTF-8")
             );
-            Map<String,String> vcard = this.parseVCard(reader);
-            SysLog.trace("parsed vcard", vcard);
+            StringBuilder vcard = new StringBuilder();
+            Map<String,String> vcardFields = this.parseVCard(
+            	reader,
+                vcard
+            );
+            SysLog.trace("parsed vcard", vcardFields);
             return this.importItem(
-                vcard,
+            	vcard.toString(),
+                vcardFields,
                 account,
                 locale,
                 report
@@ -827,8 +829,9 @@ public class VCard extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    private Account importItem(
-        Map<String,String> vcard,
+    protected Account importItem(
+    	String vcard,
+        Map<String,String> fields,
         Account account,
         short locale,
         List<String> report
@@ -844,7 +847,7 @@ public class VCard extends AbstractImpl {
         dateTimeFormatter.setLenient(false);
         boolean isContact = account instanceof Contact;
         // name
-        String name = vcard.get("N");
+        String name = fields.get("N");
         if(isContact) {
         	Contact contact = (Contact)account;
             if((name != null) && (name.indexOf(";") >= 0)) {
@@ -893,22 +896,22 @@ public class VCard extends AbstractImpl {
                 }
             }
             // nickName
-            String nickName = vcard.get("NICKNAME");
+            String nickName = fields.get("NICKNAME");
             if((nickName != null) && (nickName.length() > 0)) {
                 contact.setNickName(nickName);
             }
             // jobTitle
-            String jobTitle = vcard.get("TITLE");
+            String jobTitle = fields.get("TITLE");
             if((jobTitle != null) && (jobTitle.length() > 0)) {
                 contact.setJobTitle(jobTitle);
             }
             // organization
-            String organization = vcard.get("ORG");
+            String organization = fields.get("ORG");
             if((organization != null) && (organization.length() > 0)) {
                 contact.setOrganization(organization);
             }
             // bday
-            String bday = vcard.get("BDAY");
+            String bday = fields.get("BDAY");
             if((bday != null) && (bday.length() > 0)) {
                 try {
                     contact.setBirthdate(
@@ -949,9 +952,9 @@ public class VCard extends AbstractImpl {
         // externalLink
         boolean hasVcardUid = false;
         List<String> externalLinks = account.getExternalLink();
-        String vcardUid = vcard.get("UID") == null ? 
+        String vcardUid = fields.get("UID") == null ? 
         	account.refGetPath().getBase() : 
-        	vcard.get("UID");
+        	fields.get("UID");
         for(int i = 0; i < externalLinks.size(); i++) {
             if(externalLinks.get(i).startsWith(VCARD_SCHEMA)) {
                 externalLinks.set(
@@ -966,9 +969,9 @@ public class VCard extends AbstractImpl {
             externalLinks.add(
                 VCARD_SCHEMA + vcardUid    
             );
-        }        
+        }
         // note
-        String s = vcard.get("NOTE") != null ? vcard.get("NOTE") : vcard.get("NOTE;ENCODING=QUOTED-PRINTABLE");
+        String s = fields.get("NOTE") != null ? fields.get("NOTE") : fields.get("NOTE;ENCODING=QUOTED-PRINTABLE");
         if(s != null) {
         	Note note = null;
         	try {
@@ -998,8 +1001,9 @@ public class VCard extends AbstractImpl {
             }
             note.setText(text);
         }
-
-        // addresses
+        // vcard
+        account.setVcard(vcard);        
+        // Addresses
         Collection<AccountAddress> addresses = account.getAddress();
         PostalAddress adrHome = null;
         PostalAddress adrWork = null;
@@ -1012,8 +1016,7 @@ public class VCard extends AbstractImpl {
         PhoneNumber telCellVoice = null;
         EMailAddress emailInternet = null;
         EMailAddress emailPrefInternet = null;
-
-        // get addresses
+        // Get addresses
         for(AccountAddress address: addresses) {
             List<Short> usage = new ArrayList<Short>();
             for(Iterator<Short> j = address.getUsage().iterator(); j.hasNext(); ) {
@@ -1067,9 +1070,9 @@ public class VCard extends AbstractImpl {
             }
         }
         // update adrHome
-        s = vcard.get("ADR;HOME") != null ? vcard.get("ADR;HOME") :
-            vcard.get("ADR;TYPE=HOME") != null ? vcard.get("ADR;TYPE=HOME") :
-            vcard.get("ADR;HOME;ENCODING=QUOTED-PRINTABLE");
+        s = fields.get("ADR;HOME") != null ? fields.get("ADR;HOME") :
+            fields.get("ADR;TYPE=HOME") != null ? fields.get("ADR;TYPE=HOME") :
+            fields.get("ADR;HOME;ENCODING=QUOTED-PRINTABLE");
         if((s != null) && (s.length() > 0) && !s.startsWith(";;;")) {
             if(adrHome == null) {
                 adrHome = pm.newInstance(PostalAddress.class);
@@ -1100,9 +1103,9 @@ public class VCard extends AbstractImpl {
             }
         }
         // update adrWork
-        s = vcard.get("ADR;WORK") != null ? vcard.get("ADR;WORK") :
-            vcard.get("ADR;TYPE=WORK") != null ? vcard.get("ADR;TYPE=WORK") :
-            vcard.get("ADR;WORK;ENCODING=QUOTED-PRINTABLE");
+        s = fields.get("ADR;WORK") != null ? fields.get("ADR;WORK") :
+            fields.get("ADR;TYPE=WORK") != null ? fields.get("ADR;TYPE=WORK") :
+            fields.get("ADR;WORK;ENCODING=QUOTED-PRINTABLE");
         if((s != null) && (s.length() > 0) && !s.startsWith(";;;")) {
             if(adrWork == null) {
             	adrWork = pm.newInstance(PostalAddress.class);
@@ -1133,8 +1136,8 @@ public class VCard extends AbstractImpl {
             }
         }
         // update telHomeVoice
-        s = vcard.get("TEL;HOME;VOICE") != null ? vcard.get("TEL;HOME;VOICE") :
-            vcard.get("TEL;TYPE=HOME");
+        s = fields.get("TEL;HOME;VOICE") != null ? fields.get("TEL;HOME;VOICE") :
+            fields.get("TEL;TYPE=HOME");
         if((s != null) && (s.length() > 0)) {
             if(telHomeVoice == null) {
                 telHomeVoice = pm.newInstance(PhoneNumber.class);
@@ -1155,8 +1158,8 @@ public class VCard extends AbstractImpl {
             }
         }
         // update telWorkVoice
-        s = vcard.get("TEL;WORK;VOICE") != null ? vcard.get("TEL;WORK;VOICE") :
-            vcard.get("TEL;TYPE=WORK");
+        s = fields.get("TEL;WORK;VOICE") != null ? fields.get("TEL;WORK;VOICE") :
+            fields.get("TEL;TYPE=WORK");
         if((s != null) && (s.length() > 0)) {        
             if(telWorkVoice == null) {
             	telWorkVoice = pm.newInstance(PhoneNumber.class);
@@ -1177,7 +1180,7 @@ public class VCard extends AbstractImpl {
             }
         }
         // update telHomeFax
-        s = vcard.get("TEL;HOME;FAX");
+        s = fields.get("TEL;HOME;FAX");
         if((s != null) && (s.length() > 0)) {                
             if(telHomeFax == null) {
             	telHomeFax = pm.newInstance(PhoneNumber.class);
@@ -1198,8 +1201,8 @@ public class VCard extends AbstractImpl {
             }
         }
         // update telFax
-        s = vcard.get("TEL;FAX") != null ? vcard.get("TEL;FAX") :
-            vcard.get("TEL;TYPE=FAX");
+        s = fields.get("TEL;FAX") != null ? fields.get("TEL;FAX") :
+            fields.get("TEL;TYPE=FAX");
         if((s != null) && (s.length() > 0)) {                
             if(telFax == null) {
             	telFax = pm.newInstance(PhoneNumber.class);
@@ -1220,8 +1223,8 @@ public class VCard extends AbstractImpl {
             }
         }
         // update telCellVoice
-        s = vcard.get("TEL;CELL;VOICE") != null ? vcard.get("TEL;CELL;VOICE") :
-            vcard.get("TEL;TYPE=CELL");
+        s = fields.get("TEL;CELL;VOICE") != null ? fields.get("TEL;CELL;VOICE") :
+            fields.get("TEL;TYPE=CELL");
         if((s != null) && (s.length() > 0)) {                
             if(telCellVoice == null) {
             	telCellVoice = pm.newInstance(PhoneNumber.class);
@@ -1242,7 +1245,7 @@ public class VCard extends AbstractImpl {
             }
         }
         // update urlHome
-        s = vcard.get("URL;HOME");
+        s = fields.get("URL;HOME");
         if((s != null) && (s.length() > 0)) {                
             if(urlHome == null) {
                 urlHome = pm.newInstance(WebAddress.class);
@@ -1263,7 +1266,7 @@ public class VCard extends AbstractImpl {
             }
         }
         // update urlWork
-        s = vcard.get("URL;WORK");
+        s = fields.get("URL;WORK");
         if((s != null) && (s.length() > 0)) {                
             if(urlWork == null) {
             	urlWork = pm.newInstance(WebAddress.class);
@@ -1284,8 +1287,8 @@ public class VCard extends AbstractImpl {
             }
         }
         // update emailPrefInternet
-        s = vcard.get("EMAIL;PREF;INTERNET") != null ? vcard.get("EMAIL;PREF;INTERNET") :
-            vcard.get("EMAIL;TYPE=WORK");
+        s = fields.get("EMAIL;PREF;INTERNET") != null ? fields.get("EMAIL;PREF;INTERNET") :
+            fields.get("EMAIL;TYPE=WORK");
         if((s != null) && (s.length() > 0)) {                
             if(emailPrefInternet == null) {
                 emailPrefInternet = pm.newInstance(EMailAddress.class);
@@ -1306,8 +1309,8 @@ public class VCard extends AbstractImpl {
             }
         }
         // update emailInternet
-        s = vcard.get("EMAIL;INTERNET") != null ? vcard.get("EMAIL;INTERNET") :
-            vcard.get("EMAIL;TYPE=HOME");
+        s = fields.get("EMAIL;INTERNET") != null ? fields.get("EMAIL;INTERNET") :
+            fields.get("EMAIL;TYPE=HOME");
         if((s != null) && (s.length() > 0)) {                
             if(emailInternet == null) {
                 emailInternet = pm.newInstance(EMailAddress.class);
@@ -1332,13 +1335,14 @@ public class VCard extends AbstractImpl {
         
     //-------------------------------------------------------------------------
     public Account updateAccount(
-        Map<String,String> vcard,
+    	String vcard,
+        Map<String,String> vcardFields,
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         short locale,
         List<String> report
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
-        String lookupEmail = vcard.get("EMAIL;PREF;INTERNET");
+        String lookupEmail = vcardFields.get("EMAIL;PREF;INTERNET");
         Account contact = null;
         if((lookupEmail != null) && (lookupEmail.length() > 0)) {
         	SysLog.trace("looking up", lookupEmail);
@@ -1362,10 +1366,193 @@ public class VCard extends AbstractImpl {
             return null;
         }
         return this.importItem(
-            vcard, 
+        	vcard,
+            vcardFields, 
             contact, 
             locale, 
             report
+        );
+    }
+
+    //-----------------------------------------------------------------------
+    protected Account findAccount(
+        PersistenceManager pm,
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment,
+        String uid
+    ) {
+        Account1Package accountPkg = Utils.getAccountPackage(pm);
+        AccountQuery query = accountPkg.createAccountQuery();
+        query.thereExistsExternalLink().equalTo(VCard.VCARD_SCHEMA + uid);
+        List<Account> accounts = accountSegment.getAccount(query);
+        if(accounts.isEmpty()) {
+            query = accountPkg.createAccountQuery();
+            query.thereExistsExternalLink().equalTo(VCard.VCARD_SCHEMA + uid.replace('.', '+'));
+            accounts = accountSegment.getAccount(query);
+            if(accounts.isEmpty()) {
+                return null;
+            }
+            else {
+                return accounts.iterator().next();
+            }
+        }
+        else {
+            return accounts.iterator().next();
+        }
+    }
+
+    //-------------------------------------------------------------------------
+    public static class PutVCardResult {
+    	
+    	public enum Status { CREATED, UPDATED }
+    	
+    	public PutVCardResult(
+    		Status status,
+    		String oldUID,
+    		String newUID,
+    		Account account
+    	) {
+    		this.status = status;
+    		this.oldUID = oldUID;
+    		this.newUID = newUID;
+    		this.account = account;
+    	}
+    	public Status getStatus() {
+        	return status;
+        }
+		public String getOldUID() {
+        	return oldUID;
+        }
+		public String getNewUID() {
+        	return newUID;
+        }
+		public Account getAccount() {
+        	return account;
+        }
+		private final Status status;
+    	private final String oldUID;
+    	private final String newUID;
+    	private final Account account;    	
+    }
+    
+    public PutVCardResult putVCard(
+    	BufferedReader reader,
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment
+    ) throws ServiceException {    
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+    	PutVCardResult.Status status = PutVCardResult.Status.UPDATED;
+    	Account account = null;
+    	String cardUID = null;
+    	String newUID = null;
+    	String l;
+        try {
+            while((l = reader.readLine()) != null) {
+                if(l.toUpperCase().startsWith("BEGIN:VCARD")) {
+                    String vcard = "";
+                    vcard += "BEGIN:VCARD\n";
+                    String cardREV = null;
+                    while((l = reader.readLine()) != null) {
+                        vcard += l;
+                        vcard += "\n";
+                        if(l.startsWith("UID:")) {
+                            cardUID = l.substring(4);
+                        }
+                        else if(l.startsWith("REV:")) {
+                        	cardREV = l.substring(4);
+                        }
+                        else if(l.startsWith("END:VCARD")) {
+                            break;
+                        }
+                    }
+                    SysLog.trace("VCARD", vcard);
+	                newUID = cardUID;
+	                if((cardUID != null) && (cardREV != null)) {
+                    	SysLog.detail("Lookup account", cardUID);
+                        account = this.findAccount(
+                            pm,
+                            accountSegment, 
+                            cardUID
+                        );
+	                    StringBuilder dummy = new StringBuilder();
+	                    Map<String,String> newCard = new HashMap<String,String>();
+	                    try {
+	                    	newCard = VCard.getInstance().parseVCard(
+	                            new BufferedReader(new StringReader(vcard.toString())),
+	                            dummy 
+	                        );
+	                    } catch(Exception e) {}
+	                    newCard.remove("LAST-MODIFIED");
+	                    newCard.remove("DTSTAMP");                               
+	                    newCard.remove("CREATED"); 
+	                    newCard.remove("REV");
+	                    dummy.setLength(0);
+	                    Map<String,String> oldCard = null;
+	                    if(account == null) {
+	                    	// Ignore supplied UID in case of a new account 
+	                    	// This way we prevent duplicate UIDs
+	                    	int pos1 = vcard.indexOf("UID:");
+	                    	if(pos1 > 0) {
+	                    		int pos2 = vcard.indexOf("\n", pos1);
+	                    		if(pos2 > pos1) {
+	                    			newUID = Base.getInstance().getUidAsString();
+	                    			vcard =
+	                    				vcard.substring(0, pos1) + 
+	                    				"UID:" + newUID + "\n" +
+	                    				vcard.substring(pos2 + 1);		                    		
+	                    		}
+	                    	}
+                            if(account == null) {
+                            	account = pm.newInstance(Contact.class);
+                            	account.refInitialize(false, false);
+                            }
+                            status =  PutVCardResult.Status.CREATED;
+	                    }
+	                    else {
+	                    	try {
+	                            oldCard = this.parseVCard(
+	                                new BufferedReader(new StringReader(account.getVcard())),
+	                                dummy
+	                            );
+	                    	} 
+	                    	catch(Exception e) {}
+	                        oldCard.remove("LAST-MODIFIED");
+	                        oldCard.remove("DTSTAMP");                                   
+	                        oldCard.remove("CREATED");          
+	                        oldCard.remove("REV");
+	                        oldCard.keySet().retainAll(newCard.keySet());
+	                    }
+                    	if(!newCard.equals(oldCard)) {
+	                        try {
+                                pm.currentTransaction().begin();
+                                ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
+                                    vcard.toString().getBytes("UTF-8"), 
+                                    VCard.MIME_TYPE, 
+                                    "import.vcf", 
+                                    (short)0
+                                );
+                                account.importItem(importItemParams);
+                                pm.currentTransaction().commit();
+	                            pm.refresh(account);
+                        	}
+	                        catch(Exception e) {
+	                        	new ServiceException(e).log();
+	                            try {
+	                                pm.currentTransaction().rollback();
+	                            } 
+	                            catch(Exception e0) {}                                    
+	                        }
+                    	}
+	                }
+	            }    	
+	        }
+        }
+        catch (IOException e) {
+        	throw new ServiceException(e);
+        }       
+        return new PutVCardResult(
+        	status,
+        	cardUID,
+        	newUID,
+        	account
         );
     }
 

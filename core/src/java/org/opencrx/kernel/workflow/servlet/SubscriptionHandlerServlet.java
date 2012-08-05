@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.63 2010/03/25 10:09:35 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.65 2010/09/28 21:46:16 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.63 $
+ * Revision:    $Revision: 1.65 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/25 10:09:35 $
+ * Date:        $Date: 2010/09/28 21:46:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -101,6 +101,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -240,7 +241,7 @@ public class SubscriptionHandlerServlet
     ) {
         // Verify active flag and event type
         Short eventType = this.getEventType(auditEntry); 
-        if(!subscription.isActive() || !this.subscriptionAcceptsEventType(subscription, eventType)) {
+        if(!this.subscriptionAcceptsEventType(subscription, eventType)) {
             return false;
         }
         /**
@@ -384,17 +385,16 @@ public class SubscriptionHandlerServlet
         List<Subscription> matchingSubscriptions = null;
         if(!matchingTopics.isEmpty()) {
             matchingSubscriptions = new ArrayList<Subscription>();
-            for(Topic topic: matchingTopics) {                
-                SubscriptionQuery query = (SubscriptionQuery)pm.newQuery(Subscription.class);
-                query.identity().like(
-                    new Path("xri://@openmdx*org.opencrx.kernel.home1/provider").getDescendant(providerName, "segment", segmentName, "userHome", ":*", "subscription", ":*").toResourcePattern()  
-                );
-                query.thereExistsTopic().equalTo(topic);                
-                Collection<Subscription> subscriptions = userHomeSegment.getExtent(query);
-                for(Subscription subscription: subscriptions) {
-                    if(this.subscriptionAcceptsMessage(subscription, auditEntry)) {
-                        matchingSubscriptions.add(subscription);
-                    }
+        	SubscriptionQuery query = (SubscriptionQuery)PersistenceHelper.newQuery(
+        		pm.getExtent(Subscription.class),
+                new Path("xri://@openmdx*org.opencrx.kernel.home1/provider").getDescendant(providerName, "segment", segmentName, "userHome", ":*", "subscription", ":*")  
+        	);
+            query.thereExistsTopic().elementOf(matchingTopics);
+            query.isActive().isTrue();
+            Collection<Subscription> subscriptions = userHomeSegment.getExtent(query);
+            for(Subscription subscription: subscriptions) {
+                if(this.subscriptionAcceptsMessage(subscription, auditEntry)) {
+                    matchingSubscriptions.add(subscription);
                 }
             }
         }
@@ -525,9 +525,7 @@ public class SubscriptionHandlerServlet
 	                                }
 	                            }
                             }
-                            if(pmUser != null) {
-                            	pmUser.evictAll();
-                            }
+                            pmUser.close();
                         }
                     }
                 }

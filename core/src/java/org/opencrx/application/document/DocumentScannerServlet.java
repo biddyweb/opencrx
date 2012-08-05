@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.19 2010/01/24 22:29:15 wfro Exp $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.20 2010/10/02 00:17:40 wfro Exp $
  * Description: DocumentScannerServlet
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/24 22:29:15 $
+ * Date:        $Date: 2010/10/02 00:17:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -119,7 +119,7 @@ public class DocumentScannerServlet
 
     //-----------------------------------------------------------------------
     private org.opencrx.kernel.base.jmi1.StringProperty getComponentConfigProperty(
-        PersistenceManager pm,
+        PersistenceManager rootPm,
         String providerName,
         String segmentName,
         String name
@@ -128,7 +128,7 @@ public class DocumentScannerServlet
             ComponentConfigHelper.getComponentConfiguration(
                 COMPONENT_CONFIGURATION_ID,
                 providerName,
-                pm,
+                rootPm,
                 true,
                 new String[][]{
                     new String[]{providerName + ".Standard." + OPTION_SCAN_DIR, ""},
@@ -565,7 +565,12 @@ public class DocumentScannerServlet
                 }
             }
             try {
-                pm.close();
+            	if(pm != null) {
+            		pm.close();
+            	}
+            	if(rootPm != null) {
+            		rootPm.close();
+            	}
             } catch(Exception e) {}
         }
         catch(Exception e) {

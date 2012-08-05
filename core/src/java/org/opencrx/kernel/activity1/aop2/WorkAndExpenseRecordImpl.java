@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkAndExpenseRecordImpl.java,v 1.2 2009/05/06 16:52:02 wfro Exp $
+ * Name:        $Id: WorkAndExpenseRecordImpl.java,v 1.4 2010/09/29 14:03:51 wfro Exp $
  * Description: WorkAndExpenseRecordImpl
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/06 16:52:02 $
+ * Date:        $Date: 2010/09/29 14:03:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,6 +79,9 @@ public class WorkAndExpenseRecordImpl
     }
 
     //-----------------------------------------------------------------------
+    /**
+     * Derived attribute activity
+     */
     public org.opencrx.kernel.activity1.jmi1.Activity getActivity(
     ) {
     	try {
@@ -92,6 +95,9 @@ public class WorkAndExpenseRecordImpl
     }
 
     //-----------------------------------------------------------------------
+    /**
+     * Derived attribute resource
+     */
     public org.opencrx.kernel.activity1.jmi1.Resource getResource(
     ) {
     	try {
@@ -103,7 +109,7 @@ public class WorkAndExpenseRecordImpl
     		return null;
     	}
     }
-    
+        
     //-----------------------------------------------------------------------
     @Override
 	public void jdoPreStore(

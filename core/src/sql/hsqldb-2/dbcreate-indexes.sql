@@ -41,7 +41,7 @@
 /*                                                                           */
 /* This product includes software developed by contributors to               */
 /* openMDX (http://www.openmdx.org/)                                         */
-/*   
+/*                                                                           */
                                        
 CREATE INDEX I_OOCKE1_ACCOUNT_FULL_NAME ON OOCKE1_ACCOUNT(full_name) ;
 CREATE INDEX I_OOCKE1_ACCOUNT_ALIAS_NAME ON OOCKE1_ACCOUNT(alias_name) ;
@@ -51,6 +51,8 @@ CREATE INDEX I_OOCKE1_ADDRESS_PARENT ON OOCKE1_ADDRESS(p$$parent) ;
 CREATE INDEX I_OOCKE1_ADDRESS_EMAILADDRESS ON OOCKE1_ADDRESS(email_address) ;
 
 CREATE INDEX I_OOCKE1_ACTIVITY_ASSIGNED_TO ON OOCKE1_ACTIVITY(assigned_to) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_REP_CONTACT ON OOCKE1_ACTIVITY(rep_contact) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_REP_ACCT ON OOCKE1_ACTIVITY(rep_acct) ;
 CREATE INDEX I_OOCKE1_ACTIVITY_PERC_COMPL ON OOCKE1_ACTIVITY(percent_complete) ;
 CREATE INDEX I_OOCKE1_ACTIVITY_ACTIVITYNUM ON OOCKE1_ACTIVITY(activity_number) ;
 CREATE INDEX I_OOCKE1_ACTIVITY_MOD_AT ON OOCKE1_ACTIVITY(modified_at) ;

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.75 2010/05/30 22:06:13 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.79 2010/11/28 15:43:59 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.75 $
+ * Revision:    $Revision: 1.79 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/30 22:06:13 $
+ * Date:        $Date: 2010/11/28 15:43:59 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1774,8 +1774,12 @@ org.openmdx.base.text.conversion.*
 					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
-					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS %></td>
-					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL %></td>
+					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL, workflowSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER %></td>
+					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER, workflowSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS %></td>
@@ -1839,6 +1843,10 @@ org.openmdx.base.text.conversion.*
 				<tr>
 					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION %></td>
 					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER %></td>
+					<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 			</table>
 		</fieldset>

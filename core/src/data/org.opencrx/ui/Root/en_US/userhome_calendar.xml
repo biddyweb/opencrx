@@ -50,21 +50,41 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:feed">
 										<_object>
 											<active>true</active>
-											<toolTip>
-												<_item>Sync Feeds</_item>
-											</toolTip>
-											<label>
-												<_item>Sync Feeds</_item>
-											</label>
+                      <toolTip>
+                        <_item>All Sync Feeds</_item>
+                      </toolTip>
+                      <label>
+                        <_item>All Sync Feeds</_item>
+                      </label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 											<inPlace>true</inPlace>
-											<maxMember>8</maxMember>
+											<maxMember>9</maxMember>
 										</_object>
-										<_content/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="1" _operation="create">
+													<_object>
+                            <toolTip>
+                              <_item>Sync Feeds [Active and Assigned]</_item>
+                            </toolTip>
+                            <label>
+                              <_item>Sync Feeds [Active and Assigned]</_item>
+                            </label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>10</_item>
+														</order>
+														<maxMember>9</maxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--FieldGroups in General Tab-->
 									<!--Element Definitions-->
@@ -135,7 +155,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 											<iconKey>AirSyncClientProfile</iconKey>
 										</_object>
@@ -156,6 +176,42 @@
 												<_item>30</_item>
 											</order>
 											<iconKey>CalendarProfile</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CardProfile">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Card Profile</_item>
+											</toolTip>
+											<label>
+												<_item>Card Profile</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<iconKey>CardProfile</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:DocumentProfile">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Document Profile</_item>
+											</toolTip>
+											<label>
+												<_item>Document Profile</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</order>
+											<iconKey>DocumentProfile</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -481,10 +537,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity Filter Feed</_item>
+												<_item>Feed Saved Search Activities</_item>
 											</toolTip>
 											<label>
-												<_item>Activity Filter Feed</_item>
+												<_item>Feed Saved Search Activities</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -501,10 +557,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Activity filter</_item>
+												<_item>Saved Search Activities</_item>
 											</toolTip>
 											<label>
-												<_item>Activity filter</_item>
+												<_item>Saved Search Activities</_item>
 											</label>
                       <orderFieldGroup>
                         <_item>0</_item>
@@ -515,6 +571,51 @@
                         <_item>0</_item>
                         <_item>0</_item>
                         <_item>220</_item>
+                      </orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- DocumentFeed -->
+                  <!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:DocumentFeed">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Document Feed</_item>
+											</toolTip>
+											<label>
+												<_item>Document Feed</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<iconKey>DocumentFeed</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <!--FieldGroups in General Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:DocumentFeed:documentFolder">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Document Folder</_item>
+											</toolTip>
+											<label>
+												<_item>Document Folder</_item>
+											</label>
+                      <orderFieldGroup>
+                        <_item>0</_item>
+                        <_item>20</_item>
+                        <_item>13</_item>
+                      </orderFieldGroup>
+                      <orderObjectContainer>
+                        <_item>0</_item>
+                        <_item>0</_item>
+                        <_item>230</_item>
                       </orderObjectContainer>
 										</_object>
 										<_content/>

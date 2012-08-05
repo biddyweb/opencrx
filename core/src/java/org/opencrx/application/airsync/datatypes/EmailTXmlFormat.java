@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EmailTXmlFormat.java,v 1.20 2010/06/22 17:08:24 wfro Exp $
+ * Name:        $Id: EmailTXmlFormat.java,v 1.22 2010/09/09 15:18:13 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/22 17:08:24 $
+ * Date:        $Date: 2010/09/09 15:18:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,12 +55,14 @@
  */
 package org.opencrx.application.airsync.datatypes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.opencrx.application.airsync.utils.DOMUtils;
 import org.openmdx.base.text.conversion.Base64;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.format.DateTimeFormat;
 
 public class EmailTXmlFormat extends AbstractXmlFormat {
@@ -220,13 +222,92 @@ public class EmailTXmlFormat extends AbstractXmlFormat {
 		return sb.toString();
 	}
 
+	private EmailBodyT parseBody(
+		Element eData
+	) {		
+		EmailBodyT emailBodyT = new EmailBodyT();			
+		emailBodyT.setData(parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "Body")));
+		return emailBodyT;
+	}
+		
+	private List<AddressT> parseAddresses(
+		String addresses
+	) {
+		List<AddressT> addressesT = new ArrayList<AddressT>();
+		if(addresses != null) {
+			String[] splits = addresses.split(",");
+			for(int i = 0; i < splits.length; i++) {
+				String address = splits[i];
+				int pos1 = address.indexOf("<");
+				int pos2 = address.indexOf(">");
+				if(pos1 >= 0 && pos2 > pos1) { 
+					addressesT.add(
+						new AddressT(address.substring(pos1 + 1, pos2).trim())
+					);
+				}
+			}
+		}
+		return addressesT; 		
+	}
+		
+	private List<AttachmentT> parseAttachments(
+		Element eData
+	) {
+		List<AttachmentT> attachmentsT = new ArrayList<AttachmentT>();
+		Element eAttachments = DOMUtils.getUniqueElement(eData, "Email:", "Attachments");
+		if(eAttachments != null) {
+			for (int i = 0, n = eAttachments.getChildNodes().getLength(); i < n; i += 1) {
+				Node node = eAttachments.getChildNodes().item(i);
+				if(node instanceof Element) {
+					Element eAttachment = (Element)node;
+					AttachmentT attachmentT = new AttachmentT();
+					attachmentT.setMethod(
+						MethodAttachment.toMethodAttachment(
+							Integer.valueOf(parseDOMString(DOMUtils.getUniqueElement(eAttachment, "Email:", "AttMethod")))
+						)
+					);
+					attachmentT.setEstimatedDataSize(parseDOMInt(DOMUtils.getUniqueElement(eAttachment, "Email:", "AttSize")));
+					attachmentT.setDisplayName((parseDOMString(DOMUtils.getUniqueElement(eAttachment, "Email:", "DisplayName"))));
+					attachmentT.setAttachmentName(parseDOMString(DOMUtils.getUniqueElement(eAttachment, "Email:", "AttName")));
+					attachmentsT.add(attachmentT);
+				}
+			}
+		}
+		return attachmentsT;
+	}
+	
 	@Override
 	public IData parse(
-		Element syncData
+		Element eData
 	) {
-		EmailT mail = new EmailT();
-		mail.setRead(parseDOMInt2Boolean(DOMUtils.getUniqueElement(syncData, "Email:", "Read")));
-		return mail;
+		EmailT emailT = new EmailT();
+		emailT.setMimeData(parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "MIMEData")));
+		List<AddressT> addressesTo = this.parseAddresses(
+			parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "To"))
+		);
+		emailT.setTo(addressesTo);
+		List<AddressT> addressesCc = this.parseAddresses(
+			parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "CC"))
+		);
+		emailT.setCc(addressesCc);
+		emailT.setBcc(Collections.<AddressT>emptyList());
+		List<AddressT> addressesFrom = this.parseAddresses(
+			parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "From"))
+		);
+		if(!addressesFrom.isEmpty()) {
+			emailT.setFrom(addressesFrom.get(0));
+		}
+		emailT.setSubject(parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "Subject")));
+		emailT.setDateReceived(parseDOMDate(DOMUtils.getUniqueElement(eData, "Email:", "DateReceived")));
+		String importance = parseDOMString(DOMUtils.getUniqueElement(eData, "Email:", "Importance"));
+		if(importance != null) {
+			emailT.setImportance(Importance.toImportance(Integer.parseInt(importance)));
+		}
+		emailT.setRead(parseDOMInt2Boolean(DOMUtils.getUniqueElement(eData, "Email:", "Read")));
+		emailT.setAttachements(this.parseAttachments(eData));
+		emailT.setBody(this.parseBody(eData));
+		emailT.setCategories(parseDOMStringCollection(DOMUtils.getUniqueElement(eData, "Email:", "Categories"), "Email:", "Category"));
+		return emailT;
 	}
 	
 }

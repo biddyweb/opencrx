@@ -302,6 +302,10 @@
                 <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
               </ownedParameter>
             </ownedOperation>
+            <ownedOperation xmi:id="_VqIsYLzcEd-deejz2j0zFw" name="linkToAndFollowUp">
+              <ownedParameter xmi:id="_aWWj4LzcEd-deejz2j0zFw" name="in" type="_cejmgLzcEd-deejz2j0zFw"/>
+              <ownedParameter xmi:id="_LbWSQLzeEd-deejz2j0zFw" type="__fH6YLzpEd-6TdDVYe-efA" direction="return"/>
+            </ownedOperation>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D3FECB035020F" name="Segment">
             <ownedRule xmi:id="_5CkxsILZEdq1PZSUDaISSQ">
@@ -333,6 +337,7 @@
             <generalization xmi:id="_xIrf4HaSEduay-WajN2Vbg">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_FrwCsHaQEduay-WajN2Vbg"/>
             </generalization>
+            <generalization xmi:id="_GibWkOXSEd-XquPOMEGJEw" general="_o8_YMOXQEd-XquPOMEGJEw"/>
             <ownedAttribute xmi:id="_3C7B8A60016D400AD02903D0" name="addressGroup" type="_3C7B8A60016D400AD012014C" isUnique="false" aggregation="composite" association="_3C7B8A60016D400AD0290249">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ICvlst7NEdmKapscEl8OLg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ICvlsd7NEdmKapscEl8OLg"/>
@@ -1109,6 +1114,7 @@
             <generalization xmi:id="_aItokLGhEdyaJ7duwyYO0A">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
             </generalization>
+            <generalization xmi:id="__tbNoOXREd-XquPOMEGJEw" general="_o8_YMOXQEd-XquPOMEGJEw"/>
             <ownedAttribute xmi:id="_3C7B8A60016D425C2D380312" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>
@@ -1357,6 +1363,9 @@
             <generalization xmi:id="_IukD8G5WEdq2_7SCieKOqA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
+            <generalization xmi:id="_b7bvcAbXEeCZXOmiOzBdfQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D409FD37B02C8"/>
+            </generalization>
             <ownedAttribute xmi:id="_rP374G5WEdq2_7SCieKOqA" name="nextState" type="_HP9dIG5EEdq2_7SCieKOqA" association="_rPx1QG5WEdq2_7SCieKOqA">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_rP37425WEdq2_7SCieKOqA" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_rP374m5WEdq2_7SCieKOqA"/>
@@ -1563,6 +1572,9 @@
             <generalization xmi:id="_Jwv5sG5WEdq2_7SCieKOqA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
+            <generalization xmi:id="_hLhEoAa5EeCZXOmiOzBdfQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D409FD37B02C8"/>
+            </generalization>
             <ownedAttribute xmi:id="_-_-CQG5WEdq2_7SCieKOqA" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>
@@ -1679,6 +1691,10 @@
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ry8mwYnAEdqT-YHfpV38vQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ry8mwInAEdqT-YHfpV38vQ"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_uSrqguXQEd-XquPOMEGJEw" name="activitiesSource" type="_o8_YMOXQEd-XquPOMEGJEw" association="_uSpOQOXQEd-XquPOMEGJEw">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_knzZQOXTEd-XquPOMEGJEw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_kn0AUOXTEd-XquPOMEGJEw"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_QB4FEG5MEdq2_7SCieKOqA" name="SegmentContainsActivityFilter" memberEnd="_QB4FEW5MEdq2_7SCieKOqA _QB4FEm5MEdq2_7SCieKOqA">
@@ -2092,6 +2108,9 @@
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
             </generalization>
             <ownedAttribute xmi:id="_bhdmMHFfEdqn-eNyJZtHUw" name="partyType">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_kkugAPvgEd-0irdVLXxHyw" name="partyStatus" aggregation="composite">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
           </packagedElement>
@@ -2783,6 +2802,70 @@
             <ownedEnd xmi:id="__172wEu9Ed-aE-iNjWF8xw" name="workRecord" type="_3C7B8A60016D4241A9320008" association="__16ooEu9Ed-aE-iNjWF8xw">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_EEWX8Eu-Ed-aE-iNjWF8xw" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_EEW_AEu-Ed-aE-iNjWF8xw"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_cejmgLzcEd-deejz2j0zFw" name="LinkToAndFollowUpParams">
+            <eAnnotations xmi:id="_WEOx8LzdEd-deejz2j0zFw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_X0Dw0LzdEd-deejz2j0zFw" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_gHy-ELzcEd-deejz2j0zFw" name="activity" type="_3C7B8A60016D3F40064D035D" aggregation="composite">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nOnaULzdEd-deejz2j0zFw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_F7VpgLziEd-deejz2j0zFw" name="transition" type="_VyurYG42Edq2_7SCieKOqA" aggregation="composite">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Mez9kLziEd-deejz2j0zFw"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="__fH6YLzpEd-6TdDVYe-efA" name="LinkToAndFollowUpResult">
+            <eAnnotations xmi:id="_Qlas8LzqEd-6TdDVYe-efA" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_TkSR0LzqEd-6TdDVYe-efA" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_Dzt8ELzqEd-6TdDVYe-efA" name="followUp" type="_3C7B8A60016D42540344017F" aggregation="composite">
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Vbm_0LzqEd-6TdDVYe-efA"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_uSpOQOXQEd-XquPOMEGJEw" name="ActivityFilterGlobalHasActivitySource" memberEnd="_uSrDcOXQEd-XquPOMEGJEw _uSrqguXQEd-XquPOMEGJEw">
+            <ownedEnd xmi:id="_uSrDcOXQEd-XquPOMEGJEw" name="activityFilter" type="_N1xZ4G5MEdq2_7SCieKOqA" association="_uSpOQOXQEd-XquPOMEGJEw">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_uSrqgeXQEd-XquPOMEGJEw" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_uSrqgOXQEd-XquPOMEGJEw"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_o8_YMOXQEd-XquPOMEGJEw" name="ActivitiesSource" isAbstract="true">
+            <eAnnotations xmi:id="_Tp0gEOXREd-XquPOMEGJEw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_aC5iAOXREd-XquPOMEGJEw" key="root"/>
+            </eAnnotations>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_roNegOZjEd-XquPOMEGJEw" name="ReportedByContactFilterProperty">
+            <generalization xmi:id="_zM1GgOZjEd-XquPOMEGJEw" general="_X2YBUBvqEdyil9rtoHqsOA"/>
+            <ownedAttribute xmi:id="_NrZ3EuZkEd-XquPOMEGJEw" name="contact" association="_NrZQAOZkEd-XquPOMEGJEw">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.account1.uml#_3C7B8A60016D3F3EBCD203AF"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NrZ3FOZkEd-XquPOMEGJEw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NrZ3E-ZkEd-XquPOMEGJEw"/>
+              <qualifier xmi:id="_dh3AIOZpEd-XquPOMEGJEw" name="id">
+                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+              </qualifier>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_uXS68OZjEd-XquPOMEGJEw" name="ReportedByAccountFilterProperty">
+            <generalization xmi:id="_B9al8OZkEd-XquPOMEGJEw" general="_X2YBUBvqEdyil9rtoHqsOA"/>
+            <ownedAttribute xmi:id="_Gimy8OZlEd-XquPOMEGJEw" name="account" association="_Gilk0OZlEd-XquPOMEGJEw">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.account1.uml#_3C7B8A60016D3F50EA250055"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Gimy8uZlEd-XquPOMEGJEw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Gimy8eZlEd-XquPOMEGJEw"/>
+              <qualifier xmi:id="_iLbzUOZpEd-XquPOMEGJEw" name="id">
+                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+              </qualifier>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_NrZQAOZkEd-XquPOMEGJEw" name="ReportedByFilterIncludesContact" memberEnd="_NrZQAeZkEd-XquPOMEGJEw _NrZ3EuZkEd-XquPOMEGJEw">
+            <ownedEnd xmi:id="_NrZQAeZkEd-XquPOMEGJEw" name="filterProperty" type="_roNegOZjEd-XquPOMEGJEw" association="_NrZQAOZkEd-XquPOMEGJEw">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NrZ3EeZkEd-XquPOMEGJEw" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NrZ3EOZkEd-XquPOMEGJEw"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_Gilk0OZlEd-XquPOMEGJEw" name="ReportedByFilterIncludesAccount" memberEnd="_GimL4OZlEd-XquPOMEGJEw _Gimy8OZlEd-XquPOMEGJEw">
+            <ownedEnd xmi:id="_GimL4OZlEd-XquPOMEGJEw" name="filterProperty" type="_uXS68OZjEd-XquPOMEGJEw" association="_Gilk0OZlEd-XquPOMEGJEw">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_GimL4uZlEd-XquPOMEGJEw" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_GimL4eZlEd-XquPOMEGJEw"/>
             </ownedEnd>
           </packagedElement>
         </packagedElement>

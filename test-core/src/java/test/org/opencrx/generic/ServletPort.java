@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Test Core, http://www.opencrx.org/
- * Name:        $Id: ServletPort.java,v 1.10 2010/05/26 14:13:04 wfro Exp $
+ * Name:        $Id: ServletPort.java,v 1.11 2010/11/22 17:08:06 wfro Exp $
  * Description: ServletPort
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/26 14:13:04 $
+ * Date:        $Date: 2010/11/22 17:08:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -445,6 +445,9 @@ public class ServletPort
                 this.servletPath = '/' + servletPath.substring(
                     servletPath.charAt(14) == '!' ? 14 : 15
                 );
+                if(interactionSpec == DELETE_SPEC) {
+                    this.request.getParameterMap().put("FunctionName", new String[]{"DELETE"});
+                }                
             }
             
             protected final RestInteractionSpec interactionSpec;

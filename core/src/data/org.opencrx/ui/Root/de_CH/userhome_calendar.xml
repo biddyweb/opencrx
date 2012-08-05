@@ -33,16 +33,32 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:feed">
 										<_object>
-											<toolTip>
-												<_item>Sync Quellen</_item>
-											</toolTip>
-											<label>
-												<_item>Sync Quellen</_item>
-											</label>
+                      <toolTip>
+                        <_item>Alle Sync Quellen</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Alle Sync Quellen</_item>
+                      </label>
 										</_object>
-										<_content/>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="1" _operation="create">
+													<_object>
+                            <toolTip>
+                              <_item>Sync Quellen [Aktiv und mit Zuweisung]</_item>
+                            </toolTip>
+                            <label>
+                              <_item>Sync Quellen [Aktiv und mit Zuweisung]</_item>
+                            </label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SyncProfile:name">
 										<_object>
@@ -95,6 +111,28 @@
 											</toolTip>
 											<label>
 												<_item>Kalenderprofil</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CardProfile">
+										<_object>
+											<toolTip>
+												<_item>Kartenprofil</_item>
+											</toolTip>
+											<label>
+												<_item>Kartenprofil</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:DocumentProfile">
+										<_object>
+											<toolTip>
+												<_item>Dokumentprofil</_item>
+											</toolTip>
+											<label>
+												<_item>Dokumentprofil</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -281,10 +319,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ActivityFilterCalendarFeed">
 										<_object>
 											<toolTip>
-												<_item>Quelle Aktivitätsfilter</_item>
+												<_item>Quelle Suchliste Aktivitäten</_item>
 											</toolTip>
 											<label>
-												<_item>Quelle Aktivitätsfilter</_item>
+												<_item>Quelle Suchliste Aktivitäten</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -292,10 +330,33 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ActivityFilterCalendarFeed:activityFilter">
 										<_object>
 											<toolTip>
-												<_item>Aktivitätsfilter</_item>
+												<_item>Suchliste Aktivitäten</_item>
 											</toolTip>
 											<label>
-												<_item>Aktivitätsfilter</_item>
+												<_item>Suchliste Aktivitäten</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:DocumentFeed">
+										<_object>
+											<toolTip>
+												<_item>Quelle Dokumente</_item>
+											</toolTip>
+											<label>
+												<_item>Quelle Dokumente</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:DocumentFeed:documentFolder">
+										<_object>
+											<toolTip>
+												<_item>Ordner</_item>
+											</toolTip>
+											<label>
+												<_item>Ordner</_item>
 											</label>
 										</_object>
 										<_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.40 2010/08/12 15:14:22 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.41 2010/12/13 09:18:25 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.40 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/12 15:14:22 $
+ * Date:        $Date: 2010/12/13 09:18:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,6 +64,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Codes;
 
 public class Addresses extends AbstractImpl {
@@ -138,8 +139,11 @@ public class Addresses extends AbstractImpl {
 		    		countryCode
 		    	);
 		    	return countryCode;
-    		} catch(Exception e) {}
+    		} catch(Exception e) {
+    			SysLog.warning("Unable to map country. Exception occured", e);
+    		}
     	}
+    	SysLog.warning("Unable to map country. Country not found", country);
     	return 0;
     }
     

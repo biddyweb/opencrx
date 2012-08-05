@@ -719,97 +719,118 @@ org.apache.poi.hssf.util.*
           </tr>
         </table>
       </div>
-    </div>
-
-    <div id="content-wrap">
-    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 <%
-    NumberFormat formatter = new DecimalFormat("0");
-
-    // Format dates/times
-    TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
-    SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());
-    timeFormat.setTimeZone(timezone);
-  	SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", app.getCurrentLocale());
-  	timestamp.setTimeZone(timezone);
-  	SimpleDateFormat exceldate = new SimpleDateFormat("dd-MM-yyyy");
-  	exceldate.setTimeZone(timezone);
-
-
-    final String MEMBER_CLASS = "org:opencrx:kernel:account1:Member";
-    final String MEMBERSHIP_CLASS = "org:opencrx:kernel:account1:AccountMembership";
-    final String ACCOUNTSEGMENT_CLASS = "org:opencrx:kernel:account1:Segment";
-    final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
-    final String ACCOUNTFILTERGLOBAL_CLASS = "org:opencrx:kernel:account1:AccountFilterGlobal";
-    final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
-    final String LEGALENTITY_CLASS = "org:opencrx:kernel:account1:LegalEntity";
-    final String GROUP_CLASS = "org:opencrx:kernel:account1:Group";
-    final String UNSPECIFIEDACCOUNT_CLASS = "org:opencrx:kernel:account1:UnspecifiedAccount";
-    final String EMAILADDRESS_CLASS = "org:opencrx:kernel:account1:EMailAddress";
-    final String POSTALADDRESS_CLASS = "org:opencrx:kernel:account1:PostalAddress";
-
-    final String ACCOUNT_FILTER_XRI_PREFIX = "ACCOUNT_FILTER_XRI_";
-
-    final int DEFAULT_PAGE_SIZE = 20;
-
-    final String colorDuplicate = "#FFA477";
-    final String colorMember = "#D2FFD2";
-    final String colorMemberDisabled = "#F2F2F2";
-
-    final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
-    final String SPREADSHEET = "<img border='0' alt=''  height='32px' src='../../images/spreadsheet.png' />";
-    final String sheetName = "Accounts_(openCRX)_" + timestamp.format(new java.util.Date());
-    final String location = UUIDs.getGenerator().next().toString();
-    File f = null;
-    FileOutputStream os = null;
-    HSSFWorkbook wb = null;
-    Action downloadAction =	null;
-    HSSFSheet sheetAccounts = null;
-    HSSFFont headerfont = null;
-    HSSFCellStyle headerStyle = null;
-    HSSFCellStyle wrappedStyle = null;
-    HSSFCellStyle topAlignedStyle = null;
-
-    HSSFRow row = null;
-    HSSFCell cell = null;
-    short nRow = 0;
-    short nCell = 0;
-
-    String errorMsg = "";
-
-    try {
-      // get reference of calling object
-      RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-
-      Path objectPath = new Path(objectXri);
-      String providerName = objectPath.get(2);
-      String segmentName = objectPath.get(4);
-
-      UserDefinedView userView = new UserDefinedView(
-        obj,
-        app,
-        viewsCache.getView(requestId)
-      );
-
-      // Get account1 package
-      org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
-
-      // Get account segment
-      org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-        (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-          new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-         );
-
-      org.opencrx.kernel.account1.jmi1.Account accountSource = null;
       String accountTitle = "";
-      if (obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
-          accountSource = (org.opencrx.kernel.account1.jmi1.Account)obj;
-          accountTitle = (new ObjectReference(accountSource, app)).getTitle();
-      }
+      try {
+	      // get reference of calling object
+	      RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+
+	      Path objectPath = new Path(objectXri);
+	      String providerName = objectPath.get(2);
+	      String segmentName = objectPath.get(4);
+
+	      UserDefinedView userView = new UserDefinedView(
+	        obj,
+	        app,
+	        viewsCache.getView(requestId)
+	      );
+
+	      // Get account1 package
+	      org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
+
+	      // Get account segment
+	      org.opencrx.kernel.account1.jmi1.Segment accountSegment =
+	        (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+	          new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+	         );
+
+	      org.opencrx.kernel.account1.jmi1.Account accountSource = null;
+	      if (obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
+	          accountSource = (org.opencrx.kernel.account1.jmi1.Account)obj;
+	          accountTitle = (new ObjectReference(accountSource, app)).getTitle();
+	      }
+        String mode = (request.getParameter("mode") == null ? "0" : request.getParameter("mode")); // default is [Manage Members]
+%>
+
+	      <div id="etitle" style="height:20px;padding-left:12px;">
+	         Manage Members of "<%= accountTitle %>"
+	      </div>
+
+				<div id="topnavi">
+					<ul id="navigation" class="navigation" onmouseover="sfinit(this);">
+						<li class="<%= mode.compareTo("0")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='0';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Manage Members</span></a></li>
+						<li class="<%= mode.compareTo("1")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='1';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Add Members</span></a></li>
+					</ul>
+				</div> <!-- topnavi -->
+
+	    <div id="content-wrap">
+	    	<div id="content" style="padding:0px 0.5em 0px 0.5em;">
+<%
+	    NumberFormat formatter = new DecimalFormat("0");
+
+	    // Format dates/times
+	    TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
+	    SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());
+	    timeFormat.setTimeZone(timezone);
+	  	SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", app.getCurrentLocale());
+	  	timestamp.setTimeZone(timezone);
+	  	SimpleDateFormat exceldate = new SimpleDateFormat("dd-MM-yyyy");
+	  	exceldate.setTimeZone(timezone);
+
+
+	    final String MEMBER_CLASS = "org:opencrx:kernel:account1:Member";
+	    final String MEMBERSHIP_CLASS = "org:opencrx:kernel:account1:AccountMembership";
+	    final String ACCOUNTSEGMENT_CLASS = "org:opencrx:kernel:account1:Segment";
+	    final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
+	    final String ACCOUNTFILTERGLOBAL_CLASS = "org:opencrx:kernel:account1:AccountFilterGlobal";
+	    final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
+	    final String LEGALENTITY_CLASS = "org:opencrx:kernel:account1:LegalEntity";
+	    final String GROUP_CLASS = "org:opencrx:kernel:account1:Group";
+	    final String UNSPECIFIEDACCOUNT_CLASS = "org:opencrx:kernel:account1:UnspecifiedAccount";
+	    final String EMAILADDRESS_CLASS = "org:opencrx:kernel:account1:EMailAddress";
+	    final String POSTALADDRESS_CLASS = "org:opencrx:kernel:account1:PostalAddress";
+
+	    final String ACCOUNT_FILTER_XRI_PREFIX = "ACCOUNT_FILTER_XRI_";
+
+	    final int DEFAULT_PAGE_SIZE = 20;
+
+	    final String colorDuplicate = "#FFA477";
+	    final String colorMember = "#D2FFD2";
+	    final String colorMemberDisabled = "#F2F2F2";
+
+	    final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
+	    final String SPREADSHEET = "<img border='0' alt=''  height='32px' src='../../images/spreadsheet.png' />";
+	    final String sheetName = "Accounts_(openCRX)_" + timestamp.format(new java.util.Date());
+	    final String location = UUIDs.getGenerator().next().toString();
+	    File f = null;
+	    FileOutputStream os = null;
+	    HSSFWorkbook wb = null;
+	    Action downloadAction =	null;
+	    HSSFSheet sheetAccounts = null;
+	    HSSFFont headerfont = null;
+	    HSSFCellStyle headerStyle = null;
+	    HSSFCellStyle wrappedStyle = null;
+	    HSSFCellStyle topAlignedStyle = null;
+
+	    HSSFRow row = null;
+	    HSSFCell cell = null;
+	    short nRow = 0;
+	    short nCell = 0;
+
+	    String errorMsg = "";
+
+      final String wildcard = ".*";
+      String searchString = (request.getParameter("searchString") == null ? "" : request.getParameter("searchString"));
+      String previousSearchString = (request.getParameter("previousSearchString") == null ? "" : request.getParameter("previousSearchString"));
 
       org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = accountPkg.createAccountQuery();
       accountFilter.forAllDisabled().isFalse();
       accountFilter.orderByFullName().ascending();
+
+      org.opencrx.kernel.account1.cci2.AccountQuery searchAccountFullNameFilter = accountPkg.createAccountQuery();
+      searchAccountFullNameFilter.forAllDisabled().isFalse();
+      searchAccountFullNameFilter.thereExistsFullName().like("(?i)" + wildcard + searchString + wildcard);
+      searchAccountFullNameFilter.orderByFullName().ascending();
 
       org.opencrx.kernel.account1.cci2.ContactQuery contactFilter = accountPkg.createContactQuery();
       contactFilter.forAllDisabled().isFalse();
@@ -830,16 +851,39 @@ org.apache.poi.hssf.util.*
       org.opencrx.kernel.account1.cci2.MemberQuery memberFilter = accountPkg.createMemberQuery();
       memberFilter.orderByCreatedAt().ascending();
 
+      org.opencrx.kernel.account1.cci2.EMailAddressQuery searchEMailAddressFilter = accountPkg.createEMailAddressQuery();
+      searchEMailAddressFilter.forAllDisabled().isFalse();
+      searchEMailAddressFilter.thereExistsEmailAddress().like("(?i)" + wildcard + searchString + wildcard);
+      searchEMailAddressFilter.orderByEmailAddress().ascending();
+
+      org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCityFilter = accountPkg.createPostalAddressQuery();
+      searchPostalAddressCityFilter.forAllDisabled().isFalse();
+      searchPostalAddressCityFilter.thereExistsPostalCity().like("(?i)" + wildcard + searchString + wildcard);
+      searchPostalAddressCityFilter.orderByPostalCity().ascending();
+
+      org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCodeFilter = accountPkg.createPostalAddressQuery();
+      searchPostalAddressCodeFilter.forAllDisabled().isFalse();
+      searchPostalAddressCodeFilter.thereExistsPostalCode().like("(?i)" + wildcard + searchString + wildcard);
+      searchPostalAddressCodeFilter.orderByPostalCode().ascending();
+
       int tabIndex = 1;
       int pageSize = DEFAULT_PAGE_SIZE;
       int displayStart = 0;
       long highAccount = 0;
       boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
       boolean highAccountIsKnown = ((request.getParameter("highAccountIsKnown") != null) && (request.getParameter("highAccountIsKnown").length() > 0));
-      boolean isSelectionChange = isFirstCall || request.getParameter("isSelectionChange") != null;
+      boolean isSelectionChange = isFirstCall || request.getParameter("isSelectionChange") != null || previousSearchString.compareTo(searchString) != 0;
       String accountFilterXri = null;
       org.opencrx.kernel.account1.jmi1.AccountFilterGlobal selectedAccountFilterGlobal = null;
-      int accountSelectorType = 0;
+      int accountSelectorType = 1;
+        /*    0: select all accounts (segment)
+              1: select members only
+              2: select based on AccountFilter
+            100: Search based on "full name"
+            110: Search based on "e-mail address"
+            111: Search based on "postal address city"
+            112: Search based on "postal address zip"
+        */
       if (request.getParameter("accountSelectorType") != null && !request.getParameter("accountSelectorType").startsWith(ACCOUNT_FILTER_XRI_PREFIX)) {
           try {
               accountSelectorType = Integer.parseInt(request.getParameter("accountSelectorType"));
@@ -850,6 +894,13 @@ org.apache.poi.hssf.util.*
               selectedAccountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)pm.getObjectById(new Path(accountFilterXri));
               accountSelectorType = 2;
           } catch (Exception e) {}
+      }
+      if (mode.compareTo("0") == 0) {
+          accountSelectorType = 1; // model [Manage Members] requires selection of membersOnly
+      } else {
+          if (accountSelectorType == 1) {
+              accountSelectorType = 100; // set to search based on Full Name
+          }
       }
       boolean duplicatesOnly = ((request.getParameter("duplicatesOnly") != null) && (request.getParameter("duplicatesOnly").length() > 0));
       if (duplicatesOnly) {accountSelectorType = 1;}
@@ -877,7 +928,17 @@ org.apache.poi.hssf.util.*
         highAccount = request.getParameter("highAccount") != null ? Long.parseLong(request.getParameter("highAccount")) : 0;
       } catch (Exception e) {}
       try {
-        if (request.getParameter("displayStart") != null && request.getParameter("displayStart").startsWith("+")) {
+        if (request.getParameter("paging") != null && request.getParameter("paging").startsWith("--")) {
+          displayStart = ((int)((highAccount - (long)(10*pageSize)) / (long)pageSize)) - 1;
+          if (displayStart < 0) {
+            displayStart = 0;
+          }
+        } else if (request.getParameter("paging") != null && request.getParameter("paging").startsWith("++")) {
+          displayStart = ((int)((highAccount + (long)(10*pageSize)) / (long)pageSize)) - 1;
+          if (displayStart < 0) {
+            displayStart = 0;
+          }
+        } else if (request.getParameter("displayStart") != null && request.getParameter("displayStart").startsWith("+")) {
           displayStart = ((int)((highAccount + Long.parseLong(request.getParameter("displayStart").substring(1))) / (long)pageSize)) - 1;
           if (displayStart < 0) {
             displayStart = 0;
@@ -902,6 +963,7 @@ org.apache.poi.hssf.util.*
       boolean iteratorNotSet = true;
       int itSetCounter = 0;
       final int MAXITSETCOUNTER = 2;
+
       while (iteratorNotSet && itSetCounter < MAXITSETCOUNTER) {
           itSetCounter++;
           try {
@@ -938,10 +1000,30 @@ org.apache.poi.hssf.util.*
                       accounts = (accountSource.getMember(memberFilter)).listIterator((int)displayStart*pageSize);
                   } else if (accountSelectorType == 2) {
                       accounts = selectedAccountFilterGlobal.getFilteredAccount(accountFilter).listIterator((int)displayStart*pageSize);
-                  }
+                  } else if (accountSelectorType == 100) {
+              	      // full name
+              	      if (searchString.length() > 0) {
+                          accounts = accountSegment.getAccount(searchAccountFullNameFilter).listIterator((int)displayStart*pageSize);
+                      }
+              	  } else if (accountSelectorType == 110) {
+              	  	  // e-mail address
+              	      if (searchString.length() > 0) {
+                          accounts = accountSegment.getAddress(searchEMailAddressFilter).listIterator((int)displayStart*pageSize);
+                      }
+              	  } else if (accountSelectorType == 111) {
+              	  	  // postal address city
+              	      if (searchString.length() > 0) {
+                          accounts = accountSegment.getAddress(searchPostalAddressCityFilter).listIterator((int)displayStart*pageSize);
+                      }
+              	  } else if (accountSelectorType == 112) {
+              	  	  // postal address zip
+              	      if (searchString.length() > 0) {
+                          accounts = accountSegment.getAddress(searchPostalAddressCodeFilter).listIterator((int)displayStart*pageSize);
+                      }
+              	  }
               }
               counter = displayStart*pageSize;
-              if (!accounts.hasNext()) {
+              if (accounts != null && !accounts.hasNext()) {
                   displayStart = (int)((highAccount / (long)pageSize));
                   counter = displayStart*pageSize;
               } else {
@@ -1097,16 +1179,14 @@ org.apache.poi.hssf.util.*
       }
 
 %>
-      <div id="etitle" style="height:20px;">
-         Manage Members of "<%= accountTitle %>"
-      </div>
-      <form name="ManageMembers" accept-charset="UTF-8" method="POST" action="<%= FORMACTION %>">
+      <form name="ManageMembers" style="padding:0;border-top:3px solid #E4E4E4;margin:0;" accept-charset="UTF-8" method="POST" action="<%= FORMACTION %>">
         <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
         <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
         <input type="hidden" name="previousSheet" id="previousSheet" value="<%= location %>" />
+        <input type="hidden" name="mode" id="mode" value="<%= mode %>" />
+        <input type="hidden" name="paging" id="paging" value="" />
         <input type="checkbox" style="display:none;" name="isFirstCall" checked />
         <input type="checkbox" style="display:none;" name="isSelectionChange" id="isSelectionChange" />
-        <br />
 
 <%
         if (downloadAction != null) {
@@ -1117,13 +1197,23 @@ org.apache.poi.hssf.util.*
 <%
         }
 %>
-        <table class="fieldGroup">
+        <table class="fieldGroup" style="width:100%;margin-top:0;padding-top:0;border-top:0;border-collapse:collapse;">
           <tr>
-            <td id="submitButtons" style="font-weight:bold;">
-              <div style="background-color:#eee;padding:3px;">
-                <%= app.getTexts().getSelectAllText() %> <select id="accountSelectorType" name="accountSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
-                  <option <%= accountSelectorType == 0 ? "selected" : "" %> value="0">* <%= app.getLabel(ACCOUNTSEGMENT_CLASS) %>&nbsp;</option>
+            <td id="submitButtons" style="font-weight:bold;background-color:#E4E4E4;padding-bottom:3px;">
+              <div style="padding:8px 3px;">
+                <%= app.getTexts().getSelectAllText() %> <select <%= mode.compareTo("0")==0 ? "disabled" : "" %> style="width:150px;" id="accountSelectorType" name="accountSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+<%
+                if (mode.compareTo("0") == 0) {
+%>
                   <option <%= accountSelectorType == 1 ? "selected" : "" %> value="1"><%= app.getLabel(MEMBER_CLASS)  %>&nbsp;</option>
+<%
+                } else {
+%>
+                  <option <%= accountSelectorType == 100 ? "selected" : "" %> value="100">? <%= app.getTexts().getSearchText() %> <%= userView.getFieldLabel("org:opencrx:kernel:account1:Account", "fullName", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+                  <option <%= accountSelectorType == 110 ? "selected" : "" %> value="110">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(EMAILADDRESS_CLASS) %>&nbsp;</option>
+                  <option <%= accountSelectorType == 111 ? "selected" : "" %> value="111">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCity", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+                  <option <%= accountSelectorType == 112 ? "selected" : "" %> value="112">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCode", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+                  <option <%= accountSelectorType ==   0 ? "selected" : "" %> value="0"  >* <%= app.getLabel(ACCOUNTSEGMENT_CLASS) %>&nbsp;</option>
 <%
 									org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountFilterGlobalQuery = (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
 									accountFilterGlobalQuery.forAllDisabled().isFalse();
@@ -1134,10 +1224,18 @@ org.apache.poi.hssf.util.*
                       <option <%= (accountSelectorType == 2) && (accountFilterXri != null && accountFilterXri.compareTo(accountFilterGlobal.refMofId()) == 0) ? "selected" : "" %> value="<%= ACCOUNT_FILTER_XRI_PREFIX %><%= accountFilterGlobal.refMofId() %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS) %>: <%= accountFilterGlobal.getName() != null ? accountFilterGlobal.getName() : "?" %> &nbsp;</option>
 <%
 									}
+							  }
 %>
                 </select>&nbsp;
 <%
-                if (!membersOnly) {
+                if (accountSelectorType >= 100) {
+%>
+                  <INPUT type="text" name="searchString" id="searchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
+                  <INPUT type="hidden" name="previousSearchString" id="previousSearchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
+									<INPUT type="submit" name="go" id="go" title="<%= app.getTexts().getSearchText() %>" tabindex="<%= tabIndex++ %>" value=">>" onclick="setTimeout('disableSubmit()', 10);$('Reload.Button').click();" />
+<%
+                } else {
+                  if (!membersOnly) {
 %>
                     &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectAccount            ? "checked" : "" %> value="selectAccount"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> *
                     &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectContact            ? "checked" : "" %> value="selectContact"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(CONTACT_CLASS) %>
@@ -1145,13 +1243,16 @@ org.apache.poi.hssf.util.*
                     &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectGroup              ? "checked" : "" %> value="selectGroup"              onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(GROUP_CLASS) %>
                     &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectUnspecifiedAccount ? "checked" : "" %> value="selectUnspecifiedAccount" onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(UNSPECIFIEDACCOUNT_CLASS) %>
 <%
+                  }
                 }
 %>
               </div>
               <br>
-              <a href="#" onclick="javascript:try{($('displayStart').value)--}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
+              <a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif" style="padding-top:5px;"></a>
+              <a href="#" onclick="javascript:try{($('displayStart').value)--;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
               <span id="displayStartSelector">...</span>
-              <a href="#" onclick="javascript:try{($('displayStart').value)++}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
+              <a href="#" onclick="javascript:try{($('displayStart').value)++;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
+              <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif" style="padding-top:5px;"></a>
               &nbsp;&nbsp;&nbsp;
               <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
                 <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
@@ -1173,7 +1274,7 @@ org.apache.poi.hssf.util.*
               <br>
             </td>
             <td id="waitMsg" style="display:none;">
-              <div style="padding-left:5px; padding-bottom: 48px;">
+              <div style="padding-left:5px; padding: 11px 0px 50px 0px;">
                 <img src="../../images/wait.gif" alt="" />
               </div>
             </td>
@@ -1190,13 +1291,14 @@ org.apache.poi.hssf.util.*
 %>
         <br />
 
-        <table><tr><td>
+        <table style="background:white;"><tr><td>
         <table id="resultTable" class="gridTableFull">
           <tr class="gridTableHeaderFull"><!-- 10 columns -->
-            <td align="right">
-              <a href="#" onclick="javascript:try{($('displayStart').value)--}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif"></a>
+            <td align="right"><a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif"></a>
+              <a href="#" onclick="javascript:try{($('displayStart').value)--;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif"></a>
               #
-              <a href="#" onclick="javascript:try{($('displayStart').value)++}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif"></a></td>
+              <a href="#" onclick="javascript:try{($('displayStart').value)++;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif"></a>
+              <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif"></a></td>
             <td align="left">&nbsp;<b><%= app.getLabel(ACCOUNT_CLASS) %></b></td>
             <td align="left">&nbsp;<b><%= app.getLabel(EMAILADDRESS_CLASS) %></b></td>
             <td align="left">&nbsp;<b><%= app.getLabel(POSTALADDRESS_CLASS) %></b></td>
@@ -1221,10 +1323,18 @@ org.apache.poi.hssf.util.*
                 Iterator i = accounts;
                 i.hasNext() && (counter <= (displayStart+1)*pageSize);
               ) {
+                  org.opencrx.kernel.account1.jmi1.PostalAddress infoAddr = null;
                   org.opencrx.kernel.account1.jmi1.Account account = null;
                   org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)i.next();
                   if (crxObject instanceof org.opencrx.kernel.account1.jmi1.Account) {
                       account = (org.opencrx.kernel.account1.jmi1.Account)crxObject;
+                  } else if (crxObject instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
+                  	  // get parent account
+                      account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
+                  } else if (crxObject instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
+                  	  // get parent account
+                      account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
+                      infoAddr = (org.opencrx.kernel.account1.jmi1.PostalAddress)crxObject;
                   } else {
                       account = ((org.opencrx.kernel.account1.jmi1.Member)crxObject).getAccount();
                       if (account == null) {
@@ -1310,32 +1420,33 @@ org.apache.poi.hssf.util.*
                   org.opencrx.kernel.account1.jmi1.PostalAddress businessAddr = null;
                   org.opencrx.kernel.account1.jmi1.PostalAddress homeAddr = null;
                   org.opencrx.kernel.account1.jmi1.PostalAddress otherAddr = null;
-                  org.opencrx.kernel.account1.jmi1.PostalAddress infoAddr = null;
-                  org.opencrx.kernel.account1.cci2.PostalAddressQuery addressFilter = accountPkg.createPostalAddressQuery();
-                  addressFilter.forAllDisabled().isFalse();
-                  for (
-                    Iterator a = account.getAddress(addressFilter).iterator();
-                    a.hasNext();
-                  ) {
-                    org.opencrx.kernel.account1.jmi1.PostalAddress addr = (org.opencrx.kernel.account1.jmi1.PostalAddress)a.next();
-                    for(
-                        Iterator k = addr.getUsage().iterator();
-                        k.hasNext();
-                    ) {
-                        switch (((Number)k.next()).intValue()) {
-                            case  400:  homeAddr = addr; break;
-                            case  500:  businessAddr = addr; break;
-                            default  :  otherAddr = addr; break;
-                        }
-                    }
-                  }
-                  if (businessAddr != null) {
-                    infoAddr = businessAddr;
-                  } else if (homeAddr != null) {
-                    infoAddr = homeAddr;
-                  } else if (otherAddr != null) {
-                    infoAddr = otherAddr;
-                  }
+                  if (infoAddr == null) {
+		                  org.opencrx.kernel.account1.cci2.PostalAddressQuery addressFilter = accountPkg.createPostalAddressQuery();
+		                  addressFilter.forAllDisabled().isFalse();
+		                  for (
+		                    Iterator a = account.getAddress(addressFilter).iterator();
+		                    a.hasNext();
+		                  ) {
+		                    org.opencrx.kernel.account1.jmi1.PostalAddress addr = (org.opencrx.kernel.account1.jmi1.PostalAddress)a.next();
+		                    for(
+		                        Iterator k = addr.getUsage().iterator();
+		                        k.hasNext();
+		                    ) {
+		                        switch (((Number)k.next()).intValue()) {
+		                            case  400:  homeAddr = addr; break;
+		                            case  500:  businessAddr = addr; break;
+		                            default  :  otherAddr = addr; break;
+		                        }
+		                    }
+		                  }
+		                  if (businessAddr != null) {
+		                    infoAddr = businessAddr;
+		                  } else if (homeAddr != null) {
+		                    infoAddr = homeAddr;
+		                  } else if (otherAddr != null) {
+		                    infoAddr = otherAddr;
+		                  }
+		              }
                   String addressInfo = "";
                   if (infoAddr != null) {
                     if (infoAddr.getPostalCode() != null) {addressInfo += infoAddr.getPostalCode() + " ";}
@@ -1655,10 +1766,11 @@ org.apache.poi.hssf.util.*
           }
 %>
           <tr class="gridTableHeaderFull"><!-- 7 columns -->
-            <td align="right">
+            <td align="right"><a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif"></a>
               <a href="#" onclick="javascript:try{($('displayStart').value)--}catch(e){};$('Reload.Button').click();"><img border="0" align="top" alt="&lt;" src="../../images/previous.gif"></a>
               #
-              <a href="#" onclick="javascript:try{($('displayStart').value)++}catch(e){};$('Reload.Button').click();"><img border="0" align="top" alt="&lt;" src="../../images/next.gif"></a></td>
+              <a href="#" onclick="javascript:try{($('displayStart').value)++}catch(e){};$('Reload.Button').click();"><img border="0" align="top" alt="&lt;" src="../../images/next.gif"></a>
+              <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif"></a></td>
             <td align="left">&nbsp;<b><%= app.getLabel(ACCOUNT_CLASS) %></b></td>
             <td align="left">&nbsp;<b><%= app.getLabel(EMAILADDRESS_CLASS) %></b></td>
             <td align="left">&nbsp;<b><%= app.getLabel(POSTALADDRESS_CLASS) %></b></td>
@@ -1724,6 +1836,7 @@ org.apache.poi.hssf.util.*
 
     }
     catch (Exception e) {
+			new ServiceException(e).log();
       out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
       PrintWriter pw = new PrintWriter(out);
       ServiceException e0 = new ServiceException(e);

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncServlet.java,v 1.10 2010/06/18 16:50:02 wfro Exp $
+ * Name:        $Id: SyncServlet.java,v 1.11 2010/09/21 12:18:49 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/18 16:50:02 $
+ * Date:        $Date: 2010/09/21 12:18:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -183,7 +183,7 @@ public class SyncServlet extends HttpServlet {
 		response.setHeader("MS-ASProtocolVersions", "1.0,2.0,2.1,2.5");
 		response.setHeader(
 			"MS-ASProtocolCommands",
-			"Sync,GetAttachment,GetHierarchy,FolderSync,MoveItems,GetItemEstimate,Ping"
+			"Sync,GetAttachment,FolderSync,MoveItems,GetItemEstimate,Ping,SendMail"
 		);
 		response.setHeader("Public", "OPTIONS,POST");
 		response.setHeader("Allow", "OPTIONS,POST");

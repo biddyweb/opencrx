@@ -641,7 +641,7 @@
 							<string>account:0</string>
 						</void>
 						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="1">
+							<array class="org.openmdx.base.query.Condition" length="2">
 								<void index="0">
 									<object class="org.openmdx.base.query.IsInCondition">
 										<void property="quantor">
@@ -657,6 +657,26 @@
 											<array class="java.lang.String" length="1">
 												<void index="0">
 													<string>org:opencrx:kernel:account1:Group</string>
+												</void>
+											</array>
+										</void>
+									</object>
+								</void>
+								<void index="1">
+									<object class="org.openmdx.base.query.IsInCondition">
+										<void property="quantor">
+											<short>1</short> <!-- for all -->
+										</void>
+										<void property="feature">
+											<string>disabled</string>
+										</void>
+										<void property="fulfil">
+											<boolean>false</boolean>
+										</void>
+										<void property="value">
+											<array class="java.lang.Boolean" length="1">
+												<void index="0">
+													<boolean>true</boolean>
 												</void>
 											</array>
 										</void>

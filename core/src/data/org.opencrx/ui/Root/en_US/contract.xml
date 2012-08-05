@@ -20,7 +20,7 @@
 												<_item>all Pipeline Objects</_item>
 											</toolTip>
 											<label>
-												<_item>Pipeline</_item>
+												<_item>Sales</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -1357,6 +1357,102 @@
 									</org.openmdx.ui1.ElementDefinition>
 									-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reprice:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:findSalesVolumeBudgets">
+										<_object>
+											<active>false</active> <!-- disabled because openMDX/portal cannot render multivalued results -->
+											<toolTip>
+												<_item>Find Sales Volume Budgets</_item>
+											</toolTip>
+											<label>
+												<_item>Find Sales Volume Budgets</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>21</_item>
+											</order>
+											<iconKey></iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:findSalesVolumeBudgets:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:findSalesVolumeBudgets:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:assignSalesVolumeBudgets">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Assign Sales Volume Budgets</_item>
+											</toolTip>
+											<label>
+												<_item>Assign Sales Volume Budgets</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>22</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:Pane:Op:Tab:assignSalesVolumeBudgets">
+										<_object>
+											<active>false</active> <!-- not used with leads -->
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:assignSalesVolumeBudgets:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:assignSalesVolumeBudgets:Group:result">
 										<_object>
 											<active>true</active>
 											<toolTip>

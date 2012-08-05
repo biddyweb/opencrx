@@ -1,4 +1,0 @@
-urlid CRX_2_7
-url jdbc:hsqldb:hsql://127.0.0.1:@@HSQLDB_PORT@@/CRX_2_7
-username sa
-password manager99

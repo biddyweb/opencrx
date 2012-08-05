@@ -56,6 +56,8 @@ DROP VIEW OOCKE1_JOIN_CBHASBK
 GO
 DROP VIEW OOCKE1_JOIN_CLFCLASSIFIESTELT
 GO
+DROP VIEW OOCKE1_JOIN_CONTACTISMEMBEROF
+GO
 DROP VIEW OOCKE1_JOIN_CPOSHASPOSMOD
 GO
 DROP VIEW OOCKE1_JOIN_DEPGCONTAINSDEP
@@ -142,8 +144,6 @@ DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY
 GO
 DROP VIEW OOMSE2_TOBJ_USERS
 GO
-DROP VIEW OOMSE2_TOBJ_USERS_ALL
-GO
 DROP VIEW OOMSE2_TOBJ_ROLES
 GO
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK
@@ -169,7 +169,9 @@ FROM
 INNER JOIN
     OOCKE1_ACCOUNT acc
 ON
-    (act.assigned_to = acc.object_id)
+    (act.assigned_to = acc.object_id) OR
+    (act.rep_contact = acc.object_id) OR
+    (act.rep_acct = acc.object_id)
 UNION
 SELECT
     act.object_id AS assigned_activity,
@@ -210,26 +212,6 @@ INNER JOIN
     OOCKE1_CONTRACT c0
 ON
     (act.contract = c0.object_id)
-UNION
-SELECT
-    act.object_id AS assigned_activity,
-    acc.object_id AS account
-FROM
-    OOCKE1_ACTIVITY act
-INNER JOIN
-    OOCKE1_ACCOUNT acc
-ON
-    (act.rep_contact = acc.object_id)
-UNION
-SELECT
-    act.object_id AS assigned_activity,
-    acc.object_id AS account
-FROM
-    OOCKE1_ACTIVITY act
-INNER JOIN
-    OOCKE1_ACCOUNT acc
-ON
-    (act.rep_acct = acc.object_id)
 GO
 CREATE VIEW OOCKE1_JOIN_ACCTHASPROD AS
 SELECT DISTINCT
@@ -300,6 +282,13 @@ INNER JOIN
     OOCKE1_MODELELEMENT e
 ON
     (c.object_id = e.type)
+GO
+CREATE VIEW OOCKE1_JOIN_CONTACTISMEMBEROF AS
+SELECT
+    cm.contact AS contact,
+    cm.p$$parent AS ou_membership
+FROM
+    OOCKE1_CONTACTMEMBERSHIP cm
 GO
 CREATE VIEW OOCKE1_JOIN_CPOSHASPOSMOD AS
 SELECT
@@ -379,7 +368,9 @@ FROM
 INNER JOIN
     OOCKE1_USERHOME h0
 ON
-    (a.assigned_to = h0.contact)
+    (a.assigned_to = h0.contact) OR
+    (a.rep_contact = h0.contact) OR
+    (a.rep_acct = h0.contact)
 UNION
 SELECT
     a.object_id AS assigned_activity,
@@ -426,26 +417,6 @@ INNER JOIN
     OOCKE1_USERHOME h0
 ON
     (adr.p$$parent = h0.contact)
-UNION
-SELECT
-    a.object_id AS assigned_activity,
-    h0.object_id AS user_home
-FROM
-    OOCKE1_ACTIVITY a
-INNER JOIN
-    OOCKE1_USERHOME h0
-ON
-    (a.rep_contact = h0.contact)
-UNION
-SELECT
-    a.object_id AS assigned_activity,
-    h0.object_id AS user_home
-FROM
-    OOCKE1_ACTIVITY a
-INNER JOIN
-    OOCKE1_USERHOME h0
-ON
-    (a.rep_acct = h0.contact)
 GO
 CREATE VIEW OOCKE1_JOIN_IITEMHASBOOKING AS
 SELECT
@@ -495,7 +466,6 @@ INNER JOIN
 ON
     (adr.p$$parent = act.object_id)
 GO
-
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSFAC AS
 SELECT
     f.object_id AS facility,
@@ -506,9 +476,7 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT b
 ON
     (f.p$$parent = b.object_id)
-
-UNION ALL
-
+UNION
 SELECT
     f.object_id AS facility,
     bu1.p$$parent AS segment
@@ -523,7 +491,6 @@ INNER JOIN
 ON
    (bu2.p$$parent = bu1.object_id)
 GO
-
 CREATE VIEW OOCKE1_JOIN_HOMEHASASSCONTR AS
 SELECT
     c.object_id AS assigned_contract,
@@ -534,9 +501,7 @@ INNER JOIN
     OOCKE1_USERHOME h
 ON
     (c.sales_rep = h.contact)
-
 UNION
-
 SELECT
     c.object_id AS assigned_contract,
     h.object_id AS user_home
@@ -546,7 +511,6 @@ INNER JOIN
     OOCKE1_USERHOME h
 ON
     (c.customer = h.contact)
-
 UNION
 
 SELECT
@@ -621,7 +585,19 @@ FROM
 INNER JOIN
     OOCKE1_ACCOUNT a
 ON
-    (b.account = a.object_id)
+    b.account = a.object_id
+
+UNION
+
+SELECT
+    b.object_id AS assigned_budget,
+    ass.account AS account
+FROM
+    OOCKE1_BUDGET b
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass
+ON
+    ass.p$$parent = b.object_id
 GO
 
 CREATE VIEW OOCKE1_JOIN_BUHASADR AS
@@ -647,7 +623,7 @@ INNER JOIN
 ON
     (b.p$$parent = s.object_id)
 
-UNION ALL
+UNION
 
 SELECT
     b.object_id AS building_unit,
@@ -1032,7 +1008,7 @@ SELECT
 
     AS object_id,
     d_.folder AS p$$parent,
-    'org:opencrx:kernel:document1:DocumentFolderEntry'
+    'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
 
 
 
@@ -1050,6 +1026,7 @@ SELECT
     d.active_on AS valid_from,
     d.active_until AS valid_to,
     d.disabled AS disabled,
+    0 AS assignment_role,
     d.object_id AS document,
     d.object_id AS based_on
 FROM
@@ -1057,7 +1034,8 @@ FROM
 INNER JOIN
     OOCKE1_DOCUMENT d
 ON
-    (d_.object_id = d.object_id)
+    (d_.object_id = d.object_id) AND
+    (d_.folder IS NOT NULL)
 
 UNION
 
@@ -1071,7 +1049,7 @@ SELECT
 
     AS object_id,
     dfa.document_folder AS p$$parent,
-    'org:opencrx:kernel:document1:DocumentFolderEntry'
+    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
 
 
 
@@ -1089,10 +1067,13 @@ SELECT
     dfa.valid_from AS valid_from,
     dfa.valid_to AS valid_to,
     dfa.disabled AS disabled,
+    dfa.assignment_role AS assignment_role,
     dfa.p$$parent AS document,
     dfa.object_id AS based_on
 FROM
     OOCKE1_DOCUMENTFOLDERASS dfa
+WHERE
+    dfa.document_folder IS NOT NULL
 GO
 
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY_ AS
@@ -1102,7 +1083,7 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:document1:DocumentFolderEntry'
+    'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
 
 
 
@@ -1118,7 +1099,7 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:document1:DocumentFolderEntry'
+    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
 
 
 
@@ -2070,7 +2051,7 @@ FROM
     OOCKE1_ACCOUNT_
 GO
 
-CREATE VIEW OOMSE2_TOBJ_USERS_ALL AS
+CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
     CASE
         WHEN r.name = 'Default' THEN p.name
@@ -2078,26 +2059,34 @@ SELECT
 
 
 
+
+
 '\'
 
         + p.name
     END AS principal_name,
-    (SELECT c1.passwd FROM OOMSE2_PRINCIPAL p1 INNER JOIN OOMSE2_REALM r1 ON p1.p$$parent = r1.object_id INNER JOIN OOMSE2_CREDENTIAL c1 ON (p1.credential = c1.object_id) WHERE r1.name = 'Default' AND p.name = p1.name) AS passwd
+    (SELECT c2.passwd FROM OOMSE2_PRINCIPAL p2 INNER JOIN OOMSE2_REALM r2 ON p2.p$$parent = r2.object_id INNER JOIN OOMSE2_CREDENTIAL c2 ON (p2.credential = c2.object_id) WHERE r2.name = 'Default' AND p.name = p2.name) AS passwd
 FROM
     OOMSE2_REALM r
 INNER JOIN
     OOMSE2_PRINCIPAL p
 ON
     p.p$$parent = r.object_id
+INNER JOIN
+    OOMSE2_PRINCIPAL p1
+ON
+    p.name = p1.name
+INNER JOIN
+    OOMSE2_REALM r1
+ON
+    p1.p$$parent = r1.object_id
+INNER JOIN
+    OOMSE2_CREDENTIAL c1
+ON
+    p1.credential = c1.object_id
 WHERE
-    r.name <> 'Root'
-GO
-
-CREATE VIEW OOMSE2_TOBJ_USERS AS
-SELECT * FROM
-    OOMSE2_TOBJ_USERS_ALL
-WHERE
-    passwd IS NOT NULL
+    r.name <> 'Root' AND
+    r1.name = 'Default'
 GO
 
 CREATE VIEW OOMSE2_TOBJ_ROLES AS
@@ -2105,6 +2094,8 @@ SELECT
     CASE
         WHEN realm.name = 'Default' THEN p.name
         ELSE realm.name +
+
+
 
 
 

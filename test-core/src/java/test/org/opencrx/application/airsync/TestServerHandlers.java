@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestServerHandlers.java,v 1.18 2010/08/24 23:32:00 wfro Exp $
+ * Name:        $Id: TestServerHandlers.java,v 1.19 2010/09/09 07:52:41 wfro Exp $
  * Description: TestHandlers
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/24 23:32:00 $
+ * Date:        $Date: 2010/09/09 07:52:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -361,14 +361,12 @@ public class TestServerHandlers {
 					bcc.add(new AddressT("bcc3@opencrx.org"));
 					List<AttachmentT> attachments = new ArrayList<AttachmentT>();
 					AttachmentT attachmentT = new AttachmentT();
-					attachmentT.setAttachmentName("attachment 1 name");
+					attachmentT.setAttachmentName("file://tmp/attachment1.txt");
 					attachmentT.setDisplayName("attachment 1 display name");
-					attachmentT.setContentLocation("file://tmp/attachment1.txt");
 					attachments.add(attachmentT);
 					attachmentT = new AttachmentT();
-					attachmentT.setAttachmentName("attachment 2 name");
+					attachmentT.setAttachmentName("file://tmp/attachment2.txt");
 					attachmentT.setDisplayName("attachment 2 display name");
-					attachmentT.setContentLocation("file://tmp/attachment2.txt");
 					attachments.add(attachmentT);
 					// Email 1
 					EmailT emailT = new EmailT();

@@ -1768,7 +1768,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 195, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 195, 'xri:@openmdx:org.opencrx.kernel.account1/provider/:*/segment/:*/account/:*/ouMembership/:*'
 )  
 GO
 
@@ -1894,7 +1894,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 213, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 213, 'xri:@openmdx:org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/customer/:*'
 )  
 GO
 
@@ -1915,7 +1915,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:type', 216, 'spice://dummy'
+    'preference/OOCKE1', 'PERSISTENCE:type', 216, 'xri:@openmdx:org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/position/:*'
 )  
 GO
 
@@ -2504,6 +2504,27 @@ INSERT INTO prefs_Preference
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
     'preference/OOCKE1', 'PERSISTENCE:type', 300, 'xri:@openmdx:org.opencrx.kernel.contract1/provider/:*/segment/:*/invoice/:*/assignedAccount/:*'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:type', 301, 'xri:@openmdx:org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/broker/:*'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:type', 302, 'xri:@openmdx:org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/salesRep/:*'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:type', 303, 'xri:@openmdx:org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/position/:*/productFilterProperty/:*'
 )  
 GO
 
@@ -3876,7 +3897,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 195, 'dummy195'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 195, 'accountOuMembership'
 )  
 GO
 
@@ -4002,7 +4023,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 213, 'dummy213'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 213, 'assignedCustomer'
 )  
 GO
 
@@ -4023,7 +4044,7 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:typeName', 216, 'dummy216'
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 216, 'budgetPosition'
 )  
 GO
 
@@ -4612,6 +4633,27 @@ INSERT INTO prefs_Preference
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
     'preference/OOCKE1', 'PERSISTENCE:typeName', 300, 'assignedAccountInvoice'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 301, 'assignedBroker'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 302, 'assignedSalesRep'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:typeName', 303, 'productFilterProperty3'
 )  
 GO
 
@@ -7426,7 +7468,14 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 213, ''
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 213, 'OOCKE1_ACCOUNTASSIGNMENT'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 213, 'OOCKE1_ACCOUNTASSIGNMENT_'
 )  
 GO
 
@@ -7447,7 +7496,14 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObject', 216, 'DUMMY'
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 216, 'OOCKE1_BUDGETPOSITION'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 216, 'OOCKE1_BUDGETPOSITION_'
 )  
 GO
 
@@ -8379,6 +8435,48 @@ INSERT INTO prefs_Preference
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
     'preference/OOCKE1', 'PERSISTENCE:dbObject2', 300, 'OOCKE1_ACCOUNTASSIGNMENT_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 301, 'OOCKE1_ACCOUNTASSIGNMENT'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 301, 'OOCKE1_ACCOUNTASSIGNMENT_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 302, 'OOCKE1_ACCOUNTASSIGNMENT'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 302, 'OOCKE1_ACCOUNTASSIGNMENT_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject', 303, 'OOCKE1_FILTERPROPERTY'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObject2', 303, 'OOCKE1_FILTERPROPERTY_'
 )  
 GO
 
@@ -10490,6 +10588,27 @@ VALUES(
 )  
 GO
 
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, integer_value)
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:pathNormalizeLevel', 301, 2
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, integer_value)
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:pathNormalizeLevel', 302, 2
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, integer_value)
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:pathNormalizeLevel', 303, 2
+)  
+GO
+
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
@@ -12598,6 +12717,27 @@ VALUES(
 )  
 GO
 
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 301, 'slicedWithIdAsKey'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 302, 'slicedWithIdAsKey'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectFormat', 303, 'slicedWithIdAsKey'
+)  
+GO
+
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, object__class, name, description, absolute_path, parent, string_value) 
@@ -13176,6 +13316,13 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 149, 'link_to'
+)  
+GO  
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
     'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 191, 'OOCKE1_TOBJ_PROPERTYSETENTRY'
 )  
 GO
@@ -13239,9 +13386,37 @@ GO
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 
 VALUES(
-    'preference/OOCKE1', 'PERSISTENCE:dbObjectsForQueryJoinColumn', 149, 'link_to'
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery', 195, 'OOCKE1_ORGANIZATIONALUNIT'
 )  
-GO  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:dbObjectForQuery2', 195, 'OOCKE1_ORGANIZATIONALUNIT_'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinTable', 195, 'OOCKE1_JOIN_CONTACTISMEMBEROF'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd1', 195, 'contact'
+)  
+GO
+
+INSERT INTO prefs_Preference 
+    (object_rid, object_oid, object_idx, string_value) 
+VALUES(
+    'preference/OOCKE1', 'PERSISTENCE:joinColumnEnd2', 195, 'ou_membership'
+)  
+GO
 
 INSERT INTO prefs_Preference 
     (object_rid, object_oid, object_idx, string_value) 

@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:         openCRX/Core, http://www.opencrx.org/
- * Name:            $Id: CreateWorkAndExpenseRecord.jsp,v 1.52 2010/04/27 12:16:10 wfro Exp $
+ * Name:            $Id: CreateWorkAndExpenseRecord.jsp,v 1.53 2010/09/27 08:20:24 cmu Exp $
  * Description:     Create Work Record
- * Revision:        $Revision: 1.52 $
+ * Revision:        $Revision: 1.53 $
  * Owner:           CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:            $Date: 2010/04/27 12:16:10 $
+ * Date:            $Date: 2010/09/27 08:20:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -2302,15 +2302,17 @@ org.openmdx.base.text.conversion.*
 													);
 												recordHref = "../../" + action.getEncodedHRef();
 												String activityHref = "";
-												action = new Action(
-														Action.EVENT_SELECT_OBJECT,
-														new Action.Parameter[]{
-														    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
-														},
-														"",
-														true // enabled
-													);
-												activityHref = "../../" + action.getEncodedHRef();
+												if (activity != null) {
+													action = new Action(
+															Action.EVENT_SELECT_OBJECT,
+															new Action.Parameter[]{
+															    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
+															},
+															"",
+															true // enabled
+														);
+													activityHref = "../../" + action.getEncodedHRef();
+												}
 												double recordTotal = 0.0;
 												boolean quantityError = false;
 												try {

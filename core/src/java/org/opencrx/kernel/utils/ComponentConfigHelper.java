@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.7 2009/07/13 14:38:37 wfro Exp $
+ * Name:        $Id: ComponentConfigHelper.java,v 1.9 2010/10/02 09:25:30 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/07/13 14:38:37 $
+ * Date:        $Date: 2010/10/02 09:25:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,44 +55,41 @@
  */
 package org.opencrx.kernel.utils;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
-import org.opencrx.kernel.admin1.jmi1.Admin1Package;
+import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
 
-public class ComponentConfigHelper {
+public abstract class ComponentConfigHelper {
 
     //-----------------------------------------------------------------------
-    public static org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
+    public static ComponentConfiguration getComponentConfiguration(
         String configurationId,
         String providerName,
-        PersistenceManager pm,
+        PersistenceManager rootPm,
         boolean autoCreate,
         String[][] initialProperties
     ) {
-        org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
+        ComponentConfiguration componentConfiguration = null;
         try {
-            Admin1Package adminPackage = Utils.getAdminPackage(pm);            
-            org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm); 
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
-                (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
+                (org.opencrx.kernel.admin1.jmi1.Segment)rootPm.getObjectById(
+                    new Path("xri://@openmdx*org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
                 );
             try {
                 componentConfiguration = adminSegment.getConfiguration(configurationId);
-            }
-            catch(Exception e) {}
+            } catch(Exception e) {}
             if(autoCreate && (componentConfiguration == null)) {
-                componentConfiguration = 
-                    adminPackage.getComponentConfiguration().createComponentConfiguration();
+                componentConfiguration = rootPm.newInstance(ComponentConfiguration.class);
+                componentConfiguration.refInitialize(false, false);
                 componentConfiguration.setName(configurationId);
-                pm.currentTransaction().begin();
+                rootPm.currentTransaction().begin();
                 adminSegment.addConfiguration(
                     false,
                     configurationId,
@@ -100,7 +97,8 @@ public class ComponentConfigHelper {
                 );
                 UUIDGenerator uuids = UUIDs.getGenerator();
                 for(String[] e: initialProperties) {
-                    org.opencrx.kernel.base.jmi1.StringProperty sp = basePackage.getStringProperty().createStringProperty();
+                    org.opencrx.kernel.base.jmi1.StringProperty sp = rootPm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
+                    sp.refInitialize(false, false);
                     sp.setName(e[0]);
                     sp.setStringValue(e[1]);
                     componentConfiguration.addProperty(
@@ -109,7 +107,7 @@ public class ComponentConfigHelper {
                         sp
                     );
                 }
-                pm.currentTransaction().commit();
+                rootPm.currentTransaction().commit();
                 componentConfiguration = adminSegment.getConfiguration(
                     configurationId
                 );
@@ -124,29 +122,15 @@ public class ComponentConfigHelper {
     //-----------------------------------------------------------------------
     public static org.opencrx.kernel.base.jmi1.StringProperty getComponentConfigProperty(
         String name,
-        org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration
+        ComponentConfiguration configuration
     ) {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(componentConfiguration);
-        org.opencrx.kernel.base.jmi1.StringProperty value = null;
-        for(int i = 0; i < 1; i++) {
-        	Collection<org.opencrx.kernel.base.jmi1.Property> properties = componentConfiguration.getProperty();
-            for(org.opencrx.kernel.base.jmi1.Property p: properties) {
-                if(
-                    p.getName().equals(name) &&
-                    (p instanceof org.opencrx.kernel.base.jmi1.StringProperty)
-                ) {
-                    value = (org.opencrx.kernel.base.jmi1.StringProperty)p;
-                    break;
-                }
-            }
-            if(value == null) {
-                pm.refresh(componentConfiguration);
-            }
-            else {
-                break;
-            }
-        }
-        return value;
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(configuration);
+        org.opencrx.kernel.base.cci2.StringPropertyQuery query = (org.opencrx.kernel.base.cci2.StringPropertyQuery)pm.newQuery(org.opencrx.kernel.base.jmi1.StringProperty.class);
+        query.name().equalTo(name);
+    	List<org.opencrx.kernel.base.jmi1.StringProperty> properties = configuration.getProperty(query);
+        return properties.isEmpty() ?
+        	null :
+        		properties.iterator().next();
     }
     
 }

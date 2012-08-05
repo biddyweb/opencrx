@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.100 2010/07/08 12:47:40 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.103 2010/12/07 12:54:25 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.100 $
+ * Revision:    $Revision: 1.103 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/08 12:47:40 $
+ * Date:        $Date: 2010/12/07 12:54:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -394,21 +394,17 @@ public class PortalExtension
           else if(refObj instanceof org.opencrx.kernel.address1.jmi1.PostalAddressable) {
               String address = "";
               int nLines = 0;
-              for(Iterator<String> i = ((List<String>)refObj.refGetValue("postalAddressLine")).iterator(); i.hasNext(); ) {
-                  String line = this.toS(i.next());
-                  if(line.length() > 0) {
-                      if(nLines > 0) address += "<br />";
-                      address += line;
-                      nLines++;
-                  }
+              for(String l: (List<String>)refObj.refGetValue("postalAddressLine")) {
+                  String line = this.toS(l);
+                  if(nLines > 0) address += "<br />";
+                  address += line;
+                  nLines++;
               }
-              for(Iterator<String> i = ((List<String>)refObj.refGetValue("postalStreet")).iterator(); i.hasNext(); ) {
-                  String street = this.toS(i.next());
-                  if(street.length() > 0) {
-                      if(nLines > 0) address += "<br />";
-                      address += street;
-                      nLines++;
-                  }
+              for(String l: (List<String>)refObj.refGetValue("postalStreet")) {
+                  String street = this.toS(l);
+                  if(nLines > 0) address += "<br />";
+                  address += street;
+                  nLines++;
               }
               Object postalCountry = refObj.refGetValue("postalCountry");
               String postalCountryS = postalCountry == null
@@ -480,9 +476,6 @@ public class PortalExtension
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
               return (refObj.refGetValue("reference") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), locale, localeAsString, asShortTitle, application));
-          }
-          else if(refObj instanceof org.opencrx.kernel.home1.jmi1.EMailAccount) {
-              return this.toS(refObj.refGetValue("eMailAddress"));
           }
           else if(refObj instanceof org.opencrx.kernel.home1.jmi1.WfProcessInstance) {
               return (refObj.refGetValue("process") == null ? "Untitled" : this.getTitle((RefObject_1_0)refObj.refGetValue("process"), locale, localeAsString, asShortTitle, application) + " " + this.toS(refObj.refGetValue("startedOn")));
@@ -788,7 +781,10 @@ public class PortalExtension
         // Derive autocomplete lookup root from root object 0
         
         // org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition
-        if("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition".equals(qualifiedFeatureName)) {
+        if(
+        	"org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition".equals(qualifiedFeatureName) ||
+        	"org:opencrx:kernel:activity1:LinkToAndFollowUpParams:transition".equals(qualifiedFeatureName)        	
+        ) {
             List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
                 org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)context;

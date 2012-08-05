@@ -15,10 +15,9 @@ import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,29 +27,43 @@ import java.util.regex.Pattern;
 
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
+import javax.mail.search.AndTerm;
+import javax.mail.search.BodyTerm;
+import javax.mail.search.ComparisonTerm;
+import javax.mail.search.DateTerm;
+import javax.mail.search.FlagTerm;
+import javax.mail.search.FromTerm;
+import javax.mail.search.HeaderTerm;
+import javax.mail.search.NotTerm;
+import javax.mail.search.OrTerm;
+import javax.mail.search.ReceivedDateTerm;
+import javax.mail.search.RecipientTerm;
+import javax.mail.search.SearchTerm;
+import javax.mail.search.SentDateTerm;
+import javax.mail.search.SizeTerm;
+import javax.mail.search.SubjectTerm;
 
 import org.opencrx.application.adapter.AbstractServer;
 import org.opencrx.application.adapter.AbstractSession;
-import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
-import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
-import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
-import org.opencrx.kernel.utils.ActivitiesFilterHelper;
+import org.opencrx.kernel.backend.MimeMessageImpl;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
-import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.kernel.text.format.HexadecimalFormatter;
+import org.w3c.format.DateTimeFormat;
 
 public class IMAPSession extends AbstractSession {
     
@@ -65,6 +78,12 @@ public class IMAPSession extends AbstractSession {
     	);
     }
 
+    //-----------------------------------------------------------------------
+    private IMAPServer getServer(
+    ) {
+    	return (IMAPServer)this.server;
+    }
+    
     //-----------------------------------------------------------------------
     private String readLine(
     ) throws IOException {
@@ -99,7 +118,7 @@ public class IMAPSession extends AbstractSession {
             try {
                 this.out = new PrintStream(this.socket.getOutputStream());
                 this.in = this.socket.getInputStream();
-                this.println("* OK [CAPABILTY IMAP4rev1] OPENCRX");
+                this.println("* OK [CAPABILTY IMAP4rev1 IDLE] OPENCRX");
                 String line = this.readLine();
                 Pattern pattern = Pattern.compile("([a-zA-Z0-9]+) ([a-zA-Z0-9]+)(.*)");
                 while (line != null) {
@@ -109,7 +128,7 @@ public class IMAPSession extends AbstractSession {
                     else if(line.indexOf("LOGOUT") > 0) {
                         System.out.println(">>> IMAPServer[" + this.socket.getInetAddress() + "]\n" + line + " " + this.username);
                     }
-                    if(this.server.isDebug()) {
+                    if(this.getServer().isDebug()) {
                         System.out.println(">>> IMAPServer[" + this.socket.getInetAddress() + "]\n" + line);
                     }
                     Matcher matcher = pattern.matcher(line);
@@ -119,12 +138,6 @@ public class IMAPSession extends AbstractSession {
                         String params = matcher.group(3);
                         if(!this.handleCommand(tag, command, params)) {                            
                             this.socket.close();                       
-                            if(this.pm != null) {
-                                try {
-                                    this.pm.close();
-                                } 
-                                catch(Exception e) {}
-                            }
                             return;
                         }
                     }
@@ -135,7 +148,7 @@ public class IMAPSession extends AbstractSession {
             catch (Exception e) {
                 if(!(e instanceof SocketTimeoutException)) {
                     ServiceException e0 = new ServiceException(e);
-                    SysLog.detail(e0.getMessage(), e0.getCause());
+                    SysLog.warning(e0.getMessage(), e0.getCause());
                 }
             }
             finally {                
@@ -149,74 +162,373 @@ public class IMAPSession extends AbstractSession {
         }
     }
 
-    //-----------------------------------------------------------------------
-    private String encodeFolderName(
-        String name
-    ) {
-        // Slash is qualified name separator. Do not allow in folder names
-        name = name.replace("/", ".");
-        StringBuilder encodedName = new StringBuilder();
-        for(int i = 0; i < name.length(); i++) {
-            char c = name.charAt(i);
-            if((c <= 127) && (c != '&')) {
-                encodedName.append(c);
-            }
-            else if(c == '&') {
-            	encodedName.append("&-");
-            }
-            else {
-                String base64EncodedChar = org.openmdx.base.text.conversion.Base64.encode(new byte[]{(byte)(c / 256), (byte)(c % 256)});
-                encodedName.append("&" + base64EncodedChar.substring(0, base64EncodedChar.length()-1) + "-");
-            }
-        }
-        return encodedName.toString();      
+    //-----------------------------------------------------------------------    
+    static class SearchTermParser {
+    	
+	    static class Position {
+	    	public int value = 0;
+	    }
+	
+	    private static void skipWhitespaces(
+	    	String searchString,
+	    	Position pos
+	    ) {
+			while(
+				pos.value < searchString.length() && 
+				Character.isWhitespace(searchString.charAt(pos.value))
+			) {
+				pos.value++;
+			}    	
+	    }
+	
+	    private static String parseString(
+	    	String searchString,
+	    	Position pos
+	    ) {
+	    	skipWhitespaces(
+	    		searchString, 
+	    		pos
+	    	);
+	    	String s = "";
+	    	if(pos.value < searchString.length()) {
+	    		if(searchString.charAt(pos.value) == '"') {
+	    			pos.value++;
+	    			while(searchString.charAt(pos.value) != '"') {
+	    				s += searchString.charAt(pos.value++);
+	    			}
+	    			pos.value++;
+	    		}
+	    	}
+	    	return s;
+	    }
+	    
+	    private static String parseIdentifier(
+	    	String searchString,
+	    	Position pos
+	    ) {
+	    	skipWhitespaces(
+	    		searchString, 
+	    		pos
+	    	);
+	    	String s = "";
+	    	while(
+	    		pos.value < searchString.length() && 
+	    		!Character.isWhitespace(searchString.charAt(pos.value))
+	    	) {
+				s += searchString.charAt(pos.value++);
+	    	}
+	    	return s;
+	    }
+	    
+	    private static SearchTerm parseSearchTerm(
+	    	String query,
+	    	Position pos
+	    ) throws ParseException, AddressException {
+	    	skipWhitespaces(query, pos);
+			// At end
+			if(pos.value >= query.length()) return null;
+			// <sequence set>
+	    	if(Character.isDigit(query.charAt(pos.value))) {
+	    		/*String number =*/parseIdentifier(query, pos);
+	    		return null;
+	    	}
+	    	// ALL
+	    	else if(query.startsWith("ALL", pos.value)) {
+	    		pos.value += 3;
+	        	List<SearchTerm> terms = new ArrayList<SearchTerm>();        	
+	        	while(pos.value < query.length()) {
+	        		SearchTerm term = parseSearchTerm(
+	    				query,
+	    				pos
+	    			);
+	        		if(term != null) {
+	        			terms.add(term);
+	        		}
+	        	}
+	        	return new AndTerm(
+	        		terms.toArray(new SearchTerm[terms.size()])
+	        	);    		
+	    	}
+	    	// ANSWERED
+	    	else if(query.startsWith("ANSWERED", pos.value)) {
+	    		pos.value += 8;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.ANSWERED);
+	    		return new FlagTerm(flags, true);    			
+	    	}
+	    	// BCC
+	    	else if(query.startsWith("BCC", pos.value)) {
+	    		pos.value += 3;
+	    		return new RecipientTerm(
+	    			Message.RecipientType.BCC,
+	    			new InternetAddress(parseString(query, pos))
+	    		);
+	    	}
+	    	// BEFORE
+	    	else if(query.startsWith("BEFORE", pos.value)) {
+	    		pos.value += 6;
+	    		return new ReceivedDateTerm(
+	    			DateTerm.LE,
+	    			DateTimeFormat.BASIC_UTC_FORMAT.parse(parseIdentifier(query, pos))
+	    		);
+	    	}
+	    	// BODY
+	    	else if(query.startsWith("BODY", pos.value)) {
+	    		pos.value += 4;
+	    		return new BodyTerm(parseIdentifier(query, pos));
+	    	}
+	    	// CC
+	    	else if(query.startsWith("CC", pos.value)) {
+	    		pos.value += 2;
+	    		return new RecipientTerm(
+	    			Message.RecipientType.CC,
+	    			new InternetAddress(parseString(query, pos))
+	    		);
+	    	}
+	    	// DELETED
+	    	else if(query.startsWith("DELETED", pos.value)) {
+	    		pos.value += 7;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.DELETED);
+	    		return new FlagTerm(flags, true);    			
+	    	}
+	    	// DRAFT
+	    	else if(query.startsWith("DRAFT", pos.value)) {
+	    		pos.value += 5;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.DRAFT);
+	    		return new FlagTerm(flags, true);    			
+	    	}
+	    	// FLAGGED
+	    	else if(query.startsWith("FLAGGED", pos.value)) {
+	    		pos.value += 7;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.FLAGGED);
+	    		return new FlagTerm(flags, true);    			
+	    	}
+	    	// FROM
+	    	else if(query.startsWith("FROM", pos.value)) {
+	    		pos.value += 4;
+	    		return new FromTerm(
+	    			new InternetAddress(parseString(query, pos))
+	    		);
+	    	}
+	    	// HEADER    	
+	    	else if(query.startsWith("HEADER", pos.value)) {
+	    		pos.value += 6;
+	    		String headerName = parseIdentifier(query, pos);
+	    		String pattern = parseString(query, pos);
+	    		return new HeaderTerm(
+	    			headerName,
+	    			pattern
+	    		);
+	    	}
+	    	// KEYWORD
+	    	else if(query.startsWith("KEYWORD", pos.value)) {
+	    		pos.value += 7;
+	    		/*String flag = */parseIdentifier(query, pos);
+	    		return null;
+	    	}
+	    	// LARGER
+	    	else if(query.startsWith("LARGER", pos.value)) {
+	    		pos.value += 6;
+	    		String size = parseIdentifier(query, pos);
+	    		return new SizeTerm(
+	    			ComparisonTerm.GT,
+	    			Integer.parseInt(size, 8)
+	    		);
+	    	}
+	    	// NEW
+	    	else if(query.startsWith("NEW", pos.value)) {
+	    		pos.value += 3;
+	    		return null;
+	    	}
+	    	// NOT
+	    	else if(query.startsWith("NOT", pos.value)) {
+	    		pos.value += 3;
+	    		return new NotTerm(
+	    			parseSearchTerm(query, pos)
+	    		);
+	    	}
+	    	// OLD
+	    	else if(query.startsWith("OLD", pos.value)) {
+	    		pos.value += 3;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.RECENT);
+	    		return new FlagTerm(flags, false);    			
+	    	}
+	    	// ON
+	    	else if(query.startsWith("ON", pos.value)) {
+	    		pos.value += 2;
+	    		return new ReceivedDateTerm(
+	    			DateTerm.EQ,
+	    			DateTimeFormat.BASIC_UTC_FORMAT.parse(parseIdentifier(query, pos))
+	    		);
+	    	}
+	    	// OR
+	    	else if(query.startsWith("OR", pos.value)) {
+	    		pos.value += 2;
+	    		List<SearchTerm> terms = new ArrayList<SearchTerm>();
+	    		for(int i = 0; i < 2; i++) {
+		    		SearchTerm term = parseSearchTerm(
+		    			query,
+		    			pos
+		    		);
+		    		if(term != null) {
+		    			terms.add(term);
+		    		}
+	    		}
+	        	return new OrTerm(
+	        		terms.toArray(new SearchTerm[terms.size()])
+	        	);
+	    	}
+	    	// RECENT
+	    	else if(query.startsWith("RECENT", pos.value)) {
+	    		pos.value += 6;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.RECENT);
+	    		return new FlagTerm(flags, true);    			
+	    	}
+	    	// SEEN
+	    	else if(query.startsWith("SEEN", pos.value)) {
+	    		pos.value += 4;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.SEEN);
+	    		return new FlagTerm(flags, true);    			
+	    	}
+	    	// SENTBEFORE
+	    	else if(query.startsWith("SENTBEFORE", pos.value)) {
+	    		pos.value += 10;
+	    		return new SentDateTerm(
+	    			DateTerm.LT,
+	    			DateTimeFormat.BASIC_UTC_FORMAT.parse(parseIdentifier(query, pos))
+	    		);
+	    	}
+	    	// SENTON
+	    	else if(query.startsWith("SENTON", pos.value)) {
+	    		pos.value += 6;
+	    		return new SentDateTerm(
+	    			DateTerm.EQ,
+	    			DateTimeFormat.BASIC_UTC_FORMAT.parse(parseIdentifier(query, pos))
+	    		);
+	    	}
+	    	// SENTSINCE
+	    	else if(query.startsWith("SENTSINCE", pos.value)) {
+	    		pos.value += 9;
+	    		return new SentDateTerm(
+	    			DateTerm.GE,
+	    			DateTimeFormat.BASIC_UTC_FORMAT.parse(parseIdentifier(query, pos))
+	    		);
+	    	}
+	    	// SINCE
+	    	else if(query.startsWith("SINCE", pos.value)) {
+	    		pos.value += 5;
+	    		return new ReceivedDateTerm(
+	    			DateTerm.GE,
+	    			DateTimeFormat.BASIC_UTC_FORMAT.parse(parseIdentifier(query, pos))
+	    		);
+	    	}
+	    	// SMALLER
+	    	else if(query.startsWith("SMALLER", pos.value)) {
+	    		pos.value += 7;
+	    		String size = parseIdentifier(query, pos);
+	    		return new SizeTerm(
+	    			ComparisonTerm.LT,
+	    			Integer.parseInt(size, 8)
+	    		);
+	    	}
+	    	// SUBJECT
+	    	else if(query.startsWith("SUBJECT", pos.value)) {
+	    		pos.value += 7;
+	    		String s = parseString(query, pos);    		
+	    		return new SubjectTerm(s);
+	    	}
+	    	// TEXT
+	    	else if(query.startsWith("TEXT", pos.value)) {
+	    		pos.value += 5;
+	    		String s = parseString(query, pos);    		
+	    		return new BodyTerm(s);
+	    	}
+	    	// TO
+	    	else if(query.startsWith("TO", pos.value)) {
+	    		pos.value += 2;
+	    		return new RecipientTerm(
+	    			Message.RecipientType.TO,
+	    			new InternetAddress(parseString(query, pos))
+	    		);
+	    	}
+	    	// UID
+	    	else if(query.startsWith("UID", pos.value)) {
+	    		pos.value += 2;
+	    		String uid = parseIdentifier(query, pos);
+	    		while(uid != null && uid.length() > 0 && Character.isDigit(uid.charAt(0))) {
+	        		uid = parseIdentifier(query, pos);
+	    		}
+	    		return null;
+	    	}
+	    	// UNANSWERED
+	    	else if(query.startsWith("UNANSWERED", pos.value)) {
+	    		pos.value += 10;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.ANSWERED);
+	    		return new FlagTerm(flags, false);    			
+	    	}
+	    	// UNDELETED
+	    	else if(query.startsWith("UNDELETED", pos.value)) {
+	    		pos.value += 9;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.DELETED);
+	    		return new FlagTerm(flags, false);    			
+	    	}
+	    	// UNDRAFT
+	    	else if(query.startsWith("UNDRAFT", pos.value)) {
+	    		pos.value += 7;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.DRAFT);
+	    		return new FlagTerm(flags, false);    			
+	    	}
+	    	// UNFLAGGED
+	    	else if(query.startsWith("UNFLAGGED", pos.value)) {
+	    		pos.value += 9;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.FLAGGED);
+	    		return new FlagTerm(flags, false);    			
+	    	}
+	    	// UNKEYWORD
+	    	else if(query.startsWith("UNKEYWORD", pos.value)) {
+	    		pos.value += 9;
+	    		/*String flag = */parseIdentifier(query, pos);
+	    		return null;
+	    	}
+	    	// UNSEEN
+	    	else if(query.startsWith("UNSEEN", pos.value)) {
+	    		pos.value += 6;
+	    		Flags flags = new Flags();
+	    		flags.add(Flags.Flag.SEEN);
+	    		return new FlagTerm(flags, false);    			
+	    	}
+	    	// Unknown token. Skip.
+	    	else {
+	    		parseIdentifier(query, pos);
+	    		return null;
+	    	}
+	    }
+	    
+	    public static SearchTerm parseSearchTerm(
+	    	String query
+	    ) throws MessagingException, ParseException {
+	    	Position position = new Position();
+	    	query = query.trim();
+	    	if(!query.startsWith("ALL ")) {
+	    		query = "ALL " + query;
+	    	}
+    		return parseSearchTerm(
+				query,
+				position
+			);
+	    }
     }
     
-    //-----------------------------------------------------------------------
-    /**
-     * Return all folders which the user is allowed to subscribe.
-     */
-    private Map<String,String> getAvailableFolders(
-    ) throws MessagingException {     
-    	if(System.currentTimeMillis() > this.refreshFoldersAt) {
-    		this.pm.evictAll();
-            Map<String,String> folders = new HashMap<String,String>();    		
-	        String providerName = this.server.getProviderName();
-	        String segmentName = username.substring(username.indexOf("@") + 1);
-	        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
-	            (org.opencrx.kernel.activity1.jmi1.Segment)this.pm.getObjectById(
-	                new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-	            );
-	        Collection<ActivityTracker> trackers = activitySegment.getActivityTracker();
-	        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: trackers) {
-	            String groupUri = "/" + providerName + "/" + segmentName + "/tracker/";
-	            folders.put(
-	                "INBOX" + groupUri + this.encodeFolderName(group.getName()),
-	                groupUri + group.getName()
-	            );
-	        }
-	        Collection<ActivityMilestone> milestones = activitySegment.getActivityMilestone();
-	        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: milestones) {
-	            String groupUri = "/" + providerName + "/" + segmentName + "/milestone/";
-	            folders.put(
-	                "INBOX" + groupUri + this.encodeFolderName(group.getName()),
-	                groupUri + group.getName()
-	            );
-	        }
-	        Collection<ActivityCategory> categories = activitySegment.getActivityCategory();
-	        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: categories) {
-	            String groupUri = "/" + providerName + "/" + segmentName + "/category/";
-	            folders.put(
-	                "INBOX" + groupUri + this.encodeFolderName(group.getName()),
-	                groupUri + group.getName()
-	            );
-	        }
-	        this.availableFolders = folders;
-	        this.refreshFoldersAt = System.currentTimeMillis() + FOLDER_REFRESH_PERIOD_MILLIS;
-    	}
-        return this.availableFolders;
-    }
-                
     //-----------------------------------------------------------------------
     /**
      * process the command and send a response if appropriate...
@@ -229,14 +541,14 @@ public class IMAPSession extends AbstractSession {
         String params
     ) throws MessagingException {
 		command = command.toUpperCase();
-		if(command.equals("CAPABILITY")) {
-			this.println("* CAPABILITY IMAP4rev1");
+		if("CAPABILITY".equals(command)) {
+			this.println("* CAPABILITY IMAP4rev1 IDLE");
 			this.println(tag + " OK CAPABILITY complete");
 		}
-		else if(command.equals("NOOP")) {
+		else if("NOOP".equals(command)) {
 			this.println(tag + " OK NOOP completed");
 		}
-		else if (command.equals("LOGOUT")) {
+		else if("LOGOUT".equals(command)) {
 			this.println("* BYE IMAP4rev1 Server logging out");
 			this.println(tag + " OK LOGOUT complete");
 			this.logout();
@@ -248,8 +560,8 @@ public class IMAPSession extends AbstractSession {
 			}
 		}
 		else {
-			if (this.state == NOT_AUTHENTICATED_STATE) {
-				if(command.equals("LOGIN")) {
+			if(this.state == NOT_AUTHENTICATED_STATE) {
+				if("LOGIN".equals(command)) {
 					String username = "";
 					String password = "";
 					try {
@@ -274,7 +586,7 @@ public class IMAPSession extends AbstractSession {
 				}
 			}
 			else if (this.state == AUTHENTICATED_STATE || this.state == SELECTED_STATE) {
-				if (command.equals("SELECT")) {
+				if ("SELECT".equals(command)) {
 					params = params.replace("\"", "");
 					params = params.trim().toUpperCase();
 					this.selectedFolder = null;
@@ -291,13 +603,15 @@ public class IMAPSession extends AbstractSession {
 					    this.println(tag + " NO SELECT failed, no mailbox with that name");
 					}
 				}
-				else if (command.equals("STATUS")) {
+				else if ("STATUS".equals(command)) {
+					if(params.indexOf(" (") > 0) {
+						params = params.substring(0, params.indexOf(" ("));
+					}
 					params = params.replace("\"", "");
-					params = params.replace("(UNSEEN)", "");
-					params = params.replace("(MESSAGES UNSEEN)", "");
 					params = params.trim().toUpperCase();
 					IMAPFolderImpl folder = this.getFolder(params);
                     if(folder != null) {
+						this.selectedFolder = folder;
                         this.println("* " + folder.getMessageCount() + " EXISTS");
 						this.println("* 0 RECENT");
 						this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
@@ -308,40 +622,43 @@ public class IMAPSession extends AbstractSession {
 						this.println(tag + " NO STATUS failed, no mailbox with that name");
 					}
 				}
-				else if(command.equals("EXAMINE")) {
+				else if("EXAMINE".equals(command)) {
 					params = params.replace("\"", "");
 					params = params.trim().toUpperCase();
                     IMAPFolderImpl folder = this.getFolder(params);
                     if(folder != null) {
+						this.selectedFolder = folder;
                         this.println("* " + folder.getMessageCount() + " EXISTS");
                         this.println("* 0 RECENT");
                         this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
                         this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
+						this.state = SELECTED_STATE;
                     }
                     else {
 						this.println(tag + " NO EXAMINE failed, no mailbox with that name");
 					}
 				}
-				else if(command.equals("CREATE")) {
+				else if("CREATE".equals(command)) {
 					this.println(tag + " NO command not supported");
 				}
-				else if (command.equals("DELETE")) {
+				else if("DELETE".equals(command)) {
 					this.println(tag + " NO command not supported");
 				}
-				else if (command.equals("RENAME")) {
+				else if("RENAME".equals(command)) {
 					this.println(tag + " NO command not supported");
 				}
-				else if(command.equals("LIST")) {
-                    Pattern pattern = Pattern.compile(" \"([a-zA-Z0-9]*)\" \"([a-zA-Z0-9*%]+)\"");
+				else if("LIST".equals(command)) {
+                    Pattern pattern = Pattern.compile(" \"([a-zA-Z0-9]*)\" \"([a-zA-Z0-9*%]*)\"");
                     Matcher matcher = pattern.matcher(params);
                     if (matcher.find()) {
                         String folderName = matcher.group(1);
                         String query = matcher.group(2);
                         if("".equals(folderName)) {
-                            for(String folder: this.getAvailableFolders().keySet()) {
+                        	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
+                            for(String folder: availableFolders.keySet()) {
                                 if(
                                     folder.equals(query) ||
-                                    ((query.endsWith("*") || query.endsWith("%")) && folder.startsWith(query.substring(0, query.length()-1)))
+                                    ((query.length() == 0) || (query.endsWith("*") || query.endsWith("%")) && folder.startsWith(query.substring(0, query.length()-1)))
                                 ) {
                                     this.println("* LIST () \"/\" \"" + folder + "\"");
                                 }
@@ -350,16 +667,16 @@ public class IMAPSession extends AbstractSession {
 					}
                     this.println(tag + " OK LIST complete");
 				}
-				else if(command.equals("LSUB")) {
+				else if("LSUB".equals(command)) {
                     for(Folder folder: this.getSubscribedFolders()) {
                     	println("* LSUB () \"/\" \"" + folder.getFullName() + "\"");
 					}
 					this.println(tag + " OK LSUB complete");
 				}
-				else if(command.equals("SUBSCRIBE")) {
+				else if("SUBSCRIBE".equals(command)) {
                     params = params.replace("\"", "");
                     params = params.trim();
-                    Map<String,String> availableFolders = this.getAvailableFolders();
+                	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
                     if(availableFolders.containsKey(params)) {
                         this.subscribeFolder(
                             params, 
@@ -371,7 +688,7 @@ public class IMAPSession extends AbstractSession {
                         this.println(tag + " NO SUBSCRIBE invalid folder name");                                            
                     }
 				}
-				else if(command.equals("UNSUBSCRIBE")) {
+				else if("UNSUBSCRIBE".equals(command)) {
                     params = params.replace("\"", "");
                     params = params.trim();
                     List<IMAPFolderImpl> subscribedFolders = this.getSubscribedFolders();
@@ -392,7 +709,7 @@ public class IMAPSession extends AbstractSession {
                         this.println(tag + " NO UNSUBSCRIBE invalid folder name");                        
                     }
 				}
-				else if(command.equals("APPEND")) {
+				else if("APPEND".equals(command)) {
 				    Pattern pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \"(.*)\" \\{([0-9]+)\\}");
 				    Matcher matcher = pattern.matcher(params);
 				    if(matcher.find()) {
@@ -402,14 +719,14 @@ public class IMAPSession extends AbstractSession {
     				        String date = matcher.group(3);
     				        if(folder != null) {
         	                    this.println("+ OK");
-        	                    if(this.server.isDebug()) {
+        	                    if(this.getServer().isDebug()) {
         	                        System.out.println("Reading " + size + " bytes");
         	                    }
         	                    byte[] msg = new byte[size];
         	                    boolean success = true;
         	                    int i = 0;
         	                    for(i = 0; i < size; i++) {
-        	                        if(this.server.isDebug() && (i > 0) && (i % 1000 == 0)) {
+        	                        if(this.getServer().isDebug() && (i > 0) && (i % 1000 == 0)) {
         	                            System.out.println(i + " bytes");
         	                        }
         	                        int c = this.in.read();
@@ -419,7 +736,7 @@ public class IMAPSession extends AbstractSession {
         	                        }
         	                        msg[i] = (byte)c;
         	                    }
-        	                    if(this.server.isDebug()) {
+        	                    if(this.getServer().isDebug()) {
         	                        System.out.println(new String(msg, "iso-8859-1"));
         	                        System.out.println();
         	                        System.out.println(new HexadecimalFormatter(msg, 0, size).toString());
@@ -452,20 +769,78 @@ public class IMAPSession extends AbstractSession {
 				    }
 				}
 				else if(this.state == SELECTED_STATE) {
-					if(command.equals("CHECK")) {
+					if("CHECK".equals(command)) {
 						this.println(tag + " OK CHECK complete");
 					}
-					else if(command.equals("CLOSE")) {
+					else if("CLOSE".equals(command)) {
 						this.println(tag + " OK CLOSE complete");
 						this.state = AUTHENTICATED_STATE;
 					}
-					else if(command.equals("EXPUNGE")) {
+					else if("EXPUNGE".equals(command)) {
 						this.println(tag + " NO EXPUNGE command not supported");
 					}
-					else if(command.equals("SEARCH")) {
-						this.println(tag + " NO SEARCH command not supported");
+					else if("SEARCH".equals(command)) {
+					    SearchTerm searchTerm = null;
+					    try {
+					    	searchTerm = SearchTermParser.parseSearchTerm(
+					    		params.substring(6)
+						    );
+					    } catch(Exception e) {}
+					    Message[] messages = this.selectedFolder.search(searchTerm);
+					    String ids = "";
+					    for(Message message: messages) {
+                            if(message instanceof MimeMessage) {
+                            	ids += " " + message.getMessageNumber();
+                            }
+					    }
+                        this.println("* SEARCH" + ids);
+                        this.println(tag + " OK SEARCH completed");
 					}
-					else if(command.equals("FETCH")) {
+					else if("IDLE".equals(command)) {
+						long timeoutAtMillis = System.currentTimeMillis() + 30*60*1000L;
+						boolean idling = false;
+						int oldCount = this.selectedFolder.getMessageCount();
+						this.println("+ idling");						
+						idling: while((idling = (System.currentTimeMillis() < timeoutAtMillis))) {
+							// Sleep for 10s and wait for DONE
+							try {
+								for(int i = 0; i < 20; i++) {
+									String l = null;
+									try {
+										if(this.in.available() > 0) {
+											l = this.readLine();
+										}
+									} catch(Exception e) {}
+									if("DONE".equalsIgnoreCase(l)) {
+										this.println(tag + " OK IDLE terminated");
+										break idling;
+									}									
+									Thread.sleep(500);
+								}
+							} catch(Exception e) {}
+							int count = this.selectedFolder.getMessageCount();							
+							if(count != oldCount) {
+								if(count < oldCount) {
+									this.println("* "+ Integer.toString(oldCount - count) + " EXPUNGE");
+								}
+								this.println("* "+ Integer.toString(count) + " EXISTS");
+								oldCount = count;
+							}
+						}
+						// Timeout --> LOGOUT
+						if(!idling) {
+							this.println("* BYE IMAP4rev1 Server logging out");
+							this.println(tag + " OK LOGOUT complete");
+							this.logout();
+							try  {
+								return false;
+							}
+							catch (Exception e) {
+								new ServiceException(e).log();
+							}
+						}
+					}
+					else if("FETCH".equals(command)) {
                         // FETCH n1,n2, ...
                         int posCommands = params.indexOf("(");
 					    StringTokenizer p = new StringTokenizer(params.substring(0, posCommands), " ", false);
@@ -515,13 +890,13 @@ public class IMAPSession extends AbstractSession {
                             this.println(tag + " OK FETCH complete");
                         }
 					}
-					else if(command.equals("STORE")) {
+					else if("STORE".equals(command)) {
 						this.println(tag + " NO STORE command not supported");
 					}
-					else if(command.equals("COPY")) {
+					else if("COPY".equals(command)) {
 						this.println(tag + " NO COPY command not supported");
 					}
-					else if(command.equals("UID")) {
+					else if("UID".equals(command)) {
 					    String uidCommand = params.trim().toUpperCase();
 						if(uidCommand.startsWith("FETCH")) {
 						    int posCommands = params.indexOf("(");
@@ -576,7 +951,24 @@ public class IMAPSession extends AbstractSession {
                                 this.println(tag + " OK UID complete");
                             }
 						}
-	                    else if(uidCommand.startsWith("COPY")) {
+						else if(uidCommand.startsWith("SEARCH")) {
+						    SearchTerm searchTerm = null;
+						    try {
+						    	searchTerm = SearchTermParser.parseSearchTerm(
+						    		uidCommand.substring(6)
+							    );
+						    } catch(Exception e) {}
+						    Message[] messages = this.selectedFolder.search(searchTerm);
+						    String ids = "";
+						    for(Message message: messages) {
+	                            if(message instanceof MimeMessage) {
+	                            	ids += " " + message.getMessageNumber();
+	                            }
+						    }
+	                        this.println("* SEARCH" + ids);
+	                        this.println(tag + " OK SEARCH completed");
+						}
+	                    else if("COPY".equals(uidCommand)) {
 	                        Pattern pattern = Pattern.compile(" (?:COPY|copy) ([0-9*\\:]+)(?:,([0-9*\\:]+))* \"(.*)\"");
 	                        Matcher matcher = pattern.matcher(params);
 	                        if(matcher.find()) {
@@ -936,7 +1328,7 @@ public class IMAPSession extends AbstractSession {
             this.printList(message.getHeader("Date"), true);
             this.print(" ");
             String[] subjects = message.getHeader("Subject");
-            if(subjects.length > 0) {
+            if(subjects != null && subjects.length > 0) {
                 String subject = subjects[0].replace("\r\n", " ");
                 subject = subject.replace("\r", " ");
                 subject = subject.replace("\n", " ");
@@ -987,7 +1379,7 @@ public class IMAPSession extends AbstractSession {
         try {
             File mailDir = IMAPFolderImpl.getMailDir(this.username);
             mailDir.mkdirs();        
-            File subscriptionsFile = new File(mailDir, ".SUBSCRIPTIONS");
+            File subscriptionsFile = new File(mailDir, ".SUBSCRIPTIONS-" + this.getServer().getProviderName());
             if(!subscriptionsFile.exists()) {
                 PrintStream ps = new PrintStream(subscriptionsFile);
                 ps.println();
@@ -1045,14 +1437,11 @@ public class IMAPSession extends AbstractSession {
             }
         }
         // Add folder
-        ActivitiesFilterHelper activitiesHelper = new ActivitiesFilterHelper(this.pm);
-        activitiesHelper.parseFilteredActivitiesUri(
-            availableFolders.get(name)
-        );
         IMAPFolderImpl folder = new IMAPFolderImpl(
             name,
+            availableFolders.get(name),
             this.username,
-            activitiesHelper
+            this.getServer().getPersistenceManagerFactory()
         );
         folders.add(folder);
         this.updateSubscriptionFile(folders);
@@ -1066,16 +1455,20 @@ public class IMAPSession extends AbstractSession {
         try {
             File mailDir = IMAPFolderImpl.getMailDir(this.username);
             mailDir.mkdirs();
-            File subscriptionsFile = new File(mailDir, ".SUBSCRIPTIONS");
+            File subscriptionsFile = new File(mailDir, ".SUBSCRIPTIONS-" + this.getServer().getProviderName());
+            if(!subscriptionsFile.exists()) {
+                subscriptionsFile = new File(mailDir, ".SUBSCRIPTIONS");            	
+            }
             folders.add(
                 new IMAPFolderImpl(
                     "INBOX",
+                    "INBOX",
                     this.username,
-                    null
+                    this.getServer().getPersistenceManagerFactory()
                 )
-            );            
+            );
             if(subscriptionsFile.exists()) {
-                Map<String,String> availableFolders = this.getAvailableFolders();
+            	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
                 BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
                         new FileInputStream(subscriptionsFile)
@@ -1084,15 +1477,12 @@ public class IMAPSession extends AbstractSession {
                 while(reader.ready()) {
                     String name = reader.readLine();
                     if(availableFolders.containsKey(name)) {
-                        ActivitiesFilterHelper activitiesHelper = new ActivitiesFilterHelper(this.pm);
                         try {
-                            activitiesHelper.parseFilteredActivitiesUri(
-                                availableFolders.get(name)
-                            );
                             IMAPFolderImpl folder = new IMAPFolderImpl(
                                 name,
+                                availableFolders.get(name),
                                 this.username,
-                                activitiesHelper
+                                this.getServer().getPersistenceManagerFactory()
                             );                        
                             folders.add(folder);
                         }
@@ -1111,15 +1501,32 @@ public class IMAPSession extends AbstractSession {
     private IMAPFolderImpl getFolder(
         String name
     ) throws MessagingException {
-        for(IMAPFolderImpl folder: this.getSubscribedFolders()) {
-            if(
-                folder.getFullName().equalsIgnoreCase(name) || 
-                // Required for some Outlook versions
-                folder.getFullName().replace("/", "").equalsIgnoreCase(name)
-            ) { 
-                return folder;
-            }
-        }
+    	if("INBOX".equals(name)) {
+            return new IMAPFolderImpl(
+                "INBOX",
+                "INBOX",
+                this.username,
+                this.getServer().getPersistenceManagerFactory()
+            );    		
+    	}
+    	else {
+	        for(Map.Entry<String,String> entry: this.getServer().getAvailableFolders(this.segmentName).entrySet()) {
+	        	String folderName = entry.getKey();
+	        	String folderId = entry.getValue();
+	            if(
+	                folderName.equalsIgnoreCase(name) || 
+	                // Required for some Outlook versions
+	                folderName.replace("/", "").equalsIgnoreCase(name)
+	            ) {
+	                return new IMAPFolderImpl(
+	                    name,
+	                    folderId,
+	                    this.username,
+	                    this.getServer().getPersistenceManagerFactory()
+	                );                                    	
+	            }
+	        }
+    	}
         return null;
     }
     
@@ -1128,7 +1535,7 @@ public class IMAPSession extends AbstractSession {
         String s
     ) {      
         try {
-            if(this.server.isDebug()) {
+            if(this.getServer().isDebug()) {
                 System.out.println(s);
                 System.out.flush();
             }
@@ -1146,7 +1553,7 @@ public class IMAPSession extends AbstractSession {
         String s
     ) {
         try {        	
-            if(this.server.isDebug()) {
+            if(this.getServer().isDebug()) {
                 System.out.print(s);
                 System.out.flush();
             }
@@ -1163,7 +1570,7 @@ public class IMAPSession extends AbstractSession {
         QuotaByteArrayOutputStream bytes
     ) {
         try {
-            if(this.server.isDebug()) {
+            if(this.getServer().isDebug()) {
                 System.out.print(new String(bytes.getBuffer(), 0, bytes.size(), "UTF-8"));
                 System.out.flush();
             }
@@ -1351,7 +1758,6 @@ public class IMAPSession extends AbstractSession {
     // Members
     //-----------------------------------------------------------------------
     private static final int MAX_LINE_LENGTH = 2048;
-    private static final long FOLDER_REFRESH_PERIOD_MILLIS = 60000L;
     
     public static final int NOT_AUTHENTICATED_STATE = 0;
     public static final int AUTHENTICATED_STATE = 1;
@@ -1363,8 +1769,6 @@ public class IMAPSession extends AbstractSession {
     protected InputStream in = null;
     protected int state = 0;
     protected IMAPFolderImpl selectedFolder = null;
-    protected Map<String,String> availableFolders = new HashMap<String,String>();
-    protected long refreshFoldersAt = System.currentTimeMillis();
 
     private static ThreadLocal<QuotaByteArrayOutputStream> byteOutputStreams = new ThreadLocal<QuotaByteArrayOutputStream>() {
         protected synchronized QuotaByteArrayOutputStream initialValue() {

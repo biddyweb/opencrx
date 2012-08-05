@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProvisionHandler.java,v 1.3 2010/07/16 12:49:01 wfro Exp $
+ * Name:        $Id: ProvisionHandler.java,v 1.5 2010/09/09 15:18:13 wfro Exp $
  * Description: AirSync Client FolderSyncHandler
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/16 12:49:01 $
+ * Date:        $Date: 2010/09/09 15:18:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -94,16 +94,16 @@ public class ProvisionHandler extends AbstractClientHandler {
 	    	String requestXml = 
 	    		"<?xml version=\"1.0\" encoding=\"UTF-8\"?>" +
                 "<Provision xmlns=\"Provision:\">" +
-	            "<Policies>" +
-		        "<Policy>" +
-			    "<PolicyType>MS-EAS-Provisioning-WBXML</PolicyType>" +
-		        "</Policy>" +
-	            "</Policies>" +
+		            "<Policies>" +
+				        "<Policy>" +
+						    "<PolicyType>MS-EAS-Provisioning-WBXML</PolicyType>" +
+				        "</Policy>" +
+		            "</Policies>" +
                 "</Provision>";
 	    	org.w3c.dom.Document requestDoc = DOMUtils.parse(
 	    		new ByteArrayInputStream(requestXml.getBytes("UTF-8"))
 	    	);	    	
-	    	org.w3c.dom.Document docResponse = target.perform(
+	    	org.w3c.dom.Document docResponse = (org.w3c.dom.Document)target.perform(
 	    		"Provision",	    		
 	    		null,
 	    		clientProfile.getUserAgent(),
@@ -130,7 +130,7 @@ public class ProvisionHandler extends AbstractClientHandler {
 				    	requestDoc = DOMUtils.parse(
 				    		new ByteArrayInputStream(requestXml.getBytes("UTF-8"))
 				    	); 	
-				    	docResponse = target.perform(
+				    	docResponse = (org.w3c.dom.Document)target.perform(
 				    		"Provision",	    		
 				    		policy.getPolicyKey(),
 				    		clientProfile.getUserAgent(),

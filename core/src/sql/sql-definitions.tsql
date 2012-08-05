@@ -592,7 +592,7 @@
 #define FORMAT_NUMBER_3_0(column_name) SUBSTR(DIGITS(column_name),LENGTH(DIGITS(column_name))-2,3)
 #define FORMAT_NUMBER_2_0(column_name) SUBSTR(DIGITS(column_name),LENGTH(DIGITS(column_name))-1,2)
 #define AS_CHAR(n) CHR(n)
-#define STRSUB SUBSTRING
+#define STRSUB SUBSTR
 #define STRLEN LEN
 #define REORG_TABLE(table) REORG TABLE table
 #define P_PARENT p$$parent

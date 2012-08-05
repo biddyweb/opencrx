@@ -245,10 +245,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Contract Filters</_item>
+												<_item>Search Criteria - Contracts</_item>
 											</toolTip>
 											<label>
-												<_item>Contract Filters</_item>
+												<_item>Search Criteria - Contracts</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -257,10 +257,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Price Filters</_item>
+												<_item>Search Criteria - Prices</_item>
 											</toolTip>
 											<label>
-												<_item>Price Filters</_item>
+												<_item>Search Criteria - Prices</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -521,10 +521,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria - Products</_item>
 											</toolTip>
 											<label>
-												<_item>Product Filter</_item>
+												<_item>Search Criteria - Products</_item>
 											</label>
 											<order>
 												<_item>10</_item>
@@ -541,10 +541,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered products</_item>
+												<_item>Products (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Products (Filtered)</_item>
+												<_item>Products (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>10</_item>
@@ -558,10 +558,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria - Accounts</_item>
 											</toolTip>
 											<label>
-												<_item>Account Filter</_item>
+												<_item>Search Criteria - Accounts</_item>
 											</label>
 											<order>
 												<_item>20</_item>
@@ -578,10 +578,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered accounts</_item>
+												<_item>Accounts (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Accounts (Filtered)</_item>
+												<_item>Accounts (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>20</_item>
@@ -613,10 +613,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria - Products</_item>
 											</toolTip>
 											<label>
-												<_item>Product Filter</_item>
+												<_item>Search Criteria - Products</_item>
 											</label>
 											<order>
 												<_item>10</_item>
@@ -633,10 +633,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered products</_item>
+												<_item>Products (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Products (Filtered)</_item>
+												<_item>Products (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>10</_item>
@@ -650,10 +650,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>all filter properties</_item>
+												<_item>Search Criteria - Accounts</_item>
 											</toolTip>
 											<label>
-												<_item>Account Filter</_item>
+												<_item>Search Criteria - Accounts</_item>
 											</label>
 											<order>
 												<_item>20</_item>
@@ -670,10 +670,10 @@
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all filtered accounts</_item>
+												<_item>Accounts (based on search criteria)</_item>
 											</toolTip>
 											<label>
-												<_item>Accounts (Filtered)</_item>
+												<_item>Accounts (based on search criteria)</_item>
 											</label>
 											<order>
 												<_item>20</_item>
@@ -892,7 +892,7 @@
 											<decimalPlaces>10</decimalPlaces>
 											<hasThousandsSeparator>true</hasThousandsSeparator>
 											<toolTip>
-												<_item>Price multiplier</_item>
+												<_item>ROUND(x*roundingFactor*multiplier,0) / roundingFactor</_item>
 											</toolTip>
 											<label>
 												<_item>Price multiplier</_item>
@@ -926,7 +926,7 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Rounding factor</_item>
+												<_item>ROUND(x*roundingFactor*multiplier,0) / roundingFactor</_item>
 											</toolTip>
 											<label>
 												<_item>Rounding factor</_item>

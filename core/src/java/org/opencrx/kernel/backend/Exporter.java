@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.53 2010/09/06 14:06:16 wfro Exp $
+ * Name:        $Id: Exporter.java,v 1.55 2010/11/05 15:00:07 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.53 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/06 14:06:16 $
+ * Date:        $Date: 2010/11/05 15:00:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -97,6 +97,7 @@ import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.cci.Multiplicities;
 import org.openmdx.base.mof.cci.PrimitiveTypes;
+import org.openmdx.base.mof.spi.ModelUtils;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
@@ -525,7 +526,7 @@ public class Exporter extends AbstractImpl {
 			// Pass 2
 			QuotaByteArrayOutputStream bs = new QuotaByteArrayOutputStream(Exporter.class.getName());
 			out = isMultiFileExport ? new ZipOutputStream(bs) : bs;
-			ps = new PrintStream(out);
+			ps = new PrintStream(out, false, "UTF-8");
 			exportParams.getContext().keySet().retainAll(Arrays.asList("template"));
 			exportParams.resetEntryId();
 			this.exportItem(
@@ -1105,9 +1106,13 @@ public class Exporter extends AbstractImpl {
 						if((attributeDef == null) || (attributeValue == null)) {
 							continue;
 						}
-						String multiplicity = (String) attributeDef.objGetValue("multiplicity");
-						boolean isMultiValued = multiplicity.equals(Multiplicities.MULTI_VALUE) || multiplicity.equals(Multiplicities.SET) || multiplicity.equals(Multiplicities.LIST)
-						    || multiplicity.equals(Multiplicities.SPARSEARRAY);
+						String multiplicity = ModelUtils.getMultiplicity(attributeDef);
+						boolean isMultiValued = 
+							multiplicity.equals(Multiplicities.MULTI_VALUE) || 
+							multiplicity.equals(Multiplicities.SET) || 
+							multiplicity.equals(Multiplicities.LIST) || 
+							multiplicity.equals(Multiplicities.SPARSEARRAY) ||
+						multiplicity.equals(Multiplicities.MAP);
 						boolean needsPosition = multiplicity.equals(Multiplicities.SPARSEARRAY);
 						String elementTag = this.toSimpleQualifiedName((String) attributeDef.objGetValue("qualifiedName"));
 						List<Object> attributeValues = new ArrayList<Object>();

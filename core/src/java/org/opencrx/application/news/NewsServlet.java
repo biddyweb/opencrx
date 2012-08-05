@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: NewsServlet.java,v 1.14 2010/06/16 11:05:02 wfro Exp $
+ * Name:        $Id: NewsServlet.java,v 1.15 2010/10/02 00:17:40 wfro Exp $
  * Description: NewsServlet
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/16 11:05:02 $
+ * Date:        $Date: 2010/10/02 00:17:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,6 +72,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.opencrx.kernel.backend.Notifications;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -97,10 +98,6 @@ public class NewsServlet extends HttpServlet {
             try {
                 Utils.getModel();
                 this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
-                this.rootPm = this.persistenceManagerFactory.getPersistenceManager(
-                    SecurityKeys.ROOT_PRINCIPAL,
-                    UUIDs.getGenerator().next().toString()
-                );            
             }
             catch (NamingException e) {
                 throw new ServletException( 
@@ -130,19 +127,26 @@ public class NewsServlet extends HttpServlet {
     }
 
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
-        String providerName
+    protected PersistenceManager getRootPersistenceManager(
     ) {
-        if(this.componentConfiguration == null) {
-            this.componentConfiguration = ComponentConfigHelper.getComponentConfiguration(
-                CONFIGURATION_ID,
-                providerName,
-                this.rootPm,
-                false,
-                null
-            );
-        }
-        return this.componentConfiguration;
+        return this.persistenceManagerFactory.getPersistenceManager(
+            SecurityKeys.ROOT_PRINCIPAL,
+            UUIDs.getGenerator().next().toString()
+        );                	
+    }
+    
+    //-----------------------------------------------------------------------
+    protected ComponentConfiguration getComponentConfiguration(
+        String providerName,
+        PersistenceManager rootPm
+    ) {
+    	return ComponentConfigHelper.getComponentConfiguration(
+            CONFIGURATION_ID,
+            providerName,
+            rootPm,
+            false,
+            null
+        );
     }
     
     //-----------------------------------------------------------------------
@@ -299,7 +303,5 @@ public class NewsServlet extends HttpServlet {
     protected static final int MAX_NEWS = 20;
     
     protected PersistenceManagerFactory persistenceManagerFactory = null;
-    protected PersistenceManager rootPm = null;
-    protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;    
         
 }

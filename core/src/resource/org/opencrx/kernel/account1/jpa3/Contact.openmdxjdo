@@ -5,7 +5,10 @@
     <class name="Contact">
 		<field name="doNotEMail" visibility="cci">
 			<column name="DO_NOT_E_MAIL"/>
-		</field>	
+		</field>
+		<field name="ouMembership" visibility="cci">
+			<join table="OOCKE1_JOIN_CONTACTISMEMBEROF"/>
+		</field>		
 	</class>
   </package>
 </openmdxjdo>

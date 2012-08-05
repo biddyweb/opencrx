@@ -34,10 +34,10 @@
 												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
 													<_object>
 														<toolTip>
-															<_item>Adresses (disabled)</_item>
+															<_item>Addresses (disabled)</_item>
 														</toolTip>
 														<label>
-															<_item>Adresses (disabled)</_item>
+															<_item>»Addresses (disabled)</_item>
 														</label>
 														<order>
 															<_item>0</_item>

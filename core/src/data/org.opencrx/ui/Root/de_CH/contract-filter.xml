@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:contractFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Vertragsfilter</_item>
+                        <_item>Suchlisten Verträge</_item>
                       </label>
                       <toolTip>
-                        <_item>alle Vertragsfilter</_item>
+                        <_item>Suchlisten Verträge</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractFilterGlobal" _operation="create">
                     <_object>
                       <label>
-                        <_item>Vertragsfilter</_item>
+                        <_item>Suchliste Verträge</_item>
                       </label>
                       <toolTip>
-                        <_item>Vertragsfilter</_item>
+                        <_item>Suchliste Verträge</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractFilterContract:filterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtereigenschaften</_item>
+                        <_item>Suchkriterien</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtereigenschaften</_item>
+                        <_item>Suchkriterien</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPriorityFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Priorität</_item>
+                        <_item>Suchkriterium Priorität</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Priorität</_item>
+                        <_item>Suchkriterium Priorität</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractStateFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Vertragsstatus</_item>
+                        <_item>Suchkriterium Vertragsstatus</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Vertragsstatus</_item>
+                        <_item>Suchkriterium Vertragsstatus</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -157,10 +157,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Vertragstyp</_item>
+                        <_item>Suchkriterium Vertragstyp</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Vertragstyp</_item>
+                        <_item>Suchkriterium Vertragstyp</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:TotalAmountFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Totalbeträge</_item>
+                        <_item>Suchkriterium Totalbeträge</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Totalbeträge</_item>
+                        <_item>Suchkriterium Totalbeträge</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CustomerFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Kunden</_item>
+                        <_item>Suchkriterium Kunden</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Kunden</_item>
+                        <_item>Suchkriterium Kunden</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesRepFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Verkäufer</_item>
+                        <_item>Suchkriterium Verkäufer</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Verkäufer</_item>
+                        <_item>Suchkriterium Verkäufer</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SupplierFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Lieferanten</_item>
+                        <_item>Suchkriterium Lieferanten</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Lieferanten</_item>
+                        <_item>Suchkriterium Lieferanten</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -267,10 +267,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DisabledFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Deaktiviert</_item>
+                        <_item>Suchkriterium Deaktiviert</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Deaktiviert</_item>
+                        <_item>Suchkriterium Deaktiviert</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -289,10 +289,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractQueryFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Query Filter</_item>
+                        <_item>SQL Query</_item>
                       </label>
                       <toolTip>
-                        <_item>Query Filter</_item>
+                        <_item>SQL Query</_item>
                       </toolTip>
                     </_object>
                     <_content/>

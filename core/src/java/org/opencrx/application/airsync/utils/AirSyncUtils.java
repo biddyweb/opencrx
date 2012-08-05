@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AirSyncUtils.java,v 1.12 2010/07/16 12:49:00 wfro Exp $
+ * Name:        $Id: AirSyncUtils.java,v 1.14 2010/09/09 15:18:13 wfro Exp $
  * Description: AirSyncUtils
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/16 12:49:00 $
+ * Date:        $Date: 2010/09/09 15:18:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,10 +67,12 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.opencrx.application.airsync.backend.cci.SyncBackend;
 import org.opencrx.application.airsync.client.ClientHandler;
+import org.opencrx.application.airsync.datatypes.AttachmentDataT;
 import org.opencrx.application.airsync.server.SyncRequest;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.kernel.exception.BasicException;
+import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.dom.Document;
 
 public class AirSyncUtils {
@@ -85,7 +87,7 @@ public class AirSyncUtils {
 		return new ClientHandler.SyncTarget(){
 
 			@Override
-            public Document perform(
+            public Object perform(
             	String cmd,
             	String policyKey,
             	String userAgent,
@@ -126,21 +128,26 @@ public class AirSyncUtils {
 						"*/*"
 					);
 					connection.setRequestMethod("POST");
-					WbXMLTransformer.transformToWBXML(
-						requestDoc,
-						connection.getOutputStream()
-					);
-					if(logger.isLoggable(Level.FINE)) {
-						ByteArrayOutputStream out = new ByteArrayOutputStream();
-						System.out.println(url);
-						WbXMLTransformer.transform(
+					logger.log(Level.FINE, "+-+-+-+-+- Request +-+-+-+-+-");
+					if(requestDoc == null) {
+						connection.getOutputStream().close();
+					}
+					else {
+						WbXMLTransformer.transformToWBXML(
 							requestDoc,
-							new StreamResult(out),
-							false
+							connection.getOutputStream()
 						);
-						out.close();
-						logger.log(Level.FINE, "+-+-+-+-+- Request +-+-+-+-+-");
-						logger.log(Level.FINE, out.toString());
+						if(logger.isLoggable(Level.FINE)) {
+							ByteArrayOutputStream out = new ByteArrayOutputStream();
+							System.out.println(url);
+							WbXMLTransformer.transform(
+								requestDoc,
+								new StreamResult(out),
+								false
+							);
+							out.close();
+							logger.log(Level.FINE, out.toString());
+						}
 					}
 					logger.log(Level.FINE, "POST Request", url);
 					int responseCode = connection.getResponseCode();
@@ -153,14 +160,26 @@ public class AirSyncUtils {
 							new BasicException.Parameter("status", responseCode)
 						);
 					}
-					org.w3c.dom.Document responseBody = WbXMLTransformer.transformFromWBXML(
-						connection.getInputStream()
-					);
-					connection.disconnect();
-					return responseBody;
+					if(cmd.startsWith("GetAttachment")) {
+						AttachmentDataT attachmentDataT = new AttachmentDataT();
+						ByteArrayOutputStream content = new ByteArrayOutputStream();
+						BinaryLargeObjects.streamCopy(connection.getInputStream(), 0, content);
+						content.close();
+						attachmentDataT.setContent(new ByteArrayInputStream(content.toByteArray()));
+						attachmentDataT.setContentType(connection.getContentType());
+						connection.disconnect();
+						return attachmentDataT;
+					}
+					else {
+						org.w3c.dom.Document responseBody = WbXMLTransformer.transformFromWBXML(
+							connection.getInputStream()
+						);
+						connection.disconnect();
+						return responseBody;
+					}
 				} catch(Exception e) {
 					throw new ServiceException(e);
-				}				
+				}
             }
 		};
 	}
@@ -175,7 +194,7 @@ public class AirSyncUtils {
 		return new ClientHandler.SyncTarget(){
 
 			@Override
-            public Document perform(
+            public Object perform(
             	String cmd, 
             	String policyKey,
             	String userAgent,

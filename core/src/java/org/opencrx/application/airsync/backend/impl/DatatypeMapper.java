@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMapper.java,v 1.19 2010/08/25 15:27:08 wfro Exp $
+ * Name:        $Id: DatatypeMapper.java,v 1.34 2010/11/23 15:41:23 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/25 15:27:08 $
+ * Date:        $Date: 2010/11/23 15:41:23 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,10 @@
  */
 package org.opencrx.application.airsync.backend.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -67,7 +70,7 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
-import javax.servlet.http.HttpServletRequest;
+import javax.mail.internet.MimeMessage;
 
 import org.opencrx.application.airsync.backend.cci.SyncBackend.RequestContext;
 import org.opencrx.application.airsync.datatypes.AddressT;
@@ -87,6 +90,7 @@ import org.opencrx.application.airsync.datatypes.Importance;
 import org.opencrx.application.airsync.datatypes.MeetingStatus;
 import org.opencrx.application.airsync.datatypes.MethodAttachment;
 import org.opencrx.application.airsync.datatypes.MimeType;
+import org.opencrx.application.airsync.datatypes.NoteT;
 import org.opencrx.application.airsync.datatypes.RecurrenceDayOfWeek;
 import org.opencrx.application.airsync.datatypes.RecurrenceT;
 import org.opencrx.application.airsync.datatypes.RecurrenceType;
@@ -129,10 +133,16 @@ import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
+import org.opencrx.kernel.backend.MimeMessageImpl;
 import org.opencrx.kernel.backend.Notifications;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.VCard;
+import org.opencrx.kernel.document1.jmi1.Document;
+import org.opencrx.kernel.document1.jmi1.DocumentFolder;
+import org.opencrx.kernel.document1.jmi1.DocumentRevision;
+import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.generic.jmi1.Media;
+import org.opencrx.kernel.home1.cci2.EMailAccountQuery;
 import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.SyncFeed;
@@ -142,8 +152,6 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.portal.servlet.Action;
-import org.openmdx.portal.servlet.WebKeys;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
 import org.w3c.spi2.Datatypes;
@@ -247,8 +255,22 @@ public class DatatypeMapper {
 					user,
 					requestContext
 				);
+			} else if(object instanceof EMail) {
+				toEMail(
+					(EmailT)data,
+					(EMail)object,
+					user,
+					requestContext
+				);
 			}
-		}		
+		} else if(data instanceof NoteT) {
+			toNote(
+				(NoteT)data,
+				(Document)object,
+				user,
+				requestContext
+			);
+		}
 	}
 		
 	public String normalizeMultilineString(
@@ -267,57 +289,6 @@ public class DatatypeMapper {
 		return target.toString();
 	}
 	
-	public String getAccessUrl(
-		RefObject_1_0 object,
-		RequestContext requestContext
-	) {
-		if(requestContext.getContext() instanceof HttpServletRequest) {
-			HttpServletRequest req = (HttpServletRequest)requestContext.getContext();
-			String url = req.getScheme()+ "://" + req.getServerName() + ":" + req.getServerPort();		
-	        Action selectObjectAction = 
-	            new Action(
-	                Action.EVENT_SELECT_OBJECT, 
-	                new Action.Parameter[]{
-	                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, object.refMofId())
-	                },
-	                "",
-	                true
-	            );        
-	        return
-	            url + 
-	            req.getContextPath().replace("-airsync-", "-core-") +  "/" + 
-	            WebKeys.SERVLET_NAME + 
-	            "?event=" + Action.EVENT_SELECT_OBJECT + 
-	            "&parameter=" + selectObjectAction.getParameter();
-		}
-		else if(requestContext.getContext() instanceof UserHome) {
-			UserHome userHome = (UserHome)requestContext.getContext();
-			String url = userHome.getWebAccessUrl();
-			if(url != null) {
-		        Action selectObjectAction = 
-		            new Action(
-		                Action.EVENT_SELECT_OBJECT, 
-		                new Action.Parameter[]{
-		                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, object.refMofId())
-		                },
-		                "",
-		                true
-		            );
-		        return
-		            url + (url.endsWith("/") ? "" : "/") + 
-		            WebKeys.SERVLET_NAME + 
-		            "?event=" + Action.EVENT_SELECT_OBJECT + 
-		            "&parameter=" + selectObjectAction.getParameter();
-			}
-			else {
-				return null;
-			}
-		}
-		else {
-			return null;
-		}
-	}
-  
 	/**
 	 * Try to match given item and return itemId. This method is
 	 * typically overriden by a user-specific data type mapper.
@@ -437,6 +408,12 @@ public class DatatypeMapper {
 		StringBuilder vcard = new StringBuilder();
 		vcard.append("BEGIN:VCARD\n");		
 		vcard.append("VERSION:2.1\n");
+		if(account.getVcard() != null) {
+			String uid = Accounts.getInstance().getVCardUid(account.getVcard());
+			if(uid != null) {
+				vcard.append("UID:" + uid + "\n");
+			}
+		}
 		if(account instanceof Contact) {
 			vcard.append("N:" + getVCardContactName(contactT) + "\n");
 			if(contactT.getBirthday() != null) {
@@ -565,6 +542,44 @@ public class DatatypeMapper {
 		);
 	}
 	
+	public void toNote(
+		NoteT noteT,
+		Document document,
+		UserHome user,
+		RequestContext requestContext		
+	) throws ServiceException {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(document);
+		document.setName(noteT.getSubject());
+		document.setTitle(noteT.getSubject());
+		MediaContent revision = pm.newInstance(MediaContent.class);
+		revision.refInitialize(false, false);
+		revision.setName(noteT.getSubject());
+		if(document.getHeadRevision() != null) {
+			revision.setVersion(document.getHeadRevision().getVersion() + 1);
+		}
+		revision.setContentMimeType("text/plain");
+		revision.setContentName(noteT.getSubject());
+		if(noteT.getBody() != null) {
+			try {
+				revision.setContent(BinaryLargeObjects.valueOf(noteT.getBody().getBytes("UTF-8")));
+			} catch(Exception e) {}
+		}
+		if(noteT.getCategories() != null) {
+			String keywords = "";
+			String sep = "";
+			for(String category: noteT.getCategories()) {
+				keywords += sep + category;
+				sep = ",";
+			}
+			document.setKeywords(keywords);
+		}						
+		document.addRevision(
+			Base.getInstance().getUidAsString(),
+			revision
+		);
+		document.setHeadRevision(revision);
+	}
+	
 	private void updateActivity(
 		Activity activity,
 		String ical
@@ -583,9 +598,7 @@ public class DatatypeMapper {
             activity, 
             (short)0, // en_US
             errors, 
-            report,
-        	IS_EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE,  
-        	IS_EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED
+            report
         );		
 	}
 	
@@ -614,7 +627,7 @@ public class DatatypeMapper {
 		vtodo.append("PRODID:" + ICalendar.PROD_ID + "\n");
 		vtodo.append("VERSION:2.0\n");
 		vtodo.append("BEGIN:VTODO\n");
-		vtodo.append("CLASS:PUBLIC\n");
+		vtodo.append("CLASS:CONFIDENTIAL\n");
 		vtodo.append("UID:" + getCalendarUID(task) + "\n");		
 		if(taskT.getSubject() != null) {
 			vtodo.append("SUMMARY:" + taskT.getSubject() + "\n");
@@ -677,7 +690,7 @@ public class DatatypeMapper {
 		vevent.append("PRODID:" + ICalendar.PROD_ID + "\n");
 		vevent.append("VERSION:2.0\n");
 		vevent.append("BEGIN:VEVENT\n");
-		vevent.append("CLASS:PUBLIC\n");
+		vevent.append("CLASS:CONFIDENTIAL\n");
 		vevent.append("UID:" + (eventT.getUID() == null ? getCalendarUID(event) : eventT.getUID()) + "\n");
 		if(eventT.getStartTime() != null) {
 			vevent.append(
@@ -744,6 +757,127 @@ public class DatatypeMapper {
                 body.substring(0, pos) : 
                 body;        	
 			event.setDescription(body);
+		}
+	}
+	
+	public void toEMail(
+		EmailT emailT,
+		EMail email,
+		UserHome user,
+		RequestContext requestContext		
+	) throws ServiceException {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(email);
+		String providerName = email.refGetPath().get(2);
+        String segmentName = email.refGetPath().get(4);
+        if(emailT.getMimeData() != null) {
+        	try {
+	            MimeMessage mimeMessage = new MimeMessageImpl(
+	                new ByteArrayInputStream(emailT.getMimeData().getBytes("US-ASCII"))
+	            );        	
+	        	Activities.getInstance().importMimeMessage(
+	        		email,
+	        		mimeMessage, 
+	        		true // isNew
+	        	);
+        	}
+        	catch(Exception e) {
+        		new ServiceException(e).log();
+        	}
+        }
+        else {
+			// FROM
+			String[] addressesFrom = new String[]{emailT.getFrom().getMail()};
+	        List<org.opencrx.kernel.account1.jmi1.EMailAddress> senderAddresses = 
+	            Accounts.getInstance().lookupEmailAddress(
+	                pm,
+	                providerName,
+	                segmentName,
+	                emailT.getFrom().getMail()
+	            );
+	        if(senderAddresses.isEmpty()) {
+	        	senderAddresses = Accounts.getInstance().lookupEmailAddress(
+	                pm,
+	                providerName,
+	                segmentName,
+	                Addresses.UNASSIGNED_ADDRESS
+	            );                            
+	        }
+	        EMailAddress from = null;
+	        if(!senderAddresses.isEmpty()) {
+	            from = senderAddresses.iterator().next();
+	            email.setSender(from);
+	        } 		
+			// TO
+			List<String> addresses = new ArrayList<String>();
+			for(AddressT addressT: emailT.getTo()) {
+				addresses.add(addressT.getMail());
+			}
+			String[] addressesTo = addresses.toArray(new String[addresses.size()]); 
+			Activities.getInstance().mapAddressesToEMailRecipients(
+				email, 
+				addressesTo, 
+				RecipientType.TO 
+			);
+			// CC
+			addresses = new ArrayList<String>();
+			for(AddressT addressT: emailT.getCc()) {
+				addresses.add(addressT.getMail());
+			}
+			String[] addressesCc = addresses.toArray(new String[addresses.size()]); 
+			Activities.getInstance().mapAddressesToEMailRecipients(
+				email, 
+				addressesCc, 
+				RecipientType.CC 
+			);
+			// BCC
+			addresses = new ArrayList<String>();
+			for(AddressT addressT: emailT.getBcc()) {
+				addresses.add(addressT.getMail());
+			}
+			String[] addressesBcc = addresses.toArray(new String[addresses.size()]);
+			Activities.getInstance().mapAddressesToEMailRecipients(
+				email, 
+				addressesBcc, 
+				RecipientType.BCC 
+			);
+	        // Add originator and recipients to a note
+			String recipientsAsText = Activities.getInstance().getRecipientsAsNoteText(
+	            pm,
+	            providerName,
+	            segmentName,
+	            addressesFrom,
+	            addressesTo,
+	            addressesCc,
+	            addressesBcc
+	        );
+			org.opencrx.kernel.generic.jmi1.Note note = pm.newInstance(org.opencrx.kernel.generic.jmi1.Note.class);
+			note.refInitialize(false, false);
+			note.setTitle("Recipients");
+			note.setText(recipientsAsText);
+			email.addNote(
+				Activities.getInstance().getUidAsString(),
+				note
+			);
+			switch(emailT.getImportance()) {
+				case LOW:
+					email.setPriority(Activities.PRIORITY_LOW);
+					break;
+				case NORMAL:
+					email.setPriority(Activities.PRIORITY_NORMAL);
+					break;
+				case HIGH:
+					email.setPriority(Activities.PRIORITY_HIGH);
+					break;
+			}
+			email.setSendDate(emailT.getDateReceived());
+			email.setMessageSubject(emailT.getSubject());
+			email.setMessageBody(
+				emailT.getBody() == null ? null : emailT.getBody().getData()
+			);
+        }
+		if(emailT.getCategories() != null) {
+			email.getCategory().clear();
+			email.getCategory().addAll(emailT.getCategories());
 		}
 	}
 	
@@ -931,6 +1065,34 @@ public class DatatypeMapper {
 				}
 			);
 		}
+		else if(objectId.startsWith(DOCUMENT_FOLDER_URI_SCHEME)) { 
+			String[] components = objectId.substring(objectId.indexOf("://") + 3).split("/");
+			return new Path(
+				new String[]{
+					"org:opencrx:kernel:document1",
+					"provider",
+					components[0],
+					"segment",
+					components[1],
+					"folder", 
+				    components[2]
+				}
+			);
+		}
+		else if(objectId.startsWith(DOCUMENT_URI_SCHEME)) { 
+			String[] components = objectId.substring(objectId.indexOf("://") + 3).split("/");
+			return new Path(
+				new String[]{
+					"org:opencrx:kernel:document1",
+					"provider",
+					components[0],
+					"segment",
+					components[1],
+					"document", 
+				    components[2]
+				}
+			);
+		}
 		else {
 			return null;
 		}
@@ -974,6 +1136,12 @@ public class DatatypeMapper {
 		// Medias attached to an activity
 		else if(object instanceof Media) { 
 			return MEDIA_URI_SCHEME + path.get(2) + "/" + path.get(4) + "/" + path.get(6) + "/" + path.get(8);
+		}
+		else if(object instanceof DocumentFolder) {
+			return DOCUMENT_FOLDER_URI_SCHEME + path.get(2) + "/" + path.get(4) + "/" + path.get(6);
+		}
+		else if(object instanceof Document) {
+			return DOCUMENT_URI_SCHEME + path.get(2) + "/" + path.get(4) + "/" + path.get(6);
 		}
 		else {
 			return null;
@@ -1212,6 +1380,7 @@ public class DatatypeMapper {
 		String byDay = null;
 		if(recurrenceT.getDayOfWeek() != null && !recurrenceT.getDayOfWeek().isEmpty()) {
 			String sep = "";
+			byDay = "";
 			for(RecurrenceDayOfWeek day: recurrenceT.getDayOfWeek()) {
 				byDay += sep;
 				byDay += day.toString();
@@ -1314,20 +1483,26 @@ public class DatatypeMapper {
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(alert);
 		UserHome userHome = (UserHome)pm.getObjectById(alert.refGetPath().getParent().getParent());
-		Collection<EMailAccount> eMailAccounts = userHome.getEMailAccount();
-        for(EMailAccount obj: eMailAccounts) {
-            if((obj.isDefault() != null) && obj.isDefault().booleanValue()) {
-               return new AddressT(obj.getEMailAddress());
-            }
-        }
-        return null;
+		EMailAccountQuery emailAccountQuery = (EMailAccountQuery)pm.newQuery(EMailAccount.class);
+		emailAccountQuery.thereExistsIsDefault().isTrue();
+		emailAccountQuery.thereExistsIsActive().isTrue();
+		List<EMailAccount> eMailAccounts = userHome.getEMailAccount(emailAccountQuery);
+		return eMailAccounts.isEmpty() ?
+			null :
+				new AddressT(eMailAccounts.iterator().next().getName());
 	}
 	
 	private AddressT getSender(
 		EMail email
 	) {
-		if(email.getSender() != null && email.getSender() instanceof EMailAddress) {
-			return new AddressT(((EMailAddress)email.getSender()).getEmailAddress());
+		AccountAddress sender = null;
+		try {
+			sender = email.getSender();
+		} catch(Exception e) {
+			new ServiceException(e).log();
+		}
+		if(sender != null && sender instanceof EMailAddress) {
+			return new AddressT(((EMailAddress)sender).getEmailAddress());
 		}
 		return null;
 	}
@@ -1426,7 +1601,11 @@ public class DatatypeMapper {
 				(event.getActivityNumber() == null ? "" : Base.COMMENT_SEPARATOR_EOT + " #" + event.getActivityNumber())
 			);
 			eventT.setUID(getCalendarUID(event));
-			String accessUrl = this.getAccessUrl(event, requestContext);
+			String accessUrl = Base.getInstance().getAccessUrl(
+				requestContext.getContext(), 
+				"-airsync-", 
+				event
+			);
 			eventT.setBody(				
 				(event.getDescription() == null ? "" : event.getDescription().trim()) + 
 				(accessUrl == null ? "" : Base.COMMENT_SEPARATOR_EOT + " " + accessUrl)
@@ -1571,7 +1750,11 @@ public class DatatypeMapper {
 				task.getName() + 
 				(task.getActivityNumber() == null ? "" : Base.COMMENT_SEPARATOR_EOT + " #" + task.getActivityNumber().trim())
 			);
-			String accessUrl = this.getAccessUrl(task, requestContext);
+			String accessUrl = Base.getInstance().getAccessUrl(
+				requestContext.getContext(), 
+				"-airsync-", 
+				task
+			);
 			taskT.setBody(
 				(task.getDescription() == null ? "" : task.getDescription().trim()) + 
 				(accessUrl == null ? "" : Base.COMMENT_SEPARATOR_EOT + " " + accessUrl)
@@ -1624,7 +1807,11 @@ public class DatatypeMapper {
 				contactT.setLastName(account.getFullName());
 			}
 			contactT.setCategories(new ArrayList<String>(account.getCategory()));
-			String accessUrl = this.getAccessUrl(account, requestContext);
+			String accessUrl = Base.getInstance().getAccessUrl(
+				requestContext.getContext(), 
+				"-airsync-", 
+				account
+			);
 			contactT.setBody(
 				(account.getDescription() == null ? "" : account.getDescription().trim()) + 
 				(accessUrl == null ? "" : Base.COMMENT_SEPARATOR_EOT + " " + accessUrl)
@@ -1720,6 +1907,42 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 
+	public SyncDataItem toNoteT(
+		Document document,
+		boolean noData,
+		UserHome user,
+		RequestContext requestContext		
+	) throws ServiceException {		
+		// data
+		NoteT noteT = new NoteT();
+		if(!noData) {
+			DocumentRevision headRevision = document.getHeadRevision();
+			if(headRevision instanceof MediaContent) {
+				MediaContent content = (MediaContent)headRevision;
+				noteT.setSubject(document.getName());
+				ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+				try {
+					BinaryLargeObjects.streamCopy(
+						content.getContent().getContent(), 
+						0L, 
+						bytes
+					);
+					noteT.setBody(new String(bytes.toString("UTF-8")));
+				} catch(Exception e) {}
+				if(document.getKeywords() != null) {
+					noteT.setCategories(Arrays.asList(document.getKeywords().split(",")));
+				}
+				noteT.setLastModifiedDate(headRevision.getCreatedAt());
+			}
+		}
+		// data item
+		SyncDataItem dataItem = new SyncDataItem();
+		dataItem.setServerId(toObjectId(document));
+		dataItem.setDataType(DataType.Notes);
+		dataItem.setData(noteT);
+		return dataItem;
+	}
+
 	public AttachmentDataT toAttachmentData(
 		RefObject_1_0 object
 	) throws ServiceException {
@@ -1748,10 +1971,7 @@ public class DatatypeMapper {
 	
 	//-----------------------------------------------------------------------
 	// Members
-	//-----------------------------------------------------------------------
-	public static final boolean IS_EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE = true;  
-	public static final boolean IS_EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED = true;
-	
+	//-----------------------------------------------------------------------	
 	public static final String SYNC_FEED_URI_SCHEME = "feed://";
 	public static final String ACTIVITY_TRACKER_URI_SCHEME = "tracker://";
 	public static final String ACTIVITY_CATEGORY_URI_SCHEME = "category://";
@@ -1763,5 +1983,7 @@ public class DatatypeMapper {
 	public static final String ACCOUNT_URI_SCHEME = "account://";
 	public static final String ALERT_URI_SCHEME = "alert://";
 	public static final String MEDIA_URI_SCHEME = "media://";
+	public static final String DOCUMENT_FOLDER_URI_SCHEME = "documentFolder://";
+	public static final String DOCUMENT_URI_SCHEME = "document://"; 
 	
 }

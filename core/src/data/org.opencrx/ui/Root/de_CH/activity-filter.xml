@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktivitätenfilter</_item>
+                        <_item>Suchlisten Aktivitäten</_item>
                       </label>
                       <toolTip>
-                        <_item>Aktivitätenfilter</_item>
+                        <_item>Suchlisten Aktivitäten</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktivitätenfiltergruppe</_item>
+                        <_item>Suchliste Aktivitäten</_item>
                       </label>
                       <toolTip>
-                        <_item>Aktivitätenfiltergruppe</_item>
+                        <_item>Suchliste Aktivitäten</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal" _operation="create">
                     <_object>
                       <label>
-                        <_item>Aktivitätsfilter</_item>
+                        <_item>Suchliste Aktivitäten</_item>
                       </label>
                       <toolTip>
-                        <_item>Aktivitätsfilter</_item>
+                        <_item>Suchliste Aktivitäten</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:activitiesSource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Quelle</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Quelle für Aktivitäten</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
                     <_object>
                       <label>
@@ -102,10 +113,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filtereigenschaften</_item>
+                        <_item>Suchkriterien</_item>
                       </label>
                       <toolTip>
-                        <_item>Filtereigenschaften</_item>
+                        <_item>Suchkriterien</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -180,10 +191,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Aktivitätsgruppe</_item>
+                        <_item>Suchkriterium Aktivitätsgruppe</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Aktivitätsgruppe</_item>
+                        <_item>Suchkriterium Aktivitätsgruppe</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -202,10 +213,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Prozess-Zustand</_item>
+                        <_item>Suchkriterium Prozess-Zustand</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Prozess-Zustand</_item>
+                        <_item>Suchkriterium Prozess-Zustand</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -224,10 +235,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityStateFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Aktivitätsstatus</_item>
+                        <_item>Suchkriterium Aktivitätsstatus</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Aktivitätsstatus</_item>
+                        <_item>Suchkriterium Aktivitätsstatus</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -246,10 +257,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityNumberFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Aktivitätsnummer</_item>
+                        <_item>Suchkriterium Aktivitätsnummer</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Aktivitätsnummer</_item>
+                        <_item>Suchkriterium Aktivitätsnummer</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -268,10 +279,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:DisabledFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Deaktiviert</_item>
+                        <_item>Suchkriterium Deaktiviert</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Deaktiviert</_item>
+                        <_item>Suchkriterium Deaktiviert</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -290,10 +301,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTypeFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Aktivitätstyp</_item>
+                        <_item>Suchkriterium Aktivitätstyp</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Aktivitätstyp</_item>
+                        <_item>Suchkriterium Aktivitätstyp</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -312,10 +323,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AssignedToFilterProperty" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Filter Zugewiesen an</_item>
+												<_item>Suchkriterium Zugewiesen an</_item>
 											</toolTip>
 											<label>
-												<_item>Filter Zugewiesen an</_item>
+												<_item>Suchkriterium Zugewiesen an</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -328,16 +339,68 @@
 											<label>
 												<_item>Zugewiesen an</_item>
 											</label>
+											<shortLabel>
+												<_item>Gemeldet von / Zugewiesen an</_item>
+											</shortLabel>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Suchkriterium Gemeldet von (Person)</_item>
+											</toolTip>
+											<label>
+												<_item>Suchkriterium Gemeldet von (Person)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty:contact" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Gemeldet von (Person)</_item>
+											</toolTip>
+											<label>
+												<_item>Gemeldet von (Person)</_item>
+											</label>
+											<shortLabel>
+												<_item>Gemeldet von / Zugewiesen an</_item>
+											</shortLabel>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Suchkriterium Gemeldet von (Kontakt)</_item>
+											</toolTip>
+											<label>
+												<_item>Suchkriterium Gemeldet von (Kontakt)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty:account" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Gemeldet von (Kontakt)</_item>
+											</toolTip>
+											<label>
+												<_item>Gemeldet von (Kontakt)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Ressource</_item>
+                        <_item>Suchkriterium Ressource</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Ressource</_item>
+                        <_item>Suchkriterium Ressource</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -356,10 +419,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Ressourcenname</_item>
+                        <_item>Suchkriterium Ressourcenname</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Ressourcenname</_item>
+                        <_item>Suchkriterium Ressourcenname</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -378,10 +441,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Ressourcenrolle</_item>
+                        <_item>Suchkriterium Ressourcenrolle</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Ressourcenrolle</_item>
+                        <_item>Suchkriterium Ressourcenrolle</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -400,10 +463,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledEndFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Geplantes Enddatum</_item>
+                        <_item>Suchkriterium Geplantes Enddatum</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Geplantes Enddatum</_item>
+                        <_item>Suchkriterium Geplantes Enddatum</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -433,10 +496,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ScheduledStartFilterProperty" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filter Geplantes Startdatum</_item>
+                        <_item>Suchkriterium Geplantes Startdatum</_item>
                       </label>
                       <toolTip>
-                        <_item>Filter Geplantes Startdatum</_item>
+                        <_item>Suchkriterium Geplantes Startdatum</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -466,10 +529,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityQueryFilterProperty">
 										<_object>
 											<toolTip>
-												<_item>Query Filter</_item>
+												<_item>SQL Query</_item>
 											</toolTip>
 											<label>
-												<_item>Query Filter</_item>
+												<_item>SQL Query</_item>
 											</label>
 										</_object>
 										<_content/>

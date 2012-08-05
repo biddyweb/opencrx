@@ -1238,6 +1238,9 @@
             <generalization xmi:id="_dF488DXZEduAX_PMQNU-eQ">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
+            <generalization xmi:id="_WLd3kAa5EeCZXOmiOzBdfQ">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D409FD37B02C8"/>
+            </generalization>
             <ownedAttribute xmi:id="_YFUBQDUkEduAX_PMQNU-eQ" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>

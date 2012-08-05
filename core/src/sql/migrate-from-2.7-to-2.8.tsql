@@ -1,0 +1,36 @@
+#include "sql-definitions.tsql"
+
+UPDATE OOCKE1_ACTIVITYPARTY SET
+    PARTY_STATUS = 0
+    COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+    
+
+
+UPDATE OOCKE1_DOCUMENTFOLDERASS SET
+    ASSIGNMENT_ROLE = 0
+    COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+    
+
+
+UPDATE OOCKE1_SEGMENT SET
+    ACCESS_LEVEL_UPDATE = 3
+WHERE 
+    ACCESS_LEVEL_UPDATE < 3 AND 
+    object_id LIKE 'codes/%' COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+   
+
+UPDATE OOCKE1_EMAILACCOUNT SET 
+    NAME = E_MAIL_ADDRESS,
+#if defined(DB2_9)
+    IS_ACTIVE = 1
+#elif defined(ORACLE_10)
+    IS_ACTIVE = 1
+#else
+    IS_ACTIVE = true
+#endif 
+    COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

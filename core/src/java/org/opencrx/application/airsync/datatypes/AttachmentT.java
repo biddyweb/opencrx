@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AttachmentT.java,v 1.2 2010/02/24 18:31:26 wfro Exp $
+ * Name:        $Id: AttachmentT.java,v 1.4 2010/09/09 15:18:13 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/24 18:31:26 $
+ * Date:        $Date: 2010/09/09 15:18:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,8 +61,6 @@ public class AttachmentT {
 	private String attachmentName;
 	private MethodAttachment method;
 	private Integer estimatedDataSize;
-	private String contentId;
-	private String contentLocation;
 	private Boolean isInline;
 	
 	public AttachmentT(){
@@ -101,22 +99,6 @@ public class AttachmentT {
 		this.estimatedDataSize = estimatedDataSize;
 	}
 
-	public String getContentId() {
-		return contentId;
-	}
-
-	public void setContentId(String contentId) {
-		this.contentId = contentId;
-	}
-
-	public String getContentLocation() {
-		return contentLocation;
-	}
-
-	public void setContentLocation(String contentLocation) {
-		this.contentLocation = contentLocation;
-	}
-
 	public Boolean getIsInline() {
 		return isInline;
 	}
@@ -124,4 +106,5 @@ public class AttachmentT {
 	public void setIsInline(Boolean isInline) {
 		this.isInline = isInline;
 	}
+		
 }

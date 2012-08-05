@@ -9,7 +9,7 @@
 			<property name="openjpa.Log" value="DefaultLevel=TRACE, Tool=INFO" />
 			<property name="openjpa.jdbc.MappingDefaults" value="IndexLogicalForeignKeys=false,IndexDiscriminator=false"/>
 			<property name="openjpa.jdbc.DBDictionary" value="postgres(CharacterColumnSize=256)"/>											
-			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost/CRX_2_6"/>
+			<property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost/CRX_2_8"/>
 			<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
 			<property name="openjpa.ConnectionUserName" value="postgres"/>
 			<property name="openjpa.ConnectionPassword" value="manager99"/>

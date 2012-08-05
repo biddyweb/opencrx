@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.85 2010/06/28 17:27:55 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.105 2010/12/25 11:54:05 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.85 $
+ * Revision:    $Revision: 1.105 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/28 17:27:55 $
+ * Date:        $Date: 2010/12/25 11:54:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +63,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -83,6 +84,11 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
+import org.opencrx.kernel.activity1.cci2.ActivityQuery;
+import org.opencrx.kernel.activity1.cci2.EMailRecipientQuery;
+import org.opencrx.kernel.activity1.cci2.IncidentPartyQuery;
+import org.opencrx.kernel.activity1.cci2.MeetingPartyQuery;
+import org.opencrx.kernel.activity1.cci2.TaskPartyQuery;
 import org.opencrx.kernel.activity1.jmi1.Absence;
 import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
 import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
@@ -104,8 +110,9 @@ import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Task;
 import org.opencrx.kernel.activity1.jmi1.TaskParty;
+import org.opencrx.kernel.backend.Activities.ActivityState;
 import org.opencrx.kernel.base.jmi1.ImportParams;
-import org.opencrx.kernel.utils.ActivitiesFilterHelper;
+import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
@@ -265,16 +272,16 @@ public class ICalendar extends AbstractImpl {
             if(isDisabled != null && isDisabled.booleanValue()) {
                 status = "CANCELLED";
             }
+            else if(percentComplete == null || percentComplete.intValue() == 0) {
+            	status = "NEEDS-ACTION";
+            }
+            else if(percentComplete != null && percentComplete.intValue() >= 100) {
+            	status = activity.getActivityState() == ActivityState.CANCELLED.getValue() ?
+            		"CANCELLED" :
+            			"COMPLETED";
+            }
             else {
-                if(percentComplete == null || percentComplete.intValue() == 0) {
-                    status = "NEEDS-ACTION";
-                }
-                else if(percentComplete != null && percentComplete.intValue() >= 100) {
-                    status = "COMPLETED";
-                }
-                else {
-                    status = "IN-PROCESS";
-                }
+                status = "IN-PROCESS";
             }
         }
         // VEVENT
@@ -284,13 +291,16 @@ public class ICalendar extends AbstractImpl {
             if(isDisabled != null && isDisabled.booleanValue()) {
                 status = "CANCELLED";
             }
+            else if(percentComplete == null || percentComplete.intValue() == 0) {
+                status = "TENTATIVE";
+            }
+            else if(percentComplete != null && percentComplete.intValue() < 100) {
+                status = "CONFIRMED";
+            }
             else {
-                if(percentComplete == null || percentComplete.intValue() == 0) {
-                    status = "TENTATIVE";
-                }
-                else {
-                    status = "CONFIRMED";
-                }
+            	status = activity.getActivityState() == ActivityState.CANCELLED.getValue() ?
+            		"CANCELLED" :
+            			"COMPLETED";                	
             }
         }
         // Attendees
@@ -347,18 +357,39 @@ public class ICalendar extends AbstractImpl {
                     String partyType = participant.getPartyType() == PARTY_TYPE_OPTIONAL ? 
                     	"OPT-PARTICIPANT" : 
                     	"REQ-PARTICIPANT";
+                    String partyStatus = null;
+                    switch(participant.getPartyStatus()) {
+                    	case PARTY_STATUS_NEEDS_ACTION:
+                    		partyStatus = "NEEDS-ACTION";
+                    		break;
+                    	case PARTY_STATUS_ACCEPTED:
+                    		partyStatus = "ACCEPTED";
+                    		break;
+                    	case PARTY_STATUS_DECLINED:
+                    		partyStatus = "DECLINED";
+                    		break;
+                    	case PARTY_STATUS_TENTATIVE:
+                    		partyStatus = "TENTATIVE";
+                    		break;
+                    	case PARTY_STATUS_DELEGATED:
+                    		partyStatus = "DELEGATED";
+                    		break;
+                    	case PARTY_STATUS_COMPLETED:
+                    		partyStatus = "COMPLETED";
+                    		break;
+                    }
                     if(emailAddress != null) {
                         String fullName = account == null ?
                         	null :
                         	account.getFullName();
                         if(fullName == null) {
                             attendees.add(
-                                ";CN=" + emailAddress + ";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
+                                ";CN=" + emailAddress + (partyStatus == null ? "" : ";PARTSTAT=" + partyStatus) + ";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
                             );          
                         }
                         else {
                             attendees.add(
-                                ";CN=\"" + fullName + " (" + emailAddress + ")\";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
+                                ";CN=\"" + fullName + " (" + emailAddress + ")\"" + (partyStatus == null ? "" : ";PARTSTAT=" + partyStatus) + ";ROLE=" + partyType + ";RSVP=TRUE:MAILTO:" + emailAddress
                             );            
                         }
                     }
@@ -396,7 +427,7 @@ public class ICalendar extends AbstractImpl {
                 "PRODID:" + PROD_ID + "\n" +
                 "VERSION:2.0\n" +
                 (icalType == ICalendar.ICAL_TYPE_VTODO ? "BEGIN:VTODO\n" : "BEGIN:VEVENT\n") +
-                "UID:" + uid.toString() + "\n" +
+                "UID:" + UUIDConversion.toUID(uid) + "\n" +
                 "LAST-MODIFIED:" + lastModified.substring(0, 15) + "Z\n" +
                 "DTSTART:\n" +
                 "DTEND:\n" +
@@ -409,7 +440,7 @@ public class ICalendar extends AbstractImpl {
                 "PRIORITY:\n" +
                 "STATUS:\n" +
                 "ATTENDEE:\n" +
-                "CLASS:PUBLIC\n" +
+                "CLASS:PRIVATE\n" +
                 (icalType == ICalendar.ICAL_TYPE_VTODO ? "END:VTODO\n" : "END:VEVENT\n") +
                 "END:VCALENDAR";            
         }
@@ -627,39 +658,6 @@ public class ICalendar extends AbstractImpl {
             if(prop.startsWith("X-")) {
            		i.remove();
             }
-            else if(prop.startsWith("ATTENDEE") || prop.startsWith("ORGANIZER")) {
-                String[] components = ical.get(prop).replaceFirst(":", ";").split(";");
-                String role = null;
-                String rsvp = null;
-                String mailto = null;
-                for(String component: components) {
-                    if(component.startsWith("ROLE=")) {
-                        role = component;
-                    }
-                    else if(component.startsWith("RSVP=")) {
-                        rsvp = component;
-                    }
-                    else if(component.startsWith("MAILTO:") || component.startsWith("mailto:")) {
-                        mailto = component;
-                    }
-                }
-                String normalizedValue = "";
-                if(role != null) {
-                    normalizedValue += role;
-                }
-                if(rsvp != null) {
-                    if(normalizedValue.length() > 0) normalizedValue += ";";
-                    normalizedValue += rsvp;
-                }
-                if(mailto != null) {
-                    if(normalizedValue.length() > 0) normalizedValue += ":";
-                    normalizedValue += mailto.replace("mailto", "MAILTO");
-                }                
-                ical.put(
-                    prop,
-                    normalizedValue
-                );
-            }
         }
     }
         
@@ -667,7 +665,7 @@ public class ICalendar extends AbstractImpl {
     public Map<String,String> parseICal(
         BufferedReader reader,
         StringBuilder ical
-    ) throws IOException {
+    ) throws ServiceException {
         Map<String,String> icalFields = new HashMap<String,String>();
         String line = null;
         int nAttendees = 0;
@@ -678,91 +676,93 @@ public class ICalendar extends AbstractImpl {
          */
         boolean isEvent = false;
         int nEvents = 0;
-        while((line = reader.readLine()) != null) {
-            // Skip tags: URL
-            if(
-                line.startsWith("URL") || 
-                line.startsWith("url") 
-            ) {
-                while(
-                    ((line = reader.readLine()) != null) &&
-                    line.startsWith(" ")
-                ) {}
-            }
-            if(line == null) {
-                break;
-            }
-            else {
-                ical.append(line).append("\n");
-                boolean addProperty = isEvent && (nEvents == 0);
-                if(
-                    line.startsWith("BEGIN:VEVENT") || 
-                    line.startsWith("begin:vevent") || 
-                    line.startsWith("BEGIN:VTODO") || 
-                    line.startsWith("begin:vtodo") 
-                ) {
-                    isEvent = true;
-                }
-                else if(
-                    line.startsWith("TZID") || 
-                    line.startsWith("tzid") 
-                ) {
-                    addProperty = true;
-                }
-                else if(
-                    line.startsWith("END:VEVENT") || 
-                    line.startsWith("end:vevent") || 
-                    line.startsWith("END:VTODO") || 
-                    line.startsWith("end:vtodo") 
-                ) {
-                    nEvents++;
-                    isEvent = false;
-                    addProperty = false;
-                }
-                if(addProperty) {
-                    int pos;
-                    if(line.startsWith(" ")) {
-                        if(icalFields.containsKey(currentName)) {
-                            icalFields.put(
-                                currentName,
-                                icalFields.get(currentName) + line.substring(1).replace("\\n", "\n").replace("\\", "")
-                            );
-                        }
-                        else if((pos = line.indexOf(":")) >= 0) {
-                            currentName += line.substring(0, pos).toUpperCase();
-                            if(currentName.indexOf(";") > 0) {
-                                currentName = currentName.substring(0, currentName.indexOf(";"));
-                            }
-                            icalFields.put(
-                                currentName,
-                                line.substring(pos + 1).replace("\\n", "\n").replace("\\", "")
-                            );                            
-                        }
-                    }
-                    else if(line.startsWith("ATTENDEE") || line.startsWith("attendee")) {
-                        currentName = "ATTENDEE[" + nAttendees + "]";
-                        icalFields.put(
-                            currentName,
-                            line.substring("ATTENDEE".length()).replace("\\n", "\n").replace("\\", "")
-                        );
-                        nAttendees++;
-                    }
-                    else if((pos = line.indexOf(":")) >= 0) {
-                        currentName = line.substring(0, pos).toUpperCase();
-                        if(currentName.indexOf(";") > 0) {
-                            currentName = currentName.substring(0, currentName.indexOf(";"));
-                        }
-                        icalFields.put(
-                            currentName,
-                            line.substring(pos + 1).replace("\\n", "\n").replace("\\", "")
-                        );
-                    }
-                    else {
-                        currentName = line;
-                    }
-                }
-            }                 
-        }      
+        try {
+	        while((line = reader.readLine()) != null) {
+	            // Skip URLs AND ATTACHs if they reference an internal object.
+	            while(
+	            	(line != null) &&
+	                (line.startsWith("URL:") || line.startsWith("url:") || line.startsWith("ATTACH:") || line.startsWith("attach:")) &&
+	                Base.getInstance().isAccessUrl(line.substring(line.indexOf(":") + 1))
+	            ) {
+	                while(((line = reader.readLine()) != null) && line.startsWith(" ")) {}
+	            }
+	            if(line == null) {
+	                break;
+	            }
+	            else {
+	                ical.append(line).append("\n");
+	                boolean addProperty = isEvent && (nEvents == 0);
+	                if(
+	                    line.startsWith("BEGIN:VEVENT") || 
+	                    line.startsWith("begin:vevent") || 
+	                    line.startsWith("BEGIN:VTODO") || 
+	                    line.startsWith("begin:vtodo") 
+	                ) {
+	                    isEvent = true;
+	                }
+	                else if(
+	                    line.startsWith("TZID") || 
+	                    line.startsWith("tzid") 
+	                ) {
+	                    addProperty = true;
+	                }
+	                else if(
+	                    line.startsWith("END:VEVENT") || 
+	                    line.startsWith("end:vevent") || 
+	                    line.startsWith("END:VTODO") || 
+	                    line.startsWith("end:vtodo") 
+	                ) {
+	                    nEvents++;
+	                    isEvent = false;
+	                    addProperty = false;
+	                }
+	                if(addProperty) {
+	                    int pos;
+	                    if(line.startsWith(" ")) {
+	                        if(icalFields.containsKey(currentName)) {
+	                            icalFields.put(
+	                                currentName,
+	                                icalFields.get(currentName) + line.substring(1).replace("\\n", "\n").replace("\\", "")
+	                            );
+	                        }
+	                        else if((pos = line.indexOf(":")) >= 0) {
+	                            currentName += line.substring(0, pos).toUpperCase();
+	                            if(currentName.indexOf(";") > 0) {
+	                                currentName = currentName.substring(0, currentName.indexOf(";"));
+	                            }
+	                            icalFields.put(
+	                                currentName,
+	                                line.substring(pos + 1).replace("\\n", "\n").replace("\\", "")
+	                            );                            
+	                        }
+	                    }
+	                    else if(line.startsWith("ATTENDEE") || line.startsWith("attendee")) {
+	                        currentName = "ATTENDEE[" + nAttendees + "]";
+	                        icalFields.put(
+	                            currentName,
+	                            line.substring("ATTENDEE".length()).replace("\\n", "\n").replace("\\", "")
+	                        );
+	                        nAttendees++;
+	                    }
+	                    else if((pos = line.indexOf(":")) >= 0) {
+	                        currentName = line.substring(0, pos).toUpperCase();
+	                        if(currentName.indexOf(";") > 0) {
+	                            currentName = currentName.substring(0, currentName.indexOf(";"));
+	                        }
+	                        icalFields.put(
+	                            currentName,
+	                            line.substring(pos + 1).replace("\\n", "\n").replace("\\", "")
+	                        );
+	                    }
+	                    else {
+	                        currentName = line;
+	                    }
+	                }
+	            }                 
+	        }
+        } catch(Exception e) {
+        	throw new ServiceException(e);
+        }
         this.removeProprietaryProperties(icalFields);
         return icalFields;
     }
@@ -773,9 +773,7 @@ public class ICalendar extends AbstractImpl {
         Activity activity,
         short locale,
         List<String> errors,
-        List<String> report,
-        boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled
+        List<String> report
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
     	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
@@ -788,58 +786,63 @@ public class ICalendar extends AbstractImpl {
     				activity.refGetPath().get(4)
     			})
     		);
+        InputStream is = new ByteArrayInputStream(item);
+        BufferedReader reader = null;
         try {
-            InputStream is = new ByteArrayInputStream(item);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            StringBuilder ical = new StringBuilder();
-            Map<String,String> icalFields = this.parseICal(
-                reader,
-                ical
-            );
-            SysLog.trace("ICalendar", icalFields);
-            return this.importItem(
-                ical.toString(),
-                icalFields,
-                activity,
-                accountSegment,
-                locale,
-                errors,
-                report,
-                isEMailAddressLookupCaseInsensitive,
-                isEMailAddressLookupIgnoreDisabled                
-            );
-        }
-        catch(IOException e) {
-        	SysLog.warning("Can not read item", e.getMessage());
-        }
-        return null;
+        	reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        } catch(UnsupportedEncodingException e) {}
+        StringBuilder ical = new StringBuilder();
+        Map<String,String> icalFields = this.parseICal(
+            reader,
+            ical
+        );
+        SysLog.trace("ICalendar", icalFields);
+        return this.importItem(
+            ical.toString(),
+            icalFields,
+            activity,
+            accountSegment,
+            locale,
+            errors,
+            report
+        );
     }
 
     //-------------------------------------------------------------------------
-    private BasicObject getAttendeeAsContact(
+    protected Account getAttendeeAsContact(
         String attendeeAsString,
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
+        Contact existingContact,
         short locale,
         List<String> report
-    ) {
-        Map<String,String> vcard = new HashMap<String,String>();
+    ) throws ServiceException {
         int pos = attendeeAsString.indexOf("MAILTO:");
         if(pos < 0) {
             pos = attendeeAsString.indexOf("mailto:");
         }
-        String emailPrefInternet = attendeeAsString.substring(pos + 7);
-        vcard.put("EMAIL;PREF;INTERNET", emailPrefInternet);
-        try {
-            return VCard.getInstance().updateAccount(
-                vcard,
-                accountSegment,
-                locale,
-                report
-            );
+        String emailInternet = attendeeAsString.substring(pos + 7);
+        PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+        String providerName = accountSegment.refGetPath().get(2);
+        String segmentName = accountSegment.refGetPath().get(4);
+        List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+        	pm, 
+        	providerName, 
+        	segmentName, 
+        	emailInternet
+        );
+        if(!emailAddresses.isEmpty()) {
+        	if(existingContact != null) {
+        		for(EMailAddress emailAddress: emailAddresses) {
+        			if(emailAddress.refGetPath().startsWith(existingContact.refGetPath())) {
+        				return existingContact;
+        			}
+        		}
+        	}
+        	EMailAddress emailAddress = emailAddresses.iterator().next();        	
+        	return (Account)pm.getObjectById(emailAddress.refGetPath().getParent().getParent());
+        } else {
+        	return null;
         }
-        catch(Exception e) {
-            return null;
-        }    
     }
 
     //-------------------------------------------------------------------------
@@ -884,14 +887,13 @@ public class ICalendar extends AbstractImpl {
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         short locale,
         List<String> errors,
-        List<String> report,
-        boolean isEMailAddressLookupCaseInsensitive,
-        boolean isEMailAddressLookupIgnoreDisabled
+        List<String> report
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
         // Prepare attendees
         List<EMailAddress> attendees = new ArrayList<EMailAddress>();
         List<Short> attendeeRoles = new ArrayList<Short>();
+        List<Short> attendeeStatuses = new ArrayList<Short>();
         int count = 0;
         while(fields.get("ATTENDEE[" + count + "]") != null) {
             String attendeeAsString = fields.get("ATTENDEE[" + count + "]");
@@ -900,24 +902,43 @@ public class ICalendar extends AbstractImpl {
                 (attendeeAsString.indexOf("mailto:") >= 0)
             ) {
             	int pos = attendeeAsString.indexOf("MAILTO:");
-                String emailPrefInternet = attendeeAsString.substring(pos + 7);                	
-            	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
-            		pm, 
-            		activity.refGetPath().get(2), 
-            		activity.refGetPath().get(4), 
-            		emailPrefInternet,
-                    isEMailAddressLookupCaseInsensitive,
-                    isEMailAddressLookupIgnoreDisabled
-            	);
-            	if(!emailAddresses.isEmpty()) {
-            		attendees.add(
-            			emailAddresses.iterator().next()
-            		);
-                    attendeeRoles.add(
-                        (attendeeAsString.indexOf("ROLE=OPT-PARTICIPANT") >= 0) || (attendeeAsString.indexOf("role=opt-participant") >= 0) ? 
-                        	new Short((short)PARTY_TYPE_OPTIONAL) : 
-                        	new Short((short)PARTY_TYPE_REQUIRED)
-                    );
+            	if(pos < 0) {
+            		pos = attendeeAsString.indexOf("mailto:");
+            	}
+            	if(pos >= 0) {
+	                String emailPrefInternet = attendeeAsString.substring(pos + 7);                	
+	            	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+	            		pm, 
+	            		activity.refGetPath().get(2), 
+	            		activity.refGetPath().get(4), 
+	            		emailPrefInternet
+	            	);
+	            	if(!emailAddresses.isEmpty()) {
+	            		attendees.add(
+	            			emailAddresses.iterator().next()
+	            		);
+	            		String attributes = attendeeAsString.toUpperCase();
+	                    attendeeRoles.add(
+	                        attributes.indexOf("ROLE=OPT-PARTICIPANT") >= 0 ? 
+	                        	new Short((short)PARTY_TYPE_OPTIONAL) : 
+	                        		new Short((short)PARTY_TYPE_REQUIRED)
+	                    );
+	                    if(attributes.indexOf("PARTSTAT=NEEDS-ACTION") >= 0) {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_NEEDS_ACTION);
+	                    } else if(attributes.indexOf("PARTSTAT=ACCEPTED") >= 0) {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_ACCEPTED);	                    	
+	                    } else if(attributes.indexOf("PARTSTAT=DECLINED") >= 0) {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_DECLINED);	                    	
+	                    } else if(attributes.indexOf("PARTSTAT=TENTATIVE") >= 0) {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_TENTATIVE);	                    	
+	                    } else if(attributes.indexOf("PARTSTAT=DELEGATED") >= 0) {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_DELEGATED);	                    	
+	                    } else if(attributes.indexOf("PARTSTAT=COMPLETED") >= 0) {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_COMPLETED);	                    	
+	                    } else {
+	                    	attendeeStatuses.add((short)PARTY_STATUS_NA);
+	                    }	                    	
+	            	}
             	}
             }
             count++;
@@ -1112,15 +1133,16 @@ public class ICalendar extends AbstractImpl {
         }
         s = fields.get("ORGANIZER");
         if((s != null) && (s.length() > 0)) {
-            BasicObject organizer = this.getAttendeeAsContact(
+            Account organizer = this.getAttendeeAsContact(
                 s.startsWith("MAILTO:") ?  
                 	s : 
                 	"MAILTO:" + s,
                 accountSegment,
+            	activity.getAssignedTo(),
                 locale,
                 report
             );
-            if(organizer != null) {
+            if(organizer instanceof Contact) {
                 activity.setAssignedTo(
                     (Contact)organizer
                 );
@@ -1158,125 +1180,225 @@ public class ICalendar extends AbstractImpl {
         	Collection<TaskParty> c = ((Task)activity).getTaskParty();
         	participants.addAll(c);
         }
-        List<Path> existingParties = new ArrayList<Path>();
-        for(AbstractActivityParty participant: participants) {
-        	try {
-        		if(participant.refGetValue("party") != null) {
-	                existingParties.add(
-	                    ((RefObject_1_0)participant.refGetValue("party")).refGetPath()
-	                );        			
-        		}
-        	}
-        	catch(Exception e) {}
-        }
         // Add attendees
-        int ii = 0;
-        for(EMailAddress attendee: attendees) {
+        for(int i = 0; i < attendees.size(); i++) {
+        	EMailAddress party = attendees.get(i);
             if(activity instanceof EMail) {
-            	Path partyIdentity = attendee.refGetPath();
-                if(!existingParties.contains(partyIdentity)) {
-                	EMailRecipient participant = pm.newInstance(EMailRecipient.class);
-                    participant.refInitialize(false, false);
-                	participant.setPartyType((short)PARTY_TYPE_NA);
-                    participant.setParty(attendee);
+            	EMailRecipientQuery query = (EMailRecipientQuery)pm.newQuery(EMailRecipient.class);
+            	query.thereExistsParty().equalTo(party);
+            	List<EMailRecipient> emailRecipients = ((EMail)activity).getEmailRecipient(query);
+            	EMailRecipient emailRecipient = emailRecipients.isEmpty() ?
+            		null :
+            			emailRecipients.iterator().next();
+            	if(emailRecipient == null) {
+                	emailRecipient = pm.newInstance(EMailRecipient.class);
+                	emailRecipient.refInitialize(false, false);
+                	emailRecipient.setParty(party);
                     ((EMail)activity).addEmailRecipient(
                     	false,
                     	this.getUidAsString(),
-                    	participant
+                    	emailRecipient
                     );
-                }
+            	}
+            	emailRecipient.setPartyType(attendeeRoles.get(i));
+            	emailRecipient.setPartyStatus(attendeeStatuses.get(i));
             }
             else if(activity instanceof Incident) {
-            	Path partyIdentity = attendee.refGetPath().getParent().getParent();
-                if(!existingParties.contains(partyIdentity)) {
-	            	IncidentParty participant = pm.newInstance(IncidentParty.class);
-	                participant.refInitialize(false, false);
-	            	participant.setPartyType((short)PARTY_TYPE_NA);
-	                participant.setParty((Account)pm.getObjectById(partyIdentity));
+            	IncidentPartyQuery query = (IncidentPartyQuery)pm.newQuery(IncidentParty.class);
+            	Account accountParty = (Account)pm.getObjectById(party.refGetPath().getParent().getParent());
+            	query.thereExistsParty().equalTo(accountParty);
+            	List<IncidentParty> incidentParties = ((Incident)activity).getIncidentParty(query);
+            	IncidentParty incidentParty = incidentParties.isEmpty() ?
+            		null :
+            			incidentParties.iterator().next();
+            	if(incidentParty == null) {
+            		incidentParty = pm.newInstance(IncidentParty.class);
+	                incidentParty.refInitialize(false, false);
+	                incidentParty.setParty(accountParty);
 	                ((Incident)activity).addIncidentParty(
 	                	false,
 	                	this.getUidAsString(),
-	                	participant
-	                );
-                }
+	                	incidentParty
+	                );            		
+            	}
+            	incidentParty.setPartyType(attendeeRoles.get(i));
+            	incidentParty.setPartyStatus(attendeeStatuses.get(i));
             }
             else if(activity instanceof Mailing) {
             	// Can not map to party. Mailings need postal addresses 
             	// whereas ICal attendees are E-mail addresses
             }
             else if(activity instanceof Meeting) {
-            	Path partyIdentity = attendee.refGetPath().getParent().getParent();
-                if(!existingParties.contains(partyIdentity)) {
-	            	MeetingParty participant = pm.newInstance(MeetingParty.class);
-	                participant.refInitialize(false, false);
-	                participant.setPartyType(attendeeRoles.get(ii));                            
-	                participant.setParty((Account)pm.getObjectById(partyIdentity));
+            	MeetingPartyQuery query = (MeetingPartyQuery)pm.newQuery(MeetingParty.class);
+            	Account accountParty = (Account)pm.getObjectById(party.refGetPath().getParent().getParent());
+            	query.thereExistsParty().equalTo(accountParty);
+            	List<MeetingParty> meetingParties = ((Meeting)activity).getMeetingParty(query);
+            	MeetingParty meetingParty = meetingParties.isEmpty() ?
+            		null :
+            			meetingParties.iterator().next();
+            	if(meetingParty == null) {
+            		meetingParty = pm.newInstance(MeetingParty.class);
+	                meetingParty.refInitialize(false, false);
+	                meetingParty.setParty(accountParty);
 	                ((Meeting)activity).addMeetingParty(
 	                	false,
 	                	this.getUidAsString(),
-	                	participant
-	                );
-                }
+	                	meetingParty
+	                );            		
+            	}
+            	meetingParty.setPartyType(attendeeRoles.get(i));
+            	meetingParty.setPartyStatus(attendeeStatuses.get(i));
             }
             else if(activity instanceof PhoneCall) {
             	// Can not map to party. PhoneCalls need phone numbers 
             	// whereas ICal attendees are E-mail addresses
             }
             else if(activity instanceof Task) {
-            	Path partyIdentity = attendee.refGetPath().getParent().getParent();
-                if(!existingParties.contains(partyIdentity)) {
-	            	TaskParty participant = pm.newInstance(TaskParty.class);
-	                participant.refInitialize(false, false);
-	            	participant.setPartyType((short)PARTY_TYPE_NA);
-	                participant.setParty((Account)pm.getObjectById(partyIdentity));
+            	TaskPartyQuery query = (TaskPartyQuery)pm.newQuery(TaskParty.class);
+            	Account accountParty = (Account)pm.getObjectById(party.refGetPath().getParent().getParent());
+            	query.thereExistsParty().equalTo(accountParty);
+            	List<TaskParty> taskParties = ((Task)activity).getTaskParty(query);
+            	TaskParty taskParty = taskParties.isEmpty() ?
+            		null :
+            			taskParties.iterator().next();
+            	if(taskParty == null) {
+            		taskParty = pm.newInstance(TaskParty.class);
+	                taskParty.refInitialize(false, false);
+	                taskParty.setParty(accountParty);
 	                ((Task)activity).addTaskParty(
 	                	false,
 	                	this.getUidAsString(),
-	                	participant
-	                );
-                }
+	                	taskParty
+	                );            		
+            	}
+            	taskParty.setPartyType(attendeeRoles.get(i));
+            	taskParty.setPartyStatus(attendeeStatuses.get(i));
             }
-            ii++;
-            report.add("Create party");
         }
         return activity;
     }
 
+    //-----------------------------------------------------------------------
+    protected Activity findActivity(
+        ActivityQueryHelper activitiesHelper,
+        String icalUid,
+        String icalRecurrenceId 
+    ) {
+    	PersistenceManager pm = activitiesHelper.getPersistenceManager();
+        ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
+        query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + icalUid);
+        if(icalRecurrenceId == null) {
+        	query.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
+        }
+        else {
+            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId);       
+        }
+        Collection<Activity> activities = activitiesHelper.getFilteredActivities(query);
+        if(activities.isEmpty()) {
+            query = (ActivityQuery)pm.newQuery(Activity.class);
+            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + icalUid.replace('.', '+'));
+            if(icalRecurrenceId == null) {
+            	query.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);
+            }            
+            else {
+            	query.thereExistsExternalLink().equalTo(ICalendar.ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId);    
+            }
+            activities = activitiesHelper.getFilteredActivities(query);
+            if(activities.isEmpty()) {
+                return null;
+            }
+            else {
+                if(activities.size() > 1) {
+                	SysLog.warning("Duplicate activities. Will be handled as not found", activities);
+                    return null;
+                }
+                else {
+                    return activities.iterator().next();
+                }
+            }
+        }
+        else {
+            if(activities.size() > 1) {
+            	SysLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
+                return null;
+            }
+            else {
+                return activities.iterator().next();
+            }
+        }
+    }
+            
     //-------------------------------------------------------------------------
-    public boolean putICal(
+    public static class PutICalResult {
+    	
+    	public enum Status { CREATED, UPDATED }
+    	
+    	public PutICalResult(
+    		Status status,
+    		String oldUID,
+    		String newUID,
+    		Activity activity
+    	) {
+    		this.status = status;
+    		this.oldUID = oldUID;
+    		this.newUID = newUID;
+    		this.activity = activity;
+    	}
+    	public Status getStatus() {
+        	return status;
+        }
+		public String getOldUID() {
+        	return oldUID;
+        }
+		public String getNewUID() {
+        	return newUID;
+        }
+		public Activity getActivity() {
+        	return activity;
+        }
+		private final Status status;
+    	private final String oldUID;
+    	private final String newUID;
+    	private final Activity activity;    	
+    }
+    
+    public PutICalResult putICal(
     	BufferedReader reader,
-    	ActivitiesFilterHelper activitiesHelper,
+    	ActivityQueryHelper activitiesHelper,
     	boolean allowCreation
     ) throws ServiceException {    
     	PersistenceManager pm = activitiesHelper.getPersistenceManager();
-    	boolean created = false;
+    	PutICalResult.Status status = PutICalResult.Status.UPDATED;
+    	Activity activity = null;
+    	String calUID = null;
+    	String newUID = null;
     	String l;
         try {
 	        while((l = reader.readLine()) != null) {
 	            boolean isEvent = l.startsWith("BEGIN:VEVENT");
 	            boolean isTodo = l.startsWith("BEGIN:VTODO");
 	            if(isEvent || isTodo) {
-	                StringBuilder calendar = new StringBuilder();
-	                calendar.append("BEGIN:VCALENDAR\n");
-	                calendar.append("VERSION:2.0\n");
-	                calendar.append("PRODID:-" + ICalendar.PROD_ID + "\n");
-	                calendar.append(
-	                    isEvent ? 
-	                        new StringBuilder("BEGIN:VEVENT\n") : 
-	                        new StringBuilder("BEGIN:VTODO\n")
-	                );
-	                String uid = null;
+	                String calendar = "";
+	                calendar += "BEGIN:VCALENDAR\n";
+	                calendar += "VERSION:2.0\n";
+	                calendar += "PRODID:-" + ICalendar.PROD_ID + "\n";
+	                calendar += isEvent ? "BEGIN:VEVENT\n" : "BEGIN:VTODO\n";
 	                String recurrenceId = null;
 	                boolean isAlarm = false;
+	                boolean hasClass = false;
 	                while((l = reader.readLine()) != null) {
 	                    if(l.startsWith("BEGIN:VALARM")) {
 	                    	isAlarm = true;
 	                    }
 	                	if(!isAlarm) {
-	                		calendar.append(l).append("\n");
+                			calendar += l;
+                			calendar += "\n";
 	                	}
 	                    if(l.startsWith("UID:")) {
-	                        uid = l.substring(4);
+	                        calUID = l.substring(4);
+	                    }
+	                    else if(l.startsWith("CLASS:")) {
+	                        hasClass = true;
 	                    }
 	                    else if(l.startsWith("RECURRENCE-ID:")) {
 	                        recurrenceId = l.substring(14);
@@ -1288,35 +1410,57 @@ public class ICalendar extends AbstractImpl {
 	                        break;
 	                    }
 	                }
-	                calendar.append("END:VCALENDAR\n");
+	                // Default class is confidential
+	                if(!hasClass && !isAlarm) {
+	                	if(isEvent) {
+	                		calendar = calendar.replace("BEGIN:VEVENT", "BEGIN:VEVENT\nCLASS:CONFIDENTIAL");
+	                	} else {
+	                		calendar = calendar.replace("BEGIN:VEVENT", "BEGIN:VTODO\nCLASS:CONFIDENTIAL");	                		
+	                	}
+	                }
+	                calendar += "END:VCALENDAR\n";
 	                SysLog.trace("VCALENDAR", calendar);
-	                if(uid != null) {
+	                newUID = calUID;
+	                if(calUID != null) {
                         // Calendar contains guard VEVENT. Allow creation of new activities
-                        if(uid.equals(activitiesHelper.getFilteredActivitiesParentId())) {
+	                	BasicObject source = activitiesHelper.getSource();
+                        if(calUID.equals(source == null ? null : source.refGetPath().getBase())) {
                             allowCreation = true;
-                        }                        
+                        }
                         else {	                	
-		                	SysLog.detail("Lookup activity", uid);
-		                    Activity activity = Activities.getInstance().findActivity(
-		                        pm,
+		                	SysLog.detail("Lookup activity", calUID);
+		                    activity = this.findActivity(
 		                        activitiesHelper, 
-		                        uid,
+		                        calUID,
 		                        recurrenceId
 		                    );
 		                    StringBuilder dummy = new StringBuilder();
 		                    Map<String,String> newICal = new HashMap<String,String>();
-		                    try {
-		                    	newICal = ICalendar.getInstance().parseICal(
-		                            new BufferedReader(new StringReader(calendar.toString())),
-		                            dummy 
-		                        );
-		                    } catch(Exception e) {}
+	                    	newICal = this.parseICal(
+	                            new BufferedReader(new StringReader(calendar.toString())),
+	                            dummy 
+	                        );
 		                    newICal.remove("LAST-MODIFIED");
 		                    newICal.remove("DTSTAMP");                               
 		                    newICal.remove("CREATED");                               
 		                    dummy.setLength(0);
 		                    Map<String,String> oldICal = null;
-		                    if(activity != null) {
+		                    if(activity == null) {
+		                    	// Ignore supplied UID in case of a new activity. 
+		                    	// This way we prevent duplicate UIDs
+		                    	int pos1 = calendar.indexOf("UID:");
+		                    	if(pos1 > 0) {
+		                    		int pos2 = calendar.indexOf("\n", pos1);
+		                    		if(pos2 > pos1) {
+		                    			newUID = Base.getInstance().getUidAsString();
+		                    			calendar =
+		                    				calendar.substring(0, pos1) + 
+		                    				"UID:" + newUID + "\n" +
+		                    				calendar.substring(pos2 + 1);		                    		
+		                    		}
+		                    	}
+		                    }
+		                    else {
 		                    	try {
 		                            oldICal = ICalendar.getInstance().parseICal(
 		                                new BufferedReader(new StringReader(activity.getIcal())),
@@ -1338,40 +1482,39 @@ public class ICalendar extends AbstractImpl {
 		                    	)
                             );
 		                    // Update existing activity
-		                    if(
-		                        (activity != null) &&
-		                        (!newICal.equals(oldICal) || disabledIsModified)
-		                    ) {
-		                        try {
-		                        	if(!newICal.equals(oldICal)) {
-			                            pm.currentTransaction().begin();
-			                            ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
-			                                calendar.toString().getBytes("UTF-8"), 
-			                                ICalendar.MIME_TYPE, 
-			                                "import.ics", 
-			                                (short)0
-			                            );
-			                            activity.importItem(importItemParams);
-			                            pm.currentTransaction().commit();
-			                            pm.refresh(activity);
-		                        	}
-		                        	if(disabledIsModified) {
-			                            pm.currentTransaction().begin();
-			                            // Handle as creation if activity is moved from folder non-disabled to disabled or vice-versa
-			                            created = true;
-			                            activity.setDisabled(
-			                                Boolean.valueOf(activitiesHelper.isDisabledFilter())
-			                            );
-			                            pm.currentTransaction().commit();
-		                        	}
-		                        }
-		                        catch(Exception e) {
-		                        	new ServiceException(e).log();
-		                            try {
-		                                pm.currentTransaction().rollback();
-		                            } 
-		                            catch(Exception e0) {}                                    
-		                        }
+		                    if(activity != null) {
+		                    	if(!newICal.equals(oldICal) || disabledIsModified) {
+			                        try {
+			                        	if(!newICal.equals(oldICal)) {
+				                            pm.currentTransaction().begin();
+				                            ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
+				                                calendar.toString().getBytes("UTF-8"), 
+				                                ICalendar.MIME_TYPE, 
+				                                "import.ics", 
+				                                (short)0
+				                            );
+				                            activity.importItem(importItemParams);
+				                            pm.currentTransaction().commit();
+				                            pm.refresh(activity);
+			                        	}
+			                        	if(disabledIsModified) {
+				                            pm.currentTransaction().begin();
+				                            // Handle as creation if activity is moved from folder non-disabled to disabled or vice-versa
+				                            status = PutICalResult.Status.CREATED;
+				                            activity.setDisabled(
+				                                Boolean.valueOf(activitiesHelper.isDisabledFilter())
+				                            );
+				                            pm.currentTransaction().commit();
+			                        	}
+			                        }
+			                        catch(Exception e) {
+			                        	new ServiceException(e).log();
+			                            try {
+			                                pm.currentTransaction().rollback();
+			                            } 
+			                            catch(Exception e0) {}                                    
+			                        }
+		                    	}
 		                    }
 		                    // Create new activity
 		                    else if(
@@ -1461,7 +1604,7 @@ public class ICalendar extends AbstractImpl {
 		                                        activity.setDisabled(Boolean.TRUE);
 		                                        pm.currentTransaction().commit();
 		                                    }
-		                                    created = true;
+		                                    status = PutICalResult.Status.CREATED;
 		                                }
 		                                catch(Exception e) {
 		                                	SysLog.warning("Error importing calendar. Reason is", new String[]{calendar.toString(), e.getMessage()});
@@ -1489,7 +1632,7 @@ public class ICalendar extends AbstractImpl {
 		                    	SysLog.detail(
 		                            "Skipping ", 
 		                            new String[]{
-		                                "UID: " + uid, 
+		                                "UID: " + calUID, 
 		                                "Activity.number: " + (activity == null ? null : activity.refMofId()),
 		                                "Activity.modifiedAt:" + (activity == null ? null : activity.getModifiedAt())
 		                            }
@@ -1503,7 +1646,12 @@ public class ICalendar extends AbstractImpl {
         catch (IOException e) {
         	throw new ServiceException(e);
         }       
-        return created;
+        return new PutICalResult(
+        	status,
+        	calUID,
+        	newUID,
+        	activity
+        );
     }
     
     //-------------------------------------------------------------------------
@@ -1517,10 +1665,19 @@ public class ICalendar extends AbstractImpl {
     public final static String ICAL_SCHEMA = "ICAL:";    
     public final static String ICAL_RECURRENCE_ID_SCHEMA = "ICAL-RECURRENCE-ID:";    
     public static final Short USAGE_EMAIL_PRIMARY = new Short((short)300);
+    
     public static final int PARTY_TYPE_NA = 0;
     public static final int PARTY_TYPE_REQUIRED = 410;
     public static final int PARTY_TYPE_OPTIONAL = 420;
-
+    
+    public static final int PARTY_STATUS_NA = 0;
+    public static final int PARTY_STATUS_NEEDS_ACTION = 1;
+    public static final int PARTY_STATUS_ACCEPTED = 2;
+    public static final int PARTY_STATUS_DECLINED = 3;
+    public static final int PARTY_STATUS_TENTATIVE = 4;
+    public static final int PARTY_STATUS_DELEGATED = 5;
+    public static final int PARTY_STATUS_COMPLETED = 6;
+    
     public static final short ICAL_TYPE_VTODO = 2;
     public static final short ICAL_TYPE_VEVENT = 1;
     public static final short ICAL_TYPE_NA = 0;

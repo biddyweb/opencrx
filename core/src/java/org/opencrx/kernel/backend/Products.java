@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.88 2010/06/01 23:49:52 wfro Exp $
+ * Name:        $Id: Products.java,v 1.91 2010/12/09 12:45:56 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.88 $
+ * Revision:    $Revision: 1.91 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/01 23:49:52 $
+ * Date:        $Date: 2010/12/09 12:45:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,8 +74,6 @@ import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
-import org.opencrx.kernel.account1.cci2.AccountQuery;
-import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
 import org.opencrx.kernel.generic.OpenCrxException;
@@ -452,7 +450,6 @@ public class Products extends AbstractImpl {
         ProductQuery query,
         boolean forCounting
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(productFilter);
         Collection<ProductFilterProperty> filterProperties = productFilter.getProductFilterProperty();
         boolean hasQueryFilterClause = false;
         for(ProductFilterProperty filterProperty: filterProperties) {
@@ -722,6 +719,7 @@ public class Products extends AbstractImpl {
     public List<ProductBasePrice> findPrices(
         Product product,
         AbstractPriceLevel priceLevel,
+        org.opencrx.kernel.uom1.jmi1.Uom uom,
         boolean useBasedOnPriceLevel
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(product);
@@ -744,6 +742,9 @@ public class Products extends AbstractImpl {
         	priceQuery.thereExistsPriceLevel().equalTo(
         		priceLevel
         	);
+        }
+        if(uom != null) {
+        	priceQuery.uom().equalTo(uom);
         }
         return product.getBasePrice(priceQuery);
     }
@@ -1010,7 +1011,7 @@ public class Products extends AbstractImpl {
                     price = 
                         new BigDecimal(
                             price.multiply(priceMultiplier).multiply(roundingFactor).add(
-                                new BigDecimal(0.5)
+                                new BigDecimal("0.5")
                             ).toBigInteger()
                         ).divide(
                             roundingFactor, price.scale(), BigDecimal.ROUND_FLOOR 
@@ -1025,7 +1026,7 @@ public class Products extends AbstractImpl {
     
     //-------------------------------------------------------------------------
     public int calculatePrices(
-        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
+        AbstractPriceLevel priceLevel,
         boolean testOnly,
         Date includeProductsModifiedSince
     ) throws ServiceException {
@@ -1062,11 +1063,13 @@ public class Products extends AbstractImpl {
             List<ProductBasePrice> basedOnPrices = this.findPrices(
                 product,
                 priceLevel,
+                null, // uom
                 !isBasePriceLevel // useBasedOnPriceLevel
             );
             List<ProductBasePrice> existingPrices = this.findPrices(
                 product,
                 priceLevel, 
+                null, // uom
                 false
             );
             // Collect new prices and add after iteration to avoid ConcurrentModificationException on iterator
@@ -1093,6 +1096,8 @@ public class Products extends AbstractImpl {
                         newPrice.getPriceLevel().clear();
                         newPrice.getPriceLevel().add(priceLevel);
                         newPrice.setPriceCurrency(priceLevel.getPriceCurrency());
+                        newPrice.getUsage().clear();
+                        newPrice.getUsage().addAll(priceLevel.getPriceUsage());
                         // Create new price if no price for price level exists
                         if(existingPrices.isEmpty()) {
                         	newPrices.add(
@@ -1250,7 +1255,7 @@ public class Products extends AbstractImpl {
     public int createInitialPrices(
         org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
         Short processingMode,
-        org.opencrx.kernel.uom1.jmi1.Uom priceUom,
+        org.opencrx.kernel.uom1.jmi1.Uom uom,
         Date includeProductsCreatedSince
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(priceLevel);    	
@@ -1287,6 +1292,7 @@ public class Products extends AbstractImpl {
             List<ProductBasePrice> basePrices = this.findPrices(
                 product,
                 priceLevel,
+                uom,
                 false
             );
             if(basePrices.isEmpty()) {
@@ -1304,7 +1310,7 @@ public class Products extends AbstractImpl {
                 );
                 basePrice.setDiscount(BigDecimal.ZERO);
                 basePrice.setDiscountIsPercentage(Boolean.FALSE);
-                basePrice.setUom(priceUom);
+                basePrice.setUom(uom);
                 this.applyPriceModifiers(
                     basePrice, 
                     priceModifiers

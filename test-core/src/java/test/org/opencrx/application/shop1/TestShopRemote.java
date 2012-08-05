@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestShopRemote.java,v 1.2 2010/08/10 13:29:19 wfro Exp $
+ * Name:        $Id: TestShopRemote.java,v 1.3 2010/12/22 08:53:31 wfro Exp $
  * Description: TestShop
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/10 13:29:19 $
+ * Date:        $Date: 2010/12/22 08:53:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,7 +58,6 @@ package test.org.opencrx.application.shop1;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.TransactionAttributeType;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
@@ -76,6 +75,7 @@ import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.persistence.cci.ConfigurableProperty;
 import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
+import org.openmdx.base.transaction.TransactionAttributeType;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 
 @RunWith(Suite.class)

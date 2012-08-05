@@ -44,6 +44,14 @@
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_MSrSMUl3Ed-kQ-Mfeg0nrw" type="5019"/>
     <children xmi:type="notation:BasicCompartment" xmi:id="_MSrSMkl3Ed-kQ-Mfeg0nrw" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_jO-1EPvgEd-0irdVLXxHyw" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_bhdmMHFfEdqn-eNyJZtHUw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_jO-1EfvgEd-0irdVLXxHyw"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_km5qQPvgEd-0irdVLXxHyw" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_kkugAPvgEd-0irdVLXxHyw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_km5qQfvgEd-0irdVLXxHyw"/>
+      </children>
       <styles xmi:type="notation:TitleStyle" xmi:id="_MSrSM0l3Ed-kQ-Mfeg0nrw" showTitle="true"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_MSrSNEl3Ed-kQ-Mfeg0nrw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_MSrSNUl3Ed-kQ-Mfeg0nrw"/>

@@ -22,6 +22,18 @@
 			<context-root>opencrx-caldav-CRX</context-root>
 		</web>
 	</module>
+	<module id="opencrx-carddav-CRX">
+		<web>
+			<web-uri>opencrx-carddav-CRX.war</web-uri>
+			<context-root>opencrx-carddav-CRX</context-root>
+		</web>
+	</module>
+	<module id="opencrx-webdav-CRX">
+		<web>
+			<web-uri>opencrx-webdav-CRX.war</web-uri>
+			<context-root>opencrx-webdav-CRX</context-root>
+		</web>
+	</module>
 	<module id="opencrx-imap-CRX">
 		<web>
 			<web-uri>opencrx-imap-CRX.war</web-uri>

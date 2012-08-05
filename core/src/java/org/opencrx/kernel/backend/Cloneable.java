@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.43 2010/03/22 21:00:53 wfro Exp $
+ * Name:        $Id: Cloneable.java,v 1.44 2010/10/19 11:25:14 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.44 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/22 21:00:53 $
+ * Date:        $Date: 2010/10/19 11:25:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -190,7 +190,7 @@ public class Cloneable extends AbstractImpl {
 		            );
 	        	}
 	        }
-	        RefContainer container = (RefContainer)cloneContext.target.refGetValue(
+	        RefContainer<?> container = (RefContainer<?>)cloneContext.target.refGetValue(
 	        	cloneContext.targetReferenceName != null ? 
 	        		cloneContext.targetReferenceName : 
 	        			object.refGetPath().getParent().getBase()

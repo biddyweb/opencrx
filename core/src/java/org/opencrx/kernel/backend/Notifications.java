@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Notifications.java,v 1.16 2009/11/19 17:58:44 wfro Exp $
+ * Name:        $Id: Notifications.java,v 1.21 2010/12/15 14:54:45 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/19 17:58:44 $
+ * Date:        $Date: 2010/12/15 14:54:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,13 +57,27 @@
 package org.opencrx.kernel.backend;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.activity1.cci2.ActivityFollowUpQuery;
+import org.opencrx.kernel.activity1.cci2.MeetingPartyQuery;
+import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
+import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
+import org.opencrx.kernel.activity1.jmi1.Incident;
+import org.opencrx.kernel.activity1.jmi1.Meeting;
+import org.opencrx.kernel.activity1.jmi1.MeetingParty;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
@@ -87,6 +101,28 @@ public class Notifications extends AbstractImpl {
 	protected Notifications(
 	) {
 		
+	}
+	
+    //-----------------------------------------------------------------------
+	public String getAccessUrl(
+		Path targetIdentity,
+		UserHome userHome
+	) throws ServiceException {
+        String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
+        Action selectTargetAction = targetIdentity == null ?
+            null :
+            new Action(
+                Action.EVENT_SELECT_OBJECT, 
+                new Action.Parameter[]{
+                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXri())
+                },
+                "",
+                true
+            );
+        return 
+	        webAccessUrl + 
+	        "?event=" + Action.EVENT_SELECT_OBJECT + 
+	        "&parameter=" + selectTargetAction.getParameter();		
 	}
 	
     //-----------------------------------------------------------------------
@@ -157,7 +193,7 @@ public class Notifications extends AbstractImpl {
                 text = "Alert:\n";
                 if(selectTargetAction != null) {
                     text += "=======================================================================\n";
-                    text += "\"" + webAccessUrl + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectTargetAction.getParameter() + "\"\n";
+                    text += "\"" + this.getAccessUrl(targetIdentity, userHome) + "\"\n";
                     text += "=======================================================================\n";
                 }
                 text += "Name:\n";
@@ -169,18 +205,17 @@ public class Notifications extends AbstractImpl {
         }
         // Activity specific text
         else if(
-            (target instanceof org.opencrx.kernel.activity1.jmi1.Activity) ||
-            (target instanceof org.opencrx.kernel.activity1.jmi1.ActivityFollowUp)
+            (target instanceof Activity) ||
+            (target instanceof ActivityFollowUp)
         ) {
-            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
-            org.opencrx.kernel.activity1.jmi1.Activity activity = target instanceof org.opencrx.kernel.activity1.jmi1.Activity ? 
-            	(org.opencrx.kernel.activity1.jmi1.Activity)target : 
-            	(org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(target.refMofId()).getParent().getParent());
-            org.opencrx.kernel.account1.jmi1.Contact reportingContact = activity.getReportingContact();
-            org.opencrx.kernel.account1.jmi1.Account reportingAccount = activity.getReportingAccount();
-            org.opencrx.kernel.account1.jmi1.Contact assignedTo = activity.getAssignedTo();                
-            org.opencrx.kernel.activity1.jmi1.ActivityProcessState activityState = activity.getProcessState();                
-            org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition lastTransition = activity.getLastTransition();                
+            Activity activity = target instanceof Activity ? 
+            	(Activity)target : 
+            		(Activity)pm.getObjectById(new Path(target.refMofId()).getParent().getParent());
+            Contact reportingContact = activity.getReportingContact();
+            Account reportingAccount = activity.getReportingAccount();
+            Contact assignedTo = activity.getAssignedTo();                
+            ActivityProcessState activityState = activity.getProcessState();                
+            ActivityProcessTransition lastTransition = activity.getLastTransition();                
             text = "";
             if(selectTargetAction != null) {
                 text += "=======================================================================\n";
@@ -192,9 +227,9 @@ public class Notifications extends AbstractImpl {
             text += "Handler:                    " + (assignedTo == null ? "N/A" : assignedTo.getFullName()) + "\n";
             text += "=======================================================================\n";
             int ii = 0;
-            Collection<org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment> assignedGroups = activity.getAssignedGroup();
-            for(org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignedGroup: assignedGroups) {
-                org.opencrx.kernel.activity1.jmi1.ActivityGroup group = assignedGroup.getActivityGroup();
+            Collection<ActivityGroupAssignment> assignedGroups = activity.getAssignedGroup();
+            for(ActivityGroupAssignment assignedGroup: assignedGroups) {
+                ActivityGroup group = assignedGroup.getActivityGroup();
                 if(group != null) {
                     if(ii == 0) {
                         text += "Activity Group:             " + group.getName() + "\n";
@@ -205,8 +240,8 @@ public class Notifications extends AbstractImpl {
                 }
             }
             text += "Activity#:                  " + activity.getActivityNumber() + "\n";
-            if(activity instanceof org.opencrx.kernel.activity1.jmi1.Incident) {
-                org.opencrx.kernel.activity1.jmi1.Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)activity;
+            if(activity instanceof Incident) {
+                Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)activity;
                 try {
                     text += "Category:                   " + incident.getCategory() + "\n";
                 } 
@@ -233,6 +268,25 @@ public class Notifications extends AbstractImpl {
             text += "Date Submitted:             " + activity.getCreatedAt() + "\n";
             text += "Last Modified:              " + activity.getModifiedAt() + "\n";
             text += "=======================================================================\n";
+            // Meeting
+            if(activity instanceof Meeting) {
+            	text += "Organizer:\n";
+            	text += "*  " + activity.getAssignedTo().getFullName() + "\n";
+            	text += "Attendees:\n";
+            	Meeting meeting = (Meeting)activity;
+            	MeetingPartyQuery partyQuery = (MeetingPartyQuery)pm.newQuery(MeetingParty.class);
+            	partyQuery.orderByPartyStatus().ascending();
+            	List<MeetingParty> meetingParties = meeting.getMeetingParty(partyQuery);            	
+            	for(MeetingParty meetingParty: meetingParties) {
+            		String partyStatus =  meetingParty.getPartyStatus() == ICalendar.PARTY_STATUS_ACCEPTED ? 
+            			"+" :
+            				meetingParty.getPartyStatus() == ICalendar.PARTY_STATUS_DECLINED ?
+            					"-" : "?";            		
+            		text += partyStatus + "  " + meetingParty.getParty().getFullName() + "\n"; 
+            	}
+                text += "=======================================================================\n";            		
+            }
+            // Summary, Description, Message Body
             String activityName = activity.getName();
             String activityDescription = activity.getDescription();
             String activityDetailedDescription = activity.getDetailedDescription();
@@ -251,12 +305,13 @@ public class Notifications extends AbstractImpl {
             }
             text += "=======================================================================\n";
             text += "\n";
-            org.opencrx.kernel.activity1.cci2.ActivityFollowUpQuery filter = activityPkg.createActivityFollowUpQuery();
-            filter.orderByCreatedAt().ascending();
-            Collection<org.opencrx.kernel.activity1.jmi1.ActivityFollowUp> followUps = activity.getFollowUp(filter);
-            for(org.opencrx.kernel.activity1.jmi1.ActivityFollowUp followUp: followUps) {
-                org.opencrx.kernel.account1.jmi1.Contact followUpAssignedTo = followUp.getAssignedTo();
-                org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition followUpTransition = followUp.getTransition();                
+            // Follow Ups
+            ActivityFollowUpQuery followUpQuery = (ActivityFollowUpQuery)pm.newQuery(ActivityFollowUp.class);
+            followUpQuery.orderByCreatedAt().descending();
+            Collection<ActivityFollowUp> followUps = activity.getFollowUp(followUpQuery);
+            for(ActivityFollowUp followUp: followUps) {
+                Contact followUpAssignedTo = followUp.getAssignedTo();
+                ActivityProcessTransition followUpTransition = followUp.getTransition();                
                 text += "-----------------------------------------------------------------------\n";
                 text += "Submitted by: " + (followUpAssignedTo == null ? "N/A" : followUpAssignedTo.getFullName()) + "\n";
                 text += "Submitted at: " + followUp.getCreatedAt() + "\n";
@@ -294,9 +349,11 @@ public class Notifications extends AbstractImpl {
     ) throws ServiceException {
         Path userHomeIdentity = userHome.refGetPath();
         String title = null;
-        String subscriptionId = (params.get("triggeredBySubscription") == null ? 
-        	"N/A" : 
-        		((Path)params.get("triggeredBySubscription")).getBase());
+        String subscriptionId = params.get("triggeredBySubscription") instanceof RefObject_1_0 ?
+        	((RefObject_1_0)params.get("triggeredBySubscription")).refGetPath().getBase() :
+        		params.get("triggeredBySubscription") instanceof Path ?
+        			((Path)params.get("triggeredBySubscription")).getBase() :
+        				"N/A"; 
         String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null ? 
             "[" + userHome.refGetPath().get(2) + ":" + userHome.refGetPath().get(4) + "]" : 
             	userHome.getSendMailSubjectPrefix();

@@ -87,6 +87,9 @@
             <generalization xmi:id="_6HMDUKHREdu_d_nrk2Vfag">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_q8yyMKHQEdu_d_nrk2Vfag"/>
             </generalization>
+            <generalization xmi:id="_QNixAOXSEd-XquPOMEGJEw">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.activity1.uml#_o8_YMOXQEd-XquPOMEGJEw"/>
+            </generalization>
             <ownedAttribute xmi:id="_3C7B8A60016D420CE03F02AF" name="webAccessUrl">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IKAEWN7NEdmKapscEl8OLg" value="1"/>
@@ -147,7 +150,7 @@
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_3C7B8A60016D4205627500F6" name="eMailAccount" type="_3C7B8A60016D4205623A0173" isUnique="false" aggregation="composite" association="_3C7B8A60016D4205627402D5">
+            <ownedAttribute xmi:id="_3C7B8A60016D4205627500F6" name="eMailAccount" type="_bQiXsMyUEd-42pJgiwQJZQ" isUnique="false" aggregation="composite" association="_3C7B8A60016D4205627402D5">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IMq9yN7NEdmKapscEl8OLg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IMq9x97NEdmKapscEl8OLg"/>
               <qualifier xmi:id="_3C7B8A60016D420567C20115" name="id" visibility="private">
@@ -544,22 +547,7 @@
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4205623A0173" name="EMailAccount">
-            <generalization xmi:id="_3C7B8A60016D4205624B00EB">
-              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
-            </generalization>
-            <generalization xmi:id="_3C7B8A60016D4205625901F0">
-              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
-            </generalization>
-            <ownedAttribute xmi:id="_3C7B8A60016D420564B30368" name="isDefault">
-              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IMSjYt7NEdmKapscEl8OLg" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IMSjYd7NEdmKapscEl8OLg"/>
-            </ownedAttribute>
-            <ownedAttribute xmi:id="_3C7B8A60016D420563DC02A1" name="eMailAddress">
-              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IMSjZd7NEdmKapscEl8OLg" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IMSjZN7NEdmKapscEl8OLg"/>
-            </ownedAttribute>
+            <generalization xmi:id="_QGo1oMyVEd-42pJgiwQJZQ" general="_bQiXsMyUEd-42pJgiwQJZQ"/>
             <ownedAttribute xmi:id="_3C7B8A60016D4207A5FD0225" name="replyEMailAddress">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IMSjaN7NEdmKapscEl8OLg" value="1"/>
@@ -1076,6 +1064,75 @@
             <generalization xmi:id="_aCQqUGp2Ed-LoruR0ghPDQ">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
             </generalization>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_bQiXsMyUEd-42pJgiwQJZQ" name="ServiceAccount" isAbstract="true">
+            <generalization xmi:id="_3C7B8A60016D4205625901F0">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            </generalization>
+            <generalization xmi:id="_3C7B8A60016D4205624B00EB">
+              <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
+            </generalization>
+            <ownedAttribute xmi:id="_gLFhsM06Ed-N1IUqkdJDXw" name="name" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_2c2YAMyUEd-42pJgiwQJZQ" name="description" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_oo09gM1PEd-N1IUqkdJDXw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_2zKJwMyVEd-42pJgiwQJZQ" name="isDefault">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_2zKJwcyVEd-42pJgiwQJZQ" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_2zKJwsyVEd-42pJgiwQJZQ"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_3-TjsMyUEd-42pJgiwQJZQ" name="isActive" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Ot3E0MyVEd-42pJgiwQJZQ"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_7WzJgMyUEd-42pJgiwQJZQ" name="TwitterAccount">
+            <generalization xmi:id="_SImGUMyVEd-42pJgiwQJZQ" general="_bQiXsMyUEd-42pJgiwQJZQ"/>
+            <generalization xmi:id="_Igf7sM06Ed-N1IUqkdJDXw" general="_Q4nvIM04Ed-N1IUqkdJDXw"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_Q4nvIM04Ed-N1IUqkdJDXw" name="OAuthAccount" isAbstract="true">
+            <eAnnotations xmi:id="_vz2bwM05Ed-N1IUqkdJDXw" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_xyOM8M05Ed-N1IUqkdJDXw" key="root"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_W558IM04Ed-N1IUqkdJDXw" name="consumerKey" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_yYnUAM04Ed-N1IUqkdJDXw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_bDeZkM04Ed-N1IUqkdJDXw" name="consumerSecret" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_y-87QM04Ed-N1IUqkdJDXw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_fmnNkM04Ed-N1IUqkdJDXw" name="accessToken" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ziBMEM04Ed-N1IUqkdJDXw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_h5tRkM04Ed-N1IUqkdJDXw" name="accessTokenSecret" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0EwswM04Ed-N1IUqkdJDXw"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_pDFL0PGGEd-1YKqw9vKbJg" name="DocumentFeed">
+            <generalization xmi:id="_BmB9MPGHEd-1YKqw9vKbJg" general="_ejjTcG_TEd2k1trwDO0y0g"/>
+            <ownedAttribute xmi:id="_goJxcvGHEd-1YKqw9vKbJg" name="documentFolder" association="_gnEMUPGHEd-1YKqw9vKbJg">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.document1.uml#_BTE4wOcdEdm9Uq_PGOuigA"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_goJxdPGHEd-1YKqw9vKbJg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_goJxc_GHEd-1YKqw9vKbJg"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_gnEMUPGHEd-1YKqw9vKbJg" name="DocumentFolderFeedHasDocumentFolder" memberEnd="_goJKYPGHEd-1YKqw9vKbJg _goJxcvGHEd-1YKqw9vKbJg">
+            <ownedEnd xmi:id="_goJKYPGHEd-1YKqw9vKbJg" name="syncFeed" type="_pDFL0PGGEd-1YKqw9vKbJg" association="_gnEMUPGHEd-1YKqw9vKbJg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_goJxcfGHEd-1YKqw9vKbJg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_goJxcPGHEd-1YKqw9vKbJg"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_ALnyQPb5Ed-ev_bki7ygbA" name="CardProfile">
+            <generalization xmi:id="_RnCgQPb5Ed-ev_bki7ygbA" general="_p5gUgG_SEd2k1trwDO0y0g"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_rJSWAPb6Ed-gLrNTltqgwQ" name="DocumentProfile">
+            <generalization xmi:id="_sp9ekPb6Ed-gLrNTltqgwQ" general="_p5gUgG_SEd2k1trwDO0y0g"/>
           </packagedElement>
         </packagedElement>
       </packagedElement>
