@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LDAPSession.java,v 1.11 2010/11/19 23:41:39 wfro Exp $
+ * Name:        $Id: LDAPSession.java,v 1.12 2011/03/30 15:47:03 wfro Exp $
  * Description: LDAPSession
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/19 23:41:39 $
+ * Date:        $Date: 2011/03/30 15:47:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -254,10 +254,6 @@ public class LDAPSession extends AbstractSession {
     	BerDecoder reqBer
     ) throws IOException {
         int currentMessageId = 0;
-        PersistenceManager pm = AbstractSession.newPersistenceManager(
-        	this.server.getPersistenceManagerFactory(), 
-        	this.username
-        );
         try {
             reqBer.parseSeq(null);
             currentMessageId = reqBer.parseInt();
@@ -288,6 +284,10 @@ public class LDAPSession extends AbstractSession {
             } 
             // Search
             else if (requestOperation == LDAP_REQ_SEARCH) {
+                PersistenceManager pm = AbstractSession.newPersistenceManager(
+                	this.server.getPersistenceManagerFactory(), 
+                	this.username
+                );            	
                 reqBer.parseSeq(null);
                 String dn = reqBer.parseString(isLdapV3());
                 if(pm != null) {
@@ -321,6 +321,7 @@ public class LDAPSession extends AbstractSession {
             	else {
                     LDAPSession.this.sendClient(currentMessageId, LDAP_REP_RESULT, LDAP_OTHER, "Anonymous access forbidden");	  
             	}
+                pm.close();
             } 
             // Abandon
             else if (requestOperation == LDAP_REQ_ABANDON) {
@@ -339,11 +340,6 @@ public class LDAPSession extends AbstractSession {
                 SysLog.detail("LOG_EXCEPTION_SENDING_ERROR_TO_CLIENT", e2);
             }
             throw e;
-        }
-        finally {
-        	if(pm != null) {
-        		pm.close();
-        	}
         }
     }
 

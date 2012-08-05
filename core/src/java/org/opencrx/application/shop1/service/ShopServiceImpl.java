@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceImpl.java,v 1.49 2010/11/04 18:15:42 wfro Exp $
+ * Name:        $Id: ShopServiceImpl.java,v 1.57 2011/02/06 22:50:58 wfro Exp $
  * Description: ShopServiceImpl
- * Revision:    $Revision: 1.49 $
+ * Revision:    $Revision: 1.57 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/04 18:15:42 $
+ * Date:        $Date: 2011/02/06 22:50:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -134,6 +134,7 @@ import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
+import org.opencrx.kernel.generic.cci2.PropertySetQuery;
 import org.opencrx.kernel.generic.jmi1.Description;
 import org.opencrx.kernel.generic.jmi1.GenericPackage;
 import org.opencrx.kernel.generic.jmi1.Media;
@@ -221,19 +222,13 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.base.jmi1.BasePackage getBasePackage(
-    ) {
-        return Utils.getBasePackage(this.pm);
-    }
-    
-    //-----------------------------------------------------------------------
     protected Account1Package getAccountPackage(
     ) {
         return Utils.getAccountPackage(this.pm);
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
+    public org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
     ) {
         return 
             (org.opencrx.kernel.account1.jmi1.Segment)this.pm.getObjectById(
@@ -254,7 +249,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.code1.jmi1.Segment getCodeSegment(
+    public org.opencrx.kernel.code1.jmi1.Segment getCodeSegment(
         String segmentName
     ) {
         return 
@@ -270,7 +265,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
+    public org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
     ) {
         return 
             (org.opencrx.kernel.contract1.jmi1.Segment)this.pm.getObjectById(
@@ -285,7 +280,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.depot1.jmi1.Segment getDepotSegment(
+    public org.opencrx.kernel.depot1.jmi1.Segment getDepotSegment(
     ) {
         return 
             (org.opencrx.kernel.depot1.jmi1.Segment)this.pm.getObjectById(
@@ -300,7 +295,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.product1.jmi1.Segment getProductSegment(
+    public org.opencrx.kernel.product1.jmi1.Segment getProductSegment(
     ) {
         return 
             (org.opencrx.kernel.product1.jmi1.Segment)this.pm.getObjectById(
@@ -315,7 +310,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.activity1.jmi1.Segment getActivitySegment(
+    public org.opencrx.kernel.activity1.jmi1.Segment getActivitySegment(
     ) {
         return 
             (org.opencrx.kernel.activity1.jmi1.Segment)this.pm.getObjectById(
@@ -324,7 +319,7 @@ public class ShopServiceImpl
     }
 
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.document1.jmi1.Segment getDocumentSegment(
+    public org.opencrx.kernel.document1.jmi1.Segment getDocumentSegment(
     ) {
         return 
             (org.opencrx.kernel.document1.jmi1.Segment)this.pm.getObjectById(
@@ -339,7 +334,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected org.opencrx.kernel.uom1.jmi1.Segment getUomSegment(
+    public org.opencrx.kernel.uom1.jmi1.Segment getUomSegment(
     ) {
         return 
             (org.opencrx.kernel.uom1.jmi1.Segment)this.pm.getObjectById(
@@ -348,7 +343,7 @@ public class ShopServiceImpl
     }
 
     //-----------------------------------------------------------------------
-    protected String uuidAsString(
+    public String uuidAsString(
     ) {
         return UUIDConversion.toUID(this.uuids.next());
     }
@@ -474,7 +469,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Invoice findInvoice(
+    public Invoice findInvoice(
         String invoiceNumber
     ) {
         InvoiceQuery query = (InvoiceQuery)this.pm.newQuery(Invoice.class);
@@ -487,7 +482,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected SalesOrder findSalesOrder(
+    public SalesOrder findSalesOrder(
         String salesOrderNumber
     ) {
         SalesOrderQuery query = (SalesOrderQuery)this.pm.newQuery(SalesOrder.class);
@@ -500,7 +495,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected List<Lead> findCustomerContracts(
+    public List<Lead> findCustomerContracts(
         Account account
     ) {    	
         LeadQuery leadQuery = (LeadQuery)this.pm.newQuery(Lead.class);
@@ -523,7 +518,7 @@ public class ShopServiceImpl
     }
 
     //-----------------------------------------------------------------------
-    protected Lead findMainCustomerContract(
+    public Lead findMainCustomerContract(
         Account account
     ) {    	
         LeadQuery leadQuery = (LeadQuery)this.pm.newQuery(Lead.class);
@@ -546,7 +541,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Lead findCustomerContract(
+    public Lead findCustomerContract(
     	AbstractContract contract
     ) {
     	if(contract instanceof Lead) {
@@ -561,7 +556,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Lead findCustomerContractByContractNumber(
+    public Lead findCustomerContractByContractNumber(
         String customerContractNumber
     ) {
         LeadQuery query = (LeadQuery)this.pm.newQuery(Lead.class);
@@ -574,7 +569,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected ProductConfigurationTypeSet findProductConfigurationType(
+    public ProductConfigurationTypeSet findProductConfigurationType(
         String name
     ) {
         ProductConfigurationTypeSetQuery query = (ProductConfigurationTypeSetQuery)this.pm.newQuery(ProductConfigurationTypeSet.class);
@@ -587,7 +582,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Product findProduct(
+    public Product findProduct(
         String productNumber
     ) {
         ProductQuery query = (ProductQuery)this.pm.newQuery(Product.class);
@@ -600,7 +595,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected ProductClassification findProductClassification(
+    public ProductClassification findProductClassification(
         String classificationName
     ) {
         ProductClassificationQuery query = (ProductClassificationQuery)this.pm.newQuery(ProductClassification.class);
@@ -613,7 +608,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Uom findUom(
+    public Uom findUom(
         String uomName
     ) {
         UomQuery query = (UomQuery)this.pm.newQuery(Uom.class);
@@ -628,7 +623,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected SalesTaxType findSalesTaxType(
+    public SalesTaxType findSalesTaxType(
         String salesTaxTypeName
     ) {
         SalesTaxTypeQuery query = (SalesTaxTypeQuery)this.pm.newQuery(SalesTaxType.class);
@@ -641,7 +636,7 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected CodeValueContainer findCodeValueContainer(
+    public CodeValueContainer findCodeValueContainer(
         String name,
         boolean isRootContainers
     ) {
@@ -697,7 +692,7 @@ public class ShopServiceImpl
         invoiceQuery.orderByContractNumber().descending();
         invoiceQuery.thereExistsCustomer().equalTo(customer);        
         List<Invoice> invoices = this.getContractSegment().getInvoice(invoiceQuery);
-        int lastInvoiceNumber = 1000000;
+        int lastInvoiceNumber = 100000000;
         if(!invoices.isEmpty()) {
             String invoiceNumber = invoices.iterator().next().getContractNumber();
             if(invoiceNumber != null) {
@@ -726,7 +721,8 @@ public class ShopServiceImpl
         Date pricingDate,
         SalesTaxType salesTaxType,
         Boolean discountIsPercentage,
-        BigDecimal discount
+        BigDecimal discount,
+        BigDecimal pricePerUnit
     ) {
         Product product = this.findProduct(productNumber);
         Uom priceUom = this.findUom(priceUomName);
@@ -775,6 +771,16 @@ public class ShopServiceImpl
             }
         }        
         this.pm.currentTransaction().commit();
+        this.pm.refresh(contractPosition);
+        // Override original price defined by price list
+        if(
+        	pricePerUnit != null && 
+        	pricePerUnit.compareTo(contractPosition.getPricePerUnit()) != 0
+        ) {
+        	this.pm.currentTransaction().begin();
+        	contractPosition.setPricePerUnit(pricePerUnit);
+        	this.pm.currentTransaction().commit();
+        }
         return contractPosition;
     }
     
@@ -833,7 +839,7 @@ public class ShopServiceImpl
         }
         // Add new values
         for(Map.Entry<String,Object[]> newProperty: newProperties.entrySet()) {
-            StringProperty property = this.getBasePackage().getStringProperty().createStringProperty();
+            StringProperty property = this.pm.newInstance(StringProperty.class);
             StringPropertyT propertyT = (StringPropertyT)newProperty.getValue()[0];
             Integer index = (Integer)newProperty.getValue()[1];
             property.refInitialize(false, false);
@@ -931,7 +937,10 @@ public class ShopServiceImpl
                     positionT.getDiscount() == null ?
                         null : 
                         new BigDecimal(positionT.getDiscount()) :
-                    discount
+                    discount,
+                positionT.getPricePerUnit() == null ?
+            		null :
+            			new BigDecimal(positionT.getPricePerUnit())
             );
         }
     }
@@ -1649,7 +1658,9 @@ public class ShopServiceImpl
                 String customerNumber = this.datatypeMappers.getAccountFieldMapper().getAccountNumber(salesOrder.getCustomer());
                 Lead customerContract = this.findCustomerContract(salesOrder);
                 if(customerContract != null) {
-                    String salesTaxTypeName = this.datatypeMappers.getLeadFieldMapper().getSalesTaxType(customerContract);
+                    String salesTaxTypeName = params.getSalesTaxType() == null || params.getSalesTaxType().isEmpty() ?
+                    	this.datatypeMappers.getLeadFieldMapper().getSalesTaxType(customerContract) :
+                    		params.getSalesTaxType();
                     SalesTaxType salesTaxType = this.findSalesTaxType(salesTaxTypeName);
                     if(salesTaxType != null || salesTaxTypeName == null) {
                     	String validationResult = this.validateContractPosition(
@@ -1666,8 +1677,9 @@ public class ShopServiceImpl
 	                            params.getPriceUom(), 
 	                            params.getPricingDate(),
 	                            salesTaxType,
-	                            Boolean.TRUE,
-	                            BigDecimal.ZERO
+	                            params.isDiscountIsPercentage() == null ? Boolean.TRUE : params.isDiscountIsPercentage(),
+	                            params.getDiscount() == null ? BigDecimal.ZERO : new BigDecimal(params.getDiscount()),
+	                            params.getPricePerUnit() == null ? null : new BigDecimal(params.getPricePerUnit())
 	                        );
 	                        result.add(
 	                            Datatypes.member(
@@ -2006,7 +2018,7 @@ public class ShopServiceImpl
                 ) {
                     // Create Customer
                     this.pm.currentTransaction().begin();
-                    Contact customer = this.getAccountPackage().getContact().createContact();
+                    Contact customer = this.pm.newInstance(Contact.class);
                     customer.refInitialize(false, false);
                     customer.setLastName(params.getLastName());
                     customer.setFirstName(params.getFirstName());
@@ -2021,7 +2033,7 @@ public class ShopServiceImpl
                     );
                     // Create Email address home
                     if(params.getEmailAddressHome() != null && params.getEmailAddressHome().length() > 0) {
-	                    EMailAddress emailAddressHome = this.getAccountPackage().getEMailAddress().createEMailAddress();
+	                    EMailAddress emailAddressHome = this.pm.newInstance(EMailAddress.class);
 	                    emailAddressHome.refInitialize(false, false);
 	                    emailAddressHome.setEmailAddress(params.getEmailAddressHome());
 	                    emailAddressHome.getUsage().add(Addresses.USAGE_HOME);
@@ -2037,7 +2049,7 @@ public class ShopServiceImpl
                     }
                     // Create Email address business
                     if(params.getEmailAddressBusiness() != null && params.getEmailAddressBusiness().length() > 0) {
-	                    EMailAddress emailAddressBusiness = this.getAccountPackage().getEMailAddress().createEMailAddress();
+	                    EMailAddress emailAddressBusiness = this.pm.newInstance(EMailAddress.class);
 	                    emailAddressBusiness.refInitialize(false, false);
 	                    emailAddressBusiness.setEmailAddress(params.getEmailAddressBusiness());
 	                    emailAddressBusiness.getUsage().add(Addresses.USAGE_BUSINESS);
@@ -2133,7 +2145,7 @@ public class ShopServiceImpl
             if(legalEntities.isEmpty()) {
                 // Create Customer
                 this.pm.currentTransaction().begin();
-                LegalEntity customer = this.getAccountPackage().getLegalEntity().createLegalEntity();
+                LegalEntity customer = this.pm.newInstance(LegalEntity.class);
                 customer.refInitialize(false, false);
                 customer.setName(params.getLegalName());
                 customer.getOwningGroup().addAll(
@@ -2380,8 +2392,8 @@ public class ShopServiceImpl
 	                        invoice,
 	                        params.getInvoice().getContract().getPosition(),
 	                        this.datatypeMappers.getLeadFieldMapper().getSalesTaxType(customerContract),
-	                        null,
-	                        null
+	                        null, // discountIsPercentage
+	                        null // discount
 	                    );
 	                    this.pm.currentTransaction().begin();
 	                    invoice.reprice();
@@ -2516,8 +2528,8 @@ public class ShopServiceImpl
                     newInvoice,
                     originalInvoiceT.getContract().getPosition(),
                     this.datatypeMappers.getLeadFieldMapper().getSalesTaxType(customerContract),
-                    null, // discountIsPercentage inherit from original position 
-                    null // discount inherit from original position
+                    null, // discountIsPercentage (inherit from original position) 
+                    null // discount (inherit from original position)
                 );
                 this.pm.refresh(newInvoice);
                 result.add(
@@ -2800,26 +2812,31 @@ public class ShopServiceImpl
                      );
                      this.pm.currentTransaction().commit();
                      // Configuration type
-                     ProductConfigurationTypeSet configurationType = this.findProductConfigurationType(productT.getConfigurationType());
-                     if(configurationType == null) {
-                         result.add(
-                             Datatypes.member(
-                                 CreateProductsResult.Member.status,
-                                 this.datatypeMappers.mapOperationStatus(
-                                     BasicException.Code.NOT_FOUND,
-                                     new String[]{"ProductConfigurationType", productT.getConfigurationType()}
-                                 )
-                             )                            
-                         );                                    
-                         hasErrors = true;
-                         break;                                                                          
+                     ProductConfigurationTypeSet configurationType = null;
+                     if(productT.getConfigurationType() != null) {
+	                     configurationType = this.findProductConfigurationType(productT.getConfigurationType());
+	                     if(configurationType == null) {
+	                         result.add(
+	                             Datatypes.member(
+	                                 CreateProductsResult.Member.status,
+	                                 this.datatypeMappers.mapOperationStatus(
+	                                     BasicException.Code.NOT_FOUND,
+	                                     new String[]{"ProductConfigurationType", productT.getConfigurationType()}
+	                                 )
+	                             )                            
+	                         );                                    
+	                         hasErrors = true;
+	                         break;                                                                          
+	                     }
                      }
                      this.pm.currentTransaction().begin();
-                     this.updateProductConfiguration(
-                         productT, 
-                         product, 
-                         configurationType
-                     );
+                     if(configurationType != null) {
+	                     this.updateProductConfiguration(
+	                         productT, 
+	                         product, 
+	                         configurationType
+	                     );
+                     }
                      this.updateProductDescriptions(
                          productT,
                          product
@@ -2954,7 +2971,10 @@ public class ShopServiceImpl
                 	);
                 	if(validationResult == null) {
 	                    this.pm.currentTransaction().begin();
-	                    String salesOrderNumber = this.getNextSalesOrderNumber(customer);
+	                    String contractNumber = params.getSalesOrder().getContract().getContractNumber();
+	                    String salesOrderNumber = contractNumber == null || contractNumber.isEmpty() ?
+	                    	this.getNextSalesOrderNumber(customer) :
+	                    		contractNumber;
 	                    SalesOrder salesOrder = this.getContractPackage().getSalesOrder().createSalesOrder();
 	                    salesOrder.refInitialize(false, false);
 	                    this.getContractSegment().addSalesOrder(
@@ -2962,16 +2982,20 @@ public class ShopServiceImpl
 	                        this.uuidAsString(),
 	                        salesOrder
 	                    );
+	                    ContractT contractT = params.getSalesOrder().getContract();
 	                    this.datatypeMappers.mapSalesOrder(
 	                        salesOrder, 
 	                        customerContract, 
 	                        customer, 
 	                        salesOrderNumber, 
-	                        SalesOrderState.DRAFT,
-	                        params.getSalesOrder().getContract().getActiveOn(),
-	                        params.getSalesOrder().getContract().getExpiresOn(),
-	                        params.getSalesOrder().getContract().getCancelOn(),
-	                        params.getSalesOrder().getContract().getClosedOn(),
+	                        SalesOrderState.DRAFT,	                        
+	                        contractT.getContractCurrency(),
+	                        contractT.getActiveOn(),
+	                        contractT.getExpiresOn(),
+	                        contractT.getCancelOn(),
+	                        contractT.getClosedOn(),
+	                        contractT.isGift(),
+	                        contractT.getGiftMessage(),
 	                        this.findPricingRule()
 	                    );
 	                    salesOrder.getOwningGroup().addAll(
@@ -2992,8 +3016,8 @@ public class ShopServiceImpl
 	                        salesOrder,
 	                        params.getSalesOrder().getContract().getPosition(), 
 	                        this.datatypeMappers.getLeadFieldMapper().getSalesTaxType(customerContract),
-	                        null,
-	                        null
+	                        null, // discountIsPercentage
+	                        null // discount
 	                    );
 	                    this.pm.currentTransaction().begin();
 	                    salesOrder.reprice();
@@ -3600,9 +3624,12 @@ public class ShopServiceImpl
             	legalEntityQuery.name().equalTo(params.getLegalName());
             	List<LegalEntity> legalEntities = this.getAccountSegment().getAccount(legalEntityQuery);
             	for(Account legalEntity: legalEntities) {
-            		customerNumbers.add(
-            			this.datatypeMappers.getAccountFieldMapper().getAccountNumber(legalEntity)
-            		);
+            		String customerNumber = this.datatypeMappers.getAccountFieldMapper().getAccountNumber(legalEntity);
+                    if(customerNumber == null) {
+                    	SysLog.warning("Customer number is null. Skipping customer", legalEntity.refGetPath());
+                    } else {
+	            		customerNumbers.add(customerNumber);
+            		}
             	}
             }
             // Query by email address
@@ -5238,7 +5265,7 @@ public class ShopServiceImpl
 		                        else {                        
 		                            PostalAddress address = (PostalAddress)addresses[Accounts.POSTAL_BUSINESS];
 		                            if(address == null) {
-		                                address = this.getAccountPackage().getPostalAddress().createPostalAddress();
+		                                address = this.pm.newInstance(PostalAddress.class);
 		                                address.refInitialize(false, false);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
@@ -5486,9 +5513,13 @@ public class ShopServiceImpl
 	                    	// Account
 	                        customer.getExternalLink().clear();
 	                        customer.getExternalLink().addAll(customerT.getExternalId());
-	                        customer.setAccountRating(DatatypeMappers.toShort(customerT.getAccountRating()));
+	                        if(customerT.getAccountRating() != null) {
+	                        	customer.setAccountRating(DatatypeMappers.toShort(customerT.getAccountRating()));
+	                        }
 	                        customer.getAccountCategory().clear();
-	                        customer.getAccountCategory().addAll(DatatypeMappers.toShortList(customerT.getAccountCategory()));
+	                        if(customerT.getAccountCategory() != null) {
+	                        	customer.getAccountCategory().addAll(DatatypeMappers.toShortList(customerT.getAccountCategory()));
+	                        }
 	                        // Contact
 	                        contact.setOrganization(contactT.getOrganization());
 	                        contact.setSalutationCode(DatatypeMappers.toShort(contactT.getSalutationCode()));
@@ -5506,24 +5537,36 @@ public class ShopServiceImpl
 	                        contact.setDoNotPhone(contactT.isDoNotPhone());
 	                        contact.setDoNotFax(contactT.isDoNotFax());
 	                        this.datatypeMappers.getAccountFieldMapper().setNativeLanguage(contact, contactT.getNativeLanguage());
-	                        contact.setPreferredSpokenLanguage(DatatypeMappers.toShort(contactT.getPreferredSpokenLanguage()));
-	                        contact.setPreferredWrittenLanguage(DatatypeMappers.toShort(contactT.getPreferredWrittenLanguage()));
+	                        if(contactT.getPreferredSpokenLanguage() != null) {
+	                        	contact.setPreferredSpokenLanguage(DatatypeMappers.toShort(contactT.getPreferredSpokenLanguage()));
+	                        }
+	                        if(contactT.getPreferredWrittenLanguage() != null) {
+	                        	contact.setPreferredWrittenLanguage(DatatypeMappers.toShort(contactT.getPreferredWrittenLanguage()));
+	                        }
 	                        contact.setGender(DatatypeMappers.toShort(contactT.getGender()));
 	                        this.datatypeMappers.getAccountFieldMapper().setJobRole(contact, contactT.getJobRole());
 	                        contact.setJobTitle(contactT.getJobTitle());
 	                        contact.getCitizenship().clear();
 	                        contact.getCitizenship().addAll(DatatypeMappers.toShortList(contactT.getCitizenship()));
-	                        contact.setEducation(DatatypeMappers.toShort(contactT.getEducation()));
+	                        if(contactT.getEducation() != null) {
+	                        	contact.setEducation(DatatypeMappers.toShort(contactT.getEducation()));
+	                        }
 	                        this.datatypeMappers.getAccountFieldMapper().setAnnualIncomeAmount(contact, contactT.getAnnualIncomeAmount());
 	                        this.datatypeMappers.getAccountFieldMapper().setAnnualIncomeCurrency(contact, contactT.getAnnualIncomeCurrency());
 	                        this.datatypeMappers.getAccountFieldMapper().setMonthlyIncomeAmount(contact, contactT.getMonthlyIncomeAmount());
 	                        this.datatypeMappers.getAccountFieldMapper().setMonthlyIncomeCurrency(contact, contactT.getMonthlyIncomeCurrency());
-	                        contact.setAnnualIncomeCurrency(DatatypeMappers.toShort(contactT.getAnnualIncomeCurrency()));
-	                        contact.setNumberOfChildren(DatatypeMappers.toShort(contactT.getNumberOfChildren()));
+	                        if(contactT.getAnnualIncomeCurrency() != null) {
+	                        	contact.setAnnualIncomeCurrency(DatatypeMappers.toShort(contactT.getAnnualIncomeCurrency()));
+	                        }
+	                        if(contactT.getNumberOfChildren() != null) {
+	                        	contact.setNumberOfChildren(DatatypeMappers.toShort(contactT.getNumberOfChildren()));
+	                        }
 	                        contact.getChildrenNames().clear();
 	                        contact.getChildrenNames().addAll(contactT.getChildrenNames());
-	                        contact.setFamilyStatus(DatatypeMappers.toShort(contactT.getFamilyStatus()));
-	                        contact.setPreferredContactMethod(DatatypeMappers.toShort(contactT.getPreferredContactMethod()));
+                        	contact.setFamilyStatus(DatatypeMappers.toShort(contactT.getFamilyStatus()));
+	                        if(contactT.getPreferredContactMethod() != null) {
+	                        	contact.setPreferredContactMethod(DatatypeMappers.toShort(contactT.getPreferredContactMethod()));
+	                        }
 	                        contact.getReligion().clear();
 	                        contact.getReligion().addAll(DatatypeMappers.toShortList(contactT.getReligion()));
 	                        this.datatypeMappers.getAccountFieldMapper().setCommunityStatus(contact, contactT.getCommunityStatus());
@@ -5876,39 +5919,32 @@ public class ShopServiceImpl
 	                        );
 	                    }
 	                    if(Boolean.TRUE.equals(params.isUpdateGenericData())) {
-	                        Collection<PropertySet> propertySets = contact.getPropertySet();
 	                        List<StringPropertyT> genericData = params.getCustomer().getGenericData();
 	                        if(genericData != null) {
-	                            boolean isNew = true;
-	                            for(PropertySet propertySet: propertySets) {
-	                                if(PropertySetName.GenericData.toString().equals(propertySet.getName())) {
-	                                    this.updatePropertySet(
-	                                        genericData,
-	                                        propertySet,
-	                                        true
-	                                    );
-	                                    isNew = false;
-	                                    break;
-	                                }
-	                            }
-	                            if(isNew) {
-	                                PropertySet propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
+	                        	PropertySetQuery propertySetQuery = this.getGenericPackage().createPropertySetQuery();
+	                        	propertySetQuery.name().equalTo(PropertySetName.GenericData.toString());
+	                        	List<PropertySet> propertySets = contact.getPropertySet(propertySetQuery);
+	                        	PropertySet propertySet = null;
+	                        	if(propertySets.isEmpty()) {
+	                                propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
 	                                propertySet.refInitialize(false, false);
 	                                propertySet.setName(PropertySetName.GenericData.toString());
 	                                propertySet.getOwningGroup().addAll(
-	                                	contact.getOwningGroup()
+	                                    customer.getOwningGroup()
 	                                );
 	                                contact.addPropertySet(
 	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    propertySet
-	                                );
-	                                this.updatePropertySet(
-	                                    genericData,
-	                                    propertySet,
-	                                    true
-	                                );
-	                            }
+	                                );                        		
+	                        	} else {
+	                        		propertySet = propertySets.iterator().next();
+	                        	}
+	                            this.updatePropertySet(
+	                                genericData,
+	                                propertySet,
+	                                true
+	                            );
 	                        }
 	                    }
 	                    if(Boolean.TRUE.equals(params.isUpdateHobbyAndInterestData())) {
@@ -5926,39 +5962,32 @@ public class ShopServiceImpl
 	                        }
 	                    }
 	                    if(Boolean.TRUE.equals(params.isUpdateBookmarks())) {
-	                        Collection<PropertySet> propertySets = contact.getPropertySet();
 	                        List<StringPropertyT> bookmarks = contactT.getBookmarks();
 	                        if(bookmarks != null) {
-	                            boolean isNew = true;
-	                            for(PropertySet propertySet: propertySets) {
-	                                if(PropertySetName.Bookmarks.toString().equals(propertySet.getName())) {
-	                                    this.updatePropertySet(
-	                                        bookmarks,
-	                                        propertySet,
-	                                        true
-	                                    );
-	                                    isNew = false;
-	                                    break;
-	                                }
-	                            }
-	                            if(isNew) {
-	                                PropertySet propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
+	                        	PropertySetQuery propertySetQuery = this.getGenericPackage().createPropertySetQuery();
+	                        	propertySetQuery.name().equalTo(PropertySetName.Bookmarks.toString());
+	                        	List<PropertySet> propertySets = contact.getPropertySet(propertySetQuery);
+	                        	PropertySet propertySet = null;
+	                        	if(propertySets.isEmpty()) {
+	                                propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
 	                                propertySet.refInitialize(false, false);
 	                                propertySet.setName(PropertySetName.Bookmarks.toString());
 	                                propertySet.getOwningGroup().addAll(
-	                                	contact.getOwningGroup()
+	                                    customer.getOwningGroup()
 	                                );
-	                                contact.addPropertySet(
+	                                customer.addPropertySet(
 	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    propertySet
-	                                );
-	                                this.updatePropertySet(
-	                                    bookmarks,
-	                                    propertySet,
-	                                    true
-	                                );
-	                            }
+	                                );                        		
+	                        	} else {
+	                        		propertySet = propertySets.iterator().next();
+	                        	}
+	                            this.updatePropertySet(
+	                                bookmarks,
+	                                propertySet,
+	                                true
+	                            );
 	                        }
 	                    }
 	                    this.pm.currentTransaction().commit();
@@ -6136,7 +6165,11 @@ public class ShopServiceImpl
                 	 this.datatypeMappers.mapProduct(
                         productT,
                         product
-                    );
+                	 );
+                	 this.updateProductDescriptions(
+                		 productT, 
+                		 product
+                	 );
                 }
                 // Classification
                 if(!hasErrors && Boolean.TRUE.equals(params.isUpdateClassification())) {

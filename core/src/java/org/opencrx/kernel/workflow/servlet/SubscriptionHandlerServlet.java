@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.65 2010/09/28 21:46:16 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.66 2011/01/23 22:16:15 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.65 $
+ * Revision:    $Revision: 1.66 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/28 21:46:16 $
+ * Date:        $Date: 2011/01/23 22:16:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -124,7 +124,7 @@ public class SubscriptionHandlerServlet
         super.init(config);
         // data connection
         try {
-            this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
+            this.pmf = Utils.getPersistenceManagerFactory();
         }
         catch(Exception e) {
             throw new ServletException("can not get connection to data provider", e);
@@ -268,7 +268,7 @@ public class SubscriptionHandlerServlet
             // Retrieve auditee in the security context of the home's principal. 
             // This validates availability and read-permissions.
             String principalName = userHomeIdentity.getBase();
-            PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+            PersistenceManager pm = this.pmf.getPersistenceManager(
                 principalName,
                 UUIDs.getGenerator().next().toString()
             );
@@ -545,7 +545,7 @@ public class SubscriptionHandlerServlet
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
 
         try {
-            PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+            PersistenceManager pm = this.pmf.getPersistenceManager(
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );
@@ -642,9 +642,9 @@ public class SubscriptionHandlerServlet
             String id = providerName + "/" + segmentName;
             // Run
             if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
-                if(!this.runningSegments.containsKey(id)) {
+                if(!runningSegments.containsKey(id)) {
 	                try {
-	                    this.runningSegments.put(
+	                    runningSegments.put(
 	                    	id,
 	                    	Thread.currentThread()
 	                    );
@@ -660,14 +660,14 @@ public class SubscriptionHandlerServlet
 	                    new ServiceException(e).log();
 	                }
 	                finally {
-	                    this.runningSegments.remove(id);
+	                    runningSegments.remove(id);
 	                }
             	}
             	else if(
-            		!this.runningSegments.get(id).isAlive() || 
-            		this.runningSegments.get(id).isInterrupted()
+            		!runningSegments.get(id).isAlive() || 
+            		runningSegments.get(id).isInterrupted()
             	) {
-	            	Thread t = this.runningSegments.get(id);
+	            	Thread t = runningSegments.get(id);
             		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
             	}            	
             }
@@ -710,9 +710,9 @@ public class SubscriptionHandlerServlet
     private static final Path PATH_PATTERN_USER_HOME = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*");
     private static final String COMMAND_EXECUTE = "/execute";
     private static final String VISITOR_ID = "SubscriptionHandler";
+    private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
 
-    private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
+    private PersistenceManagerFactory pmf = null;
     private long startedAt = System.currentTimeMillis();
 }
 

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.54 2010/12/15 11:53:22 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.55 2011/03/02 14:41:46 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.54 $
+ * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 11:53:22 $
+ * Date:        $Date: 2011/03/02 14:41:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -303,6 +303,7 @@ public class ICalServlet extends FreeBusyServlet {
 	            ) {
 	                resp.setCharacterEncoding("UTF-8");
 	                resp.setStatus(HttpServletResponse.SC_OK);
+	                resp.setContentType("text/calendar");
 	                ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
 	                if(activitiesHelper.isDisabledFilter()) {
 	                    activityQuery.thereExistsDisabled().isTrue();                    
@@ -351,7 +352,7 @@ public class ICalServlet extends FreeBusyServlet {
 	            ) {
 	                resp.setCharacterEncoding("UTF-8");
 	                resp.setStatus(HttpServletResponse.SC_OK);
-	                resp.setContentType("text/xml");
+	                resp.setContentType("text/html");
 	                ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
 	                if(activitiesHelper.isDisabledFilter()) {
 	                    activityQuery.thereExistsDisabled().isTrue();                    
@@ -388,6 +389,7 @@ public class ICalServlet extends FreeBusyServlet {
 	                    : Integer.valueOf(req.getParameter(PARAMETER_NAME_HEIGHT));
 	                resp.setCharacterEncoding("UTF-8");
 	                resp.setStatus(HttpServletResponse.SC_OK);
+	                resp.setContentType("text/html");	                
 	                PrintWriter p = resp.getWriter();
 	                p.write("<!--[if IE]><!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\"><![endif]-->\n");
 	                p.write("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\" \"http://www.w3.org/TR/html4/loose.dtd\">\n");
@@ -561,6 +563,7 @@ public class ICalServlet extends FreeBusyServlet {
 	        	Collection<Account> contacts = accountsHelper.getFilteredAccounts(contactFilter);
                 resp.setCharacterEncoding("UTF-8");
                 resp.setStatus(HttpServletResponse.SC_OK);
+                resp.setContentType("text/calendar");                
                 PrintWriter p = resp.getWriter();	    
                 p.write("BEGIN:VCALENDAR\n");
                 p.write("VERSION:2.0\n");

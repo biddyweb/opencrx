@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractActivityPartyImpl.java,v 1.1 2010/02/01 00:29:29 wfro Exp $
+ * Name:        $Id: AbstractActivityPartyImpl.java,v 1.2 2011/03/23 15:10:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/01 00:29:29 $
+ * Date:        $Date: 2011/03/23 15:10:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -78,15 +78,26 @@ public class AbstractActivityPartyImpl
     }
  
     //-----------------------------------------------------------------------
+    public org.opencrx.kernel.activity1.jmi1.Activity getActivity(
+    ) {
+    	try {
+	    	return (Activity)this.sameManager().getObjectById(
+	    		this.sameObject().refGetPath().getPrefix(7)
+	    	);
+    	}
+    	catch(Exception e) {
+    		return null;
+    	}
+    }
+
+    //-----------------------------------------------------------------------
 	@Override
     public void jdoPreStore(
     ) {
 		try {
 			// Mark activity as dirty updates ICal, ...
 			Activities.getInstance().markActivityAsDirty(
-				(Activity)this.sameManager().getObjectById(
-					this.sameObject().refGetPath().getParent().getParent()
-				)
+				this.getActivity()
 			);
 			super.jdoPreStore();
 		}
@@ -106,9 +117,7 @@ public class AbstractActivityPartyImpl
     	try {
 			// Mark activity as dirty updates ICal, ...
 			Activities.getInstance().markActivityAsDirty(
-				(Activity)this.sameManager().getObjectById(
-					this.sameObject().refGetPath().getParent().getParent()
-				)
+				this.getActivity()
 			);
     		super.jdoPreDelete();
     	}

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.81 2010/11/23 15:54:01 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.84 2011/04/13 13:15:03 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.81 $
+ * Revision:    $Revision: 1.84 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/23 15:54:01 $
+ * Date:        $Date: 2011/04/13 13:15:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -84,6 +84,7 @@ import org.opencrx.kernel.account1.jmi1.AddressTypeFilterProperty;
 import org.opencrx.kernel.account1.jmi1.AddressUsageFilterProperty;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
+import org.opencrx.kernel.account1.jmi1.Member;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.Room;
@@ -469,7 +470,7 @@ public class Accounts extends AbstractImpl {
 
     //-----------------------------------------------------------------------
     /**
-     * @return Returns the accountSegment.
+     * @return Returns the account segment.
      */
     public org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
         PersistenceManager pm,
@@ -477,7 +478,7 @@ public class Accounts extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.account1.jmi1.Segment) pm.getObjectById(
-            new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+            new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName)
         );
     }
 
@@ -830,6 +831,12 @@ public class Accounts extends AbstractImpl {
             errors, 
             report
         );
+    }
+    
+    //-------------------------------------------------------------------------
+    public void updateMember(
+    	Member member
+    ) throws ServiceException {    	
     }
     
     //-------------------------------------------------------------------------

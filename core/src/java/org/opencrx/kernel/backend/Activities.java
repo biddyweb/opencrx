@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.189 2010/12/25 11:54:04 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.195 2011/04/29 09:33:40 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.189 $
+ * Revision:    $Revision: 1.195 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/25 11:54:04 $
+ * Date:        $Date: 2011/04/29 09:33:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -106,6 +106,7 @@ import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
+import org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessActionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
@@ -125,6 +126,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
+import org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom;
 import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessAction;
@@ -369,14 +371,13 @@ public class Activities extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
             segmentName
         );
         Calendar calendar = null;
-        if((calendar = this.findCalendar(calendarName, activitySegment, pm)) != null) {
+        if((calendar = this.findCalendar(calendarName, activitySegment)) != null) {
             return calendar;            
         }                        
         pm.currentTransaction().begin();                    
@@ -388,7 +389,7 @@ public class Activities extends AbstractImpl {
         );
         activitySegment.addCalendar(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             calendar
         );
         // Sunday
@@ -401,7 +402,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         // Monday
@@ -416,7 +417,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         // Tuesday
@@ -431,7 +432,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         // Wednesday
@@ -446,7 +447,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         // Thursday
@@ -461,7 +462,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         // Friday
@@ -476,7 +477,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         // Saturday
@@ -489,7 +490,7 @@ public class Activities extends AbstractImpl {
         );
         calendar.addWeekDay(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             weekDay
         );
         pm.currentTransaction().commit();
@@ -502,7 +503,6 @@ public class Activities extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
@@ -522,7 +522,7 @@ public class Activities extends AbstractImpl {
         );
         activitySegment.addActivityProcess(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             process
         );
         // State New
@@ -534,7 +534,7 @@ public class Activities extends AbstractImpl {
         );
         process.addState(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             newState
         );
         // State Open
@@ -546,7 +546,7 @@ public class Activities extends AbstractImpl {
         );
         process.addState(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             openState
         );
         // State Closed
@@ -558,7 +558,7 @@ public class Activities extends AbstractImpl {
         );
         process.addState(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             closedState
         );
         pm.currentTransaction().commit();                    
@@ -578,7 +578,7 @@ public class Activities extends AbstractImpl {
         );
         process.addTransition(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );
         // Create SetAssignedToAction
@@ -591,7 +591,7 @@ public class Activities extends AbstractImpl {
         );
         processTransition.addAction(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setAssignedToAction
         );
         // Create SetActualStartAction
@@ -604,7 +604,7 @@ public class Activities extends AbstractImpl {
         );
         processTransition.addAction(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setActualStartAction
         );
         // Transition Add Note: Open->Open
@@ -620,7 +620,7 @@ public class Activities extends AbstractImpl {
         );
         process.addTransition(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );
         // Transition Export: Open->Open
@@ -636,7 +636,7 @@ public class Activities extends AbstractImpl {
         );
         process.addTransition(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );
         // Create WorkflowAction for ExportMail
@@ -654,7 +654,7 @@ public class Activities extends AbstractImpl {
         );
         processTransition.addAction(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             wfAction
         );
         // Transition Send: Open->Open
@@ -670,7 +670,7 @@ public class Activities extends AbstractImpl {
         );
         process.addTransition(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );
         // Create WorkflowAction for SendMail
@@ -688,7 +688,7 @@ public class Activities extends AbstractImpl {
         );
         processTransition.addAction(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             wfAction
         );
         // Transition Close: Open->Closed
@@ -704,7 +704,7 @@ public class Activities extends AbstractImpl {
         );
         process.addTransition(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             processTransition
         );
         // Create SetActualEndAction
@@ -717,7 +717,7 @@ public class Activities extends AbstractImpl {
         );
         processTransition.addAction(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             setActualEndAction
         );
         // Commit
@@ -998,7 +998,6 @@ public class Activities extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment = this.getActivitySegment(
             pm, 
             providerName, 
@@ -1019,7 +1018,7 @@ public class Activities extends AbstractImpl {
         );
         activitySegment.addActivityType(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            this.getUidAsString(),
             activityType
         );    
         pm.currentTransaction().commit();    
@@ -1199,6 +1198,65 @@ public class Activities extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    public static class ActivityReplicationDescr {
+
+    	private final ActivityCreator activityCreator;
+		private final short replicationType;
+		private final String linkName;
+		private final String linkDescription;
+    	
+		public ActivityReplicationDescr(
+    		ActivityCreator activityCreator,
+    		short replicationType,
+    		String linkName,
+    		String linkDescription
+    	) {
+    		this.activityCreator = activityCreator;
+    		this.replicationType = replicationType;
+    		this.linkName = linkName;
+    		this.linkDescription = linkDescription;
+    	}
+
+    	public ActivityCreator getActivityCreator(
+    	) {
+        	return activityCreator;
+        }
+
+    	public short getReplicationType(
+    	) {
+        	return replicationType;
+        }
+
+    	public String getLinkName() {
+        	return linkName;
+        }
+
+		public String getLinkDescription() {
+        	return linkDescription;
+        }
+		
+    }
+    
+    //-------------------------------------------------------------------------
+    /**
+     * {@link #newActivity()} allows to create replica of the newly created 
+     * activity. The replica are created based on the returned replication descriptor.
+     * The replica is created using the creator specified in the replication descriptor.
+     * The replica is then linked to the original with an activity. The returned
+     * link type must be ACTIVITY_LINK_TYPE_IS_REPLICA_OF or 
+     * ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED, otherwise the replication descriptor
+     * is ignored.
+     * 
+     * By the default the method returns an empty list. It is supposed to be
+     * overridden by a custom-specific extension.
+     */
+    public List<ActivityReplicationDescr> getActivityReplicationDescriptors(
+    	ActivityCreator source
+    ) {
+    	return Collections.emptyList();
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * Creates a new activity and links the tracker with this new activity.
      */
@@ -1215,6 +1273,7 @@ public class Activities extends AbstractImpl {
         Contact reportingContact
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activityCreator);    	
+    	// Create activity
     	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
     		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
     			activityCreator.refGetPath().getParent().getParent()
@@ -1327,6 +1386,56 @@ public class Activities extends AbstractImpl {
                 this.updateIcal(
                     newActivity
                 );
+            	// Create replicas
+            	List<ActivityReplicationDescr> replicationDescrs = this.getActivityReplicationDescriptors(activityCreator);
+            	for(ActivityReplicationDescr replicationDescr: replicationDescrs) {
+            		short replicationType = replicationDescr.getReplicationType();
+            		if(
+            			replicationType == ACTIVITY_LINK_TYPE_IS_REPLICA_OF ||
+            			replicationType == ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED
+            		) {
+        	    		Activity replica = replicationType == ACTIVITY_LINK_TYPE_IS_REPLICA_OF ?
+    		    			this.newActivity(
+    		    				replicationDescr.getActivityCreator(), 
+    		    				name, 
+    		    				description, 
+    		    				detailedDescription, 
+    		    				suppliedScheduledStart, 
+    		    				suppliedScheduledEnd, 
+    		    				suppliedDueBy, 
+    		    				suppliedPriority, 
+    		    				suppliedIcalType, 
+    		    				reportingContact
+    		    			) :
+    			    			this.newActivity(
+    			    				replicationDescr.getActivityCreator(), 
+    			    				replicationDescr.getLinkName(), 
+    			    				replicationDescr.getLinkDescription(), 
+    			    				null, // detailedDescription, 
+    			    				suppliedScheduledStart, 
+    			    				suppliedScheduledEnd, 
+    			    				suppliedDueBy, 
+    			    				suppliedPriority, 
+    			    				suppliedIcalType, 
+    			    				reportingContact
+    			    			);			    		
+	                	ActivityLinkTo linkTo = pm.newInstance(ActivityLinkTo.class);
+	                	linkTo.refInitialize(false, false);
+	                	linkTo.setName(replicationDescr.getLinkName());
+	                	linkTo.setDescription(replicationDescr.getLinkDescription());
+	                	linkTo.setActivityLinkType(replicationDescr.getReplicationType());
+	                	linkTo.setLinkTo(newActivity);
+	                	replica.addActivityLinkTo(
+	                		this.getUidAsString(),
+	                		linkTo
+	                	);
+	                	this.replicateActivity(
+	                		newActivity, 
+	                		replica, 
+	                		linkTo
+	                	);
+                	}
+                }
                 return newActivity;
             }
             catch(ServiceException e) {
@@ -2021,9 +2130,39 @@ public class Activities extends AbstractImpl {
     }
         
     //-------------------------------------------------------------------------
+    public void replicateActivity(
+    	Activity activity,
+    	Activity replica,
+    	ActivityLinkTo linkTo
+    ) {
+    	// Original
+    	if(linkTo.getActivityLinkType() == ACTIVITY_LINK_TYPE_IS_REPLICA_OF) {
+    		replica.setName(activity.getName());
+    		replica.setDescription(activity.getDescription());
+    		replica.setDetailedDescription(activity.getDetailedDescription());
+    		replica.setMisc1(activity.getMisc1());
+    		replica.setMisc2(activity.getMisc2());
+    		replica.setMisc3(activity.getMisc3());
+    		replica.setLocation(activity.getLocation());
+    	}
+    	// Obfuscate
+    	else if(linkTo.getActivityLinkType() == ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED) {
+    		replica.setName(linkTo.getName());
+    		replica.setDescription(linkTo.getDescription());        		
+    	}
+		replica.setScheduledStart(activity.getScheduledStart());
+		replica.setScheduledEnd(activity.getScheduledEnd());
+		replica.setActualStart(activity.getActualStart());
+		replica.setActualEnd(activity.getActualEnd());
+		replica.setDueBy(activity.getDueBy());
+		replica.setPriority(activity.getPriority());    	
+    }
+    
+    //-------------------------------------------------------------------------
     public void updateActivity(
         Activity activity
     ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
         if(!JDOHelper.isPersistent(activity) && JDOHelper.isNew(activity)) {
             if((activity.getDueBy() == null)) {
             	try {
@@ -2076,8 +2215,25 @@ public class Activities extends AbstractImpl {
         	);
         	SysLog.detail(e.getMessage(), e.getCause());
         }
+        // Update replicas
+        ActivityLinkFromQuery activityLinkFromQuery = (ActivityLinkFromQuery)pm.newQuery(ActivityLinkFrom.class);
+        activityLinkFromQuery.activityLinkType().elementOf(
+        	Arrays.asList(
+        		ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF, 
+        		ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF_OBFUSCATED
+        	)
+        );
+        Collection<ActivityLinkFrom> linksFrom = activity.getActivityLinkFrom(activityLinkFromQuery);
+        for(ActivityLinkFrom linkFrom: linksFrom) {
+        	Activity replica = linkFrom.getLinkFrom();
+        	this.replicateActivity(
+        		activity, 
+        		replica, 
+        		linkFrom.getLinkTo()
+        	);
+        }
     }
-        
+
     //-------------------------------------------------------------------------
     public ResourceAssignment createResourceAssignment(
         Activity activity,
@@ -3132,6 +3288,19 @@ public class Activities extends AbstractImpl {
     }
     
     //-------------------------------------------------------------------------
+    protected String getOriginalMessageName1(
+    ) {
+        return ORIGINAL_MESSAGE_MEDIA_NAME + ".eml.zip";    	
+    }
+    
+    //-------------------------------------------------------------------------
+    protected String getOriginalMessageName2(
+    	Activity email
+    ) {
+        return email.getActivityNumber().trim() + ".eml.zip";    	
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * Maps email activity to message. If email activity has a media attachment
      * which contains the original MimeMessage the stream of this message is
@@ -3141,7 +3310,8 @@ public class Activities extends AbstractImpl {
         EMail email,
         Message message
     ) throws MessagingException {
-        String originalMessageMediaName = email.getActivityNumber().trim() + ".eml.zip";
+    	String originalMessageMediaName1 = this.getOriginalMessageName1();
+        String originalMessageMediaName2 = this.getOriginalMessageName2(email);
         InputStream originalMessageStream = null;
         Multipart multipart = new MimeMultipart();
         MimeBodyPart messageBodyPart = new MimeBodyPart();
@@ -3180,7 +3350,10 @@ public class Activities extends AbstractImpl {
                     mediaContent.close();
                     // Test whether media is zipped original mail. 
                     // If yes return as original message
-                    if(originalMessageMediaName.equals(media.getContentName())) {
+                    if(
+                    	originalMessageMediaName1.equals(media.getContentName()) || 
+                    	originalMessageMediaName2.equals(media.getContentName())
+                    ) {
                         ZipInputStream zippedMessageStream = new ZipInputStream(mediaContent.toInputStream());
                         zippedMessageStream.getNextEntry();
                         originalMessageStream = zippedMessageStream;
@@ -3522,7 +3695,6 @@ public class Activities extends AbstractImpl {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
     	String providerName = email.refGetPath().get(2);
     	String segmentName = email.refGetPath().get(4);
-    	boolean isTxLocal = !pm.currentTransaction().isActive();
         MailDateFormat mailDateFormat = new MailDateFormat();
         javax.mail.Address[] addressesFrom = mimeMessage.getFrom();
         javax.mail.Address[] addressesTo = mimeMessage.getRecipients(Message.RecipientType.TO);
@@ -3530,9 +3702,6 @@ public class Activities extends AbstractImpl {
         javax.mail.Address[] addressesBcc = mimeMessage.getRecipients(Message.RecipientType.BCC);        
     	if(isNew) {
             // Update activity step 1
-    		if(isTxLocal) {
-    			pm.currentTransaction().begin();
-    		}
             String subject = mimeMessage.getSubject();
             email.setMessageSubject(
                 subject == null ? "" : subject
@@ -3558,12 +3727,9 @@ public class Activities extends AbstractImpl {
                 	}
                 }
             }
-            if(isTxLocal) {
-            	pm.currentTransaction().commit();
-            }
             // Update activity step 2
             // Append original email as media attachment
-            String mimeMessageName = email.getActivityNumber().trim() + ".eml";
+            String mimeMessageName = this.getOriginalMessageName1();
             QuotaByteArrayOutputStream mimeMessageBytes = new QuotaByteArrayOutputStream(Activities.class.getName());
             ZipOutputStream mimeMessageZipped = new ZipOutputStream(mimeMessageBytes);
             mimeMessageZipped.putNextEntry(
@@ -3571,34 +3737,22 @@ public class Activities extends AbstractImpl {
             );
             mimeMessage.writeTo(mimeMessageZipped);
             mimeMessageZipped.close();
-            if(isTxLocal) {
-            	pm.currentTransaction().begin();
-            }
             this.createOrUpdateMedia(
                 email, 
                 "application/zip", 
-                mimeMessageName + ".zip", 
+                mimeMessageName, 
                 mimeMessageBytes.toInputStream()
             );
-            if(isTxLocal) {
-            	pm.currentTransaction().commit();
-            }
             // Update activity step 3
-            if(isTxLocal) {
-            	pm.currentTransaction().begin();
-            }
             String body = this.getMessageBody(mimeMessage);
             email.setMessageBody(
                 body == null ? "" : body
             );
             String[] date = mimeMessage.getHeader("Date");
-            if(date.length > 0) {
+            if(date != null && date.length > 0) {
                 email.setSendDate(
                     mailDateFormat.parse(date[0])
                 );
-            }
-            if(isTxLocal) {
-            	pm.currentTransaction().commit();
             }
             // Add originator and recipients to a note
             this.addNote(
@@ -3692,14 +3846,7 @@ public class Activities extends AbstractImpl {
         EMailAddress from = null;
         if(!addresses.isEmpty()) {
             from = addresses.iterator().next();
-            if(isTxLocal) {
-            	pm.currentTransaction().begin();
-                pm.refresh(email);
-            }
             email.setSender(from);
-            if(isTxLocal) {
-            	pm.currentTransaction().commit();
-            }
         } 
         Activities.getInstance().mapAddressesToEMailRecipients(
             email,
@@ -3870,9 +4017,7 @@ public class Activities extends AbstractImpl {
 	            NewActivityResult newActivityResult = emailCreator.newActivity(
 	                newActivityParams
 	            );
-	            pm.currentTransaction().commit();                  
-	            email = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
-		        pm.currentTransaction().begin();
+	            email = (EMail)newActivityResult.getActivity();
 		        this.importMimeMessage(
 		        	email, 
 		        	message, 
@@ -4169,7 +4314,14 @@ public class Activities extends AbstractImpl {
     public static final String UNSPECIFIED_ADDRESS = "NO_ADDRESS_SPECIFIED";
 
 	public static final String PRIVATE_GROUP_SUFFIX = "~Private";
-    
+
+	public static final short ACTIVITY_LINK_TYPE_IS_REPLICA_OF = 7;
+	public static final short ACTIVITY_LINK_TYPE_IS_REPLICA_OF_OBFUSCATED = 8;
+	public static final short ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF = 93;
+	public static final short ACTIVITY_LINK_TYPE_IS_ORIGINAL_OF_OBFUSCATED = 92;
+	
+	public static final String ORIGINAL_MESSAGE_MEDIA_NAME = "ORIGINAL";
+	
 	private static final SimpleDateFormat DATEFORMAT_MESSAGE_HEADER = (SimpleDateFormat)SimpleDateFormat.getDateTimeInstance(
 		java.text.DateFormat.SHORT, 
 		java.text.DateFormat.SHORT, 

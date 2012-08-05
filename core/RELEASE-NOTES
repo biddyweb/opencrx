@@ -1,12 +1,12 @@
-Release Name: openCRX/Core 2.8.0
-Release Date: 2010-12-27
+Release Name: openCRX/Core 2.8.5
+Release Date: 2011-05-04
 
 ---------------------------------------------------------------------
 Notes:
 This software is published under the BSD license
 as listed below.
 
-Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+Copyright (c) 2004-2011, CRIXP Corp., Switzerland
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -51,6 +51,9 @@ openMDX (http://www.openmdx.org/)
 ---------------------------------------------------------------------
 
 0.    SUMMARY
+      * PrestaShop adapter
+      * Automatic activity replication
+      * GUI workspaces
       * WebDAV support
       * CardDAV support
       * Improved CalDAV support
@@ -63,6 +66,190 @@ openMDX (http://www.openmdx.org/)
       * Clean up
             
       For more information see below and http://www.opencrx.org/opencrx/2.8/new.htm
+
+==============================================================================
+Version 2.8.5                                                       2011-05-04
+==============================================================================
+
+1.    NEW FEATURES
+
+      CR10009791
+      Workspaces. Left-pane added which hosts workspace-level dashboard. The
+      workspace-level dashboard works like the (horizontal) object-level dashboard:
+      * dashlets can be added removed by admin or user
+      * dashlets can be shared by admin by prefixing the label with a *
+      Workspaces can be managed by the segment admin only.      
+      
+      CR10009913 
+      UserHomes.initUserHome(). Add a backend method which allows to 
+      initialize a user's home. The method can be overriden and extended by a 
+      custom-specific subclass.
+      
+      CR10009876
+      Activity replication. Activity replication is supported as follows:
+      * Activities linked with the link type 'is replica of' or 'is replica of
+        (obfuscated)' are updated when the original activity is modified. 
+        The method Activities.replicateActivity() allows to control the
+        replication at attribute-level. By default, the attributes are
+        replicated as follows:
+        * In case activityLinkType is 'is replica of':
+          - name
+          - description
+          - detailedDescription
+          - misc1
+          - misc2
+          - misc3
+          - location
+          - scheduledStart
+          - scheduledEnd
+          - actualStart
+          - actualEnd
+          - dueBy
+          - priority
+        * In case activityLink type is 'is replica of (obfuscated):
+          - name (from activityLink.name)
+          - description (from activityLink.description)
+          - scheduledStart
+          - scheduledEnd
+          - actualStart
+          - actualEnd
+          - dueBy
+          - priority
+      * Upon creation of new activities the creation of replica can be
+        controlled with the method Activities.getActivityReplicationDescrs().
+        E.g. a custom-specific extension of getActivityReplicationDescrs() can
+        replicate activities created with the creator 'guest~Home~Meetings' with
+        the creator 'guest~Private~Meetings' and obfuscate the replica.
+                      
+      CR10009836
+      UserSettings: Create UserHome > UserProfile > default document profile. 
+
+      CR10009478
+      PrestaShop integration. The PrestashopSynchronizer integrates PrestaShop
+      (http://www.prestashop.com/). PrestaShop is a PHP-based application. This
+      first version of the adapter imports data from PrestaShop to openCRX. The
+      following business objects are imported:
+
+      PrestaShop                 openCRX
+      ----------------------------------------------
+      Customer                   Account, Address
+      Orders                     Sales orders, Invoices
+      Products, Prices, Taxes    Products, Prices, Sales Taxes
+
+      The PrestashopSynchronizer is implemented as Workflow which directly accesses
+      the PrestaShop database. It periodically queries the PrestaShop database for 
+      new and updated data.
+
+      The PrestashopSynchronizer allows to map up to 10 shops to one openCRX
+      segment. All imported data is qualified with the shop name to prevent
+      conflicts.
+
+      The PrestashopSynchronizer is configured as follows:
+
+      1. JDBC Resource      
+      ================
+      For each PrestaShop a JDBC resource entry must be added to web.xml of the
+      opencrx-core-CRX.war and openejb.xml. Here is an example:
+      
+      openejb.xml
+      -----------
+      <!-- PrestaShop -->
+      <Resource id="jdbc_PrestaShop" type="DataSource">
+        JdbcDriver com.mysql.jdbc.Driver
+        JdbcUrl jdbc:mysql://127.0.0.1:3306/prestashop
+        UserName root
+        Password manager99
+        JtaManaged true
+      </Resource>
+      
+      web.xml of opencrx-core-CRX.war
+      -------------------------------
+      <resource-ref>
+        <res-ref-name>jdbc_PrestaShop</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+      </resource-ref>
+      
+      2. Configure servlet PrestashopSynchronizer
+      ===========================================
+      Add the servlet PrestashopSynchronizer to the web.xml of opencrx-core-CRX.war:
+      
+      Add init-param to the WorkflowController servlet:      
+      <init-param>
+        <param-name>path[3]</param-name>
+        <param-value>/PrestaShopSynchronizer</param-value>
+      </init-param>
+      
+      Add servlet configuration:
+      <!-- PrestaShopSynchronizer -->
+      <servlet id="PrestaShopSynchronizer">
+        <servlet-name>PrestaShopSynchronizer</servlet-name>
+        <servlet-class>org.opencrx.application.shop.prestashop.PrestaShopSynchronizer</servlet-class>
+        <init-param>
+          <param-name>providerName</param-name>
+          <param-value>provider/CRX</param-value>
+        </init-param>
+      </servlet>
+      
+      Add servlet mapping:
+      <servlet-mapping>
+        <servlet-name>PrestaShopSynchronizer</servlet-name>
+        <url-pattern>/PrestaShopSynchronizer/*</url-pattern>
+      </servlet-mapping>      
+
+      3. Component Configuration
+      ==========================
+      As admin-Root add the following component configuration for PrestashopSynchronizer:
+      
+      PrestaShopSynchronizer
+        String property name                Value
+        CRX.Standard.runAs[0]               prestashop-test1
+        CRX.Standard.emailUnique[0]	        false
+        CRX.Standard.shopName[0]	 	    Test1	 	  	  	 	 	 	
+        CRX.Standard.jdbcResourceName[0]    jdbc_PrestaShop
+        CRX.Standard.tablePrefix[0]         ps_	 	  	  	 	 	 	
+        CRX.Standard.syncKey[0]	 	        0	       
+      
+      Set the initial value of the sync key to 0. This imports all data from PrestaShop.
+      After the initial sync only new and updated data is imported. You can force a 
+      full-import by setting sync key to 0.
+      
+      runAs must be a valid openCRX user for the segment. All operations are performed
+      as this user.
+      
+      4. Database
+      ===========
+      Amend the openCRX database configuration as follows:
+      
+      Create the following sequence. This makes the column alias_name an autonum column:
+      
+      CREATE SEQUENCE OOCKE1_alias_name_seq
+        START WITH 1000000
+        INCREMENT BY 1;
+      
+      INSERT INTO prefs_Preference 
+          (object_rid, object_oid, object_idx, string_value) 
+      VALUES(
+          'preference/OOCKE1', 'PERSISTENCE:autonumColumn', 002, 'OOCKE1_ACCOUNT.alias_name AS CHAR(20)'
+      ) ; 
+
+      Make sure that the columns OOCKE1_PRODUCT.description and detailed_description are
+      of type text. Product descriptions in PrestaShop are also defined as text.
+      
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10009959
+      Import E-Mails. Import E-Mails in one UOW (legacy from v1 plug-ins).
+            
+
+2.1.  FIXED BUGS
+      none
+ 
+2.2   REMOVED FEATURES
+      none
 
 ==============================================================================
 Version 2.8.0                                                       2010-12-27

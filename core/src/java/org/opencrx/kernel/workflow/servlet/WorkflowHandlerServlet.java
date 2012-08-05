@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.42 2010/03/25 10:09:36 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.43 2011/01/23 22:16:15 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.42 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/25 10:09:36 $
+ * Date:        $Date: 2011/01/23 22:16:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -104,7 +104,7 @@ public class WorkflowHandlerServlet
         super.init(config);
         // data connection
         try {
-            this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
+            this.pmf = Utils.getPersistenceManagerFactory();
         }
         catch(Exception e) {
             throw new ServletException("Can not get connection to data provider", e);
@@ -235,7 +235,7 @@ public class WorkflowHandlerServlet
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
         SysLog.detail(WORKFLOW_NAME + " " + providerName + "/" + segmentName);        
         try {
-            PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
+            PersistenceManager pm = this.pmf.getPersistenceManager(
                 "admin-" + segmentName,
                 UUIDs.getGenerator().next().toString()
             );
@@ -361,9 +361,9 @@ public class WorkflowHandlerServlet
             String providerName = req.getParameter("provider");
             String id = providerName + "/" + segmentName;
             if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
-            	if(!this.runningSegments.containsKey(id)) {
+            	if(!runningSegments.containsKey(id)) {
             		try {
-	                    this.runningSegments.put(
+	                    runningSegments.put(
 	                    	id,
 	                    	Thread.currentThread()
 	                    );
@@ -378,19 +378,19 @@ public class WorkflowHandlerServlet
 	                	SysLog.warning(e.getMessage(), e.getCause());
 	                }
 	                finally {
-	                    this.runningSegments.remove(id);
+	                    runningSegments.remove(id);
 	                }
             	}
             	else if(
-            		!this.runningSegments.get(id).isAlive() || 
-            		this.runningSegments.get(id).isInterrupted()
+            		!runningSegments.get(id).isAlive() || 
+            		runningSegments.get(id).isInterrupted()
             	) {
-	            	Thread t = this.runningSegments.get(id);
+	            	Thread t = runningSegments.get(id);
             		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
             	}            	
             }
             else {
-            	SysLog.warning(WORKFLOW_NAME + " " + providerName + "/" + segmentName + ". Ignoring command. Running segments are", this.runningSegments);                
+            	SysLog.warning(WORKFLOW_NAME + " " + providerName + "/" + segmentName + ". Ignoring command. Running segments are", runningSegments);                
             }
         }
     }
@@ -429,9 +429,9 @@ public class WorkflowHandlerServlet
     private static final String WORKFLOW_NAME = "WorkflowHandler";
     private static final String COMMAND_EXECUTE = "/execute";
     private static final long MAX_RETRY_DELAY_MILLIS = 604800000L; // 7 days
+    private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
     
-    private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
+    private PersistenceManagerFactory pmf = null;
     private long startedAt = System.currentTimeMillis();
 }
 

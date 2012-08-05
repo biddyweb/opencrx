@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AbstractTestShopService.java,v 1.20 2010/03/30 22:21:19 wfro Exp $
+ * Name:        $Id: AbstractTestShopService.java,v 1.21 2011/01/04 23:50:44 wfro Exp $
  * Description: AbstractTestShopService
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/30 22:21:19 $
+ * Date:        $Date: 2011/01/04 23:50:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1541,7 +1541,7 @@ public abstract class AbstractTestShopService {
                 emailAddressHome
             ),
             Datatypes.member(
-            	CreateCustomerAsContactParams.Member.emailAddressHome,
+            	CreateCustomerAsContactParams.Member.emailAddressBusiness,
                 emailAddressBusiness
             )
         );

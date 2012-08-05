@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WebDavStore.java,v 1.10 2010/12/15 12:29:01 wfro Exp $
+ * Name:        $Id: WebDavStore.java,v 1.11 2011/03/01 22:34:09 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 12:29:01 $
+ * Date:        $Date: 2011/03/01 22:34:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -318,40 +318,74 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	@Override
     public MoveResourceStatus moveResource(
     	RequestContext requestContext, 
-    	Resource res, 
+    	Resource sourceRes, 
     	String sourcePath,
     	String destinationPath
     ) {
-		int posSource = sourcePath.lastIndexOf("/");
-		int posDestination = destinationPath.lastIndexOf("/");
-		String sourcePrefix = sourcePath.substring(0, posSource);
-		String destinationPrefix = destinationPath.substring(0, posDestination);
-		if(sourcePrefix.equals(destinationPrefix)) {
-			PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();
-			String newName = destinationPath.substring(posDestination + 1);
-			if(res instanceof DocumentCollectionResource) {
-				DocumentFolder folder = ((DocumentCollectionResource)res).getObject();
-				pm.currentTransaction().begin();
-				folder.setName(newName);
-				pm.currentTransaction().commit();
-			} else if(res instanceof DocumentResource) {
-				Document document = ((DocumentResource)res).getObject();
-				pm.currentTransaction().begin();
-				document.setName(newName);
-				document.setTitle(newName);
-				Collection<DocumentRevision> revisions = document.getRevision();
-				for(DocumentRevision revision: revisions) {
-					revision.setName(newName);
-					if(revision instanceof MediaContent) {
-						((MediaContent)revision).setContentName(newName);
+        Resource destRes = this.getResourceByPath(requestContext, destinationPath);
+        // Destination does not exist
+        if(destRes == null) {
+			int posSource = sourcePath.lastIndexOf("/");
+			int posDestination = destinationPath.lastIndexOf("/");
+			String sourcePrefix = sourcePath.substring(0, posSource);
+			String destinationPrefix = destinationPath.substring(0, posDestination);
+			// Rename
+			if(sourcePrefix.equals(destinationPrefix)) {
+				PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();
+				String newName = destinationPath.substring(posDestination + 1);
+				if(sourceRes instanceof DocumentCollectionResource) {
+					DocumentFolder folder = ((DocumentCollectionResource)sourceRes).getObject();
+					pm.currentTransaction().begin();
+					folder.setName(newName);
+					pm.currentTransaction().commit();
+				} else if(sourceRes instanceof DocumentResource) {
+					Document document = ((DocumentResource)sourceRes).getObject();
+					pm.currentTransaction().begin();
+					document.setName(newName);
+					document.setTitle(newName);
+					Collection<DocumentRevision> revisions = document.getRevision();
+					for(DocumentRevision revision: revisions) {
+						revision.setName(newName);
+						if(revision instanceof MediaContent) {
+							((MediaContent)revision).setContentName(newName);
+						}
 					}
+					pm.currentTransaction().commit();
 				}
-				pm.currentTransaction().commit();
+				return MoveResourceStatus.CREATED;
+			} else {
+				throw new WebdavException("Move only supportes rename of resources. source=>" + sourcePrefix + "< destination=>" + destinationPrefix + "<");
 			}
-			return MoveResourceStatus.CREATED;
-		} else {
-			throw new WebdavException("Move only supportes rename of resources. source=>" + sourcePrefix + "< destination=>" + destinationPrefix + "<");
-		}
+        }
+        // Destination exists. Overwrite destination with 
+        // content of source and remove source
+        else {
+        	try {
+	        	this.putResource(
+	        		requestContext, 
+	        		destinationPath, 
+	        		// Put content of source
+	        		this.getResourceContent(
+	            		requestContext, 
+	            		sourceRes
+	            	).getContent(),
+	            	// keep mimeType of destination
+	        		this.getMimeType(
+	        			destRes
+	        		)
+	        	);
+        	} catch(Exception e) {
+				throw new WebdavException("Unable to put source content of to destination. source=>" + sourcePath + "< destination=>" + destinationPath + "<");        		
+        	}
+        	if(sourceRes instanceof DocumentResource) {
+        		PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();        		
+    			Document document = ((DocumentResource)sourceRes).getObject();
+    			pm.currentTransaction().begin();
+    			pm.deletePersistent(document);
+    			pm.currentTransaction().commit();
+        	}
+        	return MoveResourceStatus.MOVED;
+        }
     }
 	
 	//-----------------------------------------------------------------------

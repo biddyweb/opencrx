@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Documents.java,v 1.5 2010/11/16 14:02:24 wfro Exp $
+ * Name:        $Id: Documents.java,v 1.6 2011/03/28 21:24:33 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/16 14:02:24 $
+ * Date:        $Date: 2011/03/28 21:24:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,6 +66,7 @@ import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 
 public class Documents extends AbstractImpl {
 
@@ -86,7 +87,18 @@ public class Documents extends AbstractImpl {
 	) {
 		
 	}
-		
+
+	//-------------------------------------------------------------------------
+	public org.opencrx.kernel.document1.jmi1.Segment getDocumentSegment(
+		PersistenceManager pm,
+		String providerName,
+		String segmentName
+	) throws ServiceException {
+		return (org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
+			new Path("xri://@openmdx*org.opencrx.kernel.document1").getDescendant("provider", providerName, "segment", segmentName)
+		);
+	}
+	
 	//-------------------------------------------------------------------------
 	public org.opencrx.kernel.document1.jmi1.DocumentFolder findDocumentFolder(
 		String documentFolderName,

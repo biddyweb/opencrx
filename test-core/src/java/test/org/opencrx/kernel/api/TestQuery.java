@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestQuery.java,v 1.12 2010/08/23 16:27:38 wfro Exp $
+ * Name:        $Id: TestQuery.java,v 1.17 2011/05/04 13:58:28 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/23 16:27:38 $
+ * Date:        $Date: 2011/05/04 13:58:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,13 +73,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.opencrx.kernel.account1.cci2.AbstractGroupQuery;
+import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
+import org.opencrx.kernel.activity1.cci2.MeetingQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.contract1.cci2.SalesOrderPositionQuery;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.product1.cci2.AccountAssignmentProductQuery;
+import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.AccountAssignmentProduct;
+import org.opencrx.kernel.product1.jmi1.Product;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
@@ -106,7 +112,7 @@ public class TestQuery {
         if(!NamingManager.hasInitialContextFactoryBuilder()) {
             NonManagedInitialContextFactoryBuilder.install(null);
         }
-        entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
+        emf = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
     }
     
     //-----------------------------------------------------------------------
@@ -114,7 +120,7 @@ public class TestQuery {
     	
 		public TestAll(
 		) {
-			super(TestQuery.entityManagerFactory);
+			super(TestQuery.emf);
 		}
 	
         @Test
@@ -122,10 +128,11 @@ public class TestQuery {
         ) throws ServiceException, IOException, ParseException{
             this.testSimpleCciQueries();
             this.testQueryFilters();
-            this.testNestedCciQueries();
+            this.testNestedQueries();
             this.testExtent();
             this.testAccountAssignmentsQuery();  
             this.testMultivaluedReferences();
+            this.testOwner();
         }
 		
 	    protected void testSimpleCciQueries(
@@ -133,7 +140,7 @@ public class TestQuery {
 	        try {
 	        	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
 	        		(org.opencrx.kernel.account1.jmi1.Segment)this.pm.getObjectById(
-		        		new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+		        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName)
 		        	);
 	        	System.out.println("account segment=" + accountSegment);
 	        } finally {
@@ -145,7 +152,7 @@ public class TestQuery {
 	        try {
 	        	org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
 	        		(org.opencrx.kernel.contract1.jmi1.Segment)this.pm.getObjectById(
-		        		new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName)
+		        		new Path("xri://@openmdx*org.opencrx.kernel.contract1").getDescendant("provider", providerName, "segment", segmentName)
 		        	);
 	        	System.out.println("contract segment=" + contractSegment);
 	        	org.opencrx.kernel.contract1.cci2.SalesOrderQuery salesOrderQuery = 
@@ -177,19 +184,27 @@ public class TestQuery {
 	        }
 	    }
 	    
-	    protected void testNestedCciQueries(
+	    protected void testNestedQueries(
 	    ) throws ServiceException{
 	        try {
 	        	org.opencrx.kernel.contract1.jmi1.Segment contractSegment =
 	        		(org.opencrx.kernel.contract1.jmi1.Segment)this.pm.getObjectById(
-		        		new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName)
+		        		new Path("xri://@openmdx*org.opencrx.kernel.contract1").getDescendant("provider", providerName, "segment", segmentName)
 		        	);
 	        	System.out.println("contract segment=" + contractSegment);
 	        	org.opencrx.kernel.product1.jmi1.Segment productSegment =
 	        		(org.opencrx.kernel.product1.jmi1.Segment)this.pm.getObjectById(
-		        		new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName)
+			        	new Path("xri://@openmdx*org.opencrx.kernel.product1").getDescendant("provider", providerName, "segment", segmentName)
 		        	);
 	        	System.out.println("product segment=" + productSegment);
+		    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
+		    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+		        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName)
+		    		);	        	
+		    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
+		    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+		        		new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
+		    		);
 	        	// Test 1
 	        	org.opencrx.kernel.contract1.cci2.SalesOrderQuery salesOrderQuery = 
 	        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
@@ -209,7 +224,7 @@ public class TestQuery {
 	        	assertTrue(salesOrderQuery.toString(), !salesOrders.isEmpty());
 	        	// Test 3
 	        	org.opencrx.kernel.home1.jmi1.UserHome guest = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
-	        		new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/guest")
+	        		new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", "guest")
 	        	);
 	        	assertNotNull("UserHome guest", guest);
 	        	org.opencrx.kernel.product1.cci2.ProductQuery productQuery = (org.opencrx.kernel.product1.cci2.ProductQuery)this.pm.newQuery(
@@ -217,7 +232,25 @@ public class TestQuery {
 	        	);
 	        	productQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(guest.getContact());
 	        	List<org.opencrx.kernel.product1.jmi1.Product> products = productSegment.getProduct(productQuery);
-	        	assertTrue(productQuery.toString(), !products.isEmpty());	        	
+	        	assertTrue(productQuery.toString(), !products.isEmpty());	     
+	        	// Test 4
+	        	AbstractGroupQuery groupQuery = (AbstractGroupQuery)this.pm.newQuery(AbstractGroup.class);
+	        	List<AbstractGroup> groups = accountSegment.getAccount(groupQuery);
+	        	int ni = 0;
+	        	for(AbstractGroup group: groups) {
+		        	MeetingQuery meetingQuery = (MeetingQuery)this.pm.newQuery(Meeting.class);	        	
+		        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
+		        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().distance().equalTo(-1);
+		        	List<Meeting> meetings = activitySegment.getActivity(meetingQuery);
+		        	int nj = 0;
+		        	for(Meeting meeting: meetings) {
+		        		System.out.println("Meeting " + meeting.getActivityNumber() + " has party where account is member of group " + group.getName());
+		        		nj++;
+		        		if(nj > 50) break;
+		        	}
+		        	ni++;
+		        	if(ni > 500) break;
+	        	}		       
 	        } finally {
 	        }
 	    }
@@ -226,7 +259,7 @@ public class TestQuery {
 	    ) {
             org.opencrx.kernel.contract1.jmi1.Segment contractSegment = 
             	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
-            		new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName)
+	        		new Path("xri://@openmdx*org.opencrx.kernel.contract1").getDescendant("provider", providerName, "segment", segmentName)
             	);
             SalesOrderPositionQuery salesOrderPositionQuery = (SalesOrderPositionQuery)pm.newQuery(SalesOrderPosition.class);
             salesOrderPositionQuery.identity().like(
@@ -247,11 +280,11 @@ public class TestQuery {
 	    ) {	    	
 	    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
 	    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-	    				new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+	        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName)
 	    		);
 	    	org.opencrx.kernel.product1.jmi1.Segment productSegment = 
 	    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
-	    				new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName)
+	        		new Path("xri://@openmdx*org.opencrx.kernel.product1").getDescendant("provider", providerName, "segment", segmentName)
 	    		);
 	    	int count = 0;
 	    	Collection<Account> accounts = accountSegment.getAccount();
@@ -279,13 +312,29 @@ public class TestQuery {
 	    		count++;
 	    		if(count > 50) break;
 	    	}
+	    	// Products with specific account assignment
+	    	if(!accounts.isEmpty()) {
+		    	Account account = accounts.iterator().next();
+		    	ProductQuery productQuery = (ProductQuery)this.pm.newQuery(Product.class);
+	    		Date since = new Date(System.currentTimeMillis() - (10L * 86400L * 1000L));
+	    		productQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(account);
+	    		productQuery.thereExistsAssignedAccount().thereExistsValidFrom().greaterThan(since);
+	    		productQuery.thereExistsAssignedAccount().accountRole().greaterThanOrEqualTo((short)2);
+	    		List<Product> products = productSegment.getProduct(productQuery);
+	    		count = 0;
+	    		for(Product product: products) {
+	    			System.out.println("Product=" + product.getProductNumber());
+		    		count++;
+		    		if(count > 50) break;
+	    		}
+	    	}
 	    }
 	    
 	    protected void testMultivaluedReferences(
 	    ) {
 	    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
 	    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-	    				new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+	        		new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
 	    		);	    	
 	    	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
 	    	query.contract().isEmpty();
@@ -296,13 +345,30 @@ public class TestQuery {
 	    	activities = activitySegment.getActivity(query);
 	    	System.out.println("Exists activities where contract().isNonEmpty() is " + !activities.isEmpty());	    	
 	    }
-	    
+	    	
+	    protected void testOwner(
+	    ) {
+	    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
+	    		(org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+	        		new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
+	    		);
+	    	String groupName = "Users";
+	    	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
+	    	query.thereExistsOwner().elementOf(segmentName + ":" + groupName);
+	    	List<Activity> activities = activitySegment.getActivity(query);
+	    	int count = 0;
+	    	for(Activity activity: activities) {
+	    		System.out.println("Activity=" + activity.getActivityNumber());
+	    		count++;
+	    		if(count > 50) break;
+	    	}
+	    }
     }
     
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static PersistenceManagerFactory entityManagerFactory = null;
+    protected static PersistenceManagerFactory emf = null;
 	protected static String providerName = "CRX";
 	protected static String segmentName = "Standard";
 		    

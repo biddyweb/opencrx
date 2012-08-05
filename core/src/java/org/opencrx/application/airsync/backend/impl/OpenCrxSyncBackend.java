@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSyncBackend.java,v 1.43 2010/11/23 12:25:14 wfro Exp $
+ * Name:        $Id: OpenCrxSyncBackend.java,v 1.45 2011/03/04 16:28:56 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.43 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/23 12:25:14 $
+ * Date:        $Date: 2011/03/04 16:28:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -69,6 +69,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -880,7 +882,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
     ) throws ServiceException {
 		PersistenceManager pm = this.newPersistenceManager(requestContext);
 		String newSyncKey = collection.getSyncKey();
-		List<SyncDataItem> changedDataItems = new ArrayList<SyncDataItem>();
+		Map<String,List<SyncDataItem>> changedDataItems = new TreeMap<String,List<SyncDataItem>>();
 		boolean hasMore = false;
 		if(pm != null) {
 			UserHome user = this.getUserHome(pm, requestContext.getUserId());
@@ -938,7 +940,14 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								requestContext
 							);
 							if(!excludes.contains(dataItem.getServerId())) {
-								changedDataItems.add(dataItem);
+								List<SyncDataItem> items = changedDataItems.get(syncKey);
+								if(items == null) {
+									changedDataItems.put(
+										syncKey,
+										items = new ArrayList<SyncDataItem>()
+									);
+								}
+								items.add(dataItem);
 								n++;
 							}
 							newSyncKey = syncKey;
@@ -992,7 +1001,14 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								requestContext
 							);
 							if(!excludes.contains(dataItem.getServerId())) {
-								changedDataItems.add(dataItem);
+								List<SyncDataItem> items = changedDataItems.get(syncKey);
+								if(items == null) {
+									changedDataItems.put(
+										syncKey,
+										items = new ArrayList<SyncDataItem>()
+									);
+								}
+								items.add(dataItem);
 								n++;
 							}
 							newSyncKey = syncKey;
@@ -1042,7 +1058,14 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								requestContext
 							);
 							if(!excludes.contains(dataItem.getServerId())) {
-								changedDataItems.add(dataItem);
+								List<SyncDataItem> items = changedDataItems.get(syncKey);
+								if(items == null) {
+									changedDataItems.put(
+										syncKey,
+										items = new ArrayList<SyncDataItem>()
+									);
+								}
+								items.add(dataItem);
 								changedContacts.add(membership.getAccountTo().refGetPath());
 								n++;
 							}
@@ -1075,7 +1098,14 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								requestContext
 							); 
 							if(!excludes.contains(dataItem.getServerId())) {
-								changedDataItems.add(dataItem);
+								List<SyncDataItem> items = changedDataItems.get(syncKey);
+								if(items == null) {
+									changedDataItems.put(
+										syncKey,
+										items = new ArrayList<SyncDataItem>()
+									);
+								}
+								items.add(dataItem);
 								n++;
 							}
 							newSyncKey = syncKey;
@@ -1127,7 +1157,14 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								requestContext
 							);
 							if(!excludes.contains(dataItem.getServerId())) {
-								changedDataItems.add(dataItem);
+								List<SyncDataItem> items = changedDataItems.get(syncKey);
+								if(items == null) {
+									changedDataItems.put(
+										syncKey,
+										items = new ArrayList<SyncDataItem>()
+									);
+								}
+								items.add(dataItem);
 								changedDocuments.add(document.refGetPath());
 								n++;
 							}
@@ -1760,6 +1797,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 										feed.getName() 
 									);
 									propertiesAsText.close();
+									SysLog.log(Level.FINE, "Storing properties {0} for folder {1}", properties, folder.getName());
 									pm.currentTransaction().begin();
 									feed.setDescription(
 										propertiesAsText.toString("ISO8859-1")

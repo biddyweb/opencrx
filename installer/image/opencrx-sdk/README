@@ -30,7 +30,8 @@ with Eclipse. This generates all required source files.
 
 
 IMPORTANT:
-Make sure to set the environment by running the scripts 
-./setenv.bat on Windows or ./setenv.sh on Linux platforms.
-
+* Make sure to set the environment by running the scripts 
+  ./setenv.bat on Windows or ./setenv.sh on Linux platforms.
+* Check build.log for errors after installation.
+  
 ----

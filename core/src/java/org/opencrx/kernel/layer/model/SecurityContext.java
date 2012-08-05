@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.56 2010/12/13 09:19:35 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.58 2011/03/09 13:19:41 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.56 $
+ * Revision:    $Revision: 1.58 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/13 09:19:35 $
+ * Date:        $Date: 2011/03/09 13:19:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@ package org.opencrx.kernel.layer.model;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +65,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.security.realm1.cci2.PrincipalGroupQuery;
@@ -79,7 +81,7 @@ import org.openmdx.kernel.log.SysLog;
 public class SecurityContext {
     
     //-------------------------------------------------------------------------
-	class CachedPrincipal {
+	public class CachedPrincipal {
 	
 		public CachedPrincipal(
 			org.openmdx.security.realm1.jmi1.Principal principal,
@@ -88,9 +90,22 @@ public class SecurityContext {
 		) {
 			this.principalIdentity = principal.refGetPath();
 			this.isMemberOf = new HashSet<String>();
-			List<org.openmdx.security.realm1.jmi1.Group> groups = principal.getIsMemberOf();
-			for(org.openmdx.security.realm1.jmi1.Group group: groups) {
-				this.isMemberOf.add(group.refGetPath().getBase());
+			List<org.openmdx.security.realm1.jmi1.Group> groups = principal.getIsMemberOf();			
+			for(Iterator<org.openmdx.security.realm1.jmi1.Group> i = groups.iterator(); i.hasNext(); ) {
+				try {
+					org.openmdx.security.realm1.jmi1.Group group = i.next();
+					this.isMemberOf.add(group.refGetPath().getBase());
+				}
+				catch(Exception e) {
+					ServiceException e0 = new ServiceException(
+						e,
+						OpenCrxException.DOMAIN,
+						BasicException.Code.GENERIC,
+						"Unable to principal's group membership",
+						new BasicException.Parameter("principal", principal.refGetPath())
+					);
+					e0.log();
+				}
 			}
 			this.allSupergroups = allSupergroups;
 			this.expiresAt = expiresAt;
@@ -215,12 +230,25 @@ public class SecurityContext {
                 Set<String> allSupergroups = new HashSet<String>();
                 allSupergroups.add(this.plugin.getQualifiedPrincipalName(principal.refGetPath()));
                 List<org.openmdx.security.realm1.jmi1.Group> supergroups = principal.getIsMemberOf();
-                for(org.openmdx.security.realm1.jmi1.Group supergroup: supergroups) {
-                	String qualifiedGroupName = this.plugin.getQualifiedPrincipalName(supergroup.refGetPath());
-                	if(!allSupergroups.contains(qualifiedGroupName)) {
-	                	allSupergroups.addAll(
-	                		this.getPrincipal(qualifiedGroupName).getAllSupergroups()
-	                	);
+                for(Iterator<org.openmdx.security.realm1.jmi1.Group> i = supergroups.iterator(); i.hasNext(); ) {
+                	try {
+                		org.openmdx.security.realm1.jmi1.Group supergroup = i.next();
+	                	String qualifiedGroupName = this.plugin.getQualifiedPrincipalName(supergroup.refGetPath());
+	                	if(!allSupergroups.contains(qualifiedGroupName)) {
+		                	allSupergroups.addAll(
+		                		this.getPrincipal(qualifiedGroupName).getAllSupergroups()
+		                	);
+	                	}
+                	}
+                	catch(Exception e) {
+    					ServiceException e0 = new ServiceException(
+    						e,
+    						OpenCrxException.DOMAIN,
+    						BasicException.Code.GENERIC,
+    						"Unable to principal's group membership",
+    						new BasicException.Parameter("principal", principal.refGetPath())
+    					);
+    					e0.log();
                 	}
                 }
                 this.cachedPrincipals.put(

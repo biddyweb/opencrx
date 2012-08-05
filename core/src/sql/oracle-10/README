@@ -51,7 +51,11 @@
    Avoid Oracle reserved words in column names (e.g. COMMENT, NUMBER etc.)
    * rename column name COMMENT to "COMMENT"
    * rename column name NUMBER to "NUMBER"
-   * Set the type of column OOCKE1_VOTE.description and OOCKE1_CALENDERFEED.description to CLOB   
+   * Set the type of columns 
+     - OOCKE1_VOTE.description
+     - OOCKE1_CALENDERFEED.description
+     - OOCKE1_DESCRIPTION.description
+     to CLOB   
    
 ---
 End of README

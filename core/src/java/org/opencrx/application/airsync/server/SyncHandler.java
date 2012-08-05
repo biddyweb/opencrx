@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncHandler.java,v 1.22 2010/08/24 23:27:44 wfro Exp $
+ * Name:        $Id: SyncHandler.java,v 1.23 2011/02/06 15:09:41 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/24 23:27:44 $
+ * Date:        $Date: 2011/02/06 15:09:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,6 +61,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.opencrx.application.airsync.backend.cci.GetChangedDataItemsResult;
 import org.opencrx.application.airsync.backend.cci.SyncBackend;
@@ -337,6 +338,7 @@ public class SyncHandler extends AbstractServerHandler {
 					int windowSize = collection.getWindowSize() == null ? BATCH_SIZE : collection.getWindowSize();
 					// New items
 					Set<String> excludes = new HashSet<String>();
+					logger.log(Level.FINE, "Get new items for client collection {0} and syncKey {1}", new String[]{collection.getCollectionId(), collection.getSyncKey()});						
 					GetChangedDataItemsResult getNewDataItemsResult = this.backend.getChangedDataItems(
 						requestContext, 
 						profileName, 
@@ -346,34 +348,52 @@ public class SyncHandler extends AbstractServerHandler {
 						SyncDataItem.State.NEW,
 						excludes
 					);
-					newDataItems = getNewDataItemsResult.getDataItems();
-					hasMore = getNewDataItemsResult.hasMore();
-					newSyncKey = getNewDataItemsResult.getSyncKey();
-					for(SyncDataItem dataItem: newDataItems) {
-						excludes.add(dataItem.getServerId());
-					}
-					// Changed items
-					if(!hasMore) {
-						windowSize -= newDataItems.size();
-						if(windowSize > 0) {
-							// Set temporarily to newSyncKey for querying modified items
-							String tmpSyncKey = collection.getSyncKey();
-							collection.setSyncKey(newSyncKey); 
-							GetChangedDataItemsResult getChangedDataItemsResult = this.backend.getChangedDataItems(
-								requestContext, 
-								profileName, 
-								collection,
-								false, // noData
-								windowSize,
-								SyncDataItem.State.MODIFIED,
-								excludes
-							);
-							collection.setSyncKey(tmpSyncKey);
-							changedDataItems = getChangedDataItemsResult.getDataItems();
-							hasMore = getChangedDataItemsResult.hasMore();
-							newSyncKey = getChangedDataItemsResult.getSyncKey();
-						}
-					}
+			    	for(List<SyncDataItem> dataItems: getNewDataItemsResult.getDataItems().values()) {
+				    	for(SyncDataItem dataItem: dataItems) {
+				    		excludes.add(dataItem.getServerId());
+				    	}
+			    	}
+			    	// Changed items
+					logger.log(Level.FINE, "Get changed items for client collection {0} and syncKey {1}", new String[]{collection.getCollectionId(), collection.getSyncKey()});						
+					GetChangedDataItemsResult getChangedDataItemsResult = this.backend.getChangedDataItems(
+						requestContext, 
+						profileName, 
+						collection,
+						false, // noData
+						windowSize,
+						SyncDataItem.State.MODIFIED,
+						excludes
+					);
+			    	newSyncKey = getNewDataItemsResult.getDataItems().isEmpty() ?
+			    		getChangedDataItemsResult.getSyncKey() :
+			    			getChangedDataItemsResult.getDataItems().isEmpty() ?
+			    				getNewDataItemsResult.getSyncKey() :
+			    					getNewDataItemsResult.getSyncKey().compareTo(getChangedDataItemsResult.getSyncKey()) < 0 ?
+			    						getNewDataItemsResult.getSyncKey() :
+			    							getChangedDataItemsResult.getSyncKey();
+			    	hasMore = getNewDataItemsResult.hasMore() || getChangedDataItemsResult.hasMore();
+			    	// Add new items to newDataItems with syncKey < newSyncKey
+			    	for(Map.Entry<String,List<SyncDataItem>> entries: getNewDataItemsResult.getDataItems().entrySet()) {
+			    		if(entries.getKey().compareTo(newSyncKey) <= 0) {
+			    			if(newDataItems == null) {
+			    				newDataItems = new ArrayList<SyncDataItem>();
+			    			}
+			    			newDataItems.addAll(entries.getValue());
+			    		} else {
+			    			hasMore = true;
+			    		}
+			    	}
+			    	// Add changed items to changedDataItems with syncKey < newSyncKey
+			    	for(Map.Entry<String,List<SyncDataItem>> entries: getChangedDataItemsResult.getDataItems().entrySet()) {
+			    		if(entries.getKey().compareTo(newSyncKey) <= 0) {
+			    			if(changedDataItems == null) {
+			    				changedDataItems = new ArrayList<SyncDataItem>();
+			    			}
+			    			changedDataItems.addAll(entries.getValue());
+			    		} else {
+			    			hasMore = true;
+			    		}
+			    	}
 					// Deleted items
 					if(
 						(newDataItems != null && !newDataItems.isEmpty()) || 

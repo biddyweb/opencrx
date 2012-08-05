@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestServerHandlers.java,v 1.19 2010/09/09 07:52:41 wfro Exp $
+ * Name:        $Id: TestServerHandlers.java,v 1.20 2011/02/11 12:34:49 wfro Exp $
  * Description: TestHandlers
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/09 07:52:41 $
+ * Date:        $Date: 2011/02/11 12:34:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,7 +64,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
@@ -204,7 +206,7 @@ public class TestServerHandlers {
 				SyncDataItem.State.MODIFIED,
 				Collections.<String>emptySet()
 			);
-			return getChangedDataItemsResult.getDataItems().iterator().next();
+			return getChangedDataItemsResult.getDataItems().values().iterator().next().get(0);
 		}
 
 		@Override
@@ -226,7 +228,12 @@ public class TestServerHandlers {
 			SyncDataItem.State state,
 			Set<String> excludes
 		) throws ServiceException {
-			List<SyncDataItem> changedDataItems = new ArrayList<SyncDataItem>();
+			Map<String,List<SyncDataItem>> changedDataItems = new TreeMap<String,List<SyncDataItem>>();
+			List<SyncDataItem> dataItems = null;
+			changedDataItems.put(
+				collection.getSyncKey(),
+				dataItems = new ArrayList<SyncDataItem>()
+			);
 			switch(collection.getDataType()) {
 				case Contacts: {
 					// Contact 1
@@ -240,7 +247,7 @@ public class TestServerHandlers {
 					SyncDataItem dataItem = new SyncDataItem();
 					dataItem.setData(contactT);
 					dataItem.setServerId("2147483712");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Contact 2
 					contactT = new ContactT();
 					contactT.setBusinessAddressCity("- St Cloud");
@@ -255,7 +262,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(contactT);
 					dataItem.setServerId("2147483714");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Contact 3
 					contactT = new ContactT();
 					contactT.setBusinessPhoneNumber("(01) 53 26 65 65");
@@ -268,7 +275,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(contactT);
 					dataItem.setServerId("2147483714");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Contact 4
 					contactT = new ContactT();
 					contactT.setBusinessAddressCity("PARIS 15");
@@ -282,7 +289,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(contactT);
 					dataItem.setServerId("2147483716");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Contact 5
 					contactT = new ContactT();
 					contactT.setBusinessAddressCity("PARIS 15");
@@ -298,7 +305,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(contactT);
 					dataItem.setServerId("2147483717");
-					changedDataItems.add(dataItem);					
+					dataItems.add(dataItem);					
 					break;
 				}
 				case Tasks: {
@@ -321,7 +328,7 @@ public class TestServerHandlers {
 					SyncDataItem dataItem = new SyncDataItem();
 					dataItem.setData(taskT);
 					dataItem.setServerId("12345678");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Task 2
 					taskT = new TaskT();
 					taskT.setBody("Task 2");
@@ -341,7 +348,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(taskT);
 					dataItem.setServerId("12345679");
-					changedDataItems.add(dataItem);					
+					dataItems.add(dataItem);					
 					break;
 				}
 				case Email: {
@@ -387,7 +394,7 @@ public class TestServerHandlers {
 					SyncDataItem dataItem = new SyncDataItem();
 					dataItem.setData(emailT);
 					dataItem.setServerId("11111111");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Email 2
 					emailT = new EmailT();
 					emailT.setSubject("Email 2");
@@ -407,7 +414,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(emailT);
 					dataItem.setServerId("2222222222");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					break;
 				}
 				case Calendar: {
@@ -454,7 +461,7 @@ public class TestServerHandlers {
 					SyncDataItem dataItem = new SyncDataItem();
 					dataItem.setData(eventT);
 					dataItem.setServerId("111111111");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					// Event 2
 					eventT = new EventT();
 					eventT.setOrganizerName("Test Organizer");
@@ -479,7 +486,7 @@ public class TestServerHandlers {
 					dataItem = new SyncDataItem();
 					dataItem.setData(eventT);
 					dataItem.setServerId("22222222");
-					changedDataItems.add(dataItem);
+					dataItems.add(dataItem);
 					break;
 				}
 			}

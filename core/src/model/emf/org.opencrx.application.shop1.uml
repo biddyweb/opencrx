@@ -474,6 +474,14 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_14XJodkaEd66vMy08UbRDQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_14XJotkaEd66vMy08UbRDQ"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_7IcdsBpiEeCP3-Qt4pJR9w" name="isGift" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_9XPQgBpiEeCP3-Qt4pJR9w"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_-5yBUBpiEeCP3-Qt4pJR9w" name="giftMessage" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_B-7NUBpjEeCP3-Qt4pJR9w"/>
+            </ownedAttribute>
             <ownedAttribute xmi:id="_14XJo9kaEd66vMy08UbRDQ" name="contractCurrency">
               <ownedComment xmi:id="_14XJpNkaEd66vMy08UbRDQ" annotatedElement="_14XJo9kaEd66vMy08UbRDQ">
                 <body>contractCurrency is managed by the API-client.&#xD;
@@ -1434,6 +1442,22 @@
             <ownedAttribute xmi:id="__eiQEO_LEd6Lw4NmaUinVg" name="actualProductConfiguration" visibility="public" type="_15pjENkaEd66vMy08UbRDQ">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_H1iXQO_MEd6Lw4NmaUinVg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H1hwMO_MEd6Lw4NmaUinVg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_9k7XQBjuEeCn0Leie1L73g" name="salesTaxType" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_BMBZwBjvEeCn0Leie1L73g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_f0N1oBjwEeCn0Leie1L73g" name="discountIsPercentage" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_mGV7ABjwEeCn0Leie1L73g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_i6NWMBjwEeCn0Leie1L73g" name="discount" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nREowBjwEeCn0Leie1L73g"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_m3bmUBqIEeCP3-Qt4pJR9w" name="pricePerUnit" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_os4FABqIEeCP3-Qt4pJR9w"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_143f9NkaEd66vMy08UbRDQ" name="SetInvoiceStatusResult">

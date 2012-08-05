@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: WebDavMethod.java,v 1.13 2010/12/15 16:03:21 wfro Exp $
+ * Name:        $Id: WebDavMethod.java,v 1.14 2011/03/09 10:27:11 wfro Exp $
  * Description: AbstractMethod
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 16:03:21 $
+ * Date:        $Date: 2011/03/09 10:27:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -98,6 +98,7 @@ import org.opencrx.application.uses.net.sf.webdav.WebdavStatus;
 import org.opencrx.application.uses.net.sf.webdav.exceptions.LockFailedException;
 import org.opencrx.application.uses.net.sf.webdav.fromcatalina.XMLWriter;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.text.conversion.XMLEncoder;
 
 public abstract class WebDavMethod {
 
@@ -273,6 +274,7 @@ public abstract class WebDavMethod {
     ) {    	
     	path = path.replace("%", "%25");
    		path = path.replace(" ", "%20");
+   		path = XMLEncoder.encode(path);
    		return path;
     }
 

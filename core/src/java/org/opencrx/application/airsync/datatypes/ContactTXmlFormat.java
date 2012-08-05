@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ContactTXmlFormat.java,v 1.19 2010/07/08 12:43:46 wfro Exp $
+ * Name:        $Id: ContactTXmlFormat.java,v 1.21 2011/02/11 09:57:48 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/08 12:43:46 $
+ * Date:        $Date: 2011/02/11 09:57:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -134,7 +134,7 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 		}
 		if(contactT.getChildren() != null && !contactT.getChildren().isEmpty()) {
 			Element eChildren = DOMUtils.createElement(eParent, "Contacts:", "Children");
-			for(String child : contactT.getCategories()) {
+			for(String child : contactT.getChildren()) {
 				this.createElement(eChildren, "Contacts:", "Child", child);
 			}
 		}
@@ -159,7 +159,7 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 		contactT.setAssistantName(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "AssistantName")));
 		contactT.setAssistantPhoneNumber(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "AssistantTelephoneNumber")));
 		contactT.setBirthday(parseDOMDate(DOMUtils.getUniqueElement(syncData, "Contacts:", "Birthday")));
-		contactT.setBusiness2PhoneNumber(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "Business2PoneNumber")));
+		contactT.setBusiness2PhoneNumber(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "Business2PhoneNumber")));
 		contactT.setBusinessAddressCity(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "BusinessAddressCity")));
 		contactT.setBusinessPhoneNumber(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "BusinessPhoneNumber")));
 		contactT.setWebPage(parseDOMString(DOMUtils.getUniqueElement(syncData, "Contacts:", "WebPage")));

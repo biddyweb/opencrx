@@ -92,6 +92,17 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="32" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>Vermieter</_item>
+                            </shortText>
+                            <longText>
+                              <_item>Vermieter</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="set">
                           <_object>
                             <shortText>

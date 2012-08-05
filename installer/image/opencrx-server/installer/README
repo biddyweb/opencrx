@@ -1,0 +1,43 @@
+Welcome to openCRX!
+-------------------
+
+This installer has created an openCRX instance running on
+Apache TomEE (see http://openejb.apache.org/3.0/apache-tomee.html) 
+and HSQLDB. The installation comes with TomEE and a preconfigured database.
+
+You can start and stop openCRX using the corresponding shortcuts
+on the desktop created by the installer. After starting openCRX 
+login to openCRX using a browser pointing to the URL
+
+http://localhost:<tomcat_port>/opencrx-core-CRX
+
+The following accounts are pre-configured (UserId / Password):
+* guest / guest
+* admin-Standard / admin-Standard
+* admin-Root / admin-Root
+
+Troubleshooting
+---------------
+When you are not able to login then try the following:
+
+* Open an command shell
+* cd to ${installdir}/bin
+* Start openCRX with opencrx.bat START in Windows platforms
+  and ./opencrx.sh START in Linux platforms
+* Check the console output for errors
+
+WorkflowController
+------------------
+Here is how to start the workflow controller:
+
+* Login as admin-Root
+* Select Administration then the menu entry
+  Wizards > openCRX Workflow Controller.
+* This activates and opens the WorkflowController servlet.
+  'Turn on' / 'Turn off' allows to activate and deactivate
+  openCRX background services.
+
+Configure your own database
+---------------------------
+If you want to use another database system than HSQLDB follow the guide
+http://sourceforge.net/apps/trac/opencrx/wiki/Sdk28.FromHSQLDBToOtherDB

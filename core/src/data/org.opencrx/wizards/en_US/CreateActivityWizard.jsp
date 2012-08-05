@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityWizard.jsp,v 1.16 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: CreateActivityWizard.jsp,v 1.17 2011/03/24 16:07:29 cmu Exp $
  * Description: CreateActivityWizard
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2011/03/24 16:07:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,6 +61,7 @@ java.text.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
+org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
@@ -128,7 +129,11 @@ org.openmdx.base.naming.*
 		app,
 		pm
 	);
+	
+	String errorMsg = "";
+	
 	if(actionCreate) {
+		try{
 	    String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
 	    org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") != null ?
 	    	(org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(
@@ -187,6 +192,17 @@ org.openmdx.base.naming.*
 			);
 			return;
 	    }
+	  } catch (Exception e) {
+	      new ServiceException(e).log();
+	      try {
+					Throwable root = e;  
+			    while (root.getCause() != null) {  
+			        root = root.getCause();  
+			    }
+					errorMsg = (root.toString()).replaceAll("(\\r|\\n)","<br>");
+				} catch (Exception e0) {}
+	      //System.out.println("error: " + errorMsg);
+	  }
 	}
 	if(obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
 	    formValues.put(
@@ -208,6 +224,20 @@ org.openmdx.base.naming.*
 %>
 <br />
 <form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
+<%
+	if (errorMsg != null && errorMsg.length() > 0) {
+%>
+			<div id="errorPane" style="padding:10px 10px 10px 10px;background-color:#FF0000;">
+				<table>
+					<tr style="vertical-align:top;">
+						<td style="padding:5px;font-weight:bold;color:#FFFFFF;">ERROR:</td>
+						<td style="padding:5px;color:#FFFFFF;"><%= errorMsg %></td>
+					</tr>
+				</table>
+			</div>
+<%
+	}
+%>
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 	<input type="hidden" id="Command" name="Command" value="" />

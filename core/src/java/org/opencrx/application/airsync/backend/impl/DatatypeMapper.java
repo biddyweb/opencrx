@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMapper.java,v 1.34 2010/11/23 15:41:23 wfro Exp $
+ * Name:        $Id: DatatypeMapper.java,v 1.37 2011/04/29 09:32:25 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/23 15:41:23 $
+ * Date:        $Date: 2011/04/29 09:32:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -773,12 +773,14 @@ public class DatatypeMapper {
         	try {
 	            MimeMessage mimeMessage = new MimeMessageImpl(
 	                new ByteArrayInputStream(emailT.getMimeData().getBytes("US-ASCII"))
-	            );        	
+	            );
+	            pm.currentTransaction().begin();
 	        	Activities.getInstance().importMimeMessage(
 	        		email,
 	        		mimeMessage, 
 	        		true // isNew
 	        	);
+	        	pm.currentTransaction().commit();
         	}
         	catch(Exception e) {
         		new ServiceException(e).log();
@@ -1839,6 +1841,13 @@ public class DatatypeMapper {
 					businessStreet += street;
 					sep = "\r\n";
 				}
+				// Cut off trailing blanks and separators
+				if(businessStreet != null) {
+					businessStreet = businessStreet.trim();
+					while(!sep.isEmpty() && businessStreet.endsWith(sep)) {
+						businessStreet = businessStreet.substring(0, businessStreet.length() - sep.length());
+					}
+				}
 				contactT.setBusinessStreet(businessStreet);
 				contactT.setBusinessAddressCountry(Addresses.POSTAL_COUNTRIES_BY_CODE.get(postalBusiness.getPostalCountry()));
 			}
@@ -1858,6 +1867,13 @@ public class DatatypeMapper {
 					homeStreet += sep;
 					homeStreet += street;
 					sep = "\r\n";
+				}
+				// Cut off trailing blanks and separators
+				if(homeStreet != null) {
+					homeStreet = homeStreet.trim();
+					while(!sep.isEmpty() && homeStreet.endsWith(sep)) {
+						homeStreet = homeStreet.substring(0, homeStreet.length() - sep.length());
+					}					
 				}
 				contactT.setHomeAddressStreet(homeStreet);
 				contactT.setHomeAddressCountry(Addresses.POSTAL_COUNTRIES_BY_CODE.get(postalHome.getPostalCountry()));

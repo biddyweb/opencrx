@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: GetChangedDataItemsResult.java,v 1.1 2010/06/16 12:14:54 wfro Exp $
+ * Name:        $Id: GetChangedDataItemsResult.java,v 1.2 2011/02/06 15:09:41 wfro Exp $
  * Description: GetChangedDataItemsResult
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/16 12:14:54 $
+ * Date:        $Date: 2011/02/06 15:09:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,13 +56,14 @@
 package org.opencrx.application.airsync.backend.cci;
 
 import java.util.List;
+import java.util.Map;
 
 import org.opencrx.application.airsync.datatypes.SyncDataItem;
 
 public class GetChangedDataItemsResult {
 	
 	public GetChangedDataItemsResult(
-		List<SyncDataItem> dataItems,
+		Map<String,List<SyncDataItem>> dataItems,
 		boolean hasMore,
 		String syncKey
 	) {
@@ -71,7 +72,7 @@ public class GetChangedDataItemsResult {
 		this.syncKey = syncKey;
 	}
 	
-	public List<SyncDataItem> getDataItems() {
+	public Map<String,List<SyncDataItem>> getDataItems() {
     	return dataItems;
     }
 	public boolean hasMore() {
@@ -81,7 +82,7 @@ public class GetChangedDataItemsResult {
     	return syncKey;
     }
 
-	private final List<SyncDataItem> dataItems;
+	private final Map<String,List<SyncDataItem>> dataItems;
 	private final boolean hasMore;
 	private final String syncKey;
 	

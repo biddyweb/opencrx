@@ -1,12 +1,12 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
- * Project:         openCRX/Core, http://www.opencrx.org/
- * Name:            $Id: WorkAndExpenseReport.jsp,v 1.41 2010/08/09 13:17:07 cmu Exp $
- * Description:     Create Work And Expsense Report
- * Revision:        $Revision: 1.41 $
- * Owner:           CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:            $Date: 2010/08/09 13:17:07 $
+ * Project:					openCRX/Core, http://www.opencrx.org/
+ * Name:						$Id: WorkAndExpenseReport.jsp,v 1.47 2011/04/06 12:58:10 cmu Exp $
+ * Description:			Create Work And Expsense Report
+ * Revision:				$Revision: 1.47 $
+ * Owner:						CRIXP Corp., Switzerland, http://www.crixp.com
+ * Date:						$Date: 2011/04/06 12:58:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@
 %><%@ page session="true" import="
 java.util.*,
 java.io.*,
+java.math.*,
 java.net.*,
 java.text.*,
 org.openmdx.base.accessor.jmi.cci.*,
@@ -103,7 +104,7 @@ org.apache.poi.hssf.util.*
 
 	public static GregorianCalendar getDateAsCalendar(
 		String dateAsString, // YYYYMMDD
-		                     // 01234567
+												 // 01234567
 		ApplicationContext app
 	) {
 		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
@@ -119,7 +120,7 @@ org.apache.poi.hssf.util.*
 
 	public static GregorianCalendar getDateTimeAsCalendar(
 		String dateAsString, // dd-MM-YYYY HH:mm
-		                     // 0123456789012345
+												 // 0123456789012345
 		ApplicationContext app
 	) {
 		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
@@ -150,6 +151,31 @@ org.apache.poi.hssf.util.*
 		}
 		return hhFormatter.format(hours) + ":" + mmFormatter.format(minutes);
 	}
+	
+	public static String resourceErrorMsgUpdate(
+		String resourceErrorMsg,
+		String calDayName,
+		Set resourcesToday,
+		Map dayPercentageTotals,
+		javax.jdo.PersistenceManager pm
+	) {
+		NumberFormat formatter0 = new DecimalFormat("0");
+		for (Iterator r = resourcesToday.iterator(); r.hasNext(); ) {
+			String resXri = (String)r.next();
+			String dayKey = calDayName + resXri;
+			org.opencrx.kernel.activity1.jmi1.Resource res = null;
+			try {
+					res = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resXri));
+			} catch (Exception e) {}
+			if (res != null && (dayPercentageTotals.get(dayKey) != null) && ((Double)dayPercentageTotals.get(dayKey)).doubleValue() != 100.0) {
+					if (resourceErrorMsg == null) {
+							resourceErrorMsg = "total allocation not equal to 100%";
+					}
+					resourceErrorMsg += " | " + res.getName() + " [" + formatter0.format(((Double)dayPercentageTotals.get(dayKey)).doubleValue()) + "%]";
+			}
+		}
+		return resourceErrorMsg;
+	}
 
 	private static HSSFSheet addSheet(
 		HSSFWorkbook wb,
@@ -160,18 +186,18 @@ org.apache.poi.hssf.util.*
 		int colsBetweenLabelsAndValues
 	) {
 			HSSFSheet sheet = wb.createSheet(sheetName);
-			sheet.setMargin(HSSFSheet.TopMargin,    0.5);
-			sheet.setMargin(HSSFSheet.RightMargin,  0.3);
+			sheet.setMargin(HSSFSheet.TopMargin,		0.5);
+			sheet.setMargin(HSSFSheet.RightMargin,	0.3);
 			sheet.setMargin(HSSFSheet.BottomMargin, 0.6);
-			sheet.setMargin(HSSFSheet.LeftMargin,   0.5);
+			sheet.setMargin(HSSFSheet.LeftMargin,	 0.5);
 			sheet.setAutobreaks(true);
 
 
-	    HSSFPrintSetup ps = sheet.getPrintSetup();
-	    /*
-	    ps.setFitHeight((short)100);
-	    ps.setFitWidth((short)1);
-	    */
+			HSSFPrintSetup ps = sheet.getPrintSetup();
+			/*
+			ps.setFitHeight((short)100);
+			ps.setFitWidth((short)1);
+			*/
 			ps.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
 			ps.setLandscape(isLandscape);
 			ps.setFooterMargin(0.3);
@@ -213,8 +239,8 @@ org.apache.poi.hssf.util.*
 	final String WIZARD_NAME = FORM_NAME + ".jsp";
 	final String SUBMIT_HANDLER = "javascript:$('command').value=this.name;";
 	final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
-	final String SPREADSHEET = "<img border='0' alt=''  height='64px' src='../../images/spreadsheet.png' />";
-	final String GAP_BEFORE_XRI = "     ";
+	final String SPREADSHEET = "<img border='0' alt=''	height='64px' src='../../images/spreadsheet.png' />";
+	final String GAP_BEFORE_XRI = "		 ";
 
 	final String ACTIVITY_FILTER_SEGMENT = "Segment";
 	final String ACTIVITY_FILTER_ANYGROUP = "AnyGroup";
@@ -262,7 +288,7 @@ org.apache.poi.hssf.util.*
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String requestId =	request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
 	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
@@ -292,6 +318,7 @@ org.apache.poi.hssf.util.*
 	SimpleDateFormat yyyyf = new SimpleDateFormat("yyyy", app.getCurrentLocale());									yyyyf.setTimeZone(timezone);
 	SimpleDateFormat dateonlyf = new SimpleDateFormat("dd-MMM-yyyy", app.getCurrentLocale());				dateonlyf.setTimeZone(timezone);
 	SimpleDateFormat datetimef = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());	datetimef.setTimeZone(timezone);
+	SimpleDateFormat calendardayf = new SimpleDateFormat("yyyyMMdd", app.getCurrentLocale());				calendardayf.setTimeZone(timezone);
 	SimpleDateFormat jsCalenderf = new SimpleDateFormat("dd-MM-yyyy HH:mm", app.getCurrentLocale());jsCalenderf.setTimeZone(timezone);
 	SimpleDateFormat datef = new SimpleDateFormat("EE d-MMMM-yyyy", app.getCurrentLocale());				datef.setTimeZone(timezone);
 	SimpleDateFormat dtsortf = new SimpleDateFormat("yyyyMMddHHmmss", app.getCurrentLocale());			dtsortf.setTimeZone(timezone);
@@ -301,6 +328,8 @@ org.apache.poi.hssf.util.*
 	NumberFormat formatter = new DecimalFormat("00000");
 	NumberFormat quantityf = new DecimalFormat("0.000");
 	NumberFormat ratesepf = new DecimalFormat("#,##0.00");
+	NumberFormat ratesehpf = new DecimalFormat("#,##0.00000");
+	NumberFormat formatter0 = new DecimalFormat("0");
 	DecimalFormat decimalFormat = (DecimalFormat)DecimalFormat.getInstance(app.getCurrentLocale());
 
 	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
@@ -308,7 +337,14 @@ org.apache.poi.hssf.util.*
 			new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
 		);
 
-  // Dates and Times
+	org.opencrx.kernel.uom1.jmi1.Uom uomPercent = null;
+	try {
+		uomPercent = (org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById(
+				new Path("xri://@openmdx*org.opencrx.kernel.uom1/provider/" + providerName + "/segment/Root/uom/Percent")
+		);
+	} catch (Exception e) {}
+
+	// Dates and Times
 	Map formValues = new HashMap();
 
 	UserDefinedView userView = new UserDefinedView(
@@ -325,7 +361,7 @@ org.apache.poi.hssf.util.*
 	boolean actionNextMonth = "NextMonth".equals(command);
 	boolean actionPrevMonth = "PrevMonth".equals(command);
 	boolean actionNextYear = "NextYear".equals(command);
- 	boolean actionPrevYear = "PrevYear".equals(command);
+	boolean actionPrevYear = "PrevYear".equals(command);
 	boolean actionSelectDate = command != null && command.startsWith("SelectDate.");
 	boolean actionSelectDateP = command != null && command.startsWith("SelectDateP.");
 	boolean actionSelectDateN = command != null && command.startsWith("SelectDateN.");
@@ -347,20 +383,21 @@ org.apache.poi.hssf.util.*
 	}
 
 	boolean isWorkRecord = ((request.getParameter("isExpenseRecord") == null) || (request.getParameter("isExpenseRecord").length() == 0));
+	boolean isWorkRecordInPercent = isWorkRecord &&	((request.getParameter("isWorkRecordInPercent") != null) && (request.getParameter("isWorkRecordInPercent").length() > 0));
 	boolean hasProjects = ((request.getParameter("hasProjects") != null) && (request.getParameter("hasProjects").length() > 0));
 
 	if (request.getParameter("previousSheet") != null) {
-		  // delete previous temp file if it exists
-		  try {
-			  	File previousFile = new File(
+			// delete previous temp file if it exists
+			try {
+					File previousFile = new File(
 						app.getTempFileName(request.getParameter("previousSheet"), "")
 					);
-			  	if (previousFile.exists()) {
-			  			previousFile.delete();
-			  	}
-		  } catch (Exception e){
-			  	new ServiceException(e).log();
-		  }
+					if (previousFile.exists()) {
+							previousFile.delete();
+					}
+			} catch (Exception e){
+					new ServiceException(e).log();
+			}
 	}
 	String sheetName = (isWorkRecord ? "Work_" : "Expense_") + "Report";
 	String location = UUIDs.getGenerator().next().toString();
@@ -374,6 +411,10 @@ org.apache.poi.hssf.util.*
 	HSSFCellStyle dateTimeStyle = wb.createCellStyle();
 	HSSFDataFormat dataFormatDateTime = wb.createDataFormat();
 	dateTimeStyle.setDataFormat(dataFormatDateTime.getFormat("dd-mmm-yyyy hh:mm"));
+
+	HSSFCellStyle dateStyle = wb.createCellStyle();
+	HSSFDataFormat dataFormatDate = wb.createDataFormat();
+	dateStyle.setDataFormat(dataFormatDate.getFormat("dd-mmm-yyyy"));
 
 	HSSFCellStyle timeStyle = wb.createCellStyle();
 	HSSFDataFormat dataFormatTime = wb.createDataFormat();
@@ -403,7 +444,7 @@ org.apache.poi.hssf.util.*
 	String activityFilter = null;
 	String activityFilterXri = null;
 	String activityXri = null;
-	String selector  = request.getParameter("selector") == null ? "" : request.getParameter("selector");
+	String selector	= request.getParameter("selector") == null ? "" : request.getParameter("selector");
 	boolean isSelectorChange = ((request.getParameter("isSelectorChange") != null) && (request.getParameter("isSelectorChange").length() > 0));
 
 	if (isFirstCall) {
@@ -603,18 +644,18 @@ org.apache.poi.hssf.util.*
 	} catch (Exception e) {}
 
 	if (activityXri == null) {
-			activityXri = request.getParameter("activityXri")  == null ? "*" : request.getParameter("activityXri");
+			activityXri = request.getParameter("activityXri")	== null ? "*" : request.getParameter("activityXri");
 	}
-	String recordType  = request.getParameter("recordType")  == null ? "0" : request.getParameter("recordType");  // Parameter recordType [default "0 - N/A"]
-	String isBillable  = isFirstCall ? "" : request.getParameter("isBillable");
+	String recordType	= request.getParameter("recordType")	== null ? "0" : request.getParameter("recordType");	// Parameter recordType [default "0 - N/A"]
+	String isBillable	= isFirstCall ? "" : request.getParameter("isBillable");
 	String isReimbursable = isFirstCall ? "" : request.getParameter("isReimbursable");
 	short priority = isFirstCall || request.getParameter("priority") == null ?
 		//Activities.PRIORITY_NORMAL :
 		0 : // capture ALL Activities
 		Short.valueOf(request.getParameter("priority"));
-	String isFullStartedAtDate  = isFirstCall ? "" : request.getParameter("isFullStartedAtDate");
-	String excludeClosedActivities     = isFirstCall ? "" : request.getParameter("excludeClosedActivities");
-    String showActivityGroupNameFilter = isFirstCall ? "" : request.getParameter("showActivityGroupNameFilter");
+	String isFullStartedAtDate	= isFirstCall ? "" : request.getParameter("isFullStartedAtDate");
+	String excludeClosedActivities		 = isFirstCall ? "" : request.getParameter("excludeClosedActivities");
+		String showActivityGroupNameFilter = isFirstCall ? "" : request.getParameter("showActivityGroupNameFilter");
 	int activitySortOrder = 1;
 	try {
 			activitySortOrder = request.getParameter("activitySortOrder") != null ? Integer.parseInt(request.getParameter("activitySortOrder")) : 1;
@@ -659,10 +700,10 @@ org.apache.poi.hssf.util.*
 	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
 	<link href="../../_style/ssf.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
+	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
-  <script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
-  <script language="javascript" type="text/javascript" src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script> <!-- calendar language -->
+	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
+	<script language="javascript" type="text/javascript" src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script> <!-- calendar language -->
 	<script language="javascript" type="text/javascript">
 		var OF = null;
 		try {
@@ -675,56 +716,56 @@ org.apache.poi.hssf.util.*
 			OF = new ObjectFinder();
 		}
 
-    function timeTick(hh_mm, upMins) {
-      var right_now = new Date();
-      var hrs = right_now.getHours();
-      var mins = right_now.getMinutes();
-      try {
-        timeStr = hh_mm.split(":");
-        hrsStr = timeStr[0];
-        minsStr = timeStr[1];
-      } catch (e) {}
-      try {
-        hrs = parseInt(hrsStr, 10);
-      } catch (e) {}
-      if (isNaN(hrs)) {hrs=12;}
-      try {
-        mins = parseInt(minsStr, 10);
-        mins = parseInt(mins/15, 10)*15;
-      } catch (e) {}
-      if (isNaN(mins)) {mins=00;}
-      mins = hrs*60 + mins + upMins;
-      while (mins <      0) {mins += 24*60;}
-      while (mins >= 24*60) {mins -= 24*60;}
-      hrs = parseInt(mins/60, 10);
-      if (hrs < 10) {
-        hrsStr = "0" + hrs;
-      } else {
-        hrsStr = hrs;
-      }
-      mins -= hrs*60;
-      if (mins < 10) {
-        minsStr = "0" + mins;
-      } else {
-        minsStr = mins;
-      }
-      return hrsStr + ":" + minsStr;
-    }
+		function timeTick(hh_mm, upMins) {
+			var right_now = new Date();
+			var hrs = right_now.getHours();
+			var mins = right_now.getMinutes();
+			try {
+				timeStr = hh_mm.split(":");
+				hrsStr = timeStr[0];
+				minsStr = timeStr[1];
+			} catch (e) {}
+			try {
+				hrs = parseInt(hrsStr, 10);
+			} catch (e) {}
+			if (isNaN(hrs)) {hrs=12;}
+			try {
+				mins = parseInt(minsStr, 10);
+				mins = parseInt(mins/15, 10)*15;
+			} catch (e) {}
+			if (isNaN(mins)) {mins=00;}
+			mins = hrs*60 + mins + upMins;
+			while (mins <			0) {mins += 24*60;}
+			while (mins >= 24*60) {mins -= 24*60;}
+			hrs = parseInt(mins/60, 10);
+			if (hrs < 10) {
+				hrsStr = "0" + hrs;
+			} else {
+				hrsStr = hrs;
+			}
+			mins -= hrs*60;
+			if (mins < 10) {
+				minsStr = "0" + mins;
+			} else {
+				minsStr = mins;
+			}
+			return hrsStr + ":" + minsStr;
+		}
 
-    var oldValue = "";
-    function positiveDecimalsVerify(caller){
-      var newValue = caller.value;
-      var isOK = true;
-      var i = 0;
-      while ((isOK) && (i < newValue.length)) {
-        var char = newValue.substring(i,i+1);
-        if ((char!='.') && ((char<'0') || (char>'9'))) {isOK = false;}
-        i++;
-      }
-      if (!isOK) {
-        caller.value = oldValue;
-      }
-    }
+		var oldValue = "";
+		function positiveDecimalsVerify(caller){
+			var newValue = caller.value;
+			var isOK = true;
+			var i = 0;
+			while ((isOK) && (i < newValue.length)) {
+				var char = newValue.substring(i,i+1);
+				if ((char!='.') && ((char<'0') || (char>'9'))) {isOK = false;}
+				i++;
+			}
+			if (!isOK) {
+				caller.value = oldValue;
+			}
+		}
 
 	</script>
 
@@ -743,9 +784,9 @@ org.apache.poi.hssf.util.*
 		}
 		input.error{background-color:red;}
 		#scheduleTable, .fieldGroup {
-	    border-collapse: collapse;
-	    border-spacing:0;
-	    width:100%;
+			border-collapse: collapse;
+			border-spacing:0;
+			width:100%;
 		}
 		.fieldGroup TR TD {padding:2px 0px;}
 		#scheduleTable td {
@@ -780,8 +821,10 @@ org.apache.poi.hssf.util.*
 		TR.centered TD {text-align:center;}
 		TR.even TD {background-color:#EEEEFF;}
 		TR.match TD {background-color:#FFFE70;}
+		TR.break TD {background-color:#FFC087;}
 		TD.hidden {display:none;}
 		TR.created TD {font-weight:bold;}
+		TD.error {color:red;font-weight:bold;}
 		input.disabled {
 			background-color:transparent;
 		}
@@ -801,31 +844,32 @@ org.apache.poi.hssf.util.*
 <div id="container">
 	<div id="wrap">
 		<div id="scrollheader" style="height:90px;">
-      <div id="logoTable">
-        <table id="headerlayout">
-          <tr id="headRow">
-            <td id="head" colspan="2">
-              <table id="info">
-                <tr>
-                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-                  <td id="headerCellSpacerLeft"></td>
-                  <td id="headerCellMiddle">&nbsp;</td>
-                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+			<div id="logoTable">
+				<table id="headerlayout">
+					<tr id="headRow">
+						<td id="head" colspan="2">
+							<table id="info">
+								<tr>
+									<td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+									<td id="headerCellSpacerLeft"></td>
+									<td id="headerCellMiddle">&nbsp;</td>
+									<td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 
-    <div id="content-wrap">
-    	<div id="content" style="padding:0px 0.5em 0px 0.5em;">
+		<div id="content-wrap">
+			<div id="content" style="padding:0px 0.5em 0px 0.5em;">
 				<div id="aPanel">
 					<div id="inspector">
 						<div class="inspTabPanel" style="z-index: 201;">
-							<a class="<%= isWorkRecord ? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('reload.button').click();" href="#">Work Report</a>
-							<a class="<%= isWorkRecord ? "" : "selected" %>" onclick="$('isExpenseRecord').value='isExpenseRecord';$('reload.button').click();" href="#">Expense Report</a>
+							<a class="<%= isWorkRecord && !isWorkRecordInPercent ? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='';										 $('reload.button').click();" href="#">Work Report</a>
+							<a class="<%= isWorkRecordInPercent									? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='isWorkRecordInPercent';$('reload.button').click();" href="#">Work Report in %</a>
+							<a class="<%= isWorkRecord													 ? "" : "selected" %>" onclick="$('isExpenseRecord').value='isExpenseRecord';$('isWorkRecordInPercent').value='';			$('reload.button').click();" href="#">Expense Report</a>
 						</div>
 						<div id="inspContent" class="inspContent" style="z-index: 200;">
 							<div id="inspPanel0" class="selected" style="padding-top: 10px;">
@@ -835,8 +879,9 @@ org.apache.poi.hssf.util.*
 					<input type="hidden" name="command" id="command" value="none"/>
 					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-					<input type="hidden" name="isExpenseRecord" id="isExpenseRecord" value="<%= isWorkRecord ? "" : "isExpenseRecord"  %>" />
-					<input type="hidden" name="hasProjects" id="hasProjects" value="<%= hasProjects ? "hasProjects" : ""  %>" />
+					<input type="hidden" name="isExpenseRecord" id="isExpenseRecord" value="<%= isWorkRecord ? "" : "isExpenseRecord"	%>" />
+					<input type="hidden" name="isWorkRecordInPercent" id="isWorkRecordInPercent" value="<%= !isWorkRecordInPercent ? "" : "isWorkRecordInPercent"	%>" />
+					<input type="hidden" name="hasProjects" id="hasProjects" value="<%= hasProjects ? "hasProjects" : ""	%>" />
 					<input type="hidden" name="isSelectorChange" id="isSelectorChange" value="" />
 					<input type="hidden" name="isContactChange" id="isContactChange" value="" />
 					<input type="hidden" name="isResourceChange" id="isResourceChange" value="" />
@@ -858,7 +903,7 @@ org.apache.poi.hssf.util.*
 											GregorianCalendar reportEndOfPeriod = null;
 %>
 											<select id="selector" name="selector" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('isSelectorChange').value='true';$('reload.button').click();" >
-												<option <%= isManualEntry ? "selected" : ""  %> value="*">&mdash;&mdash;&mdash;&gt;</option>
+												<option <%= isManualEntry ? "selected" : ""	%> value="*">&mdash;&mdash;&mdash;&gt;</option>
 <%
 												GregorianCalendar now = new GregorianCalendar(app.getCurrentLocale());
 												if (isManualEntry) {
@@ -890,12 +935,12 @@ org.apache.poi.hssf.util.*
 																if (isSelectorChange) {
 																		scheduledStartDate = (GregorianCalendar)beginOfPeriod.clone();
 																		scheduledStart = jsCalenderf.format(beginOfPeriod.getTime());
-																		scheduledEnd   = jsCalenderf.format(endOfPeriod.getTime());
+																		scheduledEnd	 = jsCalenderf.format(endOfPeriod.getTime());
 																		scheduledEndDate = (GregorianCalendar)endOfPeriod.clone();
 																}
 														}
 %>
-														<option <%= selected ? "selected" : ""  %> value="<%= value %>"><%= value %></option>
+														<option <%= selected ? "selected" : ""	%> value="<%= value %>"><%= value %></option>
 <%
 												}
 %>
@@ -905,19 +950,19 @@ org.apache.poi.hssf.util.*
 
 										<td class="label"><span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>:</span></td>
 										<td style="padding-top:2px;">
-												<input type="text" class="valueL" <%= scheduledStartDateOK ? "" : ERROR_STYLE %> name="scheduledStart" id="scheduledStart" maxlength="16" tabindex="<%= tabIndex++ %>" value="<%= scheduledStartDateOK ?  jsCalenderf.format(scheduledStartDate.getTime()) : scheduledStart %>" <%= isManualEntry ? "" : "readonly style='background-color:#F3F3F3;'" %> />
+												<input type="text" class="valueL" <%= scheduledStartDateOK ? "" : ERROR_STYLE %> name="scheduledStart" id="scheduledStart" maxlength="16" tabindex="<%= tabIndex++ %>" value="<%= scheduledStartDateOK ?	jsCalenderf.format(scheduledStartDate.getTime()) : scheduledStart %>" <%= isManualEntry ? "" : "readonly style='background-color:#F3F3F3;'" %> />
 										</td>
 										<td class="addon">
 												<a><img class="popUpButton" id="cal_trigger_scheduledStart" border="0" alt="Click to open Calendar" src="../../images/cal.gif" <%= isManualEntry ? "" : "style='display:none;'" %> /></a>
 												<script language="javascript" type="text/javascript">
 														Calendar.setup({
-																inputField   : "scheduledStart",
-																ifFormat     : "%d-%m-%Y %H:%M",
-																timeFormat   : "24",
-																button       : "cal_trigger_scheduledStart",
-																align        : "Tr",
-																singleClick  : true,
-																showsTime    : true
+																inputField	 : "scheduledStart",
+																ifFormat		 : "%d-%m-%Y %H:%M",
+																timeFormat	 : "24",
+																button			 : "cal_trigger_scheduledStart",
+																align				: "Tr",
+																singleClick	: true,
+																showsTime		: true
 														});
 												</script>
 										</td>
@@ -930,19 +975,19 @@ org.apache.poi.hssf.util.*
 
 										<td class="label"><span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %>:</span></td>
 										<td style="padding-top:2px;">
-												<input type="text" class="valueL" <%= scheduledEndDateOK ? "" : ERROR_STYLE %> name="scheduledEnd" id="scheduledEnd" maxlength="16" tabindex="<%= tabIndex++ %>" value="<%= scheduledEndDateOK ?  jsCalenderf.format(scheduledEndDate.getTime()) : scheduledEnd %>" <%= isManualEntry ? "" : "readonly style='background-color:#F3F3F3;'" %> />
+												<input type="text" class="valueL" <%= scheduledEndDateOK ? "" : ERROR_STYLE %> name="scheduledEnd" id="scheduledEnd" maxlength="16" tabindex="<%= tabIndex++ %>" value="<%= scheduledEndDateOK ?	jsCalenderf.format(scheduledEndDate.getTime()) : scheduledEnd %>" <%= isManualEntry ? "" : "readonly style='background-color:#F3F3F3;'" %> />
 										</td>
 										<td class="addon">
 												<a><img class="popUpButton" id="cal_trigger_scheduledEnd" border="0" alt="Click to open Calendar" src="../../images/cal.gif" <%= isManualEntry ? "" : "style='display:none;'" %> /></a>
 												<script language="javascript" type="text/javascript">
 														Calendar.setup({
-																inputField   : "scheduledEnd",
-																ifFormat     : "%d-%m-%Y %H:%M",
-																timeFormat   : "24",
-																button       : "cal_trigger_scheduledEnd",
-																align        : "Tr",
-																singleClick  : true,
-																showsTime    : true
+																inputField	 : "scheduledEnd",
+																ifFormat		 : "%d-%m-%Y %H:%M",
+																timeFormat	 : "24",
+																button			 : "cal_trigger_scheduledEnd",
+																align				: "Tr",
+																singleClick	: true,
+																showsTime		: true
 														});
 												</script>
 										</td>
@@ -982,7 +1027,7 @@ org.apache.poi.hssf.util.*
 												function afterUpdateReload(titleField, selectedItem) {
 														updateXriField(titleField, selectedItem);
 														$('isContactChange').value="true";
-													  $('reload.button').click();
+														$('reload.button').click();
 												}
 												ac_addObject0 = new Ajax.Autocompleter(
 													'contactXri.Title',
@@ -1017,16 +1062,16 @@ org.apache.poi.hssf.util.*
 											resourceFilter.orderByName().ascending();
 											resourceFilter.orderByDescription().ascending();
 											List resources = activitySegment.getResource(resourceFilter);
-										  if (resources.isEmpty()) {
-											  	errorMsg += "no matching resource found!<br>";
-											  	noResourcesFound = true;
-											  	resourceXri = "";
+											if (resources.isEmpty()) {
+													errorMsg += "no matching resource found!<br>";
+													noResourcesFound = true;
+													resourceXri = "";
 %>
 													<select id="resourceXri" name="resourceXri" class="valueL" <%= ERROR_STYLE %> tabindex="<%= tabIndex++ %>">
 														<option value="">--</option>
 													</select>
 <%
-										  } else {
+											} else {
 %>
 												<select id="resourceXri" name="resourceXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('isResourceChange').value='true';$('reload.button').click();" >
 													<option <%= showAllResourcesOfContact ? "selected" : "" %> value="*">*</option>
@@ -1044,13 +1089,13 @@ org.apache.poi.hssf.util.*
 																	resourceXri = res.refMofId();
 															}
 %>
-															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= app.getHtmlEncoder().encode(res.getName(), false) %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
+															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= res.getName() != null ? app.getHtmlEncoder().encode(res.getName(), false) : contactTitle %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
 <%
 													}
 %>
 												</select>
 <%
-										  }
+											}
 %>
 										</td>
 										<td class="addon">
@@ -1081,10 +1126,10 @@ org.apache.poi.hssf.util.*
 											}
 											*/
 											switch (activitySortOrder) {
-												case  0: activityQuery.orderByActivityNumber().ascending(); break;
-												case  1: activityQuery.orderByActivityNumber().descending(); break;
-												case  2: activityQuery.orderByName().ascending(); break;
-												case  3: activityQuery.orderByName().descending(); break;
+												case	0: activityQuery.orderByActivityNumber().ascending(); break;
+												case	1: activityQuery.orderByActivityNumber().descending(); break;
+												case	2: activityQuery.orderByName().ascending(); break;
+												case	3: activityQuery.orderByName().descending(); break;
 												default: activityQuery.orderByActivityNumber().descending(); break;
 											}
 
@@ -1102,7 +1147,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
 															orderedActivityGroups.put(
-																	(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
+																	(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
 																	ag
 																);
 														}
@@ -1112,7 +1157,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
 															orderedActivityGroups.put(
-																	(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
+																	(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
 																	ag
 																);
 														}
@@ -1122,7 +1167,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
 															orderedActivityGroups.put(
-																	(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
+																	(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
 																	ag
 																);
 														}
@@ -1156,7 +1201,7 @@ org.apache.poi.hssf.util.*
 																org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
 																if ((at.getUserString1() != null) && (at.getUserString1().length() > 0)) {
 																	orderedActivityGroups.put(
-																			(at.getUserString1() != null ? at.getUserString1().trim() : "_?") + "    " + gCounter++,
+																			(at.getUserString1() != null ? at.getUserString1().trim() : "_?") + "		" + gCounter++,
 																			at
 																		);
 																}
@@ -1169,7 +1214,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityFilter(filterGlobalFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal afg = (org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal)i.next();
 																	orderedActivityGroups.put(
-																			(afg.getName() != null ? afg.getName() : "_?") + "    " + gCounter++,
+																			(afg.getName() != null ? afg.getName() : "_?") + "		" + gCounter++,
 																			afg
 																		);
 														}
@@ -1181,7 +1226,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
 																	orderedActivityGroups.put(
-																			(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
+																			(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
 																			ag
 																		);
 														}
@@ -1193,7 +1238,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
 																orderedActivityGroups.put(
-																		(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
+																		(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
 																		ag
 																	);
 														}
@@ -1205,7 +1250,7 @@ org.apache.poi.hssf.util.*
 														for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
 																orderedActivityGroups.put(
-																		(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
+																		(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
 																		ag
 																	);
 														}
@@ -1214,14 +1259,14 @@ org.apache.poi.hssf.util.*
 
 													tabIndex += 10;
 													if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) != 0) {
-														  if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
-															  errorMsg += "no activity groups found!<br>";
+															if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
+																errorMsg += "no activity groups found!<br>";
 %>
 																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" class="valueL" <%= ERROR_STYLE %> tabindex="<%= tabIndex+5 %>">
 																	<option value="">--</option>
 																</select>
 <%
-														  } else {
+															} else {
 %>
 																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%= tabIndex+5 %>" onchange="javascript:$('reload.button').click();" >
 <%
@@ -1277,18 +1322,18 @@ org.apache.poi.hssf.util.*
 											}
 %>
 											<select class="valueL" style="width:<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 || ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0 ? "100" : "49" %>%;float:left;" id="activityFilter" name="activityFilter" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" >
-												<option <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter)      == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_SEGMENT      %>">*</option>
-												<option <%= ACTIVITY_FILTER_FILTERGLOBAL.compareTo(activityFilter) == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_FILTERGLOBAL %>"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %></option>
-												<option <%= ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter) 	   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_ANYGROUP     %>"><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
+												<option <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter)			== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_SEGMENT			%>">*</option>
+												<option <%= ACTIVITY_FILTER_FILTERGLOBAL.compareTo(activityFilter)== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_FILTERGLOBAL %>"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %></option>
+												<option <%= ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter)		== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_ANYGROUP		 %>"><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
 <%
 												if (hasProjects) {
 %>
-														<option <%= ACTIVITY_FILTER_PROJECT.compareTo(activityFilter)   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_PROJECT %>"  ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> [<%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>]</option>
+														<option <%= ACTIVITY_FILTER_PROJECT.compareTo(activityFilter)	 == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_PROJECT %>"	><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> [<%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>]</option>
 <%
 												}
 %>
-												<option <%= ACTIVITY_FILTER_TRACKER.compareTo(activityFilter)   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_TRACKER %>"  ><%= app.getLabel(ACTIVITYTRACKER_CLASS)   %></option>
-												<option <%= ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter)  == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_CATEGORY %>" ><%= app.getLabel(ACTIVITYCATEGORY_CLASS)  %></option>
+												<option <%= ACTIVITY_FILTER_TRACKER.compareTo(activityFilter)	 == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_TRACKER %>"	><%= app.getLabel(ACTIVITYTRACKER_CLASS)	 %></option>
+												<option <%= ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter)	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_CATEGORY %>" ><%= app.getLabel(ACTIVITYCATEGORY_CLASS)	%></option>
 												<option <%= ACTIVITY_FILTER_MILESTONE.compareTo(activityFilter) == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_MILESTONE %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
 											</select>
 										</td>
@@ -1304,7 +1349,7 @@ org.apache.poi.hssf.util.*
 											<td nowrap>
 <%
 												if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
-													  errorMsg += "no activity groups found!<br>";
+														errorMsg += "no activity groups found!<br>";
 %>
 														<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" class="valueL" <%= ERROR_STYLE %> tabindex="<%= tabIndex+5 %>">
 															<option value="">--</option>
@@ -1440,13 +1485,13 @@ org.apache.poi.hssf.util.*
 											int activityCounter = 0;
 											int maxToShow = MAX_ACTIVITY_SHOWN_INITIALLY;
 											if (activityXri != null && "MAX".compareTo(activityXri) == 0) {
-												  	maxToShow = MAX_ACTIVITY_SHOWN;
+														maxToShow = MAX_ACTIVITY_SHOWN;
 											}
 											boolean allFilteredActivities = "*".compareTo(activityXri) == 0;
-                                            boolean hasActivitySelection = false;
+																						boolean hasActivitySelection = false;
 %>
 												<select id="activityXri" name="activityXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" >
-													<option <%= allFilteredActivities ? "selected" : ""  %> value="*">*</option>
+													<option <%= allFilteredActivities ? "selected" : ""	%> value="*">*</option>
 <%
 													if (activitiesList != null) {
 														for (
@@ -1455,29 +1500,29 @@ org.apache.poi.hssf.util.*
 															activityCounter++
 														) {
 															org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
-                                                                  boolean selected = (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0);
-                                                                  if (selected) {
-                                                                    hasActivitySelection = true;
-                                                                  }
+																																	boolean selected = (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0);
+																																	if (selected) {
+																																		hasActivitySelection = true;
+																																	}
 %>
 															<option <%= selected ? "selected" : "" %> value="<%= activity.refMofId() %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
 <%
 														}
 													}
-											  	if (activityCounter >= maxToShow) {
+													if (activityCounter >= maxToShow) {
 %>
 													<option value="MAX"><%= activityCounter < MAX_ACTIVITY_SHOWN ? "&mdash;&mdash;&gt;" : "..." %></option>
 <%
-											  	}
-                        if (!hasActivitySelection && (activityXri != null) && (activityXri.length() > 0) && !"MAX".equalsIgnoreCase(activityXri) && !"*".equalsIgnoreCase(activityXri)) {
-                            // add another option to prevent loss of activity selection
-                            //System.out.println("activityXri = " + activityXri);
-                            hasActivitySelection = true;
-                            org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
+													}
+												if (!hasActivitySelection && (activityXri != null) && (activityXri.length() > 0) && !"MAX".equalsIgnoreCase(activityXri) && !"*".equalsIgnoreCase(activityXri)) {
+														// add another option to prevent loss of activity selection
+														//System.out.println("activityXri = " + activityXri);
+														hasActivitySelection = true;
+														org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
 %>
-                            <option selected value="<%= activityXri %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
+														<option selected value="<%= activityXri %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
 <%
-                        }
+												}
 %>
 											</select>
 										</td>
@@ -1486,7 +1531,7 @@ org.apache.poi.hssf.util.*
 										</td>
 									</tr>
 									<!-- isBillable -->
-									<tr>
+									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 										<td class="label">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
@@ -1495,8 +1540,8 @@ org.apache.poi.hssf.util.*
 										</td>
 										<td class="addon"></td>
 									</tr>
-									<!--  isReimbursable -->
-									<tr>
+									<!--	isReimbursable -->
+									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 										<td class="label">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
@@ -1505,8 +1550,8 @@ org.apache.poi.hssf.util.*
 										</td>
 										<td class="addon"></td>
 									</tr>
-									<!--  priority -->
-									<tr>
+									<!--	priority -->
+									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 										<td class="label">
 											<span class="nw"><%= userView.getFieldLabel(ACTIVITY_CLASS, "priority", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
@@ -1518,7 +1563,7 @@ org.apache.poi.hssf.util.*
 													Short key = (Short)entry.getKey();
 													String label = (String)entry.getValue();
 %>
-													<option <%= priority == key ? "selected" : ""  %> value="<%= key %>"><%= label %></option>
+													<option <%= priority == key ? "selected" : ""	%> value="<%= key %>"><%= label %></option>
 <%
 												}
 %>
@@ -1547,7 +1592,7 @@ org.apache.poi.hssf.util.*
 					if (allFilteredActivities) {
 						if ((ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) != 0) && (activitiesList != null)) {
 							// hint: instead of adding all activities of the segment to the Map selectedActivities
-							//       is left at null; this ensures that all activities are included
+							//			 is left at null; this ensures that all activities are included
 							selectedActivities = new TreeMap();
 							for (
 									Iterator i = activitiesList.iterator();
@@ -1588,7 +1633,7 @@ org.apache.poi.hssf.util.*
 					//System.out.println("allResources= " + showAllResources);
 					//System.out.println("allResOfCont= " + showAllResourcesOfContact);
 					//System.out.println("resourceXri = " + resourceXri);
-					//System.out.println("resource    = " + resource);
+					//System.out.println("resource		= " + resource);
 					//System.out.println("selectedRes = " + selectedResources);
 
 					boolean doReportCalculation = true;
@@ -1607,15 +1652,33 @@ org.apache.poi.hssf.util.*
 					//		reportBeginOfPeriod.getTime(),
 					//		reportEndOfPeriod.getTime()
 					//);
+					//if (isWorkRecord) {
+					//	workAndExpenseRecordQuery.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX)); // work records only, i.e. no expense records
+					//} else {
+					//	workAndExpenseRecordQuery.recordType().greaterThan(new Short((short)RECORDTYPE_WORK_MAX));
+					//}
+
 					if (isWorkRecord) {
-						workAndExpenseRecordQuery.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX)); // work records only, i.e. no expense records
+							if (isWorkRecordInPercent) {
+									workAndExpenseRecordQuery.recordType().equalTo(new Short((short)1));
+									if (uomPercent != null) {
+											workAndExpenseRecordQuery.thereExistsQuantityUom().equalTo(uomPercent);
+									}
+							} else {
+									workAndExpenseRecordQuery.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX));
+									if (uomPercent != null) {
+											workAndExpenseRecordQuery.forAllQuantityUom().notEqualTo(uomPercent);
+									}
+							}
 					} else {
-						workAndExpenseRecordQuery.recordType().greaterThan(new Short((short)RECORDTYPE_WORK_MAX));
+							workAndExpenseRecordQuery.recordType().greaterThan(new Short((short)RECORDTYPE_WORK_MAX));
 					}
-					if ((isBillable != null) && (isBillable.length() > 0)) {
+
+
+					if (!isWorkRecordInPercent && (isBillable != null) && (isBillable.length() > 0)) {
 						workAndExpenseRecordQuery.forAllIsBillable().isTrue();
 					}
-					if ((isReimbursable != null) && (isReimbursable.length() > 0)) {
+					if (!isWorkRecordInPercent && (isReimbursable != null) && (isReimbursable.length() > 0)) {
 						workAndExpenseRecordQuery.forAllIsReimbursable().isTrue();
 					}
 					Iterator w = null;
@@ -1671,16 +1734,22 @@ org.apache.poi.hssf.util.*
 					Map activities = new TreeMap();	// (activityNumber, XRI)
 					Map totalsPerActivity = new TreeMap();	// (activityNumber_currency, double)
 
-					Map activityGroups = new TreeMap();	// (name   XRI, XRI)
+					Map activityGroups = new TreeMap();	// (name	 XRI, XRI)
 					Map totalsPerActivityGroup	= new TreeMap();	// (XRI_currency, double)
 
 					Map totalsProject = new TreeMap();	// (currency, double)
-					Map projectPhases = new TreeMap();	// (name   XRI, XRI)
+					Map projectPhases = new TreeMap();	// (name	 XRI, XRI)
 					Map totalsPerProjectPhase = new TreeMap();	// (XRI_currency, double)
 
 					Map totalsReportingLines = new TreeMap();	// (currency, double)
 					Map reportingLines = new TreeMap();	// (sortKey, KEY)
 					Map totalsPerProjectReportLine = new TreeMap();	// (KEY[activityGroupXRI, activityXRI, resourceXRI, redordType, rate]_currency, double)
+
+					Map dayLoads = new TreeMap();							// (KEY[YYYYMMDD, resourceXRI], double)
+					Map dayPercentageTotals = new TreeMap();	// (KEY[YYYYMMDD, resourceXRI], double) [should be equal to 100%]
+					Map activityTotals = new TreeMap();				// (KEY[activityXRI, resourceXRI], double)
+					Map resourceTotals = new TreeMap();				// (KEY[resourceXRI], double)
+					Map dayErrorMessages = new TreeMap();			// (KEY[YYYYMMDD], String)
 
 					final String KEY_SPLITTER = "-;;-";
 
@@ -1706,7 +1775,7 @@ org.apache.poi.hssf.util.*
 						org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
 						if(
 							workAndExpenseRecord.getActivity() != null &&
-							workAndExpenseRecord.getActivity().getPriority() >= priority
+							(isWorkRecordInPercent || (workAndExpenseRecord.getActivity().getPriority() >= priority))
 						) {
 							org.opencrx.kernel.activity1.jmi1.Activity activity = workAndExpenseRecord.getActivity();
 							String activityNumber = null;
@@ -1721,7 +1790,7 @@ org.apache.poi.hssf.util.*
 							}
 							if (
 								((selectedActivities == null) || (selectedActivities.containsKey(activityNumber))) &&
-								((selectedResources  == null) || (selectedResources.containsKey(workAndExpenseRecord.getResource().refMofId())))
+								((selectedResources	== null) || (selectedResources.containsKey(workAndExpenseRecord.getResource().refMofId())))
 							) {
 								String sortKey =
 									(workAndExpenseRecord.getStartedAt() != null ? dtsortf.format(workAndExpenseRecord.getStartedAt()) : "yyyyMMddHHmmss") + "-" +
@@ -1747,8 +1816,8 @@ org.apache.poi.hssf.util.*
 										if (workAndExpenseRecord.getRate() != null) {
 											recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
 										} else {
-           							    	totalsError = true;
-                       					}
+											totalsError = true;
+										}
 									} else {
 										quantityError = true;
 									}
@@ -1901,7 +1970,7 @@ org.apache.poi.hssf.util.*
 									}
 								}
 
-								String WWDDKey = null; 		// YYYYWWDD where WW week of year and DD day of week
+								String WWDDKey = null;		// YYYYWWDD where WW week of year and DD day of week
 								String WWDDsumKey = null; // YYYYWW99 (sum of week)
 								String WWDDTimeKey = null;
 								String WWDDsumTimeKey = null;
@@ -1986,7 +2055,7 @@ org.apache.poi.hssf.util.*
 						Action action = new Action(
 								Action.EVENT_SELECT_OBJECT,
 								new Action.Parameter[]{
-								    new Action.Parameter(Action.PARAMETER_OBJECTXRI, resource.refMofId())
+										new Action.Parameter(Action.PARAMETER_OBJECTXRI, resource.refMofId())
 								},
 								"",
 								true // enabled
@@ -2000,7 +2069,7 @@ org.apache.poi.hssf.util.*
 						Action action = new Action(
 								Action.EVENT_SELECT_OBJECT,
 								new Action.Parameter[]{
-								    new Action.Parameter(Action.PARAMETER_OBJECTXRI, contact.refMofId())
+										new Action.Parameter(Action.PARAMETER_OBJECTXRI, contact.refMofId())
 								},
 								"",
 								true // enabled
@@ -2014,7 +2083,7 @@ org.apache.poi.hssf.util.*
 						Action action = new Action(
 								Action.EVENT_SELECT_OBJECT,
 								new Action.Parameter[]{
-								    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activityGroup.refMofId())
+										new Action.Parameter(Action.PARAMETER_OBJECTXRI, activityGroup.refMofId())
 								},
 								"",
 								true // enabled
@@ -2025,7 +2094,7 @@ org.apache.poi.hssf.util.*
 
 					String actHref = "*";
 					org.opencrx.kernel.activity1.jmi1.Activity act = null;
-					if (activityXri != null &&  "*".compareTo(activityXri) != 0) {
+					if (activityXri != null &&	"*".compareTo(activityXri) != 0) {
 							try {
 									act = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
 							} catch (Exception e) {}
@@ -2034,7 +2103,7 @@ org.apache.poi.hssf.util.*
 						Action action = new Action(
 								Action.EVENT_SELECT_OBJECT,
 								new Action.Parameter[]{
-								    new Action.Parameter(Action.PARAMETER_OBJECTXRI, act.refMofId())
+										new Action.Parameter(Action.PARAMETER_OBJECTXRI, act.refMofId())
 								},
 								"",
 								true // enabled
@@ -2047,7 +2116,7 @@ org.apache.poi.hssf.util.*
 						Action.EVENT_DOWNLOAD_FROM_LOCATION,
 						new Action.Parameter[]{
 							new Action.Parameter(Action.PARAMETER_LOCATION, location),
-							new Action.Parameter(Action.PARAMETER_NAME, sheetName),
+							new Action.Parameter(Action.PARAMETER_NAME, sheetName + ".xls"),
 							new Action.Parameter(Action.PARAMETER_MIME_TYPE, "application/vnd.ms-excel")
 						},
 						app.getTexts().getClickToDownloadText() + " " + sheetName,
@@ -2062,10 +2131,10 @@ org.apache.poi.hssf.util.*
 
 					<table id="reportHeader" style="padding:5px;border:1px solid #ddd;float:left;margin:0 0 12px 5px;">
 						<tr>
-							<td class="padded"><%= app.getLabel(CONTACT_CLASS)        %>:</td><td><%= contact != null ? contactHref : "*" %></td>
+							<td class="padded"><%= app.getLabel(CONTACT_CLASS)				%>:</td><td><%= contact != null ? contactHref : "*" %></td>
 						</tr>
 						<tr>
-							<td class="padded"><%= app.getLabel(RESOURCE_CLASS)       %>:</td><td><%= hasMultipleResources ? "*" : (resource != null ? resHref : "*") %></td>
+							<td class="padded"><%= app.getLabel(RESOURCE_CLASS)			 %>:</td><td><%= hasMultipleResources ? "*" : (resource != null ? resHref : "*") %></td>
 						</tr>
 <%
 						if (isProjectReporting) {
@@ -2087,7 +2156,8 @@ org.apache.poi.hssf.util.*
 					<div style="clear:left;"></div>
 <%
 /*---------------------------------------------------------------------------------------------------------------------
- N O T E :   It is assumed that ALL work records (i.e. WorkAndExpenseRecords with recordType <= 99 have hours as UOM!!!
+ N O T E :	 It is assumed that ALL work records (i.e. WorkAndExpenseRecords with recordType <= 99 have hours as UOM!!!
+						 unless they are marked as workRecordInPercent with quantityUom = 'Percent'
 ---------------------------------------------------------------------------------------------------------------------*/
 
 					if (doReportCalculation) {
@@ -2112,20 +2182,33 @@ org.apache.poi.hssf.util.*
 									)
 							};
 
-							HSSFSheet sheetRecords        = addSheet(wb, "Records",        true,  labels, values, 1);
-							HSSFSheet sheetWeeks          = addSheet(wb, "Calendar",       false, labels, values, 0);
-							HSSFSheet sheetActivities     = addSheet(wb, "Activities",     false, labels, values, 0);
-							HSSFSheet sheetActivityGroups = addSheet(wb, "ActivityGroups", false, labels, values, 0);
 							HSSFSheet sheetProject = null;
+							HSSFSheet sheetWeeks = null;
+							HSSFSheet sheetActivityGroups = null;
+							HSSFSheet sheetResources = null;
+							HSSFSheet sheetRecords					= addSheet(wb, "Records",				true,	labels, values, 1);
+							if (!isWorkRecordInPercent) {
+													sheetWeeks					= addSheet(wb, "Calendar",			 false, labels, values, 0);
+							}
+							HSSFSheet sheetActivities				= addSheet(wb, "Activities",		 false, labels, values, 0);
+							if (isWorkRecordInPercent && hasMultipleResources) {
+													sheetResources			= addSheet(wb, "Resources",			false, labels, values, 0);
+							}
+							if (!isWorkRecordInPercent) {
+													sheetActivityGroups = addSheet(wb, "ActivityGroups", false, labels, values, 0);
+							}
 
 							HSSFRow row = null;
 							HSSFCell cell = null;
+							HSSFCell lastSumCell = null;
+							HSSFCell preLastSumCell = null;
+							HSSFCell resourceLineCell = null;
 							short nRow = 0;
 							short nCell = 0;
 
-							boolean showFullStartedAtDate = (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
+							boolean showFullStartedAtDate = (!isWorkRecordInPercent) && (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
 
-							sheetRecords.setColumnWidth((short)0, (short)1000);
+							sheetRecords.setColumnWidth((short)0, (short)1200);
 							sheetRecords.setColumnWidth((short)1, (short)4500);
 							sheetRecords.setColumnWidth((short)2, (short)1000);
 							sheetRecords.setColumnWidth((short)3, (short)4500);
@@ -2147,16 +2230,32 @@ org.apache.poi.hssf.util.*
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()));
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()));
 							if (isWorkRecord) {
-									cell = row.createCell(nCell++);	cell.setCellValue("hh:mm"); cell.setCellStyle(timeStyle);
-									sheetRecords.setColumnWidth((short) 8, (short)1800);
-									sheetRecords.setColumnWidth((short) 9, (short)1800);
-									sheetRecords.setColumnWidth((short)10, (short)1200);
-									sheetRecords.setColumnWidth((short)11, (short)3000);
-									sheetRecords.setColumnWidth((short)12, (short)3000);
-									sheetRecords.setColumnWidth((short)13, (short)3000);
-									sheetRecords.setColumnWidth((short)14, (short)1000);
-									sheetRecords.setColumnWidth((short)15, (short)4000);
-									sheetRecords.setColumnWidth((short)16, (short)6000);
+									if (isWorkRecordInPercent) {
+											cell = row.createCell(nCell++);	cell.setCellValue("%"); cell.setCellStyle(quantityStyle);
+											sheetRecords.setColumnWidth((short) 3, (short)0);
+											sheetRecords.setColumnWidth((short) 8, (short)1800);
+											sheetRecords.setColumnWidth((short) 9, (short)0);
+											sheetRecords.setColumnWidth((short)10, (short)0);
+											sheetRecords.setColumnWidth((short)11, (short)0);
+											sheetRecords.setColumnWidth((short)12, (short)0);
+											sheetRecords.setColumnWidth((short)13, (short)0);
+											sheetRecords.setColumnWidth((short)14, (short)0);
+											sheetRecords.setColumnWidth((short)15, (short)0);
+											sheetRecords.setColumnWidth((short)16, (short)0);
+											sheetRecords.setColumnWidth((short)17, (short)2000);
+											sheetRecords.setColumnWidth((short)17, (short)2000);
+									} else {
+											cell = row.createCell(nCell++);	cell.setCellValue("hh:mm"); cell.setCellStyle(timeStyle);
+											sheetRecords.setColumnWidth((short) 8, (short)1800);
+											sheetRecords.setColumnWidth((short) 9, (short)1800);
+											sheetRecords.setColumnWidth((short)10, (short)1200);
+											sheetRecords.setColumnWidth((short)11, (short)3000);
+											sheetRecords.setColumnWidth((short)12, (short)3000);
+											sheetRecords.setColumnWidth((short)13, (short)3000);
+											sheetRecords.setColumnWidth((short)14, (short)1000);
+											sheetRecords.setColumnWidth((short)15, (short)4000);
+											sheetRecords.setColumnWidth((short)16, (short)6000);
+									}
 							} else {
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
 									cell = row.createCell(nCell++);
@@ -2175,29 +2274,44 @@ org.apache.poi.hssf.util.*
 							}
 							cell = row.createCell(nCell++);
 							cell = row.createCell(nCell++);
-							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
-							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()));
-							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()));
-							if (isWorkRecord) {
-									cell = row.createCell(nCell++);
-									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
+							if (isWorkRecordInPercent) {
+									cell = row.createCell(nCell++);	
+									cell = row.createCell(nCell++);	
+									cell = row.createCell(nCell++);	
+									cell = row.createCell(nCell++);	
+									cell = row.createCell(nCell++);	
+							} else {
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()));
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()));
+									if (isWorkRecord) {
+											cell = row.createCell(nCell++);
+											cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
+									}
 							}
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()));
+							if (isWorkRecordInPercent && !hasMultipleResources) {
+									cell = row.createCell(nCell++);	cell.setCellValue("SUM"); cell.setCellStyle(rightAlignStyle);
+									cell = row.createCell(nCell++);	cell.setCellValue("Day Load"); cell.setCellStyle(rightAlignStyle);
+							}
 
+/*--------------------------------------------------------------
+| R E C	O R D S
+\--------------------------------------------------------------*/
 %>
 							<table><tr><td style="padding-left:5px;">
 							<table class="gridTable">
 								<tr class="gridTableHeader">
 									<td class="smallheaderR" colspan="2">
 										<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>
-										<input type="checkbox" name="isFullStartedAtDate" <%= showFullStartedAtDate ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="isFullStartedAtDate" onchange="javascript:$('reload.button').click();" />
+										<input type="checkbox" name="isFullStartedAtDate" <%= showFullStartedAtDate ? "checked" : "" %> <%= isWorkRecordInPercent ? "style='display:none;'" : "" %> tabindex="<%= tabIndex++ %>" value="isFullStartedAtDate" onchange="javascript:$('reload.button').click();" />
 									</td>
 									<td class="smallheaderR <%= showFullStartedAtDate ? "" : "hidden" %>" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
 									<td class="smallheader"></td>
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 									<td class="smallheader" <%= hasMultipleResources ? "" : "style='display:none;'" %>><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-									<td class="smallheaderR"><%= isWorkRecord ? "hh:mm" : userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
+									<td class="smallheaderR"><%= isWorkRecord ? (isWorkRecordInPercent ? "%" : "hh:mm") : userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
 <%
 									if (!isWorkRecord) {
 %>
@@ -2205,31 +2319,42 @@ org.apache.poi.hssf.util.*
 										<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 <%
 									}
+									if (isWorkRecord && !isWorkRecordInPercent) {
 %>
-									<td class="smallheader">&nbsp;</td>
-									<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex()) %></td>
-									<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$&nbsp;</td>
-									<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">*&nbsp;</td>
-<%
-									if (isWorkRecord) {
-%>
-										<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+											<td class="smallheader">&nbsp;</td>
+											<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex()) %></td>
+											<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$&nbsp;</td>
+											<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">*&nbsp;</td>
+											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 <%
 									}
 %>
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+									<td class="smallheaderR"><%= isWorkRecordInPercent && !hasMultipleResources ? "&sum;" : "" %></td>
 								</tr>
 <%
 								boolean isEvenRow = false;
+								boolean isFirstRow = true;
+								BigDecimal dailySum = BigDecimal.ZERO;
+								Set resourcesToday = new TreeSet();
+								String calDayName = null;
+								String resourceErrorMsg = null;
+								String startedAtCurrent = "";
+								String startedAtPrevious = "";
+								int rowCounter = 0;
 								int wr = 0;
 								for(Iterator i = workReportEntries.values().iterator(); i.hasNext(); wr++) {
 									org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)i.next();
+
+									GregorianCalendar startedAtDate = new GregorianCalendar(app.getCurrentLocale());
+									startedAtDate.setTime(workAndExpenseRecord.getStartedAt());
+									startedAtCurrent = getDateAsString(startedAtDate);
 
 									String recordHref = "";
 									Action action = new Action(
 											Action.EVENT_SELECT_OBJECT,
 											new Action.Parameter[]{
-											    new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
+													new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
 											},
 											"",
 											true // enabled
@@ -2243,12 +2368,12 @@ org.apache.poi.hssf.util.*
 									String activityHref = "";
 									if (
 										activity != null &&
-										activity.getPriority() >= priority
+										(isWorkRecordInPercent || (activity.getPriority() >= priority))
 									) {
 										action = new Action(
 											Action.EVENT_SELECT_OBJECT,
 											new Action.Parameter[]{
-											    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
+													new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
 											},
 											"",
 											true // enabled
@@ -2259,18 +2384,123 @@ org.apache.poi.hssf.util.*
 											action = new Action(
 													Action.EVENT_SELECT_OBJECT,
 													new Action.Parameter[]{
-													    new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.getResource().refMofId())
+															new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.getResource().refMofId())
 													},
 													"",
 													true // enabled
 											);
 											resourceHref = "../../" + action.getEncodedHRef();
 										}
+										boolean isDayBreak = false;
+										if (isWorkRecordInPercent && startedAtCurrent.compareTo(startedAtPrevious) != 0) {
+												// new day --> break and print sum
+												isDayBreak = true;
+												if (isWorkRecordInPercent && hasMultipleResources && !isFirstRow) {
+														// calculate list of Resources whose sum of allocations for the current day does not equal 100%
+														resourceErrorMsg = resourceErrorMsgUpdate(resourceErrorMsg, calDayName, resourcesToday, dayPercentageTotals, pm);
+														if (resourceErrorMsg != null) {
+																row = sheetRecords.createRow(nRow++);
+																nCell = 0;
+																cell = row.createCell(nCell++);	
+																cell = row.createCell(nCell++);	
+																cell.setCellValue(resourceErrorMsg);
+																dayErrorMessages.put(calDayName, resourceErrorMsg);
+%>
+																<tr class='break'>
+																	<td colspan="11"><%= resourceErrorMsg %></td>
+																</tr>
+<%
+														}
+												}
+
+												startedAtPrevious = startedAtCurrent;
+												dailySum = BigDecimal.ZERO;
+												resourcesToday = new TreeSet();
+												resourceErrorMsg = null;
+										}
+										if (isFirstRow) {
+												isDayBreak = false;
+												isFirstRow = false;
+										}
+
+
+										// WorkRecordInPercent special treatment
+										
+										org.opencrx.kernel.activity1.jmi1.Resource currentResource = null;
+										org.opencrx.kernel.activity1.jmi1.Calendar cal = null;
+										org.opencrx.kernel.activity1.jmi1.CalendarDay calDay = null;
+										calDayName = null;
+										try {
+											calDayName = calendardayf.format(startedAtDate.getTime());
+										} catch (Exception e) {}
+										String calDayLoad = null;
+										double dayLoad = 100.0;
+
+										if (isWorkRecordInPercent) {
+											// try to get Default Calendar of Resource
+											try {
+												currentResource = workAndExpenseRecord.getResource();
+												if (currentResource != null) {
+														if (currentResource.getCalendar() != null) {
+															cal = currentResource.getCalendar();
+															// try to get CalendarDay
+															org.opencrx.kernel.activity1.cci2.CalendarDayQuery calendarDayQuery = (org.opencrx.kernel.activity1.cci2.CalendarDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
+															calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(calDayName, app).getTime());
+															Collection calendarDays = cal.getCalendarDay(calendarDayQuery);
+															if(!calendarDays.isEmpty()) {
+																calDay = (org.opencrx.kernel.activity1.jmi1.CalendarDay)calendarDays.iterator().next();
+																calDayName = calDay.getName();
+																try {
+																		String[] calDayNameSplit = calDayName.split("@");
+																		if (calDayNameSplit.length>=2) {
+																				calDayName = calDayNameSplit[0];
+																				calDayLoad = calDayNameSplit[1];
+																				dayLoad = Double.parseDouble(calDayLoad);
+																		}
+																} catch (Exception e) {}
+															}
+														}
+														
+												}
+											} catch (Exception e) {}
+										}
+										if (currentResource != null && calDayName != null) {
+											String dayKey = calDayName + currentResource.refMofId();
+											if (dayLoads.get(dayKey) == null) {
+												dayLoads.put(dayKey, (Double)dayLoad);
+											}
+											if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getQuantity().doubleValue() > 0) {
+													resourcesToday.add(currentResource.refMofId());
+
+													String activityTotalKey = activity.refMofId() + currentResource.refMofId();
+													double contribution = workAndExpenseRecord.getQuantity().doubleValue();
+													if (dayPercentageTotals.get(dayKey) == null) {
+														dayPercentageTotals.put(dayKey, (Double)contribution);
+													} else {
+														dayPercentageTotals.put(dayKey, ((Double)dayPercentageTotals.get(dayKey)) + contribution);
+													}
+
+													contribution = contribution * dayLoad / 10000.0;
+													if (activityTotals.get(activityTotalKey) == null) {
+														activityTotals.put(activityTotalKey, (Double)contribution);
+													} else {
+														activityTotals.put(activityTotalKey, ((Double)activityTotals.get(activityTotalKey)) + contribution);
+													}
+													String resourceTotalKey = currentResource.refMofId();
+													if (resourceTotals.get(resourceTotalKey) == null) {
+														resourceTotals.put(resourceTotalKey, (Double)contribution);
+													} else {
+														resourceTotals.put(resourceTotalKey, ((Double)resourceTotals.get(resourceTotalKey)) + contribution);
+													}
+											}
+										}
+										
 										double recordTotal = 0.0;
 										boolean quantityError = false;
 										try {
 											if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getRate() != null) {
-											    recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+													dailySum = dailySum.add(workAndExpenseRecord.getQuantity());
+													recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
 											} else {
 												quantityError = true;
 												totalsError = true;
@@ -2283,20 +2513,25 @@ org.apache.poi.hssf.util.*
 											quantityError = true;
 											totalsError = true;
 										}
-    									String currency = DEFAULT_CURRENCY;
-    									try {
-    									   currency = (String)(codes.getShortText(FEATURE_BILLING_CURRENCY, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
-    									} catch (Exception e) {};
+											String currency = DEFAULT_CURRENCY;
+											try {
+												 currency = (String)(codes.getShortText(FEATURE_BILLING_CURRENCY, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+											} catch (Exception e) {};
 										row = sheetRecords.createRow(nRow++);
 										nCell = 0;
 										if (workAndExpenseRecord.getStartedAt() != null) {
 											cell = row.createCell(nCell++);	cell.setCellValue(weekdayf.format(workAndExpenseRecord.getStartedAt())); cell.setCellStyle(rightAlignStyle);
-											cell = row.createCell(nCell++); cell.setCellValue(workAndExpenseRecord.getStartedAt()); cell.setCellStyle(dateTimeStyle);
+											cell = row.createCell(nCell++);
+											if (isWorkRecordInPercent) {
+												cell.setCellValue(workAndExpenseRecord.getStartedAt()); cell.setCellStyle(dateStyle);
+											} else {
+												cell.setCellValue(workAndExpenseRecord.getStartedAt()); cell.setCellStyle(dateTimeStyle);
+											}
 										} else {
 											cell = row.createCell(nCell++);
 											cell = row.createCell(nCell++);
 										}
-										if (workAndExpenseRecord.getEndedAt() != null) {
+										if (workAndExpenseRecord.getEndedAt() != null && !isWorkRecordInPercent) {
 											cell = row.createCell(nCell++);	cell.setCellValue(weekdayf.format(workAndExpenseRecord.getEndedAt())); cell.setCellStyle(rightAlignStyle);
 											cell = row.createCell(nCell++); cell.setCellValue(workAndExpenseRecord.getEndedAt()); cell.setCellStyle(dateTimeStyle);
 										} else {
@@ -2313,8 +2548,12 @@ org.apache.poi.hssf.util.*
 										cell = row.createCell(nCell++);
 										if (workAndExpenseRecord.getQuantity() != null) {
 											if (isWorkRecord) {
-													// cell.setCellValue(decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)); cell.setCellStyle(timeStyle);
-													cell.setCellValue(workAndExpenseRecord.getQuantity().doubleValue() / 24.0); cell.setCellStyle(timeStyle);
+													if (isWorkRecordInPercent) {
+															cell.setCellValue(workAndExpenseRecord.getQuantity().doubleValue()); cell.setCellStyle(quantityStyle);
+													} else {
+															// cell.setCellValue(decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)); cell.setCellStyle(timeStyle);
+															cell.setCellValue(workAndExpenseRecord.getQuantity().doubleValue() / 24.0); cell.setCellStyle(timeStyle);
+													}
 											} else {
 													cell.setCellValue(workAndExpenseRecord.getQuantity().doubleValue()); cell.setCellStyle(weightStyle);
 											}
@@ -2325,18 +2564,38 @@ org.apache.poi.hssf.util.*
 												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? workAndExpenseRecord.getQuantityUom().getName() : "?");
 										}
 										cell = row.createCell(nCell++);
-										if (workAndExpenseRecord.getRate() != null) {
+										if (workAndExpenseRecord.getRate() != null && !isWorkRecordInPercent) {
 											cell.setCellValue(workAndExpenseRecord.getRate().doubleValue()); cell.setCellStyle(amountStyle);
 										}
-										cell = row.createCell(nCell++);	cell.setCellValue(currency);
-										cell = row.createCell(nCell++);	cell.setCellValue(recordTotal); cell.setCellStyle(amountStyle);
-										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue());
-										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue());
+										if (isWorkRecordInPercent) {
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++);
+										} else {
+												cell = row.createCell(nCell++);	cell.setCellValue(currency);
+												cell = row.createCell(nCell++);	cell.setCellValue(recordTotal); cell.setCellStyle(amountStyle);
+												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue());
+												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue());
+										}
 										if (isWorkRecord) {
-												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
-												cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
+												if (isWorkRecordInPercent) {
+														cell = row.createCell(nCell++);
+														cell = row.createCell(nCell++);
+												} else {
+														cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
+														cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
+												}
 										}
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "");
+										if (isWorkRecordInPercent && !hasMultipleResources) {
+												cell = row.createCell(nCell++);
+												preLastSumCell = lastSumCell;
+												lastSumCell = cell;
+												cell.setCellValue(formatter0.format(dailySum.doubleValue())); cell.setCellStyle(quantityStyle);
+												cell = row.createCell(nCell++);
+												cell.setCellValue((calDayLoad == null ? "undef --> " : "") + formatter0.format(dayLoad)); cell.setCellStyle(quantityStyle);
+										}
 
 %>
 										<tr <%=isEvenRow ? "class='even'" : "" %>>
@@ -2348,7 +2607,7 @@ org.apache.poi.hssf.util.*
 											<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= activity != null ? app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) : "--" %>&nbsp;</a></td>
 											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getName(), false) : "" %></a></td>
 											<td class="padded" <%= hasMultipleResources ? "" : "style='display:none;'" %>><a href='<%= resourceHref %>' target='_blank'><%= workAndExpenseRecord.getResource() != null ? app.getHtmlEncoder().encode(new ObjectReference(workAndExpenseRecord.getResource(), app).getTitle(), false) : "" %>&nbsp;</a></td>
-											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=  workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0) : quantityf.format(workAndExpenseRecord.getQuantity())) %></a></td>
+											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=	workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? (isWorkRecordInPercent ? formatter0.format(workAndExpenseRecord.getQuantity()) : decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)) : quantityf.format(workAndExpenseRecord.getQuantity())) %></a></td>
 <%
 											if (!isWorkRecord) {
 %>
@@ -2356,24 +2615,73 @@ org.apache.poi.hssf.util.*
 												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getQuantityUom().getName(), false) : "?" %>&nbsp;</a></td>
 <%
 											}
+											if (isWorkRecord && !isWorkRecordInPercent) {
 %>
-											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? ratesepf.format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
-											<td class="padded_r" <%= quantityError ? ERROR_STYLE : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
-											<td class="padded_r" <%= quantityError ? ERROR_STYLE : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
-											<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-											<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-<%
-											if (isWorkRecord) {
-%>
+												<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? ratesepf.format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
+												<td class="padded_r" <%= quantityError ? ERROR_STYLE : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
+												<td class="padded_r" <%= quantityError ? ERROR_STYLE : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
 												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
 <%
 											}
 %>
 											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "" %></a></td>
+<%
+											if (isWorkRecordInPercent) {
+													if (!hasMultipleResources) {
+%>
+														<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter++ %>">
+															<%= formatter0.format(dailySum.doubleValue()) %>
+<%
+																if (!isDayBreak) {
+																		if (preLastSumCell != null) {
+																				preLastSumCell.setCellValue("");
+																				preLastSumCell = null;
+																		}
+%>
+																		<script language="javascript" type="text/javascript">
+																				try {
+																						$('cumSum<%= rowCounter-2 %>').innerHTML = '';
+																				} catch (e) {}
+																		</script>
+<%
+																}
+%>
+														</td>
+<%
+													} else {
+%>
+														<td class="padded_r"></td>
+<%
+													}
+											} else {
+%>
+													<td class="padded_r"></td>
+<%
+											}
+%>
 										</tr>
 <%
 										isEvenRow = !isEvenRow;
 									}
+								}
+								if (isWorkRecordInPercent && hasMultipleResources && !isFirstRow) {
+										// calculate list of Resources whose sum of allocations for the current day does not equal 100%
+										resourceErrorMsg = resourceErrorMsgUpdate(resourceErrorMsg, calDayName, resourcesToday, dayPercentageTotals, pm);
+								}
+								if (resourceErrorMsg != null) {
+										row = sheetRecords.createRow(nRow++);
+										nCell = 0;
+										cell = row.createCell(nCell++);	
+										cell = row.createCell(nCell++);	
+										cell.setCellValue(resourceErrorMsg);
+										dayErrorMessages.put(calDayName, resourceErrorMsg);
+%>
+										<tr class='break'>
+											<td colspan="11"><%= resourceErrorMsg %></td>
+										</tr>
+<%
 								}
 %>
 							</table>
@@ -2382,6 +2690,10 @@ org.apache.poi.hssf.util.*
 							<br>
 							<table><tr><td style="padding-left:5px;">
 							<table class="gridTable">
+<%
+							if (!isWorkRecordInPercent) {
+%>
+
 <!-- totals per week -->
 <%
 								GregorianCalendar calendarBeginOfWeek = null;
@@ -2391,10 +2703,10 @@ org.apache.poi.hssf.util.*
 									while (calendarBeginOfWeek.get(GregorianCalendar.DAY_OF_WEEK) != calendarBeginOfWeek.getFirstDayOfWeek()) {
 											calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, -1);
 									}
-                            		calendarBeginOfWeek.set(GregorianCalendar.HOUR_OF_DAY, 0);
-                            		calendarBeginOfWeek.set(GregorianCalendar.MINUTE, 0);
-                            		calendarBeginOfWeek.set(GregorianCalendar.SECOND, 0);
-                            		calendarBeginOfWeek.set(GregorianCalendar.MILLISECOND, 0);
+																calendarBeginOfWeek.set(GregorianCalendar.HOUR_OF_DAY, 0);
+																calendarBeginOfWeek.set(GregorianCalendar.MINUTE, 0);
+																calendarBeginOfWeek.set(GregorianCalendar.SECOND, 0);
+																calendarBeginOfWeek.set(GregorianCalendar.MILLISECOND, 0);
 								}
 
 								nRow = REPORT_STARTING_ROW;
@@ -2455,14 +2767,14 @@ org.apache.poi.hssf.util.*
 											cell = row.createCell(nCell++);	cell.setCellValue(yyyyf.format(beginOfCurrentWeek.getTime()) + " #" + formatter2.format(beginOfCurrentWeek.get(GregorianCalendar.WEEK_OF_YEAR)) + " [" + datef.format(beginOfCurrentWeek.getTime()) + " / " + datef.format(endOfCurrentWeek.getTime()) + "]");
 											if (isWorkRecord) {
 												for(int i = currentDate.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
-														String WWDDKey = null; 		// YYYYWWDD where WW week of year and DD day of week
+														String WWDDKey = null;		// YYYYWWDD where WW week of year and DD day of week
 														String WWDDsumKey = null; // YYYYWW99 (sum of week)
 														String WWDDTimeKey = null;
 														String WWDDsumTimeKey = null;
 														try {
-																WWDDTimeKey = 	yyyyf.format(currentDate.getTime()) +
-																								formatter2.format(currentDate.get(GregorianCalendar.WEEK_OF_YEAR)) +
-																								formatter2.format(currentDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) + "_" + timeKey;
+																WWDDTimeKey =	yyyyf.format(currentDate.getTime()) +
+																							formatter2.format(currentDate.get(GregorianCalendar.WEEK_OF_YEAR)) +
+																							formatter2.format(currentDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) + "_" + timeKey;
 														} catch (Exception e) {
 																WWDDTimeKey = "?_" + timeKey;
 														}
@@ -2514,8 +2826,6 @@ org.apache.poi.hssf.util.*
 %>
 										</tr>
 <%
-									System.out.println("currentDate: " + currentDate.getTime());
-									System.out.println("latestDate : " + latestDate);
 									}
 								}
 %>
@@ -2612,7 +2922,13 @@ org.apache.poi.hssf.util.*
 								<tr>
 									<td colspan="<%= totals.keySet().size() + 9 %>" style="padding:5px;">&nbsp;</td>
 								</tr>
+<%
+							}
 
+/*--------------------------------------------------------------
+| A C T I V I T I E S
+\--------------------------------------------------------------*/
+%>
 <!-- totals per activity -->
 								<tr class="gridTableHeader">
 									<td class="smallheader" colspan="8"><%= app.getLabel(ACTIVITYSEGMENT_CLASS) %></td>
@@ -2622,14 +2938,28 @@ org.apache.poi.hssf.util.*
 									nCell = 0;
 									cell = row.createCell(nCell);	cell.setCellValue(app.getLabel(ACTIVITYSEGMENT_CLASS));
 									sheetActivities.setColumnWidth(nCell++, (short)12000);
-									for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
-										String key = (String)i.next();
-										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+									if (isWorkRecordInPercent) {
 %>
-										<td class="smallheaderR"><%= key %></td>
+											<td class="smallheader"><%= app.getLabel(RESOURCE_CLASS) %></td>
+											<td class="smallheaderR">%</td>
+											<td class="smallheaderR">#days</td>
 <%
-										cell = row.createCell(nCell);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
-										sheetActivities.setColumnWidth(nCell++, (short)3000);
+											cell = row.createCell(nCell);	cell.setCellValue(app.getLabel(RESOURCE_CLASS)); 
+											sheetActivities.setColumnWidth(nCell++, (short)5000);
+											cell = row.createCell(nCell);	cell.setCellValue("%"); cell.setCellStyle(rightAlignStyle);
+											sheetActivities.setColumnWidth(nCell++, (short)3000);
+											cell = row.createCell(nCell);	cell.setCellValue("#days"); cell.setCellStyle(rightAlignStyle);
+											sheetActivities.setColumnWidth(nCell++, (short)3000);
+									} else {
+											for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+												String key = (String)i.next();
+												if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+%>
+												<td class="smallheaderR"><%= key %></td>
+<%
+												cell = row.createCell(nCell);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
+												sheetActivities.setColumnWidth(nCell++, (short)3000);
+											}
 									}
 %>
 								</tr>
@@ -2641,66 +2971,237 @@ org.apache.poi.hssf.util.*
 										Action action = new Action(
 												Action.EVENT_SELECT_OBJECT,
 												new Action.Parameter[]{
-												    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
+														new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
 												},
 												"",
 												true // enabled
 											);
 										activityHref = "../../" + action.getEncodedHRef();
+
+										if (isWorkRecordInPercent) {
+												isFirstRow = true;
+												for (Iterator i = resourceTotals.keySet().iterator(); i.hasNext();) {
+													resourceXri = (String)i.next();
+													resource = null;
+													try {
+															resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
+													} catch (Exception e) {}
+													if (resource != null) {
+															String activityTotalKey = activity.refMofId() + resource.refMofId();
+															Double DactivityTotal = (Double)activityTotals.get(activityTotalKey);
+															double activityTotal = 0.0;
+															
+															String resourceTotalKey = resource.refMofId();
+															Double DresourceTotal = (Double)resourceTotals.get(resourceTotalKey);
+															double resourceTotal = 0.0;
+															
+															if (DactivityTotal == null) {continue;}
+															
+															row = sheetActivities.createRow(nRow++);
+															nCell = 0;
+															cell = row.createCell(nCell++);
+															
+															if (isFirstRow) {
+																	cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
+															}
+%>
+															<tr>
+																<td class="padded" colspan="8">
+<%
+																	if (isFirstRow) {
+%>
+																		<a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %></a>
+<%
+																	}
+%>
+																</td>
+																<td class="padded"><%= resource.getName() != null ? resource.getName() : "--" %></td>
+<%
+																isFirstRow = false;
+																cell = row.createCell(nCell++);
+																cell.setCellValue(resource.getName() != null ? resource.getName() : "--"); // cell.setCellStyle(rightAlignStyle);
+
+																if (DactivityTotal != null && DresourceTotal != null) {
+																		activityTotal = DactivityTotal.doubleValue() / DresourceTotal.doubleValue();
+																		resourceTotal = DresourceTotal.doubleValue();
+																		
+																		cell = row.createCell(nCell++);
+																		cell.setCellValue(activityTotal * 100.0); cell.setCellStyle(weightStyle);
+																		cell = row.createCell(nCell++);
+																		cell.setCellValue(activityTotal * resourceTotal); cell.setCellStyle(weightStyle);
+
+%>
+																		<td class="padded_r"><%= ratesehpf.format(activityTotal * 100.0) %></td>
+																		<td class="padded_r"><%= ratesepf.format(activityTotal * resourceTotal) %></td>
+<%
+																} else {
+%>
+																		<td class="padded_r">---</td>
+																		<td class="padded_r">?</td>
+<%
+																}
+%>
+															</tr>
+<%
+													}
+												}
+										} else {
+
+												row = sheetActivities.createRow(nRow++);
+												nCell = 0;
+												cell = row.createCell(nCell++);	cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
+%>
+												<tr>
+													<td class="padded" colspan="8"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %></a></td>
+<%
+													for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+														String key = activityNumber + "_" + (String)i.next();
+														String activityKey = activityNumber + "_" + timeKey;
+														if (!isWorkRecord && key.compareTo(activityKey) == 0) {continue;}
+														cell = row.createCell(nCell++);
+														if (totalsPerActivity.get(key) != null) {
+																if (key.compareTo(activityKey) == 0) {
+																		cell.setCellValue(((Double)totalsPerActivity.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+																} else {
+																		cell.setCellValue((Double)totalsPerActivity.get(key)); cell.setCellStyle(amountStyle);
+																}
+														}
+%>
+														<td class="padded_r"><%= totalsPerActivity.get(key) == null ? "--" : (key.compareTo(activityKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerActivity.get(key)) : ratesepf.format((Double)totalsPerActivity.get(key))) %></td>
+<%
+													}
+%>
+												</tr>
+<%
+										}
+								}
+								if (!isWorkRecordInPercent) {
+
+%>
+									<tr>
+										<td class="total" colspan="8">&sum;</td>
+<%
 										row = sheetActivities.createRow(nRow++);
 										nCell = 0;
-										cell = row.createCell(nCell++);	cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
-%>
-										<tr>
-											<td class="padded" colspan="8"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %></a></td>
-<%
-											for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
-												String key = activityNumber + "_" + (String)i.next();
-												String activityKey = activityNumber + "_" + timeKey;
-												if (!isWorkRecord && key.compareTo(activityKey) == 0) {continue;}
-												cell = row.createCell(nCell++);
-												if (totalsPerActivity.get(key) != null) {
-														if (key.compareTo(activityKey) == 0) {
-																cell.setCellValue(((Double)totalsPerActivity.get(key)) / 24.0); cell.setCellStyle(timeStyle);
-														} else {
-																cell.setCellValue((Double)totalsPerActivity.get(key)); cell.setCellStyle(amountStyle);
-														}
-												}
-%>
-												<td class="padded_r"><%= totalsPerActivity.get(key) == null ? "--" : (key.compareTo(activityKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerActivity.get(key)) : ratesepf.format((Double)totalsPerActivity.get(key))) %></td>
-<%
+										cell = row.createCell(nCell++);	cell.setCellValue("Total");
+										for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+											String key = (String)i.next();
+											if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+											cell = row.createCell(nCell++);
+											if (key.compareTo(timeKey) == 0) {
+													cell.setCellValue(((Double)totals.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+											} else {
+													cell.setCellValue((Double)totals.get(key)); cell.setCellStyle(amountStyle);
 											}
 %>
-										</tr>
+											<td class="totalR"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totals.get(key)) : ratesepf.format((Double)totals.get(key)) %></td>
+<%
+										}
+%>
+									</tr>
 <%
 								}
 %>
-								<tr>
-									<td class="total" colspan="8">&sum;</td>
-<%
-									row = sheetActivities.createRow(nRow++);
-									nCell = 0;
-									cell = row.createCell(nCell++);	cell.setCellValue("Total");
-									for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
-										String key = (String)i.next();
-										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
-										cell = row.createCell(nCell++);
-										if (key.compareTo(timeKey) == 0) {
-												cell.setCellValue(((Double)totals.get(key)) / 24.0); cell.setCellStyle(timeStyle);
-										} else {
-												cell.setCellValue((Double)totals.get(key)); cell.setCellStyle(amountStyle);
-										}
-%>
-										<td class="totalR"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totals.get(key)) : ratesepf.format((Double)totals.get(key)) %></td>
-<%
-									}
-%>
-								</tr>
-<!--  end totals per activity -->
+<!--	end totals per activity -->
 
 								<tr>
 									<td colspan="<%= totals.keySet().size() + 9 %>" style="padding:5px;">&nbsp;</td>
 								</tr>
+<%
+							if (isWorkRecordInPercent && hasMultipleResources) {
+/*--------------------------------------------------------------
+| A C T I V I T Y	 /	 R E S O U R C E	 M A T R I X
+\--------------------------------------------------------------*/
+%>
+<!-- totals per activity/resource / spreadsheet only -->
+<%
+								nRow = REPORT_STARTING_ROW;
+								row = sheetResources.createRow(nRow++);
+								nCell = 0;
+								cell = row.createCell(nCell++);	cell.setCellValue(app.getLabel(RESOURCE_CLASS)); cell.setCellStyle(rightAlignStyle);
+								sheetResources.setColumnWidth((short)0, (short)12000);
+
+								for (Iterator i = resourceTotals.keySet().iterator(); i.hasNext();) {
+									resourceXri = (String)i.next();
+									resource = null;
+									try {
+											resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
+									} catch (Exception e) {}
+									if (resource != null) {
+											cell = row.createCell(nCell++);	
+											cell.setCellValue(resource.getName() != null ? resource.getName() : resource.refMofId()); 
+											cell.setCellStyle(rightAlignStyle);
+									}
+								}
+
+								row = sheetResources.createRow(nRow++);
+								nCell = 0;
+								cell = row.createCell(nCell++);	cell.setCellValue(app.getLabel(ACTIVITYSEGMENT_CLASS));
+								resourceLineCell = cell; // will be used to report resource total errors
+								
+								for (Iterator a = activities.keySet().iterator(); a.hasNext();) {
+										String activityNumber = (String)a.next();
+										org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path((String)activities.get(activityNumber)));
+										row = sheetResources.createRow(nRow++);
+										nCell = 0;
+										cell = row.createCell(nCell++);
+										cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
+
+										for (Iterator i = resourceTotals.keySet().iterator(); i.hasNext();) {
+												resourceXri = (String)i.next();
+												resource = null;
+												try {
+														resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
+												} catch (Exception e) {}
+												if (resource != null) {
+														cell = row.createCell(nCell++);
+
+														String activityTotalKey = activity.refMofId() + resource.refMofId();
+														Double DactivityTotal = (Double)activityTotals.get(activityTotalKey);
+														double activityTotal = 0.0;
+														
+														String resourceTotalKey = resource.refMofId();
+														Double DresourceTotal = (Double)resourceTotals.get(resourceTotalKey);
+														double resourceTotal = 0.0;
+														
+														if (DactivityTotal != null && DresourceTotal != null) {
+																activityTotal = DactivityTotal.doubleValue() / DresourceTotal.doubleValue();
+																resourceTotal = DresourceTotal.doubleValue();
+																
+																cell.setCellValue(activityTotal * 100.0); cell.setCellStyle(weightStyle);
+														}
+												}
+										}
+
+								}
+
+
+								row = sheetResources.createRow(nRow++);
+								boolean isFirstLine = true;
+								for (Iterator i = dayErrorMessages.keySet().iterator(); i.hasNext();) {
+									if (isFirstLine) {
+										isFirstLine = false;
+										row = sheetResources.createRow(nRow++);
+										nCell = 0;
+										cell = row.createCell(nCell++); cell.setCellValue("Days with errors:");
+									}
+									String key = (String)i.next();
+									String msg = null;
+									try {
+											msg = (String)dayErrorMessages.get(key);
+									} catch (Exception e) {}
+									if (msg != null) {
+										row = sheetResources.createRow(nRow++);
+										nCell = 0;
+										cell = row.createCell(nCell++); cell.setCellValue(key);
+										cell = row.createCell(nCell++); cell.setCellValue(msg);
+									}
+								}
+							}
+
+
+							if (!isWorkRecordInPercent) {
+%>
 
 <!-- totals per activityGroup -->
 								<tr class="gridTableHeader">
@@ -2730,7 +3231,7 @@ org.apache.poi.hssf.util.*
 										Action action = new Action(
 												Action.EVENT_SELECT_OBJECT,
 												new Action.Parameter[]{
-												    new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
+														new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
 												},
 												"",
 												true // enabled
@@ -2764,7 +3265,7 @@ org.apache.poi.hssf.util.*
 <%
 								}
 %>
-<!--  end totals per activityGroup -->
+<!--	end totals per activityGroup -->
 <%
 								if (isProjectReporting) {
 										sheetProject = addSheet(wb, "Project", false, labels, values, 1);
@@ -2804,7 +3305,7 @@ org.apache.poi.hssf.util.*
 												Action action = new Action(
 														Action.EVENT_SELECT_OBJECT,
 														new Action.Parameter[]{
-														    new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
+																new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
 														},
 														"",
 														true // enabled
@@ -2863,9 +3364,10 @@ org.apache.poi.hssf.util.*
 											}
 %>
 										</tr>
-<!--  end totals per projectPhase -->
+<!--	end totals per projectPhase -->
 <%
 								}
+							}
 %>
 							</table>
 							</td></tr></table>
@@ -2935,7 +3437,7 @@ org.apache.poi.hssf.util.*
 															Action action = new Action(
 																	Action.EVENT_SELECT_OBJECT,
 																	new Action.Parameter[]{
-																	    new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivityGroup.refMofId())
+																			new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivityGroup.refMofId())
 																	},
 																	"",
 																	true // enabled
@@ -2951,7 +3453,7 @@ org.apache.poi.hssf.util.*
 															Action action = new Action(
 																	Action.EVENT_SELECT_OBJECT,
 																	new Action.Parameter[]{
-																	    new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivity.refMofId())
+																			new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivity.refMofId())
 																	},
 																	"",
 																	true // enabled
@@ -2967,7 +3469,7 @@ org.apache.poi.hssf.util.*
 															Action action = new Action(
 																	Action.EVENT_SELECT_OBJECT,
 																	new Action.Parameter[]{
-																	    new Action.Parameter(Action.PARAMETER_OBJECTXRI, lResource.refMofId())
+																			new Action.Parameter(Action.PARAMETER_OBJECTXRI, lResource.refMofId())
 																	},
 																	"",
 																	true // enabled
@@ -3055,7 +3557,7 @@ org.apache.poi.hssf.util.*
 										</tr>
 									</table>
 									</td></tr></table>
-<!--  end totals per projectReportingLine -->
+<!--	end totals per projectReportingLine -->
 <%
 							}
 							wb.write(os);
@@ -3087,9 +3589,9 @@ org.apache.poi.hssf.util.*
 					</div> <!-- inspector -->
 				</div> <!-- aPanel -->
 
-      </div> <!-- content -->
-    </div> <!-- content-wrap -->
-  </div> <!-- wrap -->
+			</div> <!-- content -->
+		</div> <!-- content-wrap -->
+	</div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

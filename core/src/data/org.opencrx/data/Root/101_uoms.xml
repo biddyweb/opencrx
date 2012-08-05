@@ -27,6 +27,19 @@
 										</_object>
 										<_content/>
 									</org.opencrx.kernel.uom1.Uom>
+									<org.opencrx.kernel.uom1.Uom id="Percent" _operation="create">
+										<_object>
+											<description>Percent</description>
+											<name>Percent</name>
+											<isScheduleBaseUom>true</isScheduleBaseUom>
+											<quantity>1.00</quantity>
+											<uomSchedule>org::opencrx::kernel::uom1/provider/CRX/segment/Root/uomSchedule/Other</uomSchedule>
+											<accessLevelBrowse>4</accessLevelBrowse>
+											<accessLevelUpdate>2</accessLevelUpdate>
+											<accessLevelDelete>2</accessLevelDelete>
+										</_object>
+										<_content/>
+									</org.opencrx.kernel.uom1.Uom>
 									<org.opencrx.kernel.uom1.Uom id="Piece" _operation="create">
 										<_object>
 											<description>Piece(s)</description>

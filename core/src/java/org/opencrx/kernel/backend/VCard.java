@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.65 2010/11/30 18:31:30 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.66 2011/04/27 13:15:22 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.65 $
+ * Revision:    $Revision: 1.66 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/30 18:31:30 $
+ * Date:        $Date: 2011/04/27 13:15:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -813,7 +813,7 @@ public class VCard extends AbstractImpl {
             	reader,
                 vcard
             );
-            SysLog.trace("parsed vcard", vcardFields);
+            SysLog.detail("Parsed vcard", vcardFields);
             return this.importItem(
             	vcard.toString(),
                 vcardFields,
@@ -927,7 +927,7 @@ public class VCard extends AbstractImpl {
         }
         else if(account instanceof AbstractGroup){
         	AbstractGroup group = (AbstractGroup)account;
-            if((name != null) && (name.indexOf(";") >= 0)) {
+            if(name != null) {
                 String[] nameTokens = new String[]{"", "", "", "", ""};
                 StringTokenizer tokenizer = new StringTokenizer(name, ";", true);
                 int ii = 0;
@@ -941,7 +941,7 @@ public class VCard extends AbstractImpl {
                     }
                 }
                 // name
-                if(nameTokens[0].length() > 0) {
+                if(!nameTokens[0].isEmpty()) {
                 	group.setName(nameTokens[0]);        
                 }
                 else if(group.getName() == null) {

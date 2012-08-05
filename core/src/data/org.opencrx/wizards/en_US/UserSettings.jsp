@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.60 2010/11/16 12:15:49 cmu Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.63 2011/04/13 13:14:40 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.60 $
+ * Revision:    $Revision: 1.63 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/16 12:15:49 $
+ * Date:        $Date: 2011/04/13 13:14:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -106,26 +106,13 @@ org.openmdx.base.exception.*
 	String command = request.getParameter("command");
 
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
-	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-	org.opencrx.security.realm1.jmi1.Realm1Package realmPkg = org.opencrx.kernel.utils.Utils.getRealmPackage(pm);
-	org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
 	// Get user home segment
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
-	org.opencrx.kernel.home1.jmi1.Segment userHomeSegment =
-	  (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-	   );
-	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-	  (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-	   );
-	org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment =
-	  (org.opencrx.kernel.workflow1.jmi1.Segment)pm.getObjectById(
-		new Path("xri:@openmdx:org.opencrx.kernel.workflow1/provider/" + providerName + "/segment/" + segmentName)
-	   );
-
+	org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
+	org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, providerName, segmentName);
+	
 	// Exit
 	if("exit".equalsIgnoreCase(command)) {
 		session.setAttribute(WIZARD_NAME, null);
@@ -249,9 +236,6 @@ org.openmdx.base.exception.*
     <div id="content-wrap">
     	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 <%
-		boolean currentUserIsAdmin =
-			app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
-
     if (false) {
     //if (!currentUserIsAdmin) {
       Action nextAction = new ObjectReference(
@@ -303,6 +287,9 @@ org.openmdx.base.exception.*
 			String fWebAccessUrl = request.getParameter("webAccessUrl");
 			String fTopNavigationShowMax = request.getParameter("topNavigationShowMax");
 			String fShowTopNavigationSublevel = request.getParameter("showTopNavigationSublevel");
+			String fGridDefaultAlignmentIsWide = request.getParameter("gridDefaultAlignmentIsWide");
+			String fHideWorkspaceDashboard = request.getParameter("hideWorkspaceDashboard");
+			
 			List<String> fRootObjects = new ArrayList<String>();
 			fRootObjects.add("1");
 			for(int i = 1; i < 20; i++) {
@@ -338,8 +325,8 @@ org.openmdx.base.exception.*
 						userHome,
 						app.getCurrentPerspective(),
 						userSettings,
-						currentUserIsAdmin,
-						!currentUserOwnsHome,
+						!currentUserOwnsHome, // noInitUserHome
+						!currentUserOwnsHome, // Store settings if applied on 'foreign' user's home
 						userHome.getPrimaryGroup(),
 						fTimezone,
 						fStoreSettingsOnLogoff,
@@ -348,6 +335,8 @@ org.openmdx.base.exception.*
 						fWebAccessUrl,
 						fTopNavigationShowMax,
 						"on".equals(fShowTopNavigationSublevel),
+						"on".equals(fGridDefaultAlignmentIsWide),
+						"on".equals(fHideWorkspaceDashboard),
 						fRootObjects,
 						fSubscriptions
 					);
@@ -450,6 +439,13 @@ org.openmdx.base.exception.*
 
 						<tr><td><label for="showTopNavigationSublevel">Show top navigation sub-levels:</label></td>
 						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL)) ? "checked" : "" %> id="showTopNavigationSublevel" name="showTopNavigationSublevel"/></td></tr>
+
+						<tr><td><label for="gridDefaultAlignmentIsWide">Grid default alignment is wide:</label></td>
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE)) ? "checked" : "" %> id="gridDefaultAlignmentIsWide" name="gridDefaultAlignmentIsWide"/></td></tr>
+
+						<tr><td><label for="hideWorkspaceDashboard">Hide workspace dashboard:</label></td>
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD)) ? "checked" : "" %> id="hideWorkspaceDashboard" name="hideWorkspaceDashboard"/></td></tr>
+
 					</table>
 				</fieldset>
 			</div>
@@ -468,7 +464,7 @@ org.openmdx.base.exception.*
 						for(Iterator i = workflowSegment.getTopic(topicQuery).iterator(); i.hasNext(); ) {
 							org.opencrx.kernel.workflow1.jmi1.Topic topic = (org.opencrx.kernel.workflow1.jmi1.Topic)i.next();
 							ObjectReference objRefTopic = new ObjectReference(topic, app);
-							org.opencrx.kernel.home1.cci2.SubscriptionQuery query = homePkg.createSubscriptionQuery();
+							org.opencrx.kernel.home1.cci2.SubscriptionQuery query = (org.opencrx.kernel.home1.cci2.SubscriptionQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Subscription.class);
 							query.thereExistsTopic().equalTo(topic);
 							Collection subscriptions = userHome.getSubscription(query);
 							org.opencrx.kernel.home1.jmi1.Subscription subscription = subscriptions.isEmpty()
@@ -497,6 +493,8 @@ org.openmdx.base.exception.*
 			</div>
 			<div class="buttons">
 <%
+				boolean currentUserIsAdmin =
+					app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
 				boolean allowApply = currentUserIsAdmin || currentUserOwnsHome;
 %>
 				<input <%= allowApply ? "" : "disabled" %> type="submit" value="Apply"  class="button" />

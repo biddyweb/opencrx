@@ -1,12 +1,12 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
- * Project:         openCRX/Core, http://www.opencrx.org/
- * Name:            $Id: CreateWorkAndExpenseRecord.jsp,v 1.53 2010/09/27 08:20:24 cmu Exp $
- * Description:     Create Work Record
- * Revision:        $Revision: 1.53 $
- * Owner:           CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:            $Date: 2010/09/27 08:20:24 $
+ * Project:				 openCRX/Core, http://www.opencrx.org/
+ * Name:						$Id: CreateWorkAndExpenseRecord.jsp,v 1.57 2011/04/06 08:11:47 cmu Exp $
+ * Description:		 Create Work Record
+ * Revision:				$Revision: 1.57 $
+ * Owner:					 CRIXP Corp., Switzerland, http://www.crixp.com
+ * Date:						$Date: 2011/04/06 08:11:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,8 +57,10 @@
 %><%@ page session="true" import="
 java.util.*,
 java.io.*,
+java.math.*,
 java.net.*,
 java.text.*,
+javax.xml.datatype.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
@@ -129,46 +131,84 @@ org.openmdx.base.text.conversion.*
 		return hhFormatter.format(hours) + ":" + mmFormatter.format(minutes);
 	}
 
-  public static String getUsername(
-    javax.jdo.PersistenceManager pm,
-    org.opencrx.kernel.home1.jmi1.Segment homeSegment,
-    org.opencrx.kernel.activity1.jmi1.Resource resource
-  ) {
-    //org.opencrx.kernel.home1.cci2.UserHomeQuery userHomeFilter = org.opencrx.kernel.utils.Utils.getHomePackage(pm).createUserHomeQuery();
-    String userName = null;
-    org.opencrx.kernel.account1.jmi1.Contact contact = null;
-    try {
-    	  contact = resource.getContact();
-        for(
-          Iterator i = homeSegment.getUserHome().iterator();
-          i.hasNext() && userName == null && contact != null;
-        ) {
-          try {
-              org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
-              if (userHome.getContact() != null && userHome.getContact().refMofId().compareTo(contact.refMofId()) == 0) {
-                  userName = ((new Path(userHome.refMofId())).getLastComponent()).toString();
-              }
-          } catch (Exception e) {}
-        }
-    } catch (Exception e) {}
-    return userName;
-  }
+	public static String getUsername(
+		javax.jdo.PersistenceManager pm,
+		org.opencrx.kernel.home1.jmi1.Segment homeSegment,
+		org.opencrx.kernel.activity1.jmi1.Resource resource
+	) {
+		//org.opencrx.kernel.home1.cci2.UserHomeQuery userHomeFilter = org.opencrx.kernel.utils.Utils.getHomePackage(pm).createUserHomeQuery();
+		String userName = null;
+		org.opencrx.kernel.account1.jmi1.Contact contact = null;
+		try {
+				contact = resource.getContact();
+				for(
+					Iterator i = homeSegment.getUserHome().iterator();
+					i.hasNext() && userName == null && contact != null;
+				) {
+					try {
+							org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
+							if (userHome.getContact() != null && userHome.getContact().refMofId().compareTo(contact.refMofId()) == 0) {
+									userName = ((new Path(userHome.refMofId())).getLastComponent()).toString();
+							}
+					} catch (Exception e) {}
+				}
+		} catch (Exception e) {}
+		return userName;
+	}
 
-  public org.opencrx.security.realm1.jmi1.PrincipalGroup findPrincipalGroup(
-     String principalGroupName,
-     org.openmdx.security.realm1.jmi1.Realm realm,
-     javax.jdo.PersistenceManager pm
-  ) {
-    try {
-      org.opencrx.security.realm1.jmi1.PrincipalGroup principalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-        principalGroupName,
-        realm
-      );
-      return principalGroup;
-    } catch (Exception e) {
-      return null;
-    }
-  }
+	public org.opencrx.security.realm1.jmi1.PrincipalGroup findPrincipalGroup(
+		 String principalGroupName,
+		 org.openmdx.security.realm1.jmi1.Realm realm,
+		 javax.jdo.PersistenceManager pm
+	) {
+		try {
+			org.opencrx.security.realm1.jmi1.PrincipalGroup principalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+				principalGroupName,
+				realm
+			);
+			return principalGroup;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public org.opencrx.kernel.activity1.jmi1.CalendarDay createOrUpdateCalendarDay(
+			String name,
+			String date, /* in format YYYYMMDD */
+			org.opencrx.kernel.activity1.jmi1.Calendar calendar,
+			org.opencrx.kernel.activity1.jmi1.CalendarDay calendarDay,
+			org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
+			javax.jdo.PersistenceManager pm
+	) {
+			try {
+				pm.currentTransaction().begin();
+				if(calendarDay == null) {
+					calendarDay = pm.newInstance(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
+					calendarDay.refInitialize(false, false);
+					calendarDay.setName(name);
+					XMLGregorianCalendar cal = org.w3c.spi2.Datatypes.create(
+							XMLGregorianCalendar.class,
+							date
+					);
+					calendarDay.setDateOfDay(cal);
+					calendar.addCalendarDay(
+						false,
+						org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+						calendarDay
+					);
+				}
+				calendarDay.setName(name);
+				pm.currentTransaction().commit();
+			}
+			catch(Exception e) {
+				new ServiceException(e).log();
+				try {
+					pm.currentTransaction().rollback();
+				} catch(Exception e0) {}
+			}
+			return calendarDay;
+	}
+
 
 %>
 <%
@@ -181,9 +221,9 @@ org.openmdx.base.text.conversion.*
 	final String SUBMIT_HANDLER = "javascript:$('command').value=this.name;";
 	final String ONFOCUS_HANDLER = "javascript:$('lastFocusId').value=this.id;";
 	final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
-  final String PRIVATE_TOKEN = "PRIVATE";
+	final String PRIVATE_TOKEN = "PRIVATE";
 
-  final boolean EXCLUDE_ACTIVITYTRACKER_TEMPLATES = true; // excludes ActivityTracker if ActivityTracker.userBoolean1 == true
+	final boolean EXCLUDE_ACTIVITYTRACKER_TEMPLATES = true; // excludes ActivityTracker if ActivityTracker.userBoolean1 == true
 	final String ACTIVITY_FILTER_SEGMENT = "Segment";
 	final String ACTIVITY_FILTER_ANYGROUP = "AnyGroup";
 	final String ACTIVITY_FILTER_TRACKER = "Tracker";
@@ -193,14 +233,15 @@ org.openmdx.base.text.conversion.*
 
 	final String ACTIVITY_CLASS = "org:opencrx:kernel:activity1:Activity";
 	final String ACTIVITYFILTERGLOBAL_CLASS = "org:opencrx:kernel:activity1:ActivityFilterGlobal";
-  final String ACTIVITYFILTERGROUP_CLASS = "org:opencrx:kernel:activity1:ActivityFilterGroup";
+	final String ACTIVITYFILTERGROUP_CLASS = "org:opencrx:kernel:activity1:ActivityFilterGroup";
 	final String ACTIVITYSEGMENT_CLASS = "org:opencrx:kernel:activity1:Segment";
 	final String ACTIVITYGROUPASSIGNMENT_CLASS = "org:opencrx:kernel:activity1:ActivityGroupAssignment";
 	final String ACTIVITYTRACKER_CLASS = "org:opencrx:kernel:activity1:ActivityTracker";
 	final String ACTIVITYCATEGORY_CLASS = "org:opencrx:kernel:activity1:ActivityCategory";
 	final String ACTIVITYMILESTONE_CLASS = "org:opencrx:kernel:activity1:ActivityMilestone";
-  final String DISABLED_FILTER_PROPERTY_CLASS = "org:opencrx:kernel:activity1:DisabledFilterProperty";
+	final String DISABLED_FILTER_PROPERTY_CLASS = "org:opencrx:kernel:activity1:DisabledFilterProperty";
 	final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
+	final String CALENDARDAY_CLASS = "org:opencrx:kernel:activity1:CalendarDay";
 	final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
 	final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
 	final String GROUP_CLASS = "org:opencrx:kernel:account1:Group";
@@ -227,7 +268,7 @@ org.openmdx.base.text.conversion.*
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String requestId =	request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
@@ -258,16 +299,26 @@ org.openmdx.base.text.conversion.*
 	SimpleDateFormat datetimef = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());	datetimef.setTimeZone(timezone);
 	SimpleDateFormat datef = new SimpleDateFormat("EE d-MMMM-yyyy", app.getCurrentLocale()); datef.setTimeZone(timezone);
 	SimpleDateFormat dtsortf = new SimpleDateFormat("yyyyMMddHHmmss", app.getCurrentLocale()); dtsortf.setTimeZone(timezone);
+	SimpleDateFormat calendardayf = new SimpleDateFormat("yyyyMMdd", app.getCurrentLocale()); calendardayf.setTimeZone(timezone);
 	NumberFormat formatter = new DecimalFormat("00000");
 	NumberFormat quantityf = new DecimalFormat("0.000");
 	NumberFormat ratesepf = new DecimalFormat("#,##0.00");
+	NumberFormat formatter0 = new DecimalFormat("0");
 
 	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
 			new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
 		);
+		
+	org.opencrx.kernel.uom1.jmi1.Uom uomPercent = null;
+	try {
+		uomPercent = (org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById(
+				new Path("xri://@openmdx*org.opencrx.kernel.uom1/provider/" + providerName + "/segment/Root/uom/Percent")
+		);
+	} catch (Exception e) {}
 
-  // Dates and Times
+
+	// Dates and Times
 	Map formValues = new HashMap();
 
 
@@ -286,7 +337,7 @@ org.openmdx.base.text.conversion.*
 	boolean actionNextMonth = "NextMonth".equals(command);
 	boolean actionPrevMonth = "PrevMonth".equals(command);
 	boolean actionNextYear = "NextYear".equals(command);
- 	boolean actionPrevYear = "PrevYear".equals(command);
+	boolean actionPrevYear = "PrevYear".equals(command);
 	boolean actionSelectDate = command != null && command.startsWith("SelectDate.");
 	boolean actionSelectDateP = command != null && command.startsWith("SelectDateP.");
 	boolean actionSelectDateN = command != null && command.startsWith("SelectDateN.");
@@ -295,26 +346,28 @@ org.openmdx.base.text.conversion.*
 	boolean actionReload = command != null && command.startsWith("reload.");
 	boolean actionEvictAndReload = command != null && command.startsWith("EVICT_RELOAD");
 
-  if (actionReload & (request.getParameter("deleteWorkRecordXri") != null && request.getParameter("deleteWorkRecordXri").length() > 0)) {
-    // delete WorkRecord
-    try {
-        RefObject_1_0 objToDelete = (RefObject_1_0)pm.getObjectById(new Path(request.getParameter("deleteWorkRecordXri")));
-        pm.currentTransaction().begin();
-        objToDelete.refDelete();
-        pm.currentTransaction().commit();
-    } catch (Exception e) {
-        try {
-        	  pm.currentTransaction().rollback();
-        } catch (Exception er) {}
-        new ServiceException(e).log();
-    }
-  }
+	if (actionReload & (request.getParameter("deleteWorkRecordXri") != null && request.getParameter("deleteWorkRecordXri").length() > 0)) {
+		// delete WorkRecord
+		try {
+				RefObject_1_0 objToDelete = (RefObject_1_0)pm.getObjectById(new Path(request.getParameter("deleteWorkRecordXri")));
+				pm.currentTransaction().begin();
+				objToDelete.refDelete();
+				pm.currentTransaction().commit();
+		} catch (Exception e) {
+				try {
+						pm.currentTransaction().rollback();
+				} catch (Exception er) {}
+				new ServiceException(e).log();
+		}
+	}
 
 	if (actionEvictAndReload) {
 			app.resetPmData();
 	}
 	boolean isWorkRecord = ((request.getParameter("isExpenseRecord") == null) || (request.getParameter("isExpenseRecord").length() == 0));
+	boolean isWorkRecordInPercent = isWorkRecord &&	((request.getParameter("isWorkRecordInPercent") != null) && (request.getParameter("isWorkRecordInPercent").length() > 0));
 	boolean hasProjects = ((request.getParameter("hasProjects") != null) && (request.getParameter("hasProjects").length() > 0));
+	
 
 	String contactXri = null;
 	String resourceXri = null;
@@ -424,11 +477,11 @@ org.openmdx.base.text.conversion.*
 	if (contactXri == null) {contactXri = request.getParameter("contactXri");}
 	org.opencrx.kernel.account1.jmi1.Contact contact = null;
 	String contactXriTitle = request.getParameter("contactXri.Title") == null ? "" : request.getParameter("contactXri.Title");
-  boolean showAllResources = false;
-  boolean showAllResourcesOfContact = false;
-  boolean isResourceChange = ((request.getParameter("isResourceChange") != null) && (request.getParameter("isResourceChange").length() > 0));
-  boolean isContactChange = ((request.getParameter("isContactChange") != null) && (request.getParameter("isContactChange").length() > 0));
-  boolean resetActivityXri = ((request.getParameter("resetActivityXri") != null) && (request.getParameter("resetActivityXri").length() > 0));
+	boolean showAllResources = false;
+	boolean showAllResourcesOfContact = false;
+	boolean isResourceChange = ((request.getParameter("isResourceChange") != null) && (request.getParameter("isResourceChange").length() > 0));
+	boolean isContactChange = ((request.getParameter("isContactChange") != null) && (request.getParameter("isContactChange").length() > 0));
+	boolean resetActivityXri = ((request.getParameter("resetActivityXri") != null) && (request.getParameter("resetActivityXri").length() > 0));
 	try {
 			if ((contactXri != null) && (contactXri.length() > 0)) {
 					if (contactXri.compareTo("*") == 0) {
@@ -499,39 +552,39 @@ org.openmdx.base.text.conversion.*
 	} catch (Exception e) {}
 
 	if (activityXri == null) {activityXri = request.getParameter("activityXri");}
-	String recordType  = request.getParameter("recordType")  == null ? Integer.toString(org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD) : request.getParameter("recordType");  // Parameter recordType
-	String name        = request.getParameter("name")        == null ? ""  : request.getParameter("name");        // Parameter name
-	if (name.length() == 0) {errorMsg += "name is mandatory!<br>";}
-	String description = request.getParameter("description") == null ? ""  : request.getParameter("description"); // Parameter description
-	String effortHH    = (request.getParameter("effortHH")   == null || request.getParameter("effortHH").length() == 0) ? "8" : request.getParameter("effortHH");    // Parameter effortHH
-	String effortMM    = (request.getParameter("effortMM")   == null || request.getParameter("effortMM").length() == 0) ? "00": request.getParameter("effortMM");    // Parameter effortMM
+	String recordType	= request.getParameter("recordType")	== null ? Integer.toString(org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD) : request.getParameter("recordType");	// Parameter recordType
+	String name				= request.getParameter("name")				== null ? ""	: request.getParameter("name");				// Parameter name
+	String description = request.getParameter("description")	== null ? ""	: request.getParameter("description"); // Parameter description
+	String effortHH		= (request.getParameter("effortHH")		== null || request.getParameter("effortHH").length() == 0) ? "8" : request.getParameter("effortHH");		// Parameter effortHH
+	String effortMM		= (request.getParameter("effortMM")		== null || request.getParameter("effortMM").length() == 0) ? "00": request.getParameter("effortMM");		// Parameter effortMM
+	String quantPercent= (request.getParameter("quantPercent")== null || request.getParameter("quantPercent").length() == 0) ? "100" : request.getParameter("quantPercent");		// Parameter quantPercent
 	String startedAtHH = (request.getParameter("startedAtHH") == null || request.getParameter("startedAtHH").length() == 0) ? "08": request.getParameter("startedAtHH"); // Parameter startedAtHH
 	String startedAtMM = (request.getParameter("startedAtMM") == null || request.getParameter("startedAtMM").length() == 0) ? "00": request.getParameter("startedAtMM"); // Parameter startedAtMM
-	String endedAtHH   = request.getParameter("endedAtHH")   == null ? ""  : request.getParameter("endedAtHH");   // Parameter endedAtHH
-	String endedAtMM   = request.getParameter("endedAtMM")   == null ? ""  : request.getParameter("endedAtMM");   // Parameter endedAtMM
-	String billingCurrency = request.getParameter("billingCurrency")  == null ? "756" : request.getParameter("billingCurrency");  // Parameter billingCurrency [default "756 - CHF"]
-	String rate        = request.getParameter("rate")        == null ? ""  : request.getParameter("rate");        // Parameter rate
-	String isBillable  = isFirstCall ? "isBillable" : request.getParameter("isBillable");
+	String endedAtHH	 = request.getParameter("endedAtHH")		== null ? ""	: request.getParameter("endedAtHH");	 // Parameter endedAtHH
+	String endedAtMM	 = request.getParameter("endedAtMM")		== null ? ""	: request.getParameter("endedAtMM");	 // Parameter endedAtMM
+	String billingCurrency = request.getParameter("billingCurrency")	== null ? "756" : request.getParameter("billingCurrency");	// Parameter billingCurrency [default "756 - CHF"]
+	String rate				= request.getParameter("rate")				== null ? ""	: request.getParameter("rate");				// Parameter rate
+	String isBillable	= isFirstCall ? "isBillable" : request.getParameter("isBillable");
 	String isReimbursable = isFirstCall ? "" : request.getParameter("isReimbursable");
-  String makePrivate  = isFirstCall ? "" : request.getParameter("makePrivate");
-	String isFullStartedAtDate  = isFirstCall ? "" : request.getParameter("isFullStartedAtDate");
-	String paymentType = request.getParameter("paymentType")  == null ? "1" : request.getParameter("paymentType");  // Parameter paymentType [default "1 - Cash"]
-	String uomXri      = request.getParameter("uomXri") != null ? request.getParameter("uomXri") : "";
-	String quantity    = (request.getParameter("quantity")    == null || request.getParameter("quantity").length() == 0) ? "1" : request.getParameter("quantity");    // Parameter quantity
-	String lastCreatedWorkRecordXri     = request.getParameter("lastCreatedWorkRecordXri")    != null ? request.getParameter("lastCreatedWorkRecordXri")    : "";
-	String lastCreatedExpenseRecordXri  = request.getParameter("lastCreatedExpenseRecordXri") != null ? request.getParameter("lastCreatedExpenseRecordXri") : "";
-	String lastFocusId  = request.getParameter("lastFocusId") != null ? request.getParameter("lastFocusId") : "";
+	String makePrivate	= isFirstCall ? "" : request.getParameter("makePrivate");
+	String isFullStartedAtDate	= isFirstCall ? "" : request.getParameter("isFullStartedAtDate");
+	String paymentType = request.getParameter("paymentType")	== null ? "1" : request.getParameter("paymentType");	// Parameter paymentType [default "1 - Cash"]
+	String uomXri			= request.getParameter("uomXri") != null ? request.getParameter("uomXri") : "";
+	String quantity		= (request.getParameter("quantity")		== null || request.getParameter("quantity").length() == 0) ? "1" : request.getParameter("quantity");		// Parameter quantity
+	String lastCreatedWorkRecordXri		 = request.getParameter("lastCreatedWorkRecordXri")		!= null ? request.getParameter("lastCreatedWorkRecordXri")		: "";
+	String lastCreatedExpenseRecordXri	= request.getParameter("lastCreatedExpenseRecordXri") != null ? request.getParameter("lastCreatedExpenseRecordXri") : "";
+	String lastFocusId	= request.getParameter("lastFocusId") != null ? request.getParameter("lastFocusId") : "";
 
-  String filterActivityGroupName = request.getParameter("filterActivityGroupName") == null ? ""  : request.getParameter("filterActivityGroupName"); // Parameter filterActivityGroupName
-  String filterActivityName = request.getParameter("filterActivityName") == null ? ""  : request.getParameter("filterActivityName"); // Parameter filterActivityName
+	String filterActivityGroupName = request.getParameter("filterActivityGroupName") == null ? ""	: request.getParameter("filterActivityGroupName"); // Parameter filterActivityGroupName
+	String filterActivityName = request.getParameter("filterActivityName") == null ? ""	: request.getParameter("filterActivityName"); // Parameter filterActivityName
 
-	String excludeClosedActivities     = isFirstCall ? "checked" : request.getParameter("excludeClosedActivities");
-  String showActivityGroupNameFilter = isFirstCall ? "" : request.getParameter("showActivityGroupNameFilter");
+	String excludeClosedActivities		 = isFirstCall ? "checked" : request.getParameter("excludeClosedActivities");
+	String showActivityGroupNameFilter = isFirstCall ? "" : request.getParameter("showActivityGroupNameFilter");
 	int activitySortOrder = 1;
 	try {
 			activitySortOrder = request.getParameter("activitySortOrder") != null ? Integer.parseInt(request.getParameter("activitySortOrder")) : 1;
 	} catch (Exception e) {};
-	String isFullMonth  = isFirstCall ? "" : request.getParameter("isFullMonth");
+	String isFullMonth	= isFirstCall ? "" : request.getParameter("isFullMonth");
 
 	String selectedDateStr = request.getParameter("selectedDateStr"); // // YYYYMMDD
 	if(selectedDateStr == null || selectedDateStr.length() != 8) {
@@ -565,11 +618,11 @@ org.openmdx.base.text.conversion.*
 	// Select date
 	// YYYYMMDD
 	// 012345678
-  Integer calendarYear = Integer.parseInt(selectedDateStr.substring(0,4));
-  Integer calendarMonth = Integer.parseInt(selectedDateStr.substring(4,6))-1;
+	Integer calendarYear = Integer.parseInt(selectedDateStr.substring(0,4));
+	Integer calendarMonth = Integer.parseInt(selectedDateStr.substring(4,6))-1;
 	int dayOfMonth = Integer.parseInt(selectedDateStr.substring(6,8));
 
-  if(actionSelectDateP || actionSelectDate || actionSelectDateN) {
+	if(actionSelectDateP || actionSelectDate || actionSelectDateN) {
 		dayOfMonth = Integer.valueOf(command.substring(command.indexOf(".") + 1));
 		selectedDateStr = getDateAsString(calendarYear, calendarMonth+1, dayOfMonth);
 	}
@@ -656,7 +709,7 @@ org.openmdx.base.text.conversion.*
 			endedAtMM = "";
 	}
 
-	// try to parse endedAt
+	// try to parse paraEffort
 	Short paraEffortHH = null;
 	Short paraEffortMM = null;
 	try {
@@ -707,15 +760,40 @@ org.openmdx.base.text.conversion.*
 			paraQuantity = null;
 	}
 
+	// try to parse quantPercent
+	boolean quantPercentageIsZero = false;
+	Short paraQuantPercentage = null;
+	try {
+			short numValuePercentage = Short.parseShort(quantPercent);
+			if (numValuePercentage <= 0) {
+					numValuePercentage = 0;
+					quantPercent = "0";
+					quantPercentageIsZero = true;
+			} else if (numValuePercentage > 100) {
+					numValuePercentage = 100;
+					quantPercent = "100";
+			}
+			paraQuantPercentage = numValuePercentage;
+	} catch (Exception e) {
+			paraQuantPercentage = null;
+			quantPercent = "100";
+	}
+
 	// Add
 	boolean canExecuteAdd = (activityXri != null) &&
 													(resourceXri != null) &&
 													(startedAt != null) &&
 													(
 														(
-															isWorkRecord &&
+															(isWorkRecord && !isWorkRecordInPercent) &&
 															(paraEffortHH != null) &&
 															(paraEffortMM != null)
+														)
+														||
+														(
+															(isWorkRecord && isWorkRecordInPercent) &&
+															(paraQuantPercentage != null) &&
+															!quantPercentageIsZero
 														)
 														||
 														(
@@ -725,24 +803,46 @@ org.openmdx.base.text.conversion.*
 															(uomXri != null) && (uomXri.length() > 0)
 														)
 													);
-  if (canExecuteAdd && ((name == null) || (name.length() == 0))) {
-	    canExecuteAdd = false;
-	    creationFailed = true; // emulate creation failure to show warning sign next to add button
-  }
+	if (canExecuteAdd && ((name == null) || (name.length() == 0))) {
+			canExecuteAdd = false;
+			creationFailed = true; // emulate creation failure to show warning sign next to add button
+	}
 
+	boolean createdWorkRecordInPercent = false;
+	
 	if(actionAdd && canExecuteAdd) {
 			creationFailed = true;
 			try {
-				  org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = null;
+					org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = null;
 					if (isWorkRecord) {
 							// add WorkRecord
-							if (endedAt == null) {
+							if (endedAt == null && !isWorkRecordInPercent) {
 									// calculate as startedAt + paraEffort
 									endedAt = (GregorianCalendar)startedAt.clone();
 									endedAt.add(GregorianCalendar.HOUR_OF_DAY, paraEffortHH);
 									endedAt.add(GregorianCalendar.MINUTE, paraEffortMM);
 							}
-							org.opencrx.kernel.activity1.jmi1.ActivityAddWorkRecordParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityAddWorkRecordParams(
+							org.opencrx.kernel.activity1.jmi1.ActivityAddWorkRecordParams params = null;
+							
+							if (isWorkRecordInPercent) {
+								createdWorkRecordInPercent = true;
+								params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityAddWorkRecordParams(
+										(short)0, // depotSelector
+										((description != null) && (description.length() == 0) ? null : description),
+										paraQuantPercentage,
+										null,
+										null,
+										false,
+										((name != null) && (name.length() == 0) ? null : name),
+										null, // owningGroups
+										null,
+										new Short((short)0),
+										Short.parseShort(recordType),
+										(org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)),
+										startedAt.getTime()
+								);
+							} else {
+								params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityAddWorkRecordParams(
 										(short)0, // depotSelector
 										((description != null) && (description.length() == 0) ? null : description),
 										paraEffortHH,
@@ -756,11 +856,18 @@ org.openmdx.base.text.conversion.*
 										Short.parseShort(recordType),
 										(org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)),
 										startedAt.getTime()
-							);
+								);
+							}
 							pm.currentTransaction().begin();
 							org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult result = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).addWorkRecord(params);
 							pm.currentTransaction().commit();
 							workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)pm.getObjectById(result.getWorkRecord().refGetPath());
+							if (isWorkRecordInPercent) {
+								pm.currentTransaction().begin();
+								workAndExpenseRecord.setQuantityUom(uomPercent);
+								workAndExpenseRecord.setEndedAt(null);
+								pm.currentTransaction().commit();
+							}
 					} else {
 							// add ExpenseRecord
 							if (endedAt == null) {
@@ -789,60 +896,61 @@ org.openmdx.base.text.conversion.*
 							pm.currentTransaction().commit();
 							workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)pm.getObjectById(result.getWorkRecord().refGetPath());
 					}
-          lastCreatedWorkRecordXri = workAndExpenseRecord.refMofId();
-          creationFailed = false;
-          if (makePrivate != null && makePrivate.length() > 0) {
-        	    List newOwningGroups = new ArrayList();
-        	    org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
-              // remove all OwningGroups that are not private
-              for (
-                Iterator i = workAndExpenseRecord.getOwningGroup().iterator();
-                i.hasNext();
-              ) {
-                  org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
-                      (org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-                  if (currentPrincipalGroup.getName() != null && (currentPrincipalGroup.getName().toUpperCase().indexOf(PRIVATE_TOKEN) >= 0)) {
-                	    newOwningGroups.add(currentPrincipalGroup);
-                  }
-              }
+					lastCreatedWorkRecordXri = workAndExpenseRecord.refMofId();
+					creationFailed = false;
+					if (makePrivate != null && makePrivate.length() > 0) {
+							List newOwningGroups = new ArrayList();
+							org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
+							// remove all OwningGroups that are not private
+							for (
+								Iterator i = workAndExpenseRecord.getOwningGroup().iterator();
+								i.hasNext();
+							) {
+									org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
+											(org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
+									if (currentPrincipalGroup.getName() != null && (currentPrincipalGroup.getName().toUpperCase().indexOf(PRIVATE_TOKEN) >= 0)) {
+											newOwningGroups.add(currentPrincipalGroup);
+									}
+							}
 
-              // determine primary owning group of principal (if inferrable from Resource)
-              String userName = null;
-              org.opencrx.security.realm1.jmi1.PrincipalGroup resourcePrincipalGroup = null;
-              try {
-              	  org.opencrx.kernel.home1.jmi1.Segment homeSegment =
-              		    (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-              		      new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-              		    );
-                  userName = getUsername(pm, homeSegment, (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)));
-                  org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
-              		    pm,
-              		    providerName,
-              		    segmentName
-              		  );
-                  if (userName != null) {
-                      resourcePrincipalGroup = findPrincipalGroup(userName + ".Group", realm, pm);
-                      if (resourcePrincipalGroup != null) {
-                    	  newOwningGroups.add(resourcePrincipalGroup);
-                      }
-                  }
-              } catch (Exception e) {
-                  new ServiceException(e).log();
-              }
+							// determine primary owning group of principal (if inferrable from Resource)
+							String userName = null;
+							org.opencrx.security.realm1.jmi1.PrincipalGroup resourcePrincipalGroup = null;
+							try {
+									org.opencrx.kernel.home1.jmi1.Segment homeSegment =
+											(org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
+												new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
+											);
+									userName = getUsername(pm, homeSegment, (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)));
+									org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
+											pm,
+											providerName,
+											segmentName
+										);
+									if (userName != null) {
+											resourcePrincipalGroup = findPrincipalGroup(userName + ".Group", realm, pm);
+											if (resourcePrincipalGroup != null) {
+												newOwningGroups.add(resourcePrincipalGroup);
+											}
+									}
+							} catch (Exception e) {
+									new ServiceException(e).log();
+							}
 
-              // set new OwningGroups
-              pm.currentTransaction().begin();
-              org.opencrx.kernel.base.jmi1.ModifyOwningGroupsParams replaceOwningGroupsParams = basePkg.createModifyOwningGroupsParams(
-            		  newOwningGroups,
-                  (short)1 // recursive
-                );
-              workAndExpenseRecord.replaceOwningGroup(replaceOwningGroupsParams);
-              pm.currentTransaction().commit();
-          }
+							// set new OwningGroups
+							pm.currentTransaction().begin();
+							org.opencrx.kernel.base.jmi1.ModifyOwningGroupsParams replaceOwningGroupsParams = basePkg.createModifyOwningGroupsParams(
+									newOwningGroups,
+									(short)1 // recursive
+								);
+							workAndExpenseRecord.replaceOwningGroup(replaceOwningGroupsParams);
+							pm.currentTransaction().commit();
+					}
 			} catch (Exception e) {
-          try {
-              pm.currentTransaction().rollback();
-          } catch (Exception er) {}
+					createdWorkRecordInPercent = false;
+					try {
+							pm.currentTransaction().rollback();
+					} catch (Exception er) {}
 					errorMsg += "could not create Work / Expense Record<br>";
 					new ServiceException(e).log();
 			}
@@ -893,56 +1001,78 @@ org.openmdx.base.text.conversion.*
 			OF = new ObjectFinder();
 		}
 
-    function timeTick(hh_mm, upMins) {
-      var right_now = new Date();
-      var hrs = right_now.getHours();
-      var mins = right_now.getMinutes();
-      try {
-        timeStr = hh_mm.split(":");
-        hrsStr = timeStr[0];
-        minsStr = timeStr[1];
-      } catch (e) {}
-      try {
-        hrs = parseInt(hrsStr, 10);
-      } catch (e) {}
-      if (isNaN(hrs)) {hrs=12;}
-      try {
-        mins = parseInt(minsStr, 10);
-        mins = parseInt(mins/15, 10)*15;
-      } catch (e) {}
-      if (isNaN(mins)) {mins=00;}
-      mins = hrs*60 + mins + upMins;
-      while (mins <      0) {mins += 24*60;}
-      while (mins >= 24*60) {mins -= 24*60;}
-      hrs = parseInt(mins/60, 10);
-      if (hrs < 10) {
-        hrsStr = "0" + hrs;
-      } else {
-        hrsStr = hrs;
-      }
-      mins -= hrs*60;
-      if (mins < 10) {
-        minsStr = "0" + mins;
-      } else {
-        minsStr = mins;
-      }
-      return hrsStr + ":" + minsStr;
-    }
+		function timeTick(hh_mm, upMins) {
+			var right_now = new Date();
+			var hrs = right_now.getHours();
+			var mins = right_now.getMinutes();
+			try {
+				timeStr = hh_mm.split(":");
+				hrsStr = timeStr[0];
+				minsStr = timeStr[1];
+			} catch (e) {}
+			try {
+				hrs = parseInt(hrsStr, 10);
+			} catch (e) {}
+			if (isNaN(hrs)) {hrs=12;}
+			try {
+				mins = parseInt(minsStr, 10);
+				mins = parseInt(mins/15, 10)*15;
+			} catch (e) {}
+			if (isNaN(mins)) {mins=00;}
+			mins = hrs*60 + mins + upMins;
+			while (mins <			0) {mins += 24*60;}
+			while (mins >= 24*60) {mins -= 24*60;}
+			hrs = parseInt(mins/60, 10);
+			if (hrs < 10) {
+				hrsStr = "0" + hrs;
+			} else {
+				hrsStr = hrs;
+			}
+			mins -= hrs*60;
+			if (mins < 10) {
+				minsStr = "0" + mins;
+			} else {
+				minsStr = mins;
+			}
+			return hrsStr + ":" + minsStr;
+		}
 
-    var oldValue = "";
-    function positiveDecimalsVerify(caller){
-      var newValue = caller.value;
-      var isOK = true;
-      var i = 0;
-      while ((isOK) && (i < newValue.length)) {
-        var char = newValue.substring(i,i+1);
-        if ((char!='.') && ((char<'0') || (char>'9'))) {isOK = false;}
-        i++;
-      }
-      if (!isOK) {
-        caller.value = oldValue;
-      }
-    }
+		function percentageTick(currentVal, upVal) {
+			try {
+				pVal = parseInt(currentVal, 10);
+			} catch (e) {}
+			if (isNaN(pVal)) {pVal=100;}
+			if (upVal > 0) {
+				if (pVal + upVal > 100) {
+					pVal = 100;
+				} else {
+					pVal = pVal + upVal;
+				}
+			}
+			if (upVal < 0) {
+				if (pVal + upVal < 0) {
+					pVal = 0;
+				} else {
+					pVal = pVal + upVal;
+				}
+			}
+			return pVal;
+		}
+
+		var oldValue = "";
+		function positiveDecimalsVerify(caller){
+			var newValue = caller.value;
+			var isOK = true;
+			var i = 0;
+			while ((isOK) && (i < newValue.length)) {
+				var char = newValue.substring(i,i+1);
+				if ((char!='.') && ((char<'0') || (char>'9'))) {isOK = false;}
+				i++;
+			}
+			if (!isOK) {
+				caller.value = oldValue;
+			}
+		}
 
 	</script>
 
@@ -961,8 +1091,8 @@ org.openmdx.base.text.conversion.*
 		}
 		input.error{background-color:red;}
 		#scheduleTable, .fieldGroup {
-	    border-collapse: collapse;
-	    border-spacing:0;
+			border-collapse: collapse;
+			border-spacing:0;
 		}
 		.fieldGroup TR TD {padding:2px 0px;}
 		#scheduleTable td {
@@ -991,11 +1121,14 @@ org.openmdx.base.text.conversion.*
 		TD.smallheaderR{border-bottom:1px solid black;padding:0px 16px 0px 0px;font-weight:bold;text-align:right;}
 		TD.miniheader{font-size:7pt;}
 		TD.padded{padding:0px 15px 0px 0px;}
+		TD.padded_l{padding:0px 15px 0px 15px;text-align:left;}
 		TD.padded_r{padding:0px 15px 0px 0px;text-align:right;}
 		TR.centered TD {text-align:center;}
+		TR.leftaligned TD {text-align:left;}
 		TR.even TD {background-color:#EEEEFF;}
 		TR.match TD {background-color:#FFFE70;}
-		TR.created TD {background-color:#FFFE70;font-weight:bold;}
+		TR.created TD {background-color:#B4FF96;font-weight:bold;}
+		TD.error {color:red;font-weight:bold;}
 		input.outofmonth {
 			background-color:#F3F3F3;
 		}
@@ -1040,6 +1173,11 @@ org.openmdx.base.text.conversion.*
 			text-align:right;
 			font-weight:bold;
 		}
+		input.percentage {
+			width: 25px;
+			text-align:right;
+			font-weight:bold;
+		}
 		.timeButtonL {
 			cursor:pointer;
 			padding:0px 0px 2px 10px;
@@ -1062,31 +1200,32 @@ org.openmdx.base.text.conversion.*
 <div id="container">
 	<div id="wrap">
 		<div id="scrollheader" style="height:90px;">
-      <div id="logoTable">
-        <table id="headerlayout">
-          <tr id="headRow">
-            <td id="head" colspan="2">
-              <table id="info">
-                <tr>
-                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-                  <td id="headerCellSpacerLeft"></td>
-                  <td id="headerCellMiddle">&nbsp;</td>
-                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
+			<div id="logoTable">
+				<table id="headerlayout">
+					<tr id="headRow">
+						<td id="head" colspan="2">
+							<table id="info">
+								<tr>
+									<td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+									<td id="headerCellSpacerLeft"></td>
+									<td id="headerCellMiddle">&nbsp;</td>
+									<td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</div>
 
-    <div id="content-wrap">
-    	<div id="content" style="padding:0px 0.5em 0px 0.5em;">
+		<div id="content-wrap">
+			<div id="content" style="padding:0px 0.5em 0px 0.5em;">
 				<div id="aPanel">
 					<div id="inspector">
 						<div class="inspTabPanel" style="z-index: 201;">
-							<a class="<%= isWorkRecord ? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('reload.button').click();" href="#">Work Report</a>
-							<a class="<%= isWorkRecord ? "" : "selected" %>" onclick="$('isExpenseRecord').value='isExpenseRecord';$('reload.button').click();" href="#">Expense Report</a>
+							<a class="<%= isWorkRecord && !isWorkRecordInPercent ? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='';										 $('reload.button').click();" href="#">Work Report</a>
+							<a class="<%= isWorkRecordInPercent									? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='isWorkRecordInPercent';$('reload.button').click();" href="#">Work Report in %</a>
+							<a class="<%= isWorkRecord													 ? "" : "selected" %>" onclick="$('isExpenseRecord').value='isExpenseRecord';$('isWorkRecordInPercent').value='';			$('reload.button').click();" href="#">Expense Report</a>
 						</div>
 						<div id="inspContent" class="inspContent" style="z-index: 200;">
 							<div id="inspPanel0" class="selected" style="padding-top: 10px;">
@@ -1097,14 +1236,15 @@ org.openmdx.base.text.conversion.*
 					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 					<input type="hidden" name="selectedDateStr" value="<%= selectedDateStr %>" />
-					<input type="hidden" name="isExpenseRecord" id="isExpenseRecord" value="<%= isWorkRecord ? "" : "isExpenseRecord"  %>" />
-					<input type="hidden" name="hasProjects" id="hasProjects" value="<%= hasProjects ? "hasProjects" : ""  %>" />
+					<input type="hidden" name="isExpenseRecord" id="isExpenseRecord" value="<%= isWorkRecord ? "" : "isExpenseRecord"	%>" />
+					<input type="hidden" name="isWorkRecordInPercent" id="isWorkRecordInPercent" value="<%= !isWorkRecordInPercent ? "" : "isWorkRecordInPercent"	%>" />
+					<input type="hidden" name="hasProjects" id="hasProjects" value="<%= hasProjects ? "hasProjects" : ""	%>" />
 					<input type="hidden" name="isContactChange" id="isContactChange" value="" />
 					<input type="hidden" name="isResourceChange" id="isResourceChange" value="" />
 					<input type="hidden" name="resetActivityXri" id="resetActivityXri" value="" />
 					<input type="hidden" name="activitySortOrder" id="activitySortOrder" value="<%= activitySortOrder %>" />
 					<input type="checkbox" style="display:none;" id="isFirstCall" name="isFirstCall" checked="true" />
-          <input type="hidden" name="deleteWorkRecordXri" id="deleteWorkRecordXri" value="" />
+					<input type="hidden" name="deleteWorkRecordXri" id="deleteWorkRecordXri" value="" />
 					<input type="hidden" name="lastCreatedWorkRecordXri" value="<%= lastCreatedWorkRecordXri %>" />
 					<input type="hidden" name="lastCreatedExpenseRecordXri" value="<%= lastCreatedExpenseRecordXri %>" />
 					<input type="hidden" name="lastFocusId" id="lastFocusId" value="<%= lastFocusId %>" />
@@ -1114,7 +1254,7 @@ org.openmdx.base.text.conversion.*
 					<table id="scheduleTable">
 						<tr>
 							<td style="width:240px;">
-								<!--  Calendar -->
+								<!--	Calendar -->
 								<table>
 									<tr><td>
 										<div id="wizMonth" style="width:100%;">
@@ -1122,7 +1262,7 @@ org.openmdx.base.text.conversion.*
 												<tr>
 													<td>
 														<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&lt;&lt;" onclick="<%= SUBMIT_HANDLER %>" />
-														<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;"  onclick="<%= SUBMIT_HANDLER %>" />
+														<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;"	onclick="<%= SUBMIT_HANDLER %>" />
 													</td>
 													<td style="width:100%;vertical-align:middle;">
 														<span style="font-weight:bold;">&nbsp;<%= monthFormat.format(calendar.getTime()) + " " + calendarYear %>&nbsp;</span>
@@ -1191,8 +1331,8 @@ org.openmdx.base.text.conversion.*
 																	dayOfMonth
 																);
 																String cssClass = (selectedDateStr != null) && (selectedDateStr.compareTo(dateAsString) == 0)
-																  ? (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "selectedday")
-																  : (selectedWeekOfYear == calendar.get(GregorianCalendar.WEEK_OF_YEAR)
+																	? (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "selectedday")
+																	: (selectedWeekOfYear == calendar.get(GregorianCalendar.WEEK_OF_YEAR)
 																			? "selectedweek"
 																			: (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "bookable")
 																		 );
@@ -1248,10 +1388,10 @@ org.openmdx.base.text.conversion.*
 											<div class="autocomplete" id="contact.Update" style="display:none;z-index:500;"></div>
 											<script type="text/javascript" language="javascript" charset="utf-8">
 												function afterUpdateReload(titleField, selectedItem) {
-													  updateXriField(titleField, selectedItem);
-													  $('isContactChange').value="true";
-													  $('resetActivityXri').value='true';
-													  $('reload.button').click();
+														updateXriField(titleField, selectedItem);
+														$('isContactChange').value="true";
+														$('resetActivityXri').value='true';
+														$('reload.button').click();
 												}
 												ac_addObject0 = new Ajax.Autocompleter(
 													'contactXri.Title',
@@ -1285,16 +1425,16 @@ org.openmdx.base.text.conversion.*
 											resourceFilter.orderByName().ascending();
 											resourceFilter.orderByDescription().ascending();
 											List resources = activitySegment.getResource(resourceFilter);
-										  if (resources.isEmpty()) {
-											  	errorMsg += "no matching resource found!<br>";
-											  	noResourcesFound = true;
-											  	resourceXri = "";
+											if (resources.isEmpty()) {
+													errorMsg += "no matching resource found!<br>";
+													noResourcesFound = true;
+													resourceXri = "";
 %>
 													<select id="resourceXri" name="resourceXri" class="valueL" <%= errorStyle %> tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
 														<option value="">--</option>
 													</select>
 <%
-										  } else {
+											} else {
 %>
 												<select id="resourceXri" name="resourceXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('isResourceChange').value='true';$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
@@ -1311,13 +1451,13 @@ org.openmdx.base.text.conversion.*
 																	resourceXri = res.refMofId();
 															}
 %>
-															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= app.getHtmlEncoder().encode(res.getName(), false) %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
+															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= res.getName() != null ? app.getHtmlEncoder().encode(res.getName(), false) : contactTitle %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
 <%
 													}
 %>
 												</select>
 <%
-										  }
+											}
 %>
 											<input type="hidden" name="previousResourceXri" value="<%= resourceXri %>" />
 										</td>
@@ -1348,10 +1488,10 @@ org.openmdx.base.text.conversion.*
 												);
 											}
 											switch (activitySortOrder) {
-													case  0: activityQuery.orderByActivityNumber().ascending(); break;
-													case  1: activityQuery.orderByActivityNumber().descending(); break;
-													case  2: activityQuery.orderByName().ascending(); break;
-													case  3: activityQuery.orderByName().descending(); break;
+													case	0: activityQuery.orderByActivityNumber().ascending(); break;
+													case	1: activityQuery.orderByActivityNumber().descending(); break;
+													case	2: activityQuery.orderByName().ascending(); break;
+													case	3: activityQuery.orderByName().descending(); break;
 													default: activityQuery.orderByActivityNumber().descending(); break;
 											}
 
@@ -1366,45 +1506,45 @@ org.openmdx.base.text.conversion.*
 															trackerFilter.forAllDisabled().isFalse();
 															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-                                  if (
-                                      (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                      (ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                  ) {
-    																	orderedActivityGroups.put(
-    																			(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
-    																			ag
-    																		);
-                                  }
+																	if (
+																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																	) {
+																			orderedActivityGroups.put(
+																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
+																					ag
+																				);
+																	}
 															}
 															// get ActivityCategories
 															org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
 															categoryFilter.forAllDisabled().isFalse();
 															for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-                                  if (
-                                      (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                      (ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                  ) {
-                                      orderedActivityGroups.put(
-                                          (ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
-                                          ag
-                                        );
-                                  }
+																	if (
+																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																	) {
+																			orderedActivityGroups.put(
+																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
+																					ag
+																				);
+																	}
 															}
 															// get ActivityMilestones
 															org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
 															milestoneFilter.forAllDisabled().isFalse();
 															for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-                                  if (
-                                      (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                      (ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                  ) {
-                                      orderedActivityGroups.put(
-                                          (ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
-                                          ag
-                                        );
-                                  }
+																	if (
+																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																	) {
+																			orderedActivityGroups.put(
+																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
+																					ag
+																				);
+																	}
 															}
 															activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0) {
@@ -1435,15 +1575,15 @@ org.openmdx.base.text.conversion.*
 															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
 																	if ((at.getUserString1() != null) && (at.getUserString1().length() > 0)) {
-                                    if (
-                                        (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                        (at.getUserString1().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                    ) {
-                                        orderedActivityGroups.put(
-                                            (at.getUserString1() != null ? at.getUserString1().trim() : "_?") + "    " + gCounter++,
-                                            at
-                                          );
-                                    }
+																		if (
+																				(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																				(at.getUserString1().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																		) {
+																				orderedActivityGroups.put(
+																						(at.getUserString1() != null ? at.getUserString1().trim() : "_?") + "		" + gCounter++,
+																						at
+																					);
+																		}
 																	}
 															}
 															activityFilterIterator = orderedActivityGroups.values().iterator();
@@ -1453,15 +1593,15 @@ org.openmdx.base.text.conversion.*
 															trackerFilter.forAllDisabled().isFalse();
 															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-                                  if (
-                                      (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                      (ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                  ) {
-    																	orderedActivityGroups.put(
-		    																	(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
-				    															ag
-						    												);
-                                  }
+																	if (
+																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																	) {
+																			orderedActivityGroups.put(
+																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
+																					ag
+																				);
+																	}
 															}
 															activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter) == 0) {
@@ -1470,15 +1610,15 @@ org.openmdx.base.text.conversion.*
 															categoryFilter.forAllDisabled().isFalse();
 															for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-                                  if (
-                                      (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                      (ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                  ) {
-    																	orderedActivityGroups.put(
-		    																	(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
-				    															ag
-						    												);
-                                  }
+																	if (
+																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																	) {
+																			orderedActivityGroups.put(
+																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
+																					ag
+																				);
+																	}
 															}
 															activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_MILESTONE.compareTo(activityFilter) == 0) {
@@ -1487,30 +1627,30 @@ org.openmdx.base.text.conversion.*
 															milestoneFilter.forAllDisabled().isFalse();
 															for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-                                  if (
-                                      (showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-                                      (ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-                                  ) {
-    																	orderedActivityGroups.put(
-		    																	(ag.getName() != null ? ag.getName() : "_?") + "    " + gCounter++,
-				    															ag
-						    												);
-                                  }
+																	if (
+																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
+																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
+																	) {
+																			orderedActivityGroups.put(
+																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
+																					ag
+																				);
+																	}
 															}
 															activityFilterIterator = orderedActivityGroups.values().iterator();
 													}
 
 													tabIndex += 10;
 													if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) != 0) {
-														  if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
-															  activityGroup = null; // reset potentially existing selection
-															  errorMsg += "no activity groups found!<br>";
+															if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
+																activityGroup = null; // reset potentially existing selection
+																errorMsg += "no activity groups found!<br>";
 %>
 																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" <%= errorStyle %> tabindex="<%= tabIndex+5 %>" onfocus="<%= ONFOCUS_HANDLER %>">
 																	<option value="">--</option>
 																</select>
 <%
-														  } else {
+															} else {
 %>
 																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%= tabIndex+5 %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
@@ -1518,23 +1658,23 @@ org.openmdx.base.text.conversion.*
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
 																	while (activityFilterIterator.hasNext()) {
 																			org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)activityFilterIterator.next();
-                                      if (
-                                          !EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
-                                          ((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
-                                      ) {
-                                          boolean selected = false;
-                                          if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
-                                              activityGroup = ag;
-                                              selected = true;
-                                              hasSelection = true;
-                                          }
-                                          if (firstAg == null) {
-                                              firstAg = ag;
-                                          }
+																			if (
+																					!EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
+																					((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
+																			) {
+																					boolean selected = false;
+																					if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
+																							activityGroup = ag;
+																							selected = true;
+																							hasSelection = true;
+																					}
+																					if (firstAg == null) {
+																							firstAg = ag;
+																					}
 %>
-    																			<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
+																					<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
 <%
-                                      }
+																			}
 																	}
 																	if (!hasSelection) {
 																			activityGroup = firstAg; // to ensure proper location of activities
@@ -1548,26 +1688,26 @@ org.openmdx.base.text.conversion.*
 											}
 %>
 											<select class="valueL" style="width:<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 || ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0 ? "100" : "49" %>%;float:left;" id="activityFilter" name="activityFilter" tabindex="<%= tabIndex++ %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
-												<option <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter)   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_SEGMENT %>"  >*</option>
-												<option <%= ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter) 	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_ANYGROUP %>" ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
+												<option <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter)	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_SEGMENT %>"	>*</option>
+												<option <%= ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter)== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_ANYGROUP %>" ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
 <%
 												if (hasProjects) {
 %>
-														<option <%= ACTIVITY_FILTER_PROJECT.compareTo(activityFilter)   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_PROJECT %>"  ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> [<%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>]</option>
+														<option <%= ACTIVITY_FILTER_PROJECT.compareTo(activityFilter)	 == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_PROJECT %>"	><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> [<%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>]</option>
 <%
 												}
 %>
-												<option <%= ACTIVITY_FILTER_TRACKER.compareTo(activityFilter)   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_TRACKER %>"  ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %></option>
-												<option <%= ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter)  == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_CATEGORY %>" ><%= app.getLabel(ACTIVITYCATEGORY_CLASS) %></option>
+												<option <%= ACTIVITY_FILTER_TRACKER.compareTo(activityFilter)	 == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_TRACKER %>"	><%= app.getLabel(ACTIVITYTRACKER_CLASS) %></option>
+												<option <%= ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter)	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_CATEGORY %>" ><%= app.getLabel(ACTIVITYCATEGORY_CLASS) %></option>
 												<option <%= ACTIVITY_FILTER_MILESTONE.compareTo(activityFilter) == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_MILESTONE %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
 											</select>
 										</td>
 										<td class="addon">
-                        <input type="checkbox" id="showActivityGroupNameFilter" name="showActivityGroupNameFilter" <%= (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="showActivityGroupNameFilter" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-                    </td>
+												<input type="checkbox" id="showActivityGroupNameFilter" name="showActivityGroupNameFilter" <%= (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="showActivityGroupNameFilter" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
+										</td>
 									</tr>
 <%
-                  tabIndex += 10;
+									tabIndex += 10;
 									if (hasProjects) {
 										boolean isProject = ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0;
 %>
@@ -1579,9 +1719,9 @@ org.openmdx.base.text.conversion.*
 <%
 												if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
 														if (isProject) {
-                                activityGroup = null; // reset potentially existing selection
-													  		errorMsg += "no activity groups found!<br>";
-													  	}
+																activityGroup = null; // reset potentially existing selection
+																errorMsg += "no activity groups found!<br>";
+															}
 %>
 														<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" class="valueL" <%= errorStyle %> tabindex="<%= tabIndex+5 %>" onfocus="<%= ONFOCUS_HANDLER %>">
 															<option value="">--</option>
@@ -1595,23 +1735,23 @@ org.openmdx.base.text.conversion.*
 														org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
 														while (activityFilterIterator.hasNext()) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)activityFilterIterator.next();
-                                  if (
-                                      !EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
-                                      ((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
-                                  ) {
-                                      boolean selected = false;
-                                      if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
-                                          activityGroup = ag;
-                                          selected = true;
-                                          hasSelection = true;
-                                      }
-                                      if (firstAg == null) {
-                                          firstAg = ag;
-                                      }
+																	if (
+																			!EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
+																			((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
+																	) {
+																			boolean selected = false;
+																			if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
+																					activityGroup = ag;
+																					selected = true;
+																					hasSelection = true;
+																			}
+																			if (firstAg == null) {
+																					firstAg = ag;
+																			}
 %>
-  																	<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
+																		<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
 <%
-                                  }
+																	}
 															}
 															if (!hasSelection) {
 																	activityGroup = firstAg; // to ensure proper location of activities
@@ -1653,18 +1793,18 @@ org.openmdx.base.text.conversion.*
 										</tr>
 <%
 									}
-                  tabIndex += 10;
+									tabIndex += 10;
 %>
-                  <tr <%= (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) ? "" : "style='display:none;'" %>>
-                    <td class="label">
-                      <span class="nw"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %>:</span>
-                    </td>
-                    <td>
-                      <input type="<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "hidden" : "text" %>" class="valueL" name="filterActivityGroupName" id="filterActivityGroupName" title="<%= userView.getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex()) %> <%= userView.getFieldLabel(ACTIVITYGROUPASSIGNMENT_CLASS, "activityGroup", app.getCurrentLocaleAsIndex()) %>" <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "" : "style='width:50%;float:right;'" %> tabindex="<%= tabIndex+5 %>" value="<%= app.getHtmlEncoder().encode(filterActivityGroupName, false) %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-                      <input type="text" class="valueL" name="filterActivityName" id="filterActivityName" title="<%= userView.getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex()) %>" <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "" : "style='width:49%;float:left;'" %> tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(filterActivityName, false) %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-                    </td>
-                    <td class="addon"></td>
-                  </tr>
+									<tr <%= (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) ? "" : "style='display:none;'" %>>
+										<td class="label">
+											<span class="nw"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %>:</span>
+										</td>
+										<td>
+											<input type="<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "hidden" : "text" %>" class="valueL" name="filterActivityGroupName" id="filterActivityGroupName" title="<%= userView.getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex()) %> <%= userView.getFieldLabel(ACTIVITYGROUPASSIGNMENT_CLASS, "activityGroup", app.getCurrentLocaleAsIndex()) %>" <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "" : "style='width:50%;float:right;'" %> tabindex="<%= tabIndex+5 %>" value="<%= app.getHtmlEncoder().encode(filterActivityGroupName, false) %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
+											<input type="text" class="valueL" name="filterActivityName" id="filterActivityName" title="<%= userView.getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex()) %>" <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "" : "style='width:49%;float:left;'" %> tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(filterActivityName, false) %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
+										</td>
+										<td class="addon"></td>
+									</tr>
 
 									<tr>
 										<td class="label">
@@ -1680,76 +1820,76 @@ org.openmdx.base.text.conversion.*
 											if (activityGroup != null) {
 												activities = activityGroup.getFilteredActivity(activityQuery);
 											}
-                      boolean hasActivitySelection = false;
-                      String firstActivityXri = null;
+											boolean hasActivitySelection = false;
+											String firstActivityXri = null;
 %>
-                      <select id="activityXri" name="activityXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
+											<select id="activityXri" name="activityXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
-   										  if (activities == null || activities.isEmpty()) {
-   											  	if ((activityGroup != null) && (activityXri != null && "MAX".compareTo(activityXri) != 0)) {
-   														  errorMsg += "no activities found!<br>";
-   														  noActivitiesFound = true;
-   											  	}
+												if (activities == null || activities.isEmpty()) {
+														if ((activityGroup != null) && (activityXri != null && "MAX".compareTo(activityXri) != 0)) {
+																errorMsg += "no activities found!<br>";
+																noActivitiesFound = true;
+														}
 %>
-  													<option value="">--</option>
+														<option value="">--</option>
 <%
-   										  }
-   										  else {
-   											  int activityCounter = 0;
-   											  int maxToShow = MAX_ACTIVITY_SHOWN_INITIALLY;
-   											  if (activityXri != null && "MAX".compareTo(activityXri) == 0) {
-   												  	maxToShow = MAX_ACTIVITY_SHOWN;
-   											  };
-	                        for (
+												}
+												else {
+													int activityCounter = 0;
+													int maxToShow = MAX_ACTIVITY_SHOWN_INITIALLY;
+													if (activityXri != null && "MAX".compareTo(activityXri) == 0) {
+															maxToShow = MAX_ACTIVITY_SHOWN;
+													};
+													for (
 															Iterator i = activities.iterator();
 															i.hasNext() && (activityCounter < maxToShow);
 															activityCounter++
 													) {
 															org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
-                              boolean selected = (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0);
-                              if (selected) {
-                                  hasActivitySelection = true;
-                              }
-                              if (
-                            		  (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) &&
-                                  (activity.getName() != null) && (activity.getName().toUpperCase().indexOf(filterActivityName.toUpperCase()) == -1)
-                              ) {
-                                  activityCounter--;
-                              } else {
-                                  if (firstActivityXri == null) {
-                                      firstActivityXri = activity.refMofId();
-                                  }
+															boolean selected = (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0);
+															if (selected) {
+																	hasActivitySelection = true;
+															}
+															if (
+																	(showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) &&
+																	(activity.getName() != null) && (activity.getName().toUpperCase().indexOf(filterActivityName.toUpperCase()) == -1)
+															) {
+																	activityCounter--;
+															} else {
+																	if (firstActivityXri == null) {
+																			firstActivityXri = activity.refMofId();
+																	}
 %>
-															    <option <%= selected ? "selected" : "" %> value="<%= activity.refMofId() %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
+																	<option <%= selected ? "selected" : "" %> value="<%= activity.refMofId() %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
 <%
-                              }
+															}
 													}
-                          if (activityCounter == 0) {
-                              errorMsg += "no activities found!<br>";
-                              noActivitiesFound = true;
+													if (activityCounter == 0) {
+															errorMsg += "no activities found!<br>";
+															noActivitiesFound = true;
 %>
-                              <option value="">--</option>
+															<option value="">--</option>
 <%
-                          }
-											  	if (activityCounter >= maxToShow) {
+													}
+													if (activityCounter >= maxToShow) {
 %>
 														<option value="MAX"><%= activityCounter < MAX_ACTIVITY_SHOWN ? "&mdash;&mdash;&gt;" : "..." %></option>
 <%
-											  	}
+													}
 												}
-                        if (!hasActivitySelection && !resetActivityXri && (activityXri != null) && (activityXri.length() > 0) && !"MAX".equalsIgnoreCase(activityXri)) {
-                            // add another option to prevent loss of activity selection
-                            //System.out.println("activityXri = " + activityXri);
-                            hasActivitySelection = true;
-                            org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
+												if (!hasActivitySelection && !resetActivityXri && (activityXri != null) && (activityXri.length() > 0) && !"MAX".equalsIgnoreCase(activityXri)) {
+														// add another option to prevent loss of activity selection
+														//System.out.println("activityXri = " + activityXri);
+														hasActivitySelection = true;
+														org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
 %>
-                            <option selected value="<%= activityXri %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
+														<option selected value="<%= activityXri %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
 <%
-                        }
-                        if (!hasActivitySelection) {
-                            // set activityXri to first activity in drop down
-                            activityXri = firstActivityXri;
-                        }
+												}
+												if (!hasActivitySelection) {
+														// set activityXri to first activity in drop down
+														activityXri = firstActivityXri;
+												}
 %>
 											</select>
 										</td>
@@ -1783,9 +1923,11 @@ org.openmdx.base.text.conversion.*
 														Map.Entry option = (Map.Entry)options.next();
 														short value = Short.parseShort((option.getKey()).toString());
 														String selectedModifier = Short.parseShort(recordType) == value ? "selected" : "";
+														if (!isWorkRecordInPercent || value == org.opencrx.kernel.backend.Activities.WORKRECORD_TYPE_WORK_STANDARD) {
 %>
-														<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
+																<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
 <%
+														}
 													}
 												}
 %>
@@ -1793,13 +1935,20 @@ org.openmdx.base.text.conversion.*
 										</td>
 										<td class="addon"></td>
 									</tr>
-
+<%
+									if (isWorkRecordInPercent && activityXri != null && activityXri.length()>0) {
+											try {
+													name = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).getName();
+											} catch (Exception e) {}
+									}
+									if (name.length() == 0) {errorMsg += "name is mandatory!<br>";}
+%>
 									<tr>
 										<td class="label">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
 										<td>
-											<input type="text" class="valueL mandatory" name="name" id="name" tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(name, false) %>" <%= name.length() == 0 ? errorStyle : "" %> onfocus="<%= ONFOCUS_HANDLER %>" />
+											<input type="text" class="valueL <%= isWorkRecordInPercent ? "" : "mandatory" %>" name="name" id="name" <%= isWorkRecordInPercent ? "readonly" : " " %> tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(name, false) %>" <%= name.length() == 0 ? errorStyle : "" %> onfocus="<%= ONFOCUS_HANDLER %>" />
 										</td>
 										<td class="addon">
 												<%= name.length() == 0 ? CAUTION : "" %>
@@ -1815,7 +1964,6 @@ org.openmdx.base.text.conversion.*
 										</td>
 										<td class="addon"></td>
 									</tr>
-
 <%
 									String previousRecordType = request.getParameter("previousRecordType") == null ? "" : request.getParameter("previousRecordType");
 									String previousResourceXri = request.getParameter("previousResourceXri") == null ? "" : request.getParameter("previousResourceXri");
@@ -1846,12 +1994,12 @@ org.openmdx.base.text.conversion.*
 											}
 									}
 %>
-									<tr>
+									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 										<td class="label">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "rate", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
 										<td nowrap>
-											<input type="text" <%= isWorkRecord ? "" : "class='mandatory'" %> style="font-weight:bold;width:47%;float:right;padding-top:2px;padding-right:2px;text-align:right;<%= !isWorkRecord && paraRate==null ? errorStyleInline: "" %>" name="rate" id="rate" tabindex="<%= tabIndex+5 %>" value="<%= rate %>"  onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
+											<input type="text" <%= isWorkRecord ? "" : "class='mandatory'" %> style="font-weight:bold;width:47%;float:right;padding-top:2px;padding-right:2px;text-align:right;<%= !isWorkRecord && paraRate==null ? errorStyleInline: "" %>" name="rate" id="rate" tabindex="<%= tabIndex+5 %>" value="<%= rate %>"	onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
 											<select class="valueL" style="width:49%;float:left;" id="billingCurrency" name="billingCurrency" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
 												SortedMap billingCurrency_longTextsC = codes.getLongText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, false);
@@ -1878,7 +2026,7 @@ org.openmdx.base.text.conversion.*
 										<td class="addon"></td>
 									</tr>
 
-									<tr>
+									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 										<td class="label">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
@@ -1894,13 +2042,13 @@ org.openmdx.base.text.conversion.*
 										</td>
 										<td class="time">
 											<table>
-												<tr class="centered">
+												<tr class="centered" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 													<td><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %></td>
 													<td></td>
 													<td><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
 													<td style="width:100%;">&nbsp;</td>
 												</tr>
-												<tr class="centered">
+												<tr class="centered" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
 													<td>
 														<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('startedAtHH').value + ':' + $('startedAtMM').value, -15);$('startedAtHH').value = hh_mm.split(':')[0];$('startedAtMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="startedAtHH" id="startedAtHH" tabindex="<%= tabIndex++ %>" value="<%= startedAtHH %>" <%= startedAt == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />:<input type="text" class="time" name="startedAtMM" id="startedAtMM"" tabindex="<%= tabIndex++ %>" value="<%= startedAtMM %>" <%= startedAt == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('startedAtHH').value + ':' + $('startedAtMM').value, +15);$('startedAtHH').value = hh_mm.split(':')[0];$('startedAtMM').value = hh_mm.split(':')[1];" />
 													</td>
@@ -1911,14 +2059,14 @@ org.openmdx.base.text.conversion.*
 													<td></td>
 												</tr>
 
-												<!--  WorkRecord -->
-												<tr class="centered" <%= isWorkRecord ? "" : "style='display:none;'" %>>
+												<!--	WorkRecord -->
+												<tr class="centered" <%= isWorkRecord && !isWorkRecordInPercent ? "" : "style='display:none;'" %>>
 													<td style="padding-top:5px;">hh:mm</td>
 													<td></td>
 													<td></td>
 													<td></td>
 												</tr>
-												<tr class="centered" <%= isWorkRecord ? "" : "style='display:none;'" %>>
+												<tr class="centered" <%= isWorkRecord && !isWorkRecordInPercent ? "" : "style='display:none;'" %>>
 													<td>
 														<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('effortHH').value + ':' + $('effortMM').value, -15);$('effortHH').value = hh_mm.split(':')[0];$('effortMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="effortHH" id="effortHH" tabindex="<%= tabIndex++ %>" value="<%= effortHH %>" <%= paraEffortHH == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />:<input type="text" class="time" name="effortMM" id="effortMM"" tabindex="<%= tabIndex++ %>" value="<%= effortMM %>" <%= paraEffortMM == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('effortHH').value + ':' + $('effortMM').value, +15);$('effortHH').value = hh_mm.split(':')[0];$('effortMM').value = hh_mm.split(':')[1];" />
 													</td>
@@ -1926,8 +2074,161 @@ org.openmdx.base.text.conversion.*
 													<td></td>
 													<td></td>
 												</tr>
+<%
+												// WorkRecordInPercent special treatment
+												
+												org.opencrx.kernel.activity1.jmi1.Resource currentResource = null;
+												org.opencrx.kernel.activity1.jmi1.Calendar cal = null;
+												org.opencrx.kernel.activity1.jmi1.CalendarDay calDay = null;
+												String calDayName = null;
+												try {
+													calDayName = calendardayf.format(getDateAsCalendar(selectedDateStr, app).getTime());
+												} catch (Exception e) {}
+												String calDayLoad = null;
+												boolean isCurrentUsersResource = false;
+												if (isWorkRecordInPercent) {
+													// try to get Default Calendar of Resource
+													try {
+														currentResource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
+														if (currentResource != null) {
+																if (currentResource.getCalendar() != null) {
+																	cal = currentResource.getCalendar();
+																	// try to get CalendarDay
+																	org.opencrx.kernel.activity1.cci2.CalendarDayQuery calendarDayQuery = (org.opencrx.kernel.activity1.cci2.CalendarDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
+																	calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(selectedDateStr, app).getTime());
+																	Collection calendarDays = cal.getCalendarDay(calendarDayQuery);
+																	if(!calendarDays.isEmpty()) {
+																		calDay = (org.opencrx.kernel.activity1.jmi1.CalendarDay)calendarDays.iterator().next();
+																		calDayName = calDay.getName();
+																		try {
+																				String[] calDayNameSplit = calDayName.split("@");
+																				if (calDayNameSplit.length>=2) {
+																						calDayName = calDayNameSplit[0];
+																						calDayLoad = calDayNameSplit[1];
+																				}
+																		} catch (Exception e) {}
+																	}
+																}
+																// default is current users Contact (as defined in current user's UserHome
+																// get UserHome
+																org.opencrx.kernel.home1.jmi1.UserHome myUserHome =
+																	(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
+																		new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
+																	);
+																if (
+																		(myUserHome.getContact() != null) &&
+																		(currentResource.getContact() != null) &&
+																		(myUserHome.getContact().refMofId().compareTo(currentResource.getContact().refMofId()) == 0)
+																) {
+																	isCurrentUsersResource = true;
+																}
+																
+																if (cal != null && calDay != null && isCurrentUsersResource) {
+																		//System.out.println("UPDATE: " + request.getParameter("ACTION.updateCalendarDay"));
+																		if (request.getParameter("ACTION.updateCalendarDay") != null) {
+																				try {
+																						String calendarDayName = request.getParameter("ACTION.updateCalendarDay");
+																						if (calendarDayName != null && calendarDayName.length() > 9) {
+																								calDay = createOrUpdateCalendarDay(
+																										calendarDayName,
+																										calendarDayName.substring(0,8),
+																										cal,
+																										calDay,
+																										activitySegment,
+																										pm
+																								);
+																								String[] calDayNameSplit = calendarDayName.split("@");
+																								if (calDayNameSplit.length>=2) {
+																										calDayName = calDayNameSplit[0];
+																										calDayLoad = calDayNameSplit[1];
+																								}
+																						}
+																				} catch (Exception e) {
+																						new ServiceException(e).log();
+																				}
+																		}
+																}
+																if (cal != null && calDay == null && isCurrentUsersResource) {
+																		//System.out.println("CREATE: " + request.getParameter("ACTION.createCalendarDay"));
+																		if (request.getParameter("ACTION.createCalendarDay") != null) {
+																				try {
+																						String calendarDayName = request.getParameter("ACTION.createCalendarDay");
+																						if (calendarDayName != null && calendarDayName.length() > 9) {
+																								calDay = createOrUpdateCalendarDay(
+																										calendarDayName,
+																										calendarDayName.substring(0,8),
+																										cal,
+																										null,
+																										activitySegment,
+																										pm
+																								);
+																						}
+																				} catch (Exception e) {
+																						new ServiceException(e).log();
+																				}
+																		}
+																}
+																if (cal != null && calDay == null && createdWorkRecordInPercent) {
+																		// System.out.println("created default calendar day: " + calDayName + "@100");
+																		try {
+																				if (calDayName != null && calDayName.length() > 0) {
+																						calDay = createOrUpdateCalendarDay(
+																								calDayName + "@100",
+																								calDayName,
+																								cal,
+																								null,
+																								activitySegment,
+																								pm
+																						);
+																				}
+																		} catch (Exception e) {
+																				new ServiceException(e).log();
+																		}
+																}
+														}
+													} catch (Exception e) {}
+												}
+%>
+												<!--	WorkRecordInPercent -->
+												<tr <%= isWorkRecordInPercent ? "" : "style='display:none;'" %>>
+													<td style="vertical-align:bottom;">
+														<img class="timeButtonL" border="0" title="- 5%" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:$('quantPercent').value = percentageTick($('quantPercent').value, -5);" /><input type="text" class="percentage" name="quantPercent" id="quantPercent" tabindex="<%= tabIndex++ %>" value="<%= quantPercent %>" <%= quantPercent == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />%<img class="timeButtonR" border="0" title="+ 5%" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:$('quantPercent').value = percentageTick($('quantPercent').value, 5);" />
+													</td>
+													<td style="vertical-align:bottom;width:30px;">&nbsp;</td>
+													<td style="vertical-align:bottom;padding-right:30px;">
+															<%= userView.getFieldLabel(RESOURCE_CLASS, "calendar", app.getCurrentLocaleAsIndex()) %>:<br>
+															<%= cal != null && cal.getName() != null ? cal.getName() : "--" %>
+													</td>
+													<td style="vertical-align:bottom;padding-right:30px;">
+															<%= app.getLabel(CALENDARDAY_CLASS) %>:&nbsp;&nbsp;<%= calDay != null && calDay.getName() != null ? calDay.getName() : "--" %><br>
+<%
+															if (cal != null && calDay != null && calDay.getName() != null) {
+																	// change options
+%>
+																	<input type="hidden" name="currentCalendarDayXri" id="currentCalendarDayXri" value="<%= calDay.refMofId() %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("0") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("25") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("50") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("75") == 0 ? "border:2px black solid;" : "" %>" />
+																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("100") == 0 ? "border:2px black solid;" : "" %>" />
+<%
+															} else if (cal != null && isCurrentUsersResource) {
+																	// create options
+%>
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	 style="font-size:10px;font-weight:bold;width:4em;" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	style="font-size:10px;font-weight:bold;width:4em;" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	style="font-size:10px;font-weight:bold;width:4em;" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	style="font-size:10px;font-weight:bold;width:4em;" />
+																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;" />
 
-												<!--  ExpenseRecord -->
+<%
+															}
+%>
+													</td>
+												</tr>
+
+
+												<!--	ExpenseRecord -->
 												<tr class="centered" <%= isWorkRecord ? "style='display:none;'" : "" %>>
 													<td style="padding-top:5px;"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
 													<td></td>
@@ -1951,15 +2252,15 @@ org.openmdx.base.text.conversion.*
 														uomFilter.orderByName().ascending();
 														uomFilter.orderByDescription().ascending();
 														List uoms = uomSegment.getUom(uomFilter);
-													  if (uoms.isEmpty()) {
-														  	errorMsg += "no matching UOMs found!<br>";
-														  	noUomsFound = true;
+														if (uoms.isEmpty()) {
+																errorMsg += "no matching UOMs found!<br>";
+																noUomsFound = true;
 %>
 																<select id="uomXri" name="uomXri" class="valueL" <%= errorStyle %> tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
 																	<option value="">--</option>
 																</select>
 <%
-													  } else {
+														} else {
 %>
 															<select class="valueL" id="uomXri" name="uomXri" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
@@ -2023,92 +2324,93 @@ org.openmdx.base.text.conversion.*
 								</fieldset>
 
 <%
-                org.opencrx.kernel.activity1.jmi1.Activity selectedActivity = null;
-                boolean showMakePrivate = false;
-                boolean hasPrivateOwningGroup = false;
-                boolean atLeastOnePrivateMatch = false; // true if current principal is member of at least one private group which is also an owning group of the selected activity
-                List privateOwningGroups = new ArrayList();
-                if (activityXri != null && activityXri.length() > 0) {
-                	  selectedActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
-                    for (
-                      Iterator i = selectedActivity.getOwningGroup().iterator();
-                      i.hasNext() && !showMakePrivate;
-                    ) {
-                        org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
-                            (org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-                        if (currentPrincipalGroup.getName() != null && (currentPrincipalGroup.getName().toUpperCase().indexOf(PRIVATE_TOKEN) >= 0)) {
-                        	  privateOwningGroups.add(currentPrincipalGroup);
-                        	  hasPrivateOwningGroup = true;
-                        }
-                    }
-                }
+								org.opencrx.kernel.activity1.jmi1.Activity selectedActivity = null;
+								boolean showMakePrivate = false;
+								boolean hasPrivateOwningGroup = false;
+								boolean atLeastOnePrivateMatch = false; // true if current principal is member of at least one private group which is also an owning group of the selected activity
+								List privateOwningGroups = new ArrayList();
+								if (activityXri != null && activityXri.length() > 0) {
+										selectedActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
+										for (
+											Iterator i = selectedActivity.getOwningGroup().iterator();
+											i.hasNext() && !showMakePrivate;
+										) {
+												org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
+														(org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
+												if (currentPrincipalGroup.getName() != null && (currentPrincipalGroup.getName().toUpperCase().indexOf(PRIVATE_TOKEN) >= 0)) {
+														privateOwningGroups.add(currentPrincipalGroup);
+														hasPrivateOwningGroup = true;
+												}
+										}
+								}
 
-                String groupNames = "";
-                org.opencrx.kernel.home1.jmi1.UserHome myUserHome = null;
-                try {
-                    // get UserHome
-                    myUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
-                          new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
-                    );
-                } catch (Exception e) {
-                    new ServiceException(e).log();
-                };
-                org.openmdx.security.realm1.jmi1.Principal principal = null;
-                try {
-                    org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
-                      pm,
-                      providerName,
-                      segmentName
-                    );
-                    principal = org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-                      myUserHome.refGetPath().getBase(),
-                      realm
-                    );
-                    // check whether user is member of at least one private group which is also an owning group of the selected activity
-                    for (
-                      Iterator i = privateOwningGroups.iterator();
-                      i.hasNext();
-                    ) {
-                        org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrivateOwningGroup =
-                            (org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-                        if (groupNames.length() > 0) {groupNames += ", ";}
-                        groupNames += currentPrivateOwningGroup.getName();
-                        if (principal.getIsMemberOf().contains(currentPrivateOwningGroup)) {
-                        	  atLeastOnePrivateMatch = true;
-                        }
-                    }
-                }
-                catch (Exception e) {
-                    new ServiceException(e).log();
-                };
+								String groupNames = "";
+								org.opencrx.kernel.home1.jmi1.UserHome myUserHome = null;
+								try {
+										// get UserHome
+										myUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
+													new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + app.getLoginPrincipalId())
+										);
+								} catch (Exception e) {
+										new ServiceException(e).log();
+								};
+								org.openmdx.security.realm1.jmi1.Principal principal = null;
+								try {
+										org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
+											pm,
+											providerName,
+											segmentName
+										);
+										principal = org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+											myUserHome.refGetPath().getBase(),
+											realm
+										);
+										// check whether user is member of at least one private group which is also an owning group of the selected activity
+										for (
+											Iterator i = privateOwningGroups.iterator();
+											i.hasNext();
+										) {
+												org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrivateOwningGroup =
+														(org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
+												if (groupNames.length() > 0) {groupNames += ", ";}
+												groupNames += currentPrivateOwningGroup.getName();
+												if (principal.getIsMemberOf().contains(currentPrivateOwningGroup)) {
+														atLeastOnePrivateMatch = true;
+												}
+										}
+								}
+								catch (Exception e) {
+										new ServiceException(e).log();
+								};
 
-                showMakePrivate = hasPrivateOwningGroup && atLeastOnePrivateMatch;
-                if (!showMakePrivate) {
-                    // reset makePrivate
-                    makePrivate = "";
-                }
+								showMakePrivate = hasPrivateOwningGroup && atLeastOnePrivateMatch;
+								if (!showMakePrivate) {
+										// reset makePrivate
+										makePrivate = "";
+								}
 %>
-                <fieldset <%= showMakePrivate ? "" : "style='display:none;'" %>>
-                <table class="fieldGroup">
-                  <tr>
-                    <td class="label" style="padding-top:5px;">
-                      <span class="nw"><strong><%= PRIVATE_TOKEN %></strong>:</span>
-                    </td>
-                    <td>
-                      <input type="checkbox" id="makePrivate" name="makePrivate" <%= (makePrivate != null) && (makePrivate.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="makePrivate" onfocus="<%= ONFOCUS_HANDLER %>" />
-                      <%= groupNames %>
-                    </td>
-                    <td class="addon"></td>
-                  </tr>
-                </table>
-                </fieldset>
+								<fieldset <%= showMakePrivate ? "" : "style='display:none;'" %>>
+								<table class="fieldGroup">
+									<tr>
+										<td class="label" style="padding-top:5px;">
+											<span class="nw"><strong><%= PRIVATE_TOKEN %></strong>:</span>
+										</td>
+										<td>
+											<input type="checkbox" id="makePrivate" name="makePrivate" <%= (makePrivate != null) && (makePrivate.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="makePrivate" onfocus="<%= ONFOCUS_HANDLER %>" />
+											<%= groupNames %>
+										</td>
+										<td class="addon"></td>
+									</tr>
+								</table>
+								</fieldset>
 
 							</td>
 						</tr>
 						<tr>
 							<td>
 <%
-								if (creationFailed || noActivitiesFound || noResourcesFound) {
+								if (!canExecuteAdd || creationFailed || noActivitiesFound || noResourcesFound) {
+								//System.out.println("creation failed");
 %>
 									<div style="float:right;" title="<%= errorMsg.replace("<br>", " - ") %>" >
 										<%= CAUTION %>
@@ -2178,7 +2480,17 @@ org.openmdx.base.text.conversion.*
 							//workAndExpenseRecordFilter.forAllDisabled().isFalse();
 							workAndExpenseRecordFilter.thereExistsStartedAt().between(beginOfPeriod, endOfPeriod);
 							if (isWorkRecord) {
-									workAndExpenseRecordFilter.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX));
+									if (isWorkRecordInPercent) {
+											workAndExpenseRecordFilter.recordType().equalTo(new Short((short)1));
+											if (uomPercent != null) {
+													workAndExpenseRecordFilter.thereExistsQuantityUom().equalTo(uomPercent);
+											}
+									} else {
+											workAndExpenseRecordFilter.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX));
+											if (uomPercent != null) {
+													workAndExpenseRecordFilter.forAllQuantityUom().notEqualTo(uomPercent);
+											}
+									}
 							} else {
 									workAndExpenseRecordFilter.recordType().greaterThan(new Short((short)RECORDTYPE_WORK_MAX));
 							}
@@ -2220,12 +2532,12 @@ org.openmdx.base.text.conversion.*
 													}
 													sortKey += workAndExpenseRecord.getActivity().getActivityNumber() + formatter.format(counter);
 											} catch (Exception e) {};
-                      if (workAndExpenseRecord.getQuantity() != null) {
-    											sumDays[startedAtCal.get(GregorianCalendar.DAY_OF_WEEK) % 7] += workAndExpenseRecord.getQuantity().doubleValue();
-    											if (workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue()) {
-    													sumDaysBillable[startedAtCal.get(GregorianCalendar.DAY_OF_WEEK) % 7] += workAndExpenseRecord.getQuantity().doubleValue();
-    											}
-                      }
+											if (workAndExpenseRecord.getQuantity() != null) {
+													sumDays[startedAtCal.get(GregorianCalendar.DAY_OF_WEEK) % 7] += workAndExpenseRecord.getQuantity().doubleValue();
+													if (workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue()) {
+															sumDaysBillable[startedAtCal.get(GregorianCalendar.DAY_OF_WEEK) % 7] += workAndExpenseRecord.getQuantity().doubleValue();
+													}
+											}
 											workAndExpenseRecords.put(sortKey, workAndExpenseRecord);
 									}
 									res = null;
@@ -2244,47 +2556,57 @@ org.openmdx.base.text.conversion.*
 
 <%
 							if (counter > 0) {
-									boolean showFullStartedAtDate = (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
+									boolean showFullStartedAtDate = (!isWorkRecordInPercent) && (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
 %>
 									<table><tr><td style="padding-left:5px;">
 									<table class="gridTable">
 										<tr class="gridTableHeader">
 											<td class="smallheaderR" colspan="2">
 												<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>
-												<input type="checkbox" name="isFullStartedAtDate" <%= showFullStartedAtDate ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="isFullStartedAtDate" onchange="javascript:$('reload.button').click();" />
+												<input type="checkbox" name="isFullStartedAtDate" <%= showFullStartedAtDate ? "checked" : "" %> <%= isWorkRecordInPercent ? "style='display:none;'" : "" %> tabindex="<%= tabIndex++ %>" value="isFullStartedAtDate" onchange="javascript:$('reload.button').click();" />
 											</td>
 											<td class="smallheaderR <%= showFullStartedAtDate ? "" : "hidden" %>" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
-											<td class="smallheaderR"><%= isWorkRecord ? "hh:mm" : userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
+											<td class="smallheaderR"><%= isWorkRecord ? (isWorkRecordInPercent ? "%" : "hh:mm") : userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
+											<td class="smallheaderR"><%= isWorkRecordInPercent ? "&sum;" : "" %></td>
 <%
 											if (!isWorkRecord) {
 %>
 												<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 <%
 											}
+											if (isWorkRecord && !isWorkRecordInPercent) {
 %>
-											<td class="smallheader">&nbsp;</td>
-											<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex()) %></td>
-											<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$&nbsp;</td>
-											<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">*&nbsp;</td>
+												<td class="smallheader">&nbsp;</td>
+												<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex()) %></td>
+												<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$&nbsp;</td>
+												<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">*&nbsp;</td>
+<%
+											}
+%>
 											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+											<td class="smallheader" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-                      <td class="smallheader">&nbsp;</td>
+											<td class="smallheader">&nbsp;</td>
 										</tr>
 <%
 										boolean isEvenRow = false;
+										boolean isFirstRow = false;
+										BigDecimal dailySum = BigDecimal.ZERO;
+										String startedAtCurrent = "";
+										String startedAtPrevious = "";
+										int rowCounter = 0;
 										for (
-								        Iterator w = workAndExpenseRecords.values().iterator();
-								        w.hasNext();
-							      ) {
+												Iterator w = workAndExpenseRecords.values().iterator();
+												w.hasNext();
+										) {
 												org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
 
 												GregorianCalendar startedAtDate = new GregorianCalendar(app.getCurrentLocale());
 												startedAtDate.setTime(workAndExpenseRecord.getStartedAt());
+												startedAtCurrent = getDateAsString(startedAtDate);
 												boolean matchWithFormStartedAt =
-														getDateAsString(startedAtDate).compareTo(selectedDateStr) == 0;
-
+														startedAtCurrent.compareTo(selectedDateStr) == 0;
 												GregorianCalendar creationDate = new GregorianCalendar(app.getCurrentLocale());
 												GregorianCalendar today = new GregorianCalendar(app.getCurrentLocale());
 												creationDate.setTime(workAndExpenseRecord.getCreatedAt());
@@ -2295,7 +2617,7 @@ org.openmdx.base.text.conversion.*
 												Action action = new Action(
 														Action.EVENT_SELECT_OBJECT,
 														new Action.Parameter[]{
-														    new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
+																new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
 														},
 														"",
 														true // enabled
@@ -2306,19 +2628,32 @@ org.openmdx.base.text.conversion.*
 													action = new Action(
 															Action.EVENT_SELECT_OBJECT,
 															new Action.Parameter[]{
-															    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
+																	new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
 															},
 															"",
 															true // enabled
 														);
 													activityHref = "../../" + action.getEncodedHRef();
 												}
+
+												boolean isDayBreak = false;
+												if (isWorkRecordInPercent && startedAtCurrent.compareTo(startedAtPrevious) != 0) {
+														// new day --> break and print sum
+														isDayBreak = true;
+														startedAtPrevious = startedAtCurrent;
+														dailySum = BigDecimal.ZERO;
+												}
+												if (isFirstRow) {
+														isDayBreak = false;
+														isFirstRow = false;
+												}
 												double recordTotal = 0.0;
 												boolean quantityError = false;
 												try {
-													  if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getRate() != null) {
-														    recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
-													  }
+														if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getRate() != null) {
+																dailySum = dailySum.add(workAndExpenseRecord.getQuantity());
+																recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+														}
 												} catch (Exception e) {
 														quantityError = true;
 												}
@@ -2327,7 +2662,7 @@ org.openmdx.base.text.conversion.*
 												}
 												String currency = "N/A";
 												try {
-												    currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+														currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
 												} catch (Exception e) {}
 %>
 												<tr <%= matchWithFormJustCreated ? "class='created'" : (matchWithFormStartedAt ? "class='match'" : (isEvenRow ? "class='even'" : "")) %>>
@@ -2335,24 +2670,50 @@ org.openmdx.base.text.conversion.*
 													<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? (showFullStartedAtDate ? datetimef.format(workAndExpenseRecord.getStartedAt()) : dateonlyf.format(workAndExpenseRecord.getStartedAt())) : "--" %></a></td>
 													<td <%= showFullStartedAtDate ? "" : "class='hidden'" %>><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? weekdayf.format(workAndExpenseRecord.getEndedAt()) : "--" %>&nbsp;</a></td>
 													<td class="padded_r <%= showFullStartedAtDate ? "" : "hidden" %>"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? datetimef.format(workAndExpenseRecord.getEndedAt()) : "--" %></a></td>
-													<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=  workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0) : quantityf.format(workAndExpenseRecord.getQuantity())) %></a></td>
+													<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=	workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? (isWorkRecordInPercent ? formatter0.format(workAndExpenseRecord.getQuantity()) : decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)) : quantityf.format(workAndExpenseRecord.getQuantity())) %></a></td>
 <%
+													if (isWorkRecordInPercent) {
+%>
+															<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter++ %>"><%= formatter0.format(dailySum.doubleValue()) %></td>
+<%
+													} else {
+%>
+															<td class="padded_r"></td>
+<%
+													}
 													if (!isWorkRecord) {
 %>
 														<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getQuantityUom().getName(), false) : "?" %>&nbsp;</a></td>
 <%
 													}
+													if (isWorkRecord && !isWorkRecordInPercent) {
 %>
-													<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? ratesepf.format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
-													<td class="padded"   <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
-													<td class="padded_r" <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
-													<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-													<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+														<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? ratesepf.format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
+														<td class="padded"	 <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
+														<td class="padded_r" <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
+														<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+														<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+<%
+													}
+%>
 													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= app.getHtmlEncoder().encode(workAndExpenseRecord.getName(), false) %></a></td>
 													<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %>&nbsp;</a></td>
-													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+													<td class="padded" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
 													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getDescription(), false) : "" %></a></td>
-                          <td class="padded"><img src="../../images/deletesmall.gif" style="cursor:pointer;" onclick="javascript:$('deleteWorkRecordXri').value='<%= app.getHtmlEncoder().encode(workAndExpenseRecord.refMofId(), false) %>'; $('reload.button').click();" /></td>
+													<td class="padded">
+														<img src="../../images/deletesmall.gif" style="cursor:pointer;" onclick="javascript:$('deleteWorkRecordXri').value='<%= app.getHtmlEncoder().encode(workAndExpenseRecord.refMofId(), false) %>'; $('reload.button').click();" />
+<%
+															if (!isDayBreak) {
+%>
+																	<script language="javascript" type="text/javascript">
+																			try {
+																					$('cumSum<%= rowCounter-2 %>').innerHTML = '';
+																			} catch (e) {}
+																	</script>
+<%
+															}
+%>
+													</td>
 												</tr>
 <%
 												isEvenRow = !isEvenRow;
@@ -2362,7 +2723,7 @@ org.openmdx.base.text.conversion.*
 									</td></tr></table>
 
 <%
-									if (isWorkRecord) {
+									if (isWorkRecord & !isWorkRecordInPercent) {
 %>
 										<table><tr><td style="padding-left:5px;">
 										<table class="gridTable">
@@ -2376,8 +2737,8 @@ org.openmdx.base.text.conversion.*
 													calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, 1);
 												}
 %>
-												<td class="smallheader">hh:mm&nbsp;&nbsp;</td>
-												<td class="smallheaderR">&nbsp;</td>
+													<td class="smallheader">hh:mm&nbsp;&nbsp;</td>
+													<td class="smallheaderR">&nbsp;</td>
 											</tr>
 											<tr>
 <%
@@ -2385,14 +2746,14 @@ org.openmdx.base.text.conversion.*
 												dayCounter = 0;
 												for(int i = calendarBeginOfWeek.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
 %>
-													<td class="padded_r"><%= decimalMinutesToHhMm(sumDays[i % 7] * 60.0) %></td>
+													<td class="padded_r"><%= isWorkRecordInPercent ? formatter0.format(sumDays[i % 7])+"%" : decimalMinutesToHhMm(sumDays[i % 7] * 60.0) %></td>
 <%
 													sumWeek += sumDays[i % 7];
 													i++;
 												}
 %>
-												<td class="padded_r"><%= decimalMinutesToHhMm(sumWeek * 60.0) %></td>
-												<td class="padded">&sum;</td>
+													<td class="padded_r"><%= isWorkRecordInPercent ? "" : decimalMinutesToHhMm(sumWeek * 60.0) %></td>
+													<td class="padded">&sum;</td>
 											</tr>
 											<tr>
 <%
@@ -2406,8 +2767,8 @@ org.openmdx.base.text.conversion.*
 													i++;
 												}
 %>
-												<td class="padded_r"><%= decimalMinutesToHhMm(sumWeekBillable * 60.0) %></td>
-												<td class="padded">&sum; (<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>)</td>
+													<td class="padded_r"><%= decimalMinutesToHhMm(sumWeekBillable * 60.0) %></td>
+													<td class="padded">&sum; (<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>)</td>
 											</tr>
 										</table>
 										</td></tr></table>
@@ -2424,12 +2785,12 @@ org.openmdx.base.text.conversion.*
 							} catch(e){}
 						}
 <%
-						if (isFirstCall)                   { %>setFocus('contactXri.Title');  <% }
-						else if (isContactChange)          { %>setFocus('contactXri.Title');  <% }
-						else if (isResourceChange)         { %>setFocus('resourceXri');       <% }
-						else if (isResourceChange)         { %>setFocus('resourceXri');       <% }
-						else if (isRecordTypeChange)       { %>setFocus('recordType');        <% }
-                        else if (lastFocusId.length() > 0) { %>setFocus('<%= lastFocusId %>');<% }
+						if (isFirstCall)									 { %>setFocus('contactXri.Title');	<% }
+						else if (isContactChange)					{ %>setFocus('contactXri.Title');	<% }
+						else if (isResourceChange)				 { %>setFocus('resourceXri');			 <% }
+						else if (isResourceChange)				 { %>setFocus('resourceXri');			 <% }
+						else if (isRecordTypeChange)			 { %>setFocus('recordType');				<% }
+												else if (lastFocusId.length() > 0) { %>setFocus('<%= lastFocusId %>');<% }
 
 %>
 				</script>
@@ -2439,9 +2800,9 @@ org.openmdx.base.text.conversion.*
 					</div> <!-- inspector -->
 				</div> <!-- aPanel -->
 
-      </div> <!-- content -->
-    </div> <!-- content-wrap -->
-  </div> <!-- wrap -->
+			</div> <!-- content -->
+		</div> <!-- content-wrap -->
+	</div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.22 2010/12/20 13:21:41 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.32 2011/05/06 15:33:02 wfro Exp $
  * = Description: openCRX/Core Test build.xml
- * = Revision:    $Revision: 1.22 $
- * = Date:        $Date: 2010/12/20 13:21:41 $
- * = Copyright:   (c) 2003-2010 CRIXP AG
+ * = Revision:    $Revision: 1.32 $
+ * = Date:        $Date: 2011/05/06 15:33:02 $
+ * = Copyright:   (c) 2003-2011 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.8.0"/>
+	<property name="openmdx.version" value="2.8.20"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<!-- classpath -->
@@ -140,7 +140,8 @@
 					<include name="**/.classpath"/>
 				</patternset>
 				<tokenfilter>
-				    <replaceregex pattern="( \(.*\))? ~ " replace=" (${project.implementation.version}) ~ "/>
+				    <replaceregex pattern="([/]?openCRX.*)( \(.*\))? ~ " replace="\1 (${project.implementation.version}) ~ "/>
+				    <replaceregex pattern="([/]?openMDX.*)( \(.*\))? ~ " replace="\1 (${openmdx.version}) ~ "/>
 				</tokenfilter>
 			</openmdx:archivefilterchain>			
 		</openmdx:archive>

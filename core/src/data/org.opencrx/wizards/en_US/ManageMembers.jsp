@@ -96,6 +96,10 @@ org.apache.poi.hssf.util.*
 		   "ManagersRole",
 		   */
 		   "Categories",
+		   "extString0",
+		   "extString1",
+		   "extString2",
+		   "extString3",
 		   "Dtype",
 		   "XRI"
 		};
@@ -552,6 +556,26 @@ org.apache.poi.hssf.util.*
         cell.setCellValue(s);
     }
 
+    //extString0
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getExtString0() != null) {cell.setCellValue(account.getExtString0());}
+
+    //extString1
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getExtString1() != null) {cell.setCellValue(account.getExtString1());}
+
+    //extString2
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getExtString2() != null) {cell.setCellValue(account.getExtString2());}
+
+    //extString3
+    cell = row.createCell(nCell++);
+    cell.setCellStyle(topAlignedStyle);
+    if (account.getExtString3() != null) {cell.setCellValue(account.getExtString3());}
+
     //Dtype
     cell = row.createCell(nCell++);
     cell.setCellStyle(topAlignedStyle);
@@ -699,597 +723,602 @@ org.apache.poi.hssf.util.*
   .gridTableHeaderFull TD {white-space:nowrap;vertical-align:bottom;}
 </style>
 
+<%
+final String location = UUIDs.getGenerator().next().toString();
+String mode = (request.getParameter("mode") == null ? "0" : request.getParameter("mode")); // default is [Manage Members]
+%>
+
 <body>
 <div id="container">
 	<div id="wrap">
-		<div id="header" style="height:90px;">
-      <div id="logoTable">
-        <table id="headerlayout">
-          <tr id="headRow">
-            <td id="head" colspan="2">
-              <table id="info">
-                <tr>
-                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-                  <td id="headerCellSpacerLeft"></td>
-                  <td id="headerCellMiddle">&nbsp;</td>
-                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
+
+    <form name="ManageMembers" style="padding:0;border-top:3px solid #E4E4E4;margin:0;" accept-charset="UTF-8" method="POST" action="<%= FORMACTION %>">
+      <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+      <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+      <input type="hidden" name="previousSheet" id="previousSheet" value="<%= location %>" />
+      <input type="hidden" name="mode" id="mode" value="<%= mode %>" />
+      <input type="hidden" name="paging" id="paging" value="" />
+      <input type="checkbox" style="display:none;" name="isFirstCall" checked />
+      <input type="checkbox" style="display:none;" name="isSelectionChange" id="isSelectionChange" />
+
+			<div id="header" style="height:90px;">
+		    <div id="logoTable">
+		      <table id="headerlayout">
+		        <tr id="headRow">
+		          <td id="head" colspan="2">
+		            <table id="info">
+		              <tr>
+		                <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
+		                <td id="headerCellSpacerLeft"></td>
+		                <td id="headerCellMiddle">&nbsp;</td>
+		                <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
+		              </tr>
+		            </table>
+		          </td>
+		        </tr>
+		      </table>
+		    </div>
 <%
-      String accountTitle = "";
-      try {
-	      // get reference of calling object
-	      RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+		    String accountTitle = "";
+		    try {
+			    // get reference of calling object
+			    RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 
-	      Path objectPath = new Path(objectXri);
-	      String providerName = objectPath.get(2);
-	      String segmentName = objectPath.get(4);
+			    Path objectPath = new Path(objectXri);
+			    String providerName = objectPath.get(2);
+			    String segmentName = objectPath.get(4);
 
-	      UserDefinedView userView = new UserDefinedView(
-	        obj,
-	        app,
-	        viewsCache.getView(requestId)
-	      );
+			    UserDefinedView userView = new UserDefinedView(
+			      obj,
+			      app,
+			      viewsCache.getView(requestId)
+			    );
 
-	      // Get account1 package
-	      org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
+			    // Get account1 package
+			    org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 
-	      // Get account segment
-	      org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-	        (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-	          new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-	         );
+			    // Get account segment
+			    org.opencrx.kernel.account1.jmi1.Segment accountSegment =
+			      (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+			        new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
+			       );
 
-	      org.opencrx.kernel.account1.jmi1.Account accountSource = null;
-	      if (obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
-	          accountSource = (org.opencrx.kernel.account1.jmi1.Account)obj;
-	          accountTitle = (new ObjectReference(accountSource, app)).getTitle();
-	      }
-        String mode = (request.getParameter("mode") == null ? "0" : request.getParameter("mode")); // default is [Manage Members]
+			    org.opencrx.kernel.account1.jmi1.Account accountSource = null;
+			    if (obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
+			        accountSource = (org.opencrx.kernel.account1.jmi1.Account)obj;
+			        accountTitle = (new ObjectReference(accountSource, app)).getTitle();
+			    }
 %>
 
-	      <div id="etitle" style="height:20px;padding-left:12px;">
-	         Manage Members of "<%= accountTitle %>"
-	      </div>
+			    <div id="etitle" style="height:20px;padding-left:12px;">
+			       Manage Members of "<%= accountTitle %>"
+			    </div>
 
-				<div id="topnavi">
-					<ul id="navigation" class="navigation" onmouseover="sfinit(this);">
-						<li class="<%= mode.compareTo("0")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='0';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Manage Members</span></a></li>
-						<li class="<%= mode.compareTo("1")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='1';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Add Members</span></a></li>
-					</ul>
+					<div id="topnavi">
+						<ul id="navigation" class="navigation" onmouseover="sfinit(this);">
+							<li class="<%= mode.compareTo("0")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='0';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Manage Members</span></a></li>
+							<li class="<%= mode.compareTo("1")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='1';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Add Members</span></a></li>
+						</ul>
+      
+<%
+						NumberFormat formatter = new DecimalFormat("0");
+
+						// Format dates/times
+						TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
+						SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());
+						timeFormat.setTimeZone(timezone);
+						SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", app.getCurrentLocale());
+						timestamp.setTimeZone(timezone);
+						SimpleDateFormat exceldate = new SimpleDateFormat("dd-MM-yyyy");
+						exceldate.setTimeZone(timezone);
+
+
+						final String MEMBER_CLASS = "org:opencrx:kernel:account1:Member";
+						final String MEMBERSHIP_CLASS = "org:opencrx:kernel:account1:AccountMembership";
+						final String ACCOUNTSEGMENT_CLASS = "org:opencrx:kernel:account1:Segment";
+						final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
+						final String ACCOUNTFILTERGLOBAL_CLASS = "org:opencrx:kernel:account1:AccountFilterGlobal";
+						final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
+						final String LEGALENTITY_CLASS = "org:opencrx:kernel:account1:LegalEntity";
+						final String GROUP_CLASS = "org:opencrx:kernel:account1:Group";
+						final String UNSPECIFIEDACCOUNT_CLASS = "org:opencrx:kernel:account1:UnspecifiedAccount";
+						final String EMAILADDRESS_CLASS = "org:opencrx:kernel:account1:EMailAddress";
+						final String POSTALADDRESS_CLASS = "org:opencrx:kernel:account1:PostalAddress";
+
+						final String ACCOUNT_FILTER_XRI_PREFIX = "ACCOUNT_FILTER_XRI_";
+
+						final int DEFAULT_PAGE_SIZE = 20;
+
+						final String colorDuplicate = "#FFA477";
+						final String colorMember = "#D2FFD2";
+						final String colorMemberDisabled = "#F2F2F2";
+
+						final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
+						final String SPREADSHEET = "<img border='0' alt='EXCEL' title='EXCEL' align='top' height='24px' src='../../images/spreadsheet.png' />";
+						final String sheetName = "Accounts_(openCRX)_" + timestamp.format(new java.util.Date());
+						File f = null;
+						FileOutputStream os = null;
+						HSSFWorkbook wb = null;
+						Action downloadAction =	null;
+						HSSFSheet sheetAccounts = null;
+						HSSFFont headerfont = null;
+						HSSFCellStyle headerStyle = null;
+						HSSFCellStyle wrappedStyle = null;
+						HSSFCellStyle topAlignedStyle = null;
+
+						HSSFRow row = null;
+						HSSFCell cell = null;
+						short nRow = 0;
+						short nCell = 0;
+
+						String errorMsg = "";
+
+						final String wildcard = ".*";
+						String searchString = (request.getParameter("searchString") == null ? "" : request.getParameter("searchString"));
+						String previousSearchString = (request.getParameter("previousSearchString") == null ? "" : request.getParameter("previousSearchString"));
+
+						org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = accountPkg.createAccountQuery();
+						accountFilter.forAllDisabled().isFalse();
+						accountFilter.orderByFullName().ascending();
+
+						org.opencrx.kernel.account1.cci2.AccountQuery searchAccountFullNameFilter = accountPkg.createAccountQuery();
+						searchAccountFullNameFilter.forAllDisabled().isFalse();
+						searchAccountFullNameFilter.thereExistsFullName().like("(?i)" + wildcard + searchString + wildcard);
+						searchAccountFullNameFilter.orderByFullName().ascending();
+
+						org.opencrx.kernel.account1.cci2.ContactQuery contactFilter = accountPkg.createContactQuery();
+						contactFilter.forAllDisabled().isFalse();
+						contactFilter.orderByFullName().ascending();
+
+						org.opencrx.kernel.account1.cci2.LegalEntityQuery legalEntityFilter = accountPkg.createLegalEntityQuery();
+						legalEntityFilter.forAllDisabled().isFalse();
+						legalEntityFilter.orderByFullName().ascending();
+
+						org.opencrx.kernel.account1.cci2.GroupQuery groupFilter = accountPkg.createGroupQuery();
+						groupFilter.forAllDisabled().isFalse();
+						groupFilter.orderByFullName().ascending();
+
+						org.opencrx.kernel.account1.cci2.UnspecifiedAccountQuery unspecifiedAccountFilter = accountPkg.createUnspecifiedAccountQuery();
+						unspecifiedAccountFilter.forAllDisabled().isFalse();
+						unspecifiedAccountFilter.orderByFullName().ascending();
+
+						org.opencrx.kernel.account1.cci2.MemberQuery memberFilter = accountPkg.createMemberQuery();
+						memberFilter.orderByCreatedAt().ascending();
+
+						org.opencrx.kernel.account1.cci2.EMailAddressQuery searchEMailAddressFilter = accountPkg.createEMailAddressQuery();
+						searchEMailAddressFilter.forAllDisabled().isFalse();
+						searchEMailAddressFilter.thereExistsEmailAddress().like("(?i)" + wildcard + searchString + wildcard);
+						searchEMailAddressFilter.orderByEmailAddress().ascending();
+
+						org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCityFilter = accountPkg.createPostalAddressQuery();
+						searchPostalAddressCityFilter.forAllDisabled().isFalse();
+						searchPostalAddressCityFilter.thereExistsPostalCity().like("(?i)" + wildcard + searchString + wildcard);
+						searchPostalAddressCityFilter.orderByPostalCity().ascending();
+
+						org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCodeFilter = accountPkg.createPostalAddressQuery();
+						searchPostalAddressCodeFilter.forAllDisabled().isFalse();
+						searchPostalAddressCodeFilter.thereExistsPostalCode().like("(?i)" + wildcard + searchString + wildcard);
+						searchPostalAddressCodeFilter.orderByPostalCode().ascending();
+
+						int tabIndex = 1;
+						int pageSize = DEFAULT_PAGE_SIZE;
+						int displayStart = 0;
+						long highAccount = 0;
+						boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
+						boolean highAccountIsKnown = ((request.getParameter("highAccountIsKnown") != null) && (request.getParameter("highAccountIsKnown").length() > 0));
+						boolean isSelectionChange = isFirstCall || request.getParameter("isSelectionChange") != null || previousSearchString.compareTo(searchString) != 0;
+						String accountFilterXri = null;
+						org.opencrx.kernel.account1.jmi1.AccountFilterGlobal selectedAccountFilterGlobal = null;
+						int accountSelectorType = 1;
+						  /*    0: select all accounts (segment)
+						        1: select members only
+						        2: select based on AccountFilter
+						      100: Search based on "full name"
+						      110: Search based on "e-mail address"
+						      111: Search based on "postal address city"
+						      112: Search based on "postal address zip"
+						  */
+						if (request.getParameter("accountSelectorType") != null && !request.getParameter("accountSelectorType").startsWith(ACCOUNT_FILTER_XRI_PREFIX)) {
+						    try {
+						        accountSelectorType = Integer.parseInt(request.getParameter("accountSelectorType"));
+						    } catch (Exception e) {}
+						} else if (request.getParameter("accountSelectorType") != null && request.getParameter("accountSelectorType").startsWith(ACCOUNT_FILTER_XRI_PREFIX)) {
+						    accountFilterXri = request.getParameter("accountSelectorType").substring(ACCOUNT_FILTER_XRI_PREFIX.length());
+						    try {
+						        selectedAccountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)pm.getObjectById(new Path(accountFilterXri));
+						        accountSelectorType = 2;
+						    } catch (Exception e) {}
+						}
+						if (mode.compareTo("0") == 0) {
+						    accountSelectorType = 1; // model [Manage Members] requires selection of membersOnly
+						} else {
+						    if (accountSelectorType == 1) {
+						        accountSelectorType = 100; // set to search based on Full Name
+						    }
+						}
+						boolean duplicatesOnly = ((request.getParameter("duplicatesOnly") != null) && (request.getParameter("duplicatesOnly").length() > 0));
+						if (duplicatesOnly) {accountSelectorType = 1;}
+						boolean membersOnly = accountSelectorType == 1;
+						boolean detectDuplicates = ((request.getParameter("detectDuplicates") != null) && (request.getParameter("detectDuplicates").length() > 0));
+						boolean selectAccount = false;
+						boolean selectContact = false;
+						boolean selectLegalEntity = false;
+						boolean selectGroup = false;
+						boolean selectUnspecifiedAccount = false;
+						if (membersOnly) {
+						    selectAccount = true;
+						} else {
+						    if (request.getParameter("accountSelector") != null) {
+						        selectContact =            request.getParameter("accountSelector").compareTo("selectContact") == 0;
+						        selectLegalEntity =        request.getParameter("accountSelector").compareTo("selectLegalEntity") == 0;
+						        selectGroup =              request.getParameter("accountSelector").compareTo("selectGroup") == 0;
+						        selectUnspecifiedAccount = request.getParameter("accountSelector").compareTo("selectUnspecifiedAccount") == 0;
+						    }
+						}
+						try {
+						  pageSize = request.getParameter("pageSize") != null ? Integer.parseInt(request.getParameter("pageSize")) : DEFAULT_PAGE_SIZE;
+						} catch (Exception e) {}
+						try {
+						  highAccount = request.getParameter("highAccount") != null ? Long.parseLong(request.getParameter("highAccount")) : 0;
+						} catch (Exception e) {}
+						try {
+						  if (request.getParameter("paging") != null && request.getParameter("paging").startsWith("--")) {
+						    displayStart = ((int)((highAccount - (long)(10*pageSize)) / (long)pageSize)) - 1;
+						    if (displayStart < 0) {
+						      displayStart = 0;
+						    }
+						  } else if (request.getParameter("paging") != null && request.getParameter("paging").startsWith("++")) {
+						    displayStart = ((int)((highAccount + (long)(10*pageSize)) / (long)pageSize)) - 1;
+						    if (displayStart < 0) {
+						      displayStart = 0;
+						    }
+						  } else if (request.getParameter("displayStart") != null && request.getParameter("displayStart").startsWith("+")) {
+						    displayStart = ((int)((highAccount + Long.parseLong(request.getParameter("displayStart").substring(1))) / (long)pageSize)) - 1;
+						    if (displayStart < 0) {
+						      displayStart = 0;
+						    }
+						  } else {
+						    displayStart = request.getParameter("displayStart") != null ? Integer.parseInt(request.getParameter("displayStart")) : 0;
+						  }
+						} catch (Exception e) {}
+						if (isSelectionChange) {
+						   highAccount = 0;
+						   displayStart = 0;
+						   highAccountIsKnown = false;
+						}
+
+						if (request.getParameter("Reload.Button") != null) {
+						    //System.out.println("reload.button");
+						    //app.resetPmData(); // evict pm data, i.e. clear cache
+						}
+
+						Iterator accounts = null;
+						long counter = 0;
+						boolean iteratorNotSet = true;
+						int itSetCounter = 0;
+						final int MAXITSETCOUNTER = 2;
+
+						while (iteratorNotSet && itSetCounter < MAXITSETCOUNTER) {
+						    itSetCounter++;
+						    try {
+						        if (selectContact) {
+						            if (accountSelectorType == 0) {
+						                accounts = accountSegment.getAccount(contactFilter).listIterator((int)displayStart*pageSize);
+						            } else {
+						                accounts = selectedAccountFilterGlobal.getFilteredAccount(contactFilter).listIterator((int)displayStart*pageSize);
+						            }
+						        } else if (selectLegalEntity) {
+						            if (accountSelectorType == 0) {
+						                accounts = accountSegment.getAccount(legalEntityFilter).listIterator((int)displayStart*pageSize);
+						            } else {
+						                accounts = selectedAccountFilterGlobal.getFilteredAccount(legalEntityFilter).listIterator((int)displayStart*pageSize);
+						            }
+						        } else if (selectGroup) {
+						            if (accountSelectorType == 0) {
+						                accounts = accountSegment.getAccount(groupFilter).listIterator((int)displayStart*pageSize);
+						            } else {
+						                accounts = selectedAccountFilterGlobal.getFilteredAccount(groupFilter).listIterator((int)displayStart*pageSize);
+						            }
+						        } else if (selectUnspecifiedAccount) {
+						            if (accountSelectorType == 0) {
+						                accounts = accountSegment.getAccount(unspecifiedAccountFilter).listIterator((int)displayStart*pageSize);
+						            } else {
+						                accounts = selectedAccountFilterGlobal.getFilteredAccount(unspecifiedAccountFilter).listIterator((int)displayStart*pageSize);
+						            }
+						        } else {
+						            selectAccount = true;
+						            if (accountSelectorType == 0) {
+						                accounts = accountSegment.getAccount(accountFilter).listIterator((int)displayStart*pageSize);
+						            } else if (accountSelectorType == 1) {
+						                // membersOnly
+						                accounts = (accountSource.getMember(memberFilter)).listIterator((int)displayStart*pageSize);
+						            } else if (accountSelectorType == 2) {
+						                accounts = selectedAccountFilterGlobal.getFilteredAccount(accountFilter).listIterator((int)displayStart*pageSize);
+						            } else if (accountSelectorType == 100) {
+						        	      // full name
+						        	      if (searchString.length() > 0) {
+						                    accounts = accountSegment.getAccount(searchAccountFullNameFilter).listIterator((int)displayStart*pageSize);
+						                }
+						        	  } else if (accountSelectorType == 110) {
+						        	  	  // e-mail address
+						        	      if (searchString.length() > 0) {
+						                    accounts = accountSegment.getAddress(searchEMailAddressFilter).listIterator((int)displayStart*pageSize);
+						                }
+						        	  } else if (accountSelectorType == 111) {
+						        	  	  // postal address city
+						        	      if (searchString.length() > 0) {
+						                    accounts = accountSegment.getAddress(searchPostalAddressCityFilter).listIterator((int)displayStart*pageSize);
+						                }
+						        	  } else if (accountSelectorType == 112) {
+						        	  	  // postal address zip
+						        	      if (searchString.length() > 0) {
+						                    accounts = accountSegment.getAddress(searchPostalAddressCodeFilter).listIterator((int)displayStart*pageSize);
+						                }
+						        	  }
+						        }
+						        counter = displayStart*pageSize;
+						        if (accounts != null && !accounts.hasNext()) {
+						            displayStart = (int)((highAccount / (long)pageSize));
+						            counter = displayStart*pageSize;
+						        } else {
+						          iteratorNotSet = false;
+						        }
+						    } catch (Exception e) {
+						        new ServiceException(e).log();
+						        displayStart = 0;
+						        counter = 0;
+						    }
+						}
+
+						if (request.getParameter("previousSheet") != null) {
+								// delete previous temp file if it exists
+								try {
+										File previousFile = new File(
+											app.getTempFileName(request.getParameter("previousSheet"), "")
+										);
+										if (previousFile.exists()) {
+												previousFile.delete();
+												//System.out.println("deleted previous temp file " + request.getParameter("previousSheet"));
+										}
+								} catch (Exception e){
+										new ServiceException(e).log();
+								}
+						}
+						if (request.getParameter("ACTION.create") != null) {
+						    //System.out.println("CREATE: " + request.getParameter("ACTION.create"));
+						    if (accountSource != null) {
+						        try {
+						            pm.currentTransaction().begin();
+						            org.opencrx.kernel.account1.jmi1.Account accountTarget = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path((request.getParameter("ACTION.create"))));
+						            org.opencrx.kernel.account1.jmi1.Member newMember = accountPkg.getMember().createMember();
+						            newMember.refInitialize(false, false);
+						            //newMember.setMemberRole(new short[]{MEMBERROLESALESREGION});
+						            newMember.setValidFrom(new java.util.Date());
+						            newMember.setAccount(accountTarget);
+						            newMember.setQuality((short)5);
+						            newMember.setName(accountTarget.getFullName());
+						            accountSource.addMember(
+						              false,
+						              org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+						              newMember
+						            );
+						            pm.currentTransaction().commit();
+						        } catch (Exception e) {
+						            errorMsg = "Cannot enable " + app.getLabel(MEMBER_CLASS);
+						            new ServiceException(e).log();
+						            try {
+						                pm.currentTransaction().rollback();
+						            } catch (Exception er) {}
+						        }
+						    } else {
+						        errorMsg = "Cannot create " + app.getLabel(MEMBER_CLASS) + " [parent missing]";
+						    }
+						} else if (request.getParameter("ACTION.enable") != null) {
+						    //System.out.println("ENABLE: " + request.getParameter("ACTION.enable"));
+						    try {
+						        pm.currentTransaction().begin();
+						        org.opencrx.kernel.account1.jmi1.Member member = (org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path((request.getParameter("ACTION.enable"))));
+						        member.setDisabled(new Boolean(false));
+						        if (member.getValidFrom() == null) {
+						            member.setValidFrom(new java.util.Date());
+						        }
+						        member.setValidTo(null);
+						        if ((member.getName() == null || member.getName().length() == 0) && member.getAccount() != null) {
+						            member.setName(member.getAccount().getFullName());
+						        }
+						        pm.currentTransaction().commit();
+						    } catch (Exception e) {
+						        errorMsg = "Cannot enable " + app.getLabel(MEMBER_CLASS);
+						        new ServiceException(e).log();
+						        try {
+						            pm.currentTransaction().rollback();
+						        } catch (Exception er) {}
+						    }
+						} else if (request.getParameter("ACTION.disable") != null) {
+						    //System.out.println("DISABLE: " + request.getParameter("ACTION.disable"));
+						    try {
+						        pm.currentTransaction().begin();
+						        org.opencrx.kernel.account1.jmi1.Member member = (org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path((request.getParameter("ACTION.disable"))));
+						        member.setDisabled(new Boolean(true));
+						        member.setValidTo(new java.util.Date());
+						        if ((member.getName() == null || member.getName().length() == 0) && member.getAccount() != null) {
+						            member.setName(member.getAccount().getFullName());
+						        }
+						        pm.currentTransaction().commit();
+						    } catch (Exception e) {
+						        errorMsg = "Cannot disable " + app.getLabel(MEMBER_CLASS);
+						        new ServiceException(e).log();
+						        try {
+						            pm.currentTransaction().rollback();
+						        } catch (Exception er) {}
+						    }
+						} else if (request.getParameter("ACTION.delete") != null) {
+						    //System.out.println("DELETE: " + request.getParameter("ACTION.delete"));
+						    try {
+						        pm.currentTransaction().begin();
+						        org.opencrx.kernel.account1.jmi1.Member member = (org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path((request.getParameter("ACTION.delete"))));
+						        ((RefObject_1_0)member).refDelete();
+						        pm.currentTransaction().commit();
+						    } catch (Exception e) {
+						        errorMsg = "Cannot delete " + app.getLabel(MEMBER_CLASS);
+						        new ServiceException(e).log();
+						        try {
+						            pm.currentTransaction().rollback();
+						        } catch (Exception er) {}
+						    }
+						} else if (request.getParameter("ACTION.exportXLS") != null) {
+						    //System.out.println("Export_XLS: " + request.getParameter("ACTION.exportXLS"));
+						    try {
+						      	f = new File(
+						      		app.getTempFileName(location, "")
+						      	);
+						      	os = new FileOutputStream(f);
+						      	wb = new HSSFWorkbook();
+
+						        // Header Style (black background, orange/bold font)
+						        headerfont = wb.createFont();
+						        headerfont.setFontHeightInPoints((short)10);
+						        headerfont.setFontName("Tahoma");
+						        headerfont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
+						        headerfont.setColor(HSSFColor.ORANGE.index);
+						        // Fonts are set into a style so create a new one to use.
+						        headerStyle = wb.createCellStyle();
+						        headerStyle.setFillForegroundColor(HSSFColor.BLACK.index);
+						        headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
+						        headerStyle.setFont(headerfont);
+
+						        // Wrapped Style
+						        wrappedStyle = wb.createCellStyle();
+						        wrappedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+						        wrappedStyle.setWrapText(true);
+
+						        // TopAligned Style
+						        topAlignedStyle = wb.createCellStyle();
+						        topAlignedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
+
+						        downloadAction =	new Action(
+						            Action.EVENT_DOWNLOAD_FROM_LOCATION,
+						            new Action.Parameter[]{
+						                new Action.Parameter(Action.PARAMETER_LOCATION, location),
+						                new Action.Parameter(Action.PARAMETER_NAME, sheetName),
+						                new Action.Parameter(Action.PARAMETER_MIME_TYPE, "application/vnd.ms-excel")
+						            },
+						            app.getTexts().getClickToDownloadText() + " " + sheetName,
+						            true
+						        );
+										sheetAccounts = addSheet(wb, "Accounts", true, headerStyle);
+						    } catch (Exception e) {
+						        new ServiceException(e).log();
+						    }
+						}
+%>
+				    <table class="fieldGroup" style="width:100%;margin-top:0;padding-top:0;border-top:0;border-collapse:collapse;">
+				      <tr>
+				        <td id="submitButtons" style="font-weight:bold;background-color:#E4E4E4;padding-bottom:3px;">
+				          <div style="padding:8px 3px;">
+				            <%= app.getTexts().getSelectAllText() %> <select <%= mode.compareTo("0")==0 ? "disabled" : "" %> style="width:150px;" id="accountSelectorType" name="accountSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+<%
+		                if (mode.compareTo("0") == 0) {
+%>
+		                  <option <%= accountSelectorType == 1 ? "selected" : "" %> value="1"><%= app.getLabel(MEMBER_CLASS)  %>&nbsp;</option>
+<%
+		                } else {
+%>
+				              <option <%= accountSelectorType == 100 ? "selected" : "" %> value="100">? <%= app.getTexts().getSearchText() %> <%= userView.getFieldLabel("org:opencrx:kernel:account1:LegalEntity", "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+				              <option <%= accountSelectorType == 110 ? "selected" : "" %> value="110">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(EMAILADDRESS_CLASS) %>&nbsp;</option>
+				              <option <%= accountSelectorType == 111 ? "selected" : "" %> value="111">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCity", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+				              <option <%= accountSelectorType == 112 ? "selected" : "" %> value="112">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCode", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+				              <option <%= accountSelectorType ==   0 ? "selected" : "" %> value="0"  >* <%= app.getLabel(ACCOUNTSEGMENT_CLASS) %>&nbsp;</option>
+<%
+											org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountFilterGlobalQuery = (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
+											accountFilterGlobalQuery.forAllDisabled().isFalse();
+											accountFilterGlobalQuery.orderByName().ascending();
+											for(Iterator i = accountSegment.getAccountFilter(accountFilterGlobalQuery).iterator(); i.hasNext(); ) {
+													org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)i.next();
+%>
+		                      <option <%= (accountSelectorType == 2) && (accountFilterXri != null && accountFilterXri.compareTo(accountFilterGlobal.refMofId()) == 0) ? "selected" : "" %> value="<%= ACCOUNT_FILTER_XRI_PREFIX %><%= accountFilterGlobal.refMofId() %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS) %>: <%= accountFilterGlobal.getName() != null ? accountFilterGlobal.getName() : "?" %> &nbsp;</option>
+<%
+											}
+										}
+%>
+		                </select>&nbsp;
+<%
+		                if (accountSelectorType >= 100) {
+%>
+				              <INPUT type="text" name="searchString" id="searchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
+				              <INPUT type="hidden" name="previousSearchString" id="previousSearchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
+											<INPUT type="submit" name="go" id="go" title="<%= app.getTexts().getSearchText() %>" tabindex="<%= tabIndex++ %>" value=">>" onclick="setTimeout('disableSubmit()', 10);$('Reload.Button').click();" />
+<%
+				            } else {
+				              if (!membersOnly) {
+%>
+				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectAccount            ? "checked" : "" %> value="selectAccount"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> *
+				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectContact            ? "checked" : "" %> value="selectContact"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(CONTACT_CLASS) %>
+				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectLegalEntity        ? "checked" : "" %> value="selectLegalEntity"        onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(LEGALENTITY_CLASS) %>
+				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectGroup              ? "checked" : "" %> value="selectGroup"              onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(GROUP_CLASS) %>
+				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectUnspecifiedAccount ? "checked" : "" %> value="selectUnspecifiedAccount" onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(UNSPECIFIEDACCOUNT_CLASS) %>
+<%
+		                  }
+		                }
+%>
+				          </div>
+				          <br>
+				          <a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif" style="padding-top:5px;"></a>
+				          <a href="#" onclick="javascript:try{($('displayStart').value)--;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
+				          <span id="displayStartSelector">...</span>
+				          <a href="#" onclick="javascript:try{($('displayStart').value)++;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
+				          <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif" style="padding-top:5px;"></a>
+				          &nbsp;&nbsp;&nbsp;
+				          <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+				            <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
+				            <option <%= pageSize ==  20 ? "selected" : "" %> value="20">20&nbsp;</option>
+				            <option <%= pageSize ==  50 ? "selected" : "" %> value="50">50&nbsp;</option>
+				            <option <%= pageSize == 100 ? "selected" : "" %> value="100">100&nbsp;</option>
+				            <option <%= pageSize == 500 ? "selected" : "" %> value="500">500&nbsp;</option>
+				          </select>
+				          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				          <input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
+				          &nbsp;&nbsp;
+				          <input type="checkbox" name="duplicatesOnly" id="duplicatesOnly" <%= duplicatesOnly ? "checked" : "" %> /> Duplicates Only
+				          &nbsp;&nbsp;
+				          <INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+				          <!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
+				          <INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+				          <INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+
+<%
+		        if (downloadAction != null) {
+%>
+						  <span>
+						    <a href="<%= request.getContextPath() %>/<%= downloadAction.getEncodedHRef(requestId) %>"><%= SPREADSHEET %></a>&nbsp;
+						  </span>
+<%
+		        }
+%>
+				          <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
+				          <br>
+				        </td>
+				        <td id="waitMsg" style="display:none;">
+				          <div style="padding-left:5px; padding: 11px 0px 50px 0px;">
+				            <img src="../../images/wait.gif" alt="" />
+				          </div>
+				        </td>
+				      </tr>
+				    </table>
+<%
+						if (errorMsg.length() > 0) {
+%>
+							<div style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+								<%= errorMsg %>
+							</div>
+<%
+						}
+%>
 				</div> <!-- topnavi -->
+      </div> <!-- header -->
 
 	    <div id="content-wrap">
-	    	<div id="content" style="padding:0px 0.5em 0px 0.5em;">
-<%
-	    NumberFormat formatter = new DecimalFormat("0");
-
-	    // Format dates/times
-	    TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
-	    SimpleDateFormat timeFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());
-	    timeFormat.setTimeZone(timezone);
-	  	SimpleDateFormat timestamp = new SimpleDateFormat("yyyyMMdd_HHmmss", app.getCurrentLocale());
-	  	timestamp.setTimeZone(timezone);
-	  	SimpleDateFormat exceldate = new SimpleDateFormat("dd-MM-yyyy");
-	  	exceldate.setTimeZone(timezone);
-
-
-	    final String MEMBER_CLASS = "org:opencrx:kernel:account1:Member";
-	    final String MEMBERSHIP_CLASS = "org:opencrx:kernel:account1:AccountMembership";
-	    final String ACCOUNTSEGMENT_CLASS = "org:opencrx:kernel:account1:Segment";
-	    final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
-	    final String ACCOUNTFILTERGLOBAL_CLASS = "org:opencrx:kernel:account1:AccountFilterGlobal";
-	    final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
-	    final String LEGALENTITY_CLASS = "org:opencrx:kernel:account1:LegalEntity";
-	    final String GROUP_CLASS = "org:opencrx:kernel:account1:Group";
-	    final String UNSPECIFIEDACCOUNT_CLASS = "org:opencrx:kernel:account1:UnspecifiedAccount";
-	    final String EMAILADDRESS_CLASS = "org:opencrx:kernel:account1:EMailAddress";
-	    final String POSTALADDRESS_CLASS = "org:opencrx:kernel:account1:PostalAddress";
-
-	    final String ACCOUNT_FILTER_XRI_PREFIX = "ACCOUNT_FILTER_XRI_";
-
-	    final int DEFAULT_PAGE_SIZE = 20;
-
-	    final String colorDuplicate = "#FFA477";
-	    final String colorMember = "#D2FFD2";
-	    final String colorMemberDisabled = "#F2F2F2";
-
-	    final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
-	    final String SPREADSHEET = "<img border='0' alt=''  height='32px' src='../../images/spreadsheet.png' />";
-	    final String sheetName = "Accounts_(openCRX)_" + timestamp.format(new java.util.Date());
-	    final String location = UUIDs.getGenerator().next().toString();
-	    File f = null;
-	    FileOutputStream os = null;
-	    HSSFWorkbook wb = null;
-	    Action downloadAction =	null;
-	    HSSFSheet sheetAccounts = null;
-	    HSSFFont headerfont = null;
-	    HSSFCellStyle headerStyle = null;
-	    HSSFCellStyle wrappedStyle = null;
-	    HSSFCellStyle topAlignedStyle = null;
-
-	    HSSFRow row = null;
-	    HSSFCell cell = null;
-	    short nRow = 0;
-	    short nCell = 0;
-
-	    String errorMsg = "";
-
-      final String wildcard = ".*";
-      String searchString = (request.getParameter("searchString") == null ? "" : request.getParameter("searchString"));
-      String previousSearchString = (request.getParameter("previousSearchString") == null ? "" : request.getParameter("previousSearchString"));
-
-      org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = accountPkg.createAccountQuery();
-      accountFilter.forAllDisabled().isFalse();
-      accountFilter.orderByFullName().ascending();
-
-      org.opencrx.kernel.account1.cci2.AccountQuery searchAccountFullNameFilter = accountPkg.createAccountQuery();
-      searchAccountFullNameFilter.forAllDisabled().isFalse();
-      searchAccountFullNameFilter.thereExistsFullName().like("(?i)" + wildcard + searchString + wildcard);
-      searchAccountFullNameFilter.orderByFullName().ascending();
-
-      org.opencrx.kernel.account1.cci2.ContactQuery contactFilter = accountPkg.createContactQuery();
-      contactFilter.forAllDisabled().isFalse();
-      contactFilter.orderByFullName().ascending();
-
-      org.opencrx.kernel.account1.cci2.LegalEntityQuery legalEntityFilter = accountPkg.createLegalEntityQuery();
-      legalEntityFilter.forAllDisabled().isFalse();
-      legalEntityFilter.orderByFullName().ascending();
-
-      org.opencrx.kernel.account1.cci2.GroupQuery groupFilter = accountPkg.createGroupQuery();
-      groupFilter.forAllDisabled().isFalse();
-      groupFilter.orderByFullName().ascending();
-
-      org.opencrx.kernel.account1.cci2.UnspecifiedAccountQuery unspecifiedAccountFilter = accountPkg.createUnspecifiedAccountQuery();
-      unspecifiedAccountFilter.forAllDisabled().isFalse();
-      unspecifiedAccountFilter.orderByFullName().ascending();
-
-      org.opencrx.kernel.account1.cci2.MemberQuery memberFilter = accountPkg.createMemberQuery();
-      memberFilter.orderByCreatedAt().ascending();
-
-      org.opencrx.kernel.account1.cci2.EMailAddressQuery searchEMailAddressFilter = accountPkg.createEMailAddressQuery();
-      searchEMailAddressFilter.forAllDisabled().isFalse();
-      searchEMailAddressFilter.thereExistsEmailAddress().like("(?i)" + wildcard + searchString + wildcard);
-      searchEMailAddressFilter.orderByEmailAddress().ascending();
-
-      org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCityFilter = accountPkg.createPostalAddressQuery();
-      searchPostalAddressCityFilter.forAllDisabled().isFalse();
-      searchPostalAddressCityFilter.thereExistsPostalCity().like("(?i)" + wildcard + searchString + wildcard);
-      searchPostalAddressCityFilter.orderByPostalCity().ascending();
-
-      org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCodeFilter = accountPkg.createPostalAddressQuery();
-      searchPostalAddressCodeFilter.forAllDisabled().isFalse();
-      searchPostalAddressCodeFilter.thereExistsPostalCode().like("(?i)" + wildcard + searchString + wildcard);
-      searchPostalAddressCodeFilter.orderByPostalCode().ascending();
-
-      int tabIndex = 1;
-      int pageSize = DEFAULT_PAGE_SIZE;
-      int displayStart = 0;
-      long highAccount = 0;
-      boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
-      boolean highAccountIsKnown = ((request.getParameter("highAccountIsKnown") != null) && (request.getParameter("highAccountIsKnown").length() > 0));
-      boolean isSelectionChange = isFirstCall || request.getParameter("isSelectionChange") != null || previousSearchString.compareTo(searchString) != 0;
-      String accountFilterXri = null;
-      org.opencrx.kernel.account1.jmi1.AccountFilterGlobal selectedAccountFilterGlobal = null;
-      int accountSelectorType = 1;
-        /*    0: select all accounts (segment)
-              1: select members only
-              2: select based on AccountFilter
-            100: Search based on "full name"
-            110: Search based on "e-mail address"
-            111: Search based on "postal address city"
-            112: Search based on "postal address zip"
-        */
-      if (request.getParameter("accountSelectorType") != null && !request.getParameter("accountSelectorType").startsWith(ACCOUNT_FILTER_XRI_PREFIX)) {
-          try {
-              accountSelectorType = Integer.parseInt(request.getParameter("accountSelectorType"));
-          } catch (Exception e) {}
-      } else if (request.getParameter("accountSelectorType") != null && request.getParameter("accountSelectorType").startsWith(ACCOUNT_FILTER_XRI_PREFIX)) {
-          accountFilterXri = request.getParameter("accountSelectorType").substring(ACCOUNT_FILTER_XRI_PREFIX.length());
-          try {
-              selectedAccountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)pm.getObjectById(new Path(accountFilterXri));
-              accountSelectorType = 2;
-          } catch (Exception e) {}
-      }
-      if (mode.compareTo("0") == 0) {
-          accountSelectorType = 1; // model [Manage Members] requires selection of membersOnly
-      } else {
-          if (accountSelectorType == 1) {
-              accountSelectorType = 100; // set to search based on Full Name
-          }
-      }
-      boolean duplicatesOnly = ((request.getParameter("duplicatesOnly") != null) && (request.getParameter("duplicatesOnly").length() > 0));
-      if (duplicatesOnly) {accountSelectorType = 1;}
-      boolean membersOnly = accountSelectorType == 1;
-      boolean detectDuplicates = ((request.getParameter("detectDuplicates") != null) && (request.getParameter("detectDuplicates").length() > 0));
-      boolean selectAccount = false;
-      boolean selectContact = false;
-      boolean selectLegalEntity = false;
-      boolean selectGroup = false;
-      boolean selectUnspecifiedAccount = false;
-      if (membersOnly) {
-          selectAccount = true;
-      } else {
-          if (request.getParameter("accountSelector") != null) {
-              selectContact =            request.getParameter("accountSelector").compareTo("selectContact") == 0;
-              selectLegalEntity =        request.getParameter("accountSelector").compareTo("selectLegalEntity") == 0;
-              selectGroup =              request.getParameter("accountSelector").compareTo("selectGroup") == 0;
-              selectUnspecifiedAccount = request.getParameter("accountSelector").compareTo("selectUnspecifiedAccount") == 0;
-          }
-      }
-      try {
-        pageSize = request.getParameter("pageSize") != null ? Integer.parseInt(request.getParameter("pageSize")) : DEFAULT_PAGE_SIZE;
-      } catch (Exception e) {}
-      try {
-        highAccount = request.getParameter("highAccount") != null ? Long.parseLong(request.getParameter("highAccount")) : 0;
-      } catch (Exception e) {}
-      try {
-        if (request.getParameter("paging") != null && request.getParameter("paging").startsWith("--")) {
-          displayStart = ((int)((highAccount - (long)(10*pageSize)) / (long)pageSize)) - 1;
-          if (displayStart < 0) {
-            displayStart = 0;
-          }
-        } else if (request.getParameter("paging") != null && request.getParameter("paging").startsWith("++")) {
-          displayStart = ((int)((highAccount + (long)(10*pageSize)) / (long)pageSize)) - 1;
-          if (displayStart < 0) {
-            displayStart = 0;
-          }
-        } else if (request.getParameter("displayStart") != null && request.getParameter("displayStart").startsWith("+")) {
-          displayStart = ((int)((highAccount + Long.parseLong(request.getParameter("displayStart").substring(1))) / (long)pageSize)) - 1;
-          if (displayStart < 0) {
-            displayStart = 0;
-          }
-        } else {
-          displayStart = request.getParameter("displayStart") != null ? Integer.parseInt(request.getParameter("displayStart")) : 0;
-        }
-      } catch (Exception e) {}
-      if (isSelectionChange) {
-         highAccount = 0;
-         displayStart = 0;
-         highAccountIsKnown = false;
-      }
-
-      if (request.getParameter("Reload.Button") != null) {
-          //System.out.println("reload.button");
-          //app.resetPmData(); // evict pm data, i.e. clear cache
-      }
-
-      Iterator accounts = null;
-      long counter = 0;
-      boolean iteratorNotSet = true;
-      int itSetCounter = 0;
-      final int MAXITSETCOUNTER = 2;
-
-      while (iteratorNotSet && itSetCounter < MAXITSETCOUNTER) {
-          itSetCounter++;
-          try {
-              if (selectContact) {
-                  if (accountSelectorType == 0) {
-                      accounts = accountSegment.getAccount(contactFilter).listIterator((int)displayStart*pageSize);
-                  } else {
-                      accounts = selectedAccountFilterGlobal.getFilteredAccount(contactFilter).listIterator((int)displayStart*pageSize);
-                  }
-              } else if (selectLegalEntity) {
-                  if (accountSelectorType == 0) {
-                      accounts = accountSegment.getAccount(legalEntityFilter).listIterator((int)displayStart*pageSize);
-                  } else {
-                      accounts = selectedAccountFilterGlobal.getFilteredAccount(legalEntityFilter).listIterator((int)displayStart*pageSize);
-                  }
-              } else if (selectGroup) {
-                  if (accountSelectorType == 0) {
-                      accounts = accountSegment.getAccount(groupFilter).listIterator((int)displayStart*pageSize);
-                  } else {
-                      accounts = selectedAccountFilterGlobal.getFilteredAccount(groupFilter).listIterator((int)displayStart*pageSize);
-                  }
-              } else if (selectUnspecifiedAccount) {
-                  if (accountSelectorType == 0) {
-                      accounts = accountSegment.getAccount(unspecifiedAccountFilter).listIterator((int)displayStart*pageSize);
-                  } else {
-                      accounts = selectedAccountFilterGlobal.getFilteredAccount(unspecifiedAccountFilter).listIterator((int)displayStart*pageSize);
-                  }
-              } else {
-                  selectAccount = true;
-                  if (accountSelectorType == 0) {
-                      accounts = accountSegment.getAccount(accountFilter).listIterator((int)displayStart*pageSize);
-                  } else if (accountSelectorType == 1) {
-                      // membersOnly
-                      accounts = (accountSource.getMember(memberFilter)).listIterator((int)displayStart*pageSize);
-                  } else if (accountSelectorType == 2) {
-                      accounts = selectedAccountFilterGlobal.getFilteredAccount(accountFilter).listIterator((int)displayStart*pageSize);
-                  } else if (accountSelectorType == 100) {
-              	      // full name
-              	      if (searchString.length() > 0) {
-                          accounts = accountSegment.getAccount(searchAccountFullNameFilter).listIterator((int)displayStart*pageSize);
-                      }
-              	  } else if (accountSelectorType == 110) {
-              	  	  // e-mail address
-              	      if (searchString.length() > 0) {
-                          accounts = accountSegment.getAddress(searchEMailAddressFilter).listIterator((int)displayStart*pageSize);
-                      }
-              	  } else if (accountSelectorType == 111) {
-              	  	  // postal address city
-              	      if (searchString.length() > 0) {
-                          accounts = accountSegment.getAddress(searchPostalAddressCityFilter).listIterator((int)displayStart*pageSize);
-                      }
-              	  } else if (accountSelectorType == 112) {
-              	  	  // postal address zip
-              	      if (searchString.length() > 0) {
-                          accounts = accountSegment.getAddress(searchPostalAddressCodeFilter).listIterator((int)displayStart*pageSize);
-                      }
-              	  }
-              }
-              counter = displayStart*pageSize;
-              if (accounts != null && !accounts.hasNext()) {
-                  displayStart = (int)((highAccount / (long)pageSize));
-                  counter = displayStart*pageSize;
-              } else {
-                iteratorNotSet = false;
-              }
-          } catch (Exception e) {
-              new ServiceException(e).log();
-              displayStart = 0;
-              counter = 0;
-          }
-      }
-
-      if (request.getParameter("previousSheet") != null) {
-    		  // delete previous temp file if it exists
-    		  try {
-    			  	File previousFile = new File(
-    						app.getTempFileName(request.getParameter("previousSheet"), "")
-    					);
-    			  	if (previousFile.exists()) {
-    			  			previousFile.delete();
-    			  			//System.out.println("deleted previous temp file " + request.getParameter("previousSheet"));
-    			  	}
-    		  } catch (Exception e){
-    			  	new ServiceException(e).log();
-    		  }
-      }
-      if (request.getParameter("ACTION.create") != null) {
-          //System.out.println("CREATE: " + request.getParameter("ACTION.create"));
-          if (accountSource != null) {
-              try {
-                  pm.currentTransaction().begin();
-                  org.opencrx.kernel.account1.jmi1.Account accountTarget = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path((request.getParameter("ACTION.create"))));
-                  org.opencrx.kernel.account1.jmi1.Member newMember = accountPkg.getMember().createMember();
-                  newMember.refInitialize(false, false);
-                  //newMember.setMemberRole(new short[]{MEMBERROLESALESREGION});
-                  newMember.setValidFrom(new java.util.Date());
-                  newMember.setAccount(accountTarget);
-                  newMember.setQuality((short)5);
-                  newMember.setName(accountTarget.getFullName());
-                  accountSource.addMember(
-                    false,
-                    org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
-                    newMember
-                  );
-                  pm.currentTransaction().commit();
-              } catch (Exception e) {
-                  errorMsg = "Cannot enable " + app.getLabel(MEMBER_CLASS);
-                  new ServiceException(e).log();
-                  try {
-                      pm.currentTransaction().rollback();
-                  } catch (Exception er) {}
-              }
-          } else {
-              errorMsg = "Cannot create " + app.getLabel(MEMBER_CLASS) + " [parent missing]";
-          }
-      } else if (request.getParameter("ACTION.enable") != null) {
-          //System.out.println("ENABLE: " + request.getParameter("ACTION.enable"));
-          try {
-              pm.currentTransaction().begin();
-              org.opencrx.kernel.account1.jmi1.Member member = (org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path((request.getParameter("ACTION.enable"))));
-              member.setDisabled(new Boolean(false));
-              if (member.getValidFrom() == null) {
-                  member.setValidFrom(new java.util.Date());
-              }
-              member.setValidTo(null);
-              if ((member.getName() == null || member.getName().length() == 0) && member.getAccount() != null) {
-                  member.setName(member.getAccount().getFullName());
-              }
-              pm.currentTransaction().commit();
-          } catch (Exception e) {
-              errorMsg = "Cannot enable " + app.getLabel(MEMBER_CLASS);
-              new ServiceException(e).log();
-              try {
-                  pm.currentTransaction().rollback();
-              } catch (Exception er) {}
-          }
-      } else if (request.getParameter("ACTION.disable") != null) {
-          //System.out.println("DISABLE: " + request.getParameter("ACTION.disable"));
-          try {
-              pm.currentTransaction().begin();
-              org.opencrx.kernel.account1.jmi1.Member member = (org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path((request.getParameter("ACTION.disable"))));
-              member.setDisabled(new Boolean(true));
-              member.setValidTo(new java.util.Date());
-              if ((member.getName() == null || member.getName().length() == 0) && member.getAccount() != null) {
-                  member.setName(member.getAccount().getFullName());
-              }
-              pm.currentTransaction().commit();
-          } catch (Exception e) {
-              errorMsg = "Cannot disable " + app.getLabel(MEMBER_CLASS);
-              new ServiceException(e).log();
-              try {
-                  pm.currentTransaction().rollback();
-              } catch (Exception er) {}
-          }
-      } else if (request.getParameter("ACTION.delete") != null) {
-          //System.out.println("DELETE: " + request.getParameter("ACTION.delete"));
-          try {
-              pm.currentTransaction().begin();
-              org.opencrx.kernel.account1.jmi1.Member member = (org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path((request.getParameter("ACTION.delete"))));
-              ((RefObject_1_0)member).refDelete();
-              pm.currentTransaction().commit();
-          } catch (Exception e) {
-              errorMsg = "Cannot delete " + app.getLabel(MEMBER_CLASS);
-              new ServiceException(e).log();
-              try {
-                  pm.currentTransaction().rollback();
-              } catch (Exception er) {}
-          }
-      } else if (request.getParameter("ACTION.exportXLS") != null) {
-          //System.out.println("Export_XLS: " + request.getParameter("ACTION.exportXLS"));
-          try {
-            	f = new File(
-            		app.getTempFileName(location, "")
-            	);
-            	os = new FileOutputStream(f);
-            	wb = new HSSFWorkbook();
-
-              // Header Style (black background, orange/bold font)
-              headerfont = wb.createFont();
-              headerfont.setFontHeightInPoints((short)10);
-              headerfont.setFontName("Tahoma");
-              headerfont.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD);
-              headerfont.setColor(HSSFColor.ORANGE.index);
-              // Fonts are set into a style so create a new one to use.
-              headerStyle = wb.createCellStyle();
-              headerStyle.setFillForegroundColor(HSSFColor.BLACK.index);
-              headerStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-              headerStyle.setFont(headerfont);
-
-              // Wrapped Style
-              wrappedStyle = wb.createCellStyle();
-              wrappedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
-              wrappedStyle.setWrapText(true);
-
-              // TopAligned Style
-              topAlignedStyle = wb.createCellStyle();
-              topAlignedStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_TOP);
-
-              downloadAction =	new Action(
-                  Action.EVENT_DOWNLOAD_FROM_LOCATION,
-                  new Action.Parameter[]{
-                      new Action.Parameter(Action.PARAMETER_LOCATION, location),
-                      new Action.Parameter(Action.PARAMETER_NAME, sheetName),
-                      new Action.Parameter(Action.PARAMETER_MIME_TYPE, "application/vnd.ms-excel")
-                  },
-                  app.getTexts().getClickToDownloadText() + " " + sheetName,
-                  true
-              );
-							sheetAccounts = addSheet(wb, "Accounts", true, headerStyle);
-          } catch (Exception e) {
-              new ServiceException(e).log();
-          }
-      }
-
-%>
-      <form name="ManageMembers" style="padding:0;border-top:3px solid #E4E4E4;margin:0;" accept-charset="UTF-8" method="POST" action="<%= FORMACTION %>">
-        <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-        <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-        <input type="hidden" name="previousSheet" id="previousSheet" value="<%= location %>" />
-        <input type="hidden" name="mode" id="mode" value="<%= mode %>" />
-        <input type="hidden" name="paging" id="paging" value="" />
-        <input type="checkbox" style="display:none;" name="isFirstCall" checked />
-        <input type="checkbox" style="display:none;" name="isSelectionChange" id="isSelectionChange" />
-
-<%
-        if (downloadAction != null) {
-%>
-				    <div style="position:absolute;padding-top:70px;">
-				      <a href="<%= request.getContextPath() %>/<%= downloadAction.getEncodedHRef(requestId) %>"><%= SPREADSHEET %></a>
-				    </div>
-<%
-        }
-%>
-        <table class="fieldGroup" style="width:100%;margin-top:0;padding-top:0;border-top:0;border-collapse:collapse;">
-          <tr>
-            <td id="submitButtons" style="font-weight:bold;background-color:#E4E4E4;padding-bottom:3px;">
-              <div style="padding:8px 3px;">
-                <%= app.getTexts().getSelectAllText() %> <select <%= mode.compareTo("0")==0 ? "disabled" : "" %> style="width:150px;" id="accountSelectorType" name="accountSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
-<%
-                if (mode.compareTo("0") == 0) {
-%>
-                  <option <%= accountSelectorType == 1 ? "selected" : "" %> value="1"><%= app.getLabel(MEMBER_CLASS)  %>&nbsp;</option>
-<%
-                } else {
-%>
-                  <option <%= accountSelectorType == 100 ? "selected" : "" %> value="100">? <%= app.getTexts().getSearchText() %> <%= userView.getFieldLabel("org:opencrx:kernel:account1:Account", "fullName", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
-                  <option <%= accountSelectorType == 110 ? "selected" : "" %> value="110">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(EMAILADDRESS_CLASS) %>&nbsp;</option>
-                  <option <%= accountSelectorType == 111 ? "selected" : "" %> value="111">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCity", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
-                  <option <%= accountSelectorType == 112 ? "selected" : "" %> value="112">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCode", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
-                  <option <%= accountSelectorType ==   0 ? "selected" : "" %> value="0"  >* <%= app.getLabel(ACCOUNTSEGMENT_CLASS) %>&nbsp;</option>
-<%
-									org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountFilterGlobalQuery = (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
-									accountFilterGlobalQuery.forAllDisabled().isFalse();
-									accountFilterGlobalQuery.orderByName().ascending();
-									for(Iterator i = accountSegment.getAccountFilter(accountFilterGlobalQuery).iterator(); i.hasNext(); ) {
-									    org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)i.next();
-%>
-                      <option <%= (accountSelectorType == 2) && (accountFilterXri != null && accountFilterXri.compareTo(accountFilterGlobal.refMofId()) == 0) ? "selected" : "" %> value="<%= ACCOUNT_FILTER_XRI_PREFIX %><%= accountFilterGlobal.refMofId() %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS) %>: <%= accountFilterGlobal.getName() != null ? accountFilterGlobal.getName() : "?" %> &nbsp;</option>
-<%
-									}
-							  }
-%>
-                </select>&nbsp;
-<%
-                if (accountSelectorType >= 100) {
-%>
-                  <INPUT type="text" name="searchString" id="searchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
-                  <INPUT type="hidden" name="previousSearchString" id="previousSearchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
-									<INPUT type="submit" name="go" id="go" title="<%= app.getTexts().getSearchText() %>" tabindex="<%= tabIndex++ %>" value=">>" onclick="setTimeout('disableSubmit()', 10);$('Reload.Button').click();" />
-<%
-                } else {
-                  if (!membersOnly) {
-%>
-                    &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectAccount            ? "checked" : "" %> value="selectAccount"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> *
-                    &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectContact            ? "checked" : "" %> value="selectContact"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(CONTACT_CLASS) %>
-                    &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectLegalEntity        ? "checked" : "" %> value="selectLegalEntity"        onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(LEGALENTITY_CLASS) %>
-                    &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectGroup              ? "checked" : "" %> value="selectGroup"              onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(GROUP_CLASS) %>
-                    &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectUnspecifiedAccount ? "checked" : "" %> value="selectUnspecifiedAccount" onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(UNSPECIFIEDACCOUNT_CLASS) %>
-<%
-                  }
-                }
-%>
-              </div>
-              <br>
-              <a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif" style="padding-top:5px;"></a>
-              <a href="#" onclick="javascript:try{($('displayStart').value)--;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
-              <span id="displayStartSelector">...</span>
-              <a href="#" onclick="javascript:try{($('displayStart').value)++;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
-              <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif" style="padding-top:5px;"></a>
-              &nbsp;&nbsp;&nbsp;
-              <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
-                <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
-                <option <%= pageSize ==  20 ? "selected" : "" %> value="20">20&nbsp;</option>
-                <option <%= pageSize ==  50 ? "selected" : "" %> value="50">50&nbsp;</option>
-                <option <%= pageSize == 100 ? "selected" : "" %> value="100">100&nbsp;</option>
-                <option <%= pageSize == 500 ? "selected" : "" %> value="500">500&nbsp;</option>
-              </select>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
-              &nbsp;&nbsp;
-              <input type="checkbox" name="duplicatesOnly" id="duplicatesOnly" <%= duplicatesOnly ? "checked" : "" %> /> Duplicates Only
-              &nbsp;&nbsp;
-              <INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
-              <!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
-              <INPUT type="Submit" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-              <INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
-              <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:window.close();" />
-              <br>
-            </td>
-            <td id="waitMsg" style="display:none;">
-              <div style="padding-left:5px; padding: 11px 0px 50px 0px;">
-                <img src="../../images/wait.gif" alt="" />
-              </div>
-            </td>
-          </tr>
-        </table>
-<%
-		if (errorMsg.length() > 0) {
-%>
-			<div style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
-				<%= errorMsg %>
-			</div>
-<%
-		}
-%>
-        <br />
+	    	<div id="content" style="padding:20.5em 0.5em 0px 0.5em;">
 
         <table style="background:white;"><tr><td>
         <table id="resultTable" class="gridTableFull">
@@ -1323,23 +1352,28 @@ org.apache.poi.hssf.util.*
                 Iterator i = accounts;
                 i.hasNext() && (counter <= (displayStart+1)*pageSize);
               ) {
-                  org.opencrx.kernel.account1.jmi1.PostalAddress infoAddr = null;
-                  org.opencrx.kernel.account1.jmi1.Account account = null;
-                  org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)i.next();
-                  if (crxObject instanceof org.opencrx.kernel.account1.jmi1.Account) {
-                      account = (org.opencrx.kernel.account1.jmi1.Account)crxObject;
-                  } else if (crxObject instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
-                  	  // get parent account
-                      account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
-                  } else if (crxObject instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
-                  	  // get parent account
-                      account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
-                      infoAddr = (org.opencrx.kernel.account1.jmi1.PostalAddress)crxObject;
-                  } else {
-                      account = ((org.opencrx.kernel.account1.jmi1.Member)crxObject).getAccount();
-                      if (account == null) {
-                          continue;
-                      }
+		              org.opencrx.kernel.account1.jmi1.PostalAddress infoAddr = null;
+		              org.opencrx.kernel.account1.jmi1.Account account = null;
+		              org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)i.next();
+		              try {
+				              if (crxObject instanceof org.opencrx.kernel.account1.jmi1.Account) {
+				                  account = (org.opencrx.kernel.account1.jmi1.Account)crxObject;
+				              } else if (crxObject instanceof org.opencrx.kernel.account1.jmi1.EMailAddress) {
+				              	  // get parent account
+				                  account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
+				              } else if (crxObject instanceof org.opencrx.kernel.account1.jmi1.PostalAddress) {
+				              	  // get parent account
+				                  account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
+				                  infoAddr = (org.opencrx.kernel.account1.jmi1.PostalAddress)crxObject;
+				              } else {
+				                  account = ((org.opencrx.kernel.account1.jmi1.Member)crxObject).getAccount();
+				              }
+				          } catch (Exception e) {
+				              new ServiceException(e).log();
+				          }
+
+                  if (account == null) {
+                      continue;
                   }
 
                   String accountHref = "";
@@ -1790,7 +1824,6 @@ org.apache.poi.hssf.util.*
 %>
         <input type="hidden" name="highAccountIsKnown" id="highAccountIsKnown" value="<%= highAccountIsKnown ? "highAccountIsKnown" : ""  %>" />
         <input type="hidden" id="highAccount" name="highAccount" value="<%= highAccount %>" />
-      </form>
 <%
       String displayStartSelector = "<select onchange='javascript:$(\\\"waitMsg\\\").style.visibility=\\\"visible\\\";$(\\\"submitButtons\\\").style.visibility=\\\"hidden\\\";$(\\\"Reload.Button\\\").click();' id='displayStart' name='displayStart' tabindex='" + tabIndex++ + "' style='text-align:right;'>";
       int i = 0;
@@ -1851,6 +1884,7 @@ org.apache.poi.hssf.util.*
 %>
       </div> <!-- content -->
     </div> <!-- content-wrap -->
+    </form>
   </div> <!-- wrap -->
 </div> <!-- container -->
 </body>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ConnectionHelper.jsp,v 1.24 2010/12/10 09:01:19 cmu Exp $
+ * Name:        $Id: ConnectionHelper.jsp,v 1.26 2011/03/24 12:09:15 cmu Exp $
  * Description: Generate vCard/iCal/CalDAV URLs
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/10 09:01:19 $
+ * Date:        $Date: 2011/03/24 12:09:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -128,6 +128,9 @@ org.openmdx.kernel.log.*
     TABLE.fieldGroup TD {
       vertical-align:middle;
     }
+    .label {
+      width:190px;
+    }
   </style>
 </head>
 
@@ -139,6 +142,7 @@ org.openmdx.kernel.log.*
   try {
 	  boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
     boolean mustReload = request.getParameter("mustReload") != null;
+
     //System.out.println("must reload = " + mustReload);
 
     RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
@@ -224,7 +228,9 @@ org.openmdx.kernel.log.*
     final String optionValueTRUE  = "true";
     final String optionValueFALSE = "false";
     final String hintDefaultValue = "default";
+    final String hintManualEntry = "enter value below";
     final String optionValueUSER = "USER";
+    final String optionValueMANUAL = "MANUAL ENTRY";
 
     String urlBase = (request.getRequestURL().toString()).substring(0, (request.getRequestURL().toString()).indexOf(request.getServletPath().toString()));
     String groupComponent = "";
@@ -238,24 +244,28 @@ org.openmdx.kernel.log.*
     String server = "";
     String path = "";
     String options = "";
-                                                                                                                                  // default                    options          available for sourceTypes
-    String sourceType          = request.getParameter("sourceType")          != null ? request.getParameter("sourceType"         ) : optionSourceActivities; // [freebusy|activities|bdays|webdav]
-    String optionType          = request.getParameter("optionType")          != null ? request.getParameter("optionType"         ) : optionTypeIcs;          // [AirSync|CalDAV|ics|xml|html] activities
-    String optionDisabled      = request.getParameter("optionDisabled")      != null ? request.getParameter("optionDisabled"     ) : optionValueFALSE;       // [true|false]     activities, freebusy
-    String optionAlarm         = request.getParameter("optionAlarm")         != null ? request.getParameter("optionAlarm"        ) : optionValueFALSE;       // [true|false]     bdays
-    String optionIcalType      = request.getParameter("optionIcalType")      != null ? request.getParameter("optionIcalType"     ) : optionIcalTypeEvent;    // [VTODO|VEVENT]   bdays
-    String optionFreebusyAsCal = request.getParameter("optionFreebusyAsCal") != null ? request.getParameter("optionFreebusyAsCal") : optionValueFALSE;       // [true|false]     freebusy only vs. freebusy as calendar
-    String optionFreebusyUser  = request.getParameter("optionFreebusyUser")  != null ? request.getParameter("optionFreebusyUser" ) : optionValueUSER;        // [USER or e-mail] freebusy with e-mail vs. username
-    String optionMax           = request.getParameter("optionMax"     )      != null ? request.getParameter("optionMax"          ) : "";                     //                  bdays
-    String optionCategories    = request.getParameter("optionCategories")    != null ? request.getParameter("optionCategories"   ) : optionCategoriesDefault;//                  bdays
-    String optionSummaryPrefix = request.getParameter("optionSummaryPrefix") != null ? request.getParameter("optionSummaryPrefix") : optionSummaryPrefixDefault;//               bdays
-    String optionYear          = request.getParameter("optionYear")          != null ? request.getParameter("optionYear"         ) : "";                     // YYYY             bdays
+                 
+    String sourceType          = request.getParameter("sourceType")          != null ? request.getParameter("sourceType"         ) : optionSourceActivities;    // [freebusy|activities|bdays|webdav]
+    String optionType          = request.getParameter("optionType")          != null ? request.getParameter("optionType"         ) : optionTypeIcs;             // [AirSync|CalDAV|ics|xml|html] activities
+    String optionNonOwningUser = request.getParameter("optionNonOwningUser") != null ? request.getParameter("optionNonOwningUser") : optionValueFALSE;          // [true|false]     allow option .../user/<user>/...
+    String optionUsernameEmail = request.getParameter("optionUsernameEmail") != null ? request.getParameter("optionUsernameEmail") : app.getLoginPrincipalId(); // [user name|e-mail address] for option .../user/<user>/...
+    String optionDisabled      = request.getParameter("optionDisabled")      != null ? request.getParameter("optionDisabled"     ) : optionValueFALSE;          // [true|false]     activities, freebusy
+    String optionAlarm         = request.getParameter("optionAlarm")         != null ? request.getParameter("optionAlarm"        ) : optionValueFALSE;          // [true|false]     bdays
+    String optionIcalType      = request.getParameter("optionIcalType")      != null ? request.getParameter("optionIcalType"     ) : optionIcalTypeEvent;       // [VTODO|VEVENT]   bdays
+    String optionFreebusyAsCal = request.getParameter("optionFreebusyAsCal") != null ? request.getParameter("optionFreebusyAsCal") : optionValueFALSE;          // [true|false]     freebusy only vs. freebusy as calendar
+    String optionFreebusyUser  = request.getParameter("optionFreebusyUser")  != null ? request.getParameter("optionFreebusyUser" ) : optionValueUSER;           // [USER or e-mail] freebusy with e-mail vs. username
+    String optionMax           = request.getParameter("optionMax"     )      != null ? request.getParameter("optionMax"          ) : "";                        //                  bdays
+    String optionCategories    = request.getParameter("optionCategories")    != null ? request.getParameter("optionCategories"   ) : optionCategoriesDefault;   //                  bdays
+    String optionSummaryPrefix = request.getParameter("optionSummaryPrefix") != null ? request.getParameter("optionSummaryPrefix") : optionSummaryPrefixDefault;//                  bdays
+    String optionYear          = request.getParameter("optionYear")          != null ? request.getParameter("optionYear"         ) : "";                        // YYYY             bdays
 
     String optionUserTz     = "GMT-0000";
     String optionUserLocale = "en_US";
     String optionHeight        = request.getParameter("optionHeight")        != null ? request.getParameter("optionHeight"       ) : "500";                  // in pixels        activities/xml
 
     String selectedAnchorObjectXRI = "";
+
+    boolean supportsAccessByUser = true; // enable insertion of /user/<user>/ into URL
 
     int tabIndex = 0;
 
@@ -274,6 +284,11 @@ org.openmdx.kernel.log.*
     org.opencrx.kernel.home1.jmi1.Segment homeSegment = (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
         new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
     );
+
+    String nonOwningUserComponent = "";
+    if ((optionNonOwningUser.compareTo(optionValueTRUE ) == 0) && (optionUsernameEmail != null) && (optionUsernameEmail.length() > 0)) {
+    		nonOwningUserComponent = "/user/" + optionUsernameEmail;
+    }
 
     // activity filter
     if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup) {
@@ -338,7 +353,10 @@ org.openmdx.kernel.log.*
     else if(obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
         typeFromInitialObject = TYPE_CALENDAR;
         selectorTypeFromInitialObject = SELTYPE_USERHOME + selectorTypeFromInitialObject;
-        groupComponent = "/userhome/" + (sourceType.compareTo(optionSourceFreebusy) == 0 ? optionFreebusyUser : URLEncoder.encode(obj.refGetPath().getBase(), "UTF-8"));
+        groupComponent = "/userhome/" + (sourceType.compareTo(optionSourceFreebusy) == 0 
+        	? (optionFreebusyUser.compareTo(optionValueMANUAL) == 0 ? optionUsernameEmail : optionFreebusyUser)
+        	: URLEncoder.encode(obj.refGetPath().getBase(), "UTF-8")
+        );
         if (isFirstCall) {
             anchorObjectXriFromInitialObject = ((org.opencrx.kernel.home1.jmi1.UserHome)obj).refMofId();
         }
@@ -417,6 +435,10 @@ org.openmdx.kernel.log.*
     selectorType = request.getParameter("selectorType") != null ? request.getParameter("selectorType") : selectorTypeFromInitialObject;
     String anchorObjectLabel = "Anchor object";
 
+    if (sourceType.compareTo(optionSourceFreebusy) == 0) {
+    		supportsAccessByUser = false;
+    }
+
     if (type.compareTo(optionTypeAirSync) == 0) {
         target = urlBase.replace("-core-", "-airsync-") + "/Microsoft-Server-ActiveSync/";
         /* selectorType = SELTYPE_AIRSYNCPROFILE; */
@@ -424,17 +446,18 @@ org.openmdx.kernel.log.*
           request.getAttribute("javax.servlet.request.X509Certificate");
         server = request.getServerName() + ":" + request.getServerPort() + request.getContextPath().replace("-core-", "-airsync-") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + (urlBase.contains(PROTOCOL_SPECIFIER_HTTPS) ? "yes" : "no") + "]";
         //server = request.getServerName() + ":" + request.getServerPort() + request.getContextPath().replace("-core-", "-airsync-") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + ((certs != null) && (certs.length > 0) ? "yes" : "no") + "]";
+				supportsAccessByUser = false;
     } else if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
         if (type.compareTo(TYPE_CALENDAR) == 0) {
             if ((optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeCalDAV_VTODO) == 0 || (obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile)) && (sourceType.compareTo(optionSourceActivities) == 0)) {
                 target =
                     urlBase.replace("-core-", "-caldav-") + "/" +
-                    providerName + "/" + segmentName +
+                    providerName + "/" + segmentName + (supportsAccessByUser ? nonOwningUserComponent : "") +
                     groupComponent + filterComponent + (optionType.compareTo(optionTypeCalDAV_VTODO) == 0 ? "/" + optionIcalTypeTodo : "");
             } else {
                 target =
                     urlBase.replace("-core-", "-ical-") + "/" + sourceType + "?id=" +
-                    providerName + "/" + segmentName +
+                    providerName + "/" + segmentName + (supportsAccessByUser ? nonOwningUserComponent : "") +
                     groupComponent + filterComponent;
             }
         } else if (type.compareTo(TYPE_VCARD) == 0) {
@@ -442,18 +465,21 @@ org.openmdx.kernel.log.*
                 urlBase.replace("-core-", "-vcard-") + "/" + sourceType + "?id=" +
                 providerName + "/" + segmentName +
                 groupComponent + filterComponent;
+            supportsAccessByUser = false;
         } else if (type.compareTo(TYPE_WEBDAV) == 0) {
-				        server = request.getServerName() + ":" + request.getServerPort() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + (urlBase.contains(PROTOCOL_SPECIFIER_HTTPS) ? "yes" : "no") + "]";
-				        path = request.getContextPath().replace("-core-", "-webdav-") + "/" +
-				        providerName + "/" + segmentName +
-                groupComponent + filterComponent;
+		        server = request.getServerName() + ":" + request.getServerPort() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + (urlBase.contains(PROTOCOL_SPECIFIER_HTTPS) ? "yes" : "no") + "]";
+		        path = request.getContextPath().replace("-core-", "-webdav-") + "/" +
+		        providerName + "/" + segmentName +
+            groupComponent + filterComponent;
             target =
                 urlBase.replace("-core-", "-webdav-").replace("http:", "webdav:").replace("https:", "webdavs:") + "/" +
 				        providerName + "/" + segmentName +
                 groupComponent + filterComponent;
+            supportsAccessByUser = false;
         }
     } else {
         target = "";
+        supportsAccessByUser = false;
     }
 
     Map orderedanchorObjects = new TreeMap();
@@ -1018,46 +1044,140 @@ org.openmdx.kernel.log.*
                             <td class="addon"></td>
                           </tr>
 
-                          <tr title="activate option 'retrieve freebusy information by e-mail address'" <%= (sourceType.compareTo(optionSourceFreebusy) == 0) ? "" : "style='display:none;'" %>>
-                            <td class="label"><span class="nw">access by:</span></td>
+                          <tr title="select access by user name or e-mail address'" <%= (sourceType.compareTo(optionSourceFreebusy) == 0) ? "" : "style='display:none;'" %>>
+                            <td class="label"><span class="nw">freebusy <i>for user</i>:</span></td>
                             <td>
                                 <select class="valueL" id="optionFreebusyUser" name="optionFreebusyUser" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
 <%
-                                    // try to get Userhome
-                                    org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
-                                    String principal = "";
-                                    try {
-                                      userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(selectedAnchorObjectXRI));
-                                      principal = userHome.refGetPath().getBase();
-                                    } catch (Exception e) {}
+																		Map entries = new TreeMap();
+																		if (selectorType.compareTo(SELTYPE_USERHOME) == 0) {
+				                                // try to get selected Userhome
+				                                org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
+				                                String principal = "";
+				                                try {
+				                                  userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(selectedAnchorObjectXRI));
+				                                  principal = userHome.refGetPath().getBase();
+				                                } catch (Exception e) {}
+																				if (userHome != null) {
+																						org.opencrx.kernel.account1.jmi1.Contact contact = null;
+																						try {
+																								contact = userHome.getContact();
+																						} catch (Exception e) {}
+																						String display = optionValueUSER + ":&nbsp;&nbsp;" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " [" + principal + "]";
+																						String sortKey = display.toUpperCase() + formatter.format(0);
+																						entries.put(
+																								HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+																								userHome.refMofId()
+																						);
+																				}
+																		} else {
+																				if (sourceType.compareTo(optionSourceFreebusy) == 0) {
+																						options += "/&user=" + optionFreebusyUser;
+																				}
+																				// get all UserHomes
+																				int index = 0;
+																				for(Iterator i = homeSegment.getUserHome().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+																						org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
+																						org.opencrx.kernel.account1.jmi1.Contact contact = null;
+																						try {
+																								contact = userHome.getContact();
+																						} catch (Exception e) {}
+																						String principal = userHome.refGetPath().getBase();
+																						String display = optionValueUSER + ":&nbsp;&nbsp;" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " [" + principal + "]";
+																						String sortKey = display.toUpperCase() + formatter.format(index++);
+																						entries.put(
+																								HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+																								userHome.refMofId()
+																						);
+																				}
+																		}
+														        if (entries.isEmpty()) {
+														        		mustReload = true;
 %>
-                                    <option <%= optionFreebusyUser.compareTo(principal) == 0 ? "selected" : "" %> value="<%= principal %>"><%= optionValueUSER %>: <%= principal %> (<%= hintDefaultValue %>)</option>
+												                <option value="">--</option>
 <%
-                                    // try to get the list of E-Mail Addresses
-                                    if (userHome != null) {
-																				org.opencrx.kernel.home1.cci2.EMailAccountQuery eMailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
-																				eMailAccountQuery.thereExistsIsActive().isTrue();
-																				eMailAccountQuery.orderByName().ascending();
-																				List<org.opencrx.kernel.home1.jmi1.EMailAccount> emailAccounts = userHome.getEMailAccount(eMailAccountQuery);
-																				for(org.opencrx.kernel.home1.jmi1.EMailAccount eMailAccount: emailAccounts) {
-                                          try {
-                                            if ((eMailAccount.getName() != null) && (eMailAccount.getName().length() > 0)) {
-                                              String eMailAddress = eMailAccount.getName();
+														        } else {
+														        		boolean hasSelection = false;
+												                for (
+												                		Iterator i = entries.keySet().iterator();
+												                		i.hasNext();
+												                ) {
+												                    String key = (String)i.next();
+												                    String value = (String)entries.get(key);
+												                    String principal = "";
+								                            org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
+								                            try {
+								                              userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(value));
+								                              principal = userHome.refGetPath().getBase();
+								                            } catch (Exception e) {}
+								                            value = principal;
+												                    boolean selected = ((optionFreebusyUser != null) && (value != null) && (optionFreebusyUser.compareTo(value) == 0));
+												                    if (selected) {hasSelection = true;}
 %>
-                                              <option <%= optionFreebusyUser.compareTo(eMailAddress) == 0 ? "selected" : "" %> value="<%= eMailAddress %>">e-mail: <%= eMailAddress %></option>
+													                  <option <%= selected ? "selected" : "" %> value="<%= value != null ? value : "" %>"><%= key %></option>
 <%
-                                            }
-                                          } catch (Exception e) {
-                                            new ServiceException(e).log();
-                                          }
-                                        }
-                                    }
+								                            // try to get the list of E-Mail Addresses
+								                            if (userHome != null) {
+																								org.opencrx.kernel.home1.cci2.EMailAccountQuery eMailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
+																								eMailAccountQuery.thereExistsIsActive().isTrue();
+																								eMailAccountQuery.orderByName().ascending();
+																								List<org.opencrx.kernel.home1.jmi1.EMailAccount> emailAccounts = userHome.getEMailAccount(eMailAccountQuery);
+																								for(org.opencrx.kernel.home1.jmi1.EMailAccount eMailAccount: emailAccounts) {
+								                                  try {
+								                                    if ((eMailAccount.getName() != null) && (eMailAccount.getName().length() > 0)) {
+								                                      String eMailAddress = eMailAccount.getName();
+								                                      selected = optionFreebusyUser.compareTo(eMailAddress) == 0;
+																	                    if (selected) {hasSelection = true;}
 %>
+				                                              <option <%= selected ? "selected" : "" %> value="<%= eMailAddress %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= eMailAddress %></option>
+<%
+								                                    }
+								                                  } catch (Exception e) {
+								                                    new ServiceException(e).log();
+								                                  }
+								                                }
+								                            }
+													              }
+										                    if (!hasSelection) {
+										                        mustReload = true;
+										                    }
+														        }
+%>
+		                                <!-- this option is not useful
+		                                <option <%= optionFreebusyUser.compareTo(optionValueMANUAL) == 0 ? "selected" : "" %> value="<%= optionValueMANUAL %>"><%= optionValueMANUAL %>:&nbsp;&nbsp; <%= hintManualEntry %></option>
+		                                -->
                                 </select>
                             </td>
                             <td class="addon"></td>
                           </tr>
 <%
+                          if (supportsAccessByUser) {
+%>
+		                        <tr title="access by non-owning user">
+		                          <td class="label"><span class="nw">Access by <i>non-owning</i> user:</span></td>
+		                          <td>
+		                              <select class="valueL" id="optionNonOwningUser" name="optionNonOwningUser" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
+		                                  <option <%= optionNonOwningUser.compareTo(optionValueFALSE) == 0 ? "selected" : "" %> value="<%= optionValueFALSE %>"><%= optionValueFALSE %> (<%= hintDefaultValue %>)</option>
+		                                  <option <%= optionNonOwningUser.compareTo(optionValueTRUE ) == 0 ? "selected" : "" %> value="<%= optionValueTRUE  %>"><%= optionValueTRUE  %></option>
+		                              </select>
+		                          </td>
+		                          <td class="addon"></td>
+		                        </tr>
+<%
+													}
+													
+													if ((supportsAccessByUser && (optionNonOwningUser.compareTo(optionValueTRUE ) == 0)) || optionFreebusyUser.compareTo(optionValueMANUAL) == 0) {
+%>
+				                    <tr title="user name or e-mail address">
+				                      <td class="label"><span class="nw">&nbsp;&nbsp;\-- User name or e-mail address:</span></td>
+				                      <td>
+																<input type="text" value="<%= optionUsernameEmail %>" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionUsernameEmail" id="optionUsernameEmail"  onchange="javascript:$('reload.button').click();" />
+				                      </td>
+				                      <td class="addon"></td>
+				                    </tr>
+<%
+                          }
+
                           if (optionDisabled.compareTo(optionValueTRUE) == 0) {options += "&disabled=" + optionValueTRUE;}
 %>
                           <tr title="activate filter 'disabled' to process disabled activities only" <%= (sourceType.compareTo(optionSourceActivities) == 0) && (optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeCalDAV_VTODO) == 0 || (obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile)) ? "style='display:none;'" : "" %>>
@@ -1101,6 +1221,7 @@ org.openmdx.kernel.log.*
             if (target != null && target.length() > 0) {
                 target = target.replace("+", "%20");
                 options = options.replace("+", "%20");
+                
 %>
                 <br>
                 URL: <a href="<%= target + options %>" target="_blank"><%= target + options %></a><br>
@@ -1148,8 +1269,8 @@ org.openmdx.kernel.log.*
 %>
 
             <br>
-            <input type="submit" id="reload.button" name="reload.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" style="display:none;" />
-            <input type="submit" class="abutton" name="Cancel" tabindex="30" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
+            <input type="submit" id="reload.button" name="reload.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
+            <input type="submit" id="Cancel" name="Cancel" tabindex="30" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
             <br>
           </form>
         </div> <!-- content -->

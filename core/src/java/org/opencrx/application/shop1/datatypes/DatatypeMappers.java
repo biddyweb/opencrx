@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMappers.java,v 1.18 2010/04/07 12:16:27 wfro Exp $
+ * Name:        $Id: DatatypeMappers.java,v 1.22 2011/03/05 00:09:34 wfro Exp $
  * Description: DatatypeMappers
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/07 12:16:27 $
+ * Date:        $Date: 2011/03/05 00:09:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -962,6 +962,14 @@ public class DatatypeMappers {
         int exceptionCode,
         String[] parameters
     ) {
+    	List<Object> returnParams = new ArrayList<Object>();
+    	if(parameters != null) {
+    		for(Object param: returnParams) {
+    			if(param != null) {
+    				returnParams.add(param);
+    			}
+    		}
+    	}
         return Datatypes.create(
             ReturnStatusT.class,
             Datatypes.member(
@@ -970,7 +978,7 @@ public class DatatypeMappers {
             ),
             Datatypes.member(
                 ReturnStatusT.Member.returnParams,
-                parameters == null ? Collections.EMPTY_LIST : parameters
+                returnParams
             )               
         );
     }
@@ -1273,6 +1281,14 @@ public class DatatypeMappers {
                 contract.getClosedOn()
             ),            
             Datatypes.member(
+                ContractT.Member.isGift,
+                contract.isGift()
+            ),            
+            Datatypes.member(
+                ContractT.Member.giftMessage,
+                contract.getGiftMessage()
+            ),
+            Datatypes.member(
                 ContractT.Member.contractCurrency,
                 toInteger(contract.getContractCurrency())
             ),            
@@ -1360,21 +1376,26 @@ public class DatatypeMappers {
         Account customer,
         String invoiceNumber,
         SalesOrderState salesOrderState,
+        Integer contractCurrency,
         Date activeOn,
         Date expiresOn,
         Date cancelOn,
-        Date closedOn,        
+        Date closedOn,
+        Boolean isGift,
+        String giftMessage,
         PricingRule defaultPricingRule
     ) {
         salesOrder.setName(invoiceNumber + " / " + this.getAccountFieldMapper().getAccountNumber(customer));
         salesOrder.setOrigin(origin);
         salesOrder.setCustomer(customer);
         salesOrder.setContractState(toShort(salesOrderState.getValue()));
-        salesOrder.setContractCurrency(origin.getContractCurrency());
+        salesOrder.setContractCurrency(contractCurrency == null ? origin.getContractCurrency() : contractCurrency.shortValue());
         salesOrder.setActiveOn(activeOn);
         salesOrder.setExpiresOn(expiresOn);
         salesOrder.setCancelOn(cancelOn);
         salesOrder.setClosedOn(closedOn);
+        salesOrder.setGift(Boolean.TRUE.equals(isGift));
+        salesOrder.setGiftMessage(giftMessage);
         this.getAbstractContractFieldMapper().setBillingPartner(salesOrder, this.getAbstractContractFieldMapper().getBillingPartner(origin));
         this.getAbstractContractFieldMapper().setBillingPartnerRegistrationId(salesOrder, this.getAbstractContractFieldMapper().getBillingPartnerRegistrationId(origin));
         salesOrder.setPricingRule(
@@ -1614,14 +1635,15 @@ public class DatatypeMappers {
         CustomerContractT customerContractT,
         Lead customerContract
     ) {
-        this.getLeadFieldMapper().setAcceptedLegal(customerContract, customerContractT.isAcceptedLegal());
-        this.getLeadFieldMapper().setAcceptedMarketing(customerContract, customerContractT.isAcceptedMarketing());
-        this.getLeadFieldMapper().setAcceptedPrivateDataForwarding(customerContract, customerContractT.isAcceptedPrivateDataForwarding());
-        this.getLeadFieldMapper().setReferrer(customerContract, customerContractT.getReferrer());
-        this.getLeadFieldMapper().setContactSource(customerContract, customerContractT.getContactSource());
-        this.getLeadFieldMapper().setSalesTaxType(customerContract, customerContractT.getSalesTaxType());
-        this.getLeadFieldMapper().setContractCurrency(customerContract, customerContractT.getContractCurrency());   
-        this.getLeadFieldMapper().setNoBilling(customerContract, customerContractT.isNoBilling());
+    	LeadFieldMapper leadFieldMapper = this.getLeadFieldMapper();
+    	leadFieldMapper.setAcceptedLegal(customerContract, customerContractT.isAcceptedLegal());
+    	leadFieldMapper.setAcceptedMarketing(customerContract, customerContractT.isAcceptedMarketing());
+    	leadFieldMapper.setAcceptedPrivateDataForwarding(customerContract, customerContractT.isAcceptedPrivateDataForwarding());
+    	leadFieldMapper.setReferrer(customerContract, customerContractT.getReferrer());
+    	leadFieldMapper.setContactSource(customerContract, customerContractT.getContactSource());
+    	leadFieldMapper.setSalesTaxType(customerContract, customerContractT.getSalesTaxType());
+    	leadFieldMapper.setContractCurrency(customerContract, customerContractT.getContractCurrency());   
+    	leadFieldMapper.setNoBilling(customerContract, customerContractT.isNoBilling());
         this.getAbstractContractFieldMapper().setBillingPartner(customerContract, customerContractT.getBillingPartner());
         this.getAbstractContractFieldMapper().setBillingPartnerRegistrationId(customerContract, customerContractT.getBillingPartnerRegistrationId());        
     }

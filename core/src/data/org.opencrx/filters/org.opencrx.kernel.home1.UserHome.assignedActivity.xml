@@ -97,6 +97,18 @@
 										<void property="value">
 											<array class="java.lang.String" length="1">
 												<void index="0">
+  												<string>( 
+EXISTS (SELECT 0 FROM 
+OOCKE1_USERHOME h 
+WHERE 
+(h.object_id = vj.user_home) AND 
+( 
+(v.assigned_to = h.contact) ) AND 
+((v.disabled is null) OR (v.disabled = false)) AND 
+(v.percent_complete &lt; 100))
+)</string>
+
+<!--
 													<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
 SELECT OOCKE1_ACTIVITY.object_id FROM OOCKE1_ACTIVITY, OOCKE1_JOIN_HOMEHASASSACT, OOCKE1_USERHOME
 where (OOCKE1_JOIN_HOMEHASASSACT.assigned_activity=OOCKE1_ACTIVITY.object_id)
@@ -105,6 +117,7 @@ and ((OOCKE1_ACTIVITY.disabled is null) OR (OOCKE1_ACTIVITY.disabled = false))
 and (OOCKE1_ACTIVITY.percent_complete&lt;100)
 and (OOCKE1_ACTIVITY.assigned_to = OOCKE1_USERHOME.contact)
 )))</string>
+-->
 												</void>
 											</array>
 										</void>
@@ -165,7 +178,18 @@ and (OOCKE1_ACTIVITY.assigned_to = OOCKE1_USERHOME.contact)
 										<void property="value">
 											<array class="java.lang.String" length="1">
 												<void index="0">
-													<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
+  												<string>( 
+EXISTS (SELECT 0 FROM 
+OOCKE1_USERHOME h 
+WHERE 
+(h.object_id = vj.user_home) AND 
+( 
+(v.rep_contact = h.contact) ) AND 
+((v.disabled is null) OR (v.disabled = false)) AND 
+(v.percent_complete &lt; 100))
+)</string>
+
+<!--													<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
 SELECT OOCKE1_ACTIVITY.object_id FROM OOCKE1_ACTIVITY, OOCKE1_JOIN_HOMEHASASSACT, OOCKE1_USERHOME
 where (OOCKE1_JOIN_HOMEHASASSACT.assigned_activity=OOCKE1_ACTIVITY.object_id)
 and (vj.user_home = OOCKE1_USERHOME.object_id)
@@ -173,6 +197,7 @@ and ((OOCKE1_ACTIVITY.disabled is null) OR (OOCKE1_ACTIVITY.disabled = false))
 and (OOCKE1_ACTIVITY.percent_complete&lt;100)
 and (OOCKE1_ACTIVITY.rep_contact = OOCKE1_USERHOME.contact)
 )))</string>
+-->
 												</void>
 											</array>
 										</void>

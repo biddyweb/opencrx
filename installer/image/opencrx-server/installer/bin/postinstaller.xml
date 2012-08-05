@@ -1,0 +1,38 @@
+<project
+	name="opencrx-server-postinstaller" 
+	xmlns:antcontrib="antlib:net.sf.antcontrib"
+>
+	<target name="expand-native">
+		<exec command="unzip @@INSTALLDIR@@/installer/files/tomee-6.0.29.314.zip -d @@INSTALLDIR@@" />
+	</target>
+	<target name="expand-ant">
+		<unzip src="@@INSTALLDIR@@/installer/files/tomee-6.0.29.314.zip" dest="@@INSTALLDIR@@" />
+	</target>
+	<target name="postinstall">
+		<antcall inheritAll="true" target="${expand.target}"/>
+		<mkdir dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/maildir" />
+		<mkdir dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/airsyncdir" />
+		<delete dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/webapps/examples"/>
+		<delete dir="@@INSTALLDIR@@/apache-tomcat-6.0.29/webapps/ejb-examples"/>
+		<!-- Update conf -->
+		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/openejb.xml" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/openejb.xml.tomee"/>
+		<copy file="@@INSTALLDIR@@/installer/files/openejb.xml" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
+		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/logging.properties" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/logging.properties.tomee"/>
+		<copy file="@@INSTALLDIR@@/installer/files/logging.properties" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
+		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/tomcat-users.xml" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/tomcat-users.xml.tomee"/>
+		<copy file="@@INSTALLDIR@@/installer/files/tomcat-users.xml" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
+		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/server.xml" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf/server.xml.tomee"/>
+		<copy file="@@INSTALLDIR@@/installer/files/server.xml" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/conf"/>
+		<!-- Update lib -->
+		<copy file="@@INSTALLDIR@@/installer/files/hsqldb.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/lib"/>
+		<copy file="@@INSTALLDIR@@/installer/files/openmdx-base.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/lib"/>
+		<copy file="@@INSTALLDIR@@/installer/files/catalina-extension.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/lib"/>
+		<!-- Update bin -->
+		<move file="@@INSTALLDIR@@/apache-tomcat-6.0.29/bin/tomcat-juli.jar" tofile="@@INSTALLDIR@@/apache-tomcat-6.0.29/bin/tomcat-juli.jar.tomee"/>
+		<copy file="@@INSTALLDIR@@/installer/files/tomcat-juli.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/bin"/>
+		<!-- Update openejb/tomcat -->
+		<copy file="@@INSTALLDIR@@/installer/files/openejb-tomcat-catalina-3.1.4.jar" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/webapps/openejb/lib"/>
+		<!-- Update apps -->
+		<copy file="@@INSTALLDIR@@/installer/files/opencrx-core-CRX.ear" todir="@@INSTALLDIR@@/apache-tomcat-6.0.29/apps"/>		
+	</target>
+</project>

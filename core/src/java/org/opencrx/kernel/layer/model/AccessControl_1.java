@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.146 2010/12/10 11:42:41 wfro Exp $
+ * Name:        $Id: AccessControl_1.java,v 1.150 2011/04/01 12:28:24 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.146 $
+ * Revision:    $Revision: 1.150 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/10 11:42:41 $
+ * Date:        $Date: 2011/04/01 12:28:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -235,7 +235,7 @@ public class AccessControl_1 extends Standard_1 {
                 ((Number)parentFacade.attributeValue("accessLevelBrowse")).shortValue(),
                 AccessControl_1.this.useExtendedAccessLevelBasic
             );
-        }	            
+        }
         // allowedPrincipals == null --> global access. Do not restrict to allowed subjects
         if(memberships != null) {
         	// Optimize query
@@ -247,7 +247,7 @@ public class AccessControl_1 extends Standard_1 {
         		}
         	}
         	if(ownerFilterProperty != null) {
-        		memberships.removeAll(
+        		memberships.retainAll(
         			ownerFilterProperty.values()
         		);
         	}
@@ -336,6 +336,86 @@ public class AccessControl_1 extends Standard_1 {
 	        }
 	    }
     
+	    //-------------------------------------------------------------------------
+	    protected String getOwningUserForNewObject(
+	    	Path requestingUser,
+	    	Object_2Facade newObjectFacade,
+	    	Object_2Facade parentFacade,
+	    	SecurityContext securityContext
+	    ) throws ServiceException {
+	        String owningUser = null;
+	        // If new object is composite to user home set owning user to owning user of user home
+	        if(
+	            (newObjectFacade.getPath().size() > USER_HOME_PATH_PATTERN.size()) &&
+	            newObjectFacade.getPath().getPrefix(USER_HOME_PATH_PATTERN.size()).isLike(USER_HOME_PATH_PATTERN) &&
+	            !parentFacade.attributeValuesAsList("owner").isEmpty()
+	        ) {
+	           owningUser = (String)parentFacade.attributeValue("owner");
+	        }   
+	        // Owning user set on new object
+	        else if(!newObjectFacade.attributeValuesAsList("owningUser").isEmpty()) {
+	            owningUser = AccessControl_1.this.getQualifiedPrincipalName(
+	                (Path)newObjectFacade.attributeValue("owningUser")
+	            );
+	        }
+	        // Set requesting principal as default
+	        else {
+	            // If no user found set owner to segment administrator
+	            owningUser = newObjectFacade.attributeValuesAsList("owner").isEmpty() ? 
+	            	requestingUser == null ? 
+	            		AccessControl_1.this.getQualifiedPrincipalName(newObjectFacade.getPath(), SecurityKeys.ADMIN_PRINCIPAL) : 
+	            			AccessControl_1.this.getQualifiedPrincipalName(requestingUser) : 
+	            	(String)newObjectFacade.attributeValue("owner");
+	        }
+	        return owningUser;
+	    }
+	    
+	    // --------------------------------------------------------------------------
+	    protected Set<String> getOwningGroupsForNewObject(
+	    	CachedPrincipal requestingPrincipal,
+	    	Object_2Facade newObjectFacade,
+	    	Object_2Facade parentFacade,
+	    	SecurityContext securityContext
+	    ) throws ServiceException {
+	        Set<String> owningGroup = new HashSet<String>();
+	        if(
+	        	(newObjectFacade.getAttributeValues("owningGroup") != null) && 
+	        	!newObjectFacade.attributeValuesAsList("owningGroup").isEmpty()
+	        ) {
+	            for(Iterator<Object> i = newObjectFacade.attributeValuesAsList("owningGroup").iterator(); i.hasNext(); ) {
+	                owningGroup.add(
+	                	AccessControl_1.this.getQualifiedPrincipalName((Path)i.next())
+	                );
+	            }
+	        }
+	        else {
+	        	Path userGroup = requestingPrincipal == null ? 
+	        		null : 
+	        		securityContext.getPrimaryGroup(requestingPrincipal);
+	            owningGroup = new HashSet<String>();
+	            if(parentFacade != null) {
+	                List<String> ownersParent = new ArrayList(parentFacade.attributeValuesAsList("owner"));
+	                // Do not inherit group Users at segment-level
+	                if(parentFacade.getPath().size() == 5) {
+	                    ownersParent.remove(
+	                    	AccessControl_1.this.getQualifiedPrincipalName(newObjectFacade.getPath(), SecurityKeys.USER_GROUP_USERS)
+	                    );
+	                }
+	                if(!ownersParent.isEmpty()) {
+	                    owningGroup.addAll(
+	                        ownersParent.subList(1, ownersParent.size())
+	                    );
+	                }
+	            }
+	            owningGroup.add(
+	                userGroup == null ? 
+	                	AccessControl_1.this.getQualifiedPrincipalName(newObjectFacade.getPath(), "Unassigned") : 
+	                		AccessControl_1.this.getQualifiedPrincipalName(userGroup)
+	            );
+	        }  
+	        return owningGroup;
+	    }
+	    
 	    //-------------------------------------------------------------------------
 	    /**
 	     * Get the direct composite parent of the object with the given access path. 
@@ -496,77 +576,21 @@ public class AccessControl_1 extends Standard_1 {
 	        MappedRecord newObject = request.object();
 	        // Set owner in case of secure objects
 	        if(AccessControl_1.this.isSecureObject(newObject)) {
-	            Object_2Facade newObjectFacade;
-	            try {
-		            newObjectFacade = Object_2Facade.newInstance(newObject);
-	            }
-	            catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }            
-	            // Owning user
-		        String owningUser = null;
-	            // If new object is composite to user home set owning user to owning user of user home
-	            if(
-	                (newObjectFacade.getPath().size() > USER_HOME_PATH_PATTERN.size()) &&
-	                newObjectFacade.getPath().getPrefix(USER_HOME_PATH_PATTERN.size()).isLike(USER_HOME_PATH_PATTERN) &&
-	                !parentFacade.attributeValuesAsList("owner").isEmpty()
-	            ) {
-	               owningUser = (String)parentFacade.attributeValue("owner");
-	            }   
-	            // Owning user set on new object
-	            else if(!newObjectFacade.attributeValuesAsList("owningUser").isEmpty()) {
-		            owningUser = AccessControl_1.this.getQualifiedPrincipalName(
-	                    (Path)newObjectFacade.attributeValue("owningUser")
-	                );
-		        }
-	            // Set requesting principal as default
-		        else {
-		            // If no user found set owner to segment administrator
-		            owningUser = newObjectFacade.attributeValuesAsList("owner").isEmpty() ? 
-		            	requestingUser == null ? 
-		            		AccessControl_1.this.getQualifiedPrincipalName(newObjectFacade.getPath(), SecurityKeys.ADMIN_PRINCIPAL) : 
-		            			AccessControl_1.this.getQualifiedPrincipalName(requestingUser) : 
-		            	(String)newObjectFacade.attributeValue("owner");
-		        }
+	            Object_2Facade newObjectFacade = ResourceHelper.getObjectFacade(newObject);
+	            String owningUser = this.getOwningUserForNewObject(
+	            	requestingUser, 
+	            	newObjectFacade, 
+	            	parentFacade, 
+	            	securityContext
+	            );
 	            newObjectFacade.attributeValuesAsList("owner").clear();
-	            newObjectFacade.attributeValuesAsList("owner").add(owningUser);	
-	            // Owning group
-		        Set<Object> owningGroup = new HashSet<Object>();
-		        if(
-		        	(newObjectFacade.getAttributeValues("owningGroup") != null) && 
-		        	!newObjectFacade.attributeValuesAsList("owningGroup").isEmpty()
-		        ) {
-		            for(Iterator<Object> i = newObjectFacade.attributeValuesAsList("owningGroup").iterator(); i.hasNext(); ) {
-		                owningGroup.add(
-		                	AccessControl_1.this.getQualifiedPrincipalName((Path)i.next())
-		                );
-		            }
-		        }
-		        else {
-		        	Path userGroup = requestingPrincipal == null ? 
-		        		null : 
-		        		securityContext.getPrimaryGroup(requestingPrincipal);
-	                owningGroup = new HashSet<Object>();
-	                if(parent != null) {
-	                    List<Object> ownersParent = new ArrayList<Object>(parentFacade.attributeValuesAsList("owner"));
-	                    // Do not inherit group Users at segment-level
-	                    if(parentFacade.getPath().size() == 5) {
-		                    ownersParent.remove(
-		                    	AccessControl_1.this.getQualifiedPrincipalName(newObjectFacade.getPath(), SecurityKeys.USER_GROUP_USERS)
-		                    );
-	                    }
-	                    if(!ownersParent.isEmpty()) {
-	                        owningGroup.addAll(
-	                            ownersParent.subList(1, ownersParent.size())
-	                        );
-	                    }
-	                }
-		            owningGroup.add(
-	                    userGroup == null ? 
-	                    	AccessControl_1.this.getQualifiedPrincipalName(newObjectFacade.getPath(), "Unassigned") : 
-	                    		AccessControl_1.this.getQualifiedPrincipalName(userGroup)
-		            );
-		        }
+	            newObjectFacade.attributeValuesAsList("owner").add(owningUser);		            
+		        Set<String> owningGroup = this.getOwningGroupsForNewObject(
+		        	requestingPrincipal, 
+		        	newObjectFacade, 
+		        	parentFacade, 
+		        	securityContext
+		        );
 		        newObjectFacade.attributeValuesAsList("owner").addAll(owningGroup);            
 		        newObjectFacade.getValue().keySet().remove("owningUser");
 		        newObjectFacade.getValue().keySet().remove("owningGroup");
@@ -743,20 +767,10 @@ public class AccessControl_1 extends Standard_1 {
 	                header,
 	                request.path()
 	            );
-		        Object_2Facade parentFacade;
-	            try {
-		            parentFacade = Object_2Facade.newInstance(parent);
-	            } catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
+		        Object_2Facade parentFacade = ResourceHelper.getObjectFacade(parent);
 		        ModelElement_1_0 referencedType = this.getModel().getTypes(request.path())[2];
 		        if(AccessControl_1.this.isSecureObject(referencedType) && AccessControl_1.this.isSecureObject(parent)) {
-		        	Object_2Facade objectFacade;
-		        	try {
-		        		objectFacade = Object_2Facade.newInstance(reply.getObject());
-		        	} catch(ResourceException e) {
-		        		throw new ServiceException(e);
-		        	}
+		        	Object_2Facade objectFacade = ResourceHelper.getObjectFacade(reply.getObject());
 		        	boolean hasReadAccess = AccessControl_1.this.hasReadAccess(
 		        		objectFacade, 
 		        		parentFacade, 

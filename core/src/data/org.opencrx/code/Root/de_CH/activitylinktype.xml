@@ -92,6 +92,28 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>repliziert von</_item>
+                            </shortText>
+                            <longText>
+                              <_item>repliziert von</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="set">
+													<_object>
+														<shortText>
+															<_item>repliziert von (verschleiert)</_item>
+														</shortText>
+														<longText>
+															<_item>repliziert von (verschleiert)</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
                           <_object>
                             <shortText>
@@ -169,6 +191,28 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="93" _operation="set">
+                          <_object>
+                            <shortText>
+                              <_item>ist Original von</_item>
+                            </shortText>
+                            <longText>
+                              <_item>ist Original von</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="92" _operation="set">
+													<_object>
+														<shortText>
+															<_item>ist Original von (verschleiert)</_item>
+														</shortText>
+														<longText>
+															<_item>ist Original von (verschleiert)</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
                       </entry>
                     </_content>
                   </org.opencrx.kernel.code1.CodeValueContainer>

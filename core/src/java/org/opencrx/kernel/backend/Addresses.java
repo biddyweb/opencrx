@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.41 2010/12/13 09:18:25 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.44 2011/01/07 14:11:02 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.41 $
+ * Revision:    $Revision: 1.44 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/13 09:18:25 $
+ * Date:        $Date: 2011/01/07 14:11:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -120,10 +120,10 @@ public class Addresses extends AbstractImpl {
     public short mapToPostalCountryCode(    	
         String country,
         org.opencrx.kernel.code1.jmi1.Segment codeSegment
-    ) throws ServiceException {
+    ) throws ServiceException {    	
     	country = country.toUpperCase();
     	for(Entry<String,Short> entry: POSTAL_COUNTRIES_BY_TEXT.entrySet()) {
-    		if(entry.getKey().toUpperCase().startsWith(country)) {
+    		if(entry.getKey().toUpperCase().indexOf(country) >= 0) {
     			return entry.getValue().shortValue();
     		}
     	}
@@ -533,6 +533,12 @@ public class Addresses extends AbstractImpl {
 		POSTAL_COUNTRIES_BY_CODE.put((short)891, "Yugoslavia [YU]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)894, "Zambia [ZM]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)716, "Zimbabwe [ZW]");
+		for(Map.Entry<Short,String> entry: POSTAL_COUNTRIES_BY_CODE.entrySet()) {
+			POSTAL_COUNTRIES_BY_TEXT.put(
+				entry.getValue(),
+				entry.getKey()
+			);
+		}
 		
 		PHONE_COUNTRIES.put((short)0, 0);
 		PHONE_COUNTRIES.put((short)4, 93);

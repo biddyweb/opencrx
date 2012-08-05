@@ -484,6 +484,7 @@
 										<_object>
 											<active>true</active>
 											<filterable>true</filterable>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Assigned to</_item>
 											</toolTip>
@@ -803,6 +804,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Reporting account</_item>
 											</toolTip>
@@ -820,6 +822,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingContact">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Reporting contact</_item>
 											</toolTip>

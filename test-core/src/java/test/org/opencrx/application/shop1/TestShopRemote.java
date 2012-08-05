@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestShopRemote.java,v 1.3 2010/12/22 08:53:31 wfro Exp $
+ * Name:        $Id: TestShopRemote.java,v 1.5 2011/02/02 16:30:56 wfro Exp $
  * Description: TestShop
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/22 08:53:31 $
+ * Date:        $Date: 2011/02/02 16:30:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,28 +55,14 @@
  */
 package test.org.opencrx.application.shop1;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
-import javax.naming.spi.NamingManager;
-import javax.resource.cci.ConnectionFactory;
 import javax.servlet.ServletException;
 
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
-import org.openmdx.application.rest.http.SimplePort;
-import org.openmdx.application.rest.spi.EntityManagerProxyFactory_2;
-import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.persistence.cci.ConfigurableProperty;
-import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
-import org.openmdx.base.transaction.TransactionAttributeType;
-import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 
 @RunWith(Suite.class)
 @SuiteClasses(
@@ -94,45 +80,12 @@ public class TestShopRemote extends TestShop {
     @BeforeClass
     public static void initialize(
     ) throws NamingException, ServiceException, ServletException {
-        if(!NamingManager.hasInitialContextFactoryBuilder()) {
-            NonManagedInitialContextFactoryBuilder.install(null);
-        }
-    	SimplePort port = new SimplePort();
-	    //port.setMimeType("text/xml");
-    	port.setMimeType("application/vnd.openmdx.wbxml");
-    	port.setUserName("admin-Standard");
-    	port.setPassword("admin-Standard");
-    	port.setUri("http://127.0.0.1:8080/opencrx-rest-CRX/");
-        ConnectionFactory connectionFactory = new ConnectionFactoryAdapter(
-        	port,
-            true, // supportsLocalTransactionDemarcation
-            TransactionAttributeType.NEVER
-        );
-        Map<String,Object> dataManagerProxyConfiguration = new HashMap<String,Object>();
-        dataManagerProxyConfiguration.put(
-            ConfigurableProperty.ConnectionFactory.qualifiedName(),
-            connectionFactory
-        );
-        dataManagerProxyConfiguration.put(
-            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-            EntityManagerProxyFactory_2.class.getName()
-        );    
-        PersistenceManagerFactory outboundConnectionFactory = JDOHelper.getPersistenceManagerFactory(
-            dataManagerProxyConfiguration
-        );
-
-        Map<String,Object> entityManagerConfiguration = new HashMap<String,Object>();
-        entityManagerConfiguration.put(
-            ConfigurableProperty.ConnectionFactory.qualifiedName(),
-            outboundConnectionFactory
-        );
-        entityManagerConfiguration.put(
-            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-            EntityManagerFactory_1.class.getName()
-        );    
-        entityManagerFactory = JDOHelper.getPersistenceManagerFactory(
-            entityManagerConfiguration
-        );
+    	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactoryProxy(
+    		"http://127.0.0.1:8080/opencrx-rest-CRX/", 
+    		"admin-Standard", 
+    		"admin-Standard", 
+    		"application/vnd.openmdx.wbxml" // text/xml
+    	);
     }
     
     //-----------------------------------------------------------------------

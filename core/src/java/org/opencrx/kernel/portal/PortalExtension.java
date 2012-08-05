@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.103 2010/12/07 12:54:25 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.104 2011/03/16 15:34:27 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.103 $
+ * Revision:    $Revision: 1.104 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/07 12:54:25 $
+ * Date:        $Date: 2011/03/16 15:34:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1282,10 +1282,24 @@ public class PortalExtension
             result
         );
     }
+    
+	//-------------------------------------------------------------------------
+    @Override
+    public String getNewUserRole(
+    	ApplicationContext app, 
+    	Path requestedObjectIdentity
+    ) {
+    	// Do not change user role in case an object (Principals, Subjects, ...) in segment Root is requested
+    	if(requestedObjectIdentity != null && "Root".equals(requestedObjectIdentity.get(4))) {
+    		return app.getCurrentUserRole();
+    	} else {
+    		return super.getNewUserRole(app, requestedObjectIdentity);
+    	}
+    }
 
-    //-------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
     private static final long serialVersionUID = 3761691203816992816L;
-
+    
     private static final Set<String> CLASSES_WITH_USER_DEFINABLE_QUALIFER =
         new HashSet<String>(Arrays.asList(
             new String[]{

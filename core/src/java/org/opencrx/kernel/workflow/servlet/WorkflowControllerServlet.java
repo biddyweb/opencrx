@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.60 2009/12/29 10:37:47 wfro Exp $
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.61 2010/12/31 14:35:37 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.60 $
+ * Revision:    $Revision: 1.61 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/29 10:37:47 $
+ * Date:        $Date: 2010/12/31 14:35:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -286,7 +286,7 @@ public class WorkflowControllerServlet
             org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm); 
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
+                    new Path("xri://@openmdx*org.opencrx.kernel.admin1").getDescendant("provider", providerName, "segment", "Root")
                 );
             try {
                 this.componentConfiguration = adminSegment.getConfiguration(

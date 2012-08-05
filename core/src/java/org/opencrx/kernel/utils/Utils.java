@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.53 2010/10/15 09:42:52 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.54 2011/02/02 16:31:44 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.53 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/15 09:42:52 $
+ * Date:        $Date: 2011/02/02 16:31:44 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,6 +74,8 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
+import javax.naming.spi.NamingManager;
+import javax.resource.cci.ConnectionFactory;
 
 import org.oasisopen.jmi1.RefContainer;
 import org.opencrx.kernel.account1.jmi1.Account1Package;
@@ -90,6 +92,8 @@ import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
 import org.openmdx.application.rest.ejb.DataManager_2ProxyFactory;
+import org.openmdx.application.rest.http.SimplePort;
+import org.openmdx.application.rest.spi.EntityManagerProxyFactory_2;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
@@ -99,9 +103,12 @@ import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.persistence.cci.ConfigurableProperty;
+import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
 import org.openmdx.base.text.conversion.UUIDConversion;
+import org.openmdx.base.transaction.TransactionAttributeType;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.attribute.DateValue;
 
@@ -126,15 +133,61 @@ public abstract class Utils {
     ) throws NamingException, ServiceException {
         return JDOHelper.getPersistenceManagerFactory("EntityManagerFactory");
     }
+
+    //-----------------------------------------------------------------------
+    public static PersistenceManagerFactory getPersistenceManagerFactoryProxy(
+    	String url,
+    	String userName,
+    	String password,
+    	String mimeType
+    ) throws NamingException, ServiceException {
+        if(!NamingManager.hasInitialContextFactoryBuilder()) {
+            NonManagedInitialContextFactoryBuilder.install(null);
+        }
+    	SimplePort port = new SimplePort();
+    	port.setMimeType(mimeType == null ? "application/vnd.openmdx.wbxml" : mimeType);
+    	port.setUserName(userName);
+    	port.setPassword(password);
+    	port.setConnectionURL(url);
+        ConnectionFactory connectionFactory = new ConnectionFactoryAdapter(
+        	port,
+            true, // supportsLocalTransactionDemarcation
+            TransactionAttributeType.NEVER
+        );
+        Map<String,Object> dataManagerProxyConfiguration = new HashMap<String,Object>();
+        dataManagerProxyConfiguration.put(
+            ConfigurableProperty.ConnectionFactory.qualifiedName(),
+            connectionFactory
+        );
+        dataManagerProxyConfiguration.put(
+            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
+            EntityManagerProxyFactory_2.class.getName()
+        );    
+        PersistenceManagerFactory outboundConnectionFactory = JDOHelper.getPersistenceManagerFactory(
+            dataManagerProxyConfiguration
+        );
+
+        Map<String,Object> entityManagerConfiguration = new HashMap<String,Object>();
+        entityManagerConfiguration.put(
+            ConfigurableProperty.ConnectionFactory.qualifiedName(),
+            outboundConnectionFactory
+        );
+        entityManagerConfiguration.put(
+            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
+            EntityManagerFactory_1.class.getName()
+        );    
+        return JDOHelper.getPersistenceManagerFactory(entityManagerConfiguration);        
+    }
     
     //-----------------------------------------------------------------------
-    public static PersistenceManagerFactory getPersistenceManagerProxyFactory(
+    public static PersistenceManagerFactory getPersistenceManagerFactoryProxy(
+    	String contextName
     ) throws NamingException, ServiceException {    	
     	// Data manager
         Map<String,Object> dataManagerConfiguration = new HashMap<String,Object>();
         dataManagerConfiguration.put(
             Constants.PROPERTY_CONNECTION_FACTORY_NAME,
-            "java:comp/env/ejb/EntityManagerFactory"
+            contextName == null ? "java:comp/env/ejb/EntityManagerFactory" : contextName
         );
         dataManagerConfiguration.put(
             Constants.PROPERTY_PERSISTENCE_MANAGER_FACTORY_CLASS,
@@ -155,7 +208,7 @@ public abstract class Utils {
         );        
         return JDOHelper.getPersistenceManagerFactory(entityManagerConfiguration);
     }
-        
+
     //-----------------------------------------------------------------------
     public static javax.jmi.reflect.RefPackage getJmiPackage(
         PersistenceManager pm,

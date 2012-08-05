@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.25 2010/04/27 17:02:44 wfro Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.26 2011/04/29 09:03:19 cmu Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.26 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 17:02:44 $
+ * Date:        $Date: 2011/04/29 09:03:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,6 +59,7 @@ java.util.*,
 java.io.*,
 java.text.*,
 org.openmdx.kernel.id.cci.*,
+org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
@@ -98,17 +99,8 @@ org.openmdx.kernel.id.*
 	}
 	catch(FileUploadException e) {
 	  uploadFailed = true;
-	  SysLog.warning("cannot upload file", e.getMessage());
-%>
-      <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
-        <table>
-          <tr>
-            <td style="padding:5px;"><b>ERROR</b>:</td>
-            <td>cannot upload file - <%= e.getMessage() %></td>
-          </tr>
-        </table>
-      </div>
-<%
+	  SysLog.warning("first try to upload file failed", e.getMessage());
+	  new ServiceException(e).log();
 	}
 	try {
       if(uploadFailed) {
@@ -164,6 +156,7 @@ org.openmdx.kernel.id.*
 		}
 		catch(FileUploadException e) {
 			SysLog.warning("cannot upload file", e.getMessage());
+			new ServiceException(e).log();
 %>
       <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
         <table>
@@ -423,21 +416,41 @@ org.openmdx.kernel.id.*
 
             // adjust security
             // remove all owning groups
-            for (
-              Iterator i = document.getOwningGroup().iterator();
-              i.hasNext();
-            ) {
-              org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
-                  (org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-      			  org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = basePkg.createModifyOwningGroupParams(
-        				currentPrincipalGroup,
-        				(short)1
-      			  );
-              document.removeOwningGroup(modifyOwningGroupParams);
+			      List owningGroupXri = new ArrayList();
+            try {
+				        for (
+				          Iterator i = document.getOwningGroup().iterator();
+				          i.hasNext();
+				        ) {
+				          org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
+				              (org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
+				          owningGroupXri.add(currentPrincipalGroup.refMofId());
+				        }
+            } catch (Exception e) {
+          	  new ServiceException(e).log();
             }
-            pm.currentTransaction().commit();
-            pm.currentTransaction().begin();
-
+            try {
+				 				for(
+									Iterator i = owningGroupXri.iterator();
+									i.hasNext();
+								) {
+									org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
+										(org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(new Path((String)i.next()));
+				  			  org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = basePkg.createModifyOwningGroupParams(
+				    				currentPrincipalGroup,
+				    				(short)1
+				  			  );
+				          document.removeOwningGroup(modifyOwningGroupParams);
+				        }
+				        pm.currentTransaction().commit();
+            } catch (Exception e) {
+          	  new ServiceException(e).log();
+              try {
+                  pm.currentTransaction().rollback();
+              } catch(Exception e1) {}
+            }
+				        
+				    pm.currentTransaction().begin();
             // add owningGroup00
             if ((owningGroup00 != null) && (owningGroup00.length() > 0)) {
               try {
@@ -449,10 +462,13 @@ org.openmdx.kernel.id.*
           			);
                 document.addOwningGroup(modifyOwningGroupParams);
                 pm.currentTransaction().commit();
-                pm.currentTransaction().begin();
               } catch (Exception e) {
-            	  SysLog.warning(e.getMessage(), e.getCause());
+            	  new ServiceException(e).log();
+		            try {
+		                pm.currentTransaction().rollback();
+		            } catch(Exception e1) {}
               }
+	            pm.currentTransaction().begin();
             }
 
             // add owningGroup01
@@ -466,8 +482,13 @@ org.openmdx.kernel.id.*
           			);
                 document.addOwningGroup(modifyOwningGroupParams);
                 pm.currentTransaction().commit();
-                pm.currentTransaction().begin();
-              } catch (Exception e) {}
+              } catch (Exception e) {
+            	  new ServiceException(e).log();
+		            try {
+		                pm.currentTransaction().rollback();
+		            } catch(Exception e1) {}
+              }
+              pm.currentTransaction().begin();
             }
 
             // add owningGroup02
@@ -481,12 +502,16 @@ org.openmdx.kernel.id.*
           			);
                 document.addOwningGroup(modifyOwningGroupParams);
                 pm.currentTransaction().commit();
-                pm.currentTransaction().begin();
-              } catch (Exception e) {}
+              } catch (Exception e) {
+            	  new ServiceException(e).log();
+		            try {
+		                pm.currentTransaction().rollback();
+		            } catch(Exception e1) {}
+              }
+		          pm.currentTransaction().begin();
             }
           }
-
-					pm.currentTransaction().commit();
+          pm.currentTransaction().commit();
 			    successfullyCreated = true;
   			}
   			catch(Exception e) {
@@ -543,7 +568,7 @@ org.openmdx.kernel.id.*
 	            <input type="text" class="valueL" name="name" maxlength="50" tabindex="100" value="<%= name %>" />
 	          </td>
 	          <td class="addon"></td>
-          	<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENTFOLDER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
+          	<td class="label"><span class="nw"><%= app.getLabel(DOCUMENTFOLDER_CLASS) %>:</span></td>
 <%
             String lookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
             Action findDocumentFolderObjectAction = Action.getFindObjectAction(DOCUMENT_CLASS + ":folder", lookupId);

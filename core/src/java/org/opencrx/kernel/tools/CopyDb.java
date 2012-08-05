@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.48 2010/11/03 15:47:19 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.49 2011/01/19 15:40:48 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.48 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/03 15:47:19 $
+ * Date:        $Date: 2011/01/19 15:40:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -228,126 +228,130 @@ public class CopyDb {
                 currentStatement = "SELECT * FROM " + namespaceSource[0] + "_" + dbObject + (useSuffix ? namespaceSource[1] : "")
             );
             s.executeQuery();
-            ResultSet rs = s.getResultSet(); 
-            ResultSetMetaData rsm = rs.getMetaData();
-            FastResultSet frs = new FastResultSet(rs);
-            int nRows = 0;
-            
-            while(frs.next()) {
-                // Read row from source and prepare INSERT statement
-                String statement = "INSERT INTO " + namespaceTarget[0] + "_" + dbObject + (useSuffix ? namespaceTarget[1] : "") + " ";
-                List<Object> statementParameters = new ArrayList<Object>();
-                List<String> processTargetColumnNames = new ArrayList<String>();
-                for(
-                    int j =  0;
-                    j < rsm.getColumnCount();
-                    j++
-                ) {
-                    String columnName = rsm.getColumnName(j+1);                    
-                    if(frs.getObject(columnName) != null) {
-                        String mappedColumnName = CopyDb.mapColumnName(
-                            connTarget,
-                            dbObject, 
-                            columnName 
-                        );
-                        if(mappedColumnName != null) {
-                            statement += (statementParameters.size() == 0 ? " (" : ", ") + mappedColumnName;
-                            processTargetColumnNames.add(mappedColumnName);
-                            if(frs.getObject(columnName) instanceof java.sql.Clob) {
-                                try {
-                                    statementParameters.add(
-                                    	CopyDb.getStringFromClob((java.sql.Clob)frs.getObject(columnName))
-                                    );
-                                }
-                                catch(Exception e) {
-                                    System.out.println("Reading Clob failed. Reason: " + e.getMessage());
-                                    System.out.println("statement=" + statement);
-                                    System.out.println("parameters=" + statementParameters);
-                                }
-                            }
-                            else if(frs.getObject(columnName) instanceof java.sql.Blob) {
-                                try {
-                                    statementParameters.add(
-                                    	CopyDb.getBytesFromBlob((java.sql.Blob)frs.getObject(columnName))
-                                    );
-                                }
-                                catch(Exception e) {
-                                    System.out.println("Reading Blob failed. Reason: " + e.getMessage());
-                                    System.out.println("statement=" + statement);
-                                    System.out.println("parameters=" + statementParameters);
-                                }
-                            }
-                            else {
-                                statementParameters.add(
-                                	CopyDb.mapColumnValue(
-                                        connSource,
-                                        dbObject,
-                                        columnName,
-                                        frs.getObject(columnName),
-                                        providerNameSource,
-                                        providerNameTarget
-                                    )
-                                );
-                            }
-                        }
-                    }
-                }
-                statement += ") VALUES (";
-                for(int j = 0; j < statementParameters.size(); j++) {
-                    statement += j == 0 ? "?" : ", ?";
-                }
-                statement += ")";
-                
-                // Add row to target
-                try {
-                    PreparedStatement t = connTarget.prepareStatement(
-                        currentStatement = statement
-                    );
-                    for(int j = 0; j < statementParameters.size(); j++) {
-                        Object parameter = statementParameters.get(j);                        
-                        if("oracle.sql.TIMESTAMP".equals(parameter.getClass().getName())) {
-                            Method timestampValueMethod = parameter.getClass().getMethod("timestampValue", new Class[]{});
-                            parameter = timestampValueMethod.invoke(
-                                parameter, 
-                                new Object[]{}
-                            );
-                        }
-                        if(parameter instanceof java.sql.Timestamp) {
-                            t.setTimestamp(
-                                j+1, 
-                                (java.sql.Timestamp)parameter
-                            );
-                        }
-                        else if(parameter instanceof java.sql.Date) {
-                            t.setDate(
-                                j+1, 
-                                (java.sql.Date)parameter
-                            );
-                        }
-                        else {
-                            db.setPreparedStatementValue(
-                                connTarget,
-                                t,
-                                j+1,
-                                parameter
-                            );
-                        }
-                    }
-                    t.executeUpdate();
-                    t.close();                  
-                }
-                catch(Exception e) {
-                    new ServiceException(e).log();
-                    System.out.println("Insert failed. Reason: " + e.getMessage());
-                    System.out.println("statement=" + statement);
-                    System.out.println("parameters=" + statementParameters);
-                }
-                nRows++;
-                if(nRows % 1000 == 0) {
-                    System.out.println(nRows + " rows copied");
-                }
+            ResultSet rs = s.getResultSet();
+            if(rs != null) {
+	            ResultSetMetaData rsm = rs.getMetaData();
+	            FastResultSet frs = new FastResultSet(rs);
+	            int nRows = 0;
+	            
+	            while(frs.next()) {
+	                // Read row from source and prepare INSERT statement
+	                String statement = "INSERT INTO " + namespaceTarget[0] + "_" + dbObject + (useSuffix ? namespaceTarget[1] : "") + " ";
+	                List<Object> statementParameters = new ArrayList<Object>();
+	                List<String> processTargetColumnNames = new ArrayList<String>();
+	                for(
+	                    int j =  0;
+	                    j < rsm.getColumnCount();
+	                    j++
+	                ) {
+	                    String columnName = rsm.getColumnName(j+1);                    
+	                    if(frs.getObject(columnName) != null) {
+	                        String mappedColumnName = CopyDb.mapColumnName(
+	                            connTarget,
+	                            dbObject, 
+	                            columnName 
+	                        );
+	                        if(mappedColumnName != null) {
+	                            statement += (statementParameters.size() == 0 ? " (" : ", ") + mappedColumnName;
+	                            processTargetColumnNames.add(mappedColumnName);
+	                            if(frs.getObject(columnName) instanceof java.sql.Clob) {
+	                                try {
+	                                    statementParameters.add(
+	                                    	CopyDb.getStringFromClob((java.sql.Clob)frs.getObject(columnName))
+	                                    );
+	                                }
+	                                catch(Exception e) {
+	                                    System.out.println("Reading Clob failed. Reason: " + e.getMessage());
+	                                    System.out.println("statement=" + statement);
+	                                    System.out.println("parameters=" + statementParameters);
+	                                }
+	                            }
+	                            else if(frs.getObject(columnName) instanceof java.sql.Blob) {
+	                                try {
+	                                    statementParameters.add(
+	                                    	CopyDb.getBytesFromBlob((java.sql.Blob)frs.getObject(columnName))
+	                                    );
+	                                }
+	                                catch(Exception e) {
+	                                    System.out.println("Reading Blob failed. Reason: " + e.getMessage());
+	                                    System.out.println("statement=" + statement);
+	                                    System.out.println("parameters=" + statementParameters);
+	                                }
+	                            }
+	                            else {
+	                                statementParameters.add(
+	                                	CopyDb.mapColumnValue(
+	                                        connSource,
+	                                        dbObject,
+	                                        columnName,
+	                                        frs.getObject(columnName),
+	                                        providerNameSource,
+	                                        providerNameTarget
+	                                    )
+	                                );
+	                            }
+	                        }
+	                    }
+	                }
+	                statement += ") VALUES (";
+	                for(int j = 0; j < statementParameters.size(); j++) {
+	                    statement += j == 0 ? "?" : ", ?";
+	                }
+	                statement += ")";
+	                
+	                // Add row to target
+	                try {
+	                    PreparedStatement t = connTarget.prepareStatement(
+	                        currentStatement = statement
+	                    );
+	                    for(int j = 0; j < statementParameters.size(); j++) {
+	                        Object parameter = statementParameters.get(j);                        
+	                        if("oracle.sql.TIMESTAMP".equals(parameter.getClass().getName())) {
+	                            Method timestampValueMethod = parameter.getClass().getMethod("timestampValue", new Class[]{});
+	                            parameter = timestampValueMethod.invoke(
+	                                parameter, 
+	                                new Object[]{}
+	                            );
+	                        }
+	                        if(parameter instanceof java.sql.Timestamp) {
+	                            t.setTimestamp(
+	                                j+1, 
+	                                (java.sql.Timestamp)parameter
+	                            );
+	                        }
+	                        else if(parameter instanceof java.sql.Date) {
+	                            t.setDate(
+	                                j+1, 
+	                                (java.sql.Date)parameter
+	                            );
+	                        }
+	                        else {
+	                            db.setPreparedStatementValue(
+	                                connTarget,
+	                                t,
+	                                j+1,
+	                                parameter
+	                            );
+	                        }
+	                    }
+	                    t.executeUpdate();
+	                    t.close();                  
+	                }
+	                catch(Exception e) {
+	                    new ServiceException(e).log();
+	                    System.out.println("Insert failed. Reason: " + e.getMessage());
+	                    System.out.println("statement=" + statement);
+	                    System.out.println("parameters=" + statementParameters);
+	                }
+	                nRows++;
+	                if(nRows % 1000 == 0) {
+	                    System.out.println(nRows + " rows copied");
+	                }
+	            }	          
+	            rs.close();
+            } else {
+                System.out.println("Did not copy table (result set is null). Statement: " + currentStatement);
             }
-            rs.close();
             s.close();
         }
         catch(Exception e) {

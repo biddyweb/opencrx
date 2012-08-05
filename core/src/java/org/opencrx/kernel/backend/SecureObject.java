@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.29 2010/03/03 10:10:11 wfro Exp $
+ * Name:        $Id: SecureObject.java,v 1.30 2011/03/08 23:25:57 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.29 $
+ * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/03 10:10:11 $
+ * Date:        $Date: 2011/03/08 23:25:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -246,7 +246,7 @@ public class SecureObject extends AbstractImpl {
         String segmentName
     ) {
         return (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
-            new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + providerName + "/segment/Root/realm/" + segmentName)
+            new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName)
         );
     }
 

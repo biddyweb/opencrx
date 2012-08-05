@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: GetItemEstimateHandler.java,v 1.13 2010/08/14 14:37:58 wfro Exp $
+ * Name:        $Id: GetItemEstimateHandler.java,v 1.14 2011/02/06 15:09:41 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/14 14:37:58 $
+ * Date:        $Date: 2011/02/06 15:09:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -121,8 +121,10 @@ public class GetItemEstimateHandler extends AbstractServerHandler {
 						excludes
 					);
 					count = getNewDataItemsResult.getDataItems().size();
-					for(SyncDataItem dataItem: getNewDataItemsResult.getDataItems()) {
-						excludes.add(dataItem.getServerId());
+					for(List<SyncDataItem> dataItems: getNewDataItemsResult.getDataItems().values()) {
+						for(SyncDataItem dataItem: dataItems) {
+							excludes.add(dataItem.getServerId());
+						}
 					}
 					if(count < MAX_ESTIMATE_COUNT) {
 						collection.setSyncKey(getNewDataItemsResult.getSyncKey());

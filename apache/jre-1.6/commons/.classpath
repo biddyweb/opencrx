@@ -7,5 +7,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-el.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-lang.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-httpclient.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

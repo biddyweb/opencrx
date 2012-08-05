@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SyncHandler.java,v 1.47 2010/10/22 16:15:05 wfro Exp $
+ * Name:        $Id: SyncHandler.java,v 1.51 2011/03/04 16:28:00 wfro Exp $
  * Description: AirSync Client SyncHandler
- * Revision:    $Revision: 1.47 $
+ * Revision:    $Revision: 1.51 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/22 16:15:05 $
+ * Date:        $Date: 2011/03/04 16:28:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -146,7 +147,8 @@ public class SyncHandler extends AbstractClientHandler {
 						String syncKeyClient = folder.getSyncKeyClient();
 						List<SyncDataItem> changedDataItems = null;
 						List<String> deletedItemIds = null;
-						if(folder.getSyncKeyServer() != null) {			
+						// Send changed items only if not sync init
+						if(folder.getSyncKeyServer() != null && !folder.getSyncKeyServer().isEmpty() && !"0".equals(folder.getSyncKeyServer())) {
 							changedDataItems = new ArrayList<SyncDataItem>();
 					    	// Increment folder generation in case of initial sync. This 
 					    	// migrates the clientId -> serverId mappings to the new generation
@@ -162,7 +164,8 @@ public class SyncHandler extends AbstractClientHandler {
 					    	clientCollection.setCollectionId(folderId);
 					    	clientCollection.setSyncKey(syncKeyClient);					    	
 					    	clientCollection.setDataType(collectionType);					    	
-					    	Set<String> excludes = new HashSet<String>();					    	
+					    	Set<String> excludes = new HashSet<String>();
+							logger.log(Level.FINE, "Get new items for client collection {0} and syncKey {1}", new String[]{clientCollection.getCollectionId(), syncKeyClient});					    	
 					    	GetChangedDataItemsResult getNewDataItemsResult = backend.getChangedDataItems(
 					    		requestContext,
 					    		profileName,
@@ -172,35 +175,48 @@ public class SyncHandler extends AbstractClientHandler {
 					    		SyncDataItem.State.NEW,
 					    		excludes
 					    	);
-					    	changedDataItems.addAll(getNewDataItemsResult.getDataItems());
-					    	syncKeyClient = getNewDataItemsResult.getSyncKey();
-					    	for(SyncDataItem dataItem: getNewDataItemsResult.getDataItems()) {
-					    		excludes.add(dataItem.getServerId());
+					    	for(List<SyncDataItem> dataItems: getNewDataItemsResult.getDataItems().values()) {
+						    	for(SyncDataItem dataItem: dataItems) {
+						    		excludes.add(dataItem.getServerId());
+						    	}
 					    	}
-					    	if(!getNewDataItemsResult.hasMore()) {
-								// Set temporarily to syncKeyClient for querying modified items
-								String tmpSyncKey = clientCollection.getSyncKey();					    		
-					    		clientCollection.setSyncKey(syncKeyClient);
-						    	GetChangedDataItemsResult getChangedDataItemsResult = backend.getChangedDataItems(
-						    		requestContext,
-						    		profileName,
-						    		clientCollection,
-						    		false, // noData
-						    		this.batchSize, // maxItems
-						    		SyncDataItem.State.MODIFIED,
-						    		excludes
-						    	);
-						    	clientCollection.setSyncKey(tmpSyncKey);
-						    	changedDataItems.addAll(getChangedDataItemsResult.getDataItems());
-						    	syncKeyClient = getChangedDataItemsResult.getSyncKey();						    	
+							logger.log(Level.FINE, "Get changed items for client collection {0} and syncKey {1}", new String[]{clientCollection.getCollectionId(), syncKeyClient});					    	
+					    	GetChangedDataItemsResult getChangedDataItemsResult = backend.getChangedDataItems(
+					    		requestContext,
+					    		profileName,
+					    		clientCollection,
+					    		false, // noData
+					    		this.batchSize, // maxItems
+					    		SyncDataItem.State.MODIFIED,
+					    		excludes
+					    	);
+					    	syncKeyClient = getNewDataItemsResult.getDataItems().isEmpty() ?
+					    		getChangedDataItemsResult.getSyncKey() :
+					    			getChangedDataItemsResult.getDataItems().isEmpty() ?
+					    				getNewDataItemsResult.getSyncKey() :
+					    					getNewDataItemsResult.getSyncKey().compareTo(getChangedDataItemsResult.getSyncKey()) < 0 ?
+					    						getNewDataItemsResult.getSyncKey() :
+					    							getChangedDataItemsResult.getSyncKey();
+					    	// Add new items to changedDataItems with syncKey <= syncKeyClient
+					    	for(Map.Entry<String,List<SyncDataItem>> entries: getNewDataItemsResult.getDataItems().entrySet()) {
+					    		if(entries.getKey().compareTo(syncKeyClient) <= 0) {
+					    			changedDataItems.addAll(entries.getValue());
+					    		}
 					    	}
+					    	// Add changed items to changedDataItems with syncKey <= syncKeyClient
+					    	for(Map.Entry<String,List<SyncDataItem>> entries: getChangedDataItemsResult.getDataItems().entrySet()) {
+					    		if(entries.getKey().compareTo(syncKeyClient) <= 0) {
+					    			changedDataItems.addAll(entries.getValue());
+					    		}
+					    	}
+					    	logger.log(Level.FINE, "Next SyncKey.Client is {0}", syncKeyClient);					    	
 					    	deletedItemIds = backend.getDeletedDataItems(
 					    		requestContext,
 					    		profileName,
 					    		clientCollection,
 					    		syncKeyClient
 					    	);
-					    	// If nothing to change then delete items of old generations
+					    	// If nothing is new and changed then delete items of old generations
 					    	if(changedDataItems.isEmpty()) {
 					    		for(ClientProfile.Folder.ItemIdMapping mapping: itemIdMappings.getOldMappings()) {	
 					    			deletedItemIds.add(
@@ -209,6 +225,7 @@ public class SyncHandler extends AbstractClientHandler {
 					    		}
 					    	}
 						}						
+						logger.log(Level.FINE, "Number of changed data items is {0}", (changedDataItems == null ? 0 : changedDataItems.size()));					    	
 						// In case the size of changedDataItems is greater than the batch 
 						// size we have to send the changes in batches. Some servers such
 						// as MS Exchange may otherwise reject the request if it is too large
@@ -241,9 +258,10 @@ public class SyncHandler extends AbstractClientHandler {
 							org.w3c.dom.Element eCollections = DOMUtils.createElement(eRoot, null, "Collections");
 							org.w3c.dom.Element eCollection = DOMUtils.createElement(eCollections, null, "Collection");
 							DOMUtils.createElementAndText(eCollection, null, "Class", collectionType.toString());
-							DOMUtils.createElementAndText(eCollection, null, "SyncKey", (syncKeyServer == null ? "0" : syncKeyServer));		
+							DOMUtils.createElementAndText(eCollection, null, "SyncKey", (syncKeyServer == null || syncKeyServer.isEmpty() ? "0" : syncKeyServer));		
 							DOMUtils.createElementAndText(eCollection, null, "CollectionId", collectionId);
-							if(syncKeyServer != null) {
+							// Only send commands if not sync init
+							if(syncKeyServer != null && !folder.getSyncKeyServer().isEmpty() && !"0".equals(syncKeyServer)) {
 								DOMUtils.createElement(eCollection, null, "GetChanges");
 								DOMUtils.createElementAndText(eCollection, null, "WindowSize", Integer.toString(this.batchSize));
 					    		// Generate commands for changed and deleted items
@@ -317,6 +335,7 @@ public class SyncHandler extends AbstractClientHandler {
 						    	}
 					    	}
 				    		// Invoke
+							logger.log(Level.FINE, "Syncing with server for collection {0}", collectionId);				    	
 					    	org.w3c.dom.Document docResponse = (org.w3c.dom.Document)target.perform(
 					    		"Sync", 
 					    		clientProfile.getPolicyKey() == null ? "0" : clientProfile.getPolicyKey(),
@@ -331,8 +350,10 @@ public class SyncHandler extends AbstractClientHandler {
 									eCollection = (org.w3c.dom.Element)lCollection.item(i);
 									SyncCollection responseCollection = SyncCollection.decode("AirSync:", eCollection);
 									if(collectionId.equals(responseCollection.getCollectionId())) {
+										logger.log(Level.FINE, "Processing response for collection {0}. SyncKey={1}", new String[]{collectionId, responseCollection.getSyncKey()});
 										// Commands
 										org.w3c.dom.Element eCommands = DOMUtils.getUniqueElement(eCollection, "AirSync:", "Commands");
+										logger.log(Level.FINE, "Processing commands for collection {0}", collectionId);
 										if(eCommands != null) {										
 											org.w3c.dom.NodeList lCommand = eCommands.getChildNodes();
 											for(int j = 0; j < lCommand.getLength(); j++) {							
@@ -350,12 +371,14 @@ public class SyncHandler extends AbstractClientHandler {
 															clientId = mapping.getClientId();
 														}
 													}
+													logger.log(Level.FINE, "Decode element {0}", serverId);
 													org.w3c.dom.Element eApplicationData = DOMUtils.getUniqueElement(eCommand, "AirSync:", "ApplicationData");
 													IDataFormat dataDecoder = DataFormatFactory.getXmlFormat(responseCollection.getDataType());
 													IData data = null;
 													if(eApplicationData != null) {
 														data = dataDecoder.parse(eApplicationData);
 													}
+													logger.log(Level.FINE, "Processing element {0}", serverId);
 													if(folderId != null) {
 														SyncCollection collection = new SyncCollection();
 														collection.setCollectionId(folderId);
@@ -458,6 +481,7 @@ public class SyncHandler extends AbstractClientHandler {
 											}
 										}
 										// Responses
+										logger.log(Level.FINE, "Processing responses for collection {0}", collectionId);										
 										org.w3c.dom.Element eResponses = DOMUtils.getUniqueElement(eCollection, "AirSync:", "Responses");
 										if(eResponses != null) {										
 											org.w3c.dom.NodeList lResponse = eResponses.getChildNodes();
@@ -486,7 +510,8 @@ public class SyncHandler extends AbstractClientHandler {
 										}
 										// Has somebody else touched items in this collection?
 										// Only test if syncKeyServer != null --> syncKeyClient was updated
-										if(syncKeyServer != null) {
+										logger.log(Level.FINE, "Test for locally touched items for collection {0}", collectionId);
+										if(syncKeyServer != null && !folder.getSyncKeyServer().isEmpty() && !"0".equals(syncKeyServer)) {
 									    	org.opencrx.application.airsync.datatypes.SyncCollection clientCollection = 
 									    		new org.opencrx.application.airsync.datatypes.SyncCollection();
 									    	clientCollection.setCollectionId(folderId);
@@ -508,7 +533,8 @@ public class SyncHandler extends AbstractClientHandler {
 											}
 										}
 										// Update folder's sync keys									
-										folder.setSyncKeyServer(responseCollection.getSyncKey());									
+										folder.setSyncKeyServer(responseCollection.getSyncKey());	
+										logger.log(Level.FINE, "Set SyncKey.Server to {0} for collection {1}", new String[]{responseCollection.getSyncKey(), folder.getName()});
 										folder.setSyncKeyClient(
 											"0".equals(syncKeyClient) ? 
 												backend.getNextSyncKey(requestContext, syncKeyClient) :
@@ -531,9 +557,13 @@ public class SyncHandler extends AbstractClientHandler {
 						    	logger.log(Level.FINE, out.toString());
 							}
 							slicePos += this.batchSize;
-							if(slicePos >= changedDataItemsSlice.size()) {
+							if(slicePos >= changedDataItems.size()) {
 								break;
 							}
+							changedDataItemsSlice = changedDataItems.subList(
+								slicePos, 
+								Math.min(slicePos + this.batchSize, changedDataItems.size())
+							);
 						}
 					}
 				}
@@ -548,7 +578,7 @@ public class SyncHandler extends AbstractClientHandler {
 			);
 		} catch(Exception e) {
 			throw new ServiceException(e);
-		}	    
+		}
     }
 
 	//-----------------------------------------------------------------------

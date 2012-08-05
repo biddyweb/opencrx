@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.9 2010/10/02 09:25:30 wfro Exp $
+ * Name:        $Id: ComponentConfigHelper.java,v 1.10 2010/12/31 14:35:04 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 09:25:30 $
+ * Date:        $Date: 2010/12/31 14:35:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,6 +62,7 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
@@ -72,42 +73,43 @@ public abstract class ComponentConfigHelper {
     public static ComponentConfiguration getComponentConfiguration(
         String configurationId,
         String providerName,
-        PersistenceManager rootPm,
+        PersistenceManager pm,
         boolean autoCreate,
         String[][] initialProperties
     ) {
         ComponentConfiguration componentConfiguration = null;
         try {
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
-                (org.opencrx.kernel.admin1.jmi1.Segment)rootPm.getObjectById(
-                    new Path("xri://@openmdx*org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
+                (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
+                    new Path("xri://@openmdx*org.opencrx.kernel.admin1").getDescendant("provider", providerName, "segment", "Root")
                 );
             try {
                 componentConfiguration = adminSegment.getConfiguration(configurationId);
             } catch(Exception e) {}
             if(autoCreate && (componentConfiguration == null)) {
-                componentConfiguration = rootPm.newInstance(ComponentConfiguration.class);
+                componentConfiguration = pm.newInstance(ComponentConfiguration.class);
                 componentConfiguration.refInitialize(false, false);
                 componentConfiguration.setName(configurationId);
-                rootPm.currentTransaction().begin();
+                pm.currentTransaction().begin();
                 adminSegment.addConfiguration(
                     false,
                     configurationId,
                     componentConfiguration
                 );
-                UUIDGenerator uuids = UUIDs.getGenerator();
-                for(String[] e: initialProperties) {
-                    org.opencrx.kernel.base.jmi1.StringProperty sp = rootPm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
-                    sp.refInitialize(false, false);
-                    sp.setName(e[0]);
-                    sp.setStringValue(e[1]);
-                    componentConfiguration.addProperty(
-                        false,
-                        uuids.next().toString(),
-                        sp
-                    );
+                if(initialProperties != null) {
+	                for(String[] e: initialProperties) {
+	                    org.opencrx.kernel.base.jmi1.StringProperty sp = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
+	                    sp.refInitialize(false, false);
+	                    sp.setName(e[0]);
+	                    sp.setStringValue(e[1]);
+	                    componentConfiguration.addProperty(
+	                        false,
+	                        UUIDConversion.toUID(uuids.next()),
+	                        sp
+	                    );
+	                }
                 }
-                rootPm.currentTransaction().commit();
+                pm.currentTransaction().commit();
                 componentConfiguration = adminSegment.getConfiguration(
                     configurationId
                 );
@@ -117,6 +119,31 @@ public abstract class ComponentConfigHelper {
         	SysLog.warning("Can not get component configuration", e);
         }
         return componentConfiguration;
+    }
+    
+    //-----------------------------------------------------------------------
+    public static org.opencrx.kernel.base.jmi1.StringProperty addComponentConfigProperty(
+        String name,
+        String stringValue,
+        ComponentConfiguration configuration
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(configuration);
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
+    	if(isTxLocal) {
+    		pm.currentTransaction().begin();
+    	}
+        org.opencrx.kernel.base.jmi1.StringProperty sp = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
+        sp.refInitialize(false, false);
+        sp.setName(name);
+        sp.setStringValue(stringValue);
+        configuration.addProperty(
+            UUIDConversion.toUID(uuids.next()),
+            sp
+        );
+        if(isTxLocal) {
+        	pm.currentTransaction().commit();
+        }
+    	return sp;
     }
     
     //-----------------------------------------------------------------------
@@ -132,5 +159,10 @@ public abstract class ComponentConfigHelper {
         	null :
         		properties.iterator().next();
     }
+
+    //-----------------------------------------------------------------------
+    // Members
+    //-----------------------------------------------------------------------
+    private static final UUIDGenerator uuids = UUIDs.getGenerator();
     
 }

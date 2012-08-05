@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityGroupAssignmentImpl.java,v 1.1 2010/09/24 16:14:05 wfro Exp $
+ * Name:        $Id: ActivityGroupAssignmentImpl.java,v 1.2 2011/03/23 15:10:25 wfro Exp $
  * Description: WorkAndExpenseRecordImpl
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/24 16:14:05 $
+ * Date:        $Date: 2011/03/23 15:10:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -95,7 +95,7 @@ public class ActivityGroupAssignmentImpl
 	public void jdoPreStore(
 	) {
 		try {
-			Activities.getInstance().updateActivity(
+			Activities.getInstance().markActivityAsDirty(
 				this.getActivity()
 			);
 			super.jdoPreStore();
@@ -114,7 +114,7 @@ public class ActivityGroupAssignmentImpl
 	public void jdoPreDelete(
 	) {
 		try {
-			Activities.getInstance().updateActivity(
+			Activities.getInstance().markActivityAsDirty(
 				this.getActivity()
 			);
 			super.jdoPreDelete();
