@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateCampaignWizard.jsp,v 1.11 2009/02/10 23:47:21 wfro Exp $
+ * Name:        $Id: CreateCampaignWizard.jsp,v 1.12 2009/03/25 10:14:50 wfro Exp $
  * Description: CreateCampaignWizard
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/10 23:47:21 $
+ * Date:        $Date: 2009/03/25 10:14:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -145,9 +145,19 @@ org.openmdx.application.log.*
 	        (name != null) &&
 	        (name.length() > 0)
 	    ) {
+			org.opencrx.security.realm1.jmi1.PrincipalGroup usersGroup =
+				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.findPrincipal(
+					"Users",
+					org.opencrx.kernel.backend.SecureObject.getRealm(
+						pm,
+						providerName,
+						segmentName
+					),
+					pm
+				);	    	
 	        org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.initActivityTracker(
 	            name,
-	            null,
+	            Arrays.asList(usersGroup),
 	            pm,
 	            providerName,
 	            segmentName
@@ -168,7 +178,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    null,
+	    	    Arrays.asList(usersGroup),
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -210,7 +220,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    null,
+	    	    Arrays.asList(usersGroup),
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -231,7 +241,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    null,
+	    	    Arrays.asList(usersGroup),
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -252,7 +262,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    null,
+	    	    Arrays.asList(usersGroup),
 	    	    pm,
 	    	    providerName,
 	    	    segmentName

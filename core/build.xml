@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.374 2009/03/13 16:27:28 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.376 2009/03/20 18:15:52 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.374 $
- * = Date:        $Date: 2009/03/13 16:27:28 $
+ * = Revision:    $Revision: 1.376 $
+ * = Date:        $Date: 2009/03/20 18:15:52 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.4.0"/>
+	<property name="openmdx.version" value="2.4.1"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -139,7 +139,7 @@
 	<!-- Generic client parameters -->
 	<property name="client.provider.name" value="CRX"/>
 	<property name="client.segment.name" value="Standard"/>
-	<!-- CheckDb, CopyDb parameters -->
+	<!-- CopyDb parameters -->
 	<property name="format.source" value="openmdx1"/>
 	<property name="format.target" value="openmdx2"/>
 	<property name="start.with.table" value="0"/>
@@ -1100,14 +1100,14 @@
 				<include name="*.war"/>
 			</fileset>
 			<!-- Libs -->
+			<zipfileset dir="${deliver.dir}/lib" prefix="APP-INF/lib">
+				<include name="*.jar"/>
+			</zipfileset>
 			<zipfileset dir="${opencrx.home}/${build.target.platform}/core/lib" prefix="APP-INF/lib">
 				<include name="opencrx-kernel.jar"/>
 				<include name="opencrx-security.jar"/>
 				<include name="opencrx-mail.jar"/>
 				<include name="opencrx-application.jar"/>
-			</zipfileset>
-			<zipfileset dir="${deliver.dir}/lib" prefix="APP-INF/lib">
-				<include name="opencrx-extension.jar"/>
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/${build.target.platform}/core/lib" prefix="APP-INF/lib">
 				<include name="openmdx-application.jar"/>
@@ -1302,66 +1302,6 @@ ${build.dir}/doc/api/index.html
 		<ant dir="${project.home}/core/etc/ant" antfile="utilities.xml" inheritAll="true" inheritRefs="true" target="-ui-split"/>
 	</target>
 	<!-- ******************************************************************* -->
-	<!-- * update-size-columns-1_11_0 -->
-	<!-- ******************************************************************* -->
-	<target name="update-size-columns-1_11_0" description="Update size columns for 1.11.0 database">
-		<echo>*************************************************************************************************</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT           ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** update-size-columns-1_11_0 performs the following operations:                             ***</echo>
-		<echo>*** - Update size columns (columns ending with _) in primary tables                           ***</echo>
-		<echo>*** - Update dtype columns in secondary tables                                                ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>***       !!! ALWAYS MAKE A BACKUP OF THE DATABASE BEFORE RUNNING !!!                         ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** In case of failure see log for details. The log configuration is located at               ***</echo>
-		<echo>*** etc/log/SysLog.log.properties)                                                            ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Specify options with:                                                                     ***</echo>
-		<echo>*** -Ddb.jdbc.url="jdbc url of database"                                                      ***</echo>
-		<echo>*** -Ddb.jdbc.driver="jdbc driver name of database"                                           ***</echo>
-		<echo>*** -Ddb.jdbc.driver.classpath="class path pointing to jdbc drivers"                          ***</echo>
-		<echo>*** -Ddb.username="database login user name"                                                  ***</echo>
-		<echo>*** -Ddb.password="database login password"                                                   ***</echo>
-		<echo>*** -Dstart.with.table="start with table#"                                                    ***</echo>
-		<echo>*** -Dend.with.table="end with table#"                                                        ***</echo>
-		<echo>*** -Dstart.with.phase="start with conversion phase#"                                         ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Sample URLs                                                                               ***</echo>
-		<echo>*** - PostgreSQL: jdbc:postgresql://localhost/CRX                                             ***</echo>
-		<echo>*** - MySQL:      jdbc:mysql://localhost:3306/CRX                                             ***</echo>
-		<echo>*** - Oracle:     jdbc:oracle:thin:@localhost:1521:XE                                         ***</echo>
-		<echo>*** - DB2:        jdbc:db2://localhost:50000/CRX                                              ***</echo>
-		<echo>*** - SQL Server: jdbc:sqlserver://localhost:1433;databaseName=CRX;selectMethod=cursor        ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Sample driver names                                                                       ***</echo>
-		<echo>*** - PostgreSQL: org.postgresql.Driver                                                       ***</echo>
-		<echo>*** - MySQL:      com.mysql.jdbc.Driver                                                       ***</echo>
-		<echo>*** - Oracle:     oracle.jdbc.driver.OracleDriver                                             ***</echo>
-		<echo>*** - DB2:        com.ibm.db2.jcc.DB2Driver                                                   ***</echo>
-		<echo>*** - SQL Server: com.microsoft.sqlserver.jdbc.SQLServerDriver                                ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Sample driver classpath                                                                   ***</echo>
-		<echo>*** - PostgreSQL: ..\opt\postgresql\jre-1.5\postgresql-8\lib\postgresql-8.3.jdbc3.jar         ***</echo>
-		<echo>*** - MySQL:      ..\opt\mysql\jre-1.5\mysql-5\lib\mysql-connector-java-3.1.12-bin.jar        ***</echo>
-		<echo>*** - Oracle:     ..\opt\oracle\jre-1.5\oracle-10\lib\ojdbc14.jar                             ***</echo>
-		<echo>*** - DB2:        ..\opt\ibm\jre-1.5\db2-9\db2jcc.jar;..\jre-1.5\db2-9\db2jcc_license_cu.jar  ***</echo>
-		<echo>*** - SQL Server: ..\opt\microsoft\jre-1.5\sql-server-2005\lib\sqljdbc.jar                    ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*************************************************************************************************</echo>
-		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" maxmemory="96m" classpath="${db.jdbc.driver.classpath}" classpathref="utilities.bin.classpath">
-			<sysproperty key="user.language" value="en"/>
-			<sysproperty key="user.region" value="US"/>
-			<sysproperty key="file.encoding" value="Cp1252"/>
-			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
-			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
-			<arg line="-ear file:src/ear/opencrx-core-CheckDb.ear --command=update-size-columns-1_11_0 --jdbcUrl=${db.jdbc.url} --jdbcDriver=${db.jdbc.driver} --username=${db.username} --password=${db.password} --startWithTable=${start.with.table} --endWithTable=${end.with.table} --startWithPhase=${start.with.phase}"/>
-		</java>
-	</target>
-	<!-- ******************************************************************* -->
 	<!-- * CopyDb -->
 	<!-- ******************************************************************* -->
 	<target name="CopyDb" description="Copy openCRX database">
@@ -1411,6 +1351,7 @@ ${build.dir}/doc/api/index.html
 		<echo>*** - Oracle:     jdbc:oracle:thin:@localhost:1521:XE                                         ***</echo>
 		<echo>*** - DB2:        jdbc:db2://localhost:50000/CRX                                              ***</echo>
 		<echo>*** - SQL Server: jdbc:sqlserver://localhost:1433;databaseName=CRX;selectMethod=cursor        ***</echo>
+		<echo>*** - HSQLDB:     jdbc:hsqldb:hsql://localhost:9001/CRX                                       ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** Sample driver names                                                                       ***</echo>
 		<echo>*** - PostgreSQL: org.postgresql.Driver                                                       ***</echo>
@@ -1418,6 +1359,7 @@ ${build.dir}/doc/api/index.html
 		<echo>*** - Oracle:     oracle.jdbc.driver.OracleDriver                                             ***</echo>
 		<echo>*** - DB2:        com.ibm.db2.jcc.DB2Driver                                                   ***</echo>
 		<echo>*** - SQL Server: com.microsoft.sqlserver.jdbc.SQLServerDriver                                ***</echo>
+		<echo>*** - HSQLDB:     org.hsqldb.jdbcDriver                                                       ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** Sample driver classpath                                                                   ***</echo>
 		<echo>*** - PostgreSQL: ..\opt\postgresql\jre-1.5\postgresql-8\lib\postgresql-8.3.jdbc3.jar         ***</echo>
@@ -1425,17 +1367,31 @@ ${build.dir}/doc/api/index.html
 		<echo>*** - Oracle:     ..\opt\oracle\jre-1.5\oracle-10\lib\ojdbc14.jar                             ***</echo>
 		<echo>*** - DB2:        ..\opt\ibm\jre-1.5\db2-9\db2jcc.jar;..\jre-1.5\db2-9\db2jcc_license_cu.jar  ***</echo>
 		<echo>*** - SQL Server: ..\opt\microsoft\jre-1.5\sql-server-2005\lib\sqljdbc.jar                    ***</echo>
+		<echo>*** - HSQLDB:     ..\opt\hsqldb\jre-1.5\hsqldb-1\lib\hsqldb.jar                               ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*** IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT           ***</echo>
 		<echo>***                                                                                           ***</echo>
 		<echo>*************************************************************************************************</echo>
-		<java classname="org.openmdx.kernel.application.client.Launch" fork="true" maxmemory="1400M" classpath="${db.jdbc.driver.classpath}" classpathref="utilities.bin.classpath">
+		<java classname="org.opencrx.kernel.tools.CopyDb" fork="true" maxmemory="1400M" classpath="${db.jdbc.driver.classpath}" classpathref="utilities.bin.classpath">
 			<sysproperty key="user.language" value="en"/>
 			<sysproperty key="user.region" value="US"/>
 			<sysproperty key="file.encoding" value="Cp1252"/>
 			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
 			<sysproperty key="org.openmdx.log.config.filename.syslog" value="etc/log/SysLog.log.properties"/>
-			<arg line="-ear file:src/ear/opencrx-core-CopyDb.ear --formatSource=${format.source} --formatTarget=${format.target} --kernel.startFromDbObject=${kernel.start.with.table} --kernel.endWithDbObject=${kernel.end.with.table} --security.startFromDbObject=${security.start.with.table} --security.endWithDbObject=${security.end.with.table} --jdbcUrlSource=${db.jdbc.url.source} --jdbcDriverSource=${db.jdbc.driver.source} --usernameSource=${db.username.source} --passwordSource=${db.password.source} --jdbcUrlTarget=${db.jdbc.url.target} --jdbcDriverTarget=${db.jdbc.driver.target} --usernameTarget=${db.username.target} --passwordTarget=${db.password.target}"/>
+			<sysproperty key="formatSource" value="${format.source}"/>
+			<sysproperty key="formatTarget" value="${format.target}"/>
+			<sysproperty key="kernel.startFromDbObject" value="${kernel.start.with.table}"/>
+			<sysproperty key="kernel.endWithDbObject" value="${kernel.end.with.table}"/>
+			<sysproperty key="security.startFromDbObject" value="${security.start.with.table}"/>
+			<sysproperty key="security.endWithDbObject" value="${security.end.with.table}"/>
+			<sysproperty key="jdbcUrlSource" value="${db.jdbc.url.source}"/>
+			<sysproperty key="jdbcDriverSource" value="${db.jdbc.driver.source}"/>
+			<sysproperty key="usernameSource" value="${db.username.source}"/>
+			<sysproperty key="passwordSource" value="${db.password.source}"/>
+			<sysproperty key="jdbcUrlTarget" value="${db.jdbc.url.target}"/>
+			<sysproperty key="jdbcDriverTarget" value="${db.jdbc.driver.target}"/>
+			<sysproperty key="usernameTarget" value="${db.username.target}"/>
+			<sysproperty key="passwordTarget" value="${db.password.target}"/>
 		</java>
 	</target>
 </project>

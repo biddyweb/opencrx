@@ -1,5 +1,5 @@
-Release Name: openCRX/Core 2.4.0
-Release Date: 2009-03-09
+Release Name: openCRX/Core 2.4.1
+Release Date: 2009-03-23
 
 ---------------------------------------------------------------------
 Notes:
@@ -38,7 +38,7 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
 ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
 OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-POSSIBILITY OF SUCH DAMAGE.
+POSSIBILITY OF SUCH DAMAGE.	
 
 ------------------
 
@@ -283,7 +283,51 @@ openMDX (http://www.openmdx.org/)
       * create-sql: openjpa-schema --> sql build and upgrade script            
             
 2.1.  FIXED BUGS
-      none
+      
+      SF6884208
+      When I run ant script: 
+
+      ant -Dformat.source=openmdx2 -Dformat.target=openmdx2
+      -Ddb.jdbc.driver.classpath="D:\temp\hsqldb.jar;D:\temp\ojdbc14.jar"
+      -Ddb.jdbc.url.source="jdbc:hsqldb:hsql://127.0.0.1:9001/CRX_2_4"
+      -Ddb.jdbc.driver.source="org.hsqldb.jdbcDriver" -Ddb.username.source="sa"
+      -Ddb.password.source="manager99"
+      -Ddb.jdbc.url.target="jdbc:oracle:thin:@localhost:1521:XE"
+      -Ddb.jdbc.driver.target="oracle.jdbc.driver.OracleDriver"
+      -Ddb.username.target="CRX_CRX" -Ddb.password.target="123" CopyDb
+
+      I get an error: [java] java.lang.NoClassDefFoundError:
+      org/openmdx/kernel/application/client/Launch
+      
+      SF6853479
+      I tried http://www.opencrx.org/opencrx/2.3/new.htm#REST in 2.3 it is ok. But
+      in 2.4 I get an error:
+
+      javax.servlet.ServletException: Servlet.init() for servlet RestServlet threw exception
+	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
+	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
+	      org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:525)
+	      org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	      org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	      org.apache.coyote.http11.Http11AprProcessor.process(Http11AprProcessor.java:857)
+	      org.apache.coyote.http11.Http11AprProtocol$Http11ConnectionHandler.process(Http11AprProtocol.java:565)
+	      org.apache.tomcat.util.net.AprEndpoint$Worker.run(AprEndpoint.java:1509)
+	      java.lang.Thread.run(Thread.java:595)
+
+      root cause 
+
+      java.lang.NoClassDefFoundError:
+      org/openmdx/application/dataprovider/transport/ejb/cci/Jmi1AccessorFactory_2org.openmdx.application.rest.RestServlet.getPersistenceManagerFactory(RestServlet.java:1317)
+	      org.openmdx.application.rest.RestServlet.init(RestServlet.java:1338)
+	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
+	      org.apache.openejb.tomcat.catalina.OpenEJBValve.invoke(OpenEJBValve.java:45)
+	      org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:525)
+	      org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:102)
+	      org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:286)
+	      org.apache.coyote.http11.Http11AprProcessor.process(Http11AprProcessor.java:857)
+	      org.apache.coyote.http11.Http11AprProtocol$Http11ConnectionHandler.process(Http11AprProtocol.java:565)
+	      org.apache.tomcat.util.net.AprEndpoint$Worker.run(AprEndpoint.java:1509)
+	      java.lang.Thread.run(Thread.java:595)
 
 2.2   REMOVED FEATURES
       none

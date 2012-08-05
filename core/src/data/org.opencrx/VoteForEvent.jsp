@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.7 2009/03/06 10:03:21 cmu Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.8 2009/03/20 15:13:50 cmu Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.7 $
+ * Revision:	$Revision: 1.8 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2009/03/06 10:03:21 $
+ * Date:		$Date: 2009/03/20 15:13:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -236,7 +236,7 @@ java.text.*"
 
 	// try to get locale from browser header or - if authenticated - from application context
 	String localeStr = (app == null
-		?	(request.getHeader("accept-language") == null
+		?	((request.getHeader("accept-language") == null || request.getHeader("accept-language").length()<5)
 				? null
 				: request.getHeader("accept-language").substring(0,2) + "_" + request.getHeader("accept-language").substring(3,5)
 			)

@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxServer</shortName>
     <fullName>openCRX Server</fullName>
-    <version>2.4.0</version>
+    <version>2.4.1</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-server/installer/opencrx-server/README</readmeFile>
     <licenseFile>../../image/opencrx-server/installer/opencrx-server/LICENSE</licenseFile>

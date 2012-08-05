@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.38 2009/03/08 17:04:48 wfro Exp $
+ * Name:        $Id: CopyDb.java,v 1.39 2009/03/20 18:15:30 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.38 $
+ * Revision:    $Revision: 1.39 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:48 $
+ * Date:        $Date: 2009/03/20 18:15:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,10 +72,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.base.exception.ServiceException;
@@ -407,40 +403,40 @@ public class CopyDb {
         String[] args
     ) {
         try {
-            Context componentEnvironment = (Context)new InitialContext().lookup("java:comp/env");
+            Properties env = System.getProperties();
 
             // Source connection
-            Class.forName((String)componentEnvironment.lookup("jdbcDriverSource"));
+            Class.forName(env.getProperty("jdbcDriverSource"));
             Properties props = new Properties();
-            props.put("user", componentEnvironment.lookup("usernameSource"));
-            props.put("password", componentEnvironment.lookup("passwordSource"));
+            props.put("user", env.getProperty("usernameSource"));
+            props.put("password", env.getProperty("passwordSource"));
             Connection connSource = DriverManager.getConnection(
-                (String)componentEnvironment.lookup("jdbcUrlSource"),
+                env.getProperty("jdbcUrlSource"),
                 props
             );
             connSource.setAutoCommit(true);
 
             // Target connection
-            Class.forName((String)componentEnvironment.lookup("jdbcDriverTarget"));
+            Class.forName(env.getProperty("jdbcDriverTarget"));
             props = new Properties();
-            props.put("user", componentEnvironment.lookup("usernameTarget"));
-            props.put("password", componentEnvironment.lookup("passwordTarget"));
+            props.put("user", env.getProperty("usernameTarget"));
+            props.put("password", env.getProperty("passwordTarget"));
             Connection connTarget = DriverManager.getConnection(
-                (String)componentEnvironment.lookup("jdbcUrlTarget"),
+                env.getProperty("jdbcUrlTarget"),
                 props
             );
             connTarget.setAutoCommit(true);
                         
-            Number kernelStartFromDbObject = (Number)componentEnvironment.lookup("kernel.startFromDbObject");
-            Number securityStartFromDbObject = (Number)componentEnvironment.lookup("security.startFromDbObject");
-            String formatSource = (String)componentEnvironment.lookup("formatSource");
-            String formatTarget = (String)componentEnvironment.lookup("formatTarget");
+            String kernelStartFromDbObject = env.getProperty("kernel.startFromDbObject");
+            String securityStartFromDbObject = env.getProperty("security.startFromDbObject");
+            String formatSource = env.getProperty("formatSource");
+            String formatTarget = env.getProperty("formatTarget");
             if(
                 formatSource.equals(formatTarget) &&
                 (kernelStartFromDbObject != null) &&
-                (kernelStartFromDbObject.intValue() == 0) &&
+                (Integer.valueOf(kernelStartFromDbObject).intValue() == 0) &&
                 (securityStartFromDbObject != null) &&
-                (securityStartFromDbObject.intValue() == 0)
+                (Integer.valueOf(securityStartFromDbObject).intValue() == 0)
             ) {               
             	CopyDb.copyDbObject(
                     new String[]{"prefs", ""},
@@ -452,30 +448,27 @@ public class CopyDb {
                 );
             }
             // Namespace kernel
-            Number endWithDbObject = (Number)componentEnvironment.lookup("kernel.endWithDbObject");
+            String endWithDbObject = env.getProperty("kernel.endWithDbObject");
             CopyDb.copyNamespace(
                 connSource,
                 connTarget,
                 new String[]{"OOCKE1", "_"},
                 new String[]{"OOCKE1", "_"},
                 Arrays.asList(DBOBJECTS_KERNEL),
-                kernelStartFromDbObject == null ? 0 : kernelStartFromDbObject.intValue(),
-                endWithDbObject == null ? Integer.MAX_VALUE : endWithDbObject.intValue()
+                kernelStartFromDbObject == null ? 0 : Integer.valueOf(kernelStartFromDbObject).intValue(),
+                endWithDbObject == null ? Integer.MAX_VALUE : Integer.valueOf(endWithDbObject).intValue()
             );
             // Namespace security
-            endWithDbObject = (Number)componentEnvironment.lookup("security.endWithDbObject");
+            endWithDbObject = env.getProperty("security.endWithDbObject");
             CopyDb.copyNamespace(
                 connSource,
                 connTarget,
-                new String[]{"OOCSE1", "_"},
-                new String[]{"OOCSE1", "_"},
+                new String[]{"OOMSE2", "_"},
+                new String[]{"OOMSE2", "_"},
                 Arrays.asList(DBOBJECTS_SECURITY),
-                securityStartFromDbObject == null ? 0 : securityStartFromDbObject.intValue(),
-                endWithDbObject == null ? Integer.MAX_VALUE : endWithDbObject.intValue()
+                securityStartFromDbObject == null ? 0 : Integer.valueOf(securityStartFromDbObject).intValue(),
+                endWithDbObject == null ? Integer.MAX_VALUE : Integer.valueOf(endWithDbObject).intValue()
             );            
-        }
-        catch(NamingException e) {
-            e.printStackTrace();
         }
         catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -521,7 +514,6 @@ public class CopyDb {
         "CALENDARDAY",
         "CALENDARFEED",
         "CALENDARPROFILE",
-        "CHART",
         "CODEVALUECONTAINER",
         "CODEVALUEENTRY",
         "COMPETITOR",
