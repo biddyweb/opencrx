@@ -1,6 +1,4 @@
 
-
-
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */

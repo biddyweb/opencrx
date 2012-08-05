@@ -2,10 +2,6 @@
 <openejb-jar xmlns="http://www.openejb.org/xml/ns/openejb-jar-2.2">
 	<enterprise-beans>
 		<session>
-			<ejb-name>opencrx_core_CRX_EntityManagerFactory</ejb-name>
-			<local-jndi-name>org.opencrx.core.CRX.EntityManagerFactory</local-jndi-name>
-		</session>
-		<session>
 			<ejb-name>opencrx_core_CRX_EntityManagerFactoryAccessor</ejb-name>
 			<jndi-name>org.opencrx.core.CRX.EntityManagerFactoryAccessor</jndi-name>
 		</session>		

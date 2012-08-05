@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.10 2009/03/08 17:04:47 wfro Exp $
+ * Name:        $Id: FreeBusyServlet.java,v 1.12 2009/07/20 10:43:06 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:47 $
+ * Date:        $Date: 2009/07/20 10:43:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -161,12 +161,10 @@ public class FreeBusyServlet extends HttpServlet {
     protected PersistenceManager getPersistenceManager(
         HttpServletRequest req
     ) {
-        return req.getUserPrincipal() == null ?
-            null :
-            this.persistenceManagerFactory.getPersistenceManager(
-                req.getUserPrincipal().getName(),
-                UUIDs.getGenerator().next().toString()
-            );
+        return this.persistenceManagerFactory.getPersistenceManager(
+            "guest",
+            UUIDs.getGenerator().next().toString()
+        );
     }
 
     //-----------------------------------------------------------------------
@@ -225,7 +223,7 @@ public class FreeBusyServlet extends HttpServlet {
             isDisabledFilter
         );
         // Return all activities in FreeBusy format
-        if(RESOURCE_NAME_FREEBUSY.equals(req.getParameter(PARAMETER_NAME_RESOURCE))) {            
+        if((req.getRequestURI().endsWith("/freebusy"))) {        	            
             resp.setStatus(HttpServletResponse.SC_OK);
             resp.setCharacterEncoding("UTF-8");                
             PrintWriter p = resp.getWriter();
@@ -308,7 +306,6 @@ public class FreeBusyServlet extends HttpServlet {
     // Members
     //-----------------------------------------------------------------------
     private static final long serialVersionUID = 4746783518992145105L;
-    protected final static String RESOURCE_NAME_FREEBUSY = "freebusy.ics";
     protected final static String CONFIGURATION_ID = "ICalServlet";
 
     protected final static String PARAMETER_NAME_ID = "id";

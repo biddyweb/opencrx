@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.31 2009/04/21 14:29:06 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.33 2009/07/30 14:23:45 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.31 $
+ * Revision:    $Revision: 1.33 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 14:29:06 $
+ * Date:        $Date: 2009/07/30 14:23:45 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -144,7 +144,10 @@ public class Addresses extends AbstractImpl {
                     countryCode = "840";
                 }
                 else {
-                    Integer code = this.mapToPhoneCountryCode(Short.valueOf(countryCode));
+                    Integer code = null;
+                    try {
+                    	code = this.mapToPhoneCountryCode(Short.valueOf(countryCode));
+                    } catch(Exception e) {}
                     countryCode = code == null ? 
                     	"0" : 
                     	code.toString();

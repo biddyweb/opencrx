@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="religion" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="religion" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<shortText>
 															<_item>NA</_item>
@@ -28,7 +28,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Christianity -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="1000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Christentum</_item>
@@ -39,7 +39,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1010" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1010" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Christentum - Katholizismus</_item>
@@ -50,7 +50,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1020" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1020" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Christentum - Östlicher Orthodoxismus</_item>
@@ -61,7 +61,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1030" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1030" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Christentum - Protestantismus</_item>
@@ -72,7 +72,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1040" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1040" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Christentum - Orientalischer Orthodoxismus</_item>
@@ -85,7 +85,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Islam -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="2000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="2000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Islam</_item>
@@ -96,7 +96,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="2050" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="2050" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Islam - Shiismus</_item>
@@ -107,7 +107,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="2060" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="2060" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Islam - Sufismus</_item>
@@ -118,7 +118,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="2070" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="2070" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Islam - Sunnismus</_item>
@@ -131,7 +131,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Judaism -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="3000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="3000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Judentum</_item>
@@ -144,7 +144,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Buddhism -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="4000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="4000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Buddhismus</_item>
@@ -157,7 +157,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Hinduism -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="5000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="5000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Hinduismus</_item>
@@ -170,7 +170,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Sikhism -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="6000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="6000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Sikhismus</_item>
@@ -183,7 +183,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Confucianism -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="7000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="7000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Konfuzianismus</_item>
@@ -196,7 +196,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Falun Gong -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="8000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="8000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Falun Gong</_item>
@@ -209,7 +209,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Shinto -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="9000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="9000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Schintoismus</_item>
@@ -222,7 +222,7 @@
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
 <!-- Taoism -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="10000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Taoismus</_item>

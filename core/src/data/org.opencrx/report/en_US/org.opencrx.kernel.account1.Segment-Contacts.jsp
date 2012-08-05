@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.13 2009/02/09 09:14:40 wfro Exp $
+ * Name:        $Id: org.opencrx.kernel.account1.Segment-Contacts.jsp,v 1.15 2009/08/26 12:12:27 wfro Exp $
  * Description: openCRX Contacts Report
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/09 09:14:40 $
+ * Date:        $Date: 2009/08/26 12:12:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,7 +70,6 @@ org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*,
 org.apache.poi.hssf.usermodel.*,
 org.apache.poi.hssf.util.*
 " %>
@@ -266,7 +265,7 @@ org.apache.poi.hssf.util.*
 		  	}
 		}
 		if(nRow > addressStartAtRow) {
-			System.out.println("groupRow from " + addressStartAtRow + " to " + (nRow-1));
+			//System.out.println("groupRow from " + addressStartAtRow + " to " + (nRow-1));
 			contactSheet.groupRow(
 				addressStartAtRow,
 				nRow-1

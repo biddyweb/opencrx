@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeAbstractActivityParty" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeAbstractActivityParty" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item>GD</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Raporlayıcı</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="115" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="115" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Son Kullanıcı</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Satın Alıcı</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="125" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="125" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Sebep Olan</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Müşteri Hizmetleri Temsilcisi</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="135" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="135" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Müşteri Hizmetleri Yöneticisi</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Müşteri Hizmetleri Gözetmeni</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Satış Temsilcisi</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="155" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="155" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Satış Yöneticisi</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="160" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="160" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Satış Gözetmeni</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="170" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="170" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Gözlemci</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="175" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="175" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Üye</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="180" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="180" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Yönetici</_item>
@@ -169,7 +169,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="set">
                           <_object>
                             <shortText>
                               <_item>DEN</_item>
@@ -180,7 +180,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="set">
                           <_object>
                             <shortText>
                               <_item>A</_item>
@@ -191,7 +191,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="set">
                           <_object>
                             <shortText>
                               <_item>CC</_item>
@@ -202,7 +202,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="set">
                           <_object>
                             <shortText>
                               <_item>BCC</_item>
@@ -213,7 +213,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Kağıt Kopya</_item>
@@ -224,7 +224,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Gönderici</_item>
@@ -235,7 +235,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Gönderilen</_item>
@@ -246,7 +246,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Katılımcı</_item>
@@ -257,7 +257,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Katılımcı (tercihe bağlı)</_item>
@@ -268,7 +268,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Moderatör</_item>
@@ -279,7 +279,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Toplantı katibi</_item>
@@ -290,7 +290,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Başkan</_item>
@@ -301,7 +301,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Davet eden</_item>
@@ -312,7 +312,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Davetli</_item>
@@ -323,7 +323,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Katılımcı (zorunlu)</_item>
@@ -334,7 +334,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="540" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="540" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Katılımcı (tercihe bağlı)</_item>
@@ -345,7 +345,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Moderatör</_item>
@@ -356,7 +356,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="610" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="610" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Ek müşteri hesabı</_item>
@@ -367,7 +367,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Ek sorumlu hesabı</_item>
@@ -378,7 +378,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Diğer</_item>

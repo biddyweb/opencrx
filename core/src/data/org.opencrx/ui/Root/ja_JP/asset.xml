@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:ras1:AssetContext:descGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>ディスクリプタグループ</_item>
+                        <_item>ディスクリプターグループ</_item>
                       </label>
                       <toolTip>
-                        <_item>ディスクリプタグループ</_item>
+                        <_item>ディスクリプータグループ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +223,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:ras1:DescriptorGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>ディスクリプタグループ</_item>
+                        <_item>ディスクリプータグループ</_item>
                       </label>
                       <toolTip>
-                        <_item>ディスクリプタグループ</_item>
+                        <_item>ディスクリプータグループ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -234,10 +234,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:ras1:DescriptorGroup:descriptor" _operation="create">
                     <_object>
                       <label>
-                        <_item>ディスクリプタ</_item>
+                        <_item>ディスクリプター</_item>
                       </label>
                       <toolTip>
-                        <_item>ディスクリプタ</_item>
+                        <_item>ディスクリプター</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -245,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:ras1:Descriptor" _operation="create">
                     <_object>
                       <label>
-                        <_item>ディスクリプタ</_item>
+                        <_item>ディスクリプター</_item>
                       </label>
                       <toolTip>
-                        <_item>ディスクリプタ</_item>
+                        <_item>ディスクリプター</_item>
                       </toolTip>
                     </_object>
                     <_content/>

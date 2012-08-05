@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -12,7 +12,7 @@
 							<_content>
 								<elementDefinition>
 									<!--Tab Definitions Pane1-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productApplication">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:productApplication">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -29,7 +29,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:deliveryInformation">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:deliveryInformation">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -57,7 +57,7 @@
 											<label>
 												<_item>Position</_item>
 											</label>
-											<iconKey>ContractPosition</iconKey>
+											<iconKey>AbstractContractPosition</iconKey>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
@@ -75,7 +75,7 @@
 											<label>
 												<_item>Position</_item>
 											</label>
-											<iconKey>ContractPosition</iconKey>
+											<iconKey>AbstractContractPosition</iconKey>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
@@ -93,7 +93,7 @@
 											<label>
 												<_item>Position</_item>
 											</label>
-											<iconKey>ContractPosition</iconKey>
+											<iconKey>AbstractContractPosition</iconKey>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
@@ -111,7 +111,7 @@
 											<label>
 												<_item>Position</_item>
 											</label>
-											<iconKey>ContractPosition</iconKey>
+											<iconKey>AbstractContractPosition</iconKey>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
@@ -122,7 +122,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!--Tab Definition-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionModification">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:positionModification">
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
@@ -215,7 +215,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:0:Group:40">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:0:Group:40">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -227,7 +227,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:0:Group:50">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:0:Group:50">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -240,7 +240,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definitions -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:lineItemNumber">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:lineItemNumber">
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
@@ -258,7 +258,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:name">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:name">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -275,7 +275,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:description">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:description">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -297,7 +297,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contractPositionState">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:contractPositionState">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -320,7 +320,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionNumber">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:positionNumber">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -343,7 +343,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definitions Additional Information-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:quantity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:quantity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -360,7 +360,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uom">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:uom">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -377,7 +377,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:quantityShipped">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:quantityShipped">
 										<_object>
 											<active>false</active>
 											<toolTip>
@@ -394,9 +394,10 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:quantityBackOrdered">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:quantityBackOrdered">
 										<_object>
 											<active>false</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Quantity back ordered</_item>
 											</toolTip>
@@ -416,7 +417,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:listPrice">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:listPrice">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -439,7 +440,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUom">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:priceUom">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -456,7 +457,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricePerUnit">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:pricePerUnit">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -474,7 +475,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definitions Pricing Information-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricingRule">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:pricingRule">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -491,7 +492,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceLevel">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:priceLevel">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -508,7 +509,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:calcRule">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:calcRule">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -525,7 +526,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricingState">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:pricingState">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -549,7 +550,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:pricingDate">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:pricingDate">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -567,7 +568,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definitions Financial Information-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discountIsPercentage">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:discountIsPercentage">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -589,7 +590,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discount">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:discount">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -611,7 +612,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discountDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:discountDescription">
 										<_object>
 											<spanRow>2</spanRow>
 											<active>true</active>
@@ -634,7 +635,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxType">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:salesTaxType">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -656,7 +657,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesCommissionIsPercentage">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:salesCommissionIsPercentage">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -679,7 +680,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesCommission">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:salesCommission">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -701,9 +702,10 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:baseAmount">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:baseAmount">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Base amount</_item>
 											</toolTip>
@@ -723,9 +725,10 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:discountAmount">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:discountAmount">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Discount amount</_item>
 											</toolTip>
@@ -745,9 +748,10 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:taxAmount">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:taxAmount">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Tax</_item>
 											</toolTip>
@@ -767,9 +771,10 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:amount">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:amount">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Amount (incl. tax)</_item>
 											</toolTip>
@@ -881,7 +886,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Field Group Definition in Details Tab -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:20">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:20">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -893,7 +898,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:25">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:25">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -905,7 +910,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:30">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:30">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -917,7 +922,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:35">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:35">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -929,7 +934,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:40">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:40">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -941,7 +946,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:45">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:45">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -953,7 +958,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:50">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:50">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -965,7 +970,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Attr:Tab:10:Group:55">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Attr:Tab:10:Group:55">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -978,7 +983,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Element Definition Details Tab -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:minQuantity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:minQuantity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -995,7 +1000,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:maxQuantity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:maxQuantity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1012,7 +1017,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:offsetQuantity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:offsetQuantity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1029,7 +1034,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:minMaxQuantityHandling">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:minMaxQuantityHandling">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -1048,7 +1053,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:productDescription">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -1066,7 +1071,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:productDetailedDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:productDetailedDescription">
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
@@ -1084,7 +1089,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uom" _operation="null">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:uom" _operation="null">
 										<_object/>
 										<_content>
 											<alternateElementDefinition>
@@ -1107,7 +1112,7 @@
 											</alternateElementDefinition>
 										</_content>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uomDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:uomDescription">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -1125,7 +1130,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:uomDetailedDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:uomDetailedDescription">
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
@@ -1143,7 +1148,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUom" _operation="null">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:priceUom" _operation="null">
 										<_object/>
 										<_content>
 											<alternateElementDefinition>
@@ -1166,7 +1171,7 @@
 											</alternateElementDefinition>
 										</_content>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUomDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:priceUomDescription">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -1184,7 +1189,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:priceUomDetailedDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:priceUomDetailedDescription">
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
@@ -1202,7 +1207,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxType" _operation="null">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:salesTaxType" _operation="null">
 										<_object/>
 										<_content>
 											<alternateElementDefinition>
@@ -1226,7 +1231,7 @@
 											</alternateElementDefinition>
 										</_content>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxTypeDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:salesTaxTypeDescription">
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
@@ -1244,7 +1249,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:salesTaxTypeDetailedDescription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:salesTaxTypeDetailedDescription">
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
@@ -1295,6 +1300,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Quantity shipped</_item>
 											</toolTip>
@@ -1412,7 +1418,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- Operations -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Op:Tab:reprice">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Op:Tab:reprice">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1430,7 +1436,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Op:Tab:reprice:Group:in">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Op:Tab:reprice:Group:in">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1464,7 +1470,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:Pane:Op:Tab:reprice:Group:result">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:Pane:Op:Tab:reprice:Group:result">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1644,7 +1650,7 @@
 											<label>
 												<_item>Removed Position</_item>
 											</label>
-											<iconKey>ContractPosition</iconKey>
+											<iconKey>AbstractContractPosition</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

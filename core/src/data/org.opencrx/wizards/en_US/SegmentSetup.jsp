@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.58 2009/05/11 12:22:40 cmu Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.67 2009/10/17 13:55:35 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.58 $
+ * Revision:    $Revision: 1.67 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/11 12:22:40 $
+ * Date:        $Date: 2009/10/17 13:55:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,7 +69,7 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*,
+org.openmdx.kernel.log.*,
 org.opencrx.kernel.backend.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
@@ -84,7 +84,7 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.account1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery query = 
+		org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery query =
 		    (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
 		query.name().equalTo(accountFilterName);
 		Collection accountFilters = segment.getAccountFilter(query);
@@ -99,7 +99,7 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.account1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery query = 
+		org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery query =
 		    (org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AddressFilterGlobal.class);
 		query.name().equalTo(accountFilterName);
 		Collection addressFilters = segment.getAddressFilter(query);
@@ -114,7 +114,7 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.contract1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.contract1.cci2.ContractFilterGlobalQuery query = 
+		org.opencrx.kernel.contract1.cci2.ContractFilterGlobalQuery query =
 		    (org.opencrx.kernel.contract1.cci2.ContractFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.contract1.jmi1.ContractFilterGlobal.class);
 		query.name().equalTo(contractFilterName);
 		Collection contractFilters = segment.getContractFilter(query);
@@ -129,7 +129,7 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.activity1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery query = 
+		org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery query =
 		    (org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal.class);
 		query.name().equalTo(activityFilterName);
 		Collection activityFilters = segment.getActivityFilter(query);
@@ -144,7 +144,7 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.home1.jmi1.UserHome userHome,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.home1.cci2.ExportProfileQuery query = 
+		org.opencrx.kernel.home1.cci2.ExportProfileQuery query =
 		    (org.opencrx.kernel.home1.cci2.ExportProfileQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.ExportProfile.class);
 		query.name().equalTo(exportProfileName);
 		Collection exportProfiles = userHome.getExportProfile(query);
@@ -159,7 +159,7 @@ org.openmdx.base.text.conversion.*
 		org.opencrx.kernel.document1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.document1.cci2.DocumentQuery query = 
+		org.opencrx.kernel.document1.cci2.DocumentQuery query =
 		    (org.opencrx.kernel.document1.cci2.DocumentQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.Document.class);
 		query.name().equalTo(documentName);
 		Collection documents = segment.getDocument(query);
@@ -180,15 +180,15 @@ org.openmdx.base.text.conversion.*
 		if(!favorites.isEmpty()) {
 			return (org.opencrx.kernel.home1.jmi1.QuickAccess)favorites.iterator().next();
 		}
-		return null;	    
+		return null;
 	}
-	
+
 	public org.opencrx.kernel.document1.jmi1.DocumentFolder findDocumentFolder(
 		String documentFolderName,
 		org.opencrx.kernel.document1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.document1.cci2.DocumentFolderQuery query = 
+		org.opencrx.kernel.document1.cci2.DocumentFolderQuery query =
 		    (org.opencrx.kernel.document1.cci2.DocumentFolderQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
 		query.name().equalTo(documentFolderName);
 		Collection documentFolders = segment.getFolder(query);
@@ -468,7 +468,8 @@ org.openmdx.base.text.conversion.*
 		String referenceFilter,
 		org.opencrx.kernel.document1.jmi1.Document template,
 		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.home1.jmi1.UserHome userHome
+		org.opencrx.kernel.home1.jmi1.UserHome userHome,
+		List allUsers
 	) {
 		org.opencrx.kernel.home1.jmi1.ExportProfile exportProfile = findExportProfile(
 			exportProfileName,
@@ -487,9 +488,7 @@ org.openmdx.base.text.conversion.*
 			exportProfile.setMimeType(mimeType);
 			exportProfile.setReferenceFilter(referenceFilter);
 			exportProfile.setTemplate(template);
-			exportProfile.getOwningGroup().addAll(
-				userHome.getOwningGroup()
-			);
+			exportProfile.getOwningGroup().addAll(allUsers);
 			userHome.addExportProfile(
 				false,
 				org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
@@ -546,13 +545,13 @@ org.openmdx.base.text.conversion.*
 		}
 		return favorite;
 	}
-	
+
 	public org.opencrx.kernel.product1.jmi1.SalesTaxType findSalesTaxType(
 		String name,
 		org.opencrx.kernel.product1.jmi1.Segment segment,
 		javax.jdo.PersistenceManager pm
 	) {
-		org.opencrx.kernel.product1.cci2.SalesTaxTypeQuery query = 
+		org.opencrx.kernel.product1.cci2.SalesTaxTypeQuery query =
 		    (org.opencrx.kernel.product1.cci2.SalesTaxTypeQuery)pm.newQuery(org.opencrx.kernel.product1.jmi1.SalesTaxType.class);
 		query.name().equalTo(name);
 		Collection salesTaxTypes = segment.getSalesTaxType(query);
@@ -561,7 +560,7 @@ org.openmdx.base.text.conversion.*
 		}
 		return null;
 	}
-	
+
 	public org.opencrx.kernel.product1.jmi1.SalesTaxType initSalesTaxType(
 		String name,
 		java.math.BigDecimal rate,
@@ -597,7 +596,7 @@ org.openmdx.base.text.conversion.*
 		}
 		return salesTaxType;
 	}
-	
+
 %>
 
 <%
@@ -607,6 +606,7 @@ org.openmdx.base.text.conversion.*
 	final String MISSING = "<img src='../../images/cancel.gif' />";
 
 	final String ACCOUNT_FILTER_NAME_ALL = "All Accounts";
+  final String ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD = "Accounts with missing or broken vCard";
 	final String ADDRESS_FILTER_NAME_ALL = "All Addresses";
 
 	final String CONTRACT_FILTER_NAME_LEAD_FORECAST = "Lead Forecast";
@@ -642,7 +642,7 @@ org.openmdx.base.text.conversion.*
 	final String CONTRACT_TEMPLATE_INVOICE = "Invoice with Positions (RTF)";
 
 	final String SALES_TAX_TYPE_NAME_8_5 = "Sales Tax 8.5%";
-	
+
 	final String REPORT_TEMPLATE_FOLDER_NAME = "Report Templates";
 	final String REPORT_TEMPLATE_NAME_CONTRACT_LIST = "Contract Report Template";
 	final String REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST = "Contract with Positions Report Template";
@@ -656,7 +656,7 @@ org.openmdx.base.text.conversion.*
 	final String FAVORITE_NAME_CREATE_CONTRACT = "Create Contract";
 	final String FAVORITE_NAME_CREATE_LEAD = "Create Lead";
 	final String FAVORITE_NAME_SCHEDULE_EVENT = "Schedule Event";
-	
+
 	// Init
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
@@ -666,7 +666,7 @@ org.openmdx.base.text.conversion.*
 	javax.jdo.PersistenceManager pm = app.getPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
-	if((app == null) || (objectXri == null)) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		session.setAttribute(WIZARD_NAME, null);
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
@@ -1046,7 +1046,29 @@ org.openmdx.base.text.conversion.*
 				allUsers
 			);
 
-			// ADDRESS_FILTER_NAME_ALL
+      // ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD
+      org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty accountQueryFilterProperty = pm.newInstance(org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty .class);
+      accountQueryFilterProperty.refInitialize(false, false);
+      accountQueryFilterProperty.setName("external_link is null or vcard is null");
+      accountQueryFilterProperty.setActive(new Boolean (true));
+      accountQueryFilterProperty.setClause("object_id IN (\n" +
+              "  select oocke1_account.object_id from oocke1_account, oocke1_account_\n" +
+              "  where oocke1_account.object_id = oocke1_account_.object_id\n" +
+              "  and oocke1_account_.idx=0\n" +
+              "  and ((oocke1_account_.external_link is null) or (oocke1_account.vcard is null))\n" +
+              "  )"
+      );
+      org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterBrokenVcard = initAccountFilter(
+    		ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD,
+        new org.opencrx.kernel.account1.jmi1.AccountFilterProperty[]{
+            accountQueryFilterProperty
+        },
+        pm,
+        accountSegment,
+        allUsers
+      );
+
+      // ADDRESS_FILTER_NAME_ALL
 			initAddressFilter(
 				ADDRESS_FILTER_NAME_ALL,
 				new org.opencrx.kernel.account1.jmi1.AddressFilterProperty[]{},
@@ -1054,7 +1076,7 @@ org.openmdx.base.text.conversion.*
 				accountSegment,
 				allUsers
 			);
-			
+
 			// ContractFilter
 
 			// CONTRACT_FILTER_NAME_LEAD_FORECAST
@@ -1344,7 +1366,7 @@ org.openmdx.base.text.conversion.*
 				pm,
 				documentSegment,
 				allUsers
-			);			
+			);
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderQuote = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_QUOTE,
 				pm,
@@ -1359,7 +1381,7 @@ org.openmdx.base.text.conversion.*
 				pm,
 				documentSegment,
 				allUsers
-			);			
+			);
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderSalesOrder = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_SALESORDER,
 				pm,
@@ -1374,7 +1396,7 @@ org.openmdx.base.text.conversion.*
 				pm,
 				documentSegment,
 				allUsers
-			);			
+			);
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolderInvoice = initDocumentFolder(
 				CONTRACT_TEMPLATE_FOLDER_NAME_INVOICE,
 				pm,
@@ -1389,8 +1411,8 @@ org.openmdx.base.text.conversion.*
 				pm,
 				documentSegment,
 				allUsers
-			);			
-			
+			);
+
 			// Report Templates
 			templateFolder = initDocumentFolder(
 				REPORT_TEMPLATE_FOLDER_NAME,
@@ -1470,7 +1492,8 @@ org.openmdx.base.text.conversion.*
 					"Entry[XRI;IDX;ID;shortText;longText]",
 				templateContractList,
 				pm,
-				userHome
+				userHome,
+				allUsers
 			);
 			initExportProfile(
 				EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST,
@@ -1492,7 +1515,8 @@ org.openmdx.base.text.conversion.*
 					"Entry[XRI;IDX;ID;shortText;longText]",
 				templateContractWithPositionList,
 				pm,
-				userHome
+				userHome,
+				allUsers
 			);
 			initExportProfile(
 				EXPORT_PROFILE_NAME_ACTIVITY_LIST,
@@ -1511,7 +1535,8 @@ org.openmdx.base.text.conversion.*
 					"Account[XRI;IDX;fullName;aliasName;lastName;firstName;vcard;object_class]",
 				templateActivityList,
 				pm,
-				userHome
+				userHome,
+				allUsers
 			);
 			initExportProfile(
 				EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST,
@@ -1531,22 +1556,25 @@ org.openmdx.base.text.conversion.*
 					"Account[XRI;IDX;fullName;aliasName;lastName;firstName;vcard;object_class]",
 				templateActivityWithFollowUpList,
 				pm,
-				userHome
+				userHome,
+				allUsers
 			);
 			initExportProfile(
 				EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST,
 				new String[]{
+					"org:opencrx:kernel:account1:Contact",
 					"org:opencrx:kernel:account1:AbstractGroup"
 				},
 				"application/x-excel",
-					"member,account,address\n" +
+					"member,account,address[2]\n" +
 					"!\n" +
 					"Member[XRI;IDX;account],\n" +
 					"Account[XRI;IDX;fullName;aliasName;lastName;firstName;vcard;object_class],\n" +
 					"Address[XRI;IDX;isMain;usage;phoneNumberFull;postalCity;postalCode;postalCountry;postalState;postalAddressLine;postalStreet;emailAddress;webUrl;object_class]",
 				templateAccountMemberList,
 				pm,
-				userHome
+				userHome,
+				allUsers
 			);
 			initExportProfile(
 				EXPORT_PROFILE_NAME_ACCOUNT_LIST,
@@ -1560,47 +1588,48 @@ org.openmdx.base.text.conversion.*
 					"Address[XRI;IDX;isMain;usage;phoneNumberFull;postalCity;postalCode;postalCountry;postalState;postalAddressLine;postalStreet;emailAddress;webUrl;object_class]",
 				templateAccountList,
 				pm,
-				userHome
+				userHome,
+				allUsers
 			);
 
 			// Favorites
 			initFavorite(
 			    FAVORITE_NAME_CREATE_ACTIVITY,
 			    activitySegment,
-			    "ActivityManagement.gif",				
-			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateActivityWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+			    "ActivityManagement.gif",
+			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateActivityWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
 				pm,
 				userHome
 			);
 			initFavorite(
 			    FAVORITE_NAME_CREATE_CONTACT,
 			    accountSegment,
-			    "Account.gif",				
-			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateContactWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+			    "Account.gif",
+			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateContactWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
 				pm,
 				userHome
 			);
 			initFavorite(
 			    FAVORITE_NAME_CREATE_CONTRACT,
 			    contractSegment,
-			    "SalesOrder.gif",				
-			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateContractWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+			    "SalesOrder.gif",
+			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateContractWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
 				pm,
 				userHome
-			);			        
+			);
 			initFavorite(
 			    FAVORITE_NAME_CREATE_LEAD,
 			    contractSegment,
-			    "Lead.gif",				
-			    "new Ajax.Updater('UserDialog', './wizards/en_US/CreateLeadWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
+			    "Lead.gif",
+			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateLeadWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName + "', {evalScripts: true});",
 				pm,
 				userHome
 			);
 			initFavorite(
 			    FAVORITE_NAME_SCHEDULE_EVENT,
 			    activitySegment,
-			    "Meeting.gif",				
-			    "window.location.href='./wizards/en_US/ScheduleEventWizard.jsp?xri=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "';",
+			    "Meeting.gif",
+			    "$('UserDialogWait').className='loading udwait';window.location.href='./wizards/en_US/ScheduleEventWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "';",
 				pm,
 				userHome
 			);
@@ -1932,6 +1961,10 @@ org.openmdx.base.text.conversion.*
 					<td width="400px"><%= ACCOUNT_FILTER_NAME_ALL %></td>
 					<td><%= findAccountFilter(ACCOUNT_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
+        <tr>
+          <td width="400px"><%= ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD %></td>
+          <td><%= findAccountFilter(ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, accountSegment, pm) == null ? MISSING : OK %></td>
+        </tr>
 				<tr>
 					<td width="400px"><%= ADDRESS_FILTER_NAME_ALL %></td>
 					<td><%= findAddressFilter(ADDRESS_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
@@ -2115,9 +2148,10 @@ org.openmdx.base.text.conversion.*
 			<br>
 		</div>
 	</form>
+  <br>
       </div> <!-- content -->
     </div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+  </div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

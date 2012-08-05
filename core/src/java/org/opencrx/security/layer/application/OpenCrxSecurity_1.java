@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.38 2009/06/13 18:47:42 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.43 2009/10/23 11:13:32 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.38 $
+ * Revision:    $Revision: 1.43 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/13 18:47:42 $
+ * Date:        $Date: 2009/10/23 11:13:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,7 +69,6 @@ import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.RequestCollection;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.layer.application.ProvidingUid_1;
 import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
@@ -102,7 +101,7 @@ import org.openmdx.kernel.id.UUIDs;
  * 
  */
 public class OpenCrxSecurity_1
-  extends ProvidingUid_1 {
+  extends org.openmdx.application.dataprovider.layer.application.Standard_1 {
 
     //-------------------------------------------------------------------------
     public void activate(
@@ -168,7 +167,7 @@ public class OpenCrxSecurity_1
 	        	objFacade.clearAttributeValues("name").add(objFacade.getPath().getBase());            
 	        }
 	        else if(
-	            this.model.objectIsSubtypeOf(objFacade, "org:openmdx:security:realm1:Credential")
+	            this.model.objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
 	        ) {
 	        	objFacade.clearAttributeValues("id").add(objFacade.getPath().getBase());            
 	        }
@@ -260,7 +259,7 @@ public class OpenCrxSecurity_1
 	        	null;
 	        if((oldPassword != null) && !oldPassword.equals(passwordCredentialFacade.attributeValue("password"))) {
 	            throw new ServiceException(
-	                BasicException.Code.DEFAULT_DOMAIN,
+	            	OpenCrxException.DOMAIN,
 	                BasicException.Code.ASSERTION_FAILURE, 
 	                "old password verification mismatch",
 	                new BasicException.Parameter("credential", passwordCredential)
@@ -458,9 +457,9 @@ public class OpenCrxSecurity_1
         );
         return this.completeReply(
             header,
-            request.attributeSelector() == AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES
-	            ? request.attributeSpecifierAsMap().keySet()
-	            : null,
+            request.attributeSelector() == AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES ? 
+            	request.attributeSpecifierAsMap().keySet() : 
+            	null,
             super.get(
 	            header,
 	            request
@@ -525,9 +524,9 @@ public class OpenCrxSecurity_1
             request
         );
         String principalName = this.getPrincipalName(header);
-        String realmName = principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR)
-            ? principalName.substring(principalName.indexOf("-") + 1)
-            : "";
+        String realmName = principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) ? 
+        	principalName.substring(principalName.indexOf("-") + 1) : 
+        		"";
         // Restrict browsing on principals
         if(request.path().isLike(PATH_PATTERN_PRINCIPALS)) {
             boolean containsSubjectFilter = false;
@@ -537,8 +536,7 @@ public class OpenCrxSecurity_1
                     break;
                 }
             }
-            // Return groups only if requesting principal is not admin-Root
-            // or segment admin
+            // Return users and groups only if requesting principal is not admin-Root or segment admin
             if(
                 !containsSubjectFilter &&
                 !"Root".equals(realmName) &&
@@ -549,7 +547,8 @@ public class OpenCrxSecurity_1
                         Quantors.THERE_EXISTS,
                         SystemAttributes.OBJECT_CLASS,
                         FilterOperators.IS_IN,
-                        "org:opencrx:security:realm1:PrincipalGroup"   
+                        "org:opencrx:security:realm1:PrincipalGroup",   
+                        "org:opencrx:security:realm1:User"   
                     )
                 );                    
             }
@@ -569,12 +568,22 @@ public class OpenCrxSecurity_1
         }
         return this.completeReply(
             header,
-            request.attributeSelector() == AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES
-                ? request.attributeSpecifierAsMap().keySet()
-	            : null,
+            request.attributeSelector() == AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES ? 
+            	request.attributeSpecifierAsMap().keySet() : 
+            	null,
             super.find(
 	            header,
-	            request
+	            new DataproviderRequest(
+	            	request,
+	            	request.object(),
+	            	request.operation(),
+	            	request.attributeFilter(),
+	            	request.position(),
+	            	request.size(),
+	            	request.direction(),
+	            	AttributeSelectors.ALL_ATTRIBUTES,
+	            	request.attributeSpecifier()
+	            )
             )
         );
     }

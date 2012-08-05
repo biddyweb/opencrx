@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.45 2009/05/27 12:18:31 wfro Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.52 2009/10/15 16:19:34 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.52 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/27 12:18:31 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,7 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.application.log.*,
+org.openmdx.kernel.log.*,
 org.opencrx.kernel.backend.*,
 org.opencrx.kernel.layer.application.*,
 org.openmdx.kernel.id.cci.*,
@@ -85,9 +85,10 @@ org.openmdx.base.exception.*
 	// Init
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(app == null || objectXri == null) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -301,8 +302,8 @@ org.openmdx.base.exception.*
 			String fSendmailSubjectPrefix = request.getParameter("sendmailSubjectPrefix");
 			String fWebAccessUrl = request.getParameter("webAccessUrl");
 			String fTopNavigationShowMax = request.getParameter("topNavigationShowMax");
-			String fShowHistory = request.getParameter("history");
 			List<String> fRootObjects = new ArrayList<String>();
+			fRootObjects.add("1"); // always show root object 0
 			for(int i = 1; i < 20; i++) {
 				String state = request.getParameter("rootObject" + i);
 				fRootObjects.add(
@@ -317,7 +318,7 @@ org.openmdx.base.exception.*
 					parameterName.startsWith("topicIsActive-") ||
 					parameterName.startsWith("topicCreation-") ||
 					parameterName.startsWith("topicReplacement-") ||
-					parameterName.startsWith("topicRemoval-")			
+					parameterName.startsWith("topicRemoval-")
 				) {
 					fSubscriptions.put(
 						parameterName,
@@ -341,7 +342,6 @@ org.openmdx.base.exception.*
 						fSendmailSubjectPrefix,
 						fWebAccessUrl,
 						fTopNavigationShowMax,
-						fShowHistory,
 						fRootObjects,
 						fSubscriptions
 					);
@@ -370,31 +370,34 @@ org.openmdx.base.exception.*
 							<select id="timezone" name="timezone">
 <%
 								Map timezoneIDs = codes.getShortText("org:opencrx:kernel:address1:PostalAddressable:postalUtcOffset", locale, true, true);
-								for(Iterator i = timezoneIDs.values().iterator(); i.hasNext(); ) {
-									String timezoneID = (String)i.next();
-									timezoneID = timezoneID.trim();
-									timezoneID = timezoneID.replace(":", "");
-									timezoneID = timezoneID.replace(" Greenwich Mean Time", "-0000");
-									if(!"NA".equals(timezoneID)) {
-										String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
-											? "selected"
-											: "";
+								try {
+    								for(Iterator i = timezoneIDs.values().iterator(); i.hasNext(); ) {
+    									String timezoneID = (String)i.next();
+    									timezoneID = timezoneID.trim();
+    									timezoneID = timezoneID.replace(":", "");
+    									timezoneID = timezoneID.replace(" Greenwich Mean Time", "-0000");
+    									if(!"NA".equals(timezoneID)) {
+    										String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
+    											? "selected"
+    											: "";
+    %>
+    										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
+    <%
+    									}
+    								}
+    							} catch (Exception e) {
+    							    new ServiceException(e).log();
+    							}
+                                String[] timezones = java.util.TimeZone.getAvailableIDs();
+                                for(int i = 0; i < timezones.length; i++) {
+                                  String timezoneID = timezones[i].trim();
+                                  String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
+                                    ? "selected"
+                                    : "";
 %>
-										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
+                										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
 <%
-									}
-								}
-                String[] timezones = java.util.TimeZone.getAvailableIDs();
-                for(int i = 0; i < timezones.length; i++) {
-                  String timezoneID = timezones[i].trim();
-                  String selectedModifier = timezoneID.equals(userSettings.getProperty("TimeZone.Name"))
-                    ? "selected"
-                    : "";
-%>
-										<option  <%= selectedModifier %> value="<%= timezoneID %>"><%= timezoneID %>
-<%
-                }
-
+                                }
 %>
 							</select>
 						</td></tr>
@@ -437,8 +440,6 @@ org.openmdx.base.exception.*
 							}
 						}
 %>
-						<tr><td><label for="history">History:</label></td><td>
-						<input type="checkbox" <%= userSettings.getProperty("History.State", "1").equals("1") ? "checked" : "" %> id="history" name="history"/></td></tr>
 						<tr><td><label for="topNavigationShowMax">Show max items in top navigation:</label></td><td>
 						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty("TopNavigation.ShowMax", "6") %>"/></td></tr>
 					</table>
@@ -451,7 +452,12 @@ org.openmdx.base.exception.*
 						<tr><td></td><td></td><td colspan="3" style="background-color:#DDDDDD;text-align:center;">Notify on</td></tr>
 						<tr><td></td><td>&nbsp;Is&nbsp;Active&nbsp;</td><td style="">&nbsp;Creation&nbsp;</td><td style="">&nbsp;Replacement&nbsp;</td><td style="">&nbsp;Removal&nbsp;</td></tr>
 <%
-						for(Iterator i = workflowSegment.getTopic().iterator(); i.hasNext(); ) {
+                        org.opencrx.kernel.workflow1.cci2.TopicQuery topicQuery =
+                            (org.opencrx.kernel.workflow1.cci2.TopicQuery)pm.newQuery(org.opencrx.kernel.workflow1.jmi1.Topic.class);
+                        topicQuery.orderByName().ascending();
+                        topicQuery.forAllDisabled().isFalse();
+
+						for(Iterator i = workflowSegment.getTopic(topicQuery).iterator(); i.hasNext(); ) {
 							org.opencrx.kernel.workflow1.jmi1.Topic topic = (org.opencrx.kernel.workflow1.jmi1.Topic)i.next();
 							ObjectReference objRefTopic = new ObjectReference(topic, app);
 							org.opencrx.kernel.home1.cci2.SubscriptionQuery query = homePkg.createSubscriptionQuery();
@@ -495,7 +501,7 @@ org.openmdx.base.exception.*
 %>
             </div> <!-- content -->
           </div> <!-- content-wrap -->
-      	<div> <!-- wrap -->
+        </div> <!-- wrap -->
       </div> <!-- container -->
   	</body>
   	</html>

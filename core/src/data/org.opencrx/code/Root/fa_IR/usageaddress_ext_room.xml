@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="usageaddressroom" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="usageaddressroom" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item> نامشخص</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
                           <_object>
                             <shortText>
                               <_item>خصوصی</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
                           <_object>
                             <shortText>
                               <_item>اولیه</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="set">
                           <_object>
                             <shortText>
                               <_item>ثانویه</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
                           <_object>
                             <shortText>
                               <_item>خانه</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن اصلی خانه</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن دیگر خانه</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن محل کار</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن اصلی محل کار</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن دیگر محل کار</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="600" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="600" _operation="set">
                           <_object>
                             <shortText>
                               <_item>شرکت</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="620" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن اصلی شرکت</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="650" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="650" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تلفن دیگر شرکت</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="700" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="700" _operation="set">
                           <_object>
                             <shortText>
                               <_item>دستیار</_item>
@@ -169,7 +169,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="set">
                           <_object>
                             <shortText>
                               <_item>وکیل</_item>
@@ -180,7 +180,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="set">
                           <_object>
                             <shortText>
                               <_item>اتومبیل</_item>
@@ -191,7 +191,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1800" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1800" _operation="set">
                           <_object>
                             <shortText>
                               <_item>موارد دیگر</_item>
@@ -202,7 +202,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1900" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1900" _operation="set">
                           <_object>
                             <shortText>
                               <_item>اضطراری</_item>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.5 2009/06/09 14:10:35 wfro Exp $
+ * Name:        $Id: ComponentConfigHelper.java,v 1.7 2009/07/13 14:38:37 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:10:35 $
+ * Date:        $Date: 2009/07/13 14:38:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,10 +61,10 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.log.SysLog;
 
 public class ComponentConfigHelper {
 
@@ -82,7 +82,7 @@ public class ComponentConfigHelper {
             org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm); 
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root").toXri()
+                    new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
                 );
             try {
                 componentConfiguration = adminSegment.getConfiguration(configurationId);
@@ -116,7 +116,7 @@ public class ComponentConfigHelper {
             }
         }
         catch(Exception e) {
-            AppLog.warning("Can not get component configuration", e);
+        	SysLog.warning("Can not get component configuration", e);
         }
         return componentConfiguration;
     }

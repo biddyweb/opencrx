@@ -1,37 +1,37 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImportAddressesWizard.jsp,v 1.2 2009/05/11 11:49:40 cmu Exp $
+ * Name:        $Id: ImportAddressesWizard.jsp,v 1.6 2009/10/15 16:19:34 wfro Exp $
  * Description: ImportAddressGroupMemberWizard
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/11 11:49:40 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
- * 
+ *
  * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
- * 
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
- * 
+ *
  * * Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in
  * the documentation and/or other materials provided with the
  * distribution.
- * 
+ *
  * * Neither the name of CRIXP Corp. nor the names of the contributors
  * to openCRX may be used to endorse or promote products derived
  * from this software without specific prior written permission
- * 
- * 
+ *
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
  * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -45,12 +45,12 @@
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- * 
+ *
  * ------------------
- * 
+ *
  * This product includes software developed by the Apache Software
  * Foundation (http://www.apache.org/).
- * 
+ *
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
@@ -71,14 +71,14 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.application.log.*
+org.openmdx.kernel.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getViews().isEmpty()) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -112,7 +112,7 @@ org.openmdx.application.log.*
 	<meta name="toolTip" content="Import Addresses">
 	<meta name="targetType" content="_self">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:AddressGroup">
-	<meta name="order" content="9999">
+	<meta name="order" content="9998">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
 	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
@@ -134,7 +134,7 @@ org.openmdx.application.log.*
 	  	if(!OF) {
 			OF = new ObjectFinder();
 	  	}
-	</script>	
+	</script>
 </head>
 <%
 	String providerName = obj.refGetPath().get(2);
@@ -147,38 +147,47 @@ org.openmdx.application.log.*
 	    	(obj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroup) &&
 	    	(request.getParameter("AddressFilter.xri") != null)
 	    ) {
-	        org.opencrx.kernel.activity1.jmi1.AddressGroup addressGroup = (org.opencrx.kernel.activity1.jmi1.AddressGroup)obj;
-		    org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter = (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)pm.getObjectById(new Path(request.getParameter("AddressFilter.xri")));
-		    int countLimit = Integer.valueOf(request.getParameter("CountLimit"));
-			pm.currentTransaction().begin();
-			int ii = 0;
-			for(Iterator i = addressFilter.getFilteredAddress().iterator(); i.hasNext(); ) {
-			    org.opencrx.kernel.account1.jmi1.AccountAddress address = (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
-			    org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = pm.newInstance(org.opencrx.kernel.activity1.jmi1.AddressGroupMember.class);
-			    member.refInitialize(false, false);
-			    member.setAddress(address);
-				addressGroup.addMember(
-				    false,
-				    org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
-				    member
-				);
-				ii++;
-				if(ii % 100 == 0) {
-					pm.currentTransaction().commit();
-					pm.currentTransaction().begin();				    
+	      org.opencrx.kernel.activity1.jmi1.AddressGroup addressGroup = (org.opencrx.kernel.activity1.jmi1.AddressGroup)obj;
+	      Set addressXris = new HashSet();
+				for(Iterator i = addressGroup.getMember().iterator(); i.hasNext(); ) {
+						addressXris.add(((org.opencrx.kernel.activity1.jmi1.AddressGroupMember)i.next()).getAddress().refMofId());
 				}
-				if(ii > countLimit) break;
-			}
-			pm.currentTransaction().commit();
-		    Action nextAction = new ObjectReference(
-		    	obj, 
-		    	app
-		   	).getSelectObjectAction();
-			response.sendRedirect(
-				request.getContextPath() + "/" + nextAction.getEncodedHRef()
-			);
-			return;	       
-	    }	    
+
+		    org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter = (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)pm.getObjectById(new Path(request.getParameter("AddressFilter.xri")));
+		    int countLimit = -1;
+		    try {
+		    		countLimit = Integer.valueOf(request.getParameter("CountLimit"));
+		    } catch (Exception e) {}
+				pm.currentTransaction().begin();
+				int ii = 0;
+				for(Iterator i = addressFilter.getFilteredAddress().iterator(); i.hasNext() && ii < countLimit; ) {
+				    org.opencrx.kernel.account1.jmi1.AccountAddress address = (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
+				    if (addressXris.contains(address.refMofId())) {continue;} // do not import duplicates
+
+				    org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = pm.newInstance(org.opencrx.kernel.activity1.jmi1.AddressGroupMember.class);
+				    member.refInitialize(false, false);
+				    member.setAddress(address);
+						addressGroup.addMember(
+						    false,
+						    org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+						    member
+						);
+						ii++;
+						if(ii % 100 == 0) {
+							pm.currentTransaction().commit();
+							pm.currentTransaction().begin();
+						}
+				}
+				pm.currentTransaction().commit();
+			    Action nextAction = new ObjectReference(
+			    	obj,
+			    	app
+			   	).getSelectObjectAction();
+				response.sendRedirect(
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
+				);
+				return;
+	   }
 	}
 %>
 <body>
@@ -223,28 +232,28 @@ org.openmdx.application.log.*
 														addressFilterQuery.orderByName().ascending();
 														for(Iterator i = accountSegment.getAddressFilter(addressFilterQuery).iterator(); i.hasNext(); ) {
 														    org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter = (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)i.next();
-%>													
+%>
 															<option value="<%= addressFilter.refMofId() %>"><%= new ObjectReference(addressFilter, app).getTitle() %></option>
 <%
 														}
-%>															
-													</select>												
+%>
+													</select>
 												</td>
 												<td class="addon"/>
 												<td class="label"/>
 												<td/>
-												<td class="addon"/>												
+												<td class="addon"/>
 											</tr>
 											<tr>
 												<td class="label">Count limit:</td>
 												<td><input type="text" class="valueR" id="CountLimit" name="CountLimit" value="0"/></td>
-												<td class="addon"/></td>											
+												<td class="addon"/></td>
 												<td class="label"/>
 												<td/>
-												<td class="addon"/>												
-											</tr>												
+												<td class="addon"/>
+											</tr>
 										</table>
-									</div>									
+									</div>
 								</div>
 								<input type="submit" class="abutton" name="OK.Button" id="OK.Button" tabindex="9000" value="Import" />
 								<input  type="submit" class="abutton" name="Cancel.Button" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" />
@@ -254,7 +263,7 @@ org.openmdx.application.log.*
 				</form>
 			</div> <!-- content -->
 		</div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+	</div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

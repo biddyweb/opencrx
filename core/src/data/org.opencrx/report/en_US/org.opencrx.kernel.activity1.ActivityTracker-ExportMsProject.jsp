@@ -1,11 +1,11 @@
 <%/*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: org.opencrx.kernel.activity1.ActivityTracker-ExportMsProject.jsp,v 1.8 2009/01/06 15:06:34 wfro Exp $
+ * Name:        $Id: org.opencrx.kernel.activity1.ActivityTracker-ExportMsProject.jsp,v 1.9 2009/08/26 12:12:27 wfro Exp $
  * Description: openCRX MS Project Export
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 15:06:34 $
+ * Date:        $Date: 2009/08/26 12:12:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,7 +70,6 @@ org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*,
 org.apache.poi.hssf.usermodel.*,
 org.apache.poi.hssf.util.*
 " %>

@@ -46,10 +46,11 @@ import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.ActivitiesHelper;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 import org.openmdx.kernel.text.format.HexadecimalFormatter;
 import org.openmdx.security.authentication1.jmi1.Password;
 
@@ -94,7 +95,7 @@ public class IMAPSessionImpl implements Runnable {
             System.out.println("Unable to start conversation, invalid connection passed to client handler");
         } 
         else {
-            AppLog.info("Session started for client", this.client.getInetAddress().getHostAddress());
+        	SysLog.info("Session started for client", this.client.getInetAddress().getHostAddress());
             try {
                 this.out = new PrintStream(this.client.getOutputStream());
                 this.in = this.client.getInputStream();
@@ -129,12 +130,12 @@ public class IMAPSessionImpl implements Runnable {
                     }
                     line = this.readLine();
                 }
-                AppLog.info("connection closed", client.getInetAddress().getHostAddress());
+                SysLog.info("connection closed", client.getInetAddress().getHostAddress());
             } 
             catch (Exception e) {
                 if(!(e instanceof SocketTimeoutException)) {
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.detail(e0.getMessage(), e0.getCause());
+                    SysLog.detail(e0.getMessage(), e0.getCause());
                 }
             }
             finally {                
@@ -180,7 +181,7 @@ public class IMAPSessionImpl implements Runnable {
             String segmentName = username.substring(username.indexOf("@") + 1);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)this.pm.getObjectById(
-                    "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
+                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
                 );
             Collection<ActivityTracker> trackers = activitySegment.getActivityTracker();
             for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: trackers) {
@@ -638,7 +639,7 @@ public class IMAPSessionImpl implements Runnable {
         String tag, 
         String command
     ) {
-        AppLog.detail("Could not", tag + " " + command);
+    	SysLog.detail("Could not", tag + " " + command);
         this.println(tag + " BAD " + command);
     }
 
@@ -1349,7 +1350,7 @@ public class IMAPSessionImpl implements Runnable {
                 );                
                 org.opencrx.security.realm1.jmi1.Principal principal = 
                     (org.opencrx.security.realm1.jmi1.Principal)rootPm.getObjectById(
-                        "xri:@openmdx:org.openmdx.security.realm1/provider/" + this.server.getProviderName() + "/segment/Root/realm/Default/principal/" + principalName
+                        new Path("xri:@openmdx:org.openmdx.security.realm1/provider/" + this.server.getProviderName() + "/segment/Root/realm/Default/principal/" + principalName)
                     );
                 if(principal != null) {
                     org.openmdx.security.realm1.jmi1.Credential credential = principal.getCredential();                

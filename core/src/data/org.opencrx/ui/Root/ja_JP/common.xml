@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -309,10 +309,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:Modifiable:modifiedAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>更新</_item>
+                        <_item>更新日</_item>
                       </label>
                       <toolTip>
-                        <_item>更新日時</_item>
+                        <_item>最終更新日時</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -746,6 +746,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>フォルダー</_item>
+                      </label>
+                      <toolTip>
+                        <_item>フォルダー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
@@ -793,10 +804,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>≫プロパティセットエントリ</_item>
+                        <_item>≫プロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>プロパティセットエントリ</_item>
+                        <_item>プロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -837,10 +848,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:modifiedAt" _operation="create">
                     <_object>
                       <label>
-                        <_item>更新</_item>
+                        <_item>更新日</_item>
                       </label>
                       <toolTip>
-                        <_item>更新</_item>
+                        <_item>更新日</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -900,6 +911,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>フォルダー割当</_item>
+                      </label>
+                      <toolTip>
+                        <_item>フォルダー割当</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>説明</_item>
+                      </label>
+                      <toolTip>
+                        <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media" _operation="create">
                     <_object>
                       <label>
@@ -937,6 +981,17 @@
                       </label>
                       <toolTip>
                         <_item>コンテンツ長</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Media:contentMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIMEタイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIMEタイプ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1054,10 +1109,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:PropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>プロパティセットエントリ</_item>
+                        <_item>プロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>プロパティセットエントリ</_item>
+                        <_item>プロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1131,10 +1186,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:StringPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stringプロパティセットエントリ</_item>
+                        <_item>Stringプロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>Stringプロパティセットエントリ</_item>
+                        <_item>Stringプロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1153,10 +1208,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:IntegerPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Integerプロパティセットエントリ</_item>
+                        <_item>Integerプロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>Integerプロパティセットエントリ</_item>
+                        <_item>Integerプロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1175,10 +1230,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:BooleanPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Booleanプロパティセットエントリ</_item>
+                        <_item>Booleanプロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>Booleanプロパティセットエントリ</_item>
+                        <_item>Booleanプロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1194,35 +1249,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>URIプロパティセットエントリ</_item>
-                      </label>
-                      <toolTip>
-                        <_item>URIプロパティセットエントリ</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry:uriValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>値</_item>
-                      </label>
-                      <toolTip>
-                        <_item>値</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DecimalPropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Decimalプロパティセットエントリ</_item>
+                        <_item>Decimalプロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>Decimalプロパティセットエントリ</_item>
+                        <_item>Decimalプロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1238,13 +1271,79 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DatePropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dateプロパティセットエントリー</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dateプロパティセットエントリー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DatePropertySetEntry:dateValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>値</_item>
+                      </label>
+                      <toolTip>
+                        <_item>値</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DateTimePropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Date/Timeプロパティセットエントリー</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Date/Timeプロパティセットエントリー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DateTimePropertySetEntry:dateTimeValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>値</_item>
+                      </label>
+                      <toolTip>
+                        <_item>値</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>URIプロパティセットエントリー</_item>
+                      </label>
+                      <toolTip>
+                        <_item>URIプロパティセットエントリー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:UriPropertySetEntry:uriValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>値</_item>
+                      </label>
+                      <toolTip>
+                        <_item>値</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:ReferencePropertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>リファレンスプロパティセットエントリ</_item>
+                        <_item>リファレンスプロパティセットエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>リファレンスプロパティセットエントリ</_item>
+                        <_item>リファレンスプロパティセットエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1447,7 +1546,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AbstractFilterProperty:filterOperator" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AttributeFilterProperty:filterOperator" _operation="create">
                     <_object>
                       <label>
                         <_item>フィルター演算子</_item>
@@ -1458,13 +1557,167 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AbstractFilterProperty:filterQuantor" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AttributeFilterProperty:filterQuantor" _operation="create">
                     <_object>
                       <label>
-                        <_item>フィルター量子化</_item>
+                        <_item>フィルタークオンター</_item>
                       </label>
                       <toolTip>
-                        <_item>フィルター量子化</_item>
+                        <_item>フィルタークオンター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:clause" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>フレーズ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>フレーズ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:stringParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stringパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stringパラメーター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:integerParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Integerパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Integerパラメーター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:decimalParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Decimalパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Decimalパラメーター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:booleanParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Booleanパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Booleanパラメーター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:dateParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dateパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dateパラメーター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:QueryFilterProperty:dateTimeParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Date/Timeパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Date/Timeパラメーター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CountFilteredObjectsResult:count" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>カウント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>カウント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>説明</_item>
+                      </label>
+                      <toolTip>
+                        <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>クラス</_item>
+                      </label>
+                      <toolTip>
+                        <_item>クラス</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リファレンスフィルター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リファレンスフィルター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:mimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME タイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME タイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:template" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>テンプレート</_item>
+                      </label>
+                      <toolTip>
+                        <_item>テンプレート</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1579,18 +1832,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>XMLエクスポート</_item>
+                        <_item>エクスポート</_item>
                       </label>
                       <toolTip>
-                        <_item>XMLエクスポート</_item>
+                        <_item>エクスポート</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>入力</_item>
@@ -1601,29 +1854,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:referenceFilter" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemParams:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>リファレンスフィルタ</_item>
+                        <_item>プロファイル</_item>
                       </label>
                       <toolTip>
-                        <_item>リファレンスフィルタ</_item>
+                        <_item>プロファイル</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExportParams:attributeFilter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>属性フィルタ</_item>
-                      </label>
-                      <toolTip>
-                        <_item>属性フィルタ</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:XmlExporter:Pane:Op:Tab:exportXml:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>結果</_item>
@@ -1634,7 +1876,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:item" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:item" _operation="create">
                     <_object>
                       <label>
                         <_item>エクスポートされた項目</_item>
@@ -1645,18 +1887,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemMimeType" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemMimeType" _operation="create">
                     <_object>
                       <label>
-                        <_item>MIMEタイプ</_item>
+                        <_item>MIME タイプ</_item>
                       </label>
                       <toolTip>
-                        <_item>MIMEタイプ</_item>
+                        <_item>MIME タイプ</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:itemName" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:itemName" _operation="create">
                     <_object>
                       <label>
                         <_item>項目名</_item>
@@ -1667,7 +1909,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:status" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:status" _operation="create">
                     <_object>
                       <label>
                         <_item>ステータス</_item>
@@ -1678,13 +1920,68 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportResult:statusMessage" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemResult:statusMessage" _operation="create">
                     <_object>
                       <label>
                         <_item>ステータスメッセージ</_item>
                       </label>
                       <toolTip>
                         <_item>ステータスメッセージ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>詳細エクスポート</_item>
+                      </label>
+                      <toolTip>
+                        <_item>詳細エクスポート</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>入力</_item>
+                      </label>
+                      <toolTip>
+                        <_item>入力</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:referenceFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リファレンスフィルター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リファレンスフィルター</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>MIME タイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>MIME タイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItemAdvanced:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>結果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>結果</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1879,10 +2176,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CloneParams:referenceFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>リファレンスフィルタ</_item>
+                        <_item>リファレンスフィルター</_item>
                       </label>
                       <toolTip>
-                        <_item>リファレンスフィルタ</_item>
+                        <_item>リファレンスフィルター</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -2019,6 +2316,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:resendDelayInSeconds" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>再送遅延 (秒)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>再送遅延 (秒)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:description" _operation="create">
                     <_object>
                       <label>
@@ -2026,138 +2334,6 @@
                       </label>
                       <toolTip>
                         <_item>説明</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>購読追加</_item>
-                      </label>
-                      <toolTip>
-                        <_item>購読追加</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>入力</_item>
-                      </label>
-                      <toolTip>
-                        <_item>入力</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscription:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>結果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>結果</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>購読削除</_item>
-                      </label>
-                      <toolTip>
-                        <_item>購読削除</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>入力</_item>
-                      </label>
-                      <toolTip>
-                        <_item>入力</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscription:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>結果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>結果</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>親への購読追加</_item>
-                      </label>
-                      <toolTip>
-                        <_item>親への購読追加</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>入力</_item>
-                      </label>
-                      <toolTip>
-                        <_item>入力</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:addSubscriptionForParent:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>結果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>結果</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>親への購読削除</_item>
-                      </label>
-                      <toolTip>
-                        <_item>親への購読削除</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>入力</_item>
-                      </label>
-                      <toolTip>
-                        <_item>入力</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SubscriptionTarget:Pane:Op:Tab:removeSubscriptionForParent:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>結果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>結果</_item>
                       </toolTip>
                     </_object>
                     <_content/>

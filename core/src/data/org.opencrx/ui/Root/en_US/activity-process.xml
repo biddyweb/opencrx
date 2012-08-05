@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
 	<_object></_object>
 	<_content>
 		<provider>
@@ -11,6 +11,14 @@
 							<_object></_object>
 							<_content>
 								<featureDefinition>
+								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFollowUp:formattedFollowUp">
+									<_object>
+									  <type>org:w3c:string</type>
+									  <multiplicity>0..1</multiplicity>
+									  <changeable>false</changeable>
+									</_object>
+									<_content/>
+								  </org.openmdx.ui1.StructuralFeatureDefinition>
 								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
 									<_object>
 									  <type>org:w3c:string</type>
@@ -120,9 +128,32 @@
 											</order>
 											<orderObjectContainer>
 												<_item>0</_item>
-												<_item>5</_item>
+												<_item>25</_item>
 												<_item>0</_item>
 											</orderObjectContainer>																						
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedFollowUp">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Transition Info</_item>
+											</toolTip>
+											<label>
+												<_item>Transition Info</_item>
+											</label>
+											<order>
+												<_item>90</_item>
+												<_item>70</_item>
+												<_item>5</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>5</_item>
+												<_item>0</_item>
+											</orderObjectContainer>
+											<dataBindingName>org.opencrx.kernel.portal.FormattedFollowUpDataBinding</dataBindingName>																						
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

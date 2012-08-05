@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.26 2009/04/21 11:21:59 wfro Exp $
+ * Name:        $Id: Admin.java,v 1.30 2009/09/08 14:29:55 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.26 $
+ * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 11:21:59 $
+ * Date:        $Date: 2009/09/08 14:29:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -72,9 +73,9 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.kernel.log.SysLog;
 
 public class Admin extends AbstractImpl {
 
@@ -135,7 +136,7 @@ public class Admin extends AbstractImpl {
 	        }
 	        catch(Exception e0) {
 	            ServiceException e1 = new ServiceException(e0);
-	            AppLog.warning(e1.getMessage(), e1.getCause());
+	            SysLog.warning(e1.getMessage(), e1.getCause());
 	            errors.add("Unable to create segment " + segment);
 	            errors.add("reason is " + e0.getMessage());
 	        }
@@ -347,7 +348,7 @@ public class Admin extends AbstractImpl {
             );
         }        
         org.opencrx.security.realm1.jmi1.User adminUser = (org.opencrx.security.realm1.jmi1.User)this.createPrincipal(
-        	principalName + SecurityKeys.ID_SEPARATOR + SecurityKeys.GROUP_SUFFIX, 
+        	principalName + "." + SecurityKeys.USER_SUFFIX,
         	null, 
         	realm, 
         	PrincipalType.USER, 
@@ -537,9 +538,13 @@ public class Admin extends AbstractImpl {
         byte[] item
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(adminSegment);
-        BufferedReader reader = new BufferedReader(
-            new InputStreamReader(new ByteArrayInputStream(item))
-        );
+        BufferedReader reader = null;
+        try {
+	        reader = new BufferedReader(
+	            new InputStreamReader(new ByteArrayInputStream(item), "UTF-8")
+	        );
+        }
+        catch (UnsupportedEncodingException e) {}
         org.openmdx.security.realm1.jmi1.Realm loginRealm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
         	SecureObject.getInstance().getLoginRealmIdentity(adminSegment.refGetPath().get(2))
         );
@@ -555,7 +560,7 @@ public class Admin extends AbstractImpl {
         try {
             while(reader.ready()) {
                 String l = reader.readLine();
-                if(l.startsWith("Principal")) {
+                if(l.indexOf("Principal;") >= 0) {
                     StringTokenizer t = new StringTokenizer(l, ";");
                     t.nextToken();
                     String principalName = t.nextToken();
@@ -599,7 +604,7 @@ public class Admin extends AbstractImpl {
                         }
                     }
                 }
-                else if(l.startsWith("Subject")) {
+                else if(l.indexOf("Subject") >= 0) {
                     StringTokenizer t = new StringTokenizer(l, ";");
                     t.nextToken();
                     String subjectName = t.nextToken();

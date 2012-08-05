@@ -1,0 +1,31 @@
+#include "sql-definitions.tsql"
+
+ALTER TABLE OOCKE1_USERHOME 
+	DROP_COLUMN_BEGIN
+		chart0
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_USERHOME 
+	DROP_COLUMN_BEGIN
+		chart1
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_USERHOME 
+	DROP_COLUMN_BEGIN
+		chart2
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_USERHOME 
+	DROP_COLUMN_BEGIN
+		chart3
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_ACTIVITY 
+	DROP_COLUMN_BEGIN
+		is_all_day_event
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

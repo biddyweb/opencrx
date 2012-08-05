@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -301,7 +301,7 @@
 							</_object>
 							<_content>
 								<formFieldGroupDefinition>
-									<org.openmdx.ui1.FormFieldGroupDefinition name="ContractPositionInformation">
+									<org.openmdx.ui1.FormFieldGroupDefinition name="AbstractContractPositionInformation">
 										<_object>
 											<label>
 												<_item>Contract Position</_item>
@@ -316,7 +316,7 @@
 											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="quantity">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:ContractPosition</forClass>
+														<forClass>org:opencrx:kernel:contract1:AbstractContractPosition</forClass>
 														<featureName>quantity</featureName>
 														<order>100</order>			
 													</_object>
@@ -332,7 +332,7 @@
 												</org.openmdx.ui1.FormFieldDefinition>				
 												<org.openmdx.ui1.FormFieldDefinition id="name">
 													<_object>
-														<forClass>org:opencrx:kernel:contract1:ContractPosition</forClass>
+														<forClass>org:opencrx:kernel:contract1:AbstractContractPosition</forClass>
 														<featureName>name</featureName>
 														<order>300</order>			
 													</_object>

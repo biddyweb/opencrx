@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.57 2009/05/26 14:43:00 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.61 2009/10/20 09:04:01 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.57 $
+ * Revision:    $Revision: 1.61 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/26 14:43:00 $
+ * Date:        $Date: 2009/10/20 09:04:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -147,6 +147,7 @@ public class Accounts extends AbstractImpl {
     		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
     			contact.refGetPath().getPrefix(5)
     		);
+    	// Memberships to OuContainer
     	ContactMembershipQuery membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
     	membershipQuery.identity().like(
     		accountSegment.refGetPath().getDescendant("organization", ":*", "contactMembership", ":*").toResourcePattern()    	
@@ -160,6 +161,19 @@ public class Accounts extends AbstractImpl {
     		);
     		ouMemberships.add(ou);
     	}
+    	// Memberships to Ou
+    	membershipQuery = (ContactMembershipQuery)pm.newQuery(ContactMembership.class);
+    	membershipQuery.identity().like(
+    		accountSegment.refGetPath().getDescendant("organization", ":*", "organizationalUnit", ":*", "contactMembership", ":*").toResourcePattern()
+    	);
+    	membershipQuery.contact().equalTo(contact);
+    	memberships = accountSegment.getExtent(membershipQuery);
+    	for(ContactMembership membership: memberships) {
+    		AbstractOrganizationalUnit ou = (AbstractOrganizationalUnit)pm.getObjectById(
+    			membership.refGetPath().getParent().getParent()
+    		);
+    		ouMemberships.add(ou);
+    	}    	
     	return ouMemberships;
     }
     
@@ -206,8 +220,10 @@ public class Accounts extends AbstractImpl {
     			basedOn, 
     			contractSegment, 
     			"lead", 
-    			null, 
-    			null 
+    			null, // object marshallers
+    			null, // reference filter
+    			null, // owning user
+    			null // owningGroup
     		);    		
     	}
     	else {
@@ -248,8 +264,10 @@ public class Accounts extends AbstractImpl {
     			basedOn, 
     			contractSegment, 
     			"opportunity", 
-    			null, 
-    			null 
+    			null, // object marshallers
+    			null, // reference filter
+    			null, // owning user
+    			null // owningGroup
     		);    		
     	}
     	else {
@@ -289,8 +307,10 @@ public class Accounts extends AbstractImpl {
     			basedOn, 
     			contractSegment, 
     			"quote", 
-    			null, 
-    			null 
+    			null, // object marshallers
+    			null, // reference filter
+    			null, // owning user
+    			null // owningGroup
     		);    		
     	}
     	else {
@@ -329,8 +349,10 @@ public class Accounts extends AbstractImpl {
     			basedOn, 
     			contractSegment, 
     			"salesOrder", 
-    			null, 
-    			null 
+    			null, // object marshallers
+    			null, // reference filter
+    			null, // owning user
+    			null // owningGroup
     		);    		
     	}
     	else {
@@ -369,8 +391,10 @@ public class Accounts extends AbstractImpl {
     			basedOn, 
     			contractSegment, 
     			"invoice", 
-    			null, 
-    			null 
+    			null, // object marshallers
+    			null, // reference filter
+    			null, // owning user
+    			null // owningGroup
     		);    		
     	}
     	else {
@@ -421,6 +445,20 @@ public class Accounts extends AbstractImpl {
             account 
         );
         List<String> statusMessage = new ArrayList<String>();
+        // externalLink for VCARD
+        boolean hasVcardUid = false;
+        List<String> externalLinks = account.getExternalLink();
+        for(int i = 0; i < externalLinks.size(); i++) {
+            if(externalLinks.get(i).startsWith(VCard.VCARD_SCHEMA)) {
+            	hasVcardUid = true;
+            	break;
+            }
+        }
+        if(!hasVcardUid) {
+            externalLinks.add(
+                VCard.VCARD_SCHEMA + account.refGetPath().getBase()    
+            );
+        }           
         String vcard = VCard.getInstance().mergeVcard(
             account,
             account.getVcard(),
@@ -726,8 +764,7 @@ public class Accounts extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.account1.jmi1.Segment) pm.getObjectById(
-            "xri:@openmdx:org.opencrx.kernel.account1/provider/"
-            + providerName + "/segment/" + segmentName
+            new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
         );
     }
         

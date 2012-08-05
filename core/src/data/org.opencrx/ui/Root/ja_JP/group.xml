@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -21,6 +21,24 @@
                       </toolTip>
                     </_object>
                     <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:member" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>メンバー (使用不可)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>メンバー (使用不可)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group" _operation="create">
                     <_object>
@@ -44,6 +62,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:importItem" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>vCardインポート</_item>
+                      </label>
+                      <toolTip>
+                        <_item>vCardインポート</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member" _operation="create">
                     <_object>
                       <label>
@@ -51,6 +80,17 @@
                       </label>
                       <toolTip>
                         <_item>メンバー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:forUseBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>使用者</_item>
+                      </label>
+                      <toolTip>
+                        <_item>使用者</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -66,6 +106,20 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:quality" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>関係性</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>関係性</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>関係性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:name" _operation="create">
                     <_object>
                       <label>
@@ -73,17 +127,6 @@
                       </label>
                       <toolTip>
                         <_item>名称</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>役割</_item>
-                      </label>
-                      <toolTip>
-                        <_item>役割</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -99,6 +142,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>役割</_item>
+                      </label>
+                      <toolTip>
+                        <_item>役割</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>電話 (会社)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>電話 (会社)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:(account;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>携帯電話</_item>
+                      </label>
+                      <toolTip>
+                        <_item>携帯電話</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership" _operation="create">
                     <_object>
                       <label>
@@ -106,6 +182,17 @@
                       </label>
                       <toolTip>
                         <_item>グループメンバー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:forUseBy" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>使用者</_item>
+                      </label>
+                      <toolTip>
+                        <_item>使用者</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -132,13 +219,54 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:member" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountFrom" _operation="create">
                     <_object>
                       <label>
-                        <_item>メンバー</_item>
+                        <_item>アカウントfrom</_item>
                       </label>
                       <toolTip>
-                        <_item>メンバー</_item>
+                        <_item>アカウントfrom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountFromId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アカウントfrom ID</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アカウントfrom ID</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountTo" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>アカウント to</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:accountToId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アカウント to</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アカウント to ID</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:quality" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>特性</_item>
+                      </label>
+                      <toolTip>
+                        <_item>特性</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -172,6 +300,61 @@
                       </label>
                       <toolTip>
                         <_item>役割</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:distance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>親密性</_item>
+                      </label>
+                      <toolTip>
+                        <_item>親密性</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>会社電話 [from]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>会社電話</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:(accountFrom;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>携帯電話 [from]</_item>
+                      </label>
+                      <toolTip>
+                        <_item>携帯電話</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:member" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>メンバー</_item>
+                      </label>
+                      <toolTip>
+                        <_item>メンバー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembership:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>使用不可</_item>
+                      </label>
+                      <toolTip>
+                        <_item>オブジェクト使用不可</_item>
                       </toolTip>
                     </_object>
                     <_content/>

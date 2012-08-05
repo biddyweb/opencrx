@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="leadState" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="leadState" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item> نامشخص</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
                           <_object>
                             <shortText>
                               <_item>باز کردن/ جدید</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
                           <_object>
                             <shortText>
                               <_item>باز کردن/ مقدماتی</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
                           <_object>
                             <shortText>
                               <_item>باز کردن/ تماس گرفته  شده</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
                           <_object>
                             <shortText>
                               <_item>باز کردن/ مذاکره</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
                           <_object>
                             <shortText>
                               <_item>باز کردن/ دارای شرایط لازم</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تمام شده / برنده یا مرحله بعد </_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تمام شده / بازنده</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تمام شده / غیر قابل تماس</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تمام شده / عدم علاقه</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="set">
                           <_object>
                             <shortText>
                               <_item>تمام شده / لغو شده</_item>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractImpl.java,v 1.8 2009/06/09 09:49:47 wfro Exp $
+ * Name:        $Id: AbstractContractImpl.java,v 1.10 2009/08/26 12:11:47 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 09:49:47 $
+ * Date:        $Date: 2009/08/26 12:11:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,7 +58,7 @@ package org.opencrx.kernel.contract1.aop2;
 import javax.jdo.JDOUserException;
 
 import org.opencrx.kernel.backend.Contracts;
-import org.opencrx.kernel.contract1.jmi1.ContractPosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
@@ -126,7 +126,7 @@ public class AbstractContractImpl
         org.opencrx.kernel.contract1.jmi1.CreatePositionParams params
     ) {
     	try {
-	        ContractPosition position = Contracts.getInstance().createContractPosition(
+    		AbstractContractPosition position = Contracts.getInstance().createContractPosition(
 	            this.sameObject(),
 	            params.isIgnoreProductConfiguration(),
 	            params.getName(),
@@ -164,5 +164,25 @@ public class AbstractContractImpl
     		);
     	}
     }
-    
+
+    //-----------------------------------------------------------------------
+	@Override
+    public void jdoPreDelete(
+    ) {
+    	try {
+    		Contracts.getInstance().removeContract(
+    			this.sameObject(),
+    			true
+    		);
+    		super.jdoPreDelete();
+    	}
+    	catch(ServiceException e) {
+    		throw new JDOUserException(
+    			"jdoPreDelete failed",
+    			e,
+    			this.sameObject()
+    		);
+    	}
+    }
+	
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -559,6 +559,28 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 <!-- Action -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivityFollowUp">
+										<_object>
+											<toolTip>
+												<_item>Arbeitsschritt hinzufügen (erweitert)</_item>
+											</toolTip>
+											<label>
+												<_item>Arbeitsschritt hinzufügen (erweitert)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEventWizard">
+										<_object>
+											<toolTip>
+												<_item>Markieren als Ganztagesanlass</_item>
+											</toolTip>
+											<label>
+												<_item>Markieren als Ganztagesanlass</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia">
 										<_object>
 											<toolTip>

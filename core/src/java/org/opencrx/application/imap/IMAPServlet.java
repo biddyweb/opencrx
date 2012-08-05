@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 
 public class IMAPServlet extends HttpServlet {
@@ -35,7 +36,7 @@ public class IMAPServlet extends HttpServlet {
                 UUIDs.getGenerator().next().toString()
             );
             pm.getObjectById(
-                "xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root"
+                new Path("xri:@openmdx:org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
             );
             IMAPServer.startServer(
                 persistenceManagerFactory,

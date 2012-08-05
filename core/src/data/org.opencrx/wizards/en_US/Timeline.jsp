@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Timeline.jsp,v 1.15 2009/04/23 13:04:43 cmu Exp $
+ * Name:        $Id: Timeline.jsp,v 1.21 2009/10/15 16:19:34 wfro Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/23 13:04:43 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -71,14 +71,14 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.application.log.*
+org.openmdx.kernel.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
     String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -90,7 +90,7 @@ org.openmdx.application.log.*
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
-  <title><%= app.getApplicationName() + " - Timeline Launcher" %></title>
+  <title><%= app.getApplicationName() %> - Timeline Launcher</title>
   <meta name="label" content="Timeline">
   <meta name="toolTip" content="Timeline">
   <meta name="targetType" content="_blank">
@@ -101,7 +101,9 @@ org.openmdx.application.log.*
   <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGroup">
   <meta name="forClass" content="org:opencrx:kernel:activity1:Resource">
   <meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
-  <meta name="order" content="9999">
+  <!-- calendars based on contacts -->
+  <meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal"> <!-- bday -->
+  <meta name="order" content="5999">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
@@ -138,7 +140,6 @@ org.openmdx.application.log.*
     if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
       org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker =
         (org.opencrx.kernel.activity1.jmi1.ActivityTracker)obj;
-      System.out.println("is Tracker");
       if ((activityTracker.getName() != null) && (activityTracker.getName().length() > 0)) {
         groupComponent = "/tracker/" + URLEncoder.encode(activityTracker.getName(), "UTF-8");
       }
@@ -167,9 +168,18 @@ org.openmdx.application.log.*
     else if(obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
       groupComponent = "/userhome/" + URLEncoder.encode(obj.refGetPath().getBase(), "UTF-8");
     }
+    else if (obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal) {
+        org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal =
+          (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)obj;
+        if ((accountFilterGlobal.getName() != null) && (accountFilterGlobal.getName().length() > 0)) {
+          filterComponent = "/filter/" + URLEncoder.encode(accountFilterGlobal.getName(), "UTF-8");
+        }
+    }
+
     if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
 		String target =
-			"/opencrx-ical-" + providerName + "/ical?id=" +
+			request.getContextPath().replace("-core-", "-ical-") + "/" +
+			(obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal ? "bdays" : "ical") + "?id=" +
 			providerName + "/" + segmentName +
 			groupComponent + filterComponent +
 			"&resource=activities.html&user.locale=" + URLEncoder.encode(app.getCurrentLocaleAsString()) + "&user.tz=" + URLEncoder.encode(app.getCurrentTimeZone());

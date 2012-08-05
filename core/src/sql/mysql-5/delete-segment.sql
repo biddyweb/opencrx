@@ -70,8 +70,6 @@ DELETE FROM OOCKE1_ACTIVITYPROCESS WHERE object_id LIKE '%/{provider}/{segment}/
 DELETE FROM OOCKE1_ACTIVITYPROCESS_ WHERE object_id LIKE '%/{provider}/{segment}/%' ;
 DELETE FROM OOCKE1_ACTIVITYPROCSTATE WHERE object_id LIKE '%/{provider}/{segment}/%' ;
 DELETE FROM OOCKE1_ACTIVITYPROCSTATE_ WHERE object_id LIKE '%/{provider}/{segment}/%' ;
-
-
 DELETE FROM OOCKE1_ACTIVITYPROCTRANS WHERE object_id LIKE '%/{provider}/{segment}/%' ;
 
 DELETE FROM OOCKE1_ACTIVITYPROCTRANS_ WHERE object_id LIKE '%/{provider}/{segment}/%' ;

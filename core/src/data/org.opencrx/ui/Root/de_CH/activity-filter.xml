@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -91,10 +91,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Filterselektierte Aktivitäten</_item>
+                        <_item>Aktivitäten</_item>
                       </label>
                       <toolTip>
-                        <_item>Filterselektierte Aktivitäten</_item>
+                        <_item>Aktivitäten</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,10 +113,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:Pane:Op:Tab:countFilteredActivity" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Filterselektierte Aktivitäten Zählen</_item>
+												<_item>Aktivitäten Zählen</_item>
 											</toolTip>
 											<label>
-												<_item>Filterselektierte Aktivitäten Zählen</_item>
+												<_item>Aktivitäten Zählen</_item>
 											</label>
 										</_object>
 										<_content/>

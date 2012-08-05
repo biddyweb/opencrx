@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedNoteDataBinding.java,v 1.7 2009/03/08 15:05:44 wfro Exp $
+ * Name:        $Id: FormattedNoteDataBinding.java,v 1.12 2009/09/12 07:58:06 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 15:05:44 $
+ * Date:        $Date: 2009/09/12 07:58:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +60,7 @@ import javax.jmi.reflect.RefObject;
 import org.opencrx.kernel.base.jmi1.Note;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
+import org.openmdx.portal.servlet.attribute.AttributeValue;
 
 public class FormattedNoteDataBinding extends DefaultDataBinding {
 
@@ -87,25 +88,29 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
                 int titleLength = title.length();
                 int indexBol = 0;
                 int indexEol = 0;
+                boolean isWikiText = false;
+                boolean isHtmlText = false;
                 if(text != null) {
                     while((indexEol = text.indexOf('\n', indexBol)) > 0) {
                         titleLength = Math.max(titleLength, indexEol - indexBol);
                         indexBol = indexEol + 1;                    
                     }
+                    isWikiText = AttributeValue.isWikiText(text);
+                    isHtmlText = AttributeValue.isHtmlText(text);
                 }
-                titleLength = Math.min(140, titleLength);
-                StringBuilder formattedNote = new StringBuilder("<b>");
-                formattedNote.append(title.replace(" ", "&nbsp;"));
+                titleLength = Math.min(140, titleLength);                
+                StringBuilder formattedText = new StringBuilder(isWikiText ? "*" : "<b>");
+                formattedText.append(title.replace(" ", "&nbsp;"));
                 boolean isFirst = true;
                 for(int i = title.length(); i < titleLength; i++) {
-                	if(isFirst) formattedNote.append(" "); // separator in case title is an URL
-                    formattedNote.append("&nbsp;");
+                	if(isFirst) formattedText.append(" "); // separator in case title is an URL
+                    formattedText.append("&nbsp;");
                     isFirst = false;
                 }
-                formattedNote
-                    .append("</b><br />")
-                    .append(text == null ? "" : text.startsWith("<") ? text : text.replace("\n", "<br />"));
-                return formattedNote.toString();
+                formattedText
+                    .append(isWikiText ? "*\\\\ " : "</b><br />")
+                    .append(text == null ? "" : isWikiText || isHtmlText ? text : text.replaceAll("\n", "<br />"));
+                return formattedText.toString();
             }
         }
         else {

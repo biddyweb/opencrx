@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProjectImporter.java,v 1.19 2009/05/16 22:20:00 wfro Exp $
+ * Name:        $Id: ProjectImporter.java,v 1.21 2009/09/07 15:42:26 wfro Exp $
  * Description: openCRX Mantis Importer
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/16 22:20:00 $
+ * Date:        $Date: 2009/09/07 15:42:26 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -94,11 +94,11 @@ import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.compatibility.kernel.application.cci.Classes;
+import org.openmdx.kernel.loading.Classes;
+import org.openmdx.kernel.log.SysLog;
 
 public class ProjectImporter {
 
@@ -578,7 +578,7 @@ public class ProjectImporter {
         }        
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.error(e0.getMessage(), e0.getCause());
+            SysLog.error(e0.getMessage(), e0.getCause());
             errors.add(
                 "Exception while importing (see log for more details): " + e.getMessage()
             );

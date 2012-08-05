@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RequestHelper.java,v 1.7 2009/06/09 14:10:35 wfro Exp $
- * Description: Backend
- * Revision:    $Revision: 1.7 $
+ * Name:        $Id: RequestHelper.java,v 1.8 2009/08/19 14:34:28 wfro Exp $
+ * Description: RequestHelper
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:10:35 $
+ * Date:        $Date: 2009/08/19 14:34:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -82,16 +82,11 @@ public class RequestHelper {
 
     //-----------------------------------------------------------------------
     public RequestHelper(
+    	RequestContext context
     ) {
         this.uuids = UUIDs.getGenerator();
-    }
-
-    //-----------------------------------------------------------------------
-    public void open(
-        RequestContext context
-    ) {
-        this.context = context;    
-        this.derivedReferences = null;        
+        this.context = context;
+        this.derivedReferences = null;                
     }
 
     //-----------------------------------------------------------------------
@@ -218,8 +213,7 @@ public class RequestHelper {
     //-----------------------------------------------------------------------    
     private final UUIDGenerator uuids;
    
-    // Reset by open()
-    public RequestContext context = null;
+    public final RequestContext context;
     protected DerivedReferences derivedReferences = null;
     
 }

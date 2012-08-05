@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: LogConfiguration.jsp,v 1.7 2009/06/06 13:07:41 wfro Exp $
+ * Name:        $Id: LogConfiguration.jsp,v 1.9 2009/10/15 16:19:33 wfro Exp $
  * Description: ImportMantisProject wizard
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       OMEX AG, Switzerland, http://www.omex.ch
- * Date:        $Date: 2009/06/06 13:07:41 $
+ * Date:        $Date: 2009/10/15 16:19:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2006, OMEX AG, Switzerland
+ * Copyright (c) 2004-2009, OMEX AG, Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -67,7 +67,7 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.application.log.*,
+org.openmdx.kernel.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*
 " %>
@@ -77,7 +77,7 @@ org.openmdx.kernel.id.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);

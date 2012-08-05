@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailImporterConfig.java,v 1.5 2009/05/08 17:18:42 wfro Exp $
+ * Name:        $Id: MailImporterConfig.java,v 1.6 2009/06/16 21:19:20 wfro Exp $
  * Description: MailImporterConfig
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/08 17:18:42 $
+ * Date:        $Date: 2009/06/16 21:19:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,11 +61,11 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.log.SysLog;
 
 public class MailImporterConfig {
 
@@ -192,16 +192,16 @@ public class MailImporterConfig {
                 }
             }
             if(mailServiceName == null) {
-                AppLog.warning("Could not get option " + MailImporterConfig.OPTION_MAIL_SERVICE_NAME + " from configuration. Either it does not exist or access level browse is not set to global. Fallback to system default. Used option prefix", optionPrefix);
-                AppLog.warning("Checked configuration properties", componentConfiguration.getProperty());
+            	SysLog.warning("Could not get option " + MailImporterConfig.OPTION_MAIL_SERVICE_NAME + " from configuration. Either it does not exist or access level browse is not set to global. Fallback to system default. Used option prefix", optionPrefix);
+            	SysLog.warning("Checked configuration properties", componentConfiguration.getProperty());
             }
             if(mailbox == null) {
-                AppLog.warning("Could not get option " + MailImporterConfig.OPTION_MAIL_BOX + " from configuration. Either it does not exist or access level browse is not set to global. Fallback to system default. Used option prefix", optionPrefix);
-                AppLog.warning("Checked configuration properties", componentConfiguration.getProperty());                
+            	SysLog.warning("Could not get option " + MailImporterConfig.OPTION_MAIL_BOX + " from configuration. Either it does not exist or access level browse is not set to global. Fallback to system default. Used option prefix", optionPrefix);
+            	SysLog.warning("Checked configuration properties", componentConfiguration.getProperty());                
             }
         }
         catch(JmiServiceException e0) {
-            AppLog.info("Can not create default configuration", e0.getMessage());
+        	SysLog.info("Can not create default configuration", e0.getMessage());
             throw e0;
         }
         // Fallback to servlet config

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailStore.java,v 1.2 2009/03/08 17:04:54 wfro Exp $
+ * Name:        $Id: MailStore.java,v 1.3 2009/06/16 21:19:20 wfro Exp $
  * Description: MailStore
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:54 $
+ * Date:        $Date: 2009/06/16 21:19:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,8 +64,8 @@ import javax.mail.Store;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.kernel.log.SysLog;
 
 public class MailStore {
 
@@ -79,7 +79,7 @@ public class MailStore {
     //-------------------------------------------------------------------------
     public void openStore (
     ) throws ServiceException {
-        AppLog.info("Fetching emails with configuration", this.config);
+    	SysLog.info("Fetching emails with configuration", this.config);
         try {
             Context initialContxt = new InitialContext();
             Session session = (Session)initialContxt.lookup("java:comp/env" + this.config.getMailServiceName());
@@ -94,9 +94,9 @@ public class MailStore {
             );
         } 
         catch (Exception e) {
-            AppLog.error("Could not get mail session", this.config.getMailServiceName());
+        	SysLog.error("Could not get mail session", this.config.getMailServiceName());
             ServiceException e0 = new ServiceException(e);
-            AppLog.error(e0.getMessage(), e0.getCause());
+            SysLog.error(e0.getMessage(), e0.getCause());
             throw e0;
         }
     }
@@ -120,15 +120,15 @@ public class MailStore {
           this.folder.open(Folder.READ_WRITE);
       }
       catch(FolderNotFoundException e) {
-          AppLog.error("Could not open the specified folder '" + name + "'");
+    	  SysLog.error("Could not open the specified folder '" + name + "'");
           ServiceException e0 = new ServiceException(e);
-          AppLog.error(e0.getMessage(), e0.getCause());
+          SysLog.error(e0.getMessage(), e0.getCause());
           throw e0;
       } 
       catch(MessagingException e) {
-          AppLog.error("Exception while opening folder '" + name + "'");
+    	  SysLog.error("Exception while opening folder '" + name + "'");
           ServiceException e0 = new ServiceException(e);
-          AppLog.error(e0.getMessage(), e0.getCause());
+          SysLog.error(e0.getMessage(), e0.getCause());
           throw e0;          
       }
     }
@@ -155,7 +155,7 @@ public class MailStore {
         store.close();
       } 
       catch (MessagingException e) {
-          AppLog.warning("Could not clean up resources");
+    	  SysLog.warning("Could not clean up resources");
           System.err.println("Could not clean up after importing");
       }
     }

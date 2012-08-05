@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
 	<_object></_object>
 	<_content>
 		<provider>
@@ -116,7 +116,7 @@
 												<_item>all filtered contracts</_item>
 											</toolTip>
 											<label>
-												<_item>Filtered Contracts</_item>
+												<_item>Contracts</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -135,10 +135,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Count Filtered Contracts</_item>
+												<_item>Count Contracts</_item>
 											</toolTip>
 											<label>
-												<_item>Count Filtered Contracts</_item>
+												<_item>Count Contracts</_item>
 											</label>
 											<iconKey>Contract</iconKey>
 											<order>

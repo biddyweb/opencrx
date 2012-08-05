@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.58 2009/06/08 09:21:19 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.65 2009/10/14 09:10:21 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.58 $
+ * Revision:    $Revision: 1.65 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/08 09:21:19 $
+ * Date:        $Date: 2009/10/14 09:10:21 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,6 +83,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.aop2.Configuration;
 import org.opencrx.kernel.backend.Admin.PrincipalType;
+import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.AlertQuery;
 import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
@@ -93,11 +94,12 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.UserObjects;
+import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.WebKeys;
 
 public class UserHomes extends AbstractImpl {
@@ -162,13 +164,6 @@ public class UserHomes extends AbstractImpl {
             		references.add(alert.getReference());
             	}
             }
-            // Update charts
-            Contracts.getInstance().calculateUserHomeCharts(
-                userHome
-            );
-            Activities.getInstance().calculateUserHomeCharts(
-                userHome
-            );
         }
     }
        
@@ -290,8 +285,14 @@ public class UserHomes extends AbstractImpl {
 	    	}
     	}
         catch(Exception e) {
-            AppLog.warning(e.getMessage(), e.getCause());
-            return CAN_NOT_CHANGE_PASSWORD;
+        	ServiceException e0 = new ServiceException(e);
+        	if(e0.getCause(OpenCrxException.DOMAIN).getExceptionCode() == BasicException.Code.ASSERTION_FAILURE) {
+        		return OLD_PASSWORD_VERIFICATION_MISMATCH;
+        	}
+        	else {
+	        	SysLog.warning(e.getMessage(), e.getCause());
+	            return CAN_NOT_CHANGE_PASSWORD;
+        	}
         }
         return CHANGE_PASSWORD_OK;
     }
@@ -330,7 +331,7 @@ public class UserHomes extends AbstractImpl {
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.warning(e0.getMessage(), e0.getCause());
+            SysLog.warning(e0.getMessage(), e0.getCause());
             return CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL;
         }
         return this.changePassword(
@@ -423,7 +424,7 @@ public class UserHomes extends AbstractImpl {
         }
         catch(Exception e) {
             ServiceException e1 = new ServiceException(e);
-            AppLog.warning(e1.getMessage(), e1.getCause());
+            SysLog.warning(e1.getMessage(), e1.getCause());
             errors.add("can not retrieve principal " + principalName + " in realm " + loginRealmIdentity);
             errors.add("reason is " + e.getMessage());
             return null;
@@ -532,43 +533,6 @@ public class UserHomes extends AbstractImpl {
             	principalName,
             	userHome
             );
-            // Create dummy charts
-            org.opencrx.kernel.home1.jmi1.Media chart0 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
-            chart0.refInitialize(false, false);
-            chart0.setContentName("Chart 0");
-            userHome.addChart(
-            	false,
-            	"0",
-            	chart0
-            );
-            userHome.setChart0(chart0);
-            org.opencrx.kernel.home1.jmi1.Media chart1 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
-            chart1.refInitialize(false, false);
-            chart1.setContentName("Chart 1");
-            userHome.addChart(
-            	false,
-            	"1",
-            	chart1
-            );
-            userHome.setChart1(chart1);
-            org.opencrx.kernel.home1.jmi1.Media chart2 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
-            chart2.refInitialize(false, false);
-            chart2.setContentName("Chart 2");
-            userHome.addChart(
-            	false,
-            	"2",
-            	chart2
-            );
-            userHome.setChart2(chart2);
-            org.opencrx.kernel.home1.jmi1.Media chart3 = pm.newInstance( org.opencrx.kernel.home1.jmi1.Media.class);
-            chart3.refInitialize(false, false);
-            chart3.setContentName("Chart 3");
-            userHome.addChart(
-            	false,
-            	"3",
-            	chart3
-            );
-            userHome.setChart3(chart3);
             Properties userSettings = new Properties();
             if(userHome.getSettings() != null) {
 	            try {            	
@@ -594,7 +558,6 @@ public class UserHomes extends AbstractImpl {
             	"[" + providerName + ":" + segmentName + "]", 
             	null, // fWebAccessUrl 
             	"8", // fTopNavigationShowMax, 
-            	"0", // fShowHistory, 
             	null, // fRootObjects 
             	null // fSubscriptions
             );
@@ -659,7 +622,7 @@ public class UserHomes extends AbstractImpl {
         try {
             while(reader.ready()) {
                 String l = reader.readLine();
-                if(l.startsWith("User")) {
+                if(l.indexOf("User;") >= 0) {
                     StringTokenizer t = new StringTokenizer(l, ";");
                     t.nextToken();
                     String principalName = t.nextToken();
@@ -720,7 +683,7 @@ public class UserHomes extends AbstractImpl {
                                 }
                             }
                             else {
-                                AppLog.info("Contact " + accountAlias + "/" + accountFullName + " for user " + principalName + " not found");
+                            	SysLog.info("Contact " + accountAlias + "/" + accountFullName + " for user " + principalName + " not found");
                                 nFailedUsersNoContact++;
                             }
                         }
@@ -835,7 +798,6 @@ public class UserHomes extends AbstractImpl {
     	String fSendmailSubjectPrefix,
     	String fWebAccessUrl,
     	String fTopNavigationShowMax,
-    	String fShowHistory,
     	List<String> fRootObjects,
     	Map<String,String> fSubscriptions
     ) throws ServiceException {
@@ -897,13 +859,13 @@ public class UserHomes extends AbstractImpl {
 			defaultEmailAccount.setEMailAddress(fDefaultEmailAccount);
 		}
 		// Root objects
-		for(int i = 1; i < 20; i++) {
+		for(int i = 0; i < 20; i++) {
 			String state = (fRootObjects != null) && (i < fRootObjects.size()) ? 
 				fRootObjects.get(i) : 
-				"on";
+				"1";
 			userSettings.setProperty(
 				"RootObject." + i + ".State",
-				state == null ? "0" : "1"
+				state == null ? "0" : state
 			);
 		}
 		// Show max items in top navigation
@@ -913,11 +875,6 @@ public class UserHomes extends AbstractImpl {
 				fTopNavigationShowMax
 			);
 		}
-		// History
-		userSettings.setProperty(
-			"History.State",
-			fShowHistory == null ? "0" : "1"
-		);
 		// If running as segment admin set ACLs of created objects
 		org.opencrx.security.realm1.jmi1.PrincipalGroup privatePrincipalGroup = null;
 		if(runAsAdministrator) {
@@ -1126,6 +1083,7 @@ public class UserHomes extends AbstractImpl {
     public static final short CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL = 4;
     public static final short CAN_NOT_CHANGE_PASSWORD = 5;
     public static final short MISSING_OLD_PASSWORD = 6;
+    public static final short OLD_PASSWORD_VERIFICATION_MISMATCH = 7;
         
 }
 

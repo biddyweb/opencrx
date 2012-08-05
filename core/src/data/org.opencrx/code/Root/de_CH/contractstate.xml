@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="contractState" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="contractState" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
                           <_object>
                             <shortText>
                               <_item>neu</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Vorabklärungen</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
                           <_object>
                             <shortText>
                               <_item>kontaktiert</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Diskussion</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Qualifiziert</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Targeting / Vorabklärungen</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Erstkontakt</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Produktpräsentation</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Bedürfnisanalyse</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Lösungsdefinition</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Offertphase</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Vertragsphase</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Projekt verschoben</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Entwurf / in Bearbeitung</_item>
@@ -169,7 +169,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="set">
                           <_object>
                             <shortText>
                               <_item>in Bearbeitung</_item>
@@ -180,7 +180,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="set">
                           <_object>
                             <shortText>
                               <_item>aktiv</_item>
@@ -191,7 +191,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="330" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="330" _operation="set">
                           <_object>
                             <shortText>
                               <_item>sistiert</_item>
@@ -202,7 +202,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Entwurf / in Bearbeitung</_item>
@@ -213,7 +213,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="set">
                           <_object>
                             <shortText>
                               <_item>in Bearbeitung</_item>
@@ -224,7 +224,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
                           <_object>
                             <shortText>
                               <_item>aktiv</_item>
@@ -235,7 +235,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
                           <_object>
                             <shortText>
                               <_item>sistiert</_item>
@@ -246,7 +246,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Entwurf / in Bearbeitung</_item>
@@ -257,7 +257,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="set">
                           <_object>
                             <shortText>
                               <_item>in Bearbeitung</_item>
@@ -268,7 +268,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="set">
                           <_object>
                             <shortText>
                               <_item>aktiv</_item>
@@ -279,7 +279,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="set">
                           <_object>
                             <shortText>
                               <_item>sistiert</_item>
@@ -290,7 +290,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="set">
                           <_object>
                             <shortText>
                               <_item>gewonnen oder nächste Stufe</_item>
@@ -301,7 +301,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="set">
                           <_object>
                             <shortText>
                               <_item>verloren</_item>
@@ -312,7 +312,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="set">
                           <_object>
                             <shortText>
                               <_item>kein Kontakt</_item>
@@ -323,7 +323,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="set">
                           <_object>
                             <shortText>
                               <_item>nicht mehr interessiert</_item>
@@ -334,7 +334,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="set">
                           <_object>
                             <shortText>
                               <_item>abgebrochen</_item>
@@ -345,7 +345,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1210" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1210" _operation="set">
                           <_object>
                             <shortText>
                               <_item>gewonnen oder nächste Stufe</_item>
@@ -356,7 +356,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1220" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1220" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Projekt abgebrochen</_item>
@@ -367,7 +367,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1230" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1230" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Auftrag verloren / unterboten</_item>
@@ -378,7 +378,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1240" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1240" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Auftrag verloren / Qualitätsgründe</_item>
@@ -389,7 +389,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1250" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1250" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Auftrag verloren / andere Gründe</_item>
@@ -400,7 +400,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1310" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1310" _operation="set">
                           <_object>
                             <shortText>
                               <_item>gewonnen oder nächste Stufe</_item>
@@ -411,7 +411,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1320" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1320" _operation="set">
                           <_object>
                             <shortText>
                               <_item>verloren</_item>
@@ -422,7 +422,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1330" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1330" _operation="set">
                           <_object>
                             <shortText>
                               <_item>unterboten</_item>
@@ -433,7 +433,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1340" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1340" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Qualitätsgründe</_item>
@@ -444,7 +444,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1350" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1350" _operation="set">
                           <_object>
                             <shortText>
                               <_item>abgebrochen</_item>
@@ -455,7 +455,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1360" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1360" _operation="set">
                           <_object>
                             <shortText>
                               <_item>revidiert</_item>
@@ -466,7 +466,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="set">
                           <_object>
                             <shortText>
                               <_item>gewonnen oder nächste Stufe</_item>
@@ -477,7 +477,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="set">
                           <_object>
                             <shortText>
                               <_item>verloren</_item>
@@ -488,7 +488,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="set">
                           <_object>
                             <shortText>
                               <_item>unterboten</_item>
@@ -499,7 +499,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Qualitätsgründe</_item>
@@ -510,7 +510,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1450" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1450" _operation="set">
                           <_object>
                             <shortText>
                               <_item>abgebrochen</_item>
@@ -521,7 +521,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1460" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1460" _operation="set">
                           <_object>
                             <shortText>
                               <_item>revidiert</_item>
@@ -532,7 +532,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1510" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1510" _operation="set">
                           <_object>
                             <shortText>
                               <_item>bezahlt</_item>
@@ -543,7 +543,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1520" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1520" _operation="set">
                           <_object>
                             <shortText>
                               <_item>abgeschrieben</_item>
@@ -554,7 +554,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1530" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1530" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Ware retourniert</_item>

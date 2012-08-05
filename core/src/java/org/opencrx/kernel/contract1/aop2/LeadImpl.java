@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LeadImpl.java,v 1.6 2009/04/20 17:56:46 wfro Exp $
+ * Name:        $Id: LeadImpl.java,v 1.7 2009/07/21 11:09:11 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
+ * Date:        $Date: 2009/07/21 11:09:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,7 @@ package org.opencrx.kernel.contract1.aop2;
 
 import java.util.List;
 
+import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Contracts;
@@ -69,7 +70,7 @@ import org.openmdx.base.exception.ServiceException;
 public class LeadImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.Lead,N extends org.opencrx.kernel.contract1.cci2.Lead,C extends Void>
 	extends AbstractContractImpl<S,N,C>
-	implements StoreCallback {
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
     public LeadImpl(
@@ -130,5 +131,12 @@ public class LeadImpl
     ) {
 	    super.jdoPreStore();
     }
-        
+
+    //-----------------------------------------------------------------------
+	@Override
+    public void jdoPreDelete(
+    ) {
+	    super.jdoPreDelete();
+    }
+	
 }

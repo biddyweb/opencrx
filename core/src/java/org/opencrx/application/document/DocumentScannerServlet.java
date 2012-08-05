@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.15 2009/05/09 21:44:32 wfro Exp $
- * Description: IndexerServlet
- * Revision:    $Revision: 1.15 $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.18 2009/09/04 08:57:43 wfro Exp $
+ * Description: DocumentScannerServlet
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/09 21:44:32 $
+ * Date:        $Date: 2009/09/04 08:57:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,7 +56,6 @@
 package org.opencrx.application.document;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,6 +73,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.kernel.backend.Workflows;
+import org.opencrx.kernel.base.jmi1.SendAlertParams;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.cci2.FolderAssignmentQuery;
@@ -82,6 +82,7 @@ import org.opencrx.kernel.document1.jmi1.FolderAssignment;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.document1.jmi1.ResourceIdentifier;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -96,37 +97,13 @@ import org.w3c.cci2.BinaryLargeObjects;
  * The DocumentScannerServlet scans a directory and its sub-directories. File names
  * are of the form <code>name { "#" folder name } "." extension</code>. Files with
  * the same name are mapped to the same Document. Documents are assigned to the
- * document folders specified by the # separated folder list. 
+ * document folders specified by the # separated folder list. Successfully imported
+ * files are removed so the import directory should not be as import directory only 
+ * and not as document archive.  
  */  
 public class DocumentScannerServlet 
     extends HttpServlet {
 
-    //-----------------------------------------------------------------------
-    static class ModifiedSinceFileFilter implements FileFilter {
-        
-        public ModifiedSinceFileFilter(
-            Date modifiedSince
-        ) {
-            this.modifiedSince = modifiedSince;
-        }
-        
-        public boolean accept(
-            File file
-        ) {
-            if(file.isDirectory()) {
-                return true;
-            }
-            else if(file.lastModified() > this.modifiedSince.getTime()) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        }
-
-        private final Date modifiedSince;
-    }
-    
     //-----------------------------------------------------------------------
     public void init(
         ServletConfig config
@@ -170,24 +147,56 @@ public class DocumentScannerServlet
     }
         
     //-----------------------------------------------------------------------    
+    private void sendAlert(
+    	org.opencrx.kernel.document1.jmi1.Segment documentSegment,
+    	String filename,
+    	String message,
+    	PersistenceManager pm
+    ) {
+    	String providerName = documentSegment.refGetPath().get(2);
+    	String segmentName = documentSegment.refGetPath().get(4);
+    	UserHome userHomeAdmin = (UserHome)pm.getObjectById(
+    		new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName)
+    	);
+    	SendAlertParams sendAlertParams = Utils.getBasePackage(pm).createSendAlertParams(
+    		DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename + "\n" +
+    		"Reason is:\n" +
+    		message, 
+    		(short)2, // importance 
+    		DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename, 
+    		null, 
+    		60, // resendDelayInSeconds, 
+    		SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName // toUsers
+    	);
+    	try {
+    		pm.currentTransaction().begin();
+    		userHomeAdmin.sendAlert(sendAlertParams);
+    		pm.currentTransaction().commit();
+    	}
+    	catch(Exception e) {
+    		try {
+    			pm.currentTransaction().rollback();
+    		} catch(Exception e0) {}
+    	}    	
+    }
+    
+    //-----------------------------------------------------------------------    
     private void scanDocuments(
         File currentDir,
         File rootDir,
-        FileFilter filter,
         org.opencrx.kernel.document1.jmi1.Segment documentSegment,
         String uriPrefix,
         Boolean upload,
         List<org.opencrx.security.realm1.jmi1.PrincipalGroup> principalGroups,
         PersistenceManager pm
     ) {
-        File[] files = currentDir.listFiles(filter);
+        File[] files = currentDir.listFiles();
         if(files != null) {
             for(File file: files) {
                 if(file.isDirectory()) {
                     this.scanDocuments(
                         file,
                         rootDir,
-                        filter,
                         documentSegment,
                         uriPrefix,
                         upload,
@@ -196,6 +205,7 @@ public class DocumentScannerServlet
                     );
                 }
                 else {
+                	boolean hasErrors = false;
                     String filename = file.getName();
                     String ext = null;
                     if(filename.indexOf(".") > 0) {
@@ -251,6 +261,14 @@ public class DocumentScannerServlet
                             try {
                                 pm.currentTransaction().rollback();
                             } catch(Exception e0) {}
+                            this.sendAlert(
+                            	documentSegment, 
+                            	filename, 
+                            	e.getMessage(), 
+                            	pm
+                            );
+                            new ServiceException(e).log();
+                            hasErrors = true;
                         }                                                                        
                     }
                     else {
@@ -308,6 +326,14 @@ public class DocumentScannerServlet
                             try {
                                 pm.currentTransaction().rollback();
                             } catch(Exception e0) {}
+                            this.sendAlert(
+                            	documentSegment, 
+                            	filename, 
+                            	e.getMessage(), 
+                            	pm
+                            );
+                            new ServiceException(e).log();
+                            hasErrors = true;
                         }                                            
                     }
                     // Assign document to folders
@@ -345,6 +371,14 @@ public class DocumentScannerServlet
                                 try {
                                     pm.currentTransaction().rollback();
                                 } catch(Exception e0) {}
+                                this.sendAlert(
+                                	documentSegment, 
+                                	filename, 
+                                	e.getMessage(), 
+                                	pm
+                                );
+                                new ServiceException(e).log();
+                                hasErrors = true;
                             }                        
                         }
                         else {
@@ -363,6 +397,14 @@ public class DocumentScannerServlet
                                 try {
                                     pm.currentTransaction().rollback();
                                 } catch(Exception e0) {}
+                                this.sendAlert(
+                                	documentSegment, 
+                                	filename, 
+                                	e.getMessage(), 
+                                	pm
+                                );
+                                new ServiceException(e).log();
+                                hasErrors = true;
                             }                        
                         }
                         // Assign document to folder
@@ -385,14 +427,32 @@ public class DocumentScannerServlet
                                     assignment
                                 );
                                 pm.currentTransaction().commit();
+                                hasErrors = true;
                             }
                             catch(Exception e) {
                                 try {
                                     pm.currentTransaction().rollback();
                                 } catch(Exception e0) {}
+                                this.sendAlert(
+                                	documentSegment, 
+                                	filename, 
+                                	e.getMessage(), 
+                                	pm
+                                );
+                                new ServiceException(e).log();
+                                hasErrors = true;
                             }
                         }
-                    }                
+                    }
+                    // Delete file from import directory if no errors occurred
+                    if(!hasErrors) {
+                    	try {
+                    		file.delete();
+                    	}
+                    	catch(Exception e) {
+                    		new ServiceException(e).log();
+                    	}
+                    }
                 }
             }
         }
@@ -448,7 +508,6 @@ public class DocumentScannerServlet
                     OPTION_GROUPS + idxSuffix
                 );
                 if(scanDir != null) {
-                    Date lastRunAt = scanDir.getModifiedAt();
                     rootPm.currentTransaction().begin();
                     scanDir.setDescription(
                         "Last scan at " + new Date()
@@ -460,7 +519,6 @@ public class DocumentScannerServlet
                         (scanDir.getStringValue().length() > 0)                
                     ) {
                         File dir = new File(scanDir.getStringValue());
-                        FileFilter modifiedSinceFileFilter = new ModifiedSinceFileFilter(lastRunAt);
                         org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
                             (org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
                                 new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName)
@@ -497,7 +555,6 @@ public class DocumentScannerServlet
                         this.scanDocuments(
                             dir,
                             dir, 
-                            modifiedSinceFileFilter,
                             documentSegment,
                             urlPrefix == null ? "http://localhost" : urlPrefix.getStringValue(),
                             upload == null ? false : Boolean.valueOf(upload.getStringValue()),

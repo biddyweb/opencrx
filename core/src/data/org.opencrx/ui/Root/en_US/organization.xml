@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
 	<_object></_object>
 	<_content>
 		<provider>
@@ -130,7 +130,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<!--FieldGroups in General Tab-->
 									<!--Element Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:name">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:name">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -155,7 +155,7 @@
 												<_item>Organization Status</_item>
 											</toolTip>
 											<label>
-												<_item>Status</_item>
+												<_item>Org Status</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -165,7 +165,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:Pane:Attr:Tab:0:Group:10">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:Pane:Attr:Tab:0:Group:10">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -177,7 +177,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:description">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:description">
 										<_object>
 											<active>true</active>
 											<spanRow>5</spanRow>
@@ -187,11 +187,16 @@
 											<label>
 												<_item>Description</_item>
 											</label>
-											<order>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>10</_item>
 												<_item>10</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -303,11 +308,16 @@
 											<label>
 												<_item>Cost center</_item>
 											</label>
-											<order>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>20</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>80</_item>
+												<_item>20</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -316,10 +326,10 @@
 											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
-												<_item>State</_item>
+												<_item>Unit State</_item>
 											</toolTip>
 											<label>
-												<_item>State</_item>
+												<_item>Unit State</_item>
 											</label>
 											<order>
 												<_item>0</_item>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?StartPath org::opencrx::kernel::product1/provider/CRX/segment/Standard/product/iET4Ta3rEduRlB3t5M7kmA?>
-<org.openmdx.base.Authority name="org:opencrx:kernel:product1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/product1/xmi/product1.xsd">
+<org.openmdx.base.Authority name="org:opencrx:kernel:product1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/product1/xmi/product1.xsd">
     <_object/>
     <_content>
         <provider>

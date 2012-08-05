@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.3 2009/06/08 10:48:46 cmu Exp $
+ * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.11 2009/10/15 16:19:34 wfro Exp $
  * Description: import accounts from Excel Sheet
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/08 10:48:46 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -78,7 +78,7 @@ org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
 org.openmdx.base.exception.*,
-org.openmdx.application.log.*,
+org.openmdx.kernel.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.apache.poi.hssf.usermodel.*,
 org.apache.poi.hssf.util.*,
@@ -89,6 +89,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 	public List<org.opencrx.kernel.account1.jmi1.Contact> findContact(
 			String firstName,
 			String lastName,
+			String aliasName,
 			String extString0,
 			org.opencrx.kernel.account1.jmi1.Segment accountSegment,
 			javax.jdo.PersistenceManager pm
@@ -105,11 +106,18 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 					    contactFilter.forAllDisabled().isFalse();
 					    if(firstName != null) {
 					        hasQueryProperty = true;
-					        contactFilter.thereExistsFirstName().like("(?i).*" + firstName + ".*");
+					        //contactFilter.thereExistsFirstName().like("(?i).*" + firstName + ".*");
+					        contactFilter.thereExistsFirstName().equalTo(firstName); // exact match
 					    }
 					    if(lastName != null) {
 					        hasQueryProperty = true;
-					        contactFilter.thereExistsLastName().like("(?i).*" + lastName + ".*");
+					        //contactFilter.thereExistsLastName().like("(?i).*" + lastName + ".*");
+					        contactFilter.thereExistsLastName().equalTo(lastName); // exact match
+					    }
+					    if(aliasName != null) {
+					        hasQueryProperty = true;
+					        //contactFilter.thereExistsLastName().like("(?i).*" + lastName + ".*");
+					        contactFilter.thereExistsAliasName().equalTo(aliasName); // exact match
 					    }
 			    }
 			    if (hasQueryProperty) {
@@ -184,31 +192,36 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 	) {
 		org.opencrx.kernel.account1.jmi1.Account targetAccount = null;
 	    if(valueToMatch != null) {
-					// try to locate account based on fullName
-					try {
-					    org.opencrx.kernel.account1.cci2.AccountQuery accountFilter =
-					        (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
-					    accountFilter.forAllDisabled().isFalse(); // exlude disabled accounts in search
-					    accountFilter.thereExistsFullName().like("(?i).*" + valueToMatch + ".*");
-					    Iterator accounts = accountSegment.getAccount(accountFilter).iterator();
-							if (accounts.hasNext()) {
-									targetAccount = (org.opencrx.kernel.account1.jmi1.Account)accounts.next();
-									if (accounts.hasNext()) {
-											// match must be unique
-											targetAccount = null;
-									}
-							}
-					} catch (Exception e) {
-						new ServiceException(e).log();
-					}
+          boolean directMatch = valueToMatch.startsWith("@#");
+          if (!directMatch) {
+    					// try to locate account based on fullName
+    					try {
+    					    org.opencrx.kernel.account1.cci2.AccountQuery accountFilter =
+    					        (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
+    					    accountFilter.forAllDisabled().isFalse(); // exlude disabled accounts in search
+    					    accountFilter.thereExistsFullName().like("(?i).*" + valueToMatch + ".*");
+    					    Iterator accounts = accountSegment.getAccount(accountFilter).iterator();
+    							if (accounts.hasNext()) {
+    									targetAccount = (org.opencrx.kernel.account1.jmi1.Account)accounts.next();
+    									if (accounts.hasNext()) {
+    											// match must be unique
+    											targetAccount = null;
+    									}
+    							}
+    					} catch (Exception e) {
+    						new ServiceException(e).log();
+    					}
+          } else {
+            valueToMatch = valueToMatch.substring(2);
+          }
 
-					if (targetAccount == null) {
-							// try to locate account based on extString0
+					if (directMatch || targetAccount == null) {
+							// try to locate account based on exact match with extString0
 							try {
 							    org.opencrx.kernel.account1.cci2.AccountQuery accountFilter =
 							        (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
 							    //accountFilter.forAllDisabled().isFalse(); // include disabled accounts in search
-							    accountFilter.thereExistsExtString0().like("(?i).*" + valueToMatch + ".*");
+                  accountFilter.thereExistsExtString0().equalTo(valueToMatch); // exact match required
 							    Iterator accounts = accountSegment.getAccount(accountFilter).iterator();
 									if (accounts.hasNext()) {
 											targetAccount = (org.opencrx.kernel.account1.jmi1.Account)accounts.next();
@@ -339,8 +352,52 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 	final String ATTR_EXTSTRING0 = "extString0";
 	final String ATTR_FIRSTNAME = "FirstName";
 	final String ATTR_LASTNAME = "LastName";
+	final String ATTR_ALIASNAME = "AliasName";
 	final String ATTR_COMPANY = "Company";
 	final String ATTR_DTYPE = "Dtype";
+
+	final String ATTR_TITLE = "title";
+	final String ATTR_ACADEMICTITLE = "academicTitle";
+	final String ATTR_MIDDLENAME = "middleName";
+	final String ATTR_SUFFIX = "suffix";
+  final String ATTR_NICKNAME = "nickName";
+  final String ATTR_COMPANYROLE = "companyRole";
+  final String ATTR_JOBTITLE = "jobTitle";
+  final String ATTR_DEPARTMENT = "DEPARTMENT";
+  final String ATTR_BIRTHDAY = "BIRTHDAY";
+  final String ATTR_HOMEPHONE = "HOMEPHONE";
+  final String ATTR_HOMEPHONE2 = "HOMEPHONE2";
+  final String ATTR_HOMEFAX = "HOMEFAX";
+  final String ATTR_HOMEADDRESSLINE = "HOMEADDRESSLINE";
+  final String ATTR_HOMESTREET = "HOMESTREET";
+  final String ATTR_HOMECITY = "HOMECITY";
+  final String ATTR_HOMEPOSTALCODE = "HOMEPOSTALCODE";
+  final String ATTR_HOMESTATE = "HOMESTATE";
+  final String ATTR_HOMECOUNTRY = "HOMECOUNTRY";
+  final String ATTR_HOMECOUNTRYREGION = "HOMECOUNTRYREGION";
+  final String ATTR_NOTES = "NOTES";
+
+  final String ATTR_BUSINESSPHONE = "BUSINESSPHONE";
+  final String ATTR_BUSINESSPHONE2 = "BUSINESSPHONE2";
+  final String ATTR_BUSINESSFAX = "BUSINESSFAX";
+  final String ATTR_MOBILEPHONE = "MOBILEPHONE";
+  final String ATTR_EMAILADDRESS = "EMAILADDRESS";
+  final String ATTR_EMAIL2ADDRESS = "EMAIL2ADDRESS";
+  final String ATTR_EMAIL3ADDRESS = "EMAIL3ADDRESS";
+  final String ATTR_WEBPAGE = "WEBPAGE";
+  final String ATTR_BUSINESSADDRESSLINE = "BUSINESSADDRESSLINE";
+  final String ATTR_BUSINESSSTREET = "BUSINESSSTREET";
+  final String ATTR_BUSINESSCITY = "BUSINESSCITY";
+  final String ATTR_BUSINESSPOSTALCODE = "BUSINESSPOSTALCODE";
+  final String ATTR_BUSINESSSTATE = "BUSINESSSTATE";
+  final String ATTR_BUSINESSCOUNTRY = "BUSINESSCOUNTRY";
+  final String ATTR_BUSINESSCOUNTRYREGION = "BUSINESSCOUNTRYREGION";
+  final String ATTR_ASSISTANTSNAME = "ASSISTANTSNAME";
+  final String ATTR_ASSISTANTSNAMEROLE = "ASSISTANTSNAMEROLE";
+  final String ATTR_MANAGERSNAME = "MANAGERSNAME";
+  final String ATTR_MANAGERSROLE = "MANAGERSROLE";
+  final String ATTR_CATEGORIES = "CATEGORIES";
+
 	final String DTYPE_CONTACT = "Contact";
 	final String DTYPE_GROUP = "Group";
 	final String DTYPE_LEGALENTITY = "LegalEntity";
@@ -350,19 +407,13 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 	final String FEATURE_ACADEMICTITLE = "org:opencrx:kernel:account1:Contact:userCode1";
 	final String FEATURE_MEMBERROLE = "org:opencrx:kernel:account1:Member:memberRole";
 
+  	final String EXTSTRING0PREFIX = "@#";
 	final String EOL_HTML = "<br>";
 
-  request.setCharacterEncoding("UTF-8");
+	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	if (app == null) {
-		System.out.println("aborting... (ApplicationContext == null)");
-    response.sendRedirect(
-       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-    );
-    return;
-  }
 	Map parameterMap = request.getParameterMap();
-  if(FileUpload.isMultipartContent(request)) {
+	if(FileUpload.isMultipartContent(request)) {
 		parameterMap = new HashMap();
     	DiskFileUpload upload = new DiskFileUpload();
     	upload.setHeaderEncoding("UTF-8");
@@ -417,7 +468,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
         }
 		}
 		catch(FileUploadException e) {
-			AppLog.warning("cannot upload file", e.getMessage());
+			SysLog.warning("cannot upload file", e.getMessage());
 %>
       <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
         <table>
@@ -435,24 +486,22 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String[] objectXris = (String[])parameterMap.get("xri");
 	String objectXri = (objectXris == null) || (objectXris.length == 0) ? null : objectXris[0];
-  if (
-    (app == null) || (objectXri == null)
-  ) {
-    response.sendRedirect(
-       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-    );
-    return;
-  }
-  javax.jdo.PersistenceManager pm = app.getPmData();
-  Texts_1_0 texts = app.getTexts();
-  Codes codes = app.getCodes();
-  Texts_1_0[] textsAllAvailableLocales = app.getTextsFactory().getTexts();
-  List<Short> activeLocales = new ArrayList();
-  for(int t = 0; t < textsAllAvailableLocales.length; t++) {
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);	
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
+		response.sendRedirect(
+       		request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+    	);
+    	return;
+  	}
+	javax.jdo.PersistenceManager pm = app.getPmData();
+	Texts_1_0 texts = app.getTexts();
+	Codes codes = app.getCodes();
+	Texts_1_0[] textsAllAvailableLocales = app.getTextsFactory().getTexts();
+	List<Short> activeLocales = new ArrayList<Short>();
+	for(int t = 0; t < textsAllAvailableLocales.length; t++) {
 	  	activeLocales.add(textsAllAvailableLocales[t].getLocaleIndex());
-  }
-
-  final String formAction = "ImportAccountsFromXLS.jsp";
+  	}
+  	final String formAction = "ImportAccountsFromXLS.jsp";
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
@@ -609,8 +658,59 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 							int idxExtString0 = -1;
 							int idxFirstName = -1;
 							int idxLastName = -1;
+							int idxAliasName = -1;
 							int idxCompany = -1;
 							int idxDtype = -1;
+							Set explicitlyMappedAttributes = new HashSet(); // contains (capitalized) feature names mapped explicitely
+
+							explicitlyMappedAttributes.add(ATTR_EXTSTRING0.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_FIRSTNAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_LASTNAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_ALIASNAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_COMPANY.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_DTYPE.toUpperCase());
+
+              explicitlyMappedAttributes.add(ATTR_TITLE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_ACADEMICTITLE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_MIDDLENAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_SUFFIX.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_NICKNAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_COMPANYROLE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_JOBTITLE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_DEPARTMENT.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BIRTHDAY.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMEPHONE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMEPHONE2.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMEFAX.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMEADDRESSLINE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMESTREET.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMECITY.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMEPOSTALCODE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMESTATE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMECOUNTRY.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_HOMECOUNTRYREGION.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_NOTES.toUpperCase());
+
+              explicitlyMappedAttributes.add(ATTR_BUSINESSPHONE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSPHONE2.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSFAX.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_MOBILEPHONE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_EMAILADDRESS.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_EMAIL2ADDRESS.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_EMAIL3ADDRESS.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_WEBPAGE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSADDRESSLINE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSSTREET.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSCITY.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSPOSTALCODE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSSTATE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSCOUNTRY.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_BUSINESSCOUNTRYREGION.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_ASSISTANTSNAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_ASSISTANTSNAMEROLE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_MANAGERSNAME.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_MANAGERSROLE.toUpperCase());
+              explicitlyMappedAttributes.add(ATTR_CATEGORIES.toUpperCase());
 
               // verify whether File exists
               POIFSFileSystem fs = null;
@@ -669,7 +769,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		    		                            		(cell.getStringCellValue() != null)
 		    		                            ) {
 						                            		boolean isSearchAttribute = false;
-						                            		String cellValue = (cell.getStringCellValue().trim()).toUpperCase();
+						                            		String cellValue = (cell.getStringCellValue().trim());
 		    		                            		attributeMap.put(formatter.format(nCell), cellValue);
 		    		                            		// get idx of select attributes
 		    		                            		if (ATTR_EXTSTRING0.compareToIgnoreCase(cellValue) == 0) {
@@ -680,6 +780,9 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		    		                            				isSearchAttribute = true;
 		    		                            		} else if (ATTR_LASTNAME.compareToIgnoreCase(cellValue) == 0) {
 		    		                            				idxLastName = nCell;
+		    		                            				isSearchAttribute = true;
+		    		                            		} else if (ATTR_ALIASNAME.compareToIgnoreCase(cellValue) == 0) {
+		    		                            				idxAliasName = nCell;
 		    		                            				isSearchAttribute = true;
 		    		                            		} else if (ATTR_COMPANY.compareToIgnoreCase(cellValue) == 0) {
 		    		                            				idxCompany = nCell;
@@ -730,13 +833,16 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 	                 	    String extString0 = null;
 	                      String firstName = null;
 	                      String lastName = null;
+	                      String aliasName = null;
 	                      String company = null;
 
 	                      String cellId = null;
 	                      String multiMatchList = "";
-		                    Map valueMap = new TreeMap();
+		                    //Map valueMap = new TreeMap();
+                        Map valueMap = new TreeMap<String,Object>(String.CASE_INSENSITIVE_ORDER);
 		                    boolean isCreation = false;
 		                    boolean isUpdate = false;
+                        String appendErrorRow = null;
 %>
 												<tr>
 													<td><b>Row<br><%= formatter.format(nRow) %></b></td>
@@ -746,6 +852,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                        Iterator cells = row.cellIterator();
 		                        int nCell = 0;
 		                        int currentCell = 0;
+		                        appendErrorRow = null;
 		                        while (cells.hasNext()) {
 		                            //HSSFCell cell = (HSSFCell)row.getCell((short)0);
 		                            HSSFCell cell = (HSSFCell)cells.next();
@@ -757,10 +864,10 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                        		}
 		                        		currentCell = nCell+1;
 		                            try {
-		                            		cellId =  "id='r" + nRow + (String)attributeMap.get(formatter.format(nCell)) + "'";
+		                            		cellId =  "id='r" + nRow + (attributeMap.get(formatter.format(nCell))).toString().toUpperCase() + "'";
 			                            	if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
 				                            		String cellValue = cell.getStringCellValue().trim();
-		                            				valueMap.put((String)attributeMap.get(formatter.format(nCell)), cellValue);
+		                            				valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
                             						if (nCell == idxDtype) {
 		                            						if (DTYPE_GROUP.compareToIgnoreCase(cellValue) == 0) {
 		                            								isDtypeGroup = true;
@@ -781,6 +888,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 				                            				firstName = cellValue;
 				                            		} else if (nCell == idxLastName) {
 				                            				lastName = cellValue;
+				                            		} else if (nCell == idxAliasName) {
+				                            				aliasName = cellValue;
 				                            		} else if (nCell == idxCompany) {
 			                            					company = cellValue;
 				                            		}
@@ -789,13 +898,13 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 <%
 			                            	} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
 				                                BigDecimal cellValue = new BigDecimal(cell.getNumericCellValue());
-		                            				valueMap.put((String)attributeMap.get(formatter.format(nCell)), cellValue);
+		                            				valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
 %>
 																				<td <%= cellId %>><%= cellValue %></td>
 <%
 				                            } else if (cell.getCellType() == HSSFCell.CELL_TYPE_BOOLEAN) {
 				                                boolean cellValue = cell.getBooleanCellValue();
-		                            				valueMap.put((String)attributeMap.get(formatter.format(nCell)), cellValue);
+		                            				valueMap.put((attributeMap.get(formatter.format(nCell))).toString(), cellValue);
 %>
 																				<td <%= cellId %>><%= cellValue ? "TRUE" : "FALSE" %></td>
 <%
@@ -838,10 +947,22 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 															matchingContacts = findContact(
 																		firstName,
 																		lastName,
+																		aliasName,
 																		extString0,
 																		accountSegment,
 																		pm
 																	);
+															if (matchingContacts == null) {
+															    // try again without aliasName
+    															matchingContacts = findContact(
+    																		firstName,
+    																		lastName,
+    																		null,
+    																		extString0,
+    																		accountSegment,
+    																		pm
+    																	);
+															}
 															if (matchingContacts != null) {
 																// at least 1 match with existing contacts
 																updateExisting = true;
@@ -899,11 +1020,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																		isCreation = true;
 																} else {
 																		// creation failed
-%>
-																		<tr>
-																			<td class="err" colspan="<%= maxCell+2 %>">CREATION FAILED [<b><%= className %></b>]</td>
-																		</tr>
-<%
+                                    appendErrorRow = "<tr><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + className + "</b>]</td></tr>";
 																}
 															}
 
@@ -926,7 +1043,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				c.hasNext();
 																		) {
 																				String key = (String)c.next(); // key is equal to name of attribute
-				                            		cellId =  "r" + nRow + key;
+				                            		cellId =  "r" + nRow + key.toUpperCase();
 
 																				/*--------------------------------------------------------------*\
 																				| BEGIN   M a p p i n g   C o n t a c t   t o   o p e n C R X    |
@@ -937,7 +1054,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				try {
 																				    DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
 
-																				    if (key.equalsIgnoreCase("TITLE")) {
+																				    if (key.equalsIgnoreCase(ATTR_TITLE)) {
 																						    // salutationCode
 																						    short salutationCode = findCodeTableCodeFromValue(
 																						    		(String)valueMap.get(key),
@@ -951,7 +1068,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						    } else {
 																						    		isNok = true;
 																						    }
-																				    } else if (key.equalsIgnoreCase("ACADEMICTITLE")) {
+																				    } else if (key.equalsIgnoreCase(ATTR_ACADEMICTITLE)) {
 																						    // academic Title (
 																						    short academicTitle = findCodeTableCodeFromValue(
 																						    		(String)valueMap.get(key),
@@ -965,18 +1082,22 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						    } else {
 																						    		isNok = true;
 																						    }
-																						} else if (key.equalsIgnoreCase("FIRSTNAME")) {
+																						} else if (key.equalsIgnoreCase(ATTR_FIRSTNAME)) {
 																						    contact.setFirstName((String)valueMap.get(key)); isOk = true;
-																						} else if (key.equalsIgnoreCase("MIDDLENAME")) {
+																						} else if (key.equalsIgnoreCase(ATTR_MIDDLENAME)) {
 																						    contact.setMiddleName((String)valueMap.get(key)); isOk = true;
-																						} else if (key.equalsIgnoreCase("LASTNAME")) {
+																						} else if (key.equalsIgnoreCase(ATTR_LASTNAME)) {
 																						    contact.setLastName((String)valueMap.get(key)); isOk = true;
-																						} else if (key.equalsIgnoreCase("SUFFIX")) {
+																						} else if (key.equalsIgnoreCase(ATTR_SUFFIX)) {
 																						    contact.setSuffix((String)valueMap.get(key)); isOk = true;
-																						} else if (key.equalsIgnoreCase("COMPANY")) {
+																						} else if (key.equalsIgnoreCase(ATTR_ALIASNAME)) {
+																						    contact.setAliasName((String)valueMap.get(key)); isOk = true;
+																						} else if (key.equalsIgnoreCase(ATTR_NICKNAME)) {
+																						    contact.setNickName((String)valueMap.get(key)); isOk = true;
+																						} else if (key.equalsIgnoreCase(ATTR_COMPANY)) {
 																								String memberRole = null;
-																								if (valueMap.containsKey("COMPANYROLE")) {
-																										memberRole = (String)valueMap.get("COMPANYROLE");
+																								if (valueMap.containsKey(ATTR_COMPANYROLE)) {
+																										memberRole = (String)valueMap.get(ATTR_COMPANYROLE);
 																								}
 																								org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
 																								org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
@@ -991,26 +1112,26 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						    		pm
 																						    );
 																								if (member != null) {
-																										if (valueMap.containsKey("JOBTITLE")) {
-																												member.setDescription((String)valueMap.get("JOBTITLE"));
+																										if (valueMap.containsKey(ATTR_JOBTITLE)) {
+																												member.setDescription((String)valueMap.get(ATTR_JOBTITLE));
 																										}
 																										isOk = true;
 																										if (memberRole != null) {
-																											jsBuffer += "$('r" + nRow +  "COMPANYROLE').className += ' ok';";
+																											jsBuffer += "$('r" + nRow +  ATTR_COMPANYROLE.toUpperCase() + "').className += ' ok';";
 																										}
 																										// add clickable links
-																										jsBuffer += "$('r" + nRow + "COMPANY').innerHTML += '<br>&lt;Parent: <a href=\""
+																										jsBuffer += "$('r" + nRow + ATTR_COMPANY.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
 																											+ getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
 																											+ getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
 																										contact.setOrganization(parentAccount.getFullName()); isOk = true;
 																								} else {
 																										contact.setOrganization((String)valueMap.get(key)); isOk = true;
 																								}
-																						} else if (key.equalsIgnoreCase("DEPARTMENT")) {
+																						} else if (key.equalsIgnoreCase(ATTR_DEPARTMENT)) {
 																						    contact.setDepartment((String)valueMap.get(key)); isOk = true;
-																						} else if (key.equalsIgnoreCase("JOBTITLE")) {
+																						} else if (key.equalsIgnoreCase(ATTR_JOBTITLE)) {
 																						    contact.setJobTitle((String)valueMap.get(key)); isOk = true;
-																						} else if (key.equalsIgnoreCase("BIRTHDAY")) {
+																						} else if (key.equalsIgnoreCase(ATTR_BIRTHDAY)) {
 																								String value = (String)valueMap.get(key);
 																								if (!value.startsWith("00") && !value.startsWith("0.") && !value.startsWith("0-")) {
 																										java.util.Date birthdate = null;
@@ -1040,7 +1161,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																								    		contact.setBirthdate(birthdate); isOk = true;
 																										}
 																								}
-																						} else if (key.equalsIgnoreCase("HomePhone")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMEPHONE)) {
 																						    // Phone Home
 																						    DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
 																						    phoneHomeDataBinding.setValue(
@@ -1049,7 +1170,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        (String)valueMap.get(key)
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomePhone2")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMEPHONE2)) {
 																						    // Phone other
 																						    DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
 																						    phoneOtherDataBinding.setValue(
@@ -1058,7 +1179,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        (String)valueMap.get(key)
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomeFax")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMEFAX)) {
 																						    // Fax Home
 																						    DataBinding_1_0 faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
 																						    faxHomeDataBinding.setValue(
@@ -1079,7 +1200,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						    );
 																						    isOk = true;
 */
-																						} else if (key.equalsIgnoreCase("HomeAddressLine")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMEADDRESSLINE)) {
 																						    // Postal Address Business / addressLine
 																						    List<String> postalAddressLines = new ArrayList<String>();
 																						    StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
@@ -1092,7 +1213,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        postalAddressLines
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomeStreet")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMESTREET)) {
 																						    // Postal Address Business / postalStreet
 																						    List<String> postalStreetLines = new ArrayList<String>();
 																						    StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
@@ -1105,7 +1226,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        postalStreetLines
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomeCity")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMECITY)) {
 																						    // Postal Address Business / postalCity
 																						    postalHomeDataBinding.setValue(
 																						        contact,
@@ -1113,7 +1234,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        (String)valueMap.get(key)
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomePostalCode")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMEPOSTALCODE)) {
 																						    // Postal Address Business / postalCode
 																						    postalHomeDataBinding.setValue(
 																						        contact,
@@ -1121,7 +1242,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        (String)valueMap.get(key)
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomeState")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMESTATE)) {
 																						    // Postal Address Business / postalState
 																						    postalHomeDataBinding.setValue(
 																						        contact,
@@ -1129,7 +1250,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						        (String)valueMap.get(key)
 																						    );
 																						    isOk = true;
-																						} else if (key.equalsIgnoreCase("HomeCountry") || key.equalsIgnoreCase("HomeCountryRegion")) {
+																						} else if (key.equalsIgnoreCase(ATTR_HOMECOUNTRY) || key.equalsIgnoreCase(ATTR_HOMECOUNTRYREGION)) {
 																						    // Postal Address Business / postalCountry
 																						    short postalCountry = findCodeTableCodeFromValue(
 																						    		(String)valueMap.get(key),
@@ -1153,7 +1274,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						isNok = true;
 																				}
 																				if (isOk) {
-																				    jsBuffer += "$('" + cellId + "').className += ' ok';";
+                      									    jsBuffer += "$('" + cellId + "').className += ' ok';";
 																				}
 																				if (isNok) {
 																						jsBuffer += "$('" + cellId + "').className += ' nok';";
@@ -1285,11 +1406,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																		abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)unspecifiedAccount;
 																} else {
 																		// creation failed
-%>
-																		<tr>
-																			<td class="err" colspan="<%= maxCell+2 %>">CREATION FAILED [<b><%= className %></b>]</td>
-																		</tr>
-<%
+                                    appendErrorRow = "<tr><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + className + "</b>]</td></tr>";
 																}
 															}
 
@@ -1312,7 +1429,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				c.hasNext();
 																		) {
 																				String key = (String)c.next(); // key is equal to name of attribute
-				                            		cellId =  "r" + nRow + key;
+				                            		cellId =  "r" + nRow + key.toUpperCase();
 
 				                            		boolean isOk = false;
 																				try {
@@ -1320,7 +1437,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																								/*----------------------------------------------------------*\
 																								| BEGIN   M a p p i n g   G r o u p   t o   o p e n C R X    |
 																								\-----------------------------------------------------------*/
-																								if (key.equalsIgnoreCase("COMPANY")) {
+																								if (key.equalsIgnoreCase(ATTR_COMPANY)) {
 																										group.setName((String)valueMap.get(key)); isOk = true;
 																								}
 																								/*----------------------------------------------------------*\
@@ -1330,7 +1447,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																								/*----------------------------------------------------------------------*\
 																								| BEGIN   M a p p i n g   L e g a l E n t i t y   t o   o p e n C R X    |
 																								\-----------------------------------------------------------------------*/
-																								if (key.equalsIgnoreCase("COMPANY")) {
+																								if (key.equalsIgnoreCase(ATTR_COMPANY)) {
 																										legalEntity.setName((String)valueMap.get(key)); isOk = true;
 																								}
 																								/*----------------------------------------------------------------------*\
@@ -1340,7 +1457,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																								/*------------------------------------------------------------------------------------*\
 																								| BEGIN   M a p p i n g   U n s p e c i f i e d A c c o u n t   t o   o p e n C R X    |
 																								\-------------------------------------------------------------------------------------*/
-																								if (key.equalsIgnoreCase("COMPANY")) {
+																								if (key.equalsIgnoreCase(ATTR_COMPANY)) {
 																										unspecifiedAccount.setName((String)valueMap.get(key)); isOk = true;
 																								}
 																								/*------------------------------------------------------------------------------------*\
@@ -1368,6 +1485,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 															}
 													}
 
+                          boolean isOk = false;
+                          boolean isNok = false;
 													if (account != null) {
 															// update attributes common to all subclasses of Account
 														try {
@@ -1377,25 +1496,25 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																		c.hasNext();
 																) {
 																		String key = (String)c.next(); // key is equal to name of attribute
-		                            		cellId =  "r" + nRow + key;
+		                            		cellId =  "r" + nRow + key.toUpperCase();
 
 																		/*--------------------------------------------------------------*\
 																		| BEGIN   M a p p i n g   A c c o u n t   t o   o p e n C R X    |
 																		\---------------------------------------------------------------*/
 
-																		boolean isOk = false;
-																		boolean isNok = false;
+																		isOk = false;
+																		isNok = false;
 																		try {
 																		    DataBinding_1_0 postalBusinesDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
 
 																		    if (key.equalsIgnoreCase(ATTR_EXTSTRING0)) {
 																						// verify, but do NOT set extString0 (may only be set during creation of new contact!!!)
 																						isOk = (valueMap.get(key) != null) && (account.getExtString0() != null) && (valueMap.get(key).toString().compareTo(account.getExtString0()) == 0);
-																				} else if (key.equalsIgnoreCase("Notes")) {
+																				} else if (key.equalsIgnoreCase(ATTR_NOTES)) {
 																				    // description
 																				    account.setDescription((String)valueMap.get(key));
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessPhone")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE)) {
 																				    // Phone Business
 																				    DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
 																				    phoneBusinessDataBinding.setValue(
@@ -1404,7 +1523,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessPhone2")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE2)) {
 																				    // Phone other
 																				    DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
 																				    phoneOtherDataBinding.setValue(
@@ -1413,7 +1532,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessFax")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSFAX)) {
 																				    // Fax Business
 																				    DataBinding_1_0 faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
 																				    faxBusinessDataBinding.setValue(
@@ -1422,7 +1541,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("MobilePhone")) {
+																				} else if (key.equalsIgnoreCase(ATTR_MOBILEPHONE)) {
 																				    // Phone Mobile
 																				    DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
 																				    phoneMobileDataBinding.setValue(
@@ -1431,7 +1550,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("EmailAddress")) {
+																				} else if (key.equalsIgnoreCase(ATTR_EMAILADDRESS)) {
 																				    // Mail Business
 																				    DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
 																				    mailBusinessDataBinding.setValue(
@@ -1440,7 +1559,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("Email2Address")) {
+																				} else if (key.equalsIgnoreCase(ATTR_EMAIL2ADDRESS)) {
 																				    // Mail Home
 																				    DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
 																				    mailHomeDataBinding.setValue(
@@ -1449,7 +1568,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("Email3Address")) {
+																				} else if (key.equalsIgnoreCase(ATTR_EMAIL3ADDRESS)) {
 																				    // Mail Other
 																				    DataBinding_1_0 mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
 																				    mailOtherDataBinding.setValue(
@@ -1458,7 +1577,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("WebPage")) {
+																				} else if (key.equalsIgnoreCase(ATTR_WEBPAGE)) {
 																				    // Web page
 																				    org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageBusinessDataBinding =
 																				    	new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500");
@@ -1468,7 +1587,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessAddressLine")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSADDRESSLINE)) {
 																				    // Postal Address Business / addressLine
 																				    List<String> postalAddressLines = new ArrayList<String>();
 																				    StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
@@ -1481,7 +1600,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        postalAddressLines
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessStreet")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSSTREET)) {
 																				    // Postal Address Business / postalStreet
 																				    List<String> postalStreetLines = new ArrayList<String>();
 																				    StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
@@ -1494,7 +1613,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        postalStreetLines
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessCity")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSCITY)) {
 																				    // Postal Address Business / postalCity
 																				    postalBusinesDataBinding.setValue(
 																				    		account,
@@ -1502,7 +1621,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessPostalCode")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSPOSTALCODE)) {
 																				    // Postal Address Business / postalCode
 																				    postalBusinesDataBinding.setValue(
 																				    		account,
@@ -1510,7 +1629,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessState")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSSTATE)) {
 																				    // Postal Address Business / postalState
 																				    postalBusinesDataBinding.setValue(
 																				    		account,
@@ -1518,7 +1637,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				        (String)valueMap.get(key)
 																				    );
 																				    isOk = true;
-																				} else if (key.equalsIgnoreCase("BusinessCountry") || key.equalsIgnoreCase("BusinessCountryRegion")) {
+																				} else if (key.equalsIgnoreCase(ATTR_BUSINESSCOUNTRY) || key.equalsIgnoreCase(ATTR_BUSINESSCOUNTRYREGION)) {
 																				    // Postal Address Business / postalCountry
 																				    short postalCountry = findCodeTableCodeFromValue(
 																				    		(String)valueMap.get(key),
@@ -1536,10 +1655,10 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																				    } else {
 																				    		isNok = true;
 																				    }
-																				} else if (key.equalsIgnoreCase("ASSISTANTSNAME")) {
+																				} else if (key.equalsIgnoreCase(ATTR_ASSISTANTSNAME)) {
 																						String memberRole = null;
-																						if (valueMap.containsKey("ASSISTANTSNAMEROLE")) {
-																								memberRole = (String)valueMap.get("ASSISTANTSNAMEROLE");
+																						if (valueMap.containsKey(ATTR_ASSISTANTSNAMEROLE)) {
+																								memberRole = (String)valueMap.get(ATTR_ASSISTANTSNAMEROLE);
 																						}
 																						org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
 																						org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
@@ -1556,17 +1675,17 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						if (member != null) {
 																								isOk = true;
 																								if (memberRole != null) {
-																									jsBuffer += "$('r" + nRow +  "ASSISTANTSNAMEROLE').className += ' ok';";
+																									jsBuffer += "$('r" + nRow +  ATTR_ASSISTANTSNAMEROLE.toUpperCase() + "').className += ' ok';";
 																								}
 																								// add clickable links
-																								jsBuffer += "$('r" + nRow + "ASSISTANTSNAME').innerHTML += '<br>&lt;Parent: <a href=\""
+																								jsBuffer += "$('r" + nRow + ATTR_ASSISTANTSNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
 																									+ getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
 																									+ getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
 																						}
-																				} else if (key.equalsIgnoreCase("MANAGERSNAME")) {
+																				} else if (key.equalsIgnoreCase(ATTR_MANAGERSNAME)) {
 																						String memberRole = null;
-																						if (valueMap.containsKey("MANAGERSROLE")) {
-																								memberRole = (String)valueMap.get("MANAGERSROLE");
+																						if (valueMap.containsKey(ATTR_MANAGERSROLE)) {
+																								memberRole = (String)valueMap.get(ATTR_MANAGERSROLE);
 																						}
 																						org.opencrx.kernel.account1.jmi1.Account manager = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
 																						org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
@@ -1583,73 +1702,127 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 																						if (member != null) {
 																								isOk = true;
 																								if (memberRole != null) {
-																									jsBuffer += "$('r" + nRow +  "MANAGERSROLE').className += ' ok';";
+																									jsBuffer += "$('r" + nRow +  ATTR_MANAGERSROLE.toUpperCase() + "').className += ' ok';";
 																								}
 																								// add clickable links
-																								jsBuffer += "$('r" + nRow + "MANAGERSNAME').innerHTML += '<br>&lt;Parent: <a href=\""
+																								jsBuffer += "$('r" + nRow + ATTR_MANAGERSNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
 																									+ getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
 																									+ getObjectHref(manager) + "\" target=\"_blank\"><b>" + (new ObjectReference(manager, app)).getTitle() + "</b></a>&gt;';";
 																						}
+																				} else if (key.equalsIgnoreCase(ATTR_CATEGORIES)) {
+																				    // semicolon-separated categories
+																				    StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), ";", false);
+																				    while(tokenizer.hasMoreTokens()) {
+																				    		String category = (String)tokenizer.nextToken();
+																				    		if (!account.getCategory().contains(category)) {
+																				    				account.getCategory().add(category);
+																				    		}
+																				    }
+																				    isOk = true;
+                                        } else if (!(explicitlyMappedAttributes.contains(key.toUpperCase()))) {
+                                            // try to set attribute with reflective coding
+                                            try {
+                                                org.openmdx.base.mof.cci.Model_1_0 model = org.openmdx.base.mof.spi.Model_1Factory.getModel();
+                                                Map features = null;
+                                                if (isDtypeContact) {
+                                                    features = (Map)model.getElement(contact.refClass().refMofId()).objGetValue("allFeature");
+                                                } else if (isDtypeGroup) {
+                                                    features = (Map)model.getElement(group.refClass().refMofId()).objGetValue("allFeature");
+                                                } else if (isDtypeLegalEntity) {
+                                                    features = (Map)model.getElement(legalEntity.refClass().refMofId()).objGetValue("allFeature");
+                                                } else if (isDtypeUnspecifiedAccount) {
+                                                    features = (Map)model.getElement(unspecifiedAccount.refClass().refMofId()).objGetValue("allFeature");
+                                                }
+                                                org.openmdx.base.mof.cci.ModelElement_1_0 featureDef = (features == null ? null : (org.openmdx.base.mof.cci.ModelElement_1_0)features.get(key));
+                                                if (featureDef != null) {
+                                                  	if(
+                                                        org.openmdx.base.mof.cci.PrimitiveTypes.STRING.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+                                                        (
+                                                            org.openmdx.base.mof.cci.Multiplicities.SINGLE_VALUE.equals(featureDef.objGetValue("multiplicity")) ||
+                                                            org.openmdx.base.mof.cci.Multiplicities.OPTIONAL_VALUE.equals(featureDef.objGetValue("multiplicity"))
+                                                        )
+                                                    ) {
+                                                        // optional, single-valued String
+                                                        if (isDtypeContact) {
+                                                        	  contact.refSetValue(key, valueMap.get(key).toString());
+                                                        } else if (isDtypeGroup) {
+                                                            group.refSetValue(key, valueMap.get(key).toString());
+                                                        } else if (isDtypeLegalEntity) {
+                                                            legalEntity.refSetValue(key, valueMap.get(key).toString());
+                                                        } else if (isDtypeUnspecifiedAccount) {
+                                                        	  unspecifiedAccount.refSetValue(key, valueMap.get(key).toString());
+                                                        }
+                                                        isOk = true;
+                                                    }
+                                                }
+                                            } catch (Exception e) {
+                                                new ServiceException(e).log();
+                                            }
 																				}
 																		} catch (Exception e) {
 																				new ServiceException(e).log();
 																				isNok = true;
 																		}
-																		if (isOk) {
-																		    jsBuffer += "$('" + cellId + "').className += ' ok';";
-																		}
-																		if (isNok) {
-																				jsBuffer += "$('" + cellId + "').className += ' nok';";
-																		}
 																		/*--------------------------------------------------------------*\
 																		| END   M a p p i n g   A c c o u n t   t o   o p e n C R X      |
 																		\---------------------------------------------------------------*/
+                                    if (isOk) {
+                                        jsBuffer += "$('" + cellId + "').className += ' ok';";
+                                    }
+                                    if (isNok) {
+                                        jsBuffer += "$('" + cellId + "').className += ' nok';";
+                                    }
 																}
 											    			pm.currentTransaction().commit();
 														} catch (Exception e) {
 																new ServiceException(e).log();
+                                isOk = false;
+                                isNok = true;
 																contact = null;
 																try {
 																	pm.currentTransaction().rollback();
 																} catch(Exception e1) {}
 														}
 													}
-
-													valueMap = null;
-													if (isCreation) {
 %>
-															<tr>
-																<td class="create" colspan="<%= maxCell+2 %>">
-																	CREATED [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
-																	<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
-																</td>
-															</tr>
+                        </tr>
 <%
-													}
-													if (isUpdate) {
-															if (multiMatchList.length() > 0) {
+                        if (appendErrorRow != null) {
 %>
-																	<tr>
-																		<td class="match" colspan="<%= maxCell+2 %>">
-																			NO UPDATE [<b><%= className %></b>] - Multiple Matches:<%= multiMatchList %>
-																		</td>
-																	</tr>
+                            <%= appendErrorRow %>
 <%
-
-															} else {
+                        }
+												valueMap = null;
+												if (isCreation) {
 %>
-																	<tr>
-																		<td class="match" colspan="<%= maxCell+2 %>">
-																			UPDATED [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
-																			<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
-																		</td>
-																	</tr>
+														<tr>
+															<td class="<%= isNok ? "err" : "match" %>" colspan="<%= maxCell+2 %>">
+																CREATE <%= isNok ? "FAILED" : "OK" %> [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
+																<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
+															</td>
+														</tr>
 <%
-															}
-													}
+												}
+												if (isUpdate) {
+														if (multiMatchList.length() > 0) {
 %>
-												</tr>
+																<tr>
+																	<td class="err" colspan="<%= maxCell+2 %>">
+																		NO UPDATE [<b><%= className %></b>] - Multiple Matches:<%= multiMatchList %>
+																	</td>
+																</tr>
 <%
+														} else {
+%>
+																<tr>
+																	<td class="<%= isNok ? "err" : "match" %>" colspan="<%= maxCell+2 %>">
+																		UPDATE <%= isNok ? "FAILED" : "OK" %> [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
+																		<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
+																	</td>
+																</tr>
+<%
+														}
+												}
 	                    } /* while */
 %>
 											<tr class="sheetInfo">
@@ -1773,7 +1946,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                   <td>
                     <div style="padding-left:5px; padding-bottom: 3px;">
                       Processing request - please wait...<br>
-                      <img border=0 src='../../images/progress_bar.gif' alt='please wait...' />
+                      <img border="0" src='../../images/progress_bar.gif' alt='please wait...' />
                     </div>
                   </td>
                 </tr>
@@ -1830,7 +2003,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 %>
       </div> <!-- content -->
     </div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+  </div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

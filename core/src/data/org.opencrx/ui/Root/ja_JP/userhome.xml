@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -73,6 +73,28 @@
                       </label>
                       <toolTip>
                         <_item>添付メディア</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»オブジェクト検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>オブジェクト検索</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»プロファイルエクスポート</_item>
+                      </label>
+                      <toolTip>
+                        <_item>プロファイルエクスポート</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -547,6 +569,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:description" _operation="create">
                     <_object>
                       <label>
@@ -554,6 +587,50 @@
                       </label>
                       <toolTip>
                         <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:iconKey" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アイコンキー</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アイコンキー</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクションタイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクションタイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionName" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクション名</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクション名</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionParam" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクションパラメーター</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクションパラメーター</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -631,6 +708,160 @@
                       </label>
                       <toolTip>
                         <_item>グラフ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>オブジェクト検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>オブジェクト検索</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アカウント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アカウント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アクティビティ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アクティビティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>契約</_item>
+                      </label>
+                      <toolTip>
+                        <_item>契約</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryProduct" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>製品</_item>
+                      </label>
+                      <toolTip>
+                        <_item>製品</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDocument" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ドキュメント</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ドキュメント</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryBuilding" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>建物</_item>
+                      </label>
+                      <toolTip>
+                        <_item>建物</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDepot" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>デポ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>デポ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>説明</_item>
+                      </label>
+                      <toolTip>
+                        <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:allWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>全ての単語を含む</_item>
+                      </label>
+                      <toolTip>
+                        <_item>全ての単語を含む</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:atLeastOneOfTheWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>１語以上を含む</_item>
+                      </label>
+                      <toolTip>
+                        <_item>どれも含まない</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:withoutWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>どれも含まない</_item>
+                      </label>
+                      <toolTip>
+                        <_item>どれも含まない</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>プロファイルエクスポート</_item>
+                      </label>
+                      <toolTip>
+                        <_item>プロファイルエクスポート</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1049,6 +1280,138 @@
                       </label>
                       <toolTip>
                         <_item>ステータス</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:210" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>検索</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>検索</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>入力</_item>
+                      </label>
+                      <toolTip>
+                        <_item>入力</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>結果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>結果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchBasicParams:searchExpression" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>これを検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>これを検索</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>詳細検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>詳細検索</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>入力</_item>
+                      </label>
+                      <toolTip>
+                        <_item>入力</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>結果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>結果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:allWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>全ての単語を含む</_item>
+                      </label>
+                      <toolTip>
+                        <_item>全ての単語を含む</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:atLeastOneOfTheWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>１語以上を含む</_item>
+                      </label>
+                      <toolTip>
+                        <_item>１語以上を含む</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:withoutWords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>どれも含まない</_item>
+                      </label>
+                      <toolTip>
+                        <_item>どれも含まない</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchResult:objectFinder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>オブジェクト検索</_item>
+                      </label>
+                      <toolTip>
+                        <_item>オブジェクト検索</_item>
                       </toolTip>
                     </_object>
                     <_content/>

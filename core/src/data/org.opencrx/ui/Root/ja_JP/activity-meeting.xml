@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Meeting:meetingParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>関与担当者</_item>
+                        <_item>関与アカウント</_item>
                       </label>
                       <toolTip>
-                        <_item>関与担当者</_item>
+                        <_item>関与アカウント</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty" _operation="create">
                     <_object>
                       <label>
-                        <_item>関与担当者</_item>
+                        <_item>関与アカウント</_item>
                       </label>
                       <toolTip>
-                        <_item>関与担当者</_item>
+                        <_item>関与アカウント</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:party" _operation="create">
                     <_object>
                       <label>
-                        <_item>担当者</_item>
+                        <_item>アカウント</_item>
                       </label>
                       <toolTip>
-                        <_item>担当者</_item>
+                        <_item>アカウント</_item>
                       </toolTip>
                     </_object>
                     <_content/>

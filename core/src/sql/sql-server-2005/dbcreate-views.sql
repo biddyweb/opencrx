@@ -467,7 +467,6 @@ INNER JOIN
 ON
     e.container = n.object_id
 GO
-
 CREATE VIEW OOCKE1_JOIN_RESHASASSIGNEDACT AS
 SELECT
     a.object_id AS assigned_activity,
@@ -483,7 +482,6 @@ INNER JOIN
 ON
     ra.resrc = r.object_id
 GO
-
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSADR AS
 SELECT
     adr.object_id AS address,

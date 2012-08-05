@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -29,6 +29,17 @@
                       </label>
                       <toolTip>
                         <_item>宛先</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:media" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>添付</_item>
+                      </label>
+                      <toolTip>
+                        <_item>添付メディア</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -77,13 +88,35 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Attr:Tab:0:Group:50" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>&amp;nbsp;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:gateway" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>ゲートウェイ (Fax, SMS, MMS)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>ゲートウェイ (Fax, SMS, MMS)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:messageSubject" _operation="create">
                     <_object>
                       <label>
-                        <_item>サブジェクト</_item>
+                        <_item>件名</_item>
                       </label>
                       <toolTip>
-                        <_item>サブジェクト</_item>
+                        <_item>件名</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:messageBody" _operation="create">
                     <_object>
                       <label>
-                        <_item>メッセージ</_item>
+                        <_item>本文</_item>
                       </label>
                       <toolTip>
-                        <_item>メッセージ</_item>
+                        <_item>本文</_item>
                       </toolTip>
                     </_object>
                     <_content/>

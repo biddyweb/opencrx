@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityImpl.java,v 1.26 2009/06/09 09:49:29 wfro Exp $
+ * Name:        $Id: ActivityImpl.java,v 1.31 2009/09/02 14:27:37 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.26 $
+ * Revision:    $Revision: 1.31 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 09:49:29 $
+ * Date:        $Date: 2009/09/02 14:27:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,6 +57,8 @@ package org.opencrx.kernel.activity1.aop2;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.jdo.JDOUserException;
@@ -66,6 +68,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.Utils;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
@@ -183,7 +186,8 @@ public class ActivityImpl
         			new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + this.sameObject().refGetPath().get(2) + "/segment/Root/uom/hour")
         		);
         	}
-        	catch(Exception e) {}        	
+        	catch(Exception e) {}    
+        	List<PrincipalGroup> owningGroups = params.getOwningGroup();        	
             ActivityWorkRecord workRecord = Activities.getInstance().addWorkAndExpenseRecord(
                 this.sameObject(),
                 params.getResource(),
@@ -201,7 +205,8 @@ public class ActivityImpl
                 params.getRate(),
                 params.getRateCurrency(),
                 params.isBillable(),
-                Boolean.FALSE // isReimbursable
+                Boolean.FALSE, // isReimbursable
+                owningGroups
             );
             return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
                 workRecord
@@ -217,6 +222,7 @@ public class ActivityImpl
         org.opencrx.kernel.activity1.jmi1.ActivityAddExpenseRecordParams params
     ) {
         try {
+        	List<PrincipalGroup> owningGroups = params.getOwningGroup();        	
             ActivityWorkRecord workRecord = Activities.getInstance().addWorkAndExpenseRecord(
                 this.sameObject(),
                 params.getResource(),
@@ -232,7 +238,8 @@ public class ActivityImpl
                 params.getRate(),
                 params.getRateCurrency(),
                 params.isBillable(),
-                params.isReimbursable()
+                params.isReimbursable(),
+                owningGroups
             );
             return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
                 workRecord
@@ -264,6 +271,34 @@ public class ActivityImpl
     public int getTotalVotes(
     ) {
     	return this.sameObject().getVote().size();
+    }
+        
+    // ----------------------------------------------------------------------------
+    public java.lang.Boolean isAllDayEvent(
+    ) {
+    	Calendar scheduledStart = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone("GMT-0:00"));
+    	scheduledStart.setTime(this.sameObject().getScheduledStart());
+    	Calendar scheduledEnd = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone("GMT-0:00"));
+    	scheduledEnd.setTime(this.sameObject().getScheduledEnd());
+    	return 
+    		scheduledStart.get(Calendar.HOUR_OF_DAY) == 0 && scheduledStart.get(Calendar.MINUTE) == 0 && scheduledStart.get(Calendar.SECOND) == 0 &&
+    		scheduledEnd.get(Calendar.HOUR_OF_DAY) == 0 && scheduledEnd.get(Calendar.MINUTE) == 0 && scheduledEnd.get(Calendar.SECOND) == 0;
+    }
+    
+    //-----------------------------------------------------------------------
+    public org.openmdx.base.cci2.Void markAsAllDayEvent(
+    	org.opencrx.kernel.activity1.jmi1.MarkAsAllDayEventParams params    	
+    ) {
+        try {
+            Activities.getInstance().markAsAllDayEvent(
+                this.sameObject(),
+                params.getTimezone()
+            );
+            return this.newVoid();
+        }
+        catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }                                    
     }
         
     // ----------------------------------------------------------------------------
@@ -329,6 +364,26 @@ public class ActivityImpl
     }
 
     //-----------------------------------------------------------------------
+    @Override
+    protected void jdoPreDelete(
+    ) {
+    	try {
+    		Activities.getInstance().removeActivity(
+    			this.sameObject(), 
+    			true
+    		);
+    		super.jdoPreDelete();
+    	}
+    	catch(ServiceException e) {
+    		throw new JDOUserException(
+    			"jdoPreDelete failed",
+    			e,
+    			this.sameObject()
+    		);
+    	}
+    }
+
+	//-----------------------------------------------------------------------
 	@SuppressWarnings("unchecked")
     @Override
     protected C newContext(

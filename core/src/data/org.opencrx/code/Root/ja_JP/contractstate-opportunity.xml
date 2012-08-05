@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="opportunityState" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="opportunityState" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="set">
                           <_object>
                             <shortText>
                               <_item>ターゲティング/見込客化</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="set">
                           <_object>
                             <shortText>
                               <_item>初回コンタクト</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="set">
                           <_object>
                             <shortText>
                               <_item>製品プレゼンテーション</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="set">
                           <_object>
                             <shortText>
                               <_item>分析/アセスメント要</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="set">
                           <_object>
                             <shortText>
                               <_item>ソリューション設計</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
                           <_object>
                             <shortText>
                               <_item>提案フェーズ</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="set">
                           <_object>
                             <shortText>
                               <_item>契約中</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="set">
                           <_object>
                             <shortText>
                               <_item>プロジェクト延期</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1210" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1210" _operation="set">
                           <_object>
                             <shortText>
                               <_item>受注または次段階</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1220" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1220" _operation="set">
                           <_object>
                             <shortText>
                               <_item>プロジェクトキャンセル</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1230" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1230" _operation="set">
                           <_object>
                             <shortText>
                               <_item>プロジェクト失注/金額過大</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1240" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1240" _operation="set">
                           <_object>
                             <shortText>
                               <_item>プロジェクト失注/品質問題</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1250" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1250" _operation="set">
                           <_object>
                             <shortText>
                               <_item>プロジェクト失注/その他</_item>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.37 2009/06/09 14:10:35 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.45 2009/09/29 16:41:36 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:10:35 $
+ * Date:        $Date: 2009/09/29 16:41:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,10 +67,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.TimeZone;
 
+import javax.jdo.Constants;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jmi.reflect.RefObject;
 import javax.naming.NamingException;
 
 import org.opencrx.kernel.account1.jmi1.Account1Package;
@@ -86,7 +86,8 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
-import org.openmdx.application.persistence.ejb.Jmi1AccessorFactory_2;
+import org.openmdx.application.rest.ejb.DataManager_2ProxyFactory;
+import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.mof.cci.Model_1_0;
@@ -114,329 +115,228 @@ public class Utils {
     //-----------------------------------------------------------------------
     public static PersistenceManagerFactory getPersistenceManagerFactory(
     ) throws NamingException, ServiceException {
-        Map<String,String> properties = new HashMap<String,String>();
-        properties.put(
-            ConfigurableProperty.ConnectionFactoryName.qualifiedName(), 
-            "java:comp/env/ejb/EntityManagerFactory"
-        );
-        properties.put(
-            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(), 
-            Jmi1AccessorFactory_2.class.getName()
-        );
-        return JDOHelper.getPersistenceManagerFactory(properties);
+        return JDOHelper.getPersistenceManagerFactory("EntityManagerFactory");
     }
     
     //-----------------------------------------------------------------------
-    public static javax.jmi.reflect.RefPackage getOutermostPackage(
-        PersistenceManager pm
+    public static PersistenceManagerFactory getPersistenceManagerProxyFactory(
+    ) throws NamingException, ServiceException {    	
+    	// Data manager
+        Map<String,Object> dataManagerConfiguration = new HashMap<String,Object>();
+        dataManagerConfiguration.put(
+            Constants.PROPERTY_CONNECTION_FACTORY_NAME,
+            "java:comp/env/ejb/EntityManagerFactory"
+        );
+        dataManagerConfiguration.put(
+            Constants.PROPERTY_PERSISTENCE_MANAGER_FACTORY_CLASS,
+            DataManager_2ProxyFactory.class.getName()
+        );
+        PersistenceManagerFactory dataManagerFactory = JDOHelper.getPersistenceManagerFactory(
+        	dataManagerConfiguration
+        );        
+        // Entity manager
+    	Map<String,Object> entityManagerConfiguration = new HashMap<String,Object>();
+    	entityManagerConfiguration.put(
+        	ConfigurableProperty.ConnectionFactory.qualifiedName(),
+        	dataManagerFactory
+        );
+        entityManagerConfiguration.put(
+        	ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
+        	EntityManagerFactory_1.class.getName()
+        );        
+        return JDOHelper.getPersistenceManagerFactory(entityManagerConfiguration);
+    }
+        
+    //-----------------------------------------------------------------------
+    public static javax.jmi.reflect.RefPackage getJmiPackage(
+        PersistenceManager pm,
+        String authorityXri
     ) {
-        return ((RefObject)pm.newInstance(org.opencrx.kernel.account1.jmi1.Segment.class)).refOutermostPackage();            
+    	Authority obj = pm.getObjectById(
+            Authority.class,
+            authorityXri
+        );  
+    	return obj.refOutermostPackage().refPackage(obj.refGetPath().getBase());
     }
 
     //-----------------------------------------------------------------------
     public static org.opencrx.kernel.workflow1.jmi1.Workflow1Package getWorkflowPackage(
         PersistenceManager pm
     ) {
-        org.opencrx.kernel.workflow1.jmi1.Workflow1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:workflow1");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)pm.getObjectById(
-                Authority.class,
-                org.opencrx.kernel.workflow1.jmi1.Workflow1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (org.opencrx.kernel.workflow1.jmi1.Workflow1Package)getJmiPackage(
+        	pm,
+            org.opencrx.kernel.workflow1.jmi1.Workflow1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static org.opencrx.kernel.code1.jmi1.Code1Package getCodePackage(
         PersistenceManager pm
     ) {
-        org.opencrx.kernel.code1.jmi1.Code1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.code1.jmi1.Code1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:code1");
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.code1.jmi1.Code1Package)pm.getObjectById(
-                Authority.class,
-                org.opencrx.kernel.code1.jmi1.Code1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+    	return (org.opencrx.kernel.code1.jmi1.Code1Package)getJmiPackage(
+    		pm,
+            org.opencrx.kernel.code1.jmi1.Code1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static org.opencrx.kernel.document1.jmi1.Document1Package getDocumentPackage(
         PersistenceManager pm
     ) {
-        org.opencrx.kernel.document1.jmi1.Document1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.document1.jmi1.Document1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:document1");
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.document1.jmi1.Document1Package)pm.getObjectById(
-                Authority.class,
-                org.opencrx.kernel.document1.jmi1.Document1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;            
+        return (org.opencrx.kernel.document1.jmi1.Document1Package)getJmiPackage(
+        	pm,
+            org.opencrx.kernel.document1.jmi1.Document1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static Admin1Package getAdminPackage(
         PersistenceManager pm
     ) {
-        Admin1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.admin1.jmi1.Admin1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:admin1"); 
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Admin1Package)pm.getObjectById(
-                Authority.class,
-                Admin1Package.AUTHORITY_XRI
-            ).refImmediatePackage();            
-        }
-        return pkg;
+        return (Admin1Package)getJmiPackage(
+        	pm,
+            Admin1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static org.openmdx.base.jmi1.BasePackage getOpenMdxBasePackage(
         PersistenceManager pm
     ) {
-        org.openmdx.base.jmi1.BasePackage pkg = null;
-        try {
-            pkg = (org.openmdx.base.jmi1.BasePackage)Utils.getOutermostPackage(pm).refPackage("org:openmdx:base"); 
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (org.openmdx.base.jmi1.BasePackage )pm.getObjectById(
-                Authority.class,
-                org.openmdx.base.jmi1.BasePackage .AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (org.openmdx.base.jmi1.BasePackage)getJmiPackage(
+        	pm,
+        	org.openmdx.base.jmi1.BasePackage .AUTHORITY_XRI
+         );
     }
 
     //-----------------------------------------------------------------------
     public static Home1Package getHomePackage(
         PersistenceManager pm
     ) {
-        Home1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.home1.jmi1.Home1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:home1"); 
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Home1Package)pm.getObjectById(
-                Authority.class,
-                Home1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;            
+        return (Home1Package)getJmiPackage(
+        	pm,
+        	Home1Package.AUTHORITY_XRI
+         );            
     }
 
     //-----------------------------------------------------------------------
     public static Contract1Package getContractPackage(
         PersistenceManager pm
     ) {
-        Contract1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.contract1.jmi1.Contract1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:contract1"); 
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Contract1Package)pm.getObjectById(
-                Authority.class,
-                Contract1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;            
+    	return (Contract1Package)getJmiPackage(
+    		pm,
+    		Contract1Package.AUTHORITY_XRI
+    	);            
     }
 
     //-----------------------------------------------------------------------
     public static Depot1Package getDepotPackage(
         PersistenceManager pm
     ) {
-        Depot1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.depot1.jmi1.Depot1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:depot1"); 
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Depot1Package)pm.getObjectById(
-                Authority.class,
-                Depot1Package.AUTHORITY_XRI
-            ).refImmediatePackage();            
-        }
-        return pkg;
+        return (Depot1Package)getJmiPackage(
+        	pm,
+        	Depot1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static org.openmdx.compatibility.datastore1.jmi1.Datastore1Package getDatastorePackage(
         PersistenceManager pm
     ) {
-        org.openmdx.compatibility.datastore1.jmi1.Datastore1Package pkg = null;
-        try {
-            pkg = (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)Utils.getOutermostPackage(pm).refPackage("org:openmdx:compatibility:datastore1");
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)pm.getObjectById(
-                Authority.class,
-                org.openmdx.compatibility.datastore1.jmi1.Datastore1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;                    
+        return (org.openmdx.compatibility.datastore1.jmi1.Datastore1Package)getJmiPackage(
+        	pm,
+        	org.openmdx.compatibility.datastore1.jmi1.Datastore1Package.AUTHORITY_XRI
+        );                    
     }
     
     //-----------------------------------------------------------------------
     public static Building1Package getBuildingPackage(
         PersistenceManager pm
     ) {
-        Building1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.building1.jmi1.Building1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:building1");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Building1Package)pm.getObjectById(
-                Authority.class,
-                Building1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (Building1Package)getJmiPackage(
+        	pm,
+        	Building1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static Product1Package getProductPackage(
         PersistenceManager pm
     ) {
-        Product1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.product1.jmi1.Product1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:product1");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Product1Package)pm.getObjectById(
-                Authority.class,
-                Product1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (Product1Package)getJmiPackage(
+        	pm,
+        	Product1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static Uom1Package getUomPackage(
         PersistenceManager pm
     ) {
-        Uom1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.uom1.jmi1.Uom1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:uom1");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Uom1Package)pm.getObjectById(
-                Authority.class,
-                Uom1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+    	return (Uom1Package)getJmiPackage(
+    		pm,
+    		Uom1Package.AUTHORITY_XRI
+    	);
     }
 
     //-----------------------------------------------------------------------
     public static Realm1Package getRealmPackage(
         PersistenceManager pm
     ) {
-        Realm1Package pkg = null;
-        try {
-            pkg = (org.opencrx.security.realm1.jmi1.Realm1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:security:realm1");           
-        }
-        catch(UnsupportedOperationException e) {
-            pkg =(Realm1Package)pm.getObjectById(
-                Authority.class,
-                Realm1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (Realm1Package)getJmiPackage(
+        	pm,
+        	Realm1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static org.opencrx.kernel.base.jmi1.BasePackage getBasePackage(
         PersistenceManager pm
     ) {
-        org.opencrx.kernel.base.jmi1.BasePackage pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.base.jmi1.BasePackage)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:base");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (org.opencrx.kernel.base.jmi1.BasePackage)pm.getObjectById(
-                Authority.class,
-                org.opencrx.kernel.base.jmi1.BasePackage.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (org.opencrx.kernel.base.jmi1.BasePackage)getJmiPackage(
+        	pm,
+        	org.opencrx.kernel.base.jmi1.BasePackage.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static Activity1Package getActivityPackage(
         PersistenceManager pm
     ) {
-        Activity1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.activity1.jmi1.Activity1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:activity1");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Activity1Package)pm.getObjectById(
-                Authority.class,
-                Activity1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (Activity1Package)getJmiPackage(
+        	pm,
+        	Activity1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static Account1Package getAccountPackage(
         PersistenceManager pm
     ) {
-        Account1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.account1.jmi1.Account1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:account1");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (Account1Package)pm.getObjectById(
-                Authority.class,
-                Account1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (Account1Package)getJmiPackage(
+        	pm,
+        	Account1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static Forecast1Package getForecastPackage(
         PersistenceManager pm
     ) {
-        Forecast1Package pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.forecast1.jmi1.Forecast1Package)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:forecast1");            
-        }
-        catch(Exception e) {
-            pkg = (Forecast1Package)pm.getObjectById(
-                Authority.class,
-                Forecast1Package.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (Forecast1Package)getJmiPackage(
+        	pm,
+        	Forecast1Package.AUTHORITY_XRI
+        );
     }
 
     //-----------------------------------------------------------------------
     public static GenericPackage getGenericPackage(
         PersistenceManager pm
     ) {
-        GenericPackage pkg = null;
-        try {
-            pkg = (org.opencrx.kernel.generic.jmi1.GenericPackage)Utils.getOutermostPackage(pm).refPackage("org:opencrx:kernel:generic");            
-        }
-        catch(UnsupportedOperationException e) {
-            pkg = (GenericPackage)pm.getObjectById(
-                Authority.class,
-                GenericPackage.AUTHORITY_XRI
-            ).refImmediatePackage();
-        }
-        return pkg;
+        return (GenericPackage)getJmiPackage(
+        	pm,
+        	GenericPackage.AUTHORITY_XRI
+        );
     }
 
     //-------------------------------------------------------------------------

@@ -2,12 +2,6 @@
 <application id="Application_ID" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
 	<display-name>openCRX EAR</display-name>
 	<module>
-		<ejb>kernel.jar</ejb>
-	</module>
-	<module>
-		<ejb>security.jar</ejb>
-	</module>
-	<module>
 		<ejb>gateway.jar</ejb>
 	</module>
 	<module id="opencrx-core-CRX">
@@ -20,6 +14,12 @@
 		<web>
 			<web-uri>opencrx-ical-CRX.war</web-uri>
 			<context-root>opencrx-ical-CRX</context-root>
+		</web>
+	</module>
+	<module id="opencrx-caldav-CRX">
+		<web>
+			<web-uri>opencrx-caldav-CRX.war</web-uri>
+			<context-root>opencrx-caldav-CRX</context-root>
 		</web>
 	</module>
 	<module id="opencrx-imap-CRX">

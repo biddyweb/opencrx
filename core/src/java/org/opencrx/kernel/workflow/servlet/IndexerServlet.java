@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.28 2009/04/20 17:56:46 wfro Exp $
+ * Name:        $Id: IndexerServlet.java,v 1.29 2009/10/12 16:06:55 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.28 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
+ * Date:        $Date: 2009/10/12 16:06:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,6 +59,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -192,26 +194,35 @@ public class IndexerServlet
             String segmentName = req.getParameter("segment");
             String providerName = req.getParameter("provider");
             String id = providerName + "/" + segmentName;
-            if(
-                COMMAND_EXECUTE.equals(req.getPathInfo()) &&
-                !this.runningSegments.contains(id)
-            ) {
-                try {
-                    this.runningSegments.add(id);
-                    this.updateIndex(
-                        id,
-                        providerName,
-                        segmentName,
-                        req,
-                        res
-                    );
-                } 
-                catch(Exception e) {
-                    new ServiceException(e).log();
+            if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
+                if(!this.runningSegments.containsKey(id)) {
+	                try {
+	                    this.runningSegments.put(
+	                    	id,
+	                    	Thread.currentThread()
+	                    );
+	                    this.updateIndex(
+	                        id,
+	                        providerName,
+	                        segmentName,
+	                        req,
+	                        res
+	                    );
+	                } 
+	                catch(Exception e) {
+	                    new ServiceException(e).log();
+	                }
+	                finally {
+	                    this.runningSegments.remove(id);
+	                }
                 }
-                finally {
-                    this.runningSegments.remove(id);
-                }
+	        	else if(
+	        		!this.runningSegments.get(id).isAlive() || 
+	        		this.runningSegments.get(id).isInterrupted()
+	        	) {
+	            	Thread t = this.runningSegments.get(id);
+	        		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+	        	}
             }
         }
     }
@@ -252,7 +263,7 @@ public class IndexerServlet
     private static final long STARTUP_DELAY = 180000L;
     
     private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final List<String> runningSegments = new ArrayList<String>();
+    private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
     private long startedAt = System.currentTimeMillis();
         
 }

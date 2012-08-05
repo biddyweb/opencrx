@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SalesVisitImpl.java,v 1.1 2009/06/09 09:04:36 wfro Exp $
+ * Name:        $Id: SalesVisitImpl.java,v 1.2 2009/08/04 22:35:12 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 09:04:36 $
+ * Date:        $Date: 2009/08/04 22:35:12 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,5 +76,12 @@ public class SalesVisitImpl
     ) {
   		super.jdoPreStore();
     }
-        
+      
+    //-----------------------------------------------------------------------
+	@Override
+    protected void jdoPreDelete(
+    ) {
+	    super.jdoPreDelete();
+    }
+        		
 }

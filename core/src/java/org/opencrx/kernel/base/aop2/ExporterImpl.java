@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExporterImpl.java,v 1.6 2009/04/20 17:56:44 wfro Exp $
+ * Name:        $Id: ExporterImpl.java,v 1.7 2009/06/19 18:06:03 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:44 $
+ * Date:        $Date: 2009/06/19 18:06:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,6 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.jmi1.BasicObject;
 
 public class ExporterImpl
 	<S extends org.opencrx.kernel.base.jmi1.Exporter,N extends org.opencrx.kernel.base.cci2.Exporter,C extends Void>
@@ -81,7 +80,7 @@ public class ExporterImpl
     ) {
         try {
             Object[] exportedItem = Exporter.getInstance().exportItem(
-            	(BasicObject)this.sameObject(),
+            	this.sameObject(),
             	params.getExportProfile(),
             	null,
             	null
@@ -105,7 +104,7 @@ public class ExporterImpl
     ) {
         try {
             Object[] exportedItem = Exporter.getInstance().exportItem(
-            	(BasicObject)this.sameObject(),
+            	this.sameObject(),
             	null,            	
             	params.getReferenceFilter() == null ? "" : params.getReferenceFilter(),
             	params.getItemMimeType()

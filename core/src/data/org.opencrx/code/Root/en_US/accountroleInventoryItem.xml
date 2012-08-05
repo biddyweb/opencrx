@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="accountRoleInventoryItem" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="accountRoleInventoryItem" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:building1:AccountAssignmentInventoryItem:accountRole</_item>
@@ -19,7 +19,7 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<shortText>
 															<_item>NA</_item>
@@ -30,7 +30,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Owner</_item>
@@ -41,7 +41,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Administrator</_item>
@@ -52,7 +52,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Manager</_item>
@@ -63,7 +63,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Caretaker</_item>
@@ -74,7 +74,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="25" _operation="set">
 													<_object>
 														<shortText>
 															<_item>User</_item>
@@ -85,7 +85,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Landlord</_item>
@@ -96,7 +96,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="31" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="31" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Lessor</_item>
@@ -107,7 +107,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Tenant</_item>
@@ -118,7 +118,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="41" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Lessee</_item>
@@ -129,7 +129,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="42" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Hirer/Renter</_item>
@@ -140,7 +140,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Emergency Contact</_item>
@@ -151,7 +151,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="60" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="60" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Supplier</_item>
@@ -162,7 +162,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Driver</_item>
@@ -173,7 +173,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="80" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="80" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Buyer</_item>
@@ -184,7 +184,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Seller</_item>
@@ -195,7 +195,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Inspection Authority</_item>
@@ -206,7 +206,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Service Point</_item>
@@ -217,7 +217,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Manufacturer</_item>

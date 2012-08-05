@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.12 2009/06/09 14:18:15 wfro Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.15 2009/10/15 16:19:34 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:18:15 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,8 +77,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.application.log.*
+org.openmdx.base.naming.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
@@ -87,7 +86,7 @@ org.openmdx.application.log.*
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
-	if (objectXri == null || app == null || viewsCache.getViews().isEmpty()) {
+	if (objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 		   request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -152,7 +151,7 @@ org.openmdx.application.log.*
 	UserDefinedView userView = new UserDefinedView(
 		obj,
 		app,
-		(View)viewsCache.getViews().values().iterator().next()
+		viewsCache.getView(requestId)
 	);
 
   // Get account1 package
@@ -571,7 +570,7 @@ org.openmdx.application.log.*
 %>
       </div> <!-- content -->
     </div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+  </div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

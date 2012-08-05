@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -22,7 +22,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contact" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:contact" _operation="create">
                     <_object>
                       <label>
                         <_item>アカウント</_item>
@@ -165,13 +165,134 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>個人電話</_item>
+                      </label>
+                      <toolTip>
+                        <_item>個人電話</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>個人FAX</_item>
+                      </label>
+                      <toolTip>
+                        <_item>個人FAX</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>個人Eメール</_item>
+                      </label>
+                      <toolTip>
+                        <_item>個人Eメール</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!webUrl" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>個人Webページ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>個人Webページ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>個人/ビジネス 郵送先住所</_item>
+                      </label>
+                      <toolTip>
+                        <_item>個人/ビジネス 郵送先住所</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalAddressLine" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>住所行</_item>
+                      </label>
+                      <toolTip>
+                        <_item>住所行</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalStreet" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>番地 / 私書箱</_item>
+                      </label>
+                      <toolTip>
+                        <_item>町丁目番地 / 私書箱</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>県/州</_item>
+                      </label>
+                      <toolTip>
+                        <_item>県/州</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>郵便番号</_item>
+                      </label>
+                      <toolTip>
+                        <_item>郵便番号</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>市町村</_item>
+                      </label>
+                      <toolTip>
+                        <_item>市町村</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCountry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>国</_item>
+                      </label>
+                      <toolTip>
+                        <_item>国</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
                     <_object>
                       <label>
-                        <_item>好ましい方法</_item>
+                        <_item>推奨方法</_item>
                       </label>
                       <toolTip>
-                        <_item>好ましいコンタクト方法</_item>
+                        <_item>推奨コンタクト方法</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>音声言語</_item>
+                        <_item>口語</_item>
                       </label>
                       <toolTip>
-                        <_item>好ましい音声言語</_item>
+                        <_item>推奨口語</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>文字言語</_item>
+                        <_item>文語</_item>
                       </label>
                       <toolTip>
-                        <_item>好ましい文字言語</_item>
+                        <_item>推奨文語</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -297,6 +418,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:900100:Group:99" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>非推奨</_item>
+                      </label>
+                      <toolTip>
+                        <_item>非推奨</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
                     <_object>
                       <label>
@@ -374,6 +506,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:religion" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>宗教</_item>
+                      </label>
+                      <toolTip>
+                        <_item>宗教</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education" _operation="create">
                     <_object>
                       <label>
@@ -440,6 +583,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:citizenship" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>市民権</_item>
+                      </label>
+                      <toolTip>
+                        <_item>市民権</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
                     <_object>
                       <label>
@@ -449,21 +603,7 @@
                         <_item>写真</_item>
                       </toolTip>
                     </_object>
-                    <_content>
-                      <alternateElementDefinition>
-                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>写真</_item>
-                            </label>
-                            <toolTip>
-                              <_item>写真</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AlternateElementDefinition>
-                      </alternateElementDefinition>
-                    </_content>
+                    <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
                     <_object>
@@ -476,46 +616,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>vCardエクスポート</_item>
+                        <_item>vCardインポート</_item>
                       </label>
                       <toolTip>
-                        <_item>vCardエクスポート</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>入力</_item>
-                      </label>
-                      <toolTip>
-                        <_item>入力</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>言語</_item>
-                      </label>
-                      <toolTip>
-                        <_item>言語</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>結果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>結果</_item>
+                        <_item>vCardインポート</_item>
                       </toolTip>
                     </_object>
                     <_content/>

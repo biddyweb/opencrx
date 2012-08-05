@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.17 2009/04/28 14:33:20 wfro Exp $
+ * Name:        $Id: ProjectExporter.java,v 1.18 2009/06/16 21:19:20 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/28 14:33:20 $
+ * Date:        $Date: 2009/06/16 21:19:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -85,10 +85,10 @@ import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.backend.Activities;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
 
 
@@ -349,7 +349,7 @@ public class ProjectExporter {
     }
     catch (UnsupportedEncodingException e) {
       //should never happen
-      AppLog.error("Failed to open writer using UTF-8 charset, use default charset of JVM", e);
+      SysLog.error("Failed to open writer using UTF-8 charset, use default charset of JVM", e);
       this.pw = new PrintWriter(new BufferedWriter(new OutputStreamWriter(export)));
     }
   }
@@ -369,7 +369,7 @@ public class ProjectExporter {
    */
   public void export(
   ) throws ServiceException {
-    AppLog.info("export begin", activityGroup.refMofId());
+	SysLog.info("export begin", activityGroup.refMofId());
     this.preExport();
     this.w("<?xml version=\"1.0\"  encoding=\"UTF-8\"?>");
     this.weba("Project", "xmlns=\"http://schemas.microsoft.com/project\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://schemas.microsoft.com/project mspdi.xsd\"");
@@ -403,7 +403,7 @@ public class ProjectExporter {
     //----
     this.wee("Project");
     this.postExport();
-    AppLog.info("export end", activityGroup.getName());
+    SysLog.info("export end", activityGroup.getName());
   }
 
   //-----------------------------------------------------------------------
@@ -481,12 +481,12 @@ public class ProjectExporter {
           link.getActivityLinkType() == isParentOf) {
         Activity linkedActivity = link.getLinkTo();
         if (linkedActivity == null) {
-          AppLog.warning("Activity "+ am.getActivity().getIdentity() + " has an ActivityLinkTo that doesn't reference a linked activity");
+        	SysLog.warning("Activity "+ am.getActivity().getIdentity() + " has an ActivityLinkTo that doesn't reference a linked activity");
         }
         else {
           ActivityMapper linkedMapper = activityMappers.get(linkedActivity.getIdentity());
           if (linkedMapper == null) {
-            AppLog.warning("Activity "+ am.getActivity().getIdentity() + " has a link to an Activity outside the exported set", linkedActivity.getIdentity());
+        	  SysLog.warning("Activity "+ am.getActivity().getIdentity() + " has a link to an Activity outside the exported set", linkedActivity.getIdentity());
           }
           else {
             if (link.getActivityLinkType() == isPartOf) {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseType" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseType" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:activity1:CalcTotalQuantityParams:recordType</_item>
@@ -20,7 +20,7 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<shortText>
 															<_item>NA</_item>
@@ -31,7 +31,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Work (Standard Rate)</_item>
@@ -42,7 +42,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Work (Overtime Rate)</_item>
@@ -53,7 +53,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Work (Alternative Rate)</_item>
@@ -65,7 +65,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel</_item>
@@ -76,7 +76,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="101" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="101" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Other</_item>
@@ -87,7 +87,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="102" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="102" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Flight</_item>
@@ -98,7 +98,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="103" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="103" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Train</_item>
@@ -109,7 +109,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="104" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="104" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Bus / Coach</_item>
@@ -120,7 +120,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="105" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="105" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Shuttle</_item>
@@ -131,7 +131,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="106" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="106" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Taxi</_item>
@@ -142,7 +142,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="107" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="107" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Travel - Car</_item>
@@ -154,7 +154,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Accommodation</_item>
@@ -165,7 +165,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="201" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="201" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Accommodation - Other</_item>
@@ -176,7 +176,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="202" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="202" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Accommodation - Hotel / Motel</_item>
@@ -188,7 +188,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Meals</_item>
@@ -199,7 +199,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="301" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="301" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Meals - Other</_item>
@@ -210,7 +210,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="302" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="302" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Meals - Groceries</_item>
@@ -221,7 +221,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="303" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="303" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Meals - Eating out</_item>
@@ -233,7 +233,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Client Entertainment</_item>
@@ -244,7 +244,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="401" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="401" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Client Entertainment - Other</_item>
@@ -255,7 +255,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="402" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="402" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Client Entertainment - Fees / Tickets</_item>
@@ -266,7 +266,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="403" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="403" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Client Entertainment - Meals / Drinks</_item>
@@ -277,7 +277,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="404" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="404" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expense Client Entertainment - Gifts</_item>
@@ -289,7 +289,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Daily allowance</_item>
@@ -301,7 +301,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="900" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expenses</_item>
@@ -313,7 +313,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="901" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="901" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expenses - other</_item>
@@ -325,7 +325,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="902" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="902" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expenses - Representing the company</_item>
@@ -337,7 +337,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="903" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="903" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Expenses - Sponsoring</_item>

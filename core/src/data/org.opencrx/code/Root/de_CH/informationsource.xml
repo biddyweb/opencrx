@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="informationSource" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="informationSource" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Werbung</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Kampagnen</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Empfehlung</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Partner</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Kurs/Seminar</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Messe</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Internet</_item>
@@ -92,7 +92,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Bekannter</_item>
@@ -103,7 +103,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Adressbroker</_item>
@@ -114,7 +114,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Direct Mail</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="11" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="11" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Suchmaschine</_item>
@@ -136,7 +136,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Telemarketing</_item>
@@ -147,7 +147,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="13" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="13" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Mund-zu-Mund Werbung</_item>
@@ -158,7 +158,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="14" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="14" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Anruf (ausgehend)</_item>
@@ -169,7 +169,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="15" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="15" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Bestehender Kunde</_item>
@@ -180,7 +180,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="16" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="16" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Hat sich selbst gemeldet</_item>
@@ -191,7 +191,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="17" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="17" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Angestellter</_item>
@@ -202,7 +202,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="18" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="18" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Public Relations</_item>
@@ -213,7 +213,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="19" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="19" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Ausstellung</_item>
@@ -224,7 +224,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Andere</_item>
@@ -235,7 +235,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="21" _operation="set">
                           <_object>
                             <shortText>
                               <_item>E-Mail</_item>
@@ -246,7 +246,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="22" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Website</_item>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -71,6 +71,9 @@
                       <label>
                         <_item>送信メールサービス</_item>
                       </label>
+                      <shortLabel>
+                        <_item>送信</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>送信メールサービス</_item>
                       </toolTip>
@@ -82,6 +85,9 @@
                       <label>
                         <_item>受信メールサービス</_item>
                       </label>
+                      <shortLabel>
+                        <_item>受信</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>受信メールサービス</_item>
                       </toolTip>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.6 2009/06/06 19:59:27 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.13 2009/10/14 22:54:39 wfro Exp $
  * = Description: openCRX/Apps build.xml
- * = Revision:    $Revision: 1.6 $
- * = Date:        $Date: 2009/06/06 19:59:27 $
+ * = Revision:    $Revision: 1.13 $
+ * = Date:        $Date: 2009/10/14 22:54:39 $
  * = Copyright:   (c) 2003-2008 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,7 +62,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.5.0"/>
+	<property name="openmdx.version" value="2.5.3"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<path id="project.lib.classpath">
@@ -263,10 +263,6 @@
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
-		<!-- application-resources.jar -->
-		<openmdx:archive format="jar" destfile="${tmp.dir}/application-resources.jar">
-			<zipfileset dir="src/ear/${app.source.name}.ear/application-resources.jar"/>
-		</openmdx:archive>
 		<!-- opencrx-apps.ear -->
 		<openmdx:archive format="ear" destfile="${deliver.dir}/deployment-unit/${app.target.name}.ear">
 			<openmdx:archivemanifest refid="project.manifest"/>
@@ -290,9 +286,6 @@
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/${build.target.platform}/security/lib" prefix="APP-INF/lib">
 				<include name="openmdx-security.jar"/>
-			</zipfileset>
-			<zipfileset dir="${tmp.dir}" prefix="APP-INF/lib">
-				<include name="application-resources.jar"/>
 			</zipfileset>
 			<zipfileset dir="src/ear/${app.source.name}.ear/META-INF" prefix="META-INF">
 				<include name="application.xml"/>

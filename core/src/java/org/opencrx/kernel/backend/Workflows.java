@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.26 2009/04/22 14:54:00 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.28 2009/09/07 15:42:47 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.26 $
+ * Revision:    $Revision: 1.28 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/22 14:54:00 $
+ * Date:        $Date: 2009/09/07 15:42:47 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -84,15 +84,15 @@ import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.kernel.workflow1.jmi1.Workflow1Package;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
-import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.loading.Classes;
+import org.openmdx.kernel.log.SysLog;
 
 public class Workflows extends AbstractImpl {
 
@@ -671,7 +671,7 @@ public class Workflows extends AbstractImpl {
             }
             catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
-                AppLog.warning(e0.getMessage(), e0.getCause());
+                SysLog.warning(e0.getMessage(), e0.getCause());
                 /**
                   * Exceptions are catched in case of synchronous workflows. This prevents a 
                   * transaction rollback. This behaviour is e.g. required in case of activity

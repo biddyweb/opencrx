@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CloneableImpl.java,v 1.5 2009/04/20 17:56:44 wfro Exp $
+ * Name:        $Id: CloneableImpl.java,v 1.6 2009/09/22 13:51:11 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:44 $
+ * Date:        $Date: 2009/09/22 13:51:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,7 +86,13 @@ public class CloneableImpl
             	), 
             	this.sameObject().refGetPath().getParent().getBase(), 
             	null, 
-            	params.getReferenceFilter()
+            	params.getReferenceFilter(),
+            	this.sameObject() instanceof org.opencrx.kernel.base.jmi1.SecureObject ? 
+            		((org.opencrx.kernel.base.jmi1.SecureObject)this.sameObject()).getOwningUser() : 
+            		null,
+               	this.sameObject() instanceof org.opencrx.kernel.base.jmi1.SecureObject ? 
+               		((org.opencrx.kernel.base.jmi1.SecureObject)this.sameObject()).getOwningGroup() : 
+               		null
             );
             return Utils.getBasePackage(this.sameManager()).createCloneResult(
                 clonedObject

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ResourceImpl.java,v 1.16 2009/05/07 11:34:39 wfro Exp $
+ * Name:        $Id: ResourceImpl.java,v 1.17 2009/09/01 14:21:52 wfro Exp $
  * Description: CompoundBookingImpl
- * Revision:    $Revision: 1.16 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/07 11:34:39 $
+ * Date:        $Date: 2009/09/01 14:21:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +63,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.Utils;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
@@ -91,7 +92,8 @@ public class ResourceImpl
         			new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + this.sameObject().refGetPath().get(2) + "/segment/Root/uom/hour")
         		);
         	}
-        	catch(Exception e) {}        	        	
+        	catch(Exception e) {}        
+        	List<PrincipalGroup> owningGroups = params.getOwningGroup();        	
             ActivityWorkRecord workRecord = Activities.getInstance().addWorkAndExpenseRecord(
                 params.getActivity(),
                 this.sameObject(), 
@@ -109,7 +111,8 @@ public class ResourceImpl
                 params.getRate(),
                 params.getRateCurrency(),
                 params.isBillable(),
-                Boolean.FALSE // isReimbursable
+                Boolean.FALSE, // isReimbursable
+                owningGroups
             );
             return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
                 workRecord
@@ -125,6 +128,7 @@ public class ResourceImpl
         org.opencrx.kernel.activity1.jmi1.ResourceAddExpenseRecordParams params
     ) {
         try {
+        	List<PrincipalGroup> owningGroups = params.getOwningGroup();
             ActivityWorkRecord workRecord = Activities.getInstance().addWorkAndExpenseRecord(
                 params.getActivity(),
                 this.sameObject(), 
@@ -140,7 +144,8 @@ public class ResourceImpl
                 params.getRate(),
                 params.getRateCurrency(),
                 params.isBillable(),
-                params.isReimbursable()
+                params.isReimbursable(),
+                owningGroups
             );
             return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
                 workRecord

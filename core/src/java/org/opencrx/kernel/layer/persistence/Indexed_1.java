@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.33 2009/06/01 22:12:17 wfro Exp $
+ * Name:        $Id: Indexed_1.java,v 1.34 2009/06/16 21:19:22 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.33 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/01 22:12:17 $
+ * Date:        $Date: 2009/06/16 21:19:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,7 +88,6 @@ import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.dataprovider.spi.Layer_1_0;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
@@ -99,6 +98,7 @@ import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
 import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
+import org.openmdx.kernel.log.SysLog;
 
 /**
  * This plugin creates audit entries for modified objects.
@@ -223,7 +223,7 @@ public class Indexed_1 extends Database_1 {
                                      );
                                  }
                                  catch(Exception e) {
-                                     AppLog.warning("Cannot extract text from a RTF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
+                                	 SysLog.warning("Cannot extract text from a RTF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                  }
                             }
                             // application/pdf
@@ -237,7 +237,7 @@ public class Indexed_1 extends Database_1 {
                                     );
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from PDF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
+                                	SysLog.warning("Can not extract text from PDF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // application/vnd.ms-excel
@@ -252,7 +252,7 @@ public class Indexed_1 extends Database_1 {
                                     );
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from Excel document", Arrays.asList(new String[]{contentName, e.getMessage()}));
+                                	SysLog.warning("Can not extract text from Excel document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // application/vnd.ms-word
@@ -267,7 +267,7 @@ public class Indexed_1 extends Database_1 {
                                     );
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from Word document", Arrays.asList(new String[]{contentName, e.getMessage()}));
+                                	SysLog.warning("Can not extract text from Word document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // application/vnd.sun.xml.writer
@@ -290,7 +290,7 @@ public class Indexed_1 extends Database_1 {
                                     isXml = true;
                                 }
                                 catch(Exception e) {
-                                    AppLog.warning("Can not extract text from OpenOffice document", Arrays.asList(new String[]{contentName, e.getMessage()}));
+                                	SysLog.warning("Can not extract text from OpenOffice document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
                             }
                             // text/plain
@@ -725,8 +725,8 @@ public class Indexed_1 extends Database_1 {
 	                                numberOfIndexedObjects++;
 	                            }
 	                            catch(Exception e) {
-	                                AppLog.warning("Can not index", objectsToBeIndexed[i]);
-	                                AppLog.info(e.getMessage(), e.getCause());
+	                            	SysLog.warning("Can not index", objectsToBeIndexed[i]);
+	                            	SysLog.info(e.getMessage(), e.getCause());
 	                            }
 	                        }
 	                    }

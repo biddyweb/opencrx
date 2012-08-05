@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:CodeValueContainer:entry" _operation="create">
                     <_object>
                       <label>
-                        <_item>エントリ</_item>
+                        <_item>エントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>エントリ</_item>
+                        <_item>エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -47,10 +47,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:CodeValueContainer" _operation="create">
                     <_object>
                       <label>
-                        <_item>コード値コンテナ</_item>
+                        <_item>コード値コンテナー</_item>
                       </label>
                       <toolTip>
-                        <_item>コード値コンテナ</_item>
+                        <_item>コード値コンテナー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,10 +58,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:CodeValueContainer:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>コード値コンテナ</_item>
+                        <_item>コード値コンテナー</_item>
                       </label>
                       <toolTip>
-                        <_item>コード値コンテナ</_item>
+                        <_item>コード値コンテナー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -102,10 +102,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:AbstractEntry:entryValue" _operation="create">
                     <_object>
                       <label>
-                        <_item>エントリ値</_item>
+                        <_item>エントリー値</_item>
                       </label>
                       <toolTip>
-                        <_item>エントリ値</_item>
+                        <_item>エントリー値</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:SimpleEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>シンプルエントリ</_item>
+                        <_item>シンプルエントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>シンプルエントリ</_item>
+                        <_item>シンプルエントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -146,10 +146,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:code1:CodeValueEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>コード値エントリ</_item>
+                        <_item>コード値エントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>コード値エントリ</_item>
+                        <_item>コード値エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>

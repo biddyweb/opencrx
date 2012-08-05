@@ -5,7 +5,7 @@ This installer has created an openCRX instance running on
 Tomcat 6 extended by Apache OpenEJB and HSQLDB 1. The installation 
 comes with a preconfigured database. It contains data which is 
 created when working through the openCRX quick start guide (see
-http://www.opencrx.org/opencrx/2.4/QuickStart/openCRX_quickstart.html).
+http://www.opencrx.org/opencrx/2.5/tomcat-6/openCRX_Installation_Tomcat-6.html).
 
 You can start and stop openCRX using the corresponding shortcuts
 on the desktop by the installer. After starting openCRX you can

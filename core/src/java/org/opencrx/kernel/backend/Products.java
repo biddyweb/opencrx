@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.74 2009/06/08 09:21:19 wfro Exp $
+ * Name:        $Id: Products.java,v 1.79 2009/09/22 13:51:11 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.74 $
+ * Revision:    $Revision: 1.79 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/08 09:21:19 $
+ * Date:        $Date: 2009/09/22 13:51:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,7 +75,7 @@ import org.codehaus.janino.CompileException;
 import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
 import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
-import org.opencrx.kernel.contract1.jmi1.ContractPosition;
+import org.opencrx.kernel.contract1.jmi1.AbstractContractPosition;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery;
 import org.opencrx.kernel.product1.cci2.PriceListEntryQuery;
@@ -278,8 +278,7 @@ public class Products extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
-            "xri:@openmdx:org.opencrx.kernel.product1/provider/"
-            + providerName + "/segment/" + segmentName
+            new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName)
         );
     }
 
@@ -329,9 +328,12 @@ public class Products extends AbstractImpl {
      */
     public int cloneProductConfigurationSet(
     	org.opencrx.kernel.product1.jmi1.ProductConfigurationSet from,
-        ContractPosition to,
+    	AbstractContractPosition to,
         boolean cloneDefaultOnly,
-        boolean updateCurrentConfig
+        boolean updateCurrentConfig,
+        org.opencrx.security.realm1.jmi1.User owningUser,
+        List<org.opencrx.security.realm1.cci2.PrincipalGroup> owningGroup        
+        
     ) throws ServiceException {
     	Collection<ProductConfiguration> configurations = from.getConfiguration();
     	for(ProductConfiguration configuration: configurations) {
@@ -344,7 +346,9 @@ public class Products extends AbstractImpl {
             		to, 
             		"configuration", 
             		null, 
-            		null
+            		null,
+            		owningUser,
+            		owningGroup
             	);
             }
         }
@@ -405,7 +409,9 @@ public class Products extends AbstractImpl {
     				configuration, 
     				"property", 
     				null, 
-    				""
+    				"",
+            		null, // owning user
+               		null // owning group    				
     			);
     		}    		
     	}
@@ -774,7 +780,9 @@ public class Products extends AbstractImpl {
             	productSegment, 
             	"priceLevel", 
             	priceLevelMarshallers, 
-            	"priceModifier, accountFilterProperty, assignedAccount, productFilterProperty"
+            	"priceModifier, accountFilterProperty, assignedAccount, productFilterProperty",
+            	priceLevel.getOwningUser(),
+            	priceLevel.getOwningGroup()
             );
             clonedLevels.put(
                 priceLevel.refGetPath(), 
@@ -787,7 +795,9 @@ public class Products extends AbstractImpl {
                 	productSegment, 
                 	"priceLevel", 
                 	priceLevelMarshallers, 
-                	"priceModifier, accountFilterProperty, assignedAccount, productFilterProperty"
+                	"priceModifier, accountFilterProperty, assignedAccount, productFilterProperty",
+                	dependentPriceLevel.getOwningUser(),
+                	dependentPriceLevel.getOwningGroup()
                 );
                 clonedLevels.put(
                     dependentPriceLevel.refGetPath(), 
@@ -1675,6 +1685,19 @@ public class Products extends AbstractImpl {
         return result;
     }
 
+    //-------------------------------------------------------------------------
+    public void updateProduct(
+        Product product
+    ) throws ServiceException {
+    }
+    
+    //-------------------------------------------------------------------------
+    public void removeProduct(
+        Product product,
+        boolean preDelete
+    ) throws ServiceException {
+    }
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

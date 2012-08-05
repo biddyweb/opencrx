@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Auditee:audit" _operation="create">
                     <_object>
                       <label>
-                        <_item>≫監査エントリ</_item>
+                        <_item>≫監査エントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectModificationAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>監査エントリ (変更)</_item>
+                        <_item>監査エントリー (変更)</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +124,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectRemovalAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>監査エントリ (削除)</_item>
+                        <_item>監査エントリー (削除)</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectRemovalAuditEntry:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectCreationAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>監査エントリ (追加)</_item>
+                        <_item>監査エントリー (追加)</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +179,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectCreationAuditEntry:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </label>
                       <toolTip>
-                        <_item>監査エントリ</_item>
+                        <_item>監査エントリー</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -212,10 +212,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:AuditEntry:Pane:Op:Tab:testAndSetVisitedBy" _operation="create">
                     <_object>
                       <label>
-                        <_item>Test-and-Set実行者</_item>
+                        <_item>ビジット担当をテスト&amp;セット</_item>
                       </label>
                       <toolTip>
-                        <_item>Test-and-Set実行者</_item>
+                        <_item>ビジット担当をテスト&amp;セット</_item>
                       </toolTip>
                     </_object>
                     <_content/>

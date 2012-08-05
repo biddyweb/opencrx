@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AssignedActivityGroupsDataBinding.java,v 1.4 2009/04/23 17:52:06 wfro Exp $
+ * Name:        $Id: AssignedActivityGroupsDataBinding.java,v 1.5 2009/08/07 12:40:24 wfro Exp $
  * Description: AssignedActivityGroupsDataBinding
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/23 17:52:06 $
+ * Date:        $Date: 2009/08/07 12:40:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,15 +56,60 @@
 package org.opencrx.kernel.portal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jmi.reflect.RefObject;
 
+import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.openmdx.portal.servlet.DataBinding_1_0;
 
 public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
 
+	//-----------------------------------------------------------------------
+	enum ActivityGroupType {
+		TRACKER,
+		MILESTONE,
+		CATEGORY
+	}
+	
+	//-----------------------------------------------------------------------
+	public AssignedActivityGroupsDataBinding(
+		String parameterString
+	) {
+		if(parameterString != null && parameterString.startsWith("type=")) {
+			this.activityGroupTypesFilter = new HashSet<ActivityGroupType>();
+			String[] types = parameterString.substring(5).split(",");
+			for(String type: types) {
+				if(type.equalsIgnoreCase(ActivityGroupType.TRACKER.toString())) {
+					this.activityGroupTypesFilter.add(ActivityGroupType.TRACKER);
+				}
+				if(type.equalsIgnoreCase(ActivityGroupType.MILESTONE.toString())) {
+					this.activityGroupTypesFilter.add(ActivityGroupType.MILESTONE);
+				}
+				if(type.equalsIgnoreCase(ActivityGroupType.CATEGORY.toString())) {
+					this.activityGroupTypesFilter.add(ActivityGroupType.CATEGORY);
+				}
+			}
+		}
+		else {
+			this.activityGroupTypesFilter = new HashSet<ActivityGroupType>(
+				Arrays.asList(
+					ActivityGroupType.TRACKER, 
+					ActivityGroupType.MILESTONE, 
+					ActivityGroupType.CATEGORY
+				)
+			);			
+		}
+	}
+	
+	//-----------------------------------------------------------------------
     public Object getValue(
         RefObject object, 
         String qualifiedFeatureName
@@ -75,7 +120,14 @@ public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
             Collection<org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment> assignments = activity.getAssignedGroup();
             for(org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment assignment: assignments) {
                 if(assignment.getActivityGroup() != null) {
-                    groups.add(assignment.getActivityGroup());
+                	ActivityGroup group = assignment.getActivityGroup();
+                	if(
+                		((group instanceof ActivityTracker) && this.activityGroupTypesFilter.contains(ActivityGroupType.TRACKER)) ||
+                		((group instanceof ActivityMilestone) && this.activityGroupTypesFilter.contains(ActivityGroupType.MILESTONE)) ||
+                		((group instanceof ActivityCategory) && this.activityGroupTypesFilter.contains(ActivityGroupType.CATEGORY))
+                	) {
+                		groups.add(group);
+                	}
                 }
             }
             return groups;
@@ -90,4 +142,6 @@ public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
     ) {
     }
         
+    private final Set<ActivityGroupType> activityGroupTypesFilter;
+    
 }

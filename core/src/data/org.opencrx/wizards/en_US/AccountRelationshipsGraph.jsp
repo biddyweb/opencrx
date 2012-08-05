@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.10 2009/06/09 14:18:15 wfro Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.14 2009/10/15 16:19:34 wfro Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:18:15 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,8 +73,7 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.base.query.*,
-org.openmdx.application.log.*
+org.openmdx.base.query.*
 " %>
 
 <%!
@@ -96,29 +95,34 @@ org.openmdx.application.log.*
 		return title.toString();
   }
 
-	private static String getClickableNodeTitle(
-		org.opencrx.kernel.account1.jmi1.Account account,
-		ApplicationContext app,
-		String requestId
-	) {
-    ObjectReference accountRef = new ObjectReference(account, app);
-	  boolean isDisabled = account.isDisabled() != null && account.isDisabled().booleanValue();
-		String test = account.refMofId();
-		int plusLocation = test.indexOf("+");
-		while (plusLocation >= 0) {
-			test = test.substring(0, plusLocation) + "%2B" + test.substring(plusLocation + 1);
-			plusLocation = test.indexOf("+");
-		}
-		String encodedAccountXri = test;
+    private static String getClickableNodeTitle(
+        org.opencrx.kernel.account1.jmi1.Account account,
+        ApplicationContext app,
+        String requestId
+    ) {
+        ObjectReference accountRef = new ObjectReference(account, app);
+        boolean isDisabled = account.isDisabled() != null && account.isDisabled().booleanValue();
+        String test = account.refMofId();
+        int plusLocation = test.indexOf("+");
+        while (plusLocation >= 0) {
+            test = test.substring(0, plusLocation) + "%2B" + test.substring(plusLocation + 1);
+            plusLocation = test.indexOf("+");
+        }
+        String encodedAccountXri = test;
+    
+        StringBuilder title = new StringBuilder();
+        /*
+        title.append(
+          "<a title='center node and reload tree' href='AccountRelationshipsGraph.jsp?xri=" + encodedAccountXri + "&requestId=" + requestId + "'>&gt;o&lt;</a><br>" + "<a title='load in openCRX' href='../../" + accountRef.getSelectObjectAction().getEncodedHRef(requestId) + "'>*</a> " + getNodeTitle(account,app)
+        );
+        */
+        title.append(
+            getNodeTitle(account,app)
+        );
+        return title.toString();
+    }
 
-	  StringBuilder title = new StringBuilder();
-		title.append(
-		  "<a href='../../" + accountRef.getSelectObjectAction().getEncodedHRef(requestId) + "'>*</a> <a href='AccountRelationshipsGraph.jsp?xri=" + encodedAccountXri + "&requestId=" + requestId + "'>" + getNodeTitle(account,app) + "</a>"
-		);
-		return title.toString();
-  }
-
-	private static String getJSON(
+	private static String getJSON ( /* Tree */
 		Set parents,
 		org.opencrx.kernel.account1.jmi1.Account account,
 		org.opencrx.kernel.account1.jmi1.AccountMembership membership,
@@ -150,11 +154,13 @@ org.openmdx.application.log.*
 			json.append(
 				"\n" + indent
 			).append(
-				"{id:\"" + accountId + "\""
+				"{\"id\":\"" + accountId + "\""
 			).append(
-				 ",name:\"" + getClickableNodeTitle(account, app, requestId) + "\""
+				 ",\"name\":\"" + getClickableNodeTitle(account, app, requestId) + "\""
 			).append(
-				",children:["
+         ",\"data\":{" + (membership == null ? "" : "\"key\":\"" + relationshipKey + "\",\"relationships\":\"" + (relationships.length() == 0 ? "-" : relationships) + "\"") + "}"
+      ).append(
+				",\"children\":["
 			);
 			Map C = (Map)M.get(account);
 			if(C != null) {
@@ -190,15 +196,113 @@ org.openmdx.application.log.*
 		  }
 			json.append(
 			  "]"
-			).append(
-				",data:[" + (membership == null ? "" : "{key:\"" + relationshipKey + "\",value:\"" + (relationships.length() == 0 ? "-" : relationships) + "\"}") + "]"
-			);
-			json.append("}");
+			).append(" }");
 		}
 		return json.toString();
 	}
 
-	private static void addNode(
+  private static String getJSONgraph ( /* graph */
+        Set parents,
+        org.opencrx.kernel.account1.jmi1.Account account,
+        org.opencrx.kernel.account1.jmi1.AccountMembership membership,
+        String relationshipKey,
+        Map M,
+        String indent,
+        int level,
+        Map memberRoleTexts,
+        HttpServletResponse response,
+        ApplicationContext app,
+        String requestId
+  ) {
+      StringBuilder json = new StringBuilder();
+        if(level > 0) {
+            String relationships = new String();
+            if (membership != null && memberRoleTexts != null) {
+              for(Iterator roles = membership.getMemberRole().iterator(); roles.hasNext(); ) {
+                if (relationships.length() > 0) {
+                  relationships += ", ";
+                }
+                relationships += (String)memberRoleTexts.get(new Short(((Short)roles.next()).shortValue()));
+              }
+            }
+
+            String accountId = account.refGetPath().getBase();
+            if (accountId.indexOf("+") > 0) {
+              System.out.println("accountId="+accountId);
+            }
+            json.append(
+                "\n" + indent
+            ).append(
+                "{\"id\":\"" + accountId + "\""
+            ).append(
+                 ",\"name\":\"" + getClickableNodeTitle(account, app, requestId) + "\""
+            ).append(
+                ",\"adjacencies\":["
+            );
+
+            // add adjacencies to children
+            Map C = (Map)M.get(account);
+            if(C != null) {
+                String separator = "";
+                for(Iterator i = C.keySet().iterator(); i.hasNext(); ) {
+                    org.opencrx.kernel.account1.jmi1.Account child = (org.opencrx.kernel.account1.jmi1.Account)i.next();
+                    if(child != null && !parents.contains(child)) {
+                    	  String childId = child.refGetPath().getBase();
+                        json.append(
+                            separator
+                        ).append(
+                            "{ nodeTo:\"" + childId + "\""
+                        ).append(
+                            ",data:{" + (membership == null ? "" : "\"rel\":\"" + (relationships.length() == 0 ? "-" : relationships) + "\"") + "}"
+                        ).append(
+                            "}"
+                        );
+                        separator = ",";
+                    }
+                }
+            }
+            json.append(
+              "]"
+            ).append(
+              "}"
+            );
+            
+            // process child nodes
+            // Map C = (Map)M.get(account);
+            if(C != null) {
+                for(Iterator i = C.keySet().iterator(); i.hasNext(); ) {
+                    org.opencrx.kernel.account1.jmi1.Account child = (org.opencrx.kernel.account1.jmi1.Account)i.next();
+                    if(child != null && !parents.contains(child)) {
+                        Set parentsWithChild = new HashSet(parents);
+                        parentsWithChild.add(child);
+                        String jsonChild = getJSON(
+                            parentsWithChild,
+                            child,
+                            (org.opencrx.kernel.account1.jmi1.AccountMembership)C.get(child),
+                            accountId,
+                            M,
+                            indent + "  ",
+                            level - 1,
+                            memberRoleTexts,
+                            response,
+                            app,
+                            requestId
+                        );
+                        if(jsonChild.length() > 0) {
+                            json.append(
+                                ","
+                            ).append(
+                                jsonChild
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        return json.toString();
+    }
+
+    private static void addNode(
 		org.opencrx.kernel.account1.jmi1.AccountMembership membership,
 		org.opencrx.kernel.account1.jmi1.Account accountFrom,
 		org.opencrx.kernel.account1.jmi1.Account accountTo,
@@ -293,9 +397,9 @@ org.openmdx.application.log.*
 			membershipQuery.thereExistsAccountTo().equalTo(account);
 			// HINT_DBOBJECT allows to qualify the DbObject to use.
 			// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
-      queryFilter.setClause(
-    		  org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
-      );
+            queryFilter.setClause(
+                org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+            );
 			membershipQuery.thereExistsContext().equalTo(queryFilter);
 			memberships = account.getAccountMembership(membershipQuery);
 			count = 0;
@@ -314,14 +418,14 @@ org.openmdx.application.log.*
 					M
 				);
 				if (membership.getAccountFrom() != null) {
-  				addRelationships(
-  					membership.getAccountFrom(),
-  					M,
-  					level - 1,
-  					pm
-  				);
-  				count++;
-  		  }
+                	addRelationships(
+                		membership.getAccountFrom(),
+                		M,
+                		level - 1,
+                		pm
+                	);
+                	count++;
+                }
 				if(count > maxCount) break;
 			}
 		}
@@ -334,8 +438,8 @@ org.openmdx.application.log.*
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-  String objectXri = request.getParameter("xri");
-	if(app==null || objectXri==null || viewsCache.getViews().isEmpty()) {
+    String objectXri = request.getParameter("xri");
+	if(app==null || objectXri==null || viewsCache.getView(requestId) == null) {
     response.sendRedirect(
        request.getContextPath() + "/" + WebKeys.SERVLET_NAME
     );
@@ -407,8 +511,6 @@ org.openmdx.application.log.*
 	<style type="text/css" media="all">
 		#infovis {
 		background-color:#222;
-		width:900px;
-		height:500px;
 		}
 		.node {
 		background-color: #222;
@@ -418,124 +520,171 @@ org.openmdx.application.log.*
 		padding:2px;
 		}
 	</style>
-	<script language="javascript" type="text/javascript" src="../../javascript/jit/mootools-beta-1.2b2.js"></script>
 	<!--[if IE]><script language="javascript" type="text/javascript" src="../../javascript/jit/excanvas.js"></script><![endif]-->
-	<script language="javascript" type="text/javascript" src="../../javascript/jit/Hypertree.js"></script>
-	<script language="javascript" type="text/javascript" src="../../javascript/jit/infovis.js"></script>
+	<script language="javascript" type="text/javascript" src="../../javascript/jit/jit-yc.js"></script>
 	<script type="text/javascript">
-		function init() {
-			var json =  <%= json %>;
-			Infovis.initLayout();
-			var C = new Canvas('infovis', '#fff', '#fff');
-			var B = new Hypertree(C);
-			B.controller = {
-				onBeforeCompute:function(F){
-				},
-        getName:function(G,F){
-          for(var H=0;H<G.data.length;H++){
-            var I=G.data[H];
-            if(I.key==F.name){
-              return I.value
+        var Log = {
+            elem: false,
+            write: function(text){
+                if (!this.elem)
+                    this.elem = document.getElementById('log');
+                this.elem.innerHTML = text;
+                //this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
             }
-          }
-          for(var H=0;H<F.data.length;H++){
-            var I=F.data[H];
-            if(I.key==G.name){
-              return I.value
+        };
+
+        function addEvent(obj, type, fn) {
+            if (obj.addEventListener) obj.addEventListener(type, fn, false);
+            else obj.attachEvent('on' + type, fn);
+        };
+    		function init() {
+       			var json =  <%= json %>;
+       			var infovis = document.getElementById('infovis');
+            var w = 600;
+            var h = 600;
+            try {
+                w = infovis.offsetWidth - 250;
+                try {
+                    h = window.innerHeight - 20;
+                } catch (e) {}
+                try {
+                    h = document.body.clientHeight - 20;
+                } catch (e) {}
+                if (h < 200) {h = 200;}
+                infovis.style.width = w + 'px';
+                infovis.style.height = h + 'px';
+            } catch (e) {
+                alert("h=" + h);
+                alert("innerHeight=" + window.innerHeight);
             }
-          }
-        },
-        getId:function(G,F){
-          for(var H=0;H<G.data.length;H++){
-            var I=G.data[H];
-            if(I.key==F.id){
-              return I.value
-            }
-          }
-          for(var H=0;H<F.data.length;H++){
-            var I=F.data[H];
-            if(I.key==G.id){
-              return I.value
-            }
-          }
-        },
-				onCreateLabel:function(H,F){
-					$(H).setHTML(F.name).addEvents({
-						click:function(I){
-							B.onClick(I.event)
-						}
-					});
-					var G=$(H);
-					E[F.id]=new Fx.Tween(
-						G,
-						"opacity",
-						{
-							duration:300,
-							transition:Fx.Transitions.linear,
-							wait:false
-						}
-					);
-					G.setOpacity(0.8);
-					G.set("html",F.name).addEvents({
-						mouseenter:function(){
-							E[F.id].start(0.8,1)
-						},
-						mouseleave:function(){
-							E[F.id].start(1,0.8)
-						}
-					})
-				},
-				onPlaceLabel:function(F,I){
-					var H=F.offsetWidth;
-					var G=F.style.left.toInt();
-					G-=H/2;
-					F.style.left=G+"px"
-				},
-				onAfterCompute:function(){
-					var H=GraphUtil.getClosestNodeToOrigin(B.graph,"pos");
-					var F=this;
-					var G="<h4>"+H.name+"</h4><b>Relationships:</b>";
-					G+="<ul>";
-					GraphUtil.eachAdjacency(
-						B.graph,
-						H,
-						function(I){
-							if(I.data&&I.data.length>0){
-								G+="<li>"+I.name+' <div class="relation">(relationship: '+F.getId(H,I)+")</div></li>"
-							}
-						}
-					);
-					G+="</ul>";$("inner-details").set("html",G)
-				}
-			};
-			var E = {};
-			B.loadTreeFromJSON(json);
-			try{
-			  B.compute();
-			  B.plot();
-  			B.prepareCanvasEvents();
-  			B.controller.onAfterCompute();
-			}catch(e) {
-			  $('inner-details').innerHTML = 'root node disabled or no relationships<br>or relationships to disabled accounts only';
-			}
-		}
+
+            //init canvas
+            //Create a new canvas instance.
+            var canvas = new Canvas('crxcanvas', {
+                'injectInto': 'infovis',
+                'width': w,
+                'height': h
+            });
+            var ht = new Hypertree(canvas, {
+                //Change node and edge styles such as
+                //color, width and dimensions.
+                Node: {
+                    dim: 1,
+                    color: "#bbb"
+                },
+
+                Edge: {
+                    lineWidth: 1,
+                    color: "#aaa"
+                },
+
+                getRelationship: function(G,F){
+                    for(var H=0;H<G.data.length;H++){
+                      var I=G.data[H];
+                      if(I.key==F.id){
+                        return I.value
+                      }
+                    }
+                    for(var H=0;H<F.data.length;H++){
+                      var I=F.data[H];
+                      if(I.key==G.id){
+                        return I.value
+                      }
+                    }
+                },
+
+                onBeforeCompute: function(node){
+                    Log.write("centering");
+                },
+                //Attach event handlers and add text to the
+                //labels. This method is only triggered on label
+                //creation
+                onCreateLabel: function(domElement, node){
+                    domElement.innerHTML = node.name;
+                    addEvent(domElement, 'click', function () {
+                        ht.onClick(node.id);
+                    });
+                },
+                //Change node styles when labels are placed
+                //or moved.
+                onPlaceLabel: function(domElement, node){
+                    var style = domElement.style;
+                    style.display = '';
+                    style.cursor = 'pointer';
+                    if (node._depth <= 0) {
+                        style.fontSize = "0.9em";
+                        style.color = "#fff";
+                    } else if(node._depth == 1){
+                        style.fontSize = "0.75em";
+                        style.color = "#EC8D00";
+                    } else {
+                        style.fontSize = "0.6em";
+                        style.color = "#FFBD59";
+                    }
+
+                    var left = parseInt(style.left);
+                    var w = domElement.offsetWidth;
+                    style.left = (left - w / 2) + 'px';
+                },
+
+                onAfterCompute: function(){
+                    Log.write("");
+
+                    //Build the left column relationship list.
+                    //This is done by collecting the information (stored in the data property)
+                    //for all the nodes adjacent to the centered node.
+                    var F = this;
+                    var node = Graph.Util.getClosestNodeToOrigin(ht.graph, "pos");
+                    var html = "<h2>" + node.name + "</h2><b>Relationships:</b>";
+                    html += "<ul>";
+                    Graph.Util.eachAdjacency(node, function(adj){
+                        var nodeTo = adj.nodeTo;
+                        if(nodeTo.data){
+                        	var rel = (nodeTo.data.key == node.id) ? nodeTo.data.relationships : node.data.relationships; 
+                        	html += "<li>" + nodeTo.name + ' <div class=\"relation\">(relationship: ' + rel + ")</div></li>"
+                        } 
+                    });
+                    html += "</ul>";
+                    document.getElementById('inner-details').innerHTML = html;
+                }
+            });
+
+            //load JSON data.
+            try {
+                ht.loadJSON(json);
+                //compute positions and plot.
+                ht.refresh();
+                ht.controller.onAfterCompute();
+
+			       } catch(e) {
+                document.getElementById('inner-details').innerHTML = 'root node disabled or no relationships<br>or relationships to disabled accounts only';
+			       }
+		    }
 	</script>
 </head>
 <body onload="init();">
-  <div id="header"></div>
-	<div id="visheader"></div>
-	<div id="left">
+
+<div id="viscontainer">
+    <div id="left-container">
 		<div id="details" class="toggler left-item">
 		  Root: <b><%= getClickableNodeTitle(account, app, requestId) %></b><br>
 		  <input type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" style="float:right;margin:5px 5px 0px 0px;" /><br>
 		  Node Limits: 25 - 5 - 5
 		</div>
-		<div class="element contained-item">
-			<div class="inner" id="inner-details"></div>
-		</div>
-	</div>
-	<canvas id="infovis" width="900" height="500"></canvas>
-	<div id="label_container"></div>
+		<div class="inner" id="inner-details"></div>
+    </div>
+
+    <div id="center-container">
+        <div id="infovis"></div>
+    </div>
+
+    <!--
+    <div id="right-container">
+    </div>
+    -->
+
+    <div id="log">calculating relationships - please wait...</div>
+</div>
 <%
 	}
 	catch (Exception e) {

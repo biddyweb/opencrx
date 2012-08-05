@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.38 2009/06/09 14:10:35 wfro Exp $
+ * Name:        $Id: WorkflowHandlerServlet.java,v 1.41 2009/10/12 16:06:55 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.38 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:10:35 $
+ * Date:        $Date: 2009/10/12 16:06:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,9 +59,9 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -80,11 +80,11 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.compatibility.kernel.application.cci.Classes;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.loading.Classes;
+import org.openmdx.kernel.log.SysLog;
 
 /**
  * The WorkflowHandlerServlet scans for non-executed 
@@ -115,7 +115,7 @@ public class WorkflowHandlerServlet
         WfProcessInstance wfInstance
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(wfInstance);
-        AppLog.info("Execute", wfInstance.getProcess().getName());        
+    	SysLog.info("Execute", wfInstance.getProcess().getName());        
         try {
             String workflowName = wfInstance.getProcess().getName();
             Boolean isSynchronous = wfInstance.getProcess().isSynchronous();        
@@ -148,8 +148,8 @@ public class WorkflowHandlerServlet
                     return wfInstance.getStartedOn() != null;
                 }
                 catch(Exception e) {
-                    AppLog.warning("Can not execute workflow", wfInstance.getProcess().getName() + "; home=" + userHome.refMofId());
-                    AppLog.warning(e.getMessage(), e.getCause());
+                	SysLog.warning("Can not execute workflow", wfInstance.getProcess().getName() + "; home=" + userHome.refMofId());
+                	SysLog.warning(e.getMessage(), e.getCause());
                     try {
                         pm.currentTransaction().rollback();
                     } 
@@ -167,7 +167,7 @@ public class WorkflowHandlerServlet
                     );
                 }
                 catch(ClassNotFoundException e) {
-                    AppLog.error("Implementation for workflow " + workflowName + " not found");
+                	SysLog.error("Implementation for workflow " + workflowName + " not found");
                     return false;          
                 }
                 // Look up constructor
@@ -176,37 +176,37 @@ public class WorkflowHandlerServlet
                     workflowConstructor = workflowClass.getConstructor(new Class[]{});
                 }
                 catch(NoSuchMethodException e) {
-                    AppLog.error("No constructor found for workflow " + workflowName);
+                	SysLog.error("No constructor found for workflow " + workflowName);
                 }
                 // Instantiate workflow
                 try {
                     workflow = (ASynchWorkflow_1_0)workflowConstructor.newInstance(new Object[]{});
                 }
                 catch(InstantiationException e) {
-                    AppLog.error("Can not create workflow (can not instantiate)", workflowName);
+                	SysLog.error("Can not create workflow (can not instantiate)", workflowName);
                     return false;
                 }
                 catch(IllegalAccessException e) {
-                    AppLog.error("Can not create workflow (illegal access)", workflowName);
+                	SysLog.error("Can not create workflow (illegal access)", workflowName);
                     return false;
                 }
                 catch(IllegalArgumentException e) {
-                    AppLog.error("Can not create workflow (illegal argument)", workflowName);
+                	SysLog.error("Can not create workflow (illegal argument)", workflowName);
                     return false;
                 }
                 catch(InvocationTargetException e) {
-                    AppLog.error("Can not create workflow (can not invoke target)", workflowName + "(" + e.getTargetException().getMessage() + ")");
+                	SysLog.error("Can not create workflow (can not invoke target)", workflowName + "(" + e.getTargetException().getMessage() + ")");
                     return false;         
                 }  
                 workflow.execute(
                     wfInstance
                 );
-                AppLog.info("SUCCESS");
+                SysLog.info("SUCCESS");
                 return true;
             }
         }
         catch(Exception e) {
-            AppLog.warning("FAILED", e.getMessage());
+        	SysLog.warning("FAILED", e.getMessage());
             new ServiceException(e).log();
             return false;
         }            
@@ -221,7 +221,7 @@ public class WorkflowHandlerServlet
     ) throws IOException {
             
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
-        AppLog.detail(WORKFLOW_NAME + " " + providerName + "/" + segmentName);        
+        SysLog.detail(WORKFLOW_NAME + " " + providerName + "/" + segmentName);        
         try {
             PersistenceManager pm = this.persistenceManagerFactory.getPersistenceManager(
                 "admin-" + segmentName,
@@ -247,7 +247,7 @@ public class WorkflowHandlerServlet
             query.startedOn().isNull();
             query.orderByStepCounter().ascending();
             List<WfProcessInstance> wfInstances = userHomeSegment.getExtent(query);
-            AppLog.info("Executing workflows");
+            SysLog.info("Executing workflows");
             for(WfProcessInstance wfInstance: wfInstances) {
                 int stepCounter = wfInstance.getStepCounter() == null
                     ? 0
@@ -280,7 +280,7 @@ public class WorkflowHandlerServlet
                             pm.currentTransaction().commit();
                         }
                         catch(Exception e) {
-                            AppLog.info(e.getMessage(), e.getCause());
+                        	SysLog.info(e.getMessage(), e.getCause());
                             try {
                                 pm.currentTransaction().rollback();
                             } 
@@ -297,7 +297,7 @@ public class WorkflowHandlerServlet
                             pm.currentTransaction().commit();
                         }
                         catch(Exception e) {
-                            AppLog.info(e.getMessage(), e.getCause());
+                        	SysLog.info(e.getMessage(), e.getCause());
                             try {
                                 pm.currentTransaction().rollback();
                             } 
@@ -314,7 +314,7 @@ public class WorkflowHandlerServlet
                         pm.currentTransaction().commit();
                     }
                     catch(Exception e) {
-                        AppLog.info(e.getMessage(), e.getCause());
+                    	SysLog.info(e.getMessage(), e.getCause());
                         try {
                             pm.currentTransaction().rollback();
                         } 
@@ -334,8 +334,8 @@ public class WorkflowHandlerServlet
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             System.out.println("Exception occured " + e0.getMessage() + ". Continuing");
-            AppLog.warning("Exception occured " + e0.getMessage() + ". Continuing");
-            AppLog.detail(e0.getMessage(), e0.getCause());
+            SysLog.warning("Exception occured " + e0.getMessage() + ". Continuing");
+            SysLog.detail(e0.getMessage(), e0.getCause());
         }
     }    
 
@@ -348,30 +348,37 @@ public class WorkflowHandlerServlet
             String segmentName = req.getParameter("segment");
             String providerName = req.getParameter("provider");
             String id = providerName + "/" + segmentName;
-            // run
-            if(
-                COMMAND_EXECUTE.equals(req.getPathInfo()) &&
-                !this.runningSegments.contains(id)
-            ) {
-                try {
-                    this.runningSegments.add(id);
-                    this.processPendingWorklows(
-                        providerName,
-                        segmentName,
-                        req,
-                        res
-                    );
-                    this.runningSegments.remove(id);
-                } 
-                catch(Exception e) {
-                    AppLog.warning(e.getMessage(), e.getCause());
-                }
-                finally {
-                    this.runningSegments.remove(id);
-                }            
+            if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
+            	if(!this.runningSegments.containsKey(id)) {
+            		try {
+	                    this.runningSegments.put(
+	                    	id,
+	                    	Thread.currentThread()
+	                    );
+	                    this.processPendingWorklows(
+	                        providerName,
+	                        segmentName,
+	                        req,
+	                        res
+	                    );
+	                } 
+	                catch(Exception e) {
+	                	SysLog.warning(e.getMessage(), e.getCause());
+	                }
+	                finally {
+	                    this.runningSegments.remove(id);
+	                }
+            	}
+            	else if(
+            		!this.runningSegments.get(id).isAlive() || 
+            		this.runningSegments.get(id).isInterrupted()
+            	) {
+	            	Thread t = this.runningSegments.get(id);
+            		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+            	}            	
             }
             else {
-                AppLog.warning(WORKFLOW_NAME + " " + providerName + "/" + segmentName + ". Ignoring command. Running segments are", this.runningSegments);                
+            	SysLog.warning(WORKFLOW_NAME + " " + providerName + "/" + segmentName + ". Ignoring command. Running segments are", this.runningSegments);                
             }
         }
     }
@@ -412,7 +419,7 @@ public class WorkflowHandlerServlet
     private static final long MAX_RETRY_DELAY_MILLIS = 604800000L; // 7 days
     
     private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final Set<String> runningSegments = new HashSet<String>();
+    private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
     private long startedAt = System.currentTimeMillis();
 }
 

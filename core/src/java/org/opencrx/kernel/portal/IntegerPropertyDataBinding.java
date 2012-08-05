@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IntegerPropertyDataBinding.java,v 1.5 2008/11/28 17:04:08 wfro Exp $
+ * Name:        $Id: IntegerPropertyDataBinding.java,v 1.8 2009/10/02 13:34:08 wfro Exp $
  * Description: IntegerPropertyDataBinding
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/11/28 17:04:08 $
+ * Date:        $Date: 2009/10/02 13:34:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -105,9 +105,11 @@ public class IntegerPropertyDataBinding extends AbstractPropertyDataBinding {
         }
         if(p instanceof IntegerProperty) {
             ((IntegerProperty)p).setIntegerValue(
-                newValue instanceof Number ? 
-                    ((Number)newValue).intValue() : 
-                    Integer.valueOf(newValue.toString())
+            	newValue == null ?
+            		null :
+            			newValue instanceof Number ? 
+            				((Number)newValue).intValue() : 
+            					Integer.valueOf(newValue.toString())
             );
         }
     }

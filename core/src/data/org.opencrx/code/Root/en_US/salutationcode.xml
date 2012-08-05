@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="salutationCode" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="salutationCode" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:account1:Contact:salutationCode</_item>
@@ -19,7 +19,7 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>NA</_item>
@@ -30,7 +30,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="001" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="001" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Mr.</_item>
@@ -41,7 +41,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="002" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="002" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Mrs.</_item>
@@ -52,7 +52,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="003" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="003" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Miss</_item>
@@ -63,7 +63,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="004" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="004" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Mr. and Mrs.</_item>
@@ -74,7 +74,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="005" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="005" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Company</_item>
@@ -85,7 +85,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="006" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="006" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Brothers</_item>
@@ -96,7 +96,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="007" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="007" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Prof.</_item>
@@ -107,7 +107,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="008" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="008" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Dr.</_item>
@@ -118,7 +118,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="009" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="009" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Family</_item>

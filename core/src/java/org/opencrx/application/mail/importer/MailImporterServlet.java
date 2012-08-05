@@ -1,11 +1,11 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.13 2009/05/08 17:18:42 wfro Exp $
+   * Name:        $Id: MailImporterServlet.java,v 1.14 2009/06/16 21:19:20 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.13 $
+   * Revision:    $Revision: 1.14 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2009/05/08 17:18:42 $
+   * Date:        $Date: 2009/06/16 21:19:20 $
    * ====================================================================
    *
    * This software is published under the BSD license
@@ -93,11 +93,11 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 
 /**
  * The EMailImporterServlet imports E-Mails from a configured Mail server
@@ -122,7 +122,7 @@ public class MailImporterServlet
             Model_1Factory.getModel();
         }
         catch(Exception e) {
-            AppLog.warning("Can not initialize model repository", e);
+        	SysLog.warning("Can not initialize model repository", e);
         }
         // data connection
         try {
@@ -201,7 +201,7 @@ public class MailImporterServlet
                     while (attachments.hasNext()) {
                         Media attachment = (Media)attachments.next();
                         if(content.getId() != null && content.getId().equals(attachment.getContentName())) {
-                            AppLog.trace("Attachment already linked, '"
+                        	SysLog.trace("Attachment already linked, '"
                                 + mimeMsg.getSubject() + "', "
                                 + mimeMsg.getMessageID() + "', "
                                 + content.getId());
@@ -218,9 +218,9 @@ public class MailImporterServlet
                                 );
                             }
                             catch(IOException e) {
-                                AppLog.warning("Can not add attachment", e);
+                            	SysLog.warning("Can not add attachment", e);
                                 new ServiceException(e).log();
-                                AppLog.detail(e.getMessage(), e.getCause());
+                                SysLog.detail(e.getMessage(), e.getCause());
                             }
                         }
                     }
@@ -237,9 +237,9 @@ public class MailImporterServlet
                         );
                     }
                     catch(IOException e) {
-                        AppLog.warning("Can not add attachment", e);
+                    	SysLog.warning("Can not add attachment", e);
                         new ServiceException(e).log();
-                        AppLog.detail(e.getMessage(), e.getCause());
+                        SysLog.detail(e.getMessage(), e.getCause());
                     }
                 }
             }
@@ -272,7 +272,7 @@ public class MailImporterServlet
                 mimeMessage.getMessageID()
             );
             if (activities.isEmpty()) {
-                AppLog.trace("create a new EMailActivity");
+            	SysLog.trace("create a new EMailActivity");
       
                 ActivityCreator emailCreator = this.getEmailCreator(
                     pm,
@@ -338,7 +338,7 @@ public class MailImporterServlet
                     pm.currentTransaction().commit();
                 } 
                 else {
-                    AppLog.trace("lookup " + fromAddress + " finds "
+                	SysLog.trace("lookup " + fromAddress + " finds "
                         + addresses.size() + " addresses");
                 }
                 // Handle recipients
@@ -395,12 +395,12 @@ public class MailImporterServlet
                 );
             }
             else if (activities.size() == 1) {
-              AppLog.info(
+            	SysLog.info(
                   "Import of email message skipped, an email with this message id exists already, "
                   + mimeMessage.getMessageID() + ", " + mimeMessage.getSubject());
             }
             else {
-                AppLog.info(
+            	SysLog.info(
                     "Import of email message skipped, found "
                     + activities.size() + " email with this message id, "
                     + mimeMessage.getMessageID() + ", " + mimeMessage.getSubject());
@@ -416,8 +416,8 @@ public class MailImporterServlet
                 e.getMessage(),
                 new String[]{}
             );
-            AppLog.warning("Can not create email activity", e.getMessage());
-            AppLog.info(e.getMessage(), e.getCause());
+            SysLog.warning("Can not create email activity", e.getMessage());
+            SysLog.info(e.getMessage(), e.getCause());
             throw new ServiceException(e);
         }
     }
@@ -468,7 +468,7 @@ public class MailImporterServlet
             return emailCreator;
         }
         catch(Exception e) {
-            AppLog.info("Can not retrieve config from external task configuration", e.getMessage());
+        	SysLog.info("Can not retrieve config from external task configuration", e.getMessage());
         }
         return null;
     }
@@ -482,7 +482,7 @@ public class MailImporterServlet
         SimpleMimeMessage message,
         MailImporterConfig config
     ) {        
-        AppLog.info("Importing Message (" + providerName + "/" + segmentName + "): ", message);
+    	SysLog.info("Importing Message (" + providerName + "/" + segmentName + "): ", message);
         String messageId = "NA";
         try {
             messageId = message.getMessageID();
@@ -507,7 +507,7 @@ public class MailImporterServlet
                         );
                     }
                     catch(Exception e) {
-                        AppLog.info(e.getMessage(), e.getCause());                        
+                    	SysLog.info(e.getMessage(), e.getCause());                        
                         this.notifyAdmin(
                             pm,
                             providerName,
@@ -633,7 +633,7 @@ public class MailImporterServlet
                         );
                     }
                     catch(Exception e) {
-                        AppLog.info(e.getMessage(), e.getCause());
+                    	SysLog.info(e.getMessage(), e.getCause());
                         this.notifyAdmin(
                             pm,
                             providerName,
@@ -661,7 +661,7 @@ public class MailImporterServlet
                     new String[]{}
                 );
             }
-            AppLog.warning(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": ");
+            SysLog.warning(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": ");
             new ServiceException(e).log();
         }
     }
@@ -696,8 +696,8 @@ public class MailImporterServlet
             }
             catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
-                AppLog.warning("Import messages failed", e0.getMessage());
-                AppLog.warning(e0.getMessage(), e0.getCause());
+                SysLog.warning("Import messages failed", e0.getMessage());
+                SysLog.warning(e0.getMessage(), e0.getCause());
             }
             finally {
                 this.runningSegments.remove(id);

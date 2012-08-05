@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateCampaignWizard.jsp,v 1.14 2009/05/11 12:12:32 cmu Exp $
+ * Name:        $Id: CreateCampaignWizard.jsp,v 1.18 2009/10/15 16:19:34 wfro Exp $
  * Description: CreateCampaignWizard
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/11 12:12:32 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,8 +70,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.application.log.*
+org.openmdx.base.naming.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	String servletPath = "." + request.getServletPath();
@@ -80,7 +79,7 @@ org.openmdx.application.log.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getViews().isEmpty()) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -95,7 +94,7 @@ org.openmdx.application.log.*
 
 	// Get Parameters
 	String command = request.getParameter("Command");
-	if(command == null) command = "";		
+	if(command == null) command = "";
 	boolean actionCreate = "OK".equals(command);
 	boolean actionCancel = "Cancel".equals(command);
 
@@ -114,7 +113,7 @@ org.openmdx.application.log.*
 	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:Segment">
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:createCampaign">
--->	
+-->
 <%
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
@@ -144,7 +143,7 @@ org.openmdx.application.log.*
 	        (name != null) &&
 	        (name.length() > 0)
 	    ) {
-			org.opencrx.security.realm1.jmi1.PrincipalGroup usersGroup =
+			org.opencrx.security.realm1.jmi1.PrincipalGroup usersPrincipalGroup =
 				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
 					"Users",
 					org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
@@ -153,10 +152,23 @@ org.openmdx.application.log.*
 						segmentName
 					),
 					pm
-				);	    	
+				);
+			org.opencrx.security.realm1.jmi1.PrincipalGroup administratorsPrincipalGroup =
+				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+					"Administrators",
+					org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
+						pm,
+						providerName,
+						segmentName
+					),
+					pm
+				);
+			List allUsers = new ArrayList();
+			allUsers.add(usersPrincipalGroup);
+			allUsers.add(administratorsPrincipalGroup);
 	        org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.getInstance().initActivityTracker(
 	            name,
-	            Arrays.asList(usersGroup),
+	            allUsers,
 	            pm,
 	            providerName,
 	            segmentName
@@ -177,7 +189,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    Arrays.asList(usersGroup),
+	    	    allUsers,
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -198,7 +210,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    null,
+	    	    allUsers,
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -219,7 +231,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    Arrays.asList(usersGroup),
+	    	    allUsers,
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -240,7 +252,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    Arrays.asList(usersGroup),
+	    	    allUsers,
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -261,7 +273,7 @@ org.openmdx.application.log.*
 		    	    segmentName
 		    	),
 	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    Arrays.asList(usersGroup),
+	    	    allUsers,
 	    	    pm,
 	    	    providerName,
 	    	    segmentName
@@ -287,7 +299,7 @@ org.openmdx.application.log.*
 		app,
 		obj
 	);
-	HtmlPage p = HtmlPageFactory.openPage(
+	ViewPort p = ViewPortFactory.openPage(
 		view,
 		request,
 		out
@@ -297,7 +309,7 @@ org.openmdx.application.log.*
 <form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-	<input type="Hidden" id="Command" name="Command" value="" />	
+	<input type="Hidden" id="Command" name="Command" value="" />
 	<table cellspacing="8" class="tableLayout">
 		<tr>
 			<td class="cellObject">
@@ -326,7 +338,7 @@ org.openmdx.application.log.*
 			}
 		});
 		Event.stop(event);
-	});		
+	});
 </script>
 <%
 p.close(false);

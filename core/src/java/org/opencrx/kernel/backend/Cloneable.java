@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.38 2009/05/16 22:19:33 wfro Exp $
+ * Name:        $Id: Cloneable.java,v 1.41 2009/09/22 13:51:11 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.38 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/16 22:19:33 $
+ * Date:        $Date: 2009/09/22 13:51:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -116,7 +116,9 @@ public class Cloneable extends AbstractImpl {
         RefObject_1_0 target,
         String referenceName,
         Map<String,Marshaller> objectMarshallers,
-        String referenceFilterAsString
+        String referenceFilterAsString,
+        org.opencrx.security.realm1.jmi1.User owningUser,
+        List<org.opencrx.security.realm1.cci2.PrincipalGroup> owningGroup        
     ) throws ServiceException {
         Set<String> referenceFilter = this.getReferenceFilter(referenceFilterAsString);
         RefObject_1_0 cloned = this.cloneObject(
@@ -125,7 +127,9 @@ public class Cloneable extends AbstractImpl {
             referenceName,
             CLONE_EXCLUDE_ATTRIBUTES,
             objectMarshallers,
-            referenceFilter
+            referenceFilter,
+            owningUser,
+            owningGroup
         );
         return cloned;
     }
@@ -138,9 +142,10 @@ public class Cloneable extends AbstractImpl {
         String referenceName,
         Set<String> excludeAttributes,
         Map<String,Marshaller> objectMarshallers,
-        Set<String> referenceFilter
-    ) throws ServiceException {    
-    	
+        Set<String> referenceFilter,
+        org.opencrx.security.realm1.jmi1.User owningUser,
+        List<org.opencrx.security.realm1.cci2.PrincipalGroup> owningGroup
+    ) throws ServiceException {        	
         String objectType = object.refClass().refMofId();
         // Clone
         RefObject_1_0 clone = null;
@@ -153,8 +158,15 @@ public class Cloneable extends AbstractImpl {
             clone = PersistenceHelper.clone(object);
         }        
         if(clone instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
-            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).setOwningUser((org.opencrx.security.realm1.jmi1.User)null);
-            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().clear();
+        	if(owningUser != null) {
+        		((org.opencrx.kernel.base.jmi1.SecureObject)clone).setOwningUser(owningUser);
+        	}
+        	if(owningGroup != null) {
+	            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().clear();
+	            ((org.opencrx.kernel.base.jmi1.SecureObject)clone).getOwningGroup().addAll(
+	            	owningGroup
+	            );
+        	}
         }
         RefContainer container = (RefContainer)target.refGetValue(referenceName);
         container.refAdd(
@@ -208,7 +220,9 @@ public class Cloneable extends AbstractImpl {
                             referenceName,
                             excludeAttributes,
                             objectMarshallers,
-                            referenceFilter
+                            referenceFilter,
+                            owningUser,
+                            owningGroup
                         );
                     }
                 }

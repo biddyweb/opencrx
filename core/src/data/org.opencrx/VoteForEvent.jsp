@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.12 2009/06/09 12:47:48 cmu Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.14 2009/09/21 13:20:50 cmu Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.12 $
+ * Revision:	$Revision: 1.14 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2009/06/09 12:47:48 $
+ * Date:		$Date: 2009/09/21 13:20:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,6 +69,7 @@ java.text.*"
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%!
 	public static final int NUM_SLOTS = 8;
+	public static final String TIME_MISSING = "0000.000Z@<";
 	public static final String SCHEDULE_EVENT_WIZARD_NAME = "ScheduleEventWizard.jsp";
 	public static final String WIZARD_NAME = "VoteForEvent.jsp";
 	public static final Map resourceBundles = new HashMap();
@@ -151,11 +152,25 @@ java.text.*"
 		String event,
 		SimpleDateFormat timeFormat
 	) {
+    if(event == null) return "";
+    if(event.indexOf(TIME_MISSING)>0) return event.substring(22);
+    if (event.length() < 20) return "";
+		Date dateFrom = org.w3c.spi2.Datatypes.create(Date.class, event.substring(0, 20));
+		Date dateTo = org.w3c.spi2.Datatypes.create(Date.class, event.length() < 41 ? event.substring(0, 20) : event.substring(21, 41));
+		return timeFormat.format(dateFrom) + (dateFrom.compareTo(dateTo) == 0 ? "" : "-" + timeFormat.format(dateTo)) + (event.length() < 41 ? event.substring(20) : event.substring(41));
+	}
+
+/*
+	public static String formatEvent(
+		String event,
+		SimpleDateFormat timeFormat
+	) {
 		if((event == null) || (event.length() < 21)) return "";
 		Date dateFrom = org.w3c.spi2.Datatypes.create(Date.class, event.substring(0, 20));
 		Date dateTo = org.w3c.spi2.Datatypes.create(Date.class, event.length() < 41 ? event.substring(0, 20) : event.substring(21, 41));
 		return timeFormat.format(dateFrom) + (dateFrom.compareTo(dateTo) == 0 ? "" : "-" + timeFormat.format(dateTo)) + (event.length() < 41 ? event.substring(20) : event.substring(41));
 	}
+*/
 
 	public static boolean userIsOwnerOfEMailAddress(
 		javax.jdo.PersistenceManager pm,
@@ -598,7 +613,7 @@ java.text.*"
 <%
 									for (int i = 0; i < activeLocales.size(); i++) {
 %>
-										<li><a href="#" onclick="javascript:$('locale').value='<%= activeLocales.get(i).toString() %>';$('locale').click();"><span style="font-family:courier;"><%= activeLocales.get(i).toString() %>&nbsp;&nbsp;</span><%= textsLocale.get(activeLocales.get(i)).toString() %></a></li>
+										<li><a href="#" onclick="javascript:$('locale').value='<%= activeLocales.get(i).toString() %>';$('Refresh').click();"><span style="font-family:courier;"><%= activeLocales.get(i).toString() %>&nbsp;&nbsp;</span><%= textsLocale.get(activeLocales.get(i)).toString() %></a></li>
 <%
 									}
 %>

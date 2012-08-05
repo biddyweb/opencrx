@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Notifications.java,v 1.13 2009/05/20 23:39:02 wfro Exp $
+ * Name:        $Id: Notifications.java,v 1.14 2009/09/30 09:38:24 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/20 23:39:02 $
+ * Date:        $Date: 2009/09/30 09:38:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,7 +56,6 @@
 
 package org.opencrx.kernel.backend;
 
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Map;
 
@@ -98,7 +97,6 @@ public class Notifications extends AbstractImpl {
         UserHome userHome,
         Map<String,Object> params
     ) throws ServiceException {
-    	SimpleDateFormat dateFormat = Utils.getLocalizedDateFormat(userHome);
         String text = "#ERR";
         String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
         Path targetIdentity = target == null ?
@@ -226,11 +224,11 @@ public class Notifications extends AbstractImpl {
             text += "Status:                     " + (activityState == null ? "N/A" : activityState.getName()) + "\n";
             text += "Last transition:            " + (lastTransition == null ? "N/A" : lastTransition.getName()) + "\n";
             text += "=======================================================================\n";
-            text += "Scheduled start:            " + (activity.getScheduledStart() == null ? "N/A" : dateFormat.format(activity.getScheduledStart())) + "\n";
-            text += "Scheduled end:              " + (activity.getScheduledEnd() == null ? "N/A" : dateFormat.format(activity.getScheduledEnd())) + "\n";
-            text += "Due by:                     " + (activity.getDueBy() == null ? "N/A" : dateFormat.format(activity.getDueBy())) + "\n";
-            text += "Actual start:               " + (activity.getActualStart() == null ? "N/A" : dateFormat.format(activity.getActualStart())) + "\n";
-            text += "Actual end:                 " + (activity.getActualEnd() == null ? "N/A" : dateFormat.format(activity.getActualEnd())) + "\n";
+            text += "Scheduled start:            " + (activity.getScheduledStart() == null ? "N/A" : activity.getScheduledStart()) + "\n";
+            text += "Scheduled end:              " + (activity.getScheduledEnd() == null ? "N/A" : activity.getScheduledEnd()) + "\n";
+            text += "Due by:                     " + (activity.getDueBy() == null ? "N/A" : activity.getDueBy()) + "\n";
+            text += "Actual start:               " + (activity.getActualStart() == null ? "N/A" : activity.getActualStart()) + "\n";
+            text += "Actual end:                 " + (activity.getActualEnd() == null ? "N/A" : activity.getActualEnd()) + "\n";
             text += "=======================================================================\n";
             text += "Date Submitted:             " + activity.getCreatedAt() + "\n";
             text += "Last Modified:              " + activity.getModifiedAt() + "\n";

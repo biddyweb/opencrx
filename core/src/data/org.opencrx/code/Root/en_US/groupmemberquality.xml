@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="memberQuality" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="memberQuality" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:account1:Member:quality</_item>
@@ -20,7 +20,7 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="set">
 													<_object>
 														<shortText>
 															<_item>C - normal</_item>
@@ -32,7 +32,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
 													<_object>
 														<shortText>
 															<_item>A - excellent</_item>
@@ -44,7 +44,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
 													<_object>
 														<shortText>
 															<_item>B - good</_item>
@@ -56,7 +56,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="set">
 													<_object>
 														<shortText>
 															<_item>D - not so good</_item>
@@ -67,7 +67,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="set">
 													<_object>
 														<shortText>
 															<_item>E - bad</_item>

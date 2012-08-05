@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.45 2009/05/27 23:09:57 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.49 2009/08/20 15:52:38 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/27 23:09:57 $
+ * Date:        $Date: 2009/08/20 15:52:38 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,7 +74,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.jdo.JDOHelper;
@@ -90,13 +89,13 @@ import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.generic.jmi1.Note;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.format.DateFormat;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 
 public class VCard extends AbstractImpl {
 
@@ -409,14 +408,24 @@ public class VCard extends AbstractImpl {
             return null;
         }        
         if((sourceVcard == null) || (sourceVcard.length() == 0)) {
-            // Template
-            UUID uid = null;
-            try {
-                uid = UUIDConversion.fromString(account.refGetPath().getBase());
-            }
-            catch(Exception e) {
-                uid = UUIDs.getGenerator().next();
-            }
+            String uid = null;
+        	// Get from externalLink
+        	for(int i = 0; i < account.getExternalLink().size(); i++) {
+        		if(account.getExternalLink().get(i).startsWith(VCARD_SCHEMA)) {
+        			uid = account.getExternalLink().get(i).substring(VCARD_SCHEMA.length());
+        			break;
+        		}
+        	}
+        	if(uid == null) {
+	            // Derive from qualifier
+	            try {
+	                uid = account.refGetPath().getBase();
+	            }
+	            catch(Exception e) {
+	            	// Generate new
+	                uid = UUIDConversion.toUID(UUIDs.getGenerator().next());
+	            }
+        	}
             sourceVcard = 
                 "BEGIN:VCARD\n" +
                 "VERSION:2.1\n" +
@@ -638,17 +647,18 @@ public class VCard extends AbstractImpl {
             for(int i = 0; i < street.size()-1; i++) {
                 address.getPostalAddressLine().add(street.get(i));
             }
+            address.getPostalStreet().clear();
             address.getPostalStreet().add(street.get(street.size()-1));
             address.setPostalCity(tokens[3]);
             address.setPostalState(tokens[4]);
             address.setPostalCode(tokens[5]);
             address.setPostalCountry(new Short((short)0));
             // Lookup country
-            AppLog.trace("lookup country", tokens[6]);
+            SysLog.trace("lookup country", tokens[6]);
             address.setPostalCountry(
             	Addresses.getInstance().mapToPostalCountryCode(tokens[6])
             );
-            AppLog.trace("updated address", address);
+            SysLog.trace("updated address", address);
             return true;
         }
         return false;
@@ -663,7 +673,7 @@ public class VCard extends AbstractImpl {
             address.setPhoneNumberFull(newValue);
             address.setAutomaticParsing(Boolean.TRUE);
             Addresses.getInstance().updatePhoneNumber(address);
-            AppLog.trace("updated address", address);
+            SysLog.trace("updated address", address);
             return true;
         }
         return false;
@@ -676,7 +686,7 @@ public class VCard extends AbstractImpl {
     ) {
         if((newValue != null) && (newValue.length() > 0)) {
             address.setWebUrl(newValue);
-            AppLog.trace("updated address", address);
+            SysLog.trace("updated address", address);
             return true;
         }
         return false;
@@ -689,7 +699,7 @@ public class VCard extends AbstractImpl {
     ) {
         if((newValue != null) && (newValue.length() > 0)) {
             address.setEmailAddress(newValue);
-            AppLog.trace("updated address", address);
+            SysLog.trace("updated address", address);
             return true;
         }
         return false;
@@ -738,7 +748,7 @@ public class VCard extends AbstractImpl {
                 new InputStreamReader(is, "UTF-8")
             );
             Map<String,String> vcard = this.parseVCard(reader);
-            AppLog.trace("parsed vcard", vcard);
+            SysLog.trace("parsed vcard", vcard);
             return this.importItem(
                 vcard,
                 account,
@@ -747,7 +757,7 @@ public class VCard extends AbstractImpl {
             );
         }
         catch(IOException e) {
-            AppLog.warning("can not read item", e.getMessage());
+        	SysLog.warning("can not read item", e.getMessage());
         }
         return null;
     }
@@ -896,9 +906,11 @@ public class VCard extends AbstractImpl {
         String s = vcard.get("NOTE") != null ? vcard.get("NOTE") : vcard.get("NOTE;ENCODING=QUOTED-PRINTABLE");
         if(s != null) {
         	Note note = null;
-            note = (Note)pm.getObjectById(
-                account.refGetPath().getDescendant(new String[]{"note", "VCARD"})
-            );
+        	try {
+	            note = (Note)pm.getObjectById(
+	                account.refGetPath().getDescendant(new String[]{"note", "VCARD"})
+	            );
+        	} catch(Exception e) {}
             if(note == null) {
                 note = pm.newInstance(Note.class);
                 note.refInitialize(false, false);
@@ -912,7 +924,7 @@ public class VCard extends AbstractImpl {
             else {
                 report.add("Update note");
             }
-            note.setTitle("vCard note");
+            note.setTitle("VCard note");
             String text = "";
             int pos = 0;
             while((pos = s.indexOf("=0D=0A")) >= 0) {
@@ -1244,7 +1256,7 @@ public class VCard extends AbstractImpl {
         String lookupEmail = vcard.get("EMAIL;PREF;INTERNET");
         Account contact = null;
         if((lookupEmail != null) && (lookupEmail.length() > 0)) {
-            AppLog.trace("looking up", lookupEmail);
+        	SysLog.trace("looking up", lookupEmail);
             EMailAddressQuery addressQuery = (EMailAddressQuery)pm.newQuery(AccountAddress.class);
             addressQuery.identity().like(
             	accountSegment.refGetPath().getDescendant(new String[]{"account", ":*", "address", ":*"}).toXRI()
@@ -1252,14 +1264,14 @@ public class VCard extends AbstractImpl {
             addressQuery.thereExistsEmailAddress().equalTo(lookupEmail);
             List<EMailAddress> addresses = accountSegment.getExtent(addressQuery);
             if(addresses.iterator().hasNext()) {
-                AppLog.trace("address found");
+            	SysLog.trace("address found");
                 AccountAddress address = addresses.iterator().next();
                 contact = (Account)pm.getObjectById(
                     address.refGetPath().getParent().getParent()
                 );
             }
         }
-        AppLog.trace("account", contact);
+        SysLog.trace("account", contact);
         boolean isNew = contact == null;
         if(isNew) {
             return null;

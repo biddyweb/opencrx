@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.38 2009/05/11 12:22:41 cmu Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.41 2009/10/15 16:19:33 wfro Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.38 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/11 12:22:41 $
+ * Date:        $Date: 2009/10/15 16:19:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2008, CRIXP AG, Switzerland
+ * Copyright (c) 2004-2009, CRIXP AG, Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -70,7 +70,7 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.application.log.*,
+org.openmdx.kernel.log.*,
 org.openmdx.kernel.exception.BasicException,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*
@@ -189,7 +189,7 @@ org.openmdx.kernel.id.*
 					}
 				}
 				catch(FileUploadException e) {
-					AppLog.warning("can not upload file", e.getMessage());
+					SysLog.warning("can not upload file", e.getMessage());
 				}
 			}
 
@@ -211,7 +211,7 @@ org.openmdx.kernel.id.*
 			String objectXri = (objectXris == null) || (objectXris.length == 0) ? "" : objectXris[0];
 			String location = app.getTempFileName(UPLOAD_FILE_FIELD_NAME, "");
 
-			if(objectXri == null || viewsCache.getViews().isEmpty()) {
+			if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 				response.sendRedirect(
 					request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 				);
@@ -391,9 +391,9 @@ org.openmdx.kernel.id.*
 				System.out.println("UploadMedia: file " + location + " either does not exist or has size 0: exists=" + uploadFile.exists() + "; length=" + uploadFile.length());
 			}
 			UserDefinedView userView = new UserDefinedView(
-				(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+				pm.getObjectById(new Path(objectXri)),
 				app,
-				(View)viewsCache.getViews().values().iterator().next()
+				viewsCache.getView(requestId)
 			);
 %>
 <form name="UploadMedia" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="UploadMedia.jsp">
@@ -460,7 +460,7 @@ org.openmdx.kernel.id.*
 %>
       </div> <!-- content -->
     </div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+  </div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

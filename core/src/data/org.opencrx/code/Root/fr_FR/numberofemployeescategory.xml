@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="numberOfEmployeesCategory" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="numberOfEmployeesCategory" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
                           <_object>
                             <shortText>
                               <_item>Exactement</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 1 et 4</_item>
@@ -45,7 +45,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 5 et 9</_item>
@@ -53,7 +53,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="30" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 10 et 19</_item>
@@ -61,7 +61,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 20 et 49</_item>
@@ -69,7 +69,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="50" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 50 et 99</_item>
@@ -77,7 +77,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="60" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="60" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 100 et 199</_item>
@@ -85,7 +85,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 200 et 499</_item>
@@ -93,7 +93,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="80" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="80" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 500 et 999</_item>
@@ -101,7 +101,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="90" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 1000 et 1999</_item>
@@ -109,7 +109,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 2000 et 4999</_item>
@@ -117,7 +117,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 5000 et 9999</_item>
@@ -125,7 +125,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 10 000 et 19 999</_item>
@@ -133,7 +133,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 20 000 et 49 999</_item>
@@ -141,7 +141,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 50 000 et 99 999</_item>
@@ -149,7 +149,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 100 000 et 199 999</_item>
@@ -157,7 +157,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="160" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="160" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 200 000 et 499 999</_item>
@@ -165,7 +165,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="170" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="170" _operation="set">
                           <_object>
                             <longText>
                               <_item>Entre 500 000 et 999 999</_item>
@@ -173,7 +173,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="180" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="180" _operation="set">
                           <_object>
                             <longText>
                               <_item>Plus de 1 000 000</_item>

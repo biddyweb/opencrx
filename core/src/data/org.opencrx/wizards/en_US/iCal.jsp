@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: iCal.jsp,v 1.2 2009/05/11 12:12:33 cmu Exp $
+ * Name:        $Id: iCal.jsp,v 1.8 2009/10/15 16:19:34 wfro Exp $
  * Description: create vCard(s)
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/11 12:12:33 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,8 +73,7 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.base.query.*,
-org.openmdx.application.log.*
+org.openmdx.base.query.*
 " %>
 <%!
 
@@ -103,12 +102,12 @@ org.openmdx.application.log.*
 
 %>
 <%
-   request.setCharacterEncoding("UTF-8");
-   ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-   ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-   String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-     String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-   if(objectXri == null || app == null) {
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+ 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
       response.sendRedirect(
          request.getContextPath() + "/" + WebKeys.SERVLET_NAME
       );
@@ -122,7 +121,7 @@ org.openmdx.application.log.*
 <html>
 
 <head>
-  <title><%= app.getApplicationName() %> - iCal></title>
+  <title><%= app.getApplicationName() %> - iCal</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="UNUSEDlabel" content="iCal">
   <meta name="UNUSEDtoolTip" content="iCal">
@@ -193,7 +192,7 @@ org.openmdx.application.log.*
 
           <div id="content-wrap">
              <div id="content" style="padding:100px 0.5em 0px 0.5em;">
-              <form name="iCal" accept-charset="UTF-8" method="POST" action=<%= FORM_ACTION %>>
+              <form name="iCal" accept-charset="UTF-8" method="POST" action="<%= FORM_ACTION %>">
                 <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
                   <h1>iCal - <%= (new ObjectReference(obj, app)).getLabel() %></h1>
                   <div style="background-color:#FFFFBB;margin:5px 0px;padding:5px;"><i><%= (new ObjectReference(obj, app)).getTitle() %></i></div>
@@ -219,7 +218,7 @@ org.openmdx.application.log.*
     if (
     	(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
       (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCategory) ||
-      (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityMilestone) 
+      (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityMilestone)
     )	{
       multipleFiles = true;
       downloadFileName = ((org.opencrx.kernel.activity1.jmi1.ActivityGroup)obj).getName();
@@ -293,7 +292,7 @@ org.openmdx.application.log.*
           try {
             zipos.putNextEntry(new ZipEntry(filename));
             if (activity.getIcal() != null) {
-              zipos.write(activity.getIcal().getBytes());
+              zipos.write(activity.getIcal().getBytes("UTF-8"));
             }
             zipos.closeEntry();
           }
@@ -307,7 +306,7 @@ org.openmdx.application.log.*
         } else {
           // create vCard file
           if (activity.getIcal() != null) {
-            fileos.write(activity.getIcal().getBytes());
+            fileos.write(activity.getIcal().getBytes("UTF-8"));
           }
           fileos.flush();
           fileos.close();
@@ -370,7 +369,7 @@ org.openmdx.application.log.*
               </form>
             </div> <!-- content -->
           </div> <!-- content-wrap -->
-         <div> <!-- wrap -->
+        </div> <!-- wrap -->
       </div> <!-- container -->
       </body>
       </html>

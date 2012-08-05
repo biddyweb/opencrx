@@ -206,12 +206,10 @@ DELETE FROM OOCKE1_CONTACTROLE WHERE object_id LIKE '%/{provider}/{segment}/%'
 GO
 DELETE FROM OOCKE1_CONTACTROLE_ WHERE object_id LIKE '%/{provider}/{segment}/%'
 GO
-
 DELETE FROM OOCKE1_CONTRACT WHERE object_id LIKE '%/{provider}/{segment}/%'
 GO
 DELETE FROM OOCKE1_CONTRACT_ WHERE object_id LIKE '%/{provider}/{segment}/%'
 GO
-
 DELETE FROM OOCKE1_CONTRACTLINK WHERE object_id LIKE '%/{provider}/{segment}/%'
 GO
 DELETE FROM OOCKE1_CONTRACTLINK_ WHERE object_id LIKE '%/{provider}/{segment}/%'

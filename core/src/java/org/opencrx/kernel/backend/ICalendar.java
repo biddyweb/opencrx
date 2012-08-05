@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.63 2009/06/05 09:20:12 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.76 2009/10/19 16:32:13 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.63 $
+ * Revision:    $Revision: 1.76 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/05 09:20:12 $
+ * Date:        $Date: 2009/10/19 16:32:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,6 +91,7 @@ import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.AbstractPhoneCallRecipient;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.ExternalActivity;
@@ -100,18 +101,23 @@ import org.opencrx.kernel.activity1.jmi1.Mailing;
 import org.opencrx.kernel.activity1.jmi1.MailingRecipient;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.activity1.jmi1.MeetingParty;
+import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
+import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Task;
 import org.opencrx.kernel.activity1.jmi1.TaskParty;
-import org.openmdx.application.log.AppLog;
+import org.opencrx.kernel.base.jmi1.ImportParams;
+import org.opencrx.kernel.utils.ActivitiesHelper;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
-import org.openmdx.base.text.format.DateFormat;
+import org.openmdx.base.text.format.DateTimeFormat;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 
 public class ICalendar extends AbstractImpl {
 
@@ -229,7 +235,7 @@ public class ICalendar extends AbstractImpl {
         // DTSTART
         String dtStart = null;
         if(activity.getScheduledStart() != null) {
-            dtStart = DateFormat.getInstance().format(activity.getScheduledStart());
+            dtStart = DateTimeFormat.BASIC_UTC_FORMAT.format(activity.getScheduledStart());
         }
         else {
             // ical requires DTSTART. Set DTSTART to beginning of year 
@@ -240,20 +246,20 @@ public class ICalendar extends AbstractImpl {
         // DTEND
         String dtEnd = null;
         if(activity.getScheduledEnd() != null) {
-            dtEnd = DateFormat.getInstance().format(activity.getScheduledEnd());
+            dtEnd = DateTimeFormat.BASIC_UTC_FORMAT.format(activity.getScheduledEnd());
         }
         // DUE
         String dueBy = null;
         if(activity.getDueBy() != null) {
-            dueBy = DateFormat.getInstance().format(activity.getDueBy());
+            dueBy = DateTimeFormat.BASIC_UTC_FORMAT.format(activity.getDueBy());
         }
         // COMPLETED
         String completed = null;
         if(activity.getActualEnd() != null) {
-            completed = DateFormat.getInstance().format(activity.getActualEnd());
+            completed = DateTimeFormat.BASIC_UTC_FORMAT.format(activity.getActualEnd());
         }
         // LAST-MODIFIED
-        String lastModified = DateFormat.getInstance().format(new Date());
+        String lastModified = DateTimeFormat.BASIC_UTC_FORMAT.format(new Date());
         // PRIORITY
         Number priority = activity.getPriority();
         // SUMMARY (append activity number)
@@ -485,24 +491,27 @@ public class ICalendar extends AbstractImpl {
                     lSourceIcal.toUpperCase().startsWith("END:VEVENT") || 
                     lSourceIcal.toUpperCase().startsWith("END:VTODO")
                 ) {                    
-                    // DTSTART
-                    if(dtStart != null) {
-                        if(dtStart.endsWith("T000000.000Z")) {
-                            targetIcal.println("DTSTART;VALUE=DATE:" + dtStart.substring(0, 8));                            
+                	boolean isAllDay =
+                		((dtStart != null) && (dtStart.endsWith("T000000.000Z") || dtStart.endsWith("T000000Z"))) &&
+                		((dtEnd != null) && (dtEnd.endsWith("T000000.000Z") || dtEnd.endsWith("T000000Z")));
+                	// DTSTART
+                	if(dtStart != null) {
+                		if(isAllDay) {
+                			targetIcal.println("DTSTART;VALUE=DATE:" + dtStart.substring(0, 8));                            
                         }
                         else {
                             targetIcal.println("DTSTART:" + dtStart.substring(0, 15) + "Z");
                         }
-                    }
-                    // DTEND
-                    if(dtEnd != null) {
-                        if(dtEnd.endsWith("T000000.000Z")) {
-                            targetIcal.println("DTEND;VALUE=DATE:" + dtEnd.substring(0, 8));                            
-                        }
-                        else {
-                            targetIcal.println("DTEND:" + dtEnd.substring(0, 15) + "Z");
-                        }
-                    }
+                	}
+                	// DTEND
+                	if(dtEnd != null) {
+                		if(isAllDay) {
+                			targetIcal.println("DTEND;VALUE=DATE:" + dtEnd.substring(0, 8));                            
+                		}
+                		else {
+                			targetIcal.println("DTEND:" + dtEnd.substring(0, 15) + "Z");
+                		}
+                	}
                     // DUE
                     if(dueBy != null) {
                         if(dueBy.endsWith("T000000.000Z")) {
@@ -530,7 +539,7 @@ public class ICalendar extends AbstractImpl {
                         targetIcal.println("LOCATION:" + location);
                     }
                     // DTSTAMP
-                    targetIcal.println("DTSTAMP:" + DateFormat.getInstance().format(new Date()).substring(0, 15) + "Z");
+                    targetIcal.println("DTSTAMP:" + DateTimeFormat.BASIC_UTC_FORMAT.format(new Date()).substring(0, 15) + "Z");
                     // DESCRIPTION
                     if((description != null) && (description.length() > 0)) {
                         targetIcal.println("DESCRIPTION:" + this.escapeNewlines(description));
@@ -637,7 +646,7 @@ public class ICalendar extends AbstractImpl {
         for(Iterator<String> i = ical.keySet().iterator(); i.hasNext(); ) {
             String prop = i.next();
             if(prop.startsWith("X-")) {
-                i.remove();
+           		i.remove();
             }
             else if(prop.startsWith("ATTENDEE") || prop.startsWith("ORGANIZER")) {
                 String[] components = ical.get(prop).replaceFirst(":", ";").split(";");
@@ -808,7 +817,7 @@ public class ICalendar extends AbstractImpl {
                 reader,
                 ical
             );
-            AppLog.trace("ICalendar", icalFields);
+            SysLog.trace("ICalendar", icalFields);
             return this.importItem(
                 ical.toString(),
                 icalFields,
@@ -822,7 +831,7 @@ public class ICalendar extends AbstractImpl {
             );
         }
         catch(IOException e) {
-            AppLog.warning("Can not read item", e.getMessage());
+        	SysLog.warning("Can not read item", e.getMessage());
         }
         return null;
     }
@@ -862,14 +871,14 @@ public class ICalendar extends AbstractImpl {
         Date date = null;
         if(dateTime.endsWith("Z")) {
             if(dateTime.length() == 16) {
-                date = DateFormat.getInstance().parse(dateTime.substring(0, 15) + ".000Z");
+                date = DateTimeFormat.BASIC_UTC_FORMAT.parse(dateTime.substring(0, 15) + ".000Z");
             }
             else {
-                date = DateFormat.getInstance().parse(dateTime);
+                date = DateTimeFormat.BASIC_UTC_FORMAT.parse(dateTime);
             }
         }
         else if(dateTime.length() == 8) {
-            date = DateFormat.getInstance().parse(dateTime + "T000000.000Z");
+            date = DateTimeFormat.BASIC_UTC_FORMAT.parse(dateTime + "T000000.000Z");
         }
         else {
             date = dateTimeFormatter.parse(dateTime);
@@ -945,7 +954,7 @@ public class ICalendar extends AbstractImpl {
         if(!errors.isEmpty()) {
             return null;
         }
-        AppLog.trace("attendees=", attendees);
+        SysLog.trace("attendees=", attendees);
         // Timezone and date/time formatter
         String tzid = fields.get("TZID");
         TimeZone tz = TimeZone.getDefault();
@@ -983,35 +992,46 @@ public class ICalendar extends AbstractImpl {
             );
         }
         // Update activity according to ical fields
-        String s = fields.get("DTSTART");
-        if((s != null) && (s.length() > 0)) {
+        String dtStart = fields.get("DTSTART");
+        if((dtStart != null) && (dtStart.length() > 0)) {
             try {
                 activity.setScheduledStart(
                 	this.getUtcDate(
-                        s,
+                		dtStart,
                         dateTimeFormatter
                     )
                 );
             } 
             catch(Exception e) {
-                errors.add("DTSTART (" + s + ")");
+                errors.add("DTSTART (" + dtStart + ")");
             }
         }
-        s = fields.get("DTEND");
-        if((s != null) && (s.length() > 0)) {
+        String dtEnd = fields.get("DTEND");
+        if((dtEnd != null) && (dtEnd.length() > 0)) {
             try {
                 activity.setScheduledEnd(
                 	this.getUtcDate(
-                        s, 
+                        dtEnd, 
                         dateTimeFormatter
                     )
                 );
+                // If DTSTART and DTEND are specified as DATETIME prevent that the
+                // event is converted to an all-day event. Allow all-day events
+                // only if DTSTART and DTEND are specified in as DATE.
+                if(
+                	(dtStart != null && (dtStart.endsWith("T000000Z") || dtStart.endsWith("T000000.000Z"))) && 
+                	(dtEnd != null && (dtEnd.endsWith("T000000Z") || dtEnd.endsWith("T000000.000Z")))
+                ) {
+                    activity.setScheduledEnd(
+                    	new Date(activity.getScheduledEnd().getTime() - 1000L)
+                    );                	
+                }
             } 
             catch(Exception e) {
-                errors.add("DTEND (" + s + ")");
+                errors.add("DTEND (" + dtEnd + ")");
             }
         }
-        s = fields.get("DUE");
+        String s = fields.get("DUE");
         if((s != null) && (s.length() > 0)) {
             try {
                 activity.setDueBy(
@@ -1066,7 +1086,7 @@ public class ICalendar extends AbstractImpl {
         s = fields.get("SUMMARY");
         if((s != null) && (s.length() > 0)) {
             int posComment = s.indexOf(LINE_COMMENT_INDICATOR);
-            String name =  posComment > 0 ? 
+            String name =  posComment >= 0 ? 
                 s.substring(0, posComment) : 
                 s;
             name = this.fromICalString(name);
@@ -1078,6 +1098,10 @@ public class ICalendar extends AbstractImpl {
         }
         s = fields.get("DESCRIPTION");
         if((s != null) && (s.length() > 0)) {
+            int posComment = s.indexOf(LINE_COMMENT_INDICATOR);
+            s =  posComment >= 0 ? 
+                s.substring(0, posComment) : 
+                s;        	
             String temp = "";
             int pos = 0;
             while((pos = s.indexOf("\\n")) >= 0) {
@@ -1232,6 +1256,265 @@ public class ICalendar extends AbstractImpl {
         return activity;
     }
 
+    //-------------------------------------------------------------------------
+    public boolean putICal(
+    	BufferedReader reader,
+    	ActivitiesHelper activitiesHelper,
+    	boolean allowCreation
+    ) throws ServiceException {    
+    	PersistenceManager pm = activitiesHelper.getPersistenceManager();
+    	boolean created = false;
+    	String l;
+        try {
+	        while((l = reader.readLine()) != null) {
+	            boolean isEvent = l.startsWith("BEGIN:VEVENT");
+	            boolean isTodo = l.startsWith("BEGIN:VTODO");
+	            if(isEvent || isTodo) {
+	                StringBuilder calendar = new StringBuilder();
+	                calendar.append("BEGIN:VCALENDAR\n");
+	                calendar.append("VERSION:2.0\n");
+	                calendar.append("PRODID:-" + ICalendar.PROD_ID + "\n");
+	                calendar.append(
+	                    isEvent ? 
+	                        new StringBuilder("BEGIN:VEVENT\n") : 
+	                        new StringBuilder("BEGIN:VTODO\n")
+	                );
+	                String uid = null;
+	                boolean isAlarm = false;
+	                while((l = reader.readLine()) != null) {
+	                    if(l.startsWith("BEGIN:VALARM")) {
+	                    	isAlarm = true;
+	                    }
+	                	if(!isAlarm) {
+	                		calendar.append(l).append("\n");
+	                	}
+	                    if(l.startsWith("UID:")) {
+	                        uid = l.substring(4);
+	                    }
+	                    else if(l.startsWith("END:VALARM")) {
+	                    	isAlarm = false;
+	                    }
+	                    else if(l.startsWith("END:VEVENT") || l.startsWith("END:VTODO")) {
+	                        break;
+	                    }
+	                }
+	                calendar.append("END:VCALENDAR\n");
+	                SysLog.trace("VCALENDAR", calendar);
+	                if(uid != null) {
+                        // Calendar contains guard VEVENT. Allow creation of new activities
+                        if(uid.equals(activitiesHelper.getFilteredActivitiesParentId())) {
+                            allowCreation = true;
+                        }                        
+                        else {	                	
+		                	SysLog.detail("Lookup activity", uid);
+		                    Activity activity = Activities.getInstance().findActivity(
+		                        pm,
+		                        activitiesHelper, 
+		                        uid
+		                    );
+		                    StringBuilder dummy = new StringBuilder();
+		                    Map<String,String> newICal = new HashMap<String,String>();
+		                    try {
+		                    	newICal = ICalendar.getInstance().parseICal(
+		                            new BufferedReader(new StringReader(calendar.toString())),
+		                            dummy 
+		                        );
+		                    } catch(Exception e) {}
+		                    newICal.remove("LAST-MODIFIED");
+		                    newICal.remove("DTSTAMP");                               
+		                    newICal.remove("CREATED");                               
+		                    dummy.setLength(0);
+		                    Map<String,String> oldICal = null;
+		                    if(activity != null) {
+		                    	try {
+		                            oldICal = ICalendar.getInstance().parseICal(
+		                                new BufferedReader(new StringReader(activity.getIcal())),
+		                                dummy
+		                            );
+		                    	} 
+		                    	catch(Exception e) {}
+		                        oldICal.remove("LAST-MODIFIED");
+		                        oldICal.remove("DTSTAMP");                                   
+		                        oldICal.remove("CREATED");                                   
+		                        oldICal.keySet().retainAll(newICal.keySet());
+		                    }
+		                    ActivityGroup activityGroup = activitiesHelper.getActivityGroup();  
+		                    boolean disabledIsModified = activity == null ?
+		                    	false : 
+		                    	!Utils.areEqual(
+		                    		activity.isDisabled(), 
+		                    		Boolean.valueOf(activitiesHelper.isDisabledFilter()
+		                    	)
+                            );
+		                    // Update existing activity
+		                    if(
+		                        (activity != null) &&
+		                        (!newICal.equals(oldICal) || disabledIsModified)
+		                    ) {
+		                        try {
+		                        	if(!newICal.equals(oldICal)) {
+			                            pm.currentTransaction().begin();
+			                            ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
+			                                calendar.toString().getBytes("UTF-8"), 
+			                                ICalendar.MIME_TYPE, 
+			                                "import.ics", 
+			                                (short)0
+			                            );
+			                            activity.importItem(importItemParams);
+			                            pm.currentTransaction().commit();
+			                            pm.refresh(activity);
+		                        	}
+		                        	if(disabledIsModified) {
+			                            pm.currentTransaction().begin();
+			                            // Handle as creation if activity is moved from folder non-disabled to disabled or vice-versa
+			                            created = true;
+			                            activity.setDisabled(
+			                                Boolean.valueOf(activitiesHelper.isDisabledFilter())
+			                            );
+			                            pm.currentTransaction().commit();
+		                        	}
+		                        }
+		                        catch(Exception e) {
+		                        	new ServiceException(e).log();
+		                            try {
+		                                pm.currentTransaction().rollback();
+		                            } 
+		                            catch(Exception e0) {}                                    
+		                        }
+		                    }
+		                    // Create new activity
+		                    else if(
+                                allowCreation && 		                    	
+		                        (activity == null) &&
+		                        (activityGroup != null)
+		                    ) {
+		                        Collection<ActivityCreator> activityCreators = activityGroup.getActivityCreator();
+		                        // Priority 1
+		                        ActivityCreator activityCreator = Activities.getInstance().findActivityCreator(
+		                            activityCreators,
+		                            isTodo ? 
+		                                Activities.ACTIVITY_CLASS_TASK : 
+		                                isEvent ? 
+		                                    Activities.ACTIVITY_CLASS_MEETING : 
+		                                    Activities.ACTIVITY_CLASS_INCIDENT
+		                        );
+		                        // Priority 2
+		                        if(activityCreator == null) {
+		                            activityCreator = Activities.getInstance().findActivityCreator(
+		                                activityCreators,
+		                                isTodo ? 
+		                                    Activities.ACTIVITY_CLASS_MEETING : 
+		                                    isEvent ? 
+		                                        Activities.ACTIVITY_CLASS_INCIDENT : 
+		                                        Activities.ACTIVITY_CLASS_INCIDENT
+		                            );                                    
+		                        }
+		                        // Priority 3
+		                        if(activityCreator == null) {
+		                            activityCreator = Activities.getInstance().findActivityCreator(
+		                                activityCreators,
+		                                isTodo ? 
+		                                    Activities.ACTIVITY_CLASS_INCIDENT : 
+		                                    isEvent ? 
+		                                        Activities.ACTIVITY_CLASS_INCIDENT : 
+		                                        Activities.ACTIVITY_CLASS_INCIDENT
+		                            );                                    
+		                        }
+		                        if(activityCreator == null) {
+		                            activityCreator = activitiesHelper.getActivityGroup().getDefaultCreator();
+		                        }
+		                        if(activityCreator != null) {
+		                            try {
+		                                String name = "NA";
+		                                int posSummary;
+		                                if((posSummary = calendar.indexOf("SUMMARY:")) > 0) {
+		                                    if(calendar.indexOf("\n", posSummary) > 0) {
+		                                        name = calendar.substring(posSummary + 8, calendar.indexOf("\n", posSummary));
+		                                    }
+		                                }
+		                                pm.currentTransaction().begin();
+		                                NewActivityParams newActivityParams = Utils.getActivityPackage(pm).createNewActivityParams(
+		                                    null, // description
+		                                    null, // detailedDescription
+		                                    null, // dueBy
+		                                    isEvent ? 
+		                                        ICalendar.ICAL_TYPE_VEVENT : 
+		                                        isTodo ? 
+		                                            ICalendar.ICAL_TYPE_VTODO : 
+		                                            ICalendar.ICAL_TYPE_NA,
+		                                    name, // name
+		                                    (short)0, // priority
+		                                    null, // reportingContact
+		                                    null, // scheduledEnd
+		                                    null // scheduledStart
+		                                );
+		                                NewActivityResult result = activityCreator.newActivity(newActivityParams);
+		                                pm.currentTransaction().commit();
+		                                try {
+		                                    activity = (Activity)pm.getObjectById(result.getActivity().refGetPath());
+		                                    pm.currentTransaction().begin();
+		                                    ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
+		                                        calendar.toString().getBytes("UTF-8"), 
+		                                        ICalendar.MIME_TYPE, 
+		                                        "import.ics", 
+		                                        (short)0
+		                                    );
+		                                    activity.importItem(importItemParams);
+		                                    pm.currentTransaction().commit();
+		                                    pm.refresh(activity);
+		                                    if(
+		                                        activitiesHelper.isDisabledFilter() &&
+		                                        ((activity.isDisabled() == null) || !activity.isDisabled().booleanValue())
+		                                    ) {
+		                                        pm.currentTransaction().begin();
+		                                        activity.setDisabled(Boolean.TRUE);
+		                                        pm.currentTransaction().commit();
+		                                    }
+		                                    created = true;
+		                                }
+		                                catch(Exception e) {
+		                                	SysLog.warning("Error importing calendar. Reason is", new String[]{calendar.toString(), e.getMessage()});
+		                                    new ServiceException(e).log();
+		                                    try {
+		                                        pm.currentTransaction().rollback();
+		                                    } 
+		                                    catch(Exception e0) {}
+		                                }
+		                            }
+		                            catch(Exception e) {
+		                            	SysLog.warning("Can not create activity. Reason is", e.getMessage());
+		                                new ServiceException(e).log();
+		                                try {
+		                                    pm.currentTransaction().rollback();
+		                                } 
+		                                catch(Exception e0) {}
+		                            }
+		                        }
+		                        else {
+		                        	SysLog.detail("Skipping calendar. No activity creator found", calendar); 
+		                        }
+		                    }                            
+		                    else {
+		                    	SysLog.detail(
+		                            "Skipping ", 
+		                            new String[]{
+		                                "UID: " + uid, 
+		                                "Activity.number: " + (activity == null ? null : activity.refMofId()),
+		                                "Activity.modifiedAt:" + (activity == null ? null : activity.getModifiedAt())
+		                            }
+		                        );
+		                    }
+                        }
+	                }
+	            }    	
+	        }
+        }
+        catch (IOException e) {
+        	throw new ServiceException(e);
+        }       
+        return created;
+    }
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

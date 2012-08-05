@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeMeeting" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="partytypeMeeting" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item>NA</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="set">
                           <_object>
                             <shortText>
                               <_item>参加者 (必須)</_item>
@@ -37,7 +37,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
                           <_object>
                             <shortText>
                               <_item>参加者(オプション)</_item>
@@ -48,7 +48,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
                           <_object>
                             <shortText>
                               <_item>モデレーター</_item>
@@ -59,7 +59,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="440" _operation="set">
                           <_object>
                             <shortText>
                               <_item>議事録担当</_item>
@@ -70,7 +70,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="set">
                           <_object>
                             <shortText>
                               <_item>議長</_item>
@@ -81,7 +81,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="999" _operation="set">
                           <_object>
                             <shortText>
                               <_item>その他</_item>

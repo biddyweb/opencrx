@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: DerivedReferences.java,v 1.57 2009/06/13 18:47:42 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: DerivedReferences.java,v 1.58 2009/08/19 14:34:28 wfro Exp $
  * Description: DerivedReferences
- * Revision:    $Revision: 1.57 $
+ * Revision:    $Revision: 1.58 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/13 18:47:42 $
+ * Date:        $Date: 2009/08/19 14:34:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 

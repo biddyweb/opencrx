@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -157,7 +157,7 @@
 													<_object>
 														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
 														<featureName>description</featureName>
-														<spanRow>6</spanRow>																												
+														<spanRow>3</spanRow>																												
 														<order>100</order>														
 													</_object>
 													<_content />

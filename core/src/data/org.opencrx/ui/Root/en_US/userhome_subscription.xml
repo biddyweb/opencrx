@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -153,7 +153,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName0">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #0</_item>
 											</toolTip>
@@ -171,7 +171,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName1">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #1</_item>
 											</toolTip>
@@ -189,7 +189,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName2">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #2</_item>
 											</toolTip>
@@ -207,7 +207,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName3">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #3</_item>
 											</toolTip>
@@ -225,7 +225,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName4">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #4</_item>
 											</toolTip>
@@ -243,13 +243,13 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue0">
 										<_object>
 									    <columnBreak>true</columnBreak>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 									    <active>true</active>
 											<toolTip>
-												<_item>Value of filter #0</_item>
+												<_item>Values of filter #0</_item>
 											</toolTip>
 											<label>
-												<_item>Value of filter #0</_item>
+												<_item>Values of filter #0</_item>
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>
@@ -267,12 +267,12 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue1">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
-												<_item>Value of filter #1</_item>
+												<_item>Values of filter #1</_item>
 											</toolTip>
 											<label>
-												<_item>Value of filter #1</_item>
+												<_item>Values of filter #1</_item>
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>
@@ -290,12 +290,12 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue2">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
-												<_item>Value of filter #2</_item>
+												<_item>Values of filter #2</_item>
 											</toolTip>
 											<label>
-												<_item>Value of filter #2</_item>
+												<_item>Values of filter #2</_item>
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>
@@ -313,12 +313,12 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue3">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
-												<_item>Value of filter #3</_item>
+												<_item>Values of filter #3</_item>
 											</toolTip>
 											<label>
-												<_item>Value of filter #3</_item>
+												<_item>Values of filter #3</_item>
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>
@@ -336,12 +336,12 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue4">
 										<_object>
 									    <active>true</active>
-                       <spanRow>5</spanRow>
+                       <spanRow>4</spanRow>
 											<toolTip>
-												<_item>Value of filter #4</_item>
+												<_item>Values of filter #4</_item>
 											</toolTip>
 											<label>
-												<_item>Value of filter #4</_item>
+												<_item>Values of filter #4</_item>
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>

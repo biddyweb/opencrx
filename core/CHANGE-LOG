@@ -5,7 +5,223 @@
                     =====================================
 
 
+==============================================================================
+Version 2.5.3                                                       2009-10-16
+==============================================================================
 
+1.    NEW FEATURES
+            
+      CR20018858
+      Portal: DashboardControl. DashboardControl and wizard which 
+      allows to manage dashlets.             
+            
+      CR10008432
+      Add GUI mode which is optimized for mobile browsers. Currently tested
+      and supported is Safari for iPhone and desktop browsers.
+      
+      CR10008878
+      EMailRecipientDataBinding. Data binding to manage recipients of EMail activity.
+      Here is a sample customizing:
+      
+		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:EMail:to0">
+		      <_object>
+			<type>org:opencrx:kernel:account1:EMailAddress</type>
+			<multiplicity>0..1</multiplicity>
+			<changeable>true</changeable>
+		      </_object>
+		      <_content/>
+		</org.openmdx.ui1.StructuralFeatureDefinition>
+		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:EMail:to1">
+		      <_object>
+			<type>org:opencrx:kernel:account1:EMailAddress</type>
+			<multiplicity>0..1</multiplicity>
+			<changeable>true</changeable>
+		      </_object>
+		      <_content/>
+		</org.openmdx.ui1.StructuralFeatureDefinition>
+		
+		...
+		
+		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to0">
+		    <_object>
+			<dataBindingName>org.opencrx.kernel.portal.EMailRecipientDataBinding?index=0;partyType=220</dataBindingName>
+			<active>true</active>
+			<filterable>false</filterable>
+			<toolTip>
+			  <_item>TO</_item>
+			</toolTip>
+			<label>
+			  <_item>TO</_item>
+			</label>
+			<order>
+			  <_item>0</_item>
+			  <_item>0</_item>
+			  <_item>80</_item>
+			</order>
+		    </_object>
+		<_content/>
+		</org.openmdx.ui1.ElementDefinition>
+		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to1">
+		    <_object>
+			<dataBindingName>org.opencrx.kernel.portal.EMailRecipientDataBinding?index=1;partyType=220</dataBindingName>
+			<active>true</active>
+			<filterable>false</filterable>
+			<toolTip>
+			  <_item>TO</_item>
+			</toolTip>
+			<label>
+			  <_item>TO</_item>
+			</label>
+			<order>
+			  <_item>0</_item>
+			  <_item>0</_item>
+			  <_item>81</_item>
+			</order>
+		    </_object>
+		<_content/>
+		</org.openmdx.ui1.ElementDefinition>  
+		       
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008870
+      The schema paths in the ui and code files have to be changed:
+      * xri:+resource/org/openmdx/ui1/xmi/ui1.xsd --> xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd
+      * xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd --> xri://+resource/org/opencrx/kernel/code1/xmi/code1.xsd
+      Files in custom projects have to be adapted correspondingly. The following commands do the job:
+	  * grep -rl 'xri:+resource/org/openmdx/ui1/xmi/ui1.xsd' . | xargs sed -i -e 's/xri:+resource\/org\/openmdx\/ui1\/xmi\/ui1.xsd/xri:\/\/+resource\/org\/openmdx\/ui1\/xmi1\/ui1.xsd/'
+      * grep -rl 'xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd' . | xargs sed -i -e 's/xri:+resource\/org\/opencrx\/kernel\/code1\/xmi\/code1.xsd/xri:\/\/+resource\/org\/opencrx\/kernel\/code1\/xmi1\/code1.xsd/      
+      Also the _operation tag in the code files have to be fixed:
+      grep -rl '_operation=\"create\"' . | xargs sed -i -e 's/_operation=\"create\"/_operation=\"set\"/'
+             
+2.1.  FIXED BUGS
+      
+2.2   REMOVED FEATURES
+      none
+      
+==============================================================================
+Version 2.5.2                                                       2009-09-14
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10008773
+      PortalExtension: queries for customized feature definitions. The method
+      PortalExtension_1_0.getQuery() allows to specify user-defined queries.
+      The method takes as parameter the field and the filter value. Identity
+      columns for example require user-defined queries. 
+      
+      CR10008709
+      Favorites with xri of current object. Favorites which are invoked on the 
+      current object can be defined as follows:
+      1. Set favorite's reference to null. The favorite's reference is then
+         set to current object.
+      2. The macro $XRI is replaced with the XRI of the currently selected object.
+         Example:
+         window.location.href='./wizards/en_US/CreateWorkAndExpenseRecord.jsp?xri=$XRI'; 
+      
+      CR10008577
+      CalDAV servlet added to EAR. 
+      
+      With iPhone 3 connect as follows:
+      1) With standard GUI go to user home of user {login} and create a calendar 
+         profile {P}. 
+      2) Attach one are more calendar feeds pointing to an activity group or 
+         activity filter. Set active to true and background color to some value, 
+         e.g. #112233.
+      3) On iPhone subscribe to calendar with 
+         url http://host:port/opencrx-caldav-CRX/CRX/Standard/user/{login}/profile/{P}      
+                  
+      With Sunbird connect as follows:
+      1) Subscribe to calendar with URL 
+         http://host:port/opencrx-caldav-CRX/CRX/Standard/tracker/{tracker name}[/filter/{filter name}]
+      
+      CR10007844
+      Portal: support for Wiki tags. Text fields are rendered client-side using
+      Wiky. For more information about features and supported Wiki tags
+      see http://goessner.net/articles/wiky/. 
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008803: isAllDayEvent
+      isAllDayEvent is currently modeled as persistent attribute.
+      * isAllDayEvent should be derived. It is true, if scheduledStart and scheduledEnd do not 
+        specify a time, i.e. 00:00:00.000
+      * Add operation markAsAllDayEvent() which resets the time of scheduledStart and scheduledEnd.
+            
+      CR10008789: Deprecate EJBs
+      Deprecate Kernel and Security Dataprovider EJBs in favor of REST plug-ins.
+        
+      CR10008788: Rename ContractPosition
+      Rename the abstract class ContractPosition to AbstractContractPosition.
+      
+                  
+2.1.  FIXED BUGS
+      
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
+Version 2.5.1                                                       2009-07-22
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10008599
+      Birthday calendars. Generation of birthday calendars added to ICal servlet. 
+      Sample URL is: http://localhost:8080/opencrx-ical-CRX/bdays?id=CRX/Standard/filter/Accounts~all&alarm=true&max=100
+      Parameters:
+      * id: account filter.
+      * alarm: true|false. Generate alarm tag. Default is false.
+      * max: Generate events for max accounts. Default is 500.
+      * icalType: VTODO|VEVENT. Default is VEVENT.
+      * year: Generate events for years [year-1, year, year+1]. Default is current year. 
+      * categories: CATEGORIES attribute. Default is Birthday
+      * summaryPrefix: Prefix for attribute SUMMARY. Default is ""
+            
+      CR10008602
+      Redesign Grid Follow-Ups. Add FormattedFollowUpDataBinding which formats
+      the fields transition, assignedTo, createdAt, modifiedAt of an ActivityFollowUp. 
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008700
+      Database: improve case-insensitive search. UPPER(column) LIKE UPPER(?) 
+      does not work for all databases. 
+            
+      CR10008581
+      Upgrade Timeline to version 2.3.0.
+            
+2.1.  FIXED BUGS
+      
+      SF2808264
+      Setup-Problem with 2.5.0 on Tomcat and DB2. OpenCrxSecurity_1 plugin fixed. This
+      fixes the following reported errors:
+      1) User creation error
+      2) Start openCRX with empty database
+      3) Change password
+            
+      CR10008615
+      vCard Importer appends postalStreet. Importing the same vCard multiple 
+      times leads to unwanted extra lines in postalStreet; it seems that the 
+      importer just appends the imported lines to postalStreet instead of 
+      replacing existing lines with the imported lines. 
+      
+      CR10008609
+      ui/code-merge/split broken. Parameter sourceDir ignored/not correctly injected? 
+            
+      CR10008595
+      pg script dbcreate-table.sql of v2.5.0 is no good. Use TIMESTAMP WITH TIME ZONE 
+      instead of ABSTIME. 
+
+2.2   REMOVED FEATURES
+      none
 
 
 ==============================================================================
@@ -207,7 +423,7 @@ Version 2.4.0                                                       2009-03-06
       is a sample definition:
       
 			<?xml version="1.0" encoding="UTF-8"?>
-			<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+			<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi/ui1.xsd">
 			  <_object/>
 			  <_content>
 			    <provider>

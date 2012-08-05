@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: vCard.jsp,v 1.2 2009/02/16 19:19:59 cmu Exp $
+ * Name:        $Id: vCard.jsp,v 1.7 2009/10/15 16:19:34 wfro Exp $
  * Description: create vCard(s)
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/16 19:19:59 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,7 +74,7 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*
+org.openmdx.kernel.log.*
 " %>
 <%!
 
@@ -103,26 +103,26 @@ org.openmdx.application.log.*
 
 %>
 <%
-   request.setCharacterEncoding("UTF-8");
-   ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-   ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-   String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-     String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-   if(objectXri == null || app == null) {
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+ 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
       response.sendRedirect(
          request.getContextPath() + "/" + WebKeys.SERVLET_NAME
       );
       return;
-   }
-   Texts_1_0 texts = app.getTexts();
-   javax.jdo.PersistenceManager pm = app.getPmData();
+	}
+	Texts_1_0 texts = app.getTexts();
+	javax.jdo.PersistenceManager pm = app.getPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 
 <head>
-  <title><%= app.getApplicationName() %> - vCard></title>
+  <title><%= app.getApplicationName() %> - vCard</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="UNUSEDlabel" content="vCard">
   <meta name="UNUSEDtoolTip" content="vCard">
@@ -187,7 +187,7 @@ org.openmdx.application.log.*
 
           <div id="content-wrap">
              <div id="content" style="padding:100px 0.5em 0px 0.5em;">
-              <form name="vCard" accept-charset="UTF-8" method="POST" action=<%= FORM_ACTION %>>
+              <form name="vCard" accept-charset="UTF-8" method="POST" action="<%= FORM_ACTION %>">
                 <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
                   <h1>vCard - <%= (new ObjectReference(obj, app)).getLabel() %></h1>
                   <div style="background-color:#FFFFBB;margin:5px 0px;padding:5px;"><i><%= (new ObjectReference(obj, app)).getTitle() %></i></div>
@@ -278,7 +278,7 @@ org.openmdx.application.log.*
           try {
             zipos.putNextEntry(new ZipEntry(filename));
             if (account.getVcard() != null) {
-              zipos.write(account.getVcard().getBytes());
+              zipos.write(account.getVcard().getBytes("UTF-8"));
             }
             zipos.closeEntry();
           }
@@ -292,7 +292,7 @@ org.openmdx.application.log.*
         } else {
           // create vCard file
           if (account.getVcard() != null) {
-            fileos.write(account.getVcard().getBytes());
+            fileos.write(account.getVcard().getBytes("UTF-8"));
           }
           fileos.flush();
           fileos.close();

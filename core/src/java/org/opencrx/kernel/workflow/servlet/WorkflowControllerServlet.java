@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.56 2009/06/09 14:10:35 wfro Exp $
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.58 2009/09/22 12:10:10 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.56 $
+ * Revision:    $Revision: 1.58 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:10:35 $
+ * Date:        $Date: 2009/09/22 12:10:10 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,11 +83,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.log.SysLog;
 
 /**
  * The WorkflowControllerServlet periodically pings the configured URLs 
@@ -163,7 +163,7 @@ public class WorkflowControllerServlet
                         URL monitoredURL = WorkflowControllerServlet.this.getWorkflowServletURL(
                             monitoredWorkflowServlet.getPath()
                         );
-                        AppLog.detail("Next execution", Arrays.asList(new Object[]{monitoredURL, monitoredWorkflowServlet.getNextExecutionAt()}));
+                        SysLog.detail("Next execution", Arrays.asList(new Object[]{monitoredURL, monitoredWorkflowServlet.getNextExecutionAt()}));
                         if(new Date().compareTo(monitoredWorkflowServlet.getNextExecutionAt()) > 0) {
                             if(monitoredURL != null) {
                                 try {
@@ -193,11 +193,11 @@ public class WorkflowControllerServlet
                 catch(Exception e) {
                     System.out.println(new Date().toString() + ": WorkflowController: catched exception (for more information see log) " + e.getMessage());
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.error(e0.getMessage(), e0.getCause());
+                    SysLog.error(e0.getMessage(), e0.getCause());
                 }
                 catch(Error e) {
                     System.out.println(new Date().toString() + ": WorkflowController: catched error (for more information see log) " + e.getMessage());
-                    AppLog.error(e.getMessage(), e.getCause());                    
+                    SysLog.error(e.getMessage(), e.getCause());                    
                 }
             }            
         }
@@ -408,8 +408,8 @@ public class WorkflowControllerServlet
         
         // Create a path to be monitored from each configured path and provider/segment
         try {
-            this.workflowServlets = new ArrayList<WorkflowServletConfig>();
-            this.monitoredWorkflowServlets = new ArrayList<WorkflowServletConfig>();
+        	List<WorkflowServletConfig> workflowServlets = new ArrayList<WorkflowServletConfig>();
+        	List<WorkflowServletConfig> monitoredWorkflowServlets = new ArrayList<WorkflowServletConfig>();
             for(Iterator<String> j = segmentNames.iterator(); j.hasNext(); ) {
                 String segmentName = j.next();
                 int ii = 0;
@@ -420,26 +420,28 @@ public class WorkflowControllerServlet
                     WorkflowServletConfig servletConfig =
                         new WorkflowServletConfig(
                             path + "/execute?provider=" + providerName + "&segment=" + segmentName,
-                            autostart != null
-                                ? Boolean.valueOf(autostart).booleanValue()
-                                : false,
-                            pingrate != null
-                                ? new PingRate(Long.valueOf(pingrate).longValue())
-                                : new PingRate(1L)
+                            autostart != null ? 
+                            	Boolean.valueOf(autostart).booleanValue() : 
+                            	false,
+                            pingrate != null ? 
+                            	new PingRate(Long.valueOf(pingrate).longValue()) : 
+                            	new PingRate(1L)
                         );                        
-                    this.workflowServlets.add(
+                    workflowServlets.add(
                         servletConfig
                     );
                     if(servletConfig.isAutostart()) {
-                        this.monitoredWorkflowServlets.add(servletConfig);
+                        monitoredWorkflowServlets.add(servletConfig);
                     }
                     ii++;
                 }
             }
+            this.workflowServlets = workflowServlets;
+            this.monitoredWorkflowServlets = monitoredWorkflowServlets;
             // Start monitor
             new Thread(
                 new WorkflowMonitor(
-                    this.monitoredWorkflowServlets
+                    monitoredWorkflowServlets
                 )
             ).start();
         }

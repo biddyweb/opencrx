@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -99,6 +99,173 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to0">
+                    <_object>
+                      <toolTip>
+                        <_item>AN</_item>
+                      </toolTip>
+                      <label>
+                        <_item>AN</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to1">
+                    <_object>
+                      <toolTip>
+                        <_item>AN</_item>
+                      </toolTip>
+                      <label>
+                        <_item>AN</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to2">
+                    <_object>
+                      <toolTip>
+                        <_item>AN</_item>
+                      </toolTip>
+                      <label>
+                        <_item>AN</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to3">
+                    <_object>
+                      <toolTip>
+                        <_item>AN</_item>
+                      </toolTip>
+                      <label>
+                        <_item>AN</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:to4">
+                    <_object>
+                      <toolTip>
+                        <_item>AN</_item>
+                      </toolTip>
+                      <label>
+                        <_item>AN</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:cc0">
+                    <_object>
+                      <toolTip>
+                        <_item>CC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>CC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:cc1">
+                    <_object>
+                      <toolTip>
+                        <_item>CC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>CC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:cc2">
+                    <_object>
+                      <toolTip>
+                        <_item>CC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>CC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:cc3">
+                    <_object>
+                      <toolTip>
+                        <_item>CC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>CC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:cc4">
+                    <_object>
+                      <toolTip>
+                        <_item>CC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>CC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:bcc0">
+                    <_object>
+                      <toolTip>
+                        <_item>BCC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>BCC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:bcc1">
+                    <_object>
+                      <toolTip>
+                        <_item>BCC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>BCC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:bcc2">
+                    <_object>
+                      <toolTip>
+                        <_item>BCC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>BCC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:bcc3">
+                    <_object>
+                      <toolTip>
+                        <_item>BCC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>BCC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:bcc4">
+                    <_object>
+                      <toolTip>
+                        <_item>BCC</_item>
+                      </toolTip>
+                      <label>
+                        <_item>BCC</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:messageSubject" _operation="create">
                     <_object>
                       <label>

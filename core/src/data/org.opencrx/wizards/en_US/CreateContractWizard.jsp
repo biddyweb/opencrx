@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateContractWizard.jsp,v 1.19 2009/06/09 14:18:15 wfro Exp $
+ * Name:        $Id: CreateContractWizard.jsp,v 1.24 2009/10/15 16:19:34 wfro Exp $
  * Description: CreateContractWizard
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:18:15 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,8 +73,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.application.log.*
+org.openmdx.base.naming.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	String servletPath = "." + request.getServletPath();
@@ -83,7 +82,7 @@ org.openmdx.application.log.*
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getViews().isEmpty()) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -151,7 +150,7 @@ org.openmdx.application.log.*
 	<meta name="order" content="org:opencrx:kernel:contract1:Segment:createQuote">
 	<meta name="order" content="org:opencrx:kernel:contract1:Segment:createSalesOrder">
 	<meta name="order" content="org:opencrx:kernel:contract1:Segment:createInvoice">
--->	
+-->
 <%
 	String providerName = obj.refGetPath().get(2);
 	String segmentName = obj.refGetPath().get(4);
@@ -328,8 +327,8 @@ org.openmdx.application.log.*
 	}
 	if(actionAddPosition) {
 	    org.opencrx.kernel.product1.jmi1.Product product = (org.opencrx.kernel.product1.jmi1.Product)formValues.get("org:opencrx:kernel:product1:ProductDescriptor:product");
-	    java.math.BigDecimal quantity = (java.math.BigDecimal)formValues.get("org:opencrx:kernel:contract1:ContractPosition:quantity");
-	    String positionName = (String)formValues.get("org:opencrx:kernel:contract1:ContractPosition:name");
+	    java.math.BigDecimal quantity = (java.math.BigDecimal)formValues.get("org:opencrx:kernel:contract1:AbstractContractPosition:quantity");
+	    String positionName = (String)formValues.get("org:opencrx:kernel:contract1:AbstractContractPosition:name");
 	    if(
 	        (product != null) &&
 	        (quantity != null)
@@ -416,7 +415,7 @@ org.openmdx.application.log.*
 	        (contractNumber != null) && (contractNumber.length() > 0) &&
 	        (account != null) &&
 	        (!postalAddressLineShipping.isEmpty() || !postalStreetShipping.isEmpty()) &&
-	        (!postalAddressLineBilling.isEmpty() || !postalStreetBilling.isEmpty())	        
+	        (!postalAddressLineBilling.isEmpty() || !postalStreetBilling.isEmpty())
 	    ) {
 		    org.opencrx.kernel.contract1.jmi1.AbstractContract contract = null;
 		    if(actionCreateOpportunity) {
@@ -542,7 +541,7 @@ org.openmdx.application.log.*
 					    org.opencrx.kernel.contract1.jmi1.CreatePositionResult result = contract.createPosition(params);
 					    pm.currentTransaction().commit();
 					    if(pricePerUnit != null) {
-						    org.opencrx.kernel.contract1.jmi1.ContractPosition position = result.getPosition();
+						    org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = result.getPosition();
 						    pm.refresh(position);
 						    pm.currentTransaction().begin();
 							position.setPricePerUnit(app.parseNumber(pricePerUnit));
@@ -574,7 +573,7 @@ org.openmdx.application.log.*
 		app,
 		obj
 	);
-	HtmlPage p = HtmlPageFactory.openPage(
+	ViewPort p = ViewPortFactory.openPage(
 		view,
 		request,
 		out
@@ -605,11 +604,11 @@ org.openmdx.application.log.*
 						<table class="gridTableFull">
 							<tr class="gridTableHeaderFull">
 								<td />
-								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractPosition", "quantity", app.getCurrentLocaleAsIndex()) %></td>
+								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:AbstractContractPosition", "quantity", app.getCurrentLocaleAsIndex()) %></td>
 								<td><%= view.getFieldLabel("org:opencrx:kernel:product1:ProductDescriptor", "product", app.getCurrentLocaleAsIndex()) %></td>
-								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractPosition", "name", app.getCurrentLocaleAsIndex()) %></td>
-								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractPosition", "pricePerUnit", app.getCurrentLocaleAsIndex()) %></td>
-								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractPosition", "baseAmount", app.getCurrentLocaleAsIndex()) %></td>
+								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:AbstractContractPosition", "name", app.getCurrentLocaleAsIndex()) %></td>
+								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:AbstractContractPosition", "pricePerUnit", app.getCurrentLocaleAsIndex()) %></td>
+								<td><%= view.getFieldLabel("org:opencrx:kernel:contract1:AbstractContractPosition", "baseAmount", app.getCurrentLocaleAsIndex()) %></td>
 								<td class="addon"/>
 							</tr>
 <%
@@ -697,8 +696,8 @@ org.openmdx.application.log.*
 			}
 		});
 		Event.stop(event);
-	});		
-</script>				
+	});
+</script>
 <%
 p.close(false);
 %>

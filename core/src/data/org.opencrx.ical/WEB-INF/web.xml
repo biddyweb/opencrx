@@ -15,17 +15,32 @@
 		<url-pattern>/ical</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>ICalServlet</servlet-name>
+		<url-pattern>/activities</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ICalServlet</servlet-name>
+		<url-pattern>/bdays</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>FreeBusyServlet</servlet-name>
 		<url-pattern>/freebusy</url-pattern>
 	</servlet-mapping>
 	<session-config>
 		<session-timeout>1</session-timeout>
 	</session-config>
+	<resource-ref>
+		<res-ref-name>jdbc_opencrx_CRX</res-ref-name>
+		<res-type>javax.sql.DataSource</res-type>
+		<res-auth>Container</res-auth>
+	</resource-ref>		
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>ical</web-resource-name>
-			<description>ical</description>
+			<web-resource-name>secure</web-resource-name>
+			<description>secure</description>
 			<url-pattern>/ical</url-pattern>
+			<url-pattern>/activities</url-pattern>
+			<url-pattern>/bdays</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>
@@ -44,11 +59,4 @@
 	<security-role>
 		<role-name>OpenCrxAdministrator</role-name>
 	</security-role>			
-	<ejb-local-ref id="ejb_EntityManagerFactory">
-		<ejb-ref-name>ejb/EntityManagerFactory</ejb-ref-name>
-		<ejb-ref-type>Session</ejb-ref-type>
-		<local-home>org.openmdx.application.persistence.ejb.EntityManagerFactory_2LocalHome</local-home>
-		<local>org.openmdx.application.persistence.ejb.EntityManagerFactory_2_0Local</local>
-		<ejb-link>gateway.jar#opencrx_core_CRX_EntityManagerFactory</ejb-link>
-	</ejb-local-ref>
 </web-app>

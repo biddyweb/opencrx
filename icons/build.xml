@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.2 2009/06/12 13:03:46 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.6 2009/09/20 22:02:08 wfro Exp $
  * = Description: openCRX/icons build.xml
- * = Revision:    $Revision: 1.2 $
- * = Date:        $Date: 2009/06/12 13:03:46 $
+ * = Revision:    $Revision: 1.6 $
+ * = Date:        $Date: 2009/09/20 22:02:08 $
  * = Copyright:   (c) 2003-2009 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -62,7 +62,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.5.0"/>
+	<property name="openmdx.version" value="2.5.2+"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<mkdir dir="src/java"/>
@@ -109,6 +109,7 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityCreationAction.gif"/>
 	  <copy file="src/data/images/lib1/CreateActivities.gif" tofile="${build.dir}/data/images/lib1/ActivityCreator.gif"/>
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ActivityFilter.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterCalendarFeed.gif"/>
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterGlobal.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ActivityFilterGroup.gif"/>
 	  <copy file="src/data/images/lib1/Answer.gif" tofile="${build.dir}/data/images/lib1/ActivityFollowUp.gif"/>
@@ -149,6 +150,7 @@
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ArtifactDependency.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Asset.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AssetContext.gif"/>
+	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/AssignedToFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Association.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AssociationEnd.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Attribute.gif"/>
@@ -200,7 +202,7 @@
 	  <copy file="src/data/images/lib1/CustomQueries.gif" tofile="${build.dir}/data/images/lib1/ContractFilterGlobal.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ContractLinkFrom.gif"/>
 	  <copy file="src/data/images/lib1/Link.gif" tofile="${build.dir}/data/images/lib1/ContractLinkTo.gif"/>
-	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ContractPosition.gif"/>
+	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/AbstractContractPosition.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ContractPriorityFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ContractQueryFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ContractStateFilterProperty.gif"/>
@@ -405,7 +407,7 @@
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/SalesRepFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/TaxRates.gif" tofile="${build.dir}/data/images/lib1/SalesTaxType.gif"/>
 	  <copy file="src/data/images/lib1/Appointment.gif" tofile="${build.dir}/data/images/lib1/SalesVisit.gif"/>
-	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/ScheduledEndFilterProperty.gif"/>
+	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ScheduledEndFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Property.gif" tofile="${build.dir}/data/images/lib1/ScheduledStartFilterProperty.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/SearchIndexEntry.gif"/>
 	  <copy file="src/data/images/lib1/Default.gif" tofile="${build.dir}/data/images/lib1/Segment.gif"/>
@@ -490,6 +492,7 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityCreationAction.gif"/>
 	  <copy file="src/data/images/lib2/CreateActivities.gif" tofile="${build.dir}/data/images/lib2/ActivityCreator.gif"/>
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ActivityFilter.gif"/>
+	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterCalendarFeed.gif"/>
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterGlobal.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ActivityFilterGroup.gif"/>
 	  <copy file="src/data/images/lib2/FollowUp.gif" tofile="${build.dir}/data/images/lib2/ActivityFollowUp.gif"/>
@@ -530,6 +533,7 @@
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ArtifactDependency.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Asset.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AssetContext.gif"/>
+	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/AssignedToFilterProperty.gif"/>		
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Association.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/AssociationEnd.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Attribute.gif"/>
@@ -581,7 +585,7 @@
 	  <copy file="src/data/images/lib2/CustomQueries.gif" tofile="${build.dir}/data/images/lib2/ContractFilterGlobal.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ContractLinkFrom.gif"/>
 	  <copy file="src/data/images/lib2/Link.gif" tofile="${build.dir}/data/images/lib2/ContractLinkTo.gif"/>
-	  <copy file="src/data/images/lib2/ContractPosition.gif" tofile="${build.dir}/data/images/lib2/ContractPosition.gif"/>
+	  <copy file="src/data/images/lib2/ContractPosition.gif" tofile="${build.dir}/data/images/lib2/AbstractContractPosition.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ContractPriorityFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ContractQueryFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ContractStateFilterProperty.gif"/>
@@ -786,7 +790,7 @@
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/SalesRepFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/TaxRates.gif" tofile="${build.dir}/data/images/lib2/SalesTaxType.gif"/>
 	  <copy file="src/data/images/lib2/Appointment.gif" tofile="${build.dir}/data/images/lib2/SalesVisit.gif"/>
-	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/ScheduledEndFilterProperty.gif"/>
+	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ScheduledEndFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Property.gif" tofile="${build.dir}/data/images/lib2/ScheduledStartFilterProperty.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/SearchIndexEntry.gif"/>
 	  <copy file="src/data/images/lib2/Default.gif" tofile="${build.dir}/data/images/lib2/Segment.gif"/>

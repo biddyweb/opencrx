@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VCardServlet.java,v 1.11 2009/03/08 17:04:47 wfro Exp $
+ * Name:        $Id: VCardServlet.java,v 1.14 2009/07/18 14:32:39 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:47 $
+ * Date:        $Date: 2009/07/18 14:32:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,9 +79,9 @@ import org.opencrx.kernel.utils.AccountsHelper;
 import org.opencrx.kernel.utils.ActivitiesHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.WebKeys;
 
@@ -234,39 +234,44 @@ public class VCardServlet extends HttpServlet {
                 maxAccountsValue
         ).intValue();
         // Return all accounts in VCF format
-        if(
-            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter(PARAMETER_NAME_RESOURCE)) ||
-            RESOURCE_TYPE_VCF.equals(req.getParameter(PARAMETER_NAME_TYPE))
-        ) {
-            try {
-                resp.setCharacterEncoding("UTF-8");
-                resp.setStatus(HttpServletResponse.SC_OK);
-                AccountQuery accountQuery = Utils.getAccountPackage(pm).createAccountQuery();
-                accountQuery.forAllDisabled().isFalse();
-                accountQuery.vcard().isNonNull();
-                PrintWriter p = resp.getWriter();
-                int n = 0;
-                for(Account account: accountsHelper.getFilteredAccounts(accountQuery)) {
-                    String vcard = account.getVcard();
-                    if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
-                        int start = vcard.indexOf("BEGIN:VCARD");
-                        int end = vcard.indexOf("END:VCARD");
-                        p.write(vcard.substring(start, end));
-                        if(vcard.indexOf("URL:") < 0) {
-                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getAccountUrl(req, account, false) + "\n");
-                        }                        
-                        p.write("END:VCARD\n");
-                    }
-                    n++;
-                    if(n % 50 == 0) pm.evictAll();                
-                    if(n > maxAccounts) break;
-                }
-                p.flush();
-            }
-            catch(Exception e) {
-                new ServiceException(e).log();
-                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            }
+        if(req.getRequestURI().endsWith("/vcard") || req.getRequestURI().endsWith("/accounts")) {
+        	if(
+	            RESOURCE_NAME_ACCOUNTS_VCF.equals(req.getParameter(PARAMETER_NAME_RESOURCE)) ||
+	            RESOURCE_TYPE_VCF.equals(req.getParameter(PARAMETER_NAME_TYPE))
+	        ) {
+	            try {
+	                resp.setCharacterEncoding("UTF-8");
+	                resp.setStatus(HttpServletResponse.SC_OK);
+	                AccountQuery accountQuery = Utils.getAccountPackage(pm).createAccountQuery();
+	                accountQuery.forAllDisabled().isFalse();
+	                accountQuery.vcard().isNonNull();
+	                PrintWriter p = resp.getWriter();
+	                int n = 0;
+	                for(Account account: accountsHelper.getFilteredAccounts(accountQuery)) {
+	                    String vcard = account.getVcard();
+	                    if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
+	                        int start = vcard.indexOf("BEGIN:VCARD");
+	                        int end = vcard.indexOf("END:VCARD");
+	                        p.write(vcard.substring(start, end));
+	                        if(vcard.indexOf("URL:") < 0) {
+	                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getAccountUrl(req, account, false) + "\n");
+	                        }                        
+	                        p.write("END:VCARD\n");
+	                    }
+	                    n++;
+	                    if(n % 50 == 0) pm.evictAll();                
+	                    if(n > maxAccounts) break;
+	                }
+	                p.flush();
+	            }
+	            catch(Exception e) {
+	                new ServiceException(e).log();
+	                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	            }
+        	}
+        	else {
+                super.doGet(req, resp);        		
+        	}
         }
         else {
             super.doGet(req, resp);
@@ -313,9 +318,9 @@ public class VCardServlet extends HttpServlet {
                             break;
                         }
                     }
-                    AppLog.trace("VCARD", vcard);
+                    SysLog.trace("VCARD", vcard);
                     if((uid != null) && (rev != null)) {
-                        AppLog.detail("Lookup account", uid);
+                    	SysLog.detail("Lookup account", uid);
                         Account account = this.findAccount(
                             pm,
                             accountsHelper, 
@@ -346,7 +351,7 @@ public class VCardServlet extends HttpServlet {
                             }
                         }
                         else {
-                            AppLog.detail(
+                        	SysLog.detail(
                                 "Skipping ", 
                                 new String[]{
                                     "UID: " + uid, 
@@ -358,7 +363,7 @@ public class VCardServlet extends HttpServlet {
                         }
                     }
                     else {
-                        AppLog.detail("Skipping", vcard); 
+                    	SysLog.detail("Skipping", vcard); 
                     }
                 }                    
             }
@@ -382,8 +387,6 @@ public class VCardServlet extends HttpServlet {
     protected final static String RESOURCE_TYPE_VCF = "vcf";
     protected final static String PARAMETER_NAME_TYPE = "type";
     protected final static String PARAMETER_NAME_RESOURCE = "resource";
-    
-    protected static final int MAX_ACCOUNTS = 500;
     
     protected PersistenceManagerFactory persistenceManagerFactory = null;
     protected PersistenceManager rootPm = null;

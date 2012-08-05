@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -22,6 +22,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:assignedAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アカウント割当</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アカウント割当</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:competitor" _operation="create">
                     <_object>
                       <label>
@@ -40,6 +51,28 @@
                       </label>
                       <toolTip>
                         <_item>関連アクティビティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リンク先</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リンク先</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リンク元</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リンク元</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -178,6 +211,9 @@
                       <label>
                         <_item>契約番号</_item>
                       </label>
+                      <shortLabel>
+                        <_item>コントラクト-#</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>契約番号</_item>
                       </toolTip>
@@ -209,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:activeOn" _operation="create">
                     <_object>
                       <label>
-                        <_item>有効日</_item>
+                        <_item>有効期間開始</_item>
                       </label>
                       <toolTip>
-                        <_item>有効日</_item>
+                        <_item>有効期間開始</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -393,6 +429,138 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>説明</_item>
+                      </label>
+                      <toolTip>
+                        <_item>説明</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:linkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>タイプ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>タイプ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>有効期間開始</_item>
+                      </label>
+                      <toolTip>
+                        <_item>有効期間開始</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLink:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>有効期間終了</_item>
+                      </label>
+                      <toolTip>
+                        <_item>有効期間終了</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>契約リンク先</_item>
+                      </label>
+                      <toolTip>
+                        <_item>契約リンク先</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkTo:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>リンク済契約</_item>
+                      </label>
+                      <toolTip>
+                        <_item>リンク済契約</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>契約リンク元</_item>
+                      </label>
+                      <toolTip>
+                        <_item>契約リンク元</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>契約へのリンク</_item>
+                      </label>
+                      <toolTip>
+                        <_item>契約へのリンク</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractLinkFrom:linkFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>契約からのリンク</_item>
+                      </label>
+                      <toolTip>
+                        <_item>契約からのリンク</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>アカウント割当</_item>
+                      </label>
+                      <toolTip>
+                        <_item>アカウント割当</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AccountAssignmentContract:accountRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>役割</_item>
+                      </label>
+                      <toolTip>
+                        <_item>役割</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createPosition" _operation="create">
                     <_object>
                       <label>
@@ -440,10 +608,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:uom" _operation="create">
                     <_object>
                       <label>
-                        <_item>単位</_item>
+                        <_item>単位 (数量)</_item>
                       </label>
                       <toolTip>
-                        <_item>単位</_item>
+                        <_item>単位 (数量)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -484,10 +652,21 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:priceUom" _operation="create">
                     <_object>
                       <label>
-                        <_item>単位(価格)</_item>
+                        <_item>単位 (価格)</_item>
                       </label>
                       <toolTip>
-                        <_item>単位(価格)</_item>
+                        <_item>単位 (価格)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionParams:ignoreProductConfiguration" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>製品構成を無視</_item>
+                      </label>
+                      <toolTip>
+                        <_item>製品構成を無視</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -504,72 +683,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreatePositionResult:position" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>ポジション</_item>
-                      </label>
-                      <toolTip>
-                        <_item>ポジション</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>提供製品に基づくポジション作成</_item>
-                      </label>
-                      <toolTip>
-                        <_item>提供製品に基づくポジション作成</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>入力</_item>
-                      </label>
-                      <toolTip>
-                        <_item>入力</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:quantity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>数量</_item>
-                      </label>
-                      <toolTip>
-                        <_item>数量</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionParams:offering" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>提示製品</_item>
-                      </label>
-                      <toolTip>
-                        <_item>提示製品</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:createProductOfferingPosition:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>結果</_item>
-                      </label>
-                      <toolTip>
-                        <_item>結果</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:CreateProductOfferingPositionResult:offeringPosition" _operation="create">
                     <_object>
                       <label>
                         <_item>ポジション</_item>
@@ -627,10 +740,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:removePendingInventoryBookings" _operation="create">
                     <_object>
                       <label>
-                        <_item>ペンディング在庫仕訳削除</_item>
+                        <_item>未決在庫仕訳削除</_item>
                       </label>
                       <toolTip>
-                        <_item>ペンディング在庫仕訳削除</_item>
+                        <_item>未決在庫仕訳削除在庫仕訳削除</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -750,6 +863,9 @@
                       <label>
                         <_item>ポジション額スクリプト</_item>
                       </label>
+                      <shortLabel>
+                        <_item>ポジションスクリプト</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>ポジション額スクリプト</_item>
                       </toolTip>
@@ -761,6 +877,9 @@
                       <label>
                         <_item>契約額スクリプト</_item>
                       </label>
+                      <shortLabel>
+                        <_item>契約スクリプト</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>契約額スクリプト</_item>
                       </toolTip>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.18 2009/06/01 16:56:03 wfro Exp $
+ * Name:        $Id: Importer.java,v 1.20 2009/10/14 13:43:22 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/01 16:56:03 $
+ * Date:        $Date: 2009/10/14 13:43:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,7 +56,6 @@
 package org.opencrx.kernel.backend;
 
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -70,7 +69,6 @@ import javax.resource.cci.MappedRecord;
 import org.oasisopen.cci2.QualifierType;
 import org.oasisopen.jmi1.RefContainer;
 import org.openmdx.application.dataprovider.cci.JmiHelper;
-import org.openmdx.application.dataprovider.importer.XmlImporter;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
@@ -108,12 +106,9 @@ public class Importer extends AbstractImpl {
     ) throws ServiceException {    	    	
     	PersistenceManager pm = JDOHelper.getPersistenceManager(targetSegment);
         Map<Path,MappedRecord> data = new LinkedHashMap<Path,MappedRecord>();
-        XmlImporter importer = new XmlImporter(
-            data,
-            false
-        );
-        importer.process(
-        	new InputStream[]{new ByteArrayInputStream(item)}
+        org.openmdx.application.xml.Importer.importObjects(
+        	org.openmdx.application.xml.Importer.asTarget(data),
+        	org.openmdx.application.xml.Importer.asSource(new ByteArrayInputStream(item))
         );
         // Load objects in multiple runs in order to resolve object dependencies.       
         Map<Path,RefObject> loadedObjects = new HashMap<Path,RefObject>();
@@ -138,9 +133,7 @@ public class Importer extends AbstractImpl {
                             entry,
                             existing,
                             loadedObjects, // object cache
-                            pm,
-                            true, // replace values
-                            true // remove trailing empty string
+                            null // ignorable features
                         );
                     }
                     else {
@@ -155,9 +148,7 @@ public class Importer extends AbstractImpl {
                             entry,
                             newEntry,
                             loadedObjects, // object cache
-                            pm,
-                            true, // replace values
-                            true // remove trailing empty string
+                            null
                         );
                         Path entryPath = ObjectHolder_2Facade.getPath(entry);
                         Path parentIdentity = entryPath.getParent().getParent();

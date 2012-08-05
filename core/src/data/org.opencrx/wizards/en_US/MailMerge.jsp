@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MailMerge.jsp,v 1.25 2009/06/09 14:18:15 wfro Exp $
+ * Name:        $Id: MailMerge.jsp,v 1.32 2009/10/15 16:19:34 wfro Exp $
  * Description: mail merge addresses of group's members --> RTF document
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:18:15 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -74,7 +74,7 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*
+org.openmdx.kernel.log.*
 " %>
 
 <%!
@@ -96,26 +96,26 @@ org.openmdx.application.log.*
 
 %>
 <%
-   request.setCharacterEncoding("UTF-8");
-   ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
-   ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-   String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-     String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-   if(objectXri == null || app == null) {
+	request.setCharacterEncoding("UTF-8");
+	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
+	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
+	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
+	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+ 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
       response.sendRedirect(
          request.getContextPath() + "/" + WebKeys.SERVLET_NAME
       );
       return;
-   }
-   Texts_1_0 texts = app.getTexts();
-   javax.jdo.PersistenceManager pm = app.getPmData();
+	}
+	Texts_1_0 texts = app.getTexts();
+	javax.jdo.PersistenceManager pm = app.getPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 
 <head>
-  <title><%= app.getApplicationName() %> - Mail Merge></title>
+  <title><%= app.getApplicationName() %> - Mail Merge</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
   <meta name="UNUSEDlabel" content="Mail Merge --&gt; RTF">
   <meta name="UNUSEDtoolTip" content="Mail Merge --&gt; RTF">
@@ -212,12 +212,13 @@ org.openmdx.application.log.*
 
           <div id="content-wrap">
              <div id="content" style="padding:100px 0.5em 0px 0.5em;">
-              <form name="MailMerge" accept-charset="UTF-8" method="POST" action=<%= FORM_ACTION %>>
+              <form name="MailMerge" accept-charset="UTF-8" method="POST" action="<%= FORM_ACTION %>">
                 <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
                   <h1>Mail Merge - <%= (new ObjectReference(obj, app)).getLabel() %></h1>
                   <div style="background-color:#FFFFBB;margin:5px 0px;padding:5px;"><i><%= (new ObjectReference(obj, app)).getTitle() %></i></div>
                   <INPUT type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
                   <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+                  <input type="hidden" name="lastSelection" id="lastSelection" value="<%= request.getParameter("lastSelection") != null ? request.getParameter("lastSelection") : "--" %>" />
 <%
       if (!actionCancel) {
         // must choose template first
@@ -231,7 +232,7 @@ org.openmdx.application.log.*
            documentFolderEntryFilter.forAllDisabled().isFalse();
            documentFolderEntryFilter.orderByName().ascending();
 %>
-           <select class="valueL" id="templateXri" name="templateXri" tabindex="100">
+           <select class="valueL" id="templateXri" name="templateXri" tabindex="100" onchange="javascript:$('lastSelection').value=this.value;">
 <%
              for(
                  Iterator i = documentFolder.getFolderEntry(documentFolderEntryFilter).iterator();
@@ -239,43 +240,48 @@ org.openmdx.application.log.*
              ) {
                 org.opencrx.kernel.document1.jmi1.DocumentFolderEntry entry =
                    (org.opencrx.kernel.document1.jmi1.DocumentFolderEntry)i.next();
-                org.opencrx.kernel.document1.jmi1.Document document =
-                  (org.opencrx.kernel.document1.jmi1.Document)entry.getDocument();
-                InputStream content = null;
-                String contentName = null;
-                try {
-                    // get content of head revision
-                    if (document.getHeadRevision() != null) {
-                      org.opencrx.kernel.document1.jmi1.MediaContent mediaContent = null;
-                      if (document.getHeadRevision() instanceof org.opencrx.kernel.document1.jmi1.MediaReference) {
-                        org.opencrx.kernel.document1.jmi1.MediaReference mediaReference =
-                          (org.opencrx.kernel.document1.jmi1.MediaReference)document.getHeadRevision();
-                        if (mediaReference.getMedia() != null) {
-                          mediaContent =
-                            (org.opencrx.kernel.document1.jmi1.MediaContent)((org.opencrx.kernel.document1.jmi1.Media)mediaReference.getMedia());
-                        }
-                      }
-                      else {
-                        if (document.getHeadRevision() instanceof org.opencrx.kernel.document1.jmi1.MediaContent) {
-                          mediaContent =
-                            (org.opencrx.kernel.document1.jmi1.MediaContent)document.getHeadRevision();
-                        }
-                      }
-                      if (
-                        (mediaContent != null) &&
-                        (mediaContent.getContentMimeType() != null) &&
-                        (TEMPLATE_MIMETYPE1.equals(mediaContent.getContentMimeType()) || TEMPLATE_MIMETYPE2.equals(mediaContent.getContentMimeType()))
-                      ) {
-                        contentName = mediaContent.getContentName();
-                        hasTemplates = true;
+                if (entry.getDocument() instanceof org.opencrx.kernel.document1.jmi1.Document) {
+		                org.opencrx.kernel.document1.jmi1.Document document =
+		                  (org.opencrx.kernel.document1.jmi1.Document)entry.getDocument();
+		                InputStream content = null;
+		                String contentName = null;
+		                try {
+		                    // get content of head revision
+		                    if (document.getHeadRevision() != null) {
+		                      org.opencrx.kernel.document1.jmi1.MediaContent mediaContent = null;
+		                      if (document.getHeadRevision() instanceof org.opencrx.kernel.document1.jmi1.MediaReference) {
+		                        org.opencrx.kernel.document1.jmi1.MediaReference mediaReference =
+		                          (org.opencrx.kernel.document1.jmi1.MediaReference)document.getHeadRevision();
+		                        if (mediaReference.getMedia() != null) {
+		                          mediaContent =
+		                            (org.opencrx.kernel.document1.jmi1.MediaContent)((org.opencrx.kernel.document1.jmi1.Media)mediaReference.getMedia());
+		                        }
+		                      }
+		                      else {
+		                        if (document.getHeadRevision() instanceof org.opencrx.kernel.document1.jmi1.MediaContent) {
+		                          mediaContent =
+		                            (org.opencrx.kernel.document1.jmi1.MediaContent)document.getHeadRevision();
+		                        }
+		                      }
+		                      if (
+		                        (mediaContent != null) &&
+		                        (mediaContent.getContentMimeType() != null) &&
+		                        (TEMPLATE_MIMETYPE1.equals(mediaContent.getContentMimeType()) || TEMPLATE_MIMETYPE2.equals(mediaContent.getContentMimeType()))
+		                      ) {
+		                        contentName = mediaContent.getContentName();
+		                        hasTemplates = true;
+		                        boolean selected =
+		                          request.getParameter("lastSelection") != null &&
+		                          request.getParameter("lastSelection").compareTo(mediaContent.refMofId()) == 0;
 %>
-                        <option value="<%= mediaContent.refMofId() %>"><%= entry.getName() == null ? "#" : entry.getName() %> / <%= contentName == null ? "*" : contentName %>
+		                        <option <%= selected ? "selected" : "" %> value="<%= mediaContent.refMofId() %>"><%= entry.getName() == null ? "#" : entry.getName() %> / <%= contentName == null ? "*" : contentName %>
 <%
-                      }
-                    }
-                  }
-                catch (Exception em) {
-                  new ServiceException(em).log();
+		                      }
+		                    }
+		                  }
+		                catch (Exception em) {
+		                  new ServiceException(em).log();
+		                }
                 }
              }
 %>
@@ -317,20 +323,20 @@ org.openmdx.application.log.*
         return;
     }
 
-   // Get template
-   org.opencrx.kernel.document1.jmi1.MediaContent mediaContent =
-      (org.opencrx.kernel.document1.jmi1.MediaContent)pm.getObjectById(new Path(templateXri));
-   pm.refresh(mediaContent);
-   InputStream content = mediaContent.getContent().getContent();
-   ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-   int b;
-   while((b = content.read()) != -1) {
-      bytes.write(b);
-   }
-   bytes.close();
-   byte[] template = bytes.toByteArray();
+    // Get template
+    org.opencrx.kernel.document1.jmi1.MediaContent mediaContent =
+       (org.opencrx.kernel.document1.jmi1.MediaContent)pm.getObjectById(new Path(templateXri));
+    pm.refresh(mediaContent);
+    InputStream content = mediaContent.getContent().getContent();
+    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    int b;
+    while((b = content.read()) != -1) {
+       bytes.write(b);
+    }
+    bytes.close();
+    byte[] template = bytes.toByteArray();
 
-   // Prepare
+    // Prepare
     org.opencrx.kernel.account1.jmi1.Account account = null;
     String location = UUIDs.getGenerator().next().toString();
     String filename = null;
@@ -477,16 +483,18 @@ org.openmdx.application.log.*
     org.opencrx.kernel.utils.rtf.RTFTemplate document = new org.opencrx.kernel.utils.rtf.RTFTemplate();
     document.readFrom(new InputStreamReader(new ByteArrayInputStream(template)), true);
     org.opencrx.kernel.utils.rtf.Bookmark bmTemplateRow = null;
+    String[] templateRowLayout = null;
     try {
-       bmTemplateRow = document.searchBookmark("TemplateRow");
+        bmTemplateRow = document.searchBookmark("TemplateRow");
+        String layoutDefinition = bmTemplateRow.getRawContent();
+        if(layoutDefinition != null && layoutDefinition.indexOf(" ") > 0) {
+            layoutDefinition = layoutDefinition.substring(layoutDefinition.lastIndexOf(" ")).trim();
+        }
+        templateRowLayout = bmTemplateRow == null || layoutDefinition == null?
+           null :
+           layoutDefinition.split(";");
+
     } catch(Exception e) {}
-    String layoutDefinition = bmTemplateRow.getRawContent();
-    if(layoutDefinition.indexOf(" ") > 0) {
-        layoutDefinition = layoutDefinition.substring(layoutDefinition.lastIndexOf(" ")).trim();
-    }
-    String[] templateRowLayout = bmTemplateRow == null ?
-       null :
-       layoutDefinition.split(";");
     int nColumns = (templateRowLayout == null) || (templateRowLayout.length < 1) ?
        1 :
        Integer.valueOf(templateRowLayout[0]).intValue();
@@ -513,11 +521,11 @@ org.openmdx.application.log.*
          document = new org.opencrx.kernel.utils.rtf.RTFTemplate();
          document.readFrom(new InputStreamReader(new ByteArrayInputStream(template)), true);
       }
-       org.opencrx.kernel.utils.rtf.MultiTextParts mtpWarning = new org.opencrx.kernel.utils.rtf.MultiTextParts();
-       mtpWarning.addText(org.opencrx.kernel.utils.rtf.TextPart.NEWLINE);
-       // Map mailing address
-       org.opencrx.kernel.utils.rtf.MultiTextParts mtpMailingAddress = new org.opencrx.kernel.utils.rtf.MultiTextParts();
-       boolean needsNewLine = false;
+      org.opencrx.kernel.utils.rtf.MultiTextParts mtpWarning = new org.opencrx.kernel.utils.rtf.MultiTextParts();
+      mtpWarning.addText(org.opencrx.kernel.utils.rtf.TextPart.NEWLINE);
+      // Map mailing address
+      org.opencrx.kernel.utils.rtf.MultiTextParts mtpMailingAddress = new org.opencrx.kernel.utils.rtf.MultiTextParts();
+      boolean needsNewLine = false;
       if (mailingAddress != null) {
          try {
              for(Iterator m = mailingAddress.getPostalAddressLine().iterator(); m.hasNext();) {
@@ -558,15 +566,15 @@ org.openmdx.application.log.*
       else {
            mtpMailingAddress.addText(new org.opencrx.kernel.utils.rtf.TextPart("WARNING: no postal address available"));
            mtpMailingAddress.addText(org.opencrx.kernel.utils.rtf.TextPart.NEWLINE);
-       }
-       // Filename
-       String filenameDetail = "---";
-       try {
-           String accountXri = new Path(mailingAddress.refMofId()).getParent().getParent().toXri();
-           account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
-           filenameDetail = ((account.getFullName() != null ? account.getFullName() : "---NoName")).replaceAll(" +", "_");
-       }
-       catch (Exception ef) {}
+      }
+      // Filename
+      String filenameDetail = "---";
+      try {
+          String accountXri = new Path(mailingAddress.refMofId()).getParent().getParent().toXri();
+          account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(accountXri));
+          filenameDetail = ((account.getFullName() != null ? account.getFullName() : "---NoName")).replaceAll(" +", "_");
+      }
+      catch (Exception ef) {}
       filename =
            providerName + "_"
            + segmentName + "_"
@@ -601,9 +609,10 @@ org.openmdx.application.log.*
       if(bmTemplateRow != null) {
           recordIndex++;
       }
-    }
-   // Write file
-   if(bmTemplateRow != null) {
+    } // for loop over addresses
+
+    // Write file
+    if(bmTemplateRow != null) {
       try {
            zipos.putNextEntry(new ZipEntry("MailMerge.rtf"));
            document.writeTo(zipos);
@@ -616,10 +625,14 @@ org.openmdx.application.log.*
             catch (Exception ex) {}
             new ServiceException(e).log();
         }
-   }
-    zipos.finish();
-    zipos.close();
-   if(location != null) {
+    }
+    try {
+        zipos.finish();
+        zipos.close();
+    } catch (Exception e) {
+        new ServiceException(e).log();
+    }
+    if(location != null) {
        // determine user-agent because IE doesn't handle application/zip properly
        String userAgent = request.getHeader("User-Agent");
        String mimeType = "application/zip";
@@ -642,10 +655,11 @@ org.openmdx.application.log.*
 %>
       <div style="background-color:#FFFFFF;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
         <a href="<%= request.getContextPath() + "/" + downloadAction.getEncodedHRef(requestId) %>"><%= app.getTexts().getClickToDownloadText() %> <b><%= fileToDownload %></b></a>
+        (containing <%= counter %> documents)
       </div>
 <%
     }
-   else {
+    else {
       // Go back to previous view
       Action nextAction = new ObjectReference(
            (RefObject_1_0)pm.getObjectById(new Path(objectXri)),
@@ -659,7 +673,7 @@ org.openmdx.application.log.*
               </form>
             </div> <!-- content -->
           </div> <!-- content-wrap -->
-         <div> <!-- wrap -->
+        </div> <!-- wrap -->
       </div> <!-- container -->
       </body>
       </html>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.11 2009/04/23 12:35:34 cmu Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.13 2009/10/15 16:19:34 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/23 12:35:34 $
+ * Date:        $Date: 2009/10/15 16:19:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,15 +72,14 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.base.query.*,
-org.openmdx.application.log.*
+org.openmdx.base.query.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId = request.getParameter(Action.PARAMETER_REQUEST_ID);
-  String objectXri = request.getParameter("xri");
-	if(objectXri == null || app == null || viewsCache.getViews().isEmpty()) {
+	String objectXri = request.getParameter("xri");
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
@@ -170,7 +169,7 @@ org.openmdx.application.log.*
     		userView = new UserDefinedView(
     			accountAssignmentInventoryItemValues,
     			app,
-    			(View)viewsCache.getViews().values().iterator().next()
+    			viewsCache.getView(requestId)
     		);
      		// get AccountAssignmentInventoryItem attributes
 			try {

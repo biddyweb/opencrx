@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountImpl.java,v 1.7 2009/04/20 17:56:46 wfro Exp $
+ * Name:        $Id: AccountImpl.java,v 1.8 2009/06/18 12:22:43 wfro Exp $
  * Description: AccountImpl
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
+ * Date:        $Date: 2009/06/18 12:22:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -92,8 +92,9 @@ public class AccountImpl
 	            params.getName(),
 	            params.getDescription(),
 	            params.getNextStep(),
-	            // TODO pm for params workaround
-	            (Lead)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
+	            params.getBasedOn() == null ?
+	            	null :
+	            	(Lead)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
 	        );
 	        return Utils.getAccountPackage(this.sameManager()).createCreateLeadResult(
 	            lead                    
@@ -114,8 +115,9 @@ public class AccountImpl
 	            params.getName(),
 	            params.getDescription(),
 	            null,
-	            // TODO pm for params workaround
-	            (Opportunity)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
+	            params.getBasedOn() == null ?
+	            	null :
+	            	(Opportunity)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
 	        );
 	        return Utils.getAccountPackage(this.sameManager()).createCreateOpportunityResult(
 	            opportunity                    
@@ -135,8 +137,9 @@ public class AccountImpl
 	            this.sameObject(),
 	            params.getName(),
 	            params.getDescription(),
-	            // TODO pm for params workaround
-	            (Quote)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
+	            params.getBasedOn() == null ?
+	            	null : 
+	            	(Quote)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
 	        );
 	        return Utils.getAccountPackage(this.sameManager()).createCreateQuoteResult(
 	            quote                    
@@ -156,8 +159,9 @@ public class AccountImpl
 	            this.sameObject(),
 	            params.getName(),
 	            params.getDescription(),
-	            // TODO pm for params workaround
-	            (SalesOrder)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
+	            params.getBasedOn() == null ?
+	            	null :
+	            	(SalesOrder)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
 	        );
 	        return Utils.getAccountPackage(this.sameManager()).createCreateSalesOrderResult(
 	            salesOrder                    
@@ -177,8 +181,9 @@ public class AccountImpl
 	            this.sameObject(),
 	            params.getName(),
 	            params.getDescription(),
-	            // TODO pm for params workaround	            
-	            (Invoice)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
+	            params.getBasedOn() == null ?
+	            	null :
+	            	(Invoice)this.sameManager().getObjectById(params.getBasedOn().refGetPath())
 	        );
 	        return Utils.getAccountPackage(this.sameManager()).createCreateInvoiceResult(
 	            invoice

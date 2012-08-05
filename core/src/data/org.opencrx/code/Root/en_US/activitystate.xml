@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="activityState" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="activityState" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:activity1:Activity:activityState</_item>
@@ -21,14 +21,12 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
 														<iconKey>na8by8.gif</iconKey>
-														<shortText>
-															<_item></_item>
-														</shortText>
+														<shortText />
 														<longText>
 															<_item> N/A</_item>
 														</longText>
@@ -36,28 +34,24 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 												<!-- Task -->
-												<org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
 														<iconKey>open.gif</iconKey>
-														<shortText>
-															<_item></_item>
-														</shortText>
+														<shortText />
 														<longText>
 															<_item>Open</_item>
 														</longText>
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="20" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
 														<iconKey>closed.gif</iconKey>
-														<shortText>
-															<_item></_item>
-														</shortText>
+														<shortText />
 														<longText>
 															<_item>Closed</_item>
 														</longText>

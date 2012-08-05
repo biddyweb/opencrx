@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImporterImpl.java,v 1.8 2009/05/08 17:19:19 wfro Exp $
+ * Name:        $Id: ImporterImpl.java,v 1.9 2009/06/16 21:19:18 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/08 17:19:19 $
+ * Date:        $Date: 2009/06/16 21:19:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,11 +66,11 @@ import org.opencrx.kernel.backend.Importer;
 import org.opencrx.kernel.backend.VCard;
 import org.opencrx.kernel.base.jmi1.BasePackage;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.kernel.log.SysLog;
 
 public class ImporterImpl
 	<S extends org.opencrx.kernel.base.jmi1.Importer,N extends org.opencrx.kernel.base.cci2.Importer,C extends Void>
@@ -92,7 +92,7 @@ public class ImporterImpl
             short locale = params.getLocale();
             byte[] item = params.getItem();
             String itemMimeType = params.getItemMimeType();
-            AppLog.trace("import MIME_TYPE", itemMimeType);
+            SysLog.trace("import MIME_TYPE", itemMimeType);
             List<String> report = new ArrayList<String>();
             List<String> errors = new ArrayList<String>();
             BasicObject importedObject = null; 

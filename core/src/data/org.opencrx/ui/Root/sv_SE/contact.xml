@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -22,7 +22,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:contact" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContractPosition:contact" _operation="create">
                     <_object>
                       <label>
                         <_item>Kunder</_item>
@@ -176,6 +176,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fax Privat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fax Privat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress" _operation="create">
                     <_object>
                       <label>
@@ -289,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Talspråk</_item>
+                        <_item>Talat språk</_item>
                       </label>
                       <toolTip>
-                        <_item>Språk som föredras av personen i tal</_item>
+                        <_item>Språk som personen föredrar att tala</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -300,10 +311,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Skriftspråk</_item>
+                        <_item>Skrivet språk</_item>
                       </label>
                       <toolTip>
-                        <_item>Språk som föredras av personen i skrift</_item>
+                        <_item>Språk som personen föredrar att skriva på</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -325,7 +336,7 @@
                         <_item>Ej post</_item>
                       </label>
                       <toolTip>
-                        <_item>Personen vill ej bli kontakt per post</_item>
+                        <_item>Personen vill ej bli kontaktad per post</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -336,7 +347,7 @@
                         <_item>Ej massutskick</_item>
                       </label>
                       <toolTip>
-                        <_item>Personen vill ej bli kontakt per massutskick</_item>
+                        <_item>Personen vill ej bli kontaktad per massutskick</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -347,7 +358,7 @@
                         <_item>Ej telefon</_item>
                       </label>
                       <toolTip>
-                        <_item>Personen vill ej bli kontakt per telefon</_item>
+                        <_item>Personen vill ej bli kontaktad per telefon</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -358,7 +369,7 @@
                         <_item>Ej fax</_item>
                       </label>
                       <toolTip>
-                        <_item>Personen vill ej bli kontakt per fax</_item>
+                        <_item>Personen vill ej bli kontaktad per fax</_item>
                       </toolTip>
                     </_object>
                     <_content/>

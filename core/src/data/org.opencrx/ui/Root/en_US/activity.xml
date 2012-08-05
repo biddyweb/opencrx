@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
 	<_content>
 		<provider>
@@ -304,7 +304,8 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<maxMember>5</maxMember>
+											<showMaxMember>2</showMaxMember>
+											<maxMember>8</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1740,66 +1741,6 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Reapply Activity Creator</_item>
-											</toolTip>
-											<label>
-												<_item>Reapply Activity Creator</_item>
-											</label>
-											<order>
-												<_item>500</_item>
-												<_item>0</_item>
-												<_item>100</_item>
-											</order>
-											<iconKey>Activity</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:in">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Input</_item>
-											</toolTip>
-											<label>
-												<_item>Input</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Activity creator</_item>
-											</toolTip>
-											<label>
-												<_item>Activity creator</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:result">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Result</_item>
-											</toolTip>
-											<label>
-												<_item>Result</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo">
 										<_object>
 											<active>true</active>
@@ -1812,7 +1753,7 @@
 											<order>
 												<_item>500</_item>
 												<_item>0</_item>
-												<_item>150</_item>
+												<_item>100</_item>
 											</order>
 											<iconKey>Resource</iconKey>
 										</_object>
@@ -1848,6 +1789,66 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reapply Activity Creator</_item>
+											</toolTip>
+											<label>
+												<_item>Reapply Activity Creator</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</order>
+											<iconKey>Activity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity creator</_item>
+											</toolTip>
+											<label>
+												<_item>Activity creator</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:result">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1939,7 +1940,7 @@
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord">
 										<_object>
-											<active>true</active>
+											<active>false</active>
 											<toolTip>
 												<_item>Add Expense Record</_item>
 											</toolTip>
@@ -2206,6 +2207,12 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:owningGroup">
+                    <_object>
+                      <active>false</active>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addExpenseRecord:Group:result">
 										<_object>
 											<active>true</active>
@@ -2221,7 +2228,7 @@
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord">
 										<_object>
-											<active>true</active>
+											<active>false</active>
 											<toolTip>
 												<_item>Add Work Record</_item>
 											</toolTip>
@@ -2453,6 +2460,12 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:owningGroup">
+                    <_object>
+                      <active>false</active>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:addWorkRecord:Group:result">
 										<_object>
 											<active>true</active>
@@ -2627,6 +2640,55 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:updateIcal:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEvent">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>Mark as All Day Event</_item>
+											</toolTip>
+											<label>
+												<_item>Mark as All Day Event</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+											<iconKey>Activity</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEvent:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MarkAsAllDayEventParams:timezone">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEvent:Group:result">
 										<_object>
 											<active>true</active>
 											<toolTip>

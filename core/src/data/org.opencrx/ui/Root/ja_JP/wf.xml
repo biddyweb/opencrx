@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -84,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>同期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:WfProcess:maxRetries" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>最大再試行回数</_item>
+                      </label>
+                      <toolTip>
+                        <_item>最大再試行回数</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -337,6 +348,72 @@
                       </label>
                       <toolTip>
                         <_item>String値</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dateプロパティ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dateプロパティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dateプロパティ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dateプロパティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateProperty:dateValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Date値</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Date値</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Date/Timeプロパティ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Date/Timeプロパティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Date/Timeプロパティ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Date/Timeプロパティ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:DateTimeProperty:dateTimeValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Date/Time値</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Date/Time値</_item>
                       </toolTip>
                     </_object>
                     <_content/>

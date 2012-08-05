@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: AccountsHelper.java,v 1.4 2009/03/08 17:04:48 wfro Exp $
- * Description: ActivitiesHelper
- * Revision:    $Revision: 1.4 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: AccountsHelper.java,v 1.5 2009/07/13 16:39:11 wfro Exp $
+ * Description: AccountsHelper
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:48 $
+ * Date:        $Date: 2009/07/13 16:39:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -69,6 +69,7 @@ import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.account1.jmi1.AccountFilterGlobal;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.format.DateFormat;
 
 public class AccountsHelper {
@@ -97,7 +98,7 @@ public class AccountsHelper {
             this.accountPackage = Utils.getAccountPackage(this.pm); 
             this.accountSegment = 
                 (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-                    "xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName
+                    new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
                 );
             this.accountFilter = null;
             if(this.filterName != null) {

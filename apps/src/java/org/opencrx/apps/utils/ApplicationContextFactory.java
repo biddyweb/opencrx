@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencCRX/Apps, http://www.opencrx.org/
- * Name:        $Id: ApplicationContextFactory.java,v 1.4 2009/05/15 12:14:15 wfro Exp $
+ * Name:        $Id: ApplicationContextFactory.java,v 1.6 2009/09/04 16:27:14 wfro Exp $
  * Description: openCRX Context Factory
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/15 12:14:15 $
+ * Date:        $Date: 2009/09/04 16:27:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -78,7 +78,7 @@ public class ApplicationContextFactory {
         }        
         // Get persistence manager factory
         if(ApplicationContextFactory.persistenceManagerFactory == null) {
-            ApplicationContextFactory.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
+            ApplicationContextFactory.persistenceManagerFactory = Utils.getPersistenceManagerProxyFactory();
         }
         // Locale
         String localeAsString = session.getServletContext().getInitParameter("locale");

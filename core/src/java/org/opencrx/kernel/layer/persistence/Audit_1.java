@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.46 2009/06/13 18:47:42 wfro Exp $
+ * Name:        $Id: Audit_1.java,v 1.49 2009/10/19 16:32:13 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.46 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/13 18:47:42 $
+ * Date:        $Date: 2009/10/19 16:32:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,9 +76,9 @@ import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderReplyContexts;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
-import org.openmdx.application.dataprovider.cci.DataproviderRequestContexts;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.model.LayerConfigurationEntries;
+import org.openmdx.application.dataprovider.spi.DatatypeFormat;
 import org.openmdx.application.dataprovider.spi.Layer_1_0;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.collection.SparseList;
@@ -89,10 +89,7 @@ import org.openmdx.base.query.FilterOperators;
 import org.openmdx.base.query.FilterProperty;
 import org.openmdx.base.query.Quantors;
 import org.openmdx.base.rest.spi.ObjectHolder_2Facade;
-import org.openmdx.base.text.format.DatatypeFormat;
 import org.openmdx.base.text.format.DateFormat;
-import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.log.SysLog;
 
 /**
  * This plugin creates audit entries for modified objects.
@@ -131,17 +128,6 @@ public class Audit_1
           header,
           requests
         );
-        String unitOfWorkId = requests.length == 0
-          ? null
-          : requests[0].context(DataproviderRequestContexts.UNIT_OF_WORK_ID).size() == 0
-            ? null
-            : (String)requests[0].context(DataproviderRequestContexts.UNIT_OF_WORK_ID).get(0);
-        // guarantee that this.unitOfWorkId has always a valid value
-        this.unitOfWorkId = unitOfWorkId != null
-          ? unitOfWorkId
-          : this.unitOfWorkId != null
-            ? this.unitOfWorkId
-            : super.uidAsString();    
     }
 
     // --------------------------------------------------------------------------
@@ -601,9 +587,10 @@ public class Audit_1
 	                	auditEntryFacade.attributeValues("auditee").add(
 	                        request.path().toXri()
 	                    );
-	                    if(this.unitOfWorkId != null) {
+	                	String unitOfWorkId = super.getUnitOfWorkId(request);
+	                    if(unitOfWorkId != null) {
 	                    	auditEntryFacade.attributeValues("unitOfWork").add(
-	                            this.unitOfWorkId
+	                            unitOfWorkId
 	                        );
 	                    }
 	                    for(Iterator<String> i = this.visitorIds.iterator(); i.hasNext(); ) {
@@ -630,17 +617,9 @@ public class Audit_1
 	                        beforeImage,
 	                        request.object()
 	                    );
-	                    // do not create audit entry if modifiedAt is only modified attribute
 	                    // --> trivial update
 	                    if(modifiedFeatures.isEmpty()) {
-	                        ServiceException e = new ServiceException(
-	                            BasicException.Code.DEFAULT_DOMAIN,
-	                            BasicException.Code.INVALID_CONFIGURATION, 
-	                            "Replace request leading to empty modified feature set. No audit entry will be created.",
-	                            new BasicException.Parameter("request", request),
-	                            new BasicException.Parameter("existing", existing)
-	                        );
-	                        SysLog.info(e.getMessage(), e.getCause());
+		                    // do not create audit entry if modifiedAt is only modified attribute	                    	
 	                    }
 	                    else if(
 	                        ((modifiedFeatures.size() > 1) ||
@@ -725,11 +704,12 @@ public class Audit_1
 	        	auditEntryFacade.attributeValues("auditee").add(
 	                ObjectHolder_2Facade.getPath(reply.getObject()).toXri()
 	            );
-	            if(this.unitOfWorkId != null) {
+	        	String unitOfWorkId = super.getUnitOfWorkId(request);
+	            if(unitOfWorkId != null) {
 	            	auditEntryFacade.attributeValues("unitOfWork").add(
-	                    this.unitOfWorkId
+	                    unitOfWorkId
 	                );
-	            }
+	            }	        	
 	            for(Iterator<String> i = this.visitorIds.iterator(); i.hasNext(); ) {
 	                String visitorId = i.next();
 	                auditEntryFacade.attributeValues("visitedBy").add(
@@ -795,9 +775,10 @@ public class Audit_1
 	            	auditEntryFacade.attributeValues("auditee").add(
 	                    request.path().toXri()
 	                );
-	                if(this.unitOfWorkId != null) {
+	            	String unitOfWorkId = super.getUnitOfWorkId(request);
+	                if(unitOfWorkId != null) {
 	                	auditEntryFacade.attributeValues("unitOfWork").add(
-	                        this.unitOfWorkId
+	                        unitOfWorkId
 	                    );
 	                }
 	                for(Iterator<String> i = this.visitorIds.iterator(); i.hasNext(); ) {
@@ -920,7 +901,6 @@ public class Audit_1
     //-----------------------------------------------------------------------
     private static final String NOT_VISITED_SUFFIX = "-";
 
-    private String unitOfWorkId = null;
     private final Map<Path,Boolean> auditSegments = new HashMap<Path,Boolean>();
     private final List<String> visitorIds = new ArrayList<String>();
     private DatatypeFormat datatypeFormat = null;

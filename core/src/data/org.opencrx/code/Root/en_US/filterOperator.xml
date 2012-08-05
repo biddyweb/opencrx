@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="filterOperator" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="filterOperator" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:base:AttributeFilterProperty:filterOperator</_item>
@@ -19,7 +19,7 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 0] NA</_item>
@@ -30,7 +30,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 1] IS_IN</_item>
@@ -41,7 +41,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 2] IS_GREATER_OR_EQUAL</_item>
@@ -52,7 +52,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 3] IS_GREATER</_item>
@@ -63,7 +63,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 4] IS_BETWEEN</_item>
@@ -74,7 +74,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 5] IS_LIKE</_item>
@@ -85,7 +85,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[ 6] SOUNDS_LIKE</_item>
@@ -97,7 +97,7 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
-												<org.opencrx.kernel.code1.CodeValueEntry code="-1" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="-1" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[-1] IS_NOT_IN</_item>
@@ -108,7 +108,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="-2" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="-2" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[-2] IS_LESS</_item>
@@ -119,7 +119,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="-3" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="-3" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[-3] IS_LESS_OR_EQUAL</_item>
@@ -130,7 +130,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="-4" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="-4" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[-4] IS_OUTSIDE</_item>
@@ -141,7 +141,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="-5" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="-5" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[-5] IS_UNLIKE</_item>
@@ -152,7 +152,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="-6" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="-6" _operation="set">
 													<_object>
 														<shortText>
 															<_item>[-6] SOUNDS_UNLIKE</_item>

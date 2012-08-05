@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.10 2009/05/14 09:01:57 wfro Exp $
+ * Name:        $Id: MailWorkflow.java,v 1.12 2009/07/16 17:21:27 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/14 09:01:57 $
+ * Date:        $Date: 2009/07/16 17:21:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,11 +88,11 @@ import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 
 public abstract class MailWorkflow 
     implements ASynchWorkflow_1_0 {
@@ -295,10 +295,10 @@ public abstract class MailWorkflow
                         session = (Session)initialContext.lookup("java:comp/env" + mailServiceName);
                     }
                     catch(Exception e) {    
-                        AppLog.detail("Mail service not found", mailServiceName);
+                    	SysLog.detail("Mail service not found", mailServiceName);
                         // Fallback to mail/provider/<provider>
                         mailServiceName = "/mail/provider/" + wfProcessInstanceIdentity.get(2);
-                        AppLog.detail("Fall back to mail service", mailServiceName);
+                        SysLog.detail("Fall back to mail service", mailServiceName);
                         session = (Session)initialContext.lookup("java:comp/env" + mailServiceName);
                     }
                     // message
@@ -339,7 +339,7 @@ public abstract class MailWorkflow
                             params
                         );
                         message.saveChanges();
-                        AppLog.detail("Send message");
+                        SysLog.detail("Send message");
                         transport = session.getTransport();
                         String protocol = transport.getURLName().getProtocol();
                         String port = session.getProperty("mail." + protocol + ".port");
@@ -353,7 +353,7 @@ public abstract class MailWorkflow
                             message,
                             message.getAllRecipients()
                         );           
-                        AppLog.detail("Done");
+                        SysLog.detail("Done");
                     }
                     // No recipients. Can not send message
                     else {
@@ -366,9 +366,9 @@ public abstract class MailWorkflow
                     }
                 } 
                 catch(NamingException e) {
-                    AppLog.detail("Can not get mail session", mailServiceName);
+                	SysLog.detail("Can not get mail session", mailServiceName);
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.detail(e0.getMessage(), e0.getCause());
+                    SysLog.detail(e0.getMessage(), e0.getCause());
                     text = "ERROR: email not sent. Can not get mail session " + mailServiceName + ":\n" + e0.getMessage();
                 }                
             }
@@ -380,9 +380,9 @@ public abstract class MailWorkflow
             );
         }        
         catch(AuthenticationFailedException e) {
-            AppLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(e0.getMessage(), e0.getCause());
+            SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: AuthenticationFailedException",
@@ -392,9 +392,9 @@ public abstract class MailWorkflow
             throw e0;
         }
         catch(AddressException e) {
-            AppLog.warning("Can not send message to recipients (reason=AddressException)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=AddressException)", Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(e0.getMessage(), e0.getCause());
+            SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: AddressException",
@@ -404,9 +404,9 @@ public abstract class MailWorkflow
             throw e0;
         }
         catch(MessagingException e) {
-            AppLog.warning("Can not send message to recipients (reason=MessagingException)", Arrays.asList(recipients));
+        	SysLog.warning("Can not send message to recipients (reason=MessagingException)", Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(e0.getMessage(), e0.getCause());
+            SysLog.detail(e0.getMessage(), e0.getCause());
             this.createLogEntry(
                 wfProcessInstance,
                 "Can not send mail: MessagingException",
@@ -414,6 +414,18 @@ public abstract class MailWorkflow
                 pm
             );
             throw e0;
+        }
+        catch(Exception e) {
+        	SysLog.warning("Can not send message to recipients (reason=Exception)", Arrays.asList(recipients));
+            ServiceException e0 = new ServiceException(e);
+            SysLog.detail(e0.getMessage(), e0.getCause());
+            this.createLogEntry(
+                wfProcessInstance,
+                "Can not send mail: Exception",
+                e.getMessage(),
+                pm
+            );
+            throw e0;        	
         }
         finally {
             if(transport != null) {

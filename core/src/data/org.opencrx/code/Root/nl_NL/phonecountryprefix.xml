@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -11,11 +11,11 @@
               <_object/>
               <_content>
                 <valueContainer>
-                  <org.opencrx.kernel.code1.CodeValueContainer name="phoneCountryPrefix" _operation="create">
+                  <org.opencrx.kernel.code1.CodeValueContainer name="phoneCountryPrefix" _operation="set">
                     <_object/>
                     <_content>
                       <entry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
                               <_item> NVT</_item>
@@ -26,7 +26,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="set">
                           <_object>
                             <longText>
                               <_item>Albanië [355]</_item>
@@ -34,7 +34,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="set">
                           <_object>
                             <longText>
                               <_item>Algarijë [213]</_item>
@@ -42,7 +42,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="28" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="28" _operation="set">
                           <_object>
                             <longText>
                               <_item>Antigua en Barbuda [1]</_item>
@@ -50,7 +50,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="32" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="32" _operation="set">
                           <_object>
                             <longText>
                               <_item>Argentinië [54]</_item>
@@ -58,7 +58,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="51" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="51" _operation="set">
                           <_object>
                             <longText>
                               <_item>Armenië [374]</_item>
@@ -66,7 +66,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="36" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="36" _operation="set">
                           <_object>
                             <longText>
                               <_item>Australië [61]</_item>
@@ -74,7 +74,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="40" _operation="set">
                           <_object>
                             <longText>
                               <_item>Oostenrijk [43]</_item>
@@ -82,7 +82,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="56" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="56" _operation="set">
                           <_object>
                             <longText>
                               <_item>België [32]</_item>
@@ -90,7 +90,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="70" _operation="set">
                           <_object>
                             <longText>
                               <_item>Boznië Herzegovina [387]</_item>
@@ -98,7 +98,7 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="76" _operation="create">
+                        <org.opencrx.kernel.code1.CodeValueEntry code="76" _operation="set">
                           <_object>
                             <longText>
                               <_item>Brazilië [55]</_item>

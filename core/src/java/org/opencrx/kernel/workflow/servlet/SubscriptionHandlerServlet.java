@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.55 2009/06/09 14:10:35 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.59 2009/10/12 16:06:55 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.55 $
+ * Revision:    $Revision: 1.59 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:10:35 $
+ * Date:        $Date: 2009/10/12 16:06:55 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,10 +62,13 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
@@ -92,11 +95,11 @@ import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.log.SysLog;
 
 /**
  * The SubscriptionHandlerServlet 'listens' for object modifications on incoming
@@ -144,7 +147,7 @@ public class SubscriptionHandlerServlet
     ) {
         if(
             (subscription.getEventType() == null) || 
-            (subscription.getEventType().size() == 0)
+            (subscription.getEventType().isEmpty())
         ) {
             return true;
         }
@@ -162,7 +165,7 @@ public class SubscriptionHandlerServlet
     
     //-----------------------------------------------------------------------
     @SuppressWarnings("unchecked")
-    private boolean testFilterValue(
+    protected boolean testFilterValue(
         String filterName,
         String filterValue,
         Object message
@@ -173,16 +176,9 @@ public class SubscriptionHandlerServlet
             if(message instanceof RefObject) {
                 try {
                     messageValue = ((RefObject)message).refGetValue(filterName);
-                    // Get the first value if multi-valued
-                    if(messageValue instanceof Collection) {
-                        Collection messageValues = (Collection)messageValue;
-                        messageValue = messageValues.isEmpty()
-                            ? null
-                            : messageValues.iterator().next();
-                    }
                 }
                 catch(Exception e) {
-                    AppLog.warning("Can not get filter value", e.getMessage());
+                	SysLog.warning("Can not get filter value", e.getMessage());
                 }
             }
             else {
@@ -200,9 +196,34 @@ public class SubscriptionHandlerServlet
                     }
                 }                
             }
-            return (filterValue == null) || (messageValue == null)
-                ? messageValue == filterValue
-                : messageValue.toString().equals(filterValue);
+            Collection<Object> messageValues = Collections.emptyList();
+            if(messageValue instanceof Collection) {
+                messageValues = (Collection<Object>)messageValue;
+            }
+            else if(messageValue != null) {
+            	messageValues = Arrays.asList(messageValue);
+            }
+            boolean matches = false;
+            boolean negate = false;
+            if(filterValue != null && filterValue.startsWith("!")) {
+            	filterValue = filterValue.substring(1);
+            	negate = true;
+            }
+            try {
+	            for(Object v: messageValues) {
+	            	boolean isEqual =  filterValue == null ?
+	            		v == filterValue :
+	            		v instanceof RefObject ? 
+	            			((RefObject)v).refMofId().equals(filterValue) : 
+	            			v.toString().equals(filterValue);		            			
+	            	matches |= negate ? !isEqual : isEqual;
+	            }
+            } 
+            catch(Exception e) {
+            	SysLog.detail(e.getMessage(), e.getCause());
+            	SysLog.warning("Can not get filter value", Arrays.asList(filterName, e.getMessage()));            	
+            }
+            return matches;
         }
         return true;
     }
@@ -252,7 +273,7 @@ public class SubscriptionHandlerServlet
                     );
                 }
                 catch(Exception e) {
-                    AppLog.detail(e.getMessage(), e.getCause());
+                	SysLog.detail(e.getMessage(), e.getCause());
                 }
             }
             else if(auditEntry instanceof ObjectRemovalAuditEntry) {
@@ -265,10 +286,9 @@ public class SubscriptionHandlerServlet
                     );
                 }
                 catch(Exception e) {
-                    AppLog.detail(e.getMessage(), e.getCause());
+                	SysLog.detail(e.getMessage(), e.getCause());
                 }
             }   
-            pm.close();
         }
         if(auditee == null) return false;
         
@@ -399,8 +419,8 @@ public class SubscriptionHandlerServlet
                 auditEntry = (AuditEntry)pm.getObjectById(new Path(auditEntryXri));
             } 
             catch(Exception e) {
-                AppLog.warning("Can not access audit entry", Arrays.asList(new String[]{auditEntryXri, e.getMessage()}));
-                AppLog.detail(e.getMessage(), e.getCause());
+            	SysLog.warning("Can not access audit entry", Arrays.asList(new String[]{auditEntryXri, e.getMessage()}));
+            	SysLog.detail(e.getMessage(), e.getCause());
             }
             if(auditEntry != null) {
                 TestAndSetVisitedByResult markAsVisistedReply = null;
@@ -411,9 +431,9 @@ public class SubscriptionHandlerServlet
                     markAsVisistedReply = auditEntry.testAndSetVisitedBy(params);
                 }
                 catch(Exception e) {
-                    AppLog.error("Can not invoke markAsVisited", e.getMessage());
+                	SysLog.error("Can not invoke markAsVisited", e.getMessage());
                     ServiceException e0 = new ServiceException(e);
-                    AppLog.error(e0.getMessage(), e0.getCause());
+                    SysLog.error(e0.getMessage(), e0.getCause());
                 }
                 if(
                     (markAsVisistedReply != null) &&
@@ -469,8 +489,8 @@ public class SubscriptionHandlerServlet
                                             pm.currentTransaction().commit();
                                         }
                                         catch(Exception e) {
-                                            AppLog.warning("Execution of workflow FAILED", performAction.getName() + "; home=" + userHome.refMofId() + "; message=" + e.getMessage());
-                                            AppLog.detail(e.getMessage(), e.getCause());
+                                        	SysLog.warning("Execution of workflow FAILED", performAction.getName() + "; home=" + userHome.refMofId() + "; cause=" + e.getCause().getMessage());
+                                        	SysLog.detail(e.getMessage(), e.getCause());
                                             try {
                                                 pm.currentTransaction().rollback();
                                             } 
@@ -605,27 +625,36 @@ public class SubscriptionHandlerServlet
             String segmentName = req.getParameter("segment");
             String providerName = req.getParameter("provider");
             String id = providerName + "/" + segmentName;
-            // run
-            if(
-                COMMAND_EXECUTE.equals(req.getPathInfo()) &&
-                !this.runningSegments.contains(id)
-            ) {
-                try {
-                    this.runningSegments.add(id);
-                    this.handleSubscriptions(
-                        id,
-                        providerName,
-                        segmentName,
-                        req,
-                        res
-                    );
-                } 
-                catch(Exception e) {
-                    new ServiceException(e).log();
-                }
-                finally {
-                    this.runningSegments.remove(id);
-                }
+            // Run
+            if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
+                if(!this.runningSegments.containsKey(id)) {
+	                try {
+	                    this.runningSegments.put(
+	                    	id,
+	                    	Thread.currentThread()
+	                    );
+	                    this.handleSubscriptions(
+	                        id,
+	                        providerName,
+	                        segmentName,
+	                        req,
+	                        res
+	                    );
+	                } 
+	                catch(Exception e) {
+	                    new ServiceException(e).log();
+	                }
+	                finally {
+	                    this.runningSegments.remove(id);
+	                }
+            	}
+            	else if(
+            		!this.runningSegments.get(id).isAlive() || 
+            		this.runningSegments.get(id).isInterrupted()
+            	) {
+	            	Thread t = this.runningSegments.get(id);
+            		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+            	}            	
             }
         }
     }
@@ -668,7 +697,7 @@ public class SubscriptionHandlerServlet
     private static final String VISITOR_ID = "SubscriptionHandler";
 
     private PersistenceManagerFactory persistenceManagerFactory = null;
-    private final List<String> runningSegments = new ArrayList<String>();
+    private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
     private long startedAt = System.currentTimeMillis();
 }
 

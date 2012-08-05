@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,7 +11,7 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="usageaddresspostal" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="usageaddresspostal" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:account1:PostalAddress:usage</_item>
@@ -33,7 +33,7 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<shortText>
 															<_item>NA</_item>
@@ -44,7 +44,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Private</_item>
@@ -57,7 +57,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Primary</_item>
@@ -70,7 +70,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Secondary</_item>
@@ -83,7 +83,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Home</_item>
@@ -94,7 +94,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="450" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Home Other</_item>
@@ -107,7 +107,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Business</_item>
@@ -118,7 +118,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="550" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Business Other</_item>
@@ -131,7 +131,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="600" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="600" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Company</_item>
@@ -144,7 +144,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="650" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="650" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Company Other</_item>
@@ -157,7 +157,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="700" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="700" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Assistant</_item>
@@ -170,7 +170,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="800" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Deputy</_item>
@@ -183,7 +183,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1800" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1800" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Other</_item>
@@ -194,7 +194,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1900" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1900" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Emergency</_item>
@@ -207,7 +207,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="10000" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10000" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Invoice</_item>
@@ -218,7 +218,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="10100" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10100" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Quote</_item>
@@ -229,7 +229,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="10200" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10200" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Delivery</_item>
@@ -240,7 +240,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="10300" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10300" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Pickup</_item>
@@ -251,7 +251,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="10400" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="10400" _operation="set">
 													<_object>
 														<shortText>
 															<_item>Provenience</_item>

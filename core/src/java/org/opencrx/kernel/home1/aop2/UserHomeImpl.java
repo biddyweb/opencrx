@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserHomeImpl.java,v 1.17 2009/04/21 00:10:36 wfro Exp $
+ * Name:        $Id: UserHomeImpl.java,v 1.20 2009/10/14 09:10:21 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 00:10:36 $
+ * Date:        $Date: 2009/10/14 09:10:21 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,7 +55,6 @@
  */
 package org.opencrx.kernel.home1.aop2;
 
-import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.opencrx.kernel.backend.UserHomes;
@@ -65,34 +64,11 @@ import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.persistence.cci.UserObjects;
-import org.w3c.cci2.BinaryLargeObjects;
 
 public class UserHomeImpl
-	<S extends org.opencrx.kernel.home1.jmi1.UserHome,N extends org.opencrx.kernel.home1.cci2.UserHome,C extends UserHomeImpl.DerivedAttributes>
+	<S extends org.opencrx.kernel.home1.jmi1.UserHome,N extends org.opencrx.kernel.home1.cci2.UserHome,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
-	public static class DerivedAttributes {
-		
-		public DerivedAttributes(
-			byte[][] charts,
-			String[] chartNames,
-			String[] chartDescriptions,
-			String[] chartMimeTypes
-		) {
-			this.charts = charts;
-			this.chartNames = chartNames;
-			this.chartDescriptions = chartDescriptions;
-			this.chartMimeTypes = chartDescriptions;
-		}
-		
-		public byte[][] charts;
-		public String[] chartNames;
-		public String[] chartDescriptions;
-		public String[] chartMimeTypes;
-		
-	}
-	
     //-----------------------------------------------------------------------
     public UserHomeImpl(
         S same,
@@ -183,186 +159,5 @@ public class UserHomeImpl
     		throw new JmiServiceException(e);
     	}
     }
-        
-    //-----------------------------------------------------------------------
-    public byte[] getFavoriteChart0(
-    ) {
-    	return this.thisContext().charts[0];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart0Description(
-    ) {
-    	return this.thisContext().chartDescriptions[0];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart0MimeType(
-    ) {
-    	return this.thisContext().chartMimeTypes[0];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart0Name(
-    ) {
-    	return this.thisContext().chartNames[0];
-    }
-
-    //-----------------------------------------------------------------------
-    public byte[] getFavoriteChart1(
-    ) {
-    	return this.thisContext().charts[1];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart1Description(
-    ) {
-    	return this.thisContext().chartDescriptions[1];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart1MimeType(
-    ) {
-    	return this.thisContext().chartMimeTypes[1];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart1Name(
-    ) {
-    	return this.thisContext().chartNames[1];
-    }
-
-    //-----------------------------------------------------------------------
-    public byte[] getFavoriteChart2(
-    ) {
-    	return this.thisContext().charts[2];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart2Description(
-    ) {
-    	return this.thisContext().chartDescriptions[2];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart2MimeType(
-    ) {
-    	return this.thisContext().chartMimeTypes[2];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart2Name(
-    ) {
-    	return this.thisContext().chartNames[2];
-    }
-    
-    //-----------------------------------------------------------------------
-    public byte[] getFavoriteChart3(
-    ) {
-    	return this.thisContext().charts[3];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart3Description(
-    ) {
-    	return this.thisContext().chartDescriptions[3];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart3MimeType(
-    ) {
-    	return this.thisContext().chartMimeTypes[3];
-    }
-
-    //-----------------------------------------------------------------------
-    public java.lang.String getFavoriteChart3Name(
-    ) {
-    	return this.thisContext().chartNames[3];
-    }
-    
-    //-----------------------------------------------------------------------
-	@SuppressWarnings("unchecked")
-    @Override
-    protected C newContext(
-    ) {
-		byte[][] charts = new byte[4][];
-		String[] chartNames = new String[4];
-		String[] chartMimeTypes = new String[4];
-		String[] chartDescriptions = new String[4];
-		// chart0
-		if(this.sameObject().getChart0() != null) {
-			org.opencrx.kernel.document1.jmi1.Media chart = this.sameObject().getChart0();
-            ByteArrayOutputStream content = new ByteArrayOutputStream();
-            try {
-                BinaryLargeObjects.streamCopy(
-                    chart.getContent().getContent(), 
-                    0L, 
-                    content
-                );
-            } 
-            catch(Exception e) {}
-			charts[0] = content.toByteArray();
-			chartNames[0] = chart.getContentName();
-			chartDescriptions[0] = chart.getDescription();
-			chartMimeTypes[0] = chart.getContentMimeType();
-		}
-		// chart1
-		if(this.sameObject().getChart1() != null) {
-			org.opencrx.kernel.document1.jmi1.Media chart = this.sameObject().getChart1();
-            ByteArrayOutputStream content = new ByteArrayOutputStream();
-            try {
-                BinaryLargeObjects.streamCopy(
-                    chart.getContent().getContent(), 
-                    0L, 
-                    content
-                );
-            } 
-            catch(Exception e) {}
-			charts[1] = content.toByteArray();
-			chartNames[1] = chart.getContentName();
-			chartDescriptions[1] = chart.getDescription();
-			chartMimeTypes[1] = chart.getContentMimeType();
-		}
-		// chart2
-		if(this.sameObject().getChart2() != null) {
-			org.opencrx.kernel.document1.jmi1.Media chart = this.sameObject().getChart2();
-            ByteArrayOutputStream content = new ByteArrayOutputStream();
-            try {
-                BinaryLargeObjects.streamCopy(
-                    chart.getContent().getContent(), 
-                    0L, 
-                    content
-                );
-            } 
-            catch(Exception e) {}
-			charts[2] = content.toByteArray();
-			chartNames[2] = chart.getContentName();
-			chartDescriptions[2] = chart.getDescription();
-			chartMimeTypes[2] = chart.getContentMimeType();
-		}
-		// chart3
-		if(this.sameObject().getChart3() != null) {
-			org.opencrx.kernel.document1.jmi1.Media chart = this.sameObject().getChart3();
-            ByteArrayOutputStream content = new ByteArrayOutputStream();
-            try {
-                BinaryLargeObjects.streamCopy(
-                    chart.getContent().getContent(), 
-                    0L, 
-                    content
-                );
-            } 
-            catch(Exception e) {}
-			charts[3] = content.toByteArray();
-			chartNames[3] = chart.getContentName();
-			chartDescriptions[3] = chart.getDescription();
-			chartMimeTypes[3] = chart.getContentMimeType();
-		}
-        return (C)new DerivedAttributes(
-        	charts,
-        	chartNames,
-        	chartMimeTypes,
-        	chartDescriptions
-        );
-    }
-    
+            
 }

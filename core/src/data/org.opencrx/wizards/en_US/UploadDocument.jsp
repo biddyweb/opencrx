@@ -1,23 +1,23 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.17 2009/05/11 12:22:40 cmu Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.20 2009/10/15 16:19:33 wfro Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/11 12:22:40 $
+ * Date:        $Date: 2009/10/15 16:19:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2006, OMEX AG, Switzerland
+ * Copyright (c) 2007-2009, CRIXP Corp., Switzerland
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or
- * without modification, are permitted provided that the following
- * conditions are met:
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
  * * Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
@@ -27,9 +27,10 @@
  * the documentation and/or other materials provided with the
  * distribution.
  *
- * * Neither the name of the openMDX team nor the names of its
- * contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ *
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -50,9 +51,8 @@
  * This product includes software developed by the Apache Software
  * Foundation (http://www.apache.org/).
  *
- * This product includes software developed by Mihai Bazon
- * (http://dynarch.com/mishoo/calendar.epl) published with an LGPL
- * license.
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
  */
 %><%@ page session="true" import="
 java.util.*,
@@ -68,7 +68,7 @@ org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
-org.openmdx.application.log.*,
+org.openmdx.kernel.log.*,
 org.openmdx.uses.org.apache.commons.fileupload.*,
 org.openmdx.kernel.id.*
 " %><%
@@ -98,7 +98,7 @@ org.openmdx.kernel.id.*
 		}
 		catch(FileUploadException e) {
 		  uploadFailed = true;
-			AppLog.warning("cannot upload file", e.getMessage());
+		  SysLog.warning("cannot upload file", e.getMessage());
 %>
       <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
         <table>
@@ -163,7 +163,7 @@ org.openmdx.kernel.id.*
       }
 		}
 		catch(FileUploadException e) {
-			AppLog.warning("cannot upload file", e.getMessage());
+			SysLog.warning("cannot upload file", e.getMessage());
 %>
       <div style="padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
         <table>
@@ -186,18 +186,14 @@ org.openmdx.kernel.id.*
     System.out.println("xri=null - reading again");
 	  objectXri = request.getParameter("xri");
 	}
-	if(app==null || objectXri==null || viewsCache.getViews().isEmpty()) {
-    System.out.println("app=" + app);
-    System.out.println("xri=" + objectXri);
-    System.out.println("viewsCache=" + (viewsCache.getViews().isEmpty() ? "empty" : "not empty"));
-    response.sendRedirect(
-       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-    );
-    return;
-  }
-  javax.jdo.PersistenceManager pm = app.getPmData();
-  Texts_1_0 texts = app.getTexts();
-
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
+	    response.sendRedirect(
+	       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+	    );
+	    return;
+	}
+	javax.jdo.PersistenceManager pm = app.getPmData();
+	Texts_1_0 texts = app.getTexts();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
@@ -455,7 +451,7 @@ org.openmdx.kernel.id.*
                 pm.currentTransaction().commit();
                 pm.currentTransaction().begin();
               } catch (Exception e) {
-                AppLog.warning(e.getMessage(), e.getCause());
+            	  SysLog.warning(e.getMessage(), e.getCause());
               }
             }
 
@@ -497,7 +493,7 @@ org.openmdx.kernel.id.*
   				try {
   				    pm.currentTransaction().rollback();
   				} catch(Exception e0) {}
-					AppLog.warning("cannot upload file", e.getMessage());
+  				SysLog.warning("cannot upload file", e.getMessage());
 %>
           <div style="margin:0;padding:10px 10px 10px 10px;background-color:#FF0000;color:#FFFFFF;">
             <table>
@@ -517,9 +513,9 @@ org.openmdx.kernel.id.*
             ? "style='display:none;'"
             : "";
           UserDefinedView userView = new UserDefinedView(
-            (RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+            pm.getObjectById(new Path(objectXri)),
             app,
-            (View)viewsCache.getViews().values().iterator().next()
+            viewsCache.getView(requestId)
           );
 %>
 
@@ -739,7 +735,7 @@ org.openmdx.kernel.id.*
 %>
       </div> <!-- content -->
     </div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+  </div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

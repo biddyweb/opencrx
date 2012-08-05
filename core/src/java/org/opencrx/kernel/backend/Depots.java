@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.40 2009/06/01 16:56:03 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.41 2009/07/19 00:28:27 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.40 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/01 16:56:03 $
+ * Date:        $Date: 2009/07/19 00:28:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1346,13 +1346,13 @@ public class Depots extends AbstractImpl {
             // exists. If yes, do not create new position.
             List<ProductDepotPosition> positions = null;
             if(depotPositionQualifier == null) {
-            	ProductDepotPositionQuery depotPositionQuery = (ProductDepotPositionQuery)pm.newQuery(DepotPosition.class);
+            	ProductDepotPositionQuery depotPositionQuery = (ProductDepotPositionQuery)pm.newQuery(ProductDepotPosition.class);
             	depotPositionQuery.thereExistsProduct().equalTo(product);
             	positions = depot.getPosition(depotPositionQuery);
             }
             // qualifier and productRole must match
             else {
-            	ProductDepotPositionQuery depotPositionQuery = (ProductDepotPositionQuery)pm.newQuery(DepotPosition.class);
+            	ProductDepotPositionQuery depotPositionQuery = (ProductDepotPositionQuery)pm.newQuery(ProductDepotPosition.class);
             	depotPositionQuery.thereExistsProduct().equalTo(product);
             	depotPositionQuery.thereExistsQualifier().equalTo(depotPositionQualifier);
             	positions = depot.getPosition(depotPositionQuery);

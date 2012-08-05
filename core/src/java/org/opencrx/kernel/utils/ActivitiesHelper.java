@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivitiesHelper.java,v 1.5 2009/03/08 17:04:48 wfro Exp $
+ * Name:        $Id: ActivitiesHelper.java,v 1.6 2009/07/13 14:27:36 wfro Exp $
  * Description: ActivitiesHelper
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/03/08 17:04:48 $
+ * Date:        $Date: 2009/07/13 14:27:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -79,6 +79,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.format.DateFormat;
 
 public class ActivitiesHelper {
@@ -123,7 +124,7 @@ public class ActivitiesHelper {
             this.activityPackage = Utils.getActivityPackage(this.pm); 
             this.activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-                    "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
+                    new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
                 );
             this.activityGroup = null;
             this.userHome = null;
@@ -173,7 +174,7 @@ public class ActivitiesHelper {
             }
             else if("userhome".equals(calendarType)) {
                 this.userHome = (org.opencrx.kernel.home1.jmi1.UserHome)this.pm.getObjectById(
-                    "xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + this.calendarName
+                    new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + this.calendarName)
                 );
             }
             else if("resource".equals(calendarType)) {

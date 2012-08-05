@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: InvoiceImpl.java,v 1.7 2009/04/20 17:56:46 wfro Exp $
+ * Name:        $Id: InvoiceImpl.java,v 1.8 2009/07/21 11:09:11 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
+ * Date:        $Date: 2009/07/21 11:09:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,6 +55,7 @@
  */
 package org.opencrx.kernel.contract1.aop2;
 
+import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Contracts;
@@ -64,7 +65,7 @@ import org.openmdx.base.exception.ServiceException;
 public class InvoiceImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.Invoice,N extends org.opencrx.kernel.contract1.cci2.Invoice,C extends Void>
 	extends AbstractContractImpl<S,N,C>
-	implements StoreCallback {
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
     public InvoiceImpl(
@@ -96,5 +97,12 @@ public class InvoiceImpl
     ) {
 	    super.jdoPreStore();
     }
-            
+
+    //-----------------------------------------------------------------------
+	@Override
+    public void jdoPreDelete(
+    ) {
+	    super.jdoPreDelete();
+    }
+		
 }

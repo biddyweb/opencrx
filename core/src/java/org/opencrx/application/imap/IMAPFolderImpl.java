@@ -57,9 +57,9 @@ import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.utils.ActivitiesHelper;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.format.DateFormat;
+import org.openmdx.kernel.log.SysLog;
 
 public class IMAPFolderImpl extends Folder implements UIDFolder {
 
@@ -209,7 +209,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                         );
                         EMail emailActivity = null;
                         if(activities.isEmpty()) {
-                            AppLog.trace("Create a new EMailActivity");
+                        	SysLog.trace("Create a new EMailActivity");
                             pm.currentTransaction().begin();                            
                             Activity1Package activityPkg = Utils.getActivityPackage(pm);
                             NewActivityParams newActParam = activityPkg.createNewActivityParams(
@@ -227,7 +227,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                                 newActParam
                             );
                             pm.currentTransaction().commit();                  
-                            emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refMofId());
+                            emailActivity = (EMail)pm.getObjectById(newActivityResult.getActivity().refGetPath());
                             // Update activity step 1
                             pm.currentTransaction().begin();
                             String subject = mimeMessage.getSubject();                
@@ -360,7 +360,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                             pm.currentTransaction().rollback();
                         } 
                         catch(Exception e0) {}
-                        AppLog.warning("Can not create email activity", e.getMessage());
+                        SysLog.warning("Can not create email activity", e.getMessage());
                         new ServiceException(e).log();                        
                     }                                
                 }
@@ -407,7 +407,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                     reader.close();
                 }
                 catch(Exception e) {
-                    AppLog.error("Can not read index file " + indexFile, e.getMessage());
+                	SysLog.error("Can not read index file " + indexFile, e.getMessage());
                 }
             }
             // Get activities which are newer than synchronizedAt
@@ -458,7 +458,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                         );                     
                     }
                     catch(Exception e) {
-                        AppLog.warning("Unable to map activity to mime message", uid);
+                    	SysLog.warning("Unable to map activity to mime message", uid);
                         new ServiceException(e).log();
                     }
                 }
@@ -513,7 +513,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 out.close();
             }
             catch(Exception e) {
-                AppLog.error("Can not write index file " + indexFile, e.getMessage());            
+            	SysLog.error("Can not write index file " + indexFile, e.getMessage());            
             }
             this.synchronizeNextAt = System.currentTimeMillis() + SYNCHRONIZE_REFRESH_RATE;
         }
@@ -582,7 +582,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                     return mimeMessage;
                 }
                 catch(Exception e) {
-                    AppLog.error("Can not read message " + mimeMessageFile, e.getMessage());
+                	SysLog.error("Can not read message " + mimeMessageFile, e.getMessage());
                 }
             }
         }
@@ -703,7 +703,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 return mimeMessage;
             }
             catch(Exception e) {
-                AppLog.error("Can not read message " + mimeMessageFile, e.getMessage());
+            	SysLog.error("Can not read message " + mimeMessageFile, e.getMessage());
             }
         }
         return null;

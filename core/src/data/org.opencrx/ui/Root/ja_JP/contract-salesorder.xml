@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri:+resource/org/openmdx/ui1/xmi/ui1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
   <_object/>
   <_content>
     <provider>
@@ -36,10 +36,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>関連インボイス</_item>
+                        <_item>関連請求書</_item>
                       </label>
                       <toolTip>
-                        <_item>関連インボイス</_item>
+                        <_item>関連請求書</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -135,10 +135,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:Pane:Op:Tab:createInvoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>インボイス作成</_item>
+                        <_item>請求書作成</_item>
                       </label>
                       <toolTip>
-                        <_item>インボイス作成</_item>
+                        <_item>請求書作成</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderCreateInvoiceResult:invoice" _operation="create">
                     <_object>
                       <label>
-                        <_item>インボイス</_item>
+                        <_item>請求書</_item>
                       </label>
                       <toolTip>
-                        <_item>インボイス</_item>
+                        <_item>請求書</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.130 2009/06/08 13:45:22 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.148 2009/10/14 09:10:21 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.130 $
+ * Revision:    $Revision: 1.148 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/08 13:45:22 $
+ * Date:        $Date: 2009/10/14 09:10:21 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -96,6 +96,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 import javax.mail.internet.MimeUtility;
 
+import org.omg.mof.spi.Names;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
@@ -104,6 +105,7 @@ import org.opencrx.kernel.activity1.cci2.AbsenceQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessActionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
+import org.opencrx.kernel.activity1.cci2.AddressGroupMemberQuery;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
 import org.opencrx.kernel.activity1.cci2.ExternalActivityQuery;
 import org.opencrx.kernel.activity1.cci2.IncidentQuery;
@@ -174,11 +176,11 @@ import org.opencrx.kernel.generic.jmi1.PropertySet;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.uom1.jmi1.Uom;
+import org.opencrx.kernel.utils.ActivitiesHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.FilterOperators;
@@ -189,6 +191,8 @@ import org.openmdx.compatibility.datastore1.jmi1.QueryFilter;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
+import org.openmdx.kernel.loading.Classes;
+import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObjects;
 
 public class Activities extends AbstractImpl {
@@ -1100,242 +1104,6 @@ public class Activities extends AbstractImpl {
     }
             
     //-------------------------------------------------------------------------
-    public void calculateUserHomeCharts(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome
-    ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
-        org.opencrx.kernel.home1.jmi1.Media[] charts = new org.opencrx.kernel.home1.jmi1.Media[2];
-        Collection<org.opencrx.kernel.home1.jmi1.Media> existingCharts = userHome.getChart();
-        for(org.opencrx.kernel.home1.jmi1.Media chart: existingCharts) {
-            if("2".equals(chart.refGetPath().getBase())) {
-                charts[0] = chart;
-            }
-            else if("3".equals(chart.refGetPath().getBase())) {
-                charts[1] = chart;
-            }
-        }        
-        java.text.DateFormat dateFormat = 
-            java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, new Locale("en_US")); 
-        java.text.DateFormat timeFormat = 
-            java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT, new Locale("en_US"));
-        String createdAt = dateFormat.format(new Date()) + " " + timeFormat.format(new Date());
-        // try to get full name of contact
-        String fullName = "";
-        try {
-            fullName = userHome.getContact().getFullName();
-        } 
-        catch(Exception e) {}
-        String chartTitle = null;
-        /**
-         * Assigned Activities Overview
-         */
-        chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Overview (" + createdAt + ")";
-        if(charts[0] == null) {
-            charts[0] = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
-            charts[0].refInitialize(false, false);
-            userHome.addChart(
-                false, 
-                "2", 
-                charts[0]
-            );
-        }
-        charts[0].setDescription(chartTitle);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        PrintWriter pw = new PrintWriter(os);
-
-        pw.println("BEGIN:VND.OPENDMDX-CHART");
-        pw.println("VERSION:1.0");
-        pw.println("COUNT:1");
-
-        pw.println("CHART[0].TYPE:HORIZBAR");
-        pw.println("CHART[0].LABEL:" + chartTitle);
-        pw.println("CHART[0].SCALEXTITLE:#Activities");
-        pw.println("CHART[0].SCALEYTITLE:Activity type");
-        pw.println("CHART[0].COUNT:" + ACTIVITY_TYPES.length);
-
-        int[] counts = new int[9];
-        int[] timeDistribution = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        
-        // org:opencrx:kernel:activity1:EMail
-        pw.println("CHART[0].LABEL[0]:EMail");
-        EMailQuery emailQuery = (EMailQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.EMail.class);
-        emailQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[0] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            emailQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:Incident",
-        pw.println("CHART[0].LABEL[1]:Incident");
-        IncidentQuery incidentQuery = (IncidentQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Incident.class);
-        incidentQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[1] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            incidentQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:Mailing",
-        pw.println("CHART[0].LABEL[2]:Mailing");
-        MailingQuery mailingQuery = (MailingQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Mailing.class);
-        mailingQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[2] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            mailingQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:Meeting",
-        pw.println("CHART[0].LABEL[3]:Meeting");
-        MeetingQuery meetingQuery = (MeetingQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Meeting.class);
-        meetingQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[3] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            meetingQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:PhoneCall",
-        pw.println("CHART[0].LABEL[4]:PhoneCall");
-        PhoneCallQuery phoneCallQuery = (PhoneCallQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.PhoneCall.class);
-        phoneCallQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[4] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            phoneCallQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:Task",
-        pw.println("CHART[0].LABEL[5]:Task");
-        TaskQuery taskQuery = (TaskQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Task.class);
-        taskQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[5] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            taskQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:Absence",
-        pw.println("CHART[0].LABEL[6]:Absence");
-        AbsenceQuery absenceQuery = (AbsenceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Absence.class);
-        absenceQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[6] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            absenceQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:ExternalActivity",
-        pw.println("CHART[0].LABEL[7]:ExternalActivity");
-        ExternalActivityQuery externalActivityQuery = (ExternalActivityQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ExternalActivity.class);
-        externalActivityQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[7] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            externalActivityQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );
-        // org:opencrx:kernel:activity1:SalesVisit"  
-        pw.println("CHART[0].LABEL[8]:SalesVisit");
-        SalesVisitQuery salesVisitQuery = (SalesVisitQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.SalesVisit.class);
-        salesVisitQuery.thereExistsPercentComplete().lessThan((short)100);        
-        counts[8] = Activities.calculateOpenActivityTimeDistribution(
-            userHome,
-            salesVisitQuery,
-            timeDistribution, 
-            "scheduledStart", 
-            true
-        );        
-        int maxValue = 0;
-        for(int i = 0; i < counts.length; i++) {
-            pw.println("CHART[0].VAL[" + i + "]:" + counts[i]);
-            pw.println("CHART[0].BORDER[" + i + "]:#000066");
-            pw.println("CHART[0].FILL[" + i + "]:#F6D66D");
-            maxValue = Math.max(maxValue, counts[i]);
-        }
-        pw.println("CHART[0].MINVALUE:0");
-        pw.println("CHART[0].MAXVALUE:" + maxValue);      
-        pw.println("END:VND.OPENDMDX-CHART");      
-        try {
-            pw.flush();
-            os.close();
-        } 
-        catch(Exception e) {}
-        charts[0].setContent(BinaryLargeObjects.valueOf(os.toByteArray()));
-        charts[0].setContentMimeType("application/vnd.openmdx-chart");
-        charts[0].setContentName(Utils.toFilename(chartTitle) + ".txt");
-        /**
-         * Assigned Activities Age Distribution
-         */
-        chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Age Distribution (" + createdAt + ")";
-        if(charts[1] == null) {
-            charts[1] = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
-            charts[1].refInitialize(false, false);
-            userHome.addChart(
-                false, 
-                "3", 
-                charts[1]
-            );            
-        }
-        charts[1].setDescription(chartTitle);
-        os = new ByteArrayOutputStream();
-        pw = new PrintWriter(os);
-
-        pw.println("BEGIN:VND.OPENDMDX-CHART");
-        pw.println("VERSION:1.0");
-        pw.println("COUNT:1");
-
-        pw.println("CHART[0].TYPE:VERTBAR");
-        pw.println("CHART[0].LABEL:" + chartTitle);
-        pw.println("CHART[0].SCALEXTITLE:#Days");
-        pw.println("CHART[0].SCALEYTITLE:#Activities");
-        pw.println("CHART[0].COUNT:15");
-
-        pw.println("CHART[0].LABEL[0]:past due");
-        pw.println("CHART[0].LABEL[1]:today");
-        pw.println("CHART[0].LABEL[2]:1");
-        pw.println("CHART[0].LABEL[3]:2");
-        pw.println("CHART[0].LABEL[4]:3");
-        pw.println("CHART[0].LABEL[5]:4");
-        pw.println("CHART[0].LABEL[6]:5");
-        pw.println("CHART[0].LABEL[7]:6");
-        pw.println("CHART[0].LABEL[8]:7");
-        pw.println("CHART[0].LABEL[9]:..14");
-        pw.println("CHART[0].LABEL[10]:..30");
-        pw.println("CHART[0].LABEL[11]:..90");
-        pw.println("CHART[0].LABEL[12]:..180");
-        pw.println("CHART[0].LABEL[13]:..360");
-        pw.println("CHART[0].LABEL[14]:>360 days");      
-        maxValue = 0;
-        for(int i = 0; i < 15; i++) {
-            pw.println("CHART[0].VAL[" + i + "]:" + timeDistribution[i]);
-            pw.println("CHART[0].BORDER[" + i + "]:#000066");
-            pw.println("CHART[0].FILL[" + i + "]:#F6D66D");
-            maxValue = Math.max(maxValue, timeDistribution[i]);
-        }
-        pw.println("CHART[0].MINVALUE:0");
-        pw.println("CHART[0].MAXVALUE:" + maxValue);      
-        pw.println("END:VND.OPENDMDX-CHART");
-        try {
-            pw.flush();
-            os.close();
-        } 
-        catch(Exception e) {}
-        charts[1].setContent(BinaryLargeObjects.valueOf(os.toByteArray()));
-        charts[1].setContentMimeType("application/vnd.openmdx-chart");
-        charts[1].setContentName(Utils.toFilename(chartTitle) + ".txt");
-    }
-        
-    //-------------------------------------------------------------------------
     private static int calculateOpenActivityTimeDistribution(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
         ActivityQuery query,
@@ -1375,7 +1143,7 @@ public class Activities extends AbstractImpl {
             return count;
         }
         catch(Exception e) {
-            AppLog.warning("Error when iterating activities for user", Arrays.asList(userHome, e.getMessage()));
+        	SysLog.warning("Error when iterating activities for user", Arrays.asList(userHome, e.getMessage()));
             return 0;
         }            
     }
@@ -1484,33 +1252,18 @@ public class Activities extends AbstractImpl {
                 activityType.getActivityClassName() : 
                 ACTIVITY_TYPES[((Number)activityType.getActivityClass()).intValue()];
             Activity newActivity = null;
-            if("org:opencrx:kernel:activity1:EMail".equals(activityClass)) {
-            	newActivity = pm.newInstance(EMail.class); 
-            }
-        	else if("org:opencrx:kernel:activity1:Incident".equals(activityClass)) {
-        		newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Incident.class);
-        	}
-    		else if("org:opencrx:kernel:activity1:Mailing".equals(activityClass)) {
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Mailing.class);     			
-    		}
-			else if("org:opencrx:kernel:activity1:Meeting".equals(activityClass)) {
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Meeting.class); 				
+			try {
+				String packageName = activityClass.substring(0, activityClass.lastIndexOf(":"));
+				String className = activityClass.substring(activityClass.lastIndexOf(":") + 1);
+				newActivity = (Activity)pm.newInstance(
+					Classes.getApplicationClass(
+						packageName.replace(":", ".") + "." + Names.JMI1_PACKAGE_SUFFIX + "." + className
+					)
+				);
 			}
-			else if("org:opencrx:kernel:activity1:PhoneCall".equals(activityClass)) {
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.PhoneCall.class); 				
+			catch(ClassNotFoundException e) {
+				throw new ServiceException(e);
 			}
-			else if("org:opencrx:kernel:activity1:Task".equals(activityClass)) {
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Task.class); 				
-			}
-			else if("org:opencrx:kernel:activity1:Absence".equals(activityClass)) {
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.Absence.class); 				
-			}
-			else if("org:opencrx:kernel:activity1:ExternalActivity".equals(activityClass)) {
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ExternalActivity.class); 				
-			}
-			else if("org:opencrx:kernel:activity1:SalesVisit".equals(activityClass)) {            	
-            	newActivity = pm.newInstance(org.opencrx.kernel.activity1.jmi1.SalesVisit.class); 
-            }
             newActivity.refInitialize(false, false);
             if(name != null) {
                 newActivity.setName(name);
@@ -1579,8 +1332,8 @@ public class Activities extends AbstractImpl {
                 return newActivity;
             }
             catch(ServiceException e) {
-                AppLog.warning("Creation of new activity failed", e.getMessage());
-                AppLog.warning(e.getMessage(), e.getCause());
+            	SysLog.warning("Creation of new activity failed", e.getMessage());
+            	SysLog.warning(e.getMessage(), e.getCause());
             }
         }
         return null;
@@ -1612,6 +1365,46 @@ public class Activities extends AbstractImpl {
             null
         );
         return vote;
+    }
+
+    //-------------------------------------------------------------------------
+    public void markAsAllDayEvent(
+        Activity activity,
+        String timezoneID
+    ) {
+    	if(timezoneID == null) {
+    		timezoneID = "GMT-0:00";
+    	}
+    	// scheduledStart
+		java.util.Calendar localScheduledStart = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone(timezoneID));
+		localScheduledStart.setTime(activity.getScheduledStart());
+		java.util.Calendar scheduledStart = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone("GMT-0:00"));
+		scheduledStart.set(java.util.Calendar.YEAR, localScheduledStart.get(java.util.Calendar.YEAR));
+		scheduledStart.set(java.util.Calendar.MONTH, localScheduledStart.get(java.util.Calendar.MONTH));
+		scheduledStart.set(java.util.Calendar.DAY_OF_MONTH, localScheduledStart.get(java.util.Calendar.DAY_OF_MONTH));		
+		scheduledStart.set(java.util.Calendar.HOUR_OF_DAY, 0);
+		scheduledStart.set(java.util.Calendar.MINUTE, 0);
+		scheduledStart.set(java.util.Calendar.SECOND, 0);
+		scheduledStart.set(java.util.Calendar.MILLISECOND, 0);
+		// scheduledEnd
+		java.util.Calendar localScheduledEnd = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone(timezoneID));		
+		localScheduledEnd.setTime(activity.getScheduledEnd());
+		java.util.Calendar scheduledEnd = GregorianCalendar.getInstance(java.util.TimeZone.getTimeZone("GMT-0:00"));
+		scheduledEnd.set(java.util.Calendar.YEAR, localScheduledEnd.get(java.util.Calendar.YEAR));
+		scheduledEnd.set(java.util.Calendar.MONTH, localScheduledEnd.get(java.util.Calendar.MONTH));
+		scheduledEnd.set(java.util.Calendar.DAY_OF_MONTH, localScheduledEnd.get(java.util.Calendar.DAY_OF_MONTH));				
+		scheduledEnd.set(java.util.Calendar.HOUR_OF_DAY, 0);
+		scheduledEnd.set(java.util.Calendar.MINUTE, 0);
+		scheduledEnd.set(java.util.Calendar.SECOND, 0);		
+		scheduledEnd.set(java.util.Calendar.MILLISECOND, 0);		
+		if(scheduledStart.get(java.util.Calendar.DAY_OF_MONTH) == scheduledEnd.get(java.util.Calendar.DAY_OF_MONTH)) {
+			scheduledEnd.add(
+				java.util.Calendar.DAY_OF_MONTH,
+				1
+			);
+		}
+		activity.setScheduledStart(scheduledStart.getTime());
+		activity.setScheduledEnd(scheduledEnd.getTime());
     }
     
     //-------------------------------------------------------------------------
@@ -1726,7 +1519,7 @@ public class Activities extends AbstractImpl {
                         }
                     }
                     catch(Exception e) {
-                        AppLog.warning("Execution of action failed --> transition failed.", action);
+                    	SysLog.warning("Execution of action failed --> transition failed.", action);
                         new ServiceException(e).log();
                         failed = true;
                     }                            
@@ -1747,14 +1540,14 @@ public class Activities extends AbstractImpl {
                                     null,
                                     null
                                 );
-                            AppLog.info("Execution of workflow successful.", action);
+                            SysLog.info("Execution of workflow successful.", action);
                             Boolean wfExecutionFailed = wfProcessInstance.isFailed();
                             if((wfExecutionFailed != null) && wfExecutionFailed.booleanValue()) {
                                 failed = true;
                             }
                         }
                         catch(Exception e) {
-                            AppLog.warning("Execution of action failed --> transition failed.", action);
+                        	SysLog.warning("Execution of action failed --> transition failed.", action);
                             new ServiceException(e).log();
                             failed = true;
                         }                            
@@ -1792,7 +1585,7 @@ public class Activities extends AbstractImpl {
                             );
                         }
                         catch(Exception e) {
-                            AppLog.warning("Execution of action failed --> transition failed.", action);
+                        	SysLog.warning("Execution of action failed --> transition failed.", action);
                             new ServiceException(e).log();
                             failed = true;
                         }         
@@ -1820,7 +1613,7 @@ public class Activities extends AbstractImpl {
                                 );
                             }
                             catch(Exception e) {
-                                AppLog.warning("Execution of action failed --> transition failed.", action);
+                            	SysLog.warning("Execution of action failed --> transition failed.", action);
                                 new ServiceException(e).log();
                                 failed = true;
                             }
@@ -2004,7 +1797,8 @@ public class Activities extends AbstractImpl {
         BigDecimal rate,
         short rateCurrency,
         Boolean isBillable,
-        Boolean isReimbursable
+        Boolean isReimbursable,
+        List<PrincipalGroup> owningGroups
     ) throws ServiceException {
         ActivityWorkRecord workRecord = null;
         if(resource == null) {
@@ -2020,8 +1814,15 @@ public class Activities extends AbstractImpl {
                OpenCrxException.ACTIVITY_CAN_NOT_ADD_WORK_RECORD_MISSING_ACTIVITY,
                "Can not add work record. Missing activity"
            );            
-        }
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);        
+        }        
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
+    	// Validate groups
+    	List<PrincipalGroup> groups = new ArrayList<PrincipalGroup>();
+    	for(PrincipalGroup group: owningGroups) {
+    		if(group != null) {
+    			groups.add(group);
+    		}
+    	}
         ResourceAssignmentQuery resourceAssignmentQuery = (ResourceAssignmentQuery)pm.newQuery(ResourceAssignment.class);
         resourceAssignmentQuery.thereExistsResource().equalTo(resource);
         Collection<ResourceAssignment> resourceAssignments = activity.getAssignedResource(resourceAssignmentQuery);
@@ -2030,7 +1831,8 @@ public class Activities extends AbstractImpl {
             resourceAssignment = this.createResourceAssignment(
                 activity, 
                 resource, 
-                (short)0
+                (short)0,
+                groups
             );
         }
         else {
@@ -2104,6 +1906,14 @@ public class Activities extends AbstractImpl {
         workRecord.setBillable(isBillable);
         workRecord.setReimbursable(isReimbursable);
         workRecord.setDepotSelector(depotSelector);
+        if(groups != null && !groups.isEmpty()) {
+        	workRecord.getOwningGroup().addAll(groups);
+        }
+        else {
+        	workRecord.getOwningGroup().addAll(
+        		resourceAssignment.getOwningGroup()
+        	);
+        }
         resourceAssignment.addWorkRecord(
         	false,
         	this.getUidAsString(),
@@ -2181,7 +1991,8 @@ public class Activities extends AbstractImpl {
     public ResourceAssignment createResourceAssignment(
         Activity activity,
         Resource resource,
-        short resourceOrder
+        short resourceOrder,
+        List<PrincipalGroup> owningGroups
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
         ResourceAssignment resourceAssignment = pm.newInstance(ResourceAssignment.class);
@@ -2210,6 +2021,14 @@ public class Activities extends AbstractImpl {
         resourceAssignment.getOwningGroup().addAll(
         	activity.getOwningGroup()
         );
+        if(owningGroups != null && !owningGroups.isEmpty()) {
+        	resourceAssignment.getOwningGroup().addAll(owningGroups);
+        }
+        else {
+        	resourceAssignment.getOwningGroup().addAll(
+        		activity.getOwningGroup()
+        	);
+        }
         activity.addAssignedResource(
         	false,
         	this.getUidAsString(),
@@ -2313,7 +2132,8 @@ public class Activities extends AbstractImpl {
                             this.createResourceAssignment(
                                 activity,
                                 resource,
-                                (short)ii
+                                (short)ii,
+                                null
                             );
                             ii++;
                         }
@@ -2334,7 +2154,9 @@ public class Activities extends AbstractImpl {
                                 activity,
                                 "depotReference",
                                 null,
-                                ""
+                                "",
+                                activity.getOwningUser(),
+                                activity.getOwningGroup()
                             );
                         }
                     }                            
@@ -2354,7 +2176,9 @@ public class Activities extends AbstractImpl {
                                 activity,
                                 "propertySet",
                                 null,
-                                "property"
+                                "property",
+                                activity.getOwningUser(),
+                                activity.getOwningGroup()
                             );
                         }
                     }                            
@@ -3213,8 +3037,8 @@ public class Activities extends AbstractImpl {
         media.setContent(
             BinaryLargeObjects.valueOf(bos.toByteArray())
         );
-        if(AppLog.isTraceOn()) {
-            AppLog.trace("Media to add: " + content.toString());
+        if(SysLog.isTraceOn()) {
+        	SysLog.trace("Media to add: " + content.toString());
         }
         // 'copy' the email's owning groups
         media.getOwningGroup().addAll(
@@ -3249,7 +3073,7 @@ public class Activities extends AbstractImpl {
         
     ) throws ServiceException {
         if (addresses == null || addresses.length == 0) {
-            AppLog.trace("Message does not contain any recipient of type '" + type.toString() + "'");
+        	SysLog.trace("Message does not contain any recipient of type '" + type.toString() + "'");
         }
         Set<String> newAddresses = new HashSet<String>(Arrays.asList(addresses));
         newAddresses.remove("NO_ADDRESS_SPECIFIED");
@@ -3338,8 +3162,7 @@ public class Activities extends AbstractImpl {
         String segmentName
     ) {
         return (org.opencrx.kernel.activity1.jmi1.Segment) pm.getObjectById(
-            "xri:@openmdx:org.opencrx.kernel.activity1/provider/"
-            + providerName + "/segment/" + segmentName
+            new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
         );
     }
 
@@ -3710,8 +3533,8 @@ public class Activities extends AbstractImpl {
                         }
                     }
                     catch(Exception e) {
-                        AppLog.warning("Unable to get media content (see detail for more info)", e.getMessage());
-                        AppLog.info(e.getMessage(), e.getCause());
+                    	SysLog.warning("Unable to get media content (see detail for more info)", e.getMessage());
+                    	SysLog.info(e.getMessage(), e.getCause());
                     }
                     bos.close();
                     // Test whether media is zipped original mail. 
@@ -3778,6 +3601,7 @@ public class Activities extends AbstractImpl {
         org.opencrx.kernel.activity1.jmi1.EMail emailActivity,
         Message message            
     ) throws AddressException, MessagingException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(emailActivity);
         String gateway = emailActivity.getGateway() == null ?
             null : 
             emailActivity.getGateway().getEmailAddress();
@@ -3788,7 +3612,7 @@ public class Activities extends AbstractImpl {
         }
         catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            AppLog.detail(e0.getMessage(), e0.getCause());
+            SysLog.detail(e0.getMessage(), e0.getCause());
         }
         if(sender != null) {
             String inetAddress = this.getInternetAddress(
@@ -3815,57 +3639,67 @@ public class Activities extends AbstractImpl {
             }
             if(recipientType != null) {
                 if(recipient instanceof EMailRecipient) {
-                    String inetAddress = null;
-                    try {
-                        inetAddress = this.getInternetAddress(
-                            ((EMailRecipient)recipient).getParty(),
-                            gateway
-                        );
-                    } 
-                    catch(Exception e) {
-                        ServiceException e0 = new ServiceException(e);
-                        AppLog.detail(e0.getMessage(), e0.getCause());
-                    }
-                    if(inetAddress != null) {
-                        try {
-                            Address to = new InternetAddress(inetAddress);
-                            recipients.add(to);
-                            message.addRecipient(
-                                recipientType,
-                                to
-                            );
-                        }
-                        catch(Exception e) {
-                            AppLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
-                        }
-                    }
+                	if(!Boolean.TRUE.equals(((EMailRecipient)recipient).getParty().isDisabled())) {
+	                    String inetAddress = null;
+	                    try {
+	                        inetAddress = this.getInternetAddress(
+	                            ((EMailRecipient)recipient).getParty(),
+	                            gateway
+	                        );
+	                    } 
+	                    catch(Exception e) {
+	                        ServiceException e0 = new ServiceException(e);
+	                        SysLog.detail(e0.getMessage(), e0.getCause());
+	                    }
+	                    if(inetAddress != null) {
+	                        try {
+	                            Address to = new InternetAddress(inetAddress);
+	                            recipients.add(to);
+	                            message.addRecipient(
+	                                recipientType,
+	                                to
+	                            );
+	                        }
+	                        catch(Exception e) {
+	                        	SysLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
+	                        }
+	                    }
+                	}
                 }
                 else if(recipient instanceof EMailRecipientGroup) {
                     EMailRecipientGroup recipientGroup = (EMailRecipientGroup)recipient;
-                    Collection<AddressGroupMember> members = recipientGroup.getParty().getMember();
-                    for(AddressGroupMember member: members) {
-                        if((member.isDisabled() == null) || !member.isDisabled()) {
-                            AccountAddress address = member.getAddress();
-                            if((address.isDisabled() == null) || !member.isDisabled()) {
-                                String inetAddress = this.getInternetAddress(
-                                    address,
-                                    gateway
-                                );
-                                if(inetAddress != null) {
-                                    try {
-                                        Address to = new InternetAddress(inetAddress);
-                                        recipients.add(to);
-                                        message.addRecipient(
-                                            recipientType,
-                                            to
-                                        );                                
-                                    }
-                                    catch(Exception e) {
-                                        AppLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
-                                    }
-                                }
-                            }
-                        }
+                    AddressGroupMemberQuery addressGroupMemberQuery = (AddressGroupMemberQuery)pm.newQuery(AddressGroupMember.class);
+                    addressGroupMemberQuery.forAllDisabled().isFalse();
+                    if(!Boolean.TRUE.equals(recipientGroup.getParty().isDisabled())) {
+	                    Collection<AddressGroupMember> members = recipientGroup.getParty().getMember(addressGroupMemberQuery);
+	                    for(AddressGroupMember member: members) {
+	                    	AccountAddress address = null;
+	                    	try {
+	                    		address = member.getAddress();
+	                    	} catch(Exception e) {}                        		
+	                        if(
+	                        	(address != null) &&
+	                        	!Boolean.TRUE.equals(address.isDisabled())
+	                        ) {
+	                            String inetAddress = this.getInternetAddress(
+	                                address,
+	                                gateway
+	                            );
+	                            if(inetAddress != null) {
+	                                try {
+	                                    Address to = new InternetAddress(inetAddress);
+	                                    recipients.add(to);
+	                                    message.addRecipient(
+	                                        recipientType,
+	                                        to
+	                                    );                                
+	                                }
+	                                catch(Exception e) {
+	                                	SysLog.warning("Invalid recipient", Arrays.asList(emailActivity, inetAddress));
+	                                }
+	                            }
+	                        }
+	                    }
                     }
                 }
             }
@@ -3915,6 +3749,67 @@ public class Activities extends AbstractImpl {
         return null;
     }
         
+    //-----------------------------------------------------------------------
+    public Activity findActivity(
+        PersistenceManager pm,
+        ActivitiesHelper activitiesHelper,
+        String calUid
+    ) {
+        Activity1Package activityPkg = Utils.getActivityPackage(pm);
+        ActivityQuery query = activityPkg.createActivityQuery();
+        query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + calUid);
+        List<Activity> activities = activitiesHelper.getActivitySegment().getActivity(query);
+        if(activities.isEmpty()) {
+            query = activityPkg.createActivityQuery();
+            query.thereExistsExternalLink().equalTo(ICalendar.ICAL_SCHEMA + calUid.replace('.', '+'));
+            activities = activitiesHelper.getActivitySegment().getActivity(query);
+            if(activities.isEmpty()) {
+                return null;
+            }
+            else {
+                if(activities.size() > 1) {
+                	SysLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
+                    return null;
+                }
+                else {
+                    return activities.iterator().next();
+                }
+            }
+        }
+        else {
+            if(activities.size() > 1) {
+            	SysLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
+                return null;
+            }
+            else {
+                return activities.iterator().next();
+            }
+        }
+    }
+            
+    //-----------------------------------------------------------------------
+    public ActivityCreator findActivityCreator(
+        Collection<ActivityCreator> activityCreators,
+        short activityClass
+    ) {
+        for(ActivityCreator creator: activityCreators) {
+            if(
+                (creator.getActivityType() != null) && 
+                (creator.getActivityType().getActivityClass() == activityClass)
+            ) {
+                return creator;
+            }
+        }
+        return null;
+    }
+
+    //-------------------------------------------------------------------------
+    public void removeActivity(
+        Activity activity,
+        boolean preDelete
+    ) throws ServiceException {
+    }
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

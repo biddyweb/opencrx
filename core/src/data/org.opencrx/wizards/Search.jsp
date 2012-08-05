@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Search.jsp,v 1.14 2009/01/06 15:06:40 wfro Exp $
+ * Name:        $Id: Search.jsp,v 1.15 2009/06/18 11:03:18 cmu Exp $
  * Description: Search.jsp
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/01/06 15:06:40 $
+ * Date:        $Date: 2009/06/18 11:03:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,8 +69,7 @@ org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
-org.openmdx.portal.servlet.wizards.*,
-org.openmdx.application.log.*
+org.openmdx.portal.servlet.wizards.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
@@ -157,14 +156,7 @@ org.openmdx.application.log.*
 		);
 	}
   catch (Exception e) {
-		out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-		PrintWriter pw = new PrintWriter(out);
-		ServiceException e0 = new ServiceException(e);
-		pw.println(e0.getMessage());
-		pw.println(e0.getCause());
-		out.println("</pre>");
-		AppLog.warning("Error calling wizard", "Search.jsp");
-		AppLog.warning(e0.getMessage(), e0.getCause());
+		new ServiceException(e).log();
   }
 %>
   </td></tr></table>

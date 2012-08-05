@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri:+resource/org/opencrx/kernel/code1/xmi/code1.xsd">
+<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:opencrx:kernel:code1" xsi:noNamespaceSchemaLocation="xri://+resource/org/opencrx/kernel/code1/xmi1/code1.xsd">
 	<_object/>
 	<_content>
 		<provider>
@@ -11,16 +11,16 @@
 							<_object/>
 							<_content>
 								<valueContainer>
-									<org.opencrx.kernel.code1.CodeValueContainer name="contractState" _operation="create">
+									<org.opencrx.kernel.code1.CodeValueContainer name="contractState" _operation="set">
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:contract1:AbstractContract:contractState</_item>
-												<_item>org:opencrx:kernel:contract1:ContractPosition:contractPositionState</_item>
+												<_item>org:opencrx:kernel:contract1:AbstractContractPosition:AbstractContractPositionState</_item>
 											</name>
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -34,7 +34,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="110" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -48,7 +48,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="120" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -62,7 +62,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="130" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -76,7 +76,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="140" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -90,7 +90,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="150" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -104,7 +104,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -118,7 +118,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="210" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -132,7 +132,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="220" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -146,7 +146,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="230" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -160,7 +160,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="240" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -174,7 +174,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -188,7 +188,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="260" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -202,7 +202,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="270" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -216,7 +216,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="300" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -230,7 +230,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="310" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -244,7 +244,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="320" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -258,7 +258,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="330" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="330" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -272,7 +272,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="400" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -286,7 +286,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="410" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -300,7 +300,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="420" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -314,7 +314,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="430" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -328,7 +328,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="500" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -342,7 +342,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="510" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -356,7 +356,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="520" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -370,7 +370,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="530" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -384,7 +384,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1110" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -398,7 +398,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1120" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -412,7 +412,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1130" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -426,7 +426,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1140" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -440,7 +440,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1150" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -454,7 +454,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1210" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1210" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -468,7 +468,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1220" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1220" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -482,7 +482,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1230" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1230" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -496,7 +496,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1240" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1240" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -510,7 +510,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1250" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1250" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -524,7 +524,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1310" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1310" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -538,7 +538,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1320" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1320" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -552,7 +552,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1330" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1330" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -566,7 +566,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1340" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1340" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -580,7 +580,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1350" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1350" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -594,7 +594,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1360" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1360" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -608,7 +608,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1410" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -622,7 +622,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1420" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -636,7 +636,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1430" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -650,7 +650,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1440" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -664,7 +664,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1450" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1450" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -678,7 +678,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1460" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1460" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -692,7 +692,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1510" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1510" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -706,7 +706,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1520" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1520" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>
@@ -720,7 +720,7 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="1530" _operation="create">
+												<org.opencrx.kernel.code1.CodeValueEntry code="1530" _operation="set">
 													<_object>
 														<color>inherit</color>
 														<backColor>inherit</backColor>

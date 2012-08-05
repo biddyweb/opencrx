@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:         openCRX/Core, http://www.opencrx.org/
- * Name:            $Id: WorkAndExpenseReport.jsp,v 1.18 2009/06/14 21:10:41 cmu Exp $
+ * Name:            $Id: WorkAndExpenseReport.jsp,v 1.37 2009/10/16 02:08:53 cmu Exp $
  * Description:     Create Work Record
- * Revision:        $Revision: 1.18 $
+ * Revision:        $Revision: 1.37 $
  * Owner:           CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:            $Date: 2009/06/14 21:10:41 $
+ * Date:            $Date: 2009/10/16 02:08:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,12 +70,13 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*,
 org.opencrx.kernel.backend.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
-org.openmdx.base.text.conversion.*
+org.openmdx.base.text.conversion.*,
+org.apache.poi.hssf.usermodel.*,
+org.apache.poi.hssf.util.*
 " %>
 <%!
 
@@ -150,14 +151,70 @@ org.openmdx.base.text.conversion.*
 		return hhFormatter.format(hours) + ":" + mmFormatter.format(minutes);
 	}
 
+	private static HSSFSheet addSheet(
+		HSSFWorkbook wb,
+		String sheetName,
+		boolean isLandscape,
+		String[] labels,
+		String[] values,
+		int colsBetweenLabelsAndValues
+	) {
+			HSSFSheet sheet = wb.createSheet(sheetName);
+			sheet.setMargin(HSSFSheet.TopMargin,    0.5);
+			sheet.setMargin(HSSFSheet.RightMargin,  0.3);
+			sheet.setMargin(HSSFSheet.BottomMargin, 0.6);
+			sheet.setMargin(HSSFSheet.LeftMargin,   0.5);
+			sheet.setAutobreaks(true);
+
+
+	    HSSFPrintSetup ps = sheet.getPrintSetup();
+	    /*
+	    ps.setFitHeight((short)100);
+	    ps.setFitWidth((short)1);
+	    */
+			ps.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE);
+			ps.setLandscape(isLandscape);
+			ps.setFooterMargin(0.3);
+
+			HSSFFooter footer = sheet.getFooter();
+			footer.setRight(HSSFFooter.page() + " / " + HSSFFooter.numPages());
+			if (values.length > 3) {
+					footer.setLeft(values[3]);
+			}
+
+
+			HSSFRow row = null;
+			HSSFCell cell = null;
+			short nRow = 0;
+			short nCell = 0;
+			nRow = 0;
+			for (int i=0; i<labels.length; i++) {
+					row = sheet.createRow(nRow++);
+					nCell = 0;
+					cell = row.createCell(nCell++);
+					cell.setCellValue(labels[i]);
+					cell = row.createCell(nCell++);
+					for (int c = 0; c < colsBetweenLabelsAndValues; c++) {
+							cell = row.createCell(nCell++);
+					}
+					cell.setCellValue(values[i]);
+			}
+
+			return sheet;
+	}
+
 %>
 <%
+	final int REPORT_STARTING_ROW = 6;
 	final int MAX_ACTIVITY_SHOWN_INITIALLY = 50;
 	final int MAX_ACTIVITY_SHOWN = 500;
+	final int MAX_ACTIVITY_SORT_ORDER = 4;
 	final String FORM_NAME = "WorkAndExpenseReport";
 	final String WIZARD_NAME = FORM_NAME + ".jsp";
 	final String SUBMIT_HANDLER = "javascript:$('command').value=this.name;";
-	final String CAUTION = "<img border='0=' alt='' height='16px' src='../../images/caution.gif' />";
+	final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
+	final String SPREADSHEET = "<img border='0' alt=''  height='64px' src='../../images/spreadsheet.png' />";
+	final String GAP_BEFORE_XRI = "     ";
 
 	final String ACTIVITY_FILTER_SEGMENT = "Segment";
 	final String ACTIVITY_FILTER_ANYGROUP = "AnyGroup";
@@ -166,7 +223,6 @@ org.openmdx.base.text.conversion.*
 	final String ACTIVITY_FILTER_CATEGORY = "Category";
 	final String ACTIVITY_FILTER_MILESTONE = "Milestone";
 
-
 	final String ACTIVITY_CLASS = "org:opencrx:kernel:activity1:Activity";
 	final String ACTIVITYFILTER_CLASS = "org:opencrx:kernel:activity1:ActivityFilterGlobal";
 	final String ACTIVITYSEGMENT_CLASS = "org:opencrx:kernel:activity1:Segment";
@@ -174,6 +230,7 @@ org.openmdx.base.text.conversion.*
 	final String ACTIVITYTRACKER_CLASS = "org:opencrx:kernel:activity1:ActivityTracker";
 	final String ACTIVITYCATEGORY_CLASS = "org:opencrx:kernel:activity1:ActivityCategory";
 	final String ACTIVITYMILESTONE_CLASS = "org:opencrx:kernel:activity1:ActivityMilestone";
+  final String DISABLED_FILTER_PROPERTY_CLASS = "org:opencrx:kernel:activity1:DisabledFilterProperty";
 	final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
 	final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
 	final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
@@ -196,6 +253,8 @@ org.openmdx.base.text.conversion.*
 
 	final String contactTargetFinder = "org:opencrx:kernel:activity1:Resource:contact";
 
+	final String DEFAULT_CURRENCY = "N/A";
+
 	final String errorStyle = "style='background-color:#FFF0CC;'";
 	final String errorStyleInline = "background-color:#FFF0CC;";
 	// Init
@@ -207,7 +266,7 @@ org.openmdx.base.text.conversion.*
 	javax.jdo.PersistenceManager pm = app.getPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
-	if((app == null) || (objectXri == null)) {
+	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		session.setAttribute(WIZARD_NAME, null);
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
@@ -229,9 +288,10 @@ org.openmdx.base.text.conversion.*
 	SimpleDateFormat monthFormat = new java.text.SimpleDateFormat("MMMM", app.getCurrentLocale());	monthFormat.setTimeZone(timezone);
 	SimpleDateFormat dayInWeekFormat = new java.text.SimpleDateFormat("E", app.getCurrentLocale()); dayInWeekFormat.setTimeZone(timezone);
 	SimpleDateFormat weekdayf = new SimpleDateFormat("EE", app.getCurrentLocale());									weekdayf.setTimeZone(timezone);
-	SimpleDateFormat yyyyf = new SimpleDateFormat("yyyy", app.getCurrentLocale());										yyyyf.setTimeZone(timezone);
+	SimpleDateFormat yyyyf = new SimpleDateFormat("yyyy", app.getCurrentLocale());									yyyyf.setTimeZone(timezone);
+	SimpleDateFormat dateonlyf = new SimpleDateFormat("dd-MMM-yyyy", app.getCurrentLocale());				dateonlyf.setTimeZone(timezone);
 	SimpleDateFormat datetimef = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());	datetimef.setTimeZone(timezone);
-	SimpleDateFormat jsCalenderf = new SimpleDateFormat("dd-MM-yyyy HH:mm", app.getCurrentLocale());	jsCalenderf.setTimeZone(timezone);
+	SimpleDateFormat jsCalenderf = new SimpleDateFormat("dd-MM-yyyy HH:mm", app.getCurrentLocale());jsCalenderf.setTimeZone(timezone);
 	SimpleDateFormat datef = new SimpleDateFormat("EE d-MMMM-yyyy", app.getCurrentLocale());				datef.setTimeZone(timezone);
 	SimpleDateFormat dtsortf = new SimpleDateFormat("yyyyMMddHHmmss", app.getCurrentLocale());			dtsortf.setTimeZone(timezone);
 	SimpleDateFormat selectorf = new java.text.SimpleDateFormat("MM/yyyy", app.getCurrentLocale());	selectorf.setTimeZone(timezone);
@@ -251,9 +311,9 @@ org.openmdx.base.text.conversion.*
 	Map formValues = new HashMap();
 
 	UserDefinedView userView = new UserDefinedView(
-		(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+		pm.getObjectById(new Path(objectXri)),
 		app,
-		(View)viewsCache.getViews().values().iterator().next()
+		viewsCache.getView(requestId)
 	);
 	int tabIndex = 1;
 
@@ -275,8 +335,67 @@ org.openmdx.base.text.conversion.*
 			app.resetPmData();
 	}
 
+	// Cancel
+	if(actionCancel) {
+		session.setAttribute(WIZARD_NAME, null);
+		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
+		response.sendRedirect(
+			request.getContextPath() + "/" + nextAction.getEncodedHRef()
+		);
+		return;
+	}
+
 	boolean isWorkRecord = ((request.getParameter("isExpenseRecord") == null) || (request.getParameter("isExpenseRecord").length() == 0));
 	boolean hasProjects = ((request.getParameter("hasProjects") != null) && (request.getParameter("hasProjects").length() > 0));
+
+  if (request.getParameter("previousSheet") != null) {
+		  // delete previous temp file if it exists
+		  try {
+			  	File previousFile = new File(
+						app.getTempFileName(request.getParameter("previousSheet"), "")
+					);
+			  	if (previousFile.exists()) {
+			  			previousFile.delete();
+			  	}
+		  } catch (Exception e){
+			  	new ServiceException(e).log();
+		  }
+  }
+	String sheetName = (isWorkRecord ? "Work_" : "Expense_") + "Report";
+	String location = UUIDs.getGenerator().next().toString();
+	File f = new File(
+		app.getTempFileName(location, "")
+	);
+	FileOutputStream os = new FileOutputStream(f);
+
+	HSSFWorkbook wb = new HSSFWorkbook();
+
+	HSSFCellStyle dateTimeStyle = wb.createCellStyle();
+	HSSFDataFormat dataFormatDateTime = wb.createDataFormat();
+	dateTimeStyle.setDataFormat(dataFormatDateTime.getFormat("dd-mmm-yyyy hh:mm"));
+
+	HSSFCellStyle timeStyle = wb.createCellStyle();
+	HSSFDataFormat dataFormatTime = wb.createDataFormat();
+	timeStyle.setDataFormat(dataFormatTime.getFormat("[h]:mm"));
+	timeStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+
+	HSSFCellStyle rightAlignStyle = wb.createCellStyle();
+	rightAlignStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+
+	HSSFCellStyle quantityStyle = wb.createCellStyle();
+	quantityStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+	HSSFDataFormat format = wb.createDataFormat();
+	quantityStyle.setDataFormat(format.getFormat("#,##0"));
+
+	HSSFCellStyle amountStyle = wb.createCellStyle();
+	amountStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+	HSSFDataFormat amountFormat = wb.createDataFormat();
+	amountStyle.setDataFormat(amountFormat.getFormat("#,##0.00"));
+
+	HSSFCellStyle weightStyle = wb.createCellStyle();
+	weightStyle.setAlignment(HSSFCellStyle.ALIGN_RIGHT);
+	HSSFDataFormat wformat = wb.createDataFormat();
+	weightStyle.setDataFormat(wformat.getFormat("#,##0.000"));
 
 	String contactXri = null;
 	String resourceXri = null;
@@ -408,7 +527,9 @@ org.openmdx.base.text.conversion.*
 			if ((contactXri != null) && (contactXri.length() > 0)) {
 					if (contactXri.compareTo("*") == 0) {
 							showAllResources = true;
-							resourceXri = "*";
+							if (!isResourceChange) {
+									resourceXri = "*";
+							}
 					} else {
 							contact = (org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(new Path(contactXri));
 					}
@@ -449,7 +570,7 @@ org.openmdx.base.text.conversion.*
 			contactXriTitle = "*";
 	} else {
 			contactXri = contact.refMofId();
-			contactXriTitle = (new ObjectReference(contact, app)).getTitle();
+			contactXriTitle = app.getHtmlEncoder().encode(new ObjectReference(contact, app).getTitle(), false);
 	}
 
 	String projectMain = request.getParameter("projectMain") == null ? "" : request.getParameter("projectMain");
@@ -478,15 +599,13 @@ org.openmdx.base.text.conversion.*
 	String isBillable  = isFirstCall ? "" : request.getParameter("isBillable");
 	String isReimbursable = isFirstCall ? "" : request.getParameter("isReimbursable");
 
-	// Cancel
-	if(actionCancel) {
-		session.setAttribute(WIZARD_NAME, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
+	String isFullStartedAtDate  = isFirstCall ? "" : request.getParameter("isFullStartedAtDate");
+	String excludeClosedActivities     = isFirstCall ? "" : request.getParameter("excludeClosedActivities");
+    String showActivityGroupNameFilter = isFirstCall ? "" : request.getParameter("showActivityGroupNameFilter");
+	int activitySortOrder = 1;
+	try {
+			activitySortOrder = request.getParameter("activitySortOrder") != null ? Integer.parseInt(request.getParameter("activitySortOrder")) : 1;
+	} catch (Exception e) {};
 
 	String scheduledStart = request.getParameter("scheduledStart") == null ? jsCalenderf.format(new java.util.Date()) : request.getParameter("scheduledStart").trim();
 	String scheduledEnd = request.getParameter("scheduledEnd") == null ? jsCalenderf.format(new java.util.Date()) : request.getParameter("scheduledEnd").trim();
@@ -522,7 +641,7 @@ org.openmdx.base.text.conversion.*
 	<meta name="forClass" content="org:opencrx:kernel:activity1:ExternalActivity">
 	<meta name="forClass" content="org:opencrx:kernel:account1:Contact">
 	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
-	<meta name="order" content="9999">
+	<meta name="order" content="4999">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
@@ -648,6 +767,7 @@ org.openmdx.base.text.conversion.*
 		TR.centered TD {text-align:center;}
 		TR.even TD {background-color:#EEEEFF;}
 		TR.match TD {background-color:#FFFE70;}
+		TD.hidden {display:none;}
 		TR.created TD {font-weight:bold;}
 		input.disabled {
 			background-color:transparent;
@@ -707,6 +827,8 @@ org.openmdx.base.text.conversion.*
 					<input type="hidden" name="isSelectorChange" id="isSelectorChange" value="" />
 					<input type="hidden" name="isContactChange" id="isContactChange" value="" />
 					<input type="hidden" name="isResourceChange" id="isResourceChange" value="" />
+					<input type="hidden" name="activitySortOrder" id="activitySortOrder" value="<%= activitySortOrder %>" />
+					<input type="hidden" name="previousSheet" id="previousSheet" value="<%= location %>" />
 					<input type="checkbox" style="display:none;" id="isFirstCall" name="isFirstCall" checked />
 
 					<table id="scheduleTable">
@@ -903,13 +1025,13 @@ org.openmdx.base.text.conversion.*
 															org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)i.next();
 															String contactTitle = "--";
 															try {
-																	contactTitle = (new ObjectReference(res.getContact(), app)).getTitle();
+																	contactTitle = app.getHtmlEncoder().encode(new ObjectReference(res.getContact(), app).getTitle(), false);
 															} catch (Exception e) {}
 															if (((resourceXri == null) || (resourceXri.length() == 0)) && (!showAllResourcesOfContact)) {
 																	resourceXri = res.refMofId();
 															}
 %>
-															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= res.getName() %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
+															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= app.getHtmlEncoder().encode(res.getName(), false) %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
 <%
 													}
 %>
@@ -917,7 +1039,6 @@ org.openmdx.base.text.conversion.*
 <%
 										  }
 %>
-											<input type="hidden" name="previousResourceXri" value="<%= resourceXri %>" />
 										</td>
 										<td class="addon">
 												<%= noResourcesFound ? CAUTION : "" %>
@@ -937,10 +1058,23 @@ org.openmdx.base.text.conversion.*
 											Map orderedActivityGroups = new TreeMap();
 
 											List activitiesList = null;
+											boolean openOnly = (excludeClosedActivities != null) && (excludeClosedActivities.length() > 0);
 											org.opencrx.kernel.activity1.cci2.ActivityQuery activityQuery = activityPkg.createActivityQuery();
 											activityQuery.forAllDisabled().isFalse();
-											activityQuery.orderByName().ascending();
-											activityQuery.orderByDescription().ascending();
+											/*
+											if (openOnly) {
+												activityQuery.activityState().lessThan(
+													new Short((short)20) // Status "not closed"
+												);
+											}
+											*/
+											switch (activitySortOrder) {
+													case  0: activityQuery.orderByActivityNumber().ascending(); break;
+													case  1: activityQuery.orderByActivityNumber().descending(); break;
+													case  2: activityQuery.orderByName().ascending(); break;
+													case  3: activityQuery.orderByName().descending(); break;
+													default: activityQuery.orderByActivityNumber().descending(); break;
+											}
 
 											if (ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0) {
 													activitiesList = activitySegment.getActivity(activityQuery);
@@ -980,7 +1114,7 @@ org.openmdx.base.text.conversion.*
 															}
 															activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0) {
-															// get projects, i.e. ActivityTrackers with userString0 != null
+															// get projects, i.e. ActivityTrackers with userBoolean0 == true and userString0 != null
 															org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
 															trackerFilter.forAllDisabled().isFalse();
 															trackerFilter.thereExistsUserBoolean0().isTrue();
@@ -1066,7 +1200,7 @@ org.openmdx.base.text.conversion.*
 																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%= tabIndex+5 %>" onchange="javascript:$('reload.button').click();" >
 <%
 																	boolean hasSelection = false;
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null; 
+																	org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
 																	while (activityFilterIterator != null && activityFilterIterator.hasNext()) {
 																			org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)activityFilterIterator.next();
 																			boolean selected = false;
@@ -1079,7 +1213,7 @@ org.openmdx.base.text.conversion.*
 																					firstAg = ag;
 																			}
 %>
-																			<option <%= selected ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= ag.getName() %></option>
+																			<option <%= selected ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
 <%
 																	}
 																	if (!hasSelection) {
@@ -1093,7 +1227,7 @@ org.openmdx.base.text.conversion.*
 													}
 											}
 %>
-											<select class="valueL" style="width:<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 || ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0 ? "100" : "49" %>%;float:left;" id="activityGroupType" name="activityFilter" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" >
+											<select class="valueL" style="width:<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 || ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0 ? "100" : "49" %>%;float:left;" id="activityFilter" name="activityFilter" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" >
 												<option <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter)   == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_SEGMENT %>"  >*</option>
 												<option <%= ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter) 	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_ANYGROUP %>" ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
 <%
@@ -1129,11 +1263,23 @@ org.openmdx.base.text.conversion.*
 												} else {
 %>
 														<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%= tabIndex+5 %>" onchange="javascript:$('reload.button').click();" >
+															<option <%= "*".compareTo(activityFilterXri) == 0 ? "selected" : "" %>value="*">*</option>
 <%
-															boolean hasSelection = false;
-															org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null; 
+															boolean hasSelection = "*".compareTo(activityFilterXri) == 0;
+															boolean isAllProjectSubtopcis = hasSelection;
+															org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
 															while (activityFilterIterator.hasNext()) {
 																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)activityFilterIterator.next();
+																	if (isAllProjectSubtopcis) {
+																			// add filtered activities of this project subtopic to the activitiesList
+																			if (activitiesList == null) {
+																					// init
+																					activitiesList = new ArrayList();
+																			}
+																			for (Iterator i = ag.getFilteredActivity(activityQuery).iterator(); i.hasNext();) {
+																					activitiesList.add((org.opencrx.kernel.activity1.jmi1.Activity)i.next());
+																			}
+																	}
 																	boolean selected = false;
 																	if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
 																			activityGroup = ag;
@@ -1144,16 +1290,22 @@ org.openmdx.base.text.conversion.*
 																			firstAg = ag;
 																	}
 %>
-																	<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= ag.getName() %></option>
+																	<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
 <%
-															}
-															if (!hasSelection) {
-																	activityGroup = firstAg; // to ensure proper location of activities
-																	activityFilterXri = firstAg.refMofId();
 															}
 %>
 														</select>
 <%
+														if (!hasSelection) {
+																activityGroup = firstAg; // to ensure proper location of activities
+																activityFilterXri = firstAg.refMofId();
+																// make sure that the first entry right after "*" is selected
+%>
+																<script language="javascript" type="text/javascript">
+																	$('activityFilterXri').selectedIndex = 1;
+																</script>
+<%
+														}
 												}
 
 												if (projectMainIterator == null || !projectMainIterator.hasNext()) {
@@ -1171,7 +1323,7 @@ org.openmdx.base.text.conversion.*
 																org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)projectMainIterator.next();
 																if (at.getUserString0() != null) {
 %>
-																	<option <%= (projectMain != null) && (projectMain.compareTo(at.getUserString0().trim()) == 0) ? "selected" : "" %> value="<%= at.getUserString0().trim() %>"><%= at.getUserString0().trim() %></option>
+																	<option <%= (projectMain != null) && (projectMain.compareTo(at.getUserString0().trim()) == 0) ? "selected" : "" %> value="<%= app.getHtmlEncoder().encode(at.getUserString0().trim(), false) %>"><%= app.getHtmlEncoder().encode(at.getUserString0().trim(), false) %></option>
 <%
 																}
 															}
@@ -1188,6 +1340,9 @@ org.openmdx.base.text.conversion.*
 %>
 									<tr>
 										<td class="label">
+											<div style="float:right;">
+													<img class="timeButtonL" border="0" title=">" alt="" src="../../images/filter_down_star.gif" onclick="javascript:$('activitySortOrder').value = '<%= (activitySortOrder + 1) % MAX_ACTIVITY_SORT_ORDER %>';$('reload.button').click();" />
+											</div>
 											<span class="nw"><%= app.getLabel(ACTIVITYSEGMENT_CLASS) %>:</span>
 										</td>
 										<td>
@@ -1202,6 +1357,7 @@ org.openmdx.base.text.conversion.*
 												  	maxToShow = MAX_ACTIVITY_SHOWN;
 											  };
 											  boolean allFilteredActivities = "*".compareTo(activityXri) == 0;
+                                              boolean hasActivitySelection = false;
 %>
 												<select id="activityXri" name="activityXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" >
 													<option <%= allFilteredActivities ? "selected" : ""  %> value="*">*</option>
@@ -1213,8 +1369,12 @@ org.openmdx.base.text.conversion.*
 																	activityCounter++
 															) {
 																	org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
+                                                                    boolean selected = (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0);
+                                                                    if (selected) {
+                                                                      hasActivitySelection = true;
+                                                                    }
 %>
-																	<option <%= (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0) ? "selected" : "" %> value="<%= activity.refMofId() %>">#<%= activity.getActivityNumber() %>: <%= activity.getName() %></option>
+																	<option <%= selected ? "selected" : "" %> value="<%= activity.refMofId() %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
 <%
 															}
 													}
@@ -1223,10 +1383,21 @@ org.openmdx.base.text.conversion.*
 														<option value="MAX"><%= activityCounter < MAX_ACTIVITY_SHOWN ? "&mdash;&mdash;&gt;" : "..." %></option>
 <%
 											  	}
+                        if (!hasActivitySelection && (activityXri != null) && (activityXri.length() > 0) && !"MAX".equalsIgnoreCase(activityXri) && !"*".equalsIgnoreCase(activityXri)) {
+                            // add another option to prevent loss of activity selection
+                            //System.out.println("activityXri = " + activityXri);
+                            hasActivitySelection = true;
+                            org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
+%>
+                            <option selected value="<%= activityXri %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
+<%
+                        }
 %>
 											</select>
 										</td>
-										<td class="addon"></td>
+										<td class="addon">
+												<input style="display:none;" type="checkbox" id="excludeClosedActivities" name="excludeClosedActivities" title="Open Activities only" <%= (excludeClosedActivities != null) && (excludeClosedActivities.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="excludeClosedActivities" onchange="javascript:$('reload.button').click();" />
+										</td>
 									</tr>
 
 									<tr>
@@ -1355,20 +1526,72 @@ org.openmdx.base.text.conversion.*
 							w = activitySegment.getWorkReportEntry(workAndExpenseRecordFilter).iterator();
 					}
 
+					boolean isProjectReporting = hasProjects &&
+																			(activityFilter != null) && (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0) &&
+																			(activityFilterXri != null) && ("*".compareTo(activityFilterXri) == 0) &&
+																			(activityXri != null) && ("*".compareTo(activityXri) == 0) &&
+																			(projectMain != null);
+
+					org.opencrx.kernel.activity1.jmi1.ActivityTracker projectTracker = null;
+					Map projectPhaseList = new TreeMap();
+					if (isProjectReporting) {
+							// populate projectTracker and projectPhaseList
+							try {
+									projectTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)projectNames.get(projectMain);
+									if (projectTracker.getUserString0() != null) {
+											// get phases of project
+											org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
+											trackerFilter.forAllDisabled().isFalse();
+											trackerFilter.userString1().isNonNull();
+											trackerFilter.thereExistsUserString0().equalTo(projectMain);
+											trackerFilter.orderByName().ascending();
+											for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
+													org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
+													if ((at.getUserString1() != null) && (at.getUserString1().length() > 0)) {
+															projectPhaseList.put((at.getName() != null ? at.getName().toUpperCase() : "") + GAP_BEFORE_XRI + at.refMofId(), at);
+													}
+											}
+									}
+
+							} catch (Exception e) {
+									new ServiceException(e).log();
+							}
+					}
+					isProjectReporting = isProjectReporting && (projectTracker != null) && (!projectPhaseList.isEmpty());
+
 					// init totalizers
-					Map totals 							= new TreeMap();	// (currency, double)
-					Map totalsBillable 			= new TreeMap();	// (currency, double)
-					Map totalsReimbursable	= new TreeMap();	// (currency, double)
-					Map activities          = new TreeMap();	// (activityNumber, XRI)
-					Map totalsPerActivity		= new TreeMap();	// (activityNumber_currency, double)
-					Map totalsPerWeekDay		= new TreeMap();	// (yyyyNNDD_currency, double)	[NN = WEEK_OF_YEAR, EE = DAY_OF_WEEK]
+					Map totals 									= new TreeMap();	// (currency, double)
+					Map totalsBillable 					= new TreeMap();	// (currency, double)
+					Map totalsReimbursable			= new TreeMap();	// (currency, double)
+
+					Map activities          		= new TreeMap();	// (activityNumber, XRI)
+					Map totalsPerActivity				= new TreeMap();	// (activityNumber_currency, double)
+
+					Map activityGroups					= new TreeMap();	// (name   XRI, XRI)
+					Map totalsPerActivityGroup	= new TreeMap();	// (XRI_currency, double)
+
+					Map totalsProject						= new TreeMap();	// (currency, double)
+					Map projectPhases						= new TreeMap();	// (name   XRI, XRI)
+					Map totalsPerProjectPhase		= new TreeMap();	// (XRI_currency, double)
+
+					Map totalsReportingLines		= new TreeMap();	// (currency, double)
+					Map reportingLines					= new TreeMap();	// (sortKey, KEY)
+					Map totalsPerProjectReportLine = new TreeMap();	// (KEY[activityGroupXRI, activityXRI, resourceXRI, redordType, rate]_currency, double)
+
+					final String KEY_SPLITTER = "-;;-";
+
+					Map totalsPerWeekDay				= new TreeMap();	// (yyyyNNDD_currency, double)	[NN = WEEK_OF_YEAR, EE = DAY_OF_WEEK]
+
+					List recordsWithoutAssignedActivityGroup = new ArrayList(); // list of all WorkAndExpenseRecords that are not assigned to any ActivityGroup
 
 					String timeKey = " hh:mm";
 					totals.put(timeKey, (Double)0.0);
+					totalsProject.put(timeKey, (Double)0.0);
+					totalsReportingLines.put(timeKey, (Double)0.0);
 					totalsBillable.put(timeKey, (Double)0.0);
 					totalsReimbursable.put(timeKey, (Double)0.0);
 					boolean totalsError = false;
-					
+
 					java.util.Date earliestDate = null;
 					java.util.Date latestDate = null;
 
@@ -1377,9 +1600,13 @@ org.openmdx.base.text.conversion.*
 
 					while (doReportCalculation && w.hasNext()) {
 							org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
+							org.opencrx.kernel.activity1.jmi1.Activity activity = null;
 							String activityNumber = null;
+							boolean hasAssignedActivityGroup = false;
+							boolean allocatedToProjectPhase = false;
 							try {
-								activityNumber = workAndExpenseRecord.getActivity().getActivityNumber() == null
+								activity = workAndExpenseRecord.getActivity();
+								activityNumber = activity.getActivityNumber() == null
 								? "-"
 								: workAndExpenseRecord.getActivity().getActivityNumber();
 							} catch (Exception e) {
@@ -1389,10 +1616,12 @@ org.openmdx.base.text.conversion.*
 									((selectedActivities == null) || (selectedActivities.containsKey(activityNumber))) &&
 									((selectedResources  == null) || (selectedResources.containsKey(workAndExpenseRecord.getResource().refMofId())))
 							) {
-									workReportEntries.put(
-											(workAndExpenseRecord.getStartedAt() != null ? dtsortf.format(workAndExpenseRecord.getStartedAt()) : "yyyyMMddHHmmss") + "-" + formatter.format(counter++),
-											workAndExpenseRecord
-									);
+									String sortKey =	(workAndExpenseRecord.getStartedAt() != null ? dtsortf.format(workAndExpenseRecord.getStartedAt()) : "yyyyMMddHHmmss") + "-" +
+																		activityNumber + "-" +
+																		(workAndExpenseRecord.getResource() != null ? (new ObjectReference(resource, app)).getTitle() : "-") +
+																		(workAndExpenseRecord.getName() != null ? workAndExpenseRecord.getName() : "-") +
+																		formatter.format(counter++);
+									workReportEntries.put(sortKey, workAndExpenseRecord);
 									//System.out.println("added workRecord: " + dtsortf.format(workAndExpenseRecord.getStartedAt()) + "-" + formatter.format(counter++));
 
 									if (earliestDate == null || (workAndExpenseRecord.getStartedAt() != null && earliestDate.compareTo(workAndExpenseRecord.getStartedAt()) > 0)) {
@@ -1401,13 +1630,21 @@ org.openmdx.base.text.conversion.*
 									if (latestDate == null || (workAndExpenseRecord.getStartedAt() != null && latestDate.compareTo(workAndExpenseRecord.getStartedAt()) < 0)) {
 											latestDate = workAndExpenseRecord.getStartedAt();
 									}
-									
+
 									double recordTotal = 0.0;
 									double timeTotal = 0.0;
 									boolean quantityError = false;
 									try {
-											timeTotal = workAndExpenseRecord.getQuantity().doubleValue();
-											recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+										  if (workAndExpenseRecord.getQuantity() != null) {
+											    timeTotal = workAndExpenseRecord.getQuantity().doubleValue();
+                          if (workAndExpenseRecord.getRate() != null) {
+											      recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+            						  } else {
+            							    totalsError = true;
+	                       }
+										  } else {
+                          quantityError = true;
+                      }
 									} catch (Exception e) {
 											quantityError = true;
 											totalsError = true;
@@ -1417,7 +1654,10 @@ org.openmdx.base.text.conversion.*
 											totalsError = true;
 									}
 
-									String currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+									String currency = DEFAULT_CURRENCY;
+									try {
+									   currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+									} catch (Exception e) {};
 									if (totals.get(currency) == null) {
 											// init this currency
 											totals.put(currency, (Double)0.0);
@@ -1448,6 +1688,117 @@ org.openmdx.base.text.conversion.*
 											totalsPerActivity.put(activityTimeKey, (Double)0.0);
 									}
 
+									String activityGroupKey = "?_" + currency; // name_XRI
+									String activityGroupTimeKey = "?_" + timeKey;
+									if (activity != null) {
+											org.opencrx.kernel.activity1.cci2.ActivityGroupAssignmentQuery activityGroupAssignmentFilter = activityPkg.createActivityGroupAssignmentQuery();
+											activityGroupAssignmentFilter.orderByCreatedAt().ascending();
+											for(Iterator i = activity.getAssignedGroup(activityGroupAssignmentFilter).iterator(); i.hasNext(); ) {
+													org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment agas = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)i.next();
+													org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = null;
+													try {
+															ag = agas.getActivityGroup();
+													} catch (Exception e) {}
+													if (ag != null) {
+															hasAssignedActivityGroup = true;
+															if (
+																	isProjectReporting &&
+																	!allocatedToProjectPhase &&
+																	projectPhaseList.values().contains(ag)
+															) {
+																	String projectPhaseKey = "?_" + currency; // name_XRI
+																	String projectPhaseTimeKey = "?_" + timeKey;
+																	String reportingLineKEY = "@";
+																	String reportLineKey =	"?_" + currency;
+																	String reportLineTimeKey = "?_" + timeKey;
+																	try {
+																			projectPhases.put((ag.getName() != null ? ag.getName().toUpperCase() : "") + GAP_BEFORE_XRI + ag.refMofId(), ag.refMofId());
+																			projectPhaseKey = (ag.getName() != null ? ag.getName().toUpperCase() : "") + GAP_BEFORE_XRI + ag.refMofId() + "_" + currency;
+																			projectPhaseTimeKey = (ag.getName() != null ? ag.getName().toUpperCase() : "") + GAP_BEFORE_XRI + ag.refMofId() + "_" + timeKey;
+
+																			reportingLineKEY =	ag.refMofId() + KEY_SPLITTER +
+																													activity.refMofId() + KEY_SPLITTER +
+																													(workAndExpenseRecord.getResource() != null ? workAndExpenseRecord.getResource().refMofId() : "?") + KEY_SPLITTER +
+																													formatter.format(workAndExpenseRecord.getRecordType()) + KEY_SPLITTER +
+																													(workAndExpenseRecord.getRate() != null ? workAndExpenseRecord.getRate() : "0");
+																			String rSortKey = (ag.getName() != null ? ag.getName().toUpperCase() : "") + activityNumber +
+																												(workAndExpenseRecord.getResource() != null ? (new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle() : "?") +
+																												formatter.format(workAndExpenseRecord.getRecordType());
+																			reportingLines.put(rSortKey, reportingLineKEY);
+
+																			reportLineKey =	reportingLineKEY + KEY_SPLITTER +	"_" + currency;
+																			reportLineTimeKey =	reportingLineKEY + KEY_SPLITTER +	"_" + timeKey;
+
+																			allocatedToProjectPhase = true;
+																	} catch (Exception ea) {
+																			totalsError = true;
+																			projectPhaseKey = "?_" + currency;
+																			projectPhaseTimeKey = "?_" + timeKey;
+																			reportLineKey =	"?_" + currency;
+																			reportLineTimeKey = "?_" + timeKey;
+																	}
+																	if (totalsPerProjectPhase.get(projectPhaseKey) == null) {
+																			totalsPerProjectPhase.put(projectPhaseKey, (Double)0.0);
+																	}
+																	if (totalsPerProjectPhase.get(projectPhaseTimeKey) == null) {
+																			totalsPerProjectPhase.put(projectPhaseTimeKey, (Double)0.0);
+																	}
+																	if (totalsPerProjectReportLine.get(reportLineKey) == null) {
+																			totalsPerProjectReportLine.put(reportLineKey, (Double)0.0);
+																	}
+																	if (totalsPerProjectReportLine.get(reportLineTimeKey) == null) {
+																			totalsPerProjectReportLine.put(reportLineTimeKey, (Double)0.0);
+																	}
+																	if (isWorkRecord && (timeTotal != 0.0)) {
+																			totalsPerProjectPhase.put(projectPhaseTimeKey, ((Double)totalsPerProjectPhase.get(projectPhaseTimeKey)) + timeTotal);
+																			totalsPerProjectReportLine.put(reportLineTimeKey, ((Double)totalsPerProjectReportLine.get(reportLineTimeKey)) + timeTotal);
+																	}
+																	totalsPerProjectPhase.put(projectPhaseKey, ((Double)totalsPerProjectPhase.get(projectPhaseKey)) + recordTotal);
+																	totalsPerProjectReportLine.put(reportLineKey, ((Double)totalsPerProjectReportLine.get(reportLineKey)) + recordTotal);
+
+																	if (totalsProject.get(currency) == null) {
+																			totalsProject.put(currency, (Double)0.0);
+																	}
+																	if (isWorkRecord && (timeTotal != 0.0)) {
+																			totalsProject.put(timeKey, ((Double)totalsProject.get(timeKey)) + timeTotal);
+																	}
+																	totalsProject.put(currency, ((Double)totalsProject.get(currency)) + recordTotal);
+
+																	if (totalsReportingLines.get(currency) == null) {
+																			totalsReportingLines.put(currency, (Double)0.0);
+																	}
+																	if (isWorkRecord && (timeTotal != 0.0)) {
+																			totalsReportingLines.put(timeKey, ((Double)totalsReportingLines.get(timeKey)) + timeTotal);
+																	}
+																	totalsReportingLines.put(currency, ((Double)totalsReportingLines.get(currency)) + recordTotal);
+															}
+															try {
+																	try {
+																		activityGroups.put((ag.getName() != null ? ag.getName().toUpperCase() : "") + GAP_BEFORE_XRI + ag.refMofId(), ag.refMofId());
+																	} catch (Exception ea) {
+																			new ServiceException(ea).log();
+																	}
+																	activityGroupKey = (ag.getName() != null ? ag.getName().toUpperCase() : "") + GAP_BEFORE_XRI + ag.refMofId() + "_" + currency;
+																	activityGroupTimeKey = (ag.getName() != null ? ag.getName().toUpperCase() : "") + GAP_BEFORE_XRI + ag.refMofId() + "_" + timeKey;
+															} catch (Exception e) {
+																	totalsError = true;
+																	activityGroupKey = "?_" + currency;
+																	activityGroupTimeKey = "?_" + timeKey;
+															}
+															if (totalsPerActivityGroup.get(activityGroupKey) == null) {
+																	totalsPerActivityGroup.put(activityGroupKey, (Double)0.0);
+															}
+															if (totalsPerActivityGroup.get(activityGroupTimeKey) == null) {
+																	totalsPerActivityGroup.put(activityGroupTimeKey, (Double)0.0);
+															}
+															if (isWorkRecord && (timeTotal != 0.0)) {
+																	totalsPerActivityGroup.put(activityGroupTimeKey, ((Double)totalsPerActivityGroup.get(activityGroupTimeKey)) + timeTotal);
+															}
+															totalsPerActivityGroup.put(activityGroupKey, ((Double)totalsPerActivityGroup.get(activityGroupKey)) + recordTotal);
+													}
+											}
+									}
+
 									String WWDDKey = null; 		// YYYYWWDD where WW week of year and DD day of week
 									String WWDDsumKey = null; // YYYYWW99 (sum of week)
 									String WWDDTimeKey = null;
@@ -1455,16 +1806,16 @@ org.openmdx.base.text.conversion.*
 									try {
 											GregorianCalendar cal = new GregorianCalendar(app.getCurrentLocale());
 											cal.setTime(workAndExpenseRecord.getStartedAt());
-											WWDDKey = 			yyyyf.format(cal.getTime()) + 
+											WWDDKey = 			yyyyf.format(cal.getTime()) +
 																			formatter2.format(cal.get(GregorianCalendar.WEEK_OF_YEAR)) +
 																			formatter2.format(cal.get(GregorianCalendar.DAY_OF_WEEK) % 7) + "_" + currency;
-											WWDDsumKey =		yyyyf.format(cal.getTime()) + 
+											WWDDsumKey =		yyyyf.format(cal.getTime()) +
 																			formatter2.format(cal.get(GregorianCalendar.WEEK_OF_YEAR)) +
 																			"99_" + currency;
-											WWDDTimeKey = 	yyyyf.format(cal.getTime()) + 
+											WWDDTimeKey = 	yyyyf.format(cal.getTime()) +
 																			formatter2.format(cal.get(GregorianCalendar.WEEK_OF_YEAR)) +
 																			formatter2.format(cal.get(GregorianCalendar.DAY_OF_WEEK) % 7) + "_" + timeKey;
-											WWDDsumTimeKey = yyyyf.format(cal.getTime()) + 
+											WWDDsumTimeKey = yyyyf.format(cal.getTime()) +
 																			formatter2.format(cal.get(GregorianCalendar.WEEK_OF_YEAR)) +
 																			"99_" + timeKey;
 									} catch (Exception e) {
@@ -1511,11 +1862,15 @@ org.openmdx.base.text.conversion.*
 									totalsPerWeekDay.put(WWDDKey, ((Double)totalsPerWeekDay.get(WWDDKey)) + recordTotal);
 									totalsPerWeekDay.put(WWDDsumKey, ((Double)totalsPerWeekDay.get(WWDDsumKey)) + recordTotal);
 							}
+							if (!hasAssignedActivityGroup || (isProjectReporting && !allocatedToProjectPhase)) {
+									totalsError = true;
+									recordsWithoutAssignedActivityGroup.add(workAndExpenseRecord);
+							}
 					}
 					String contactTitle = "--";
 					try {
 							if (resource != null) {
-									contactTitle = (new ObjectReference(resource.getContact(), app)).getTitle();
+									contactTitle = app.getHtmlEncoder().encode(new ObjectReference(resource.getContact(), app).getTitle(), false);
 							}
 					} catch (Exception e) {}
 
@@ -1530,7 +1885,7 @@ org.openmdx.base.text.conversion.*
 								true // enabled
 							);
 						resHref = "../../" + action.getEncodedHRef();
-						resHref = "<a href='" + resHref + "' target='_blank'>" + (new ObjectReference(resource, app)).getTitle() + "</a>";
+						resHref = "<a href='" + resHref + "' target='_blank'>" + app.getHtmlEncoder().encode(new ObjectReference(resource, app).getTitle(), false) + "</a>";
 					}
 
 					String contactHref = "";
@@ -1544,52 +1899,218 @@ org.openmdx.base.text.conversion.*
 								true // enabled
 							);
 						contactHref = "../../" + action.getEncodedHRef();
-						contactHref = "<a href='" + contactHref + "' target='_blank'>" + (new ObjectReference(contact, app)).getTitle() + "</a>";
+						contactHref = "<a href='" + contactHref + "' target='_blank'>" + app.getHtmlEncoder().encode(new ObjectReference(contact, app).getTitle(), false) + "</a>";
 					}
+
+					String activityGroupHref = "*";
+					if (activityGroup != null) {
+						Action action = new Action(
+								Action.EVENT_SELECT_OBJECT,
+								new Action.Parameter[]{
+								    new Action.Parameter(Action.PARAMETER_OBJECTXRI, activityGroup.refMofId())
+								},
+								"",
+								true // enabled
+							);
+						activityGroupHref = "../../" + action.getEncodedHRef();
+						activityGroupHref = "<a href='" + activityGroupHref + "' target='_blank'>" + app.getHtmlEncoder().encode(new ObjectReference(activityGroup, app).getTitle(), false) + "</a>";
+					}
+
+					String actHref = "*";
+					org.opencrx.kernel.activity1.jmi1.Activity act = null;
+					if (activityXri != null &&  "*".compareTo(activityXri) != 0) {
+							try {
+									act = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
+							} catch (Exception e) {}
+					}
+					if (act != null) {
+						Action action = new Action(
+								Action.EVENT_SELECT_OBJECT,
+								new Action.Parameter[]{
+								    new Action.Parameter(Action.PARAMETER_OBJECTXRI, act.refMofId())
+								},
+								"",
+								true // enabled
+							);
+						actHref = "../../" + action.getEncodedHRef();
+						actHref = "<a href='" + actHref + "' target='_blank'>#" + app.getHtmlEncoder().encode(new ObjectReference(act, app).getTitle(), false) + "</a>";
+					}
+
+					Action downloadAction =	new Action(
+						Action.EVENT_DOWNLOAD_FROM_LOCATION,
+						new Action.Parameter[]{
+							new Action.Parameter(Action.PARAMETER_LOCATION, location),
+							new Action.Parameter(Action.PARAMETER_NAME, sheetName),
+							new Action.Parameter(Action.PARAMETER_MIME_TYPE, "application/vnd.ms-excel")
+						},
+						app.getTexts().getClickToDownloadText() + " " + sheetName,
+						true
+					);
 
 %>
 					<hr>
 					<h2 style="padding-left:5px;">
 						<%= app.getLabel(WORKANDEXPENSERECORD_CLASS) %>	<%= reportBeginOfPeriod != null ? datef.format(reportBeginOfPeriod.getTime()) : "--" %> &mdash; <%= reportEndOfPeriod != null ? datef.format(reportEndOfPeriod.getTime()) : "--" %><br>
 					</h2>
-					<p style="padding-left:5px;">
-						<%= hasMultipleResources
-						? (contact != null
-								? app.getLabel(CONTACT_CLASS) + ": " + contactHref
-								: app.getLabel(RESOURCE_CLASS) + ": *"
-							)
-						: app.getLabel(RESOURCE_CLASS) + ": " + resHref + "<br>" + app.getLabel(CONTACT_CLASS) + ": " + contactHref %>
-					</p>
+
+					<table id="reportHeader" style="padding:5px;border:1px solid #ddd;float:left;margin:0 0 12px 5px;">
+						<tr>
+							<td class="padded"><%= app.getLabel(CONTACT_CLASS)        %>:</td><td><%= contact != null ? contactHref : "*" %></td>
+						</tr>
+						<tr>
+							<td class="padded"><%= app.getLabel(RESOURCE_CLASS)       %>:</td><td><%= hasMultipleResources ? "*" : (resource != null ? resHref : "*") %></td>
+						</tr>
+<%
+						if (isProjectReporting) {
+%>
+							<tr>
+								<td class="padded"><%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userString0", app.getCurrentLocaleAsIndex()) %>:</td><td><%= (projectMain != null ? app.getHtmlEncoder().encode(projectMain, false) : "--") %></td>
+							</tr>
+<%
+						} else {
+%>
+							<tr>
+								<td class="padded"><%= app.getLabel(ACTIVITYFILTER_CLASS) %>:</td><td><%= activityGroupHref %> (<%= actHref %>)</td>
+							</tr>
+<%
+						}
+%>
+					</table>
+					<div style="float:left;"><a href="<%= request.getContextPath() %>/<%= downloadAction.getEncodedHRef(requestId) %>"><%= SPREADSHEET %></a></div>
+					<div style="clear:left;"></div>
 <%
 /*---------------------------------------------------------------------------------------------------------------------
  N O T E :   It is assumed that ALL work records (i.e. WorkAndExpenseRecords with recordType <= 99 have hours as UOM!!!
 ---------------------------------------------------------------------------------------------------------------------*/
 
 					if (doReportCalculation) {
+
+							String[] labels = new String[] {
+									app.getLabel(WORKANDEXPENSERECORD_CLASS),
+									app.getLabel(CONTACT_CLASS),
+									app.getLabel(RESOURCE_CLASS),
+									(isProjectReporting
+											? userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userString0", app.getCurrentLocaleAsIndex())
+											: app.getLabel(ACTIVITYFILTER_CLASS)
+									)
+							};
+
+							String[] values = new String[] {
+									(reportBeginOfPeriod != null ? datef.format(reportBeginOfPeriod.getTime()) : "--") + " - " + (reportEndOfPeriod != null ? datef.format(reportEndOfPeriod.getTime()) : "--"),
+									(contact != null ? app.getHtmlEncoder().encode(contact.getLastName(), false) + ", " + app.getHtmlEncoder().encode(contact.getFirstName(), false) : "*"),
+									(resource != null ? app.getHtmlEncoder().encode(resource.getName(), false) : "*"),
+									(isProjectReporting
+											? (projectMain != null ? app.getHtmlEncoder().encode(projectMain, false) : "--")
+											: ((activityGroup != null ? app.getHtmlEncoder().encode(activityGroup.getName(), false) : "*") + " (" + (act != null ? ("#" + act.getActivityNumber() + " " + app.getHtmlEncoder().encode(act.getName(), false)) : "*") + ")")
+									)
+							};
+
+							HSSFSheet sheetRecords        = addSheet(wb, "Records",        true,  labels, values, 1);
+							HSSFSheet sheetWeeks          = addSheet(wb, "Calendar",       false, labels, values, 0);
+							HSSFSheet sheetActivities     = addSheet(wb, "Activities",     false, labels, values, 0);
+							HSSFSheet sheetActivityGroups = addSheet(wb, "ActivityGroups", false, labels, values, 0);
+							HSSFSheet sheetProject = null;
+
+							HSSFRow row = null;
+							HSSFCell cell = null;
+							short nRow = 0;
+							short nCell = 0;
+
+							boolean showFullStartedAtDate = (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
+
+							sheetRecords.setColumnWidth((short)0, (short)1000);
+							sheetRecords.setColumnWidth((short)1, (short)4500);
+							sheetRecords.setColumnWidth((short)2, (short)1000);
+							sheetRecords.setColumnWidth((short)3, (short)4500);
+							sheetRecords.setColumnWidth((short)4, (short) 400);
+							sheetRecords.setColumnWidth((short)5, (short)9000);
+							sheetRecords.setColumnWidth((short)6, (short)3000);
+							sheetRecords.setColumnWidth((short)7, (short)4000);
+							sheetRecords.setColumnWidth((short)8, (short)4000);
+
+							nRow = REPORT_STARTING_ROW;
+							row = sheetRecords.createRow(nRow++);
+							nCell = 0;
+							cell = row.createCell(nCell++);
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
+							cell = row.createCell(nCell++);
+							cell = row.createCell(nCell++); cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
+							cell = row.createCell(nCell++);
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()));
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()));
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()));
+							if (isWorkRecord) {
+									cell = row.createCell(nCell++);	cell.setCellValue("hh:mm"); cell.setCellStyle(timeStyle);
+									sheetRecords.setColumnWidth((short) 8, (short)1800);
+									sheetRecords.setColumnWidth((short) 9, (short)1800);
+									sheetRecords.setColumnWidth((short)10, (short)1200);
+									sheetRecords.setColumnWidth((short)11, (short)3000);
+									sheetRecords.setColumnWidth((short)12, (short)3000);
+									sheetRecords.setColumnWidth((short)13, (short)3000);
+									sheetRecords.setColumnWidth((short)14, (short)1000);
+									sheetRecords.setColumnWidth((short)15, (short)4000);
+									sheetRecords.setColumnWidth((short)16, (short)6000);
+							} else {
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
+									cell = row.createCell(nCell++);
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()));
+									sheetRecords.setColumnWidth((short) 8, (short)2000);
+									sheetRecords.setColumnWidth((short) 9, (short)1000);
+									sheetRecords.setColumnWidth((short)10, (short)3000);
+									sheetRecords.setColumnWidth((short)11, (short)3000);
+									sheetRecords.setColumnWidth((short)12, (short)1800);
+									sheetRecords.setColumnWidth((short)13, (short)1200);
+									sheetRecords.setColumnWidth((short)14, (short)3000);
+									sheetRecords.setColumnWidth((short)15, (short)3000);
+									sheetRecords.setColumnWidth((short)16, (short)3000);
+									sheetRecords.setColumnWidth((short)17, (short)6000);
+							}
+							cell = row.createCell(nCell++);
+							cell = row.createCell(nCell++);
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()));
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()));
+							if (isWorkRecord) {
+									cell = row.createCell(nCell++);
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
+							}
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()));
+
 %>
 							<table><tr><td style="padding-left:5px;">
 							<table class="gridTable">
 								<tr class="gridTableHeader">
-									<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %></td>
-									<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
+									<td class="smallheaderR" colspan="2">
+										<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>
+										<input type="checkbox" name="isFullStartedAtDate" <%= showFullStartedAtDate ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="isFullStartedAtDate" onchange="javascript:$('reload.button').click();" />
+									</td>
+									<td class="smallheaderR <%= showFullStartedAtDate ? "" : "hidden" %>" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
+									<td class="smallheader"></td>
+									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+									<td class="smallheader" <%= hasMultipleResources ? "" : "style='display:none;'" %>><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 									<td class="smallheaderR"><%= isWorkRecord ? "hh:mm" : userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
 <%
 									if (!isWorkRecord) {
 %>
+										<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 										<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 <%
 									}
 %>
 									<td class="smallheader">&nbsp;</td>
-									<td class="smallheader">&nbsp;</td>
-									<td class="smallheaderR">&sum;</td>
-									<td class="smallheader" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$$&nbsp;</td>
-									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+									<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex()) %></td>
+									<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$&nbsp;</td>
+									<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">*&nbsp;</td>
+<%
+									if (isWorkRecord) {
+%>
+										<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+<%
+									}
+%>
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-									<td class="smallheader" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">~~&nbsp;</td>
-									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-									<td class="smallheader" <%= hasMultipleResources ? "" : "style='display:none;'" %>><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 								</tr>
 <%
 								boolean isEvenRow = false;
@@ -1641,7 +2162,12 @@ org.openmdx.base.text.conversion.*
 										double recordTotal = 0.0;
 										boolean quantityError = false;
 										try {
-												recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+											  if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getRate() != null) {
+												    recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+											  } else {
+                            quantityError = true;
+                            totalsError = true;
+											  }
 										} catch (Exception e) {
 												quantityError = true;
 												totalsError = true;
@@ -1651,31 +2177,94 @@ org.openmdx.base.text.conversion.*
 												totalsError = true;
 										}
 
-										String currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+    									String currency = DEFAULT_CURRENCY;
+    									try {
+    									   currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+    									} catch (Exception e) {};
+
+										row = sheetRecords.createRow(nRow++);
+										nCell = 0;
+										if (workAndExpenseRecord.getStartedAt() != null) {
+												cell = row.createCell(nCell++);	cell.setCellValue(weekdayf.format(workAndExpenseRecord.getStartedAt())); cell.setCellStyle(rightAlignStyle);
+												cell = row.createCell(nCell++); cell.setCellValue(workAndExpenseRecord.getStartedAt()); cell.setCellStyle(dateTimeStyle);
+										} else {
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++);
+										}
+										if (workAndExpenseRecord.getEndedAt() != null) {
+												cell = row.createCell(nCell++);	cell.setCellValue(weekdayf.format(workAndExpenseRecord.getEndedAt())); cell.setCellStyle(rightAlignStyle);
+												cell = row.createCell(nCell++); cell.setCellValue(workAndExpenseRecord.getEndedAt()); cell.setCellStyle(dateTimeStyle);
+										} else {
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++);
+										}
+										cell = row.createCell(nCell++);	cell.setCellValue(recordsWithoutAssignedActivityGroup.contains(workAndExpenseRecord) ? "!!!" : "");
+										cell = row.createCell(nCell++);
+										if (activity != null) {
+												cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
+										}
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getName());
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getResource() != null ? (new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle() : "");
+										cell = row.createCell(nCell++);
+										if (workAndExpenseRecord.getQuantity() != null) {
+												if (isWorkRecord) {
+														// cell.setCellValue(decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)); cell.setCellStyle(timeStyle);
+														cell.setCellValue(workAndExpenseRecord.getQuantity().doubleValue() / 24.0); cell.setCellStyle(timeStyle);
+												} else {
+														cell.setCellValue(workAndExpenseRecord.getQuantity().doubleValue()); cell.setCellStyle(weightStyle);
+												}
+										}
+										if (!isWorkRecord) {
+												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
+												cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
+												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? workAndExpenseRecord.getQuantityUom().getName() : "?");
+										}
+										cell = row.createCell(nCell++);
+										if (workAndExpenseRecord.getRate() != null) {
+												cell.setCellValue(workAndExpenseRecord.getRate().doubleValue()); cell.setCellStyle(amountStyle);
+										}
+										cell = row.createCell(nCell++);	cell.setCellValue(currency);
+										cell = row.createCell(nCell++);	cell.setCellValue(recordTotal); cell.setCellStyle(amountStyle);
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue());
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue());
+										if (isWorkRecord) {
+												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
+												cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
+										}
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "");
+
 %>
 										<tr <%=isEvenRow ? "class='even'" : "" %>>
 											<td><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? weekdayf.format(workAndExpenseRecord.getStartedAt()) : "--" %>&nbsp;</a></td>
-											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? datetimef.format(workAndExpenseRecord.getStartedAt()) : "--" %></a></td>
-											<td><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? weekdayf.format(workAndExpenseRecord.getEndedAt()) : "--" %>&nbsp;</a></td>
-											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? datetimef.format(workAndExpenseRecord.getEndedAt()) : "--" %></a></td>
-											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= isWorkRecord ? decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0) : quantityf.format(workAndExpenseRecord.getQuantity()) %></a></td>
+											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? (showFullStartedAtDate ? datetimef.format(workAndExpenseRecord.getStartedAt()) : dateonlyf.format(workAndExpenseRecord.getStartedAt())) : "--" %></a></td>
+											<td <%= showFullStartedAtDate ? "" : "class='hidden'" %>"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? weekdayf.format(workAndExpenseRecord.getEndedAt()) : "--" %>&nbsp;</a></td>
+											<td class="padded_r <%= showFullStartedAtDate ? "" : "hidden" %>"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? datetimef.format(workAndExpenseRecord.getEndedAt()) : "--" %></a></td>
+											<td><%= recordsWithoutAssignedActivityGroup.contains(workAndExpenseRecord) ? CAUTION : "" %></td>
+											<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= activity != null ? app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) : "--" %>&nbsp;</a></td>
+											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getName(), false) : "" %></a></td>
+											<td class="padded" <%= hasMultipleResources ? "" : "style='display:none;'" %>><a href='<%= resourceHref %>' target='_blank'><%= workAndExpenseRecord.getResource() != null ? app.getHtmlEncoder().encode(new ObjectReference(workAndExpenseRecord.getResource(), app).getTitle(), false) : "" %>&nbsp;</a></td>
+											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=  workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0) : quantityf.format(workAndExpenseRecord.getQuantity())) %></a></td>
 <%
 											if (!isWorkRecord) {
 %>
-												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? workAndExpenseRecord.getQuantityUom().getName() : "?" %>&nbsp;</a></td>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getQuantityUom().getName(), false) : "?" %>&nbsp;</a></td>
 <%
 											}
 %>
 											<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? ratesepf.format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
-											<td class="padded_r" 		<%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
+											<td class="padded_r" <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
 											<td class="padded_r" <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
-											<td class="padded"<a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getName() != null ? workAndExpenseRecord.getName() : "" %></a></td>
+											<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+											<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+<%
+											if (isWorkRecord) {
+%>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+<%
+											}
+%>
 											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "" %></a></td>
-											<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= activity != null ? (new ObjectReference(activity, app)).getTitle() : "--" %>&nbsp;</a></td>
-											<td class="padded"<a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
-											<td class="padded" <%= hasMultipleResources ? "" : "style='display:none;'" %>><a href='<%= resourceHref %>' target='_blank'><%= workAndExpenseRecord.getResource() != null ? (new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle() : "" %>&nbsp;</a></td>
 										</tr>
 <%
 										isEvenRow = !isEvenRow;
@@ -1696,7 +2285,18 @@ org.openmdx.base.text.conversion.*
 									while (calendarBeginOfWeek.get(GregorianCalendar.DAY_OF_WEEK) != calendarBeginOfWeek.getFirstDayOfWeek()) {
 											calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, -1);
 									}
+                            		calendarBeginOfWeek.set(GregorianCalendar.HOUR_OF_DAY, 0);
+                            		calendarBeginOfWeek.set(GregorianCalendar.MINUTE, 0);
+                            		calendarBeginOfWeek.set(GregorianCalendar.SECOND, 0);
+                            		calendarBeginOfWeek.set(GregorianCalendar.MILLISECOND, 0);
 								}
+
+								nRow = REPORT_STARTING_ROW;
+								row = sheetWeeks.createRow(nRow++);
+								nCell = 0;
+								cell = row.createCell(nCell);	cell.setCellValue(app.getLabel(CALENDAR_CLASS));
+								sheetWeeks.setColumnWidth(nCell++, (short)12000);
+
 %>
 								<tr class="gridTableHeader">
 									<td class="smallheader"><%= app.getLabel(CALENDAR_CLASS) %></td>
@@ -1708,6 +2308,8 @@ org.openmdx.base.text.conversion.*
 %>
 												<td class="smallheaderR"><%= weekdayf.format(wd.getTime()) %></td>
 <%
+												cell = row.createCell(nCell);	cell.setCellValue(weekdayf.format(wd.getTime())); cell.setCellStyle(rightAlignStyle);
+												sheetWeeks.setColumnWidth(nCell++, (short)2000);
 												wd.add(GregorianCalendar.DAY_OF_MONTH, 1);
 											}
 									} else {
@@ -1721,6 +2323,8 @@ org.openmdx.base.text.conversion.*
 %>
 										<td class="smallheaderR"><%= key %></td>
 <%
+										cell = row.createCell(nCell);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
+										sheetWeeks.setColumnWidth(nCell++, (short)3000);
 									}
 %>
 								</tr>
@@ -1731,13 +2335,18 @@ org.openmdx.base.text.conversion.*
 								}
 								if (calendarBeginOfWeek != null) {
 									GregorianCalendar currentDate = (GregorianCalendar)calendarBeginOfWeek.clone();
-									while (currentDate.getTime().compareTo(latestDate) < 0) {
+									while (currentDate.getTime().compareTo(latestDate) <= 0) {
+										dayCounter = 0;
+										GregorianCalendar beginOfCurrentWeek = (GregorianCalendar)currentDate.clone();
+										GregorianCalendar endOfCurrentWeek = (GregorianCalendar)currentDate.clone();
+										endOfCurrentWeek.add(GregorianCalendar.DAY_OF_MONTH, 6);
 %>
 										<tr>
-											<td class="padded"><%= yyyyf.format(currentDate.getTime()) %> #<%= formatter2.format(currentDate.get(GregorianCalendar.WEEK_OF_YEAR)) %> [<%= datef.format(currentDate.getTime()) %>]</td>
+											<td class="padded"><%= yyyyf.format(beginOfCurrentWeek.getTime()) %> #<%= formatter2.format(beginOfCurrentWeek.get(GregorianCalendar.WEEK_OF_YEAR)) %> [<%= datef.format(beginOfCurrentWeek.getTime()) %> / <%= datef.format(endOfCurrentWeek.getTime()) %>]</td>
 <%
-											dayCounter = 0;
-											GregorianCalendar beginOfCurrentWeek = (GregorianCalendar)currentDate.clone();
+											row = sheetWeeks.createRow(nRow++);
+											nCell = 0;
+											cell = row.createCell(nCell++);	cell.setCellValue(yyyyf.format(beginOfCurrentWeek.getTime()) + " #" + formatter2.format(beginOfCurrentWeek.get(GregorianCalendar.WEEK_OF_YEAR)) + " [" + datef.format(beginOfCurrentWeek.getTime()) + " / " + datef.format(endOfCurrentWeek.getTime()) + "]");
 											if (isWorkRecord) {
 												for(int i = currentDate.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
 														String WWDDKey = null; 		// YYYYWWDD where WW week of year and DD day of week
@@ -1745,7 +2354,7 @@ org.openmdx.base.text.conversion.*
 														String WWDDTimeKey = null;
 														String WWDDsumTimeKey = null;
 														try {
-																WWDDTimeKey = 	yyyyf.format(currentDate.getTime()) + 
+																WWDDTimeKey = 	yyyyf.format(currentDate.getTime()) +
 																								formatter2.format(currentDate.get(GregorianCalendar.WEEK_OF_YEAR)) +
 																								formatter2.format(currentDate.get(GregorianCalendar.DAY_OF_WEEK) % 7) + "_" + timeKey;
 														} catch (Exception e) {
@@ -1753,6 +2362,10 @@ org.openmdx.base.text.conversion.*
 														}
 														boolean outOfPeriod = (reportBeginOfPeriod != null && currentDate.compareTo(reportBeginOfPeriod) < 0) ||
 																									(reportEndOfPeriod != null && currentDate.compareTo(reportEndOfPeriod) > 0);
+														cell = row.createCell(nCell++);
+														if ((totalsPerWeekDay.get(WWDDTimeKey) != null) && !outOfPeriod) {
+																cell.setCellValue(((Double)totalsPerWeekDay.get(WWDDTimeKey)) / 24.0); cell.setCellStyle(timeStyle);
+														}
 %>
 														<td class="padded_r <%= outOfPeriod ? "outofperiod" : "" %>"><%= totalsPerWeekDay.get(WWDDTimeKey) == null ? (outOfPeriod ? "" : "--") : decimalMinutesToHhMm(((Double)totalsPerWeekDay.get(WWDDTimeKey)) * 60.0) %></td>
 <%
@@ -1772,11 +2385,20 @@ org.openmdx.base.text.conversion.*
 													if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
 													String sumKey = null; // YYYYWW99 (sum of week)
 													try {
-															sumKey = yyyyf.format(beginOfCurrentWeek.getTime()) + 
+															sumKey = yyyyf.format(beginOfCurrentWeek.getTime()) +
 																			formatter2.format(beginOfCurrentWeek.get(GregorianCalendar.WEEK_OF_YEAR)) +
 																			"99_" + key;
 													} catch (Exception e) {
 															sumKey = "9_" + key;
+													}
+													cell = row.createCell(nCell++);
+													if (totalsPerWeekDay.get(sumKey) != null) {
+															if (key.compareTo(timeKey) == 0) {
+																	cell.setCellValue(((Double)totalsPerWeekDay.get(sumKey)) / 24.0); cell.setCellStyle(timeStyle);
+															} else {
+																	cell.setCellValue((Double)totalsPerWeekDay.get(sumKey)); cell.setCellStyle(amountStyle);
+															}
+
 													}
 %>
 													<td class="padded_r"><%= totalsPerWeekDay.get(sumKey) == null ? "--" : (key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerWeekDay.get(sumKey)) : ratesepf.format((Double)totalsPerWeekDay.get(sumKey))) %></td>
@@ -1786,17 +2408,24 @@ org.openmdx.base.text.conversion.*
 %>
 										</tr>
 <%
+									System.out.println("currentDate: " + currentDate.getTime());
+									System.out.println("latestDate : " + latestDate);
 									}
 								}
 %>
 								<tr>
 <%
+									row = sheetWeeks.createRow(nRow++);
+									nCell = 0;
+									cell = row.createCell(nCell++);	cell.setCellValue("Total");
 									if (isWorkRecord && calendarBeginOfWeek != null) {
 %>
 										<td class="total">&sum;</td>
 <%
 											dayCounter = 0;
 											for(int i = calendarBeginOfWeek.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
+												cell = row.createCell(nCell++);
+												cell.setCellValue(sumDays[i % 7] / 24.0); cell.setCellStyle(timeStyle);
 %>
 												<td class="totalR"><%= decimalMinutesToHhMm(sumDays[i % 7] * 60.0) %></td>
 <%
@@ -1812,6 +2441,12 @@ org.openmdx.base.text.conversion.*
 											String key = (String)i.next();
 											sumIdx++;
 											if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+											cell = row.createCell(nCell++);
+											if (key.compareTo(timeKey) == 0) {
+													cell.setCellValue(sumDays[sumIdx] / 24.0); cell.setCellStyle(timeStyle);
+											} else {
+													cell.setCellValue(sumDays[sumIdx]); cell.setCellStyle(amountStyle);
+											}
 %>
 											<td class="totalR"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * sumDays[sumIdx]) : ratesepf.format(sumDays[sumIdx]) %></td>
 <%
@@ -1824,9 +2459,19 @@ org.openmdx.base.text.conversion.*
 								<tr>
 									<td class="padded" colspan="8">&sum; (<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>)</td>
 <%
+									row = sheetWeeks.createRow(nRow++);
+									nCell = 0;
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()));
+									if (isWorkRecord) {nCell = 8;}
 									for (Iterator i = totalsBillable.keySet().iterator(); i.hasNext();) {
 										String key = (String)i.next();
 										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+										cell = row.createCell(nCell++);
+										if (key.compareTo(timeKey) == 0) {
+												cell.setCellValue(((Double)totalsBillable.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+										} else {
+												cell.setCellValue((Double)totalsBillable.get(key)); cell.setCellStyle(amountStyle);
+										}
 %>
 										<td class="padded_r"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsBillable.get(key)) : ratesepf.format((Double)totalsBillable.get(key)) %></td>
 <%
@@ -1837,9 +2482,19 @@ org.openmdx.base.text.conversion.*
 								<tr>
 									<td class="padded" colspan="8">&sum; (<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>)</td>
 <%
+									row = sheetWeeks.createRow(nRow++);
+									nCell = 0;
+									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()));
+									if (isWorkRecord) {nCell = 8;}
 									for (Iterator i = totalsReimbursable.keySet().iterator(); i.hasNext();) {
 										String key = (String)i.next();
 										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+										cell = row.createCell(nCell++);
+										if (key.compareTo(timeKey) == 0) {
+												cell.setCellValue(((Double)totalsReimbursable.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+										} else {
+												cell.setCellValue((Double)totalsReimbursable.get(key)); cell.setCellStyle(amountStyle);
+										}
 %>
 										<td class="padded_r"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsReimbursable.get(key)) : ratesepf.format((Double)totalsReimbursable.get(key)) %></td>
 <%
@@ -1856,12 +2511,19 @@ org.openmdx.base.text.conversion.*
 								<tr class="gridTableHeader">
 									<td class="smallheader" colspan="8"><%= app.getLabel(ACTIVITYSEGMENT_CLASS) %></td>
 <%
+									nRow = REPORT_STARTING_ROW;
+									row = sheetActivities.createRow(nRow++);
+									nCell = 0;
+									cell = row.createCell(nCell);	cell.setCellValue(app.getLabel(ACTIVITYSEGMENT_CLASS));
+									sheetActivities.setColumnWidth(nCell++, (short)12000);
 									for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
 										String key = (String)i.next();
 										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
 %>
 										<td class="smallheaderR"><%= key %></td>
 <%
+										cell = row.createCell(nCell);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
+										sheetActivities.setColumnWidth(nCell++, (short)3000);
 									}
 %>
 								</tr>
@@ -1879,15 +2541,25 @@ org.openmdx.base.text.conversion.*
 												true // enabled
 											);
 										activityHref = "../../" + action.getEncodedHRef();
+										row = sheetActivities.createRow(nRow++);
+										nCell = 0;
+										cell = row.createCell(nCell++);	cell.setCellValue("#" + activity.getActivityNumber() + " " + activity.getName());
 %>
-
 										<tr>
-											<td class="padded" colspan="8"><a href='<%= activityHref %>' target='_blank'>#<%= (new ObjectReference(activity, app)).getTitle() %></a></td>
+											<td class="padded" colspan="8"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %></a></td>
 <%
 											for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
 												String key = activityNumber + "_" + (String)i.next();
 												String activityKey = activityNumber + "_" + timeKey;
 												if (!isWorkRecord && key.compareTo(activityKey) == 0) {continue;}
+												cell = row.createCell(nCell++);
+												if (totalsPerActivity.get(key) != null) {
+														if (key.compareTo(activityKey) == 0) {
+																cell.setCellValue(((Double)totalsPerActivity.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+														} else {
+																cell.setCellValue((Double)totalsPerActivity.get(key)); cell.setCellStyle(amountStyle);
+														}
+												}
 %>
 												<td class="padded_r"><%= totalsPerActivity.get(key) == null ? "--" : (key.compareTo(activityKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerActivity.get(key)) : ratesepf.format((Double)totalsPerActivity.get(key))) %></td>
 <%
@@ -1900,9 +2572,18 @@ org.openmdx.base.text.conversion.*
 								<tr>
 									<td class="total" colspan="8">&sum;</td>
 <%
+									row = sheetActivities.createRow(nRow++);
+									nCell = 0;
+									cell = row.createCell(nCell++);	cell.setCellValue("Total");
 									for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
 										String key = (String)i.next();
 										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+										cell = row.createCell(nCell++);
+										if (key.compareTo(timeKey) == 0) {
+												cell.setCellValue(((Double)totals.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+										} else {
+												cell.setCellValue((Double)totals.get(key)); cell.setCellStyle(amountStyle);
+										}
 %>
 										<td class="totalR"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totals.get(key)) : ratesepf.format((Double)totals.get(key)) %></td>
 <%
@@ -1910,9 +2591,370 @@ org.openmdx.base.text.conversion.*
 %>
 								</tr>
 <!--  end totals per activity -->
+
+								<tr>
+									<td colspan="<%= totals.keySet().size() + 9 %>" style="padding:5px;">&nbsp;</td>
+								</tr>
+
+<!-- totals per activityGroup -->
+								<tr class="gridTableHeader">
+									<td class="smallheader" colspan="8"><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></td>
+<%
+									nRow = REPORT_STARTING_ROW;
+									row = sheetActivityGroups.createRow(nRow++);
+									nCell = 0;
+									cell = row.createCell(nCell);	cell.setCellValue(app.getLabel(ACTIVITYTRACKER_CLASS) + " / " + app.getLabel(ACTIVITYCATEGORY_CLASS) + " / " + app.getLabel(ACTIVITYMILESTONE_CLASS));
+									sheetActivityGroups.setColumnWidth(nCell++, (short)12000);
+									for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+										String key = (String)i.next();
+										if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+										cell = row.createCell(nCell);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
+										sheetActivityGroups.setColumnWidth(nCell++, (short)3000);
+%>
+										<td class="smallheaderR"><%= key %></td>
+<%
+									}
+%>
+								</tr>
+<%
+								for (Iterator a = activityGroups.keySet().iterator(); a.hasNext();) {
+										String agkey = (String)a.next();
+										org.opencrx.kernel.activity1.jmi1.ActivityGroup actGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(new Path((String)activityGroups.get(agkey)));
+										String actGroupHref = "";
+										Action action = new Action(
+												Action.EVENT_SELECT_OBJECT,
+												new Action.Parameter[]{
+												    new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
+												},
+												"",
+												true // enabled
+											);
+										actGroupHref = "../../" + action.getEncodedHRef();
+										row = sheetActivityGroups.createRow(nRow++);
+										nCell = 0;
+										cell = row.createCell(nCell++);	cell.setCellValue(actGroup.getName());
+%>
+										<tr>
+											<td class="padded" colspan="8"><a href='<%= actGroupHref %>' target='_blank'><%= app.getHtmlEncoder().encode(new ObjectReference(actGroup, app).getTitle(), false) %></a></td>
+<%
+											for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+												String key = (actGroup.getName() != null ? actGroup.getName().toUpperCase() : "") + GAP_BEFORE_XRI + actGroup.refMofId() + "_" + (String)i.next();
+												String activityGroupKey = (actGroup.getName() != null ? actGroup.getName().toUpperCase() : "") + GAP_BEFORE_XRI + actGroup.refMofId() + "_" + timeKey;
+												if (!isWorkRecord && key.compareTo(activityGroupKey) == 0) {continue;}
+												cell = row.createCell(nCell++);
+												if (totalsPerActivityGroup.get(key) != null) {
+														if (key.compareTo(activityGroupKey) == 0) {
+																cell.setCellValue(((Double)totalsPerActivityGroup.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+														} else {
+																cell.setCellValue((Double)totalsPerActivityGroup.get(key)); cell.setCellStyle(amountStyle);
+														}
+												}
+%>
+												<td class="padded_r"><%= totalsPerActivityGroup.get(key) == null ? "--" : (key.compareTo(activityGroupKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerActivityGroup.get(key)) : ratesepf.format((Double)totalsPerActivityGroup.get(key))) %></td>
+<%
+											}
+%>
+										</tr>
+<%
+								}
+%>
+<!--  end totals per activityGroup -->
+<%
+								if (isProjectReporting) {
+										sheetProject = addSheet(wb, "Project", false, labels, values, 1);
+
+%>
+<!-- totals per projectPhase -->
+										<tr>
+											<td colspan="<%= totals.keySet().size() + 9 %>" style="padding:5px;">&nbsp;</td>
+										</tr>
+										<tr class="gridTableHeader">
+											<td class="smallheader" colspan="8"><%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>: <%= projectTracker.getName() != null ? app.getHtmlEncoder().encode(projectTracker.getName(), false) : "?" %></td>
+<%
+											nRow = REPORT_STARTING_ROW;
+											row = sheetProject.createRow(nRow++);
+											nCell = 0;
+											cell = row.createCell(nCell);	cell.setCellValue(userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) + ": " + (projectTracker.getName() != null ? projectTracker.getName() : "?"));
+											sheetProject.setColumnWidth(nCell++, (short)6000);
+											sheetProject.setColumnWidth(nCell++, (short)12000);
+											sheetProject.setColumnWidth(nCell++, (short)6000);
+											for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+												String key = (String)i.next();
+												if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+												cell = row.createCell(nCell);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
+												sheetProject.setColumnWidth(nCell++, (short)3000);
+%>
+												<td class="smallheaderR"><%= key %></td>
+<%
+											}
+											sheetProject.setColumnWidth(nCell++, (short)2000);
+											sheetProject.setColumnWidth(nCell++, (short)4000);
+%>
+										</tr>
+<%
+										for (Iterator a = projectPhaseList.values().iterator(); a.hasNext();) {
+												org.opencrx.kernel.activity1.jmi1.ActivityGroup actGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)a.next();
+												String actGroupHref = "";
+												Action action = new Action(
+														Action.EVENT_SELECT_OBJECT,
+														new Action.Parameter[]{
+														    new Action.Parameter(Action.PARAMETER_OBJECTXRI, actGroup.refMofId())
+														},
+														"",
+														true // enabled
+													);
+												actGroupHref = "../../" + action.getEncodedHRef();
+												row = sheetProject.createRow(nRow++);
+												nCell = 0;
+												cell = row.createCell(nCell++);	cell.setCellValue(actGroup.getName());
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++);
+%>
+												<tr>
+													<td class="padded" colspan="8"><a href='<%= actGroupHref %>' target='_blank'><%= app.getHtmlEncoder().encode(new ObjectReference(actGroup, app).getTitle(), false) %></a></td>
+<%
+													for (Iterator i = totals.keySet().iterator(); i.hasNext();) {
+														String projectPhaseKey = (actGroup.getName() != null ? actGroup.getName().toUpperCase() : "") + GAP_BEFORE_XRI + actGroup.refMofId() + "_" + (String)i.next();
+														String projectPhaseTimeKey = (actGroup.getName() != null ? actGroup.getName().toUpperCase() : "") + GAP_BEFORE_XRI + actGroup.refMofId() + "_" + timeKey;
+														if (!isWorkRecord && projectPhaseKey.compareTo(projectPhaseTimeKey) == 0) {continue;}
+														cell = row.createCell(nCell++);
+														if (totalsPerProjectPhase.get(projectPhaseKey) != null) {
+																if (projectPhaseKey.compareTo(projectPhaseTimeKey) == 0) {
+																		cell.setCellValue(((Double)totalsPerProjectPhase.get(projectPhaseKey)) / 24.0); cell.setCellStyle(timeStyle);
+																} else {
+																		cell.setCellValue((Double)totalsPerProjectPhase.get(projectPhaseKey)); cell.setCellStyle(amountStyle);
+																}
+														}
+%>
+														<td class="padded_r"><%= totalsPerProjectPhase.get(projectPhaseKey) == null ? "--" : (projectPhaseKey.compareTo(projectPhaseTimeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerProjectPhase.get(projectPhaseKey)) : ratesepf.format((Double)totalsPerProjectPhase.get(projectPhaseKey))) %></td>
+<%
+													}
+%>
+												</tr>
+<%
+										}
+%>
+										<tr>
+											<td class="total" colspan="8">&sum;</td>
+<%
+											row = sheetProject.createRow(nRow++);
+											nCell = 0;
+											cell = row.createCell(nCell++);	cell.setCellValue("Total");
+											cell = row.createCell(nCell++);
+											cell = row.createCell(nCell++);
+											for (Iterator i = totalsProject.keySet().iterator(); i.hasNext();) {
+												String key = (String)i.next();
+												if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+												cell = row.createCell(nCell++);
+												if (key.compareTo(timeKey) == 0) {
+														cell.setCellValue(((Double)totalsProject.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+												} else {
+														cell.setCellValue((Double)totalsProject.get(key)); cell.setCellStyle(amountStyle);
+												}
+%>
+												<td class="totalR"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsProject.get(key)) : ratesepf.format((Double)totalsProject.get(key)) %></td>
+<%
+											}
+%>
+										</tr>
+<!--  end totals per projectPhase -->
+<%
+								}
+%>
 							</table>
 							</td></tr></table>
 <%
+							if (isProjectReporting) {
+%>
+<!-- totals per projectReportingLine -->
+									<br>
+									<table><tr><td style="padding-left:5px;">
+									<table class="gridTable">
+										<tr class="gridTableHeader">
+											<td class="smallheader"><%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>: <%= projectTracker.getName() != null ? app.getHtmlEncoder().encode(projectTracker.getName(), false) : "?" %></td>
+											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+<%
+											row = sheetProject.createRow(nRow++);
+											row = sheetProject.createRow(nRow++);
+											row = sheetProject.createRow(nRow++);
+											row = sheetProject.createRow(nRow++);
+											row = sheetProject.createRow(nRow++);
+											row = sheetProject.createRow(nRow++);
+											nCell = 0;
+											cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) + ": " + (projectTracker.getName() != null ? projectTracker.getName() : "?"));
+											cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()));
+											cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()));
+											for (Iterator i = totalsReportingLines.keySet().iterator(); i.hasNext();) {
+												String key = (String)i.next();
+												if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+												cell = row.createCell(nCell++);	cell.setCellValue(key); cell.setCellStyle(rightAlignStyle);
+%>
+												<td class="smallheaderR"><%= key %></td>
+<%
+											}
+											if (!isWorkRecord) {
+												cell = row.createCell(nCell++);
+												cell = row.createCell(nCell++); cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
+%>
+												<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+<%
+											} else {
+												cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "rate", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
+%>
+												<td class="smallheaderR"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "rate", app.getCurrentLocaleAsIndex()) %></td>
+<%
+											}
+%>
+										</tr>
+<%
+										for (Iterator r = reportingLines.values().iterator(); r.hasNext();) {
+												String key = (String)r.next();
+												String rlActivityGroup = "?";
+												String titleActivityGroup = "";
+												String rlActivity = "?";
+												String titleActivity = "";
+												String rlResource = "?";
+												String titleResource = "";
+												short rlRecordType = 0;
+												String rlRate = "?";
+												boolean hasError = false;
+												String reportingLineKEY = null;
+												try {
+														String keyParts[] = key.split(KEY_SPLITTER);
+
+														// recover ActivityGroup
+														org.opencrx.kernel.activity1.jmi1.ActivityGroup lActivityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)pm.getObjectById(new Path(keyParts[0]));
+														if (lActivityGroup != null) {
+															Action action = new Action(
+																	Action.EVENT_SELECT_OBJECT,
+																	new Action.Parameter[]{
+																	    new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivityGroup.refMofId())
+																	},
+																	"",
+																	true // enabled
+																);
+															rlActivityGroup = "../../" + action.getEncodedHRef();
+															rlActivityGroup = "<a href='" + rlActivityGroup + "' target='_blank'>" + app.getHtmlEncoder().encode(new ObjectReference(lActivityGroup, app).getTitle(), false) + "</a>";
+															titleActivityGroup = lActivityGroup.getName();
+														}
+
+														// recover Activity
+														org.opencrx.kernel.activity1.jmi1.Activity lActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(keyParts[1]));
+														if (lActivity != null) {
+															Action action = new Action(
+																	Action.EVENT_SELECT_OBJECT,
+																	new Action.Parameter[]{
+																	    new Action.Parameter(Action.PARAMETER_OBJECTXRI, lActivity.refMofId())
+																	},
+																	"",
+																	true // enabled
+																);
+															rlActivity = "../../" + action.getEncodedHRef();
+															rlActivity = "<a href='" + rlActivity + "' target='_blank'>" + app.getHtmlEncoder().encode(new ObjectReference(lActivity, app).getTitle(), false) + "</a>";
+															titleActivity = "#" + lActivity.getActivityNumber() + " " + lActivity.getName();
+														}
+
+														// recover Resource
+														org.opencrx.kernel.activity1.jmi1.Resource lResource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(keyParts[2]));
+														if (lResource != null) {
+															Action action = new Action(
+																	Action.EVENT_SELECT_OBJECT,
+																	new Action.Parameter[]{
+																	    new Action.Parameter(Action.PARAMETER_OBJECTXRI, lResource.refMofId())
+																	},
+																	"",
+																	true // enabled
+																);
+															rlResource = "../../" + action.getEncodedHRef();
+															rlResource = "<a href='" + rlResource + "' target='_blank'>" + app.getHtmlEncoder().encode(new ObjectReference(lResource, app).getTitle(), false) + "</a>";
+															titleResource = lResource.getName();
+														}
+
+														// recover recordType
+														rlRecordType = Short.parseShort(keyParts[3]);
+
+														// recover rate
+														rlRate = ratesepf.format(new java.math.BigDecimal(keyParts[4]));
+												} catch (Exception e) {
+														hasError = true;
+												}
+												row = sheetProject.createRow(nRow++);
+												nCell = 0;
+												cell = row.createCell(nCell++);	cell.setCellValue(titleActivityGroup);
+												cell = row.createCell(nCell++); cell.setCellValue(titleActivity);
+												cell = row.createCell(nCell++); cell.setCellValue(titleResource);
+%>
+												<tr <%= hasError ? errorStyle : "" %>>
+													<td class="padded"><%= rlActivityGroup %></td>
+													<td class="padded"><%= rlActivity %></td>
+													<td class="padded"><%= rlResource %></td>
+<%
+													for (Iterator i = totalsReportingLines.keySet().iterator(); i.hasNext();) {
+														String reportLineKey =	key + KEY_SPLITTER +	"_" + (String)i.next();
+														String reportLineTimeKey =	key + KEY_SPLITTER +	"_" + timeKey;
+														if (!isWorkRecord && reportLineKey.compareTo(reportLineTimeKey) == 0) {continue;}
+														cell = row.createCell(nCell++);
+														if (totalsPerProjectReportLine.get(reportLineKey) != null) {
+																if (reportLineKey.compareTo(reportLineTimeKey) == 0) {
+																		cell.setCellValue(((Double)totalsPerProjectReportLine.get(reportLineKey)) / 24.0); cell.setCellStyle(timeStyle);
+																} else {
+																		cell.setCellValue((Double)totalsPerProjectReportLine.get(reportLineKey)); cell.setCellStyle(amountStyle);
+																}
+														}
+%>
+														<td class="padded_r"><%= totalsPerProjectReportLine.get(reportLineKey) == null ? "--" : (reportLineKey.compareTo(reportLineTimeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsPerProjectReportLine.get(reportLineKey)) : ratesepf.format((Double)totalsPerProjectReportLine.get(reportLineKey))) %></td>
+<%
+													}
+													if (!isWorkRecord) {
+														cell = row.createCell(nCell++);	cell.setCellValue(rlRecordType);
+														cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(rlRecordType))));
+%>
+														<td class="padded"><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(rlRecordType))) %></td>
+<%
+													} else {
+														cell = row.createCell(nCell++);	cell.setCellValue(rlRate); cell.setCellStyle(amountStyle);
+%>
+														<td class="padded_r"><%= rlRate %></td>
+<%
+													}
+%>
+												</tr>
+<%
+										}
+%>
+										<tr>
+											<td class="total" colspan="3">&sum;</td>
+<%
+											row = sheetProject.createRow(nRow++);
+											nCell = 0;
+											cell = row.createCell(nCell++);	cell.setCellValue("Total");
+											cell = row.createCell(nCell++);
+											cell = row.createCell(nCell++);
+											for (Iterator i = totalsReportingLines.keySet().iterator(); i.hasNext();) {
+												String key = (String)i.next();
+												if (!isWorkRecord && key.compareTo(timeKey) == 0) {continue;}
+												cell = row.createCell(nCell++);
+												if (key.compareTo(timeKey) == 0) {
+														cell.setCellValue(((Double)totalsReportingLines.get(key)) / 24.0); cell.setCellStyle(timeStyle);
+												} else {
+														cell.setCellValue((Double)totalsReportingLines.get(key)); cell.setCellStyle(amountStyle);
+												}
+%>
+												<td class="totalR"><%= key.compareTo(timeKey) == 0 ? decimalMinutesToHhMm(60.0 * (Double)totalsReportingLines.get(key)) : ratesepf.format((Double)totalsReportingLines.get(key)) %></td>
+<%
+											}
+%>
+											<td class="total"></td>
+										</tr>
+									</table>
+									</td></tr></table>
+<!--  end totals per projectReportingLine -->
+<%
+							}
+							wb.write(os);
+							os.flush();
+							os.close();
 					} /* doReportCalculation */
 %>
 				</form>
@@ -1941,7 +2983,7 @@ org.openmdx.base.text.conversion.*
 
       </div> <!-- content -->
     </div> <!-- content-wrap -->
-	<div> <!-- wrap -->
+  </div> <!-- wrap -->
 </div> <!-- container -->
 </body>
 </html>

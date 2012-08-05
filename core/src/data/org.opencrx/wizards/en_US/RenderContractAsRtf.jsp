@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RenderContractAsRtf.jsp,v 1.9 2009/06/09 14:18:15 wfro Exp $
+ * Name:        $Id: RenderContractAsRtf.jsp,v 1.12 2009/10/15 16:19:33 wfro Exp $
  * Description: RenderContractAsRtf
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/09 14:18:15 $
+ * Date:        $Date: 2009/10/15 16:19:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -76,7 +76,7 @@ org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
-org.openmdx.application.log.*
+org.openmdx.kernel.log.*
 " %>
 <%!
 
@@ -103,7 +103,7 @@ org.openmdx.application.log.*
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
   	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(app==null || objectXri==null || viewsCache.getViews().isEmpty()) {
+	if(app==null || objectXri==null || viewsCache.getView(requestId) == null) {
 	    response.sendRedirect(
 	       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 	    );
@@ -235,9 +235,9 @@ org.openmdx.application.log.*
     	Iterator j = positions.iterator();
     	j.hasNext();
 	) {
-		org.opencrx.kernel.contract1.jmi1.ContractPosition position = (org.opencrx.kernel.contract1.jmi1.ContractPosition)j.next();
+		org.opencrx.kernel.contract1.jmi1.AbstractContractPosition position = (org.opencrx.kernel.contract1.jmi1.AbstractContractPosition)j.next();
 		if(positionCount < nPositions - 1) {
-	       	document.appendTableRow("contractPositions");
+	       	document.appendTableRow("ContractPositions");
 		}
 		document.setBookmarkContent("quantity", decimalFormatter.format(position.getQuantity()), true);
   	    document.setBookmarkContent("product", app.getPortalExtension().getTitle(((org.opencrx.kernel.product1.jmi1.ConfiguredProduct)position).getProduct(), app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), app), true);
@@ -410,7 +410,7 @@ org.openmdx.application.log.*
 <%
   }
   catch(Exception e) {
-    AppLog.warning(e.getMessage(), e.getCause());
+    SysLog.warning(e.getMessage(), e.getCause());
     // Go back to previous view
     Action nextAction = new ObjectReference(
       (RefObject_1_0)pm.getObjectById(new Path(objectXri)),
