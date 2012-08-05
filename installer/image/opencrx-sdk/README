@@ -5,6 +5,7 @@ This installer has created an openCRX development environment.
 The SDK contains the sources of the following openCRX projects:
 
 * core: contains the openCRX Core models and functions
+* groupware: contains the openCRX Groupware extensions
 * store: contains the openCRX Store application
 
 Each project contains a build.xml which accepts the following
@@ -17,7 +18,10 @@ targets:
 * assemble: build assemblies
 * config: display the project settings
 
-The installer has already performed install-src and assemble 
+The installer has performed the following tasks
+* ant install-src 
+* ant deliverables
+* ant assemble 
 for each project.
 
 The projects come with Eclipse project files. Run 

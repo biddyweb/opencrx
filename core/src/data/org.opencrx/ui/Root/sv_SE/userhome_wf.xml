@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:wfProcessInstance" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Processinstanser</_item>
+                        <_item>Processinstanser</_item>
                       </label>
                       <toolTip>
                         <_item>Processinstanser</_item>

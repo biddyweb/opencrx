@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Filtri Soggetti</_item>
+                        <_item>Filtri Soggetti</_item>
                       </label>
                       <toolTip>
                         <_item>Filtrazione dei Soggetti</_item>

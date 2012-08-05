@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Indexed:indexEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Entradas de índice</_item>
+                        <_item>Entradas de índice</_item>
                       </label>
                       <toolTip>
                         <_item>Entradas de índice</_item>

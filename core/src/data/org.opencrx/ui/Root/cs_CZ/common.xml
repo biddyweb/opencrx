@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Poznámky</_item>
+                        <_item>Poznámky</_item>
                       </label>
                       <toolTip>
                         <_item>Připojené poznámky</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dokumenty</_item>
+                        <_item>Dokumenty</_item>
                       </label>
                       <toolTip>
                         <_item>Připojené dokumenty</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Média</_item>
+                        <_item>Média</_item>
                       </label>
                       <toolTip>
                         <_item>Připojená média</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Hodnocení</_item>
+                        <_item>Hodnocení</_item>
                       </label>
                       <toolTip>
                         <_item>Připojená hodnocení</_item>

@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Search.jsp,v 1.11 2008/10/06 11:04:18 cmu Exp $
+ * Name:        $Id: Search.jsp,v 1.13 2008/12/04 14:17:07 cmu Exp $
  * Description: Search.jsp
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 11:04:18 $
+ * Date:        $Date: 2008/12/04 14:17:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,6 +55,7 @@
  * openMDX (http://www.openmdx.org/)
  */
 %><%@ page session="true" import="
+java.net.*,
 java.util.*,
 java.io.*,
 java.text.*,
@@ -104,12 +105,12 @@ org.openmdx.application.log.*
 <body>
   <table><tr><td>
 <%
-	  try {
+	try {
 		String searchExpression = request.getParameter("searchExpression");
 		// Lookup object by its XRI
 		if(searchExpression.startsWith("xri:")) {
 			try {
-				RefObject_1_0 object = (RefObject_1_0)pm.getObjectById(new Path(searchExpression.trim()));
+				RefObject_1_0 object = (RefObject_1_0)pm.getObjectById(new Path((searchExpression.trim()).replace("+", "%2B")));
 				Action nextAction = new ObjectReference(object, app).getSelectObjectAction();
 				response.sendRedirect(
 					request.getContextPath() + "/" + nextAction.getEncodedHRef()
@@ -121,8 +122,17 @@ org.openmdx.application.log.*
 		else {
 			// Get home1 package
 			org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
-			org.opencrx.kernel.home1.jmi1.UserHome userHome =
-				(org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+			org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
+			try {
+  			userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentity());
+			}
+			catch(Exception e) {
+			  // no or broken userhome --> would not be able to build ObjectFinder
+    		response.sendRedirect(
+    			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
+    	  );
+				return;
+			}
 			org.opencrx.kernel.home1.jmi1.SearchResult searchResult = null;
 			try {
 				pm.currentTransaction().begin();
@@ -149,8 +159,8 @@ org.openmdx.application.log.*
 		response.sendRedirect(
 			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 		);
-	  }
-	  catch (Exception e) {
+	}
+  catch (Exception e) {
 		out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
 		PrintWriter pw = new PrintWriter(out);
 		ServiceException e0 = new ServiceException(e);
@@ -159,7 +169,7 @@ org.openmdx.application.log.*
 		out.println("</pre>");
 		AppLog.warning("Error calling wizard", "Search.jsp");
 		AppLog.warning(e0.getMessage(), e0.getCause());
-	  }
+  }
 %>
   </td></tr></table>
 </body>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.60 2008/10/06 21:08:47 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.69 2008/12/01 17:25:27 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.60 $
+ * Revision:    $Revision: 1.69 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 21:08:47 $
+ * Date:        $Date: 2008/12/01 17:25:27 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,6 +80,7 @@ import java.util.Set;
 import java.util.zip.ZipInputStream;
 
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -99,7 +100,15 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.EmailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
+import org.opencrx.kernel.activity1.cci2.AbsenceQuery;
 import org.opencrx.kernel.activity1.cci2.EmailQuery;
+import org.opencrx.kernel.activity1.cci2.ExternalActivityQuery;
+import org.opencrx.kernel.activity1.cci2.IncidentQuery;
+import org.opencrx.kernel.activity1.cci2.MailingQuery;
+import org.opencrx.kernel.activity1.cci2.MeetingQuery;
+import org.opencrx.kernel.activity1.cci2.PhoneCallQuery;
+import org.opencrx.kernel.activity1.cci2.SalesVisitQuery;
+import org.opencrx.kernel.activity1.cci2.TaskQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractEmailRecipient;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Activity1Package;
@@ -856,6 +865,20 @@ public class Activities {
             UUIDConversion.toUID(uuids.next()),
             setAssignedToAction
         );        
+        // Create SetActualEndAction
+        setActualEndAction = activityPkg.getSetActualEndAction().createSetActualEndAction();
+        setActualEndAction.refInitialize(false, false);
+        setActualEndAction.setName("Reset actualEnd");
+        setActualEndAction.setDescription("Reset actualEnd");
+        setActualEndAction.setResetToNull(true);
+        setActualEndAction.getOwningGroup().addAll(
+            activitySegment.getOwningGroup()
+        );
+        processTransition.addAction(
+            false,
+            UUIDConversion.toUID(uuids.next()),
+            setActualEndAction
+        );        
         // Commit
         pm.currentTransaction().commit();
         
@@ -982,80 +1005,20 @@ public class Activities {
     }
             
     //-------------------------------------------------------------------------
-    private int calculateOpenActivityTimeDistribution(
-      Path reference,
-      String objectClass,
-      int[] timeDistribution,
-      String distributionOnAttribute,
-      boolean lookAhead
-    ) {
-      try {
-        List activities = this.backend.getDelegatingRequests().addFindRequest(
-            reference,
-            new FilterProperty[]{
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    SystemAttributes.OBJECT_CLASS,
-                    FilterOperators.IS_IN,
-                    objectClass
-                ),
-                new FilterProperty(
-                    Quantors.THERE_EXISTS,
-                    "percentComplete",
-                    FilterOperators.IS_LESS,
-                    new Short((short)100)
-                )
-            },
-            AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
-            0,
-            Activities.BATCHING_MODE_SIZE,
-            Directions.ASCENDING
-        );
-        
-        int count = 0;
-        for(
-           Iterator i = activities.iterator(); 
-           i.hasNext(); 
-        ) {
-          DataproviderObject_1_0 activity = (DataproviderObject_1_0)i.next();
-          Date dt = new Date();
-          try {
-            dt = org.openmdx.base.text.format.DateFormat.getInstance().parse(
-              (String)activity.values(distributionOnAttribute).get(0)
-            );
-          } catch(Exception e) {}
-
-          long delayInDays = (lookAhead ? 1 : -1) * (dt.getTime() - System.currentTimeMillis()) / 86400000;
-          if(delayInDays < 0) timeDistribution[0]++;
-          else if(delayInDays < 1) timeDistribution[1]++;
-          else if(delayInDays < 2) timeDistribution[2]++;
-          else if(delayInDays < 3) timeDistribution[3]++;
-          else if(delayInDays < 4) timeDistribution[4]++;
-          else if(delayInDays < 5) timeDistribution[5]++;
-          else if(delayInDays < 6) timeDistribution[6]++;
-          else if(delayInDays < 7) timeDistribution[7]++;
-          else if(delayInDays < 8) timeDistribution[8]++;
-          else if(delayInDays < 15) timeDistribution[9]++;
-          else if(delayInDays < 31) timeDistribution[10]++;
-          else if(delayInDays < 91) timeDistribution[11]++;
-          else if(delayInDays < 181) timeDistribution[12]++;
-          else if(delayInDays < 361) timeDistribution[13]++;
-          else timeDistribution[14]++;
-          
-          count++;
-        }
-        return count;
-      }
-      catch(ServiceException e) {
-        return 0;
-      }
-    }
-
-    //-------------------------------------------------------------------------
-    DataproviderObject[] calculateUserHomeCharts(
-        Path userHome,
-        Path chartReference
+    public static void calculateUserHomeCharts(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome,
+        PersistenceManager pm
     ) throws ServiceException {
+        org.opencrx.kernel.home1.jmi1.Media[] charts = new org.opencrx.kernel.home1.jmi1.Media[2];
+        Collection<org.opencrx.kernel.home1.jmi1.Media> existingCharts = userHome.getChart();
+        for(org.opencrx.kernel.home1.jmi1.Media chart: existingCharts) {
+            if("2".equals(chart.refGetPath().getBase())) {
+                charts[0] = chart;
+            }
+            else if("3".equals(chart.refGetPath().getBase())) {
+                charts[1] = chart;
+            }
+        }        
         java.text.DateFormat dateFormat = 
             java.text.DateFormat.getDateInstance(java.text.DateFormat.SHORT, new Locale("en_US")); 
         java.text.DateFormat timeFormat = 
@@ -1064,21 +1027,23 @@ public class Activities {
         // try to get full name of contact
         String fullName = "";
         try {
-            fullName = (String)this.backend.retrieveObject(
-                (Path)this.backend.retrieveObject(userHome).values("contact").get(0)
-            ).values("fullName").get(0);
+            fullName = userHome.getContact().getFullName();
         } catch(Exception e) {}
-        DataproviderObject[] charts = new DataproviderObject[2];
         String chartTitle = null;
         /**
          * Assigned Activities Overview
          */
         chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Overview (" + createdAt + ")";
-        charts[0] = new DataproviderObject(
-            chartReference.getChild("2")
-        );
-        charts[0].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Media");
-        charts[0].values("description").add(chartTitle);
+        if(charts[0] == null) {
+            charts[0] = (org.opencrx.kernel.home1.jmi1.Media)pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
+            charts[0].refInitialize(false, false);
+            userHome.addChart(
+                false, 
+                "2", 
+                charts[0]
+            );
+        }
+        charts[0].setDescription(chartTitle);
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         PrintWriter pw = new PrintWriter(os);
 
@@ -1092,29 +1057,117 @@ public class Activities {
         pw.println("CHART[0].SCALEYTITLE:Activity type");
         pw.println("CHART[0].COUNT:" + ACTIVITY_TYPES.length);
 
-        int[] counts = new int[ACTIVITY_TYPES.length];
+        int[] counts = new int[9];
         int[] timeDistribution = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-        Path assignedActivityReference = userHome.getChild("assignedActivity");
-        for(
-            int i = 0; 
-            i < ACTIVITY_TYPES.length; 
-            i++
-        ) {
-            String activityTypeName = (String)this.backend.getCodes().getLongText(
-                CODEVALUENAME_ACTIVITY_TYPE,
-                (short)0, 
-                true
-            ).get(new Short((short)i));          
-            pw.println("CHART[0].LABEL[" + i + "]:" + activityTypeName);
-            counts[i] = 
-                this.calculateOpenActivityTimeDistribution(
-                    assignedActivityReference, 
-                    ACTIVITY_TYPES[i], 
-                    timeDistribution, 
-                    "scheduledStart", 
-                    true
-                );
-        }         
+        
+        // org:opencrx:kernel:activity1:EMail
+        pw.println("CHART[0].LABEL[0]:EMail");
+        Query query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Email.class);
+        EmailQuery emailQuery = (EmailQuery)query;
+        emailQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[0] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:Incident",
+        pw.println("CHART[0].LABEL[1]:Incident");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Incident.class);
+        IncidentQuery incidentQuery = (IncidentQuery)query;
+        incidentQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[1] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:Mailing",
+        pw.println("CHART[0].LABEL[2]:Mailing");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Mailing.class);
+        MailingQuery mailingQuery = (MailingQuery)query;
+        mailingQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[2] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:Meeting",
+        pw.println("CHART[0].LABEL[3]:Meeting");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Meeting.class);
+        MeetingQuery meetingQuery = (MeetingQuery)query;
+        meetingQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[3] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:PhoneCall",
+        pw.println("CHART[0].LABEL[4]:PhoneCall");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.PhoneCall.class);
+        PhoneCallQuery phoneCallQuery = (PhoneCallQuery)query;
+        phoneCallQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[4] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:Task",
+        pw.println("CHART[0].LABEL[5]:Task");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Task.class);
+        TaskQuery taskQuery = (TaskQuery)query;
+        taskQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[5] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:Absence",
+        pw.println("CHART[0].LABEL[6]:Absence");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.Absence.class);
+        AbsenceQuery absenceQuery = (AbsenceQuery)query;
+        absenceQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[6] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:ExternalActivity",
+        pw.println("CHART[0].LABEL[7]:ExternalActivity");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.ExternalActivity.class);
+        ExternalActivityQuery externalActivityQuery = (ExternalActivityQuery)query;
+        externalActivityQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[7] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );
+        // org:opencrx:kernel:activity1:SalesVisit"  
+        pw.println("CHART[0].LABEL[8]:SalesVisit");
+        query = pm.newQuery(org.opencrx.kernel.activity1.jmi1.SalesVisit.class);
+        SalesVisitQuery salesVisitQuery = (SalesVisitQuery)query;
+        salesVisitQuery.thereExistsPercentComplete().lessThan((short)100);        
+        counts[8] = Activities.calculateOpenActivityTimeDistribution(
+            userHome,
+            query,
+            timeDistribution, 
+            "scheduledStart", 
+            true
+        );        
         int maxValue = 0;
         for(int i = 0; i < counts.length; i++) {
             pw.println("CHART[0].VAL[" + i + "]:" + counts[i]);
@@ -1129,22 +1182,23 @@ public class Activities {
             pw.flush();
             os.close();
         } catch(Exception e) {}
-        charts[0].values("content").add(
-            os.toByteArray()
-        );
-        charts[0].values("contentMimeType").add("application/vnd.openmdx-chart");
-        charts[0].values("contentName").add(
-            Utils.toFilename(chartTitle) + ".txt"
-        );
+        charts[0].setContent(BinaryLargeObjects.valueOf(os.toByteArray()));
+        charts[0].setContentMimeType("application/vnd.openmdx-chart");
+        charts[0].setContentName(Utils.toFilename(chartTitle) + ".txt");
         /**
          * Assigned Activities Age Distribution
          */
         chartTitle = (fullName.length() == 0 ? "" : fullName + ": ") + "Assigned Open Activities Age Distribution (" + createdAt + ")";
-        charts[1] = new DataproviderObject(
-            chartReference.getChild("3")
-        );
-        charts[1].values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:home1:Media");
-        charts[1].values("description").add(chartTitle);
+        if(charts[1] == null) {
+            charts[1] = (org.opencrx.kernel.home1.jmi1.Media)pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
+            charts[1].refInitialize(false, false);
+            userHome.addChart(
+                false, 
+                "3", 
+                charts[1]
+            );            
+        }
+        charts[1].setDescription(chartTitle);
         os = new ByteArrayOutputStream();
         pw = new PrintWriter(os);
 
@@ -1187,16 +1241,57 @@ public class Activities {
             pw.flush();
             os.close();
         } catch(Exception e) {}
-        charts[1].values("content").add(
-            os.toByteArray()
-        );
-        charts[1].values("contentMimeType").add("application/vnd.openmdx-chart");
-        charts[1].values("contentName").add(
-            Utils.toFilename(chartTitle) + ".txt"
-        );
-        return charts;
+        charts[1].setContent(BinaryLargeObjects.valueOf(os.toByteArray()));
+        charts[1].setContentMimeType("application/vnd.openmdx-chart");
+        charts[1].setContentName(Utils.toFilename(chartTitle) + ".txt");
     }
-    
+        
+    //-------------------------------------------------------------------------
+    private static int calculateOpenActivityTimeDistribution(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome,
+        Query query,
+        int[] timeDistribution,
+        String distributionOnAttribute,
+        boolean lookAhead
+    ) {
+        try {
+            query.setCandidates(userHome.getAssignedActivity());
+            List<org.opencrx.kernel.activity1.jmi1.Activity> activities = (List<org.opencrx.kernel.activity1.jmi1.Activity>)query.execute();
+            int count = 0;
+            for(org.opencrx.kernel.activity1.jmi1.Activity activity: activities) {
+                Date dt = null;
+                try {
+                    dt = (Date)activity.refGetValue(distributionOnAttribute);
+                } catch(Exception e) {}
+                if(dt == null) dt = new Date(); 
+                long delayInDays = (lookAhead ? 1 : -1) * (dt.getTime() - System.currentTimeMillis()) / 86400000;
+                if(delayInDays < 0) timeDistribution[0]++;
+                else if(delayInDays < 1) timeDistribution[1]++;
+                else if(delayInDays < 2) timeDistribution[2]++;
+                else if(delayInDays < 3) timeDistribution[3]++;
+                else if(delayInDays < 4) timeDistribution[4]++;
+                else if(delayInDays < 5) timeDistribution[5]++;
+                else if(delayInDays < 6) timeDistribution[6]++;
+                else if(delayInDays < 7) timeDistribution[7]++;
+                else if(delayInDays < 8) timeDistribution[8]++;
+                else if(delayInDays < 15) timeDistribution[9]++;
+                else if(delayInDays < 31) timeDistribution[10]++;
+                else if(delayInDays < 91) timeDistribution[11]++;
+                else if(delayInDays < 181) timeDistribution[12]++;
+                else if(delayInDays < 361) timeDistribution[13]++;
+                else timeDistribution[14]++;              
+                count++;
+                if(count > 500) break;
+            }
+            return count;
+        }
+        catch(Exception e) {
+            ServiceException e0 = new ServiceException(e);
+            AppLog.warning("Error when iterating activities for user", Arrays.asList(userHome, e.getMessage()));
+            return 0;
+        }            
+    }
+
     //-------------------------------------------------------------------------
     public DataproviderObject refreshTracker(
       DataproviderObject_1_0 activityTracker
@@ -1375,11 +1470,11 @@ public class Activities {
             newActivity.values("icalType").add(
                 new Short(icalType)
             );
-            newActivity.values("dueBy").add(
-                dueBy != null ? 
-                    DateFormat.getInstance().format(dueBy) : 
-                    MAX_DATE
-            );
+            if(dueBy != null) {
+                newActivity.values("dueBy").add(
+                    DateFormat.getInstance().format(dueBy)
+                );
+            }
             newActivity.values("activityState").add(
                 new Short((short)0)
             );
@@ -1564,108 +1659,49 @@ public class Activities {
                 }
                 // SetAssignedToAction
                 else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:SetAssignedToAction")) {
-                    List<DataproviderObject_1_0> resourceAssignments = this.backend.getDelegatingRequests().addFindRequest(
-                        activityIdentity.getChild("assignedResource"),
-                        null,
-                        AttributeSelectors.ALL_ATTRIBUTES,
-                        0,
-                        Integer.MAX_VALUE,
-                        Directions.ASCENDING
-                    );
-                    boolean assigned = false;
-                    // Try to find resource which matches specified contact
+                    // Determine contact to which activity is assigned to
                     Path contactIdentity = null;
-                    if(
-                        !action.values("contactFeatureName").isEmpty() &&
-                        !activity.values((String)action.values("contactFeatureName").get(0)).isEmpty()
-                    ) {
-                        contactIdentity = (Path)activity.values((String)action.values("contactFeatureName").get(0)).get(0);
-                    }
-                    else {
-                        DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(action.path());
-                        contactIdentity = (Path)userHome.values("contact").get(0);
-                    }
-                    if(contactIdentity != null) {
-                        try {
-                            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
-                                if(!resourceAssignment.values("resource").isEmpty()) {
-                                    DataproviderObject_1_0 resource = this.backend.retrieveObject(
-                                        (Path)resourceAssignment.values("resource").get(0)
-                                    );
-                                    if(
-                                        !resource.values("contact").isEmpty() &&
-                                        contactIdentity.equals(resource.values("contact").get(0))
-                                    ) {
-                                        this.assignTo(
-                                            activityIdentity,
-                                            resource.path()
-                                        );
-                                        assigned = true;
-                                        break;
-                                    }
-                                }
+                    try {
+                        if(
+                            !action.values("contactFeatureName").isEmpty() &&
+                            !activity.values((String)action.values("contactFeatureName").get(0)).isEmpty()
+                        ) {
+                            contactIdentity = (Path)activity.values((String)action.values("contactFeatureName").get(0)).get(0);
+                        }
+                        else {
+                            DataproviderObject_1_0 userHome = this.backend.getUserHomes().getUserHome(action.path());
+                            contactIdentity = (Path)userHome.values("contact").get(0);
+                        }
+                        if(contactIdentity != null) {
+                            // Determine resource matching the contact 
+                            List<DataproviderObject_1_0> resources = this.backend.getDelegatingRequests().addFindRequest(
+                                activityIdentity.getPrefix(5).getChild("resource"),
+                                new FilterProperty[]{
+                                    new FilterProperty(
+                                        Quantors.THERE_EXISTS,
+                                        "contact",
+                                        FilterOperators.IS_IN,
+                                        contactIdentity
+                                    )
+                                },
+                                AttributeSelectors.ALL_ATTRIBUTES,
+                                0,
+                                Integer.MAX_VALUE,
+                                Directions.ASCENDING
+                            );
+                            if(!resources.isEmpty()) {
+                                this.assignTo(
+                                    activityIdentity,
+                                    resources.iterator().next().path()
+                                );
                             }
                         }
-                        catch(Exception e) {
-                            AppLog.warning("Execution of action failed --> transition failed.", action);
-                            new ServiceException(e).log();
-                            failed = true;
-                        }                            
                     }
-                    // Try to find resource with matching resource order
-                    if(!assigned && !action.values("resourceOrder").isEmpty()) {
-                        try {
-                            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
-                                if(!resourceAssignment.values("resourceOrder").isEmpty()) {
-                                    short actionResourceOrder = ((Number)action.values("resourceOrder").get(0)).shortValue();
-                                    short assignmentResourceOrder = ((Number)resourceAssignment.values("resourceOrder").get(0)).shortValue();
-                                    if(
-                                        (actionResourceOrder == assignmentResourceOrder) &&
-                                        !resourceAssignment.values("resource").isEmpty()
-                                    ) {
-                                        this.assignTo(
-                                            activityIdentity,
-                                            (Path)resourceAssignment.values("resource").get(0)
-                                        );
-                                        assigned = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        catch(Exception e) {
-                            AppLog.warning("Execution of action failed --> transition failed.", action);
-                            new ServiceException(e).log();
-                            failed = true;
-                        }                            
-                    }
-                    // Try to find resource with matching resource role
-                    if(!assigned && !action.values("resourceRole").isEmpty()) {
-                        try {
-                            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
-                                if(!resourceAssignment.values("resourceRole").isEmpty()) {
-                                    short actionResourceRole = ((Number)action.values("resourceRole").get(0)).shortValue();
-                                    short assignmentResourceRole = ((Number)resourceAssignment.values("resourceRole").get(0)).shortValue();
-                                    if(
-                                        (actionResourceRole == assignmentResourceRole) &&
-                                        !resourceAssignment.values("resource").isEmpty()
-                                    ) {
-                                        this.assignTo(
-                                            activityIdentity,
-                                            (Path)resourceAssignment.values("resource").get(0)
-                                        );
-                                        assigned = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }
-                        catch(Exception e) {
-                            AppLog.warning("Execution of action failed --> transition failed.", action);
-                            new ServiceException(e).log();
-                            failed = true;
-                        }                            
-                    }
+                    catch(Exception e) {
+                        AppLog.warning("Execution of action failed --> transition failed.", action);
+                        new ServiceException(e).log();
+                        failed = true;
+                    }                            
                 }
                 // WfAction
                 else if(this.backend.getModel().isSubtypeOf(actionClass, "org:opencrx:kernel:activity1:WfAction")) {
@@ -2764,7 +2800,7 @@ public class Activities {
                     // dateParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(
@@ -2782,7 +2818,7 @@ public class Activities {
                     // dateTimeParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(
@@ -3043,6 +3079,46 @@ public class Activities {
                 resourceIdentity
             );
             Path contactIdentity = (Path)resource.values("contact").get(0);
+            List<DataproviderObject_1_0> resourceAssignments = this.backend.getDelegatingRequests().addFindRequest(
+                activityIdentity.getChild("assignedResource"),
+                null,
+                AttributeSelectors.ALL_ATTRIBUTES,
+                0,
+                Integer.MAX_VALUE,
+                Directions.ASCENDING
+            );
+            boolean hasAssignment = false;
+            // Try to find resource which matches specified contact
+            for(DataproviderObject_1_0 resourceAssignment: resourceAssignments) {
+                if(!resourceAssignment.values("resource").isEmpty()) {
+                    DataproviderObject_1_0 assignedResource = this.backend.retrieveObject(
+                        (Path)resourceAssignment.values("resource").get(0)
+                    );
+                    if(
+                        !assignedResource.values("contact").isEmpty() &&
+                        contactIdentity.equals(assignedResource.values("contact").get(0))
+                    ) {
+                        hasAssignment = true;
+                        break;
+                    }
+                }
+            }
+            // Create a resource assignment
+            if(!hasAssignment) {
+                DataproviderObject resourceAssignment = new DataproviderObject(
+                    activityIdentity.getChild("assignedResource").getChild(this.backend.getUidAsString())
+                );
+                resourceAssignment.values(SystemAttributes.OBJECT_CLASS).add("org:opencrx:kernel:activity1:ResourceAssignment");
+                resourceAssignment.values("name").addAll(resource.values("name"));
+                resourceAssignment.values("description").add(
+                    "#" + (activity.values("activityNumber").isEmpty() ? "" : activity.values("activityNumber").get(0)) + ": " + (activity.values("name").isEmpty() ? "" : activity.values("name").get(0))
+                );
+                resourceAssignment.values("resource").add(resourceIdentity);
+                resourceAssignment.values("resourceRole").add(0);
+                resourceAssignment.values("resourceOrder").add(0);
+                resourceAssignment.values("workDurationPercentage").add(100);
+                this.backend.createObject(resourceAssignment);                
+            }
             activity.clearValues("assignedTo").add(
                 contactIdentity
             );
@@ -3056,9 +3132,10 @@ public class Activities {
         List messages = new ArrayList();
         List errors = new ArrayList();
         List report = new ArrayList();
+        DataproviderObject_1_0 activity = this.backend.retrieveObject(activityIdentity);
         String ical = this.icals.mergeIcal(
-            this.backend.retrieveObject(activityIdentity),
-            null, 
+            activity,
+            (String)activity.values("ical").get(0), 
             messages
         );        
         byte[] item = null;
@@ -3148,10 +3225,10 @@ public class Activities {
      * @return array with actual effort hours at index 0 and minutes at index 1.
      */
     public int[] calcActualEffort(
-        Path activityGroupIdentity
+        org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup
     ) throws ServiceException {        
         List workReportEntries = this.backend.getDelegatingRequests().addFindRequest(
-            activityGroupIdentity.getChild("workReportEntry"),
+            activityGroup.refGetPath().getChild("workReportEntry"),
             null,
             AttributeSelectors.ALL_ATTRIBUTES,
             0,
@@ -3179,6 +3256,57 @@ public class Activities {
         };
     }
     
+    //-------------------------------------------------------------------------
+    public int[] calcActualEffort(
+        org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity activityFilter
+    ) throws ServiceException {
+        List<DataproviderObject_1_0> activities = this.backend.getDelegatingRequests().addFindRequest(
+            activityFilter.refGetPath().getPrefix(5).getChild("activity"),
+            this.getActivityFilterProperties(
+                activityFilter.refGetPath(), 
+                false
+            ),
+            AttributeSelectors.NO_ATTRIBUTES,
+            null,
+            0, 
+            1,
+            Directions.ASCENDING
+        );
+        BigDecimal actualEffortHours = new BigDecimal(0);
+        BigDecimal actualEffortMinutes = new BigDecimal(0);
+        for(DataproviderObject_1_0 activity: activities) {
+            List<DataproviderObject_1_0> workReportEntries = this.backend.getDelegatingRequests().addFindRequest(
+                activity.path().getPrefix(5).getChild("workReportEntry"),
+                new FilterProperty[]{
+                    new FilterProperty(
+                        Quantors.THERE_EXISTS,
+                        "activity",
+                        FilterOperators.IS_IN,
+                        new Object[]{activity.path()}
+                        
+                    )
+                },
+                AttributeSelectors.SPECIFIED_AND_TYPICAL_ATTRIBUTES,
+                null,
+                0, 
+                1,
+                Directions.ASCENDING
+            );
+            for(DataproviderObject_1_0 workReportEntry: workReportEntries) {
+                actualEffortHours = actualEffortHours.add(
+                    (BigDecimal)workReportEntry.values("durationHours").get(0)
+                );
+                actualEffortMinutes = actualEffortMinutes.add(
+                    (BigDecimal)workReportEntry.values("durationMinutes").get(0)
+                );                
+            }
+        }
+        return new int[]{
+            Math.abs(actualEffortHours.intValue() + (actualEffortMinutes.intValue() / 60)),                    
+            Math.abs(actualEffortMinutes.intValue() % 60)
+        };
+    }
+        
     //-------------------------------------------------------------------------
     public void completeMainEffortEstimate(
         DataproviderObject_1_0 activity, 
@@ -3258,10 +3386,13 @@ public class Activities {
     
     //-------------------------------------------------------------------------
     public int countFilteredActivity(
-        Path activityFilterIdentity
+        Path activityFilterIdentity,
+        boolean isActivityGroupFilter
     ) throws ServiceException {
         List activities = this.backend.getDelegatingRequests().addFindRequest(
-            activityFilterIdentity.getPrefix(5).getChild("activity"),
+            isActivityGroupFilter ?                    
+                activityFilterIdentity.getPrefix(7).getChild("filteredActivity") :
+                activityFilterIdentity.getPrefix(5).getChild("activity"),
             this.getActivityFilterProperties(
             	activityFilterIdentity, 
                 true

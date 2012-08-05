@@ -22,83 +22,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nuovo contatto o Soggetto Giuridico</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nuovo contatto o Soggetto Giuridico</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Modifica Contatto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Modifica Contatto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Modifica Soggetto giuridico</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Modifica soggetto giuridico</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Modifica Gruppo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Modifica Gruppo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Modifica Soggetto non specificato</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Modifica Soggetto non specificato</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Modifica Contatto(rapido)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Modifica Contatto (rapido)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Modifica Soggetto Giuridico (rapido)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Modifica Soggetto Giuridico (rapido)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings" _operation="create">
                     <_object>
                       <label>
@@ -106,17 +29,6 @@
                       </label>
                       <toolTip>
                         <_item>Impostazioni Utenti</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rubrica</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rubrica</_item>
                       </toolTip>
                     </_object>
                     <_content/>

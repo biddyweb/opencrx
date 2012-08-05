@@ -58,7 +58,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Immeubles (désactivé)</_item>
+                              <_item>Immeubles (désactivé)</_item>
                             </label>
                             <toolTip>
                               <_item>Immeubles (désactivé)</_item>
@@ -105,7 +105,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Complexes immobiliers (désactivé)</_item>
+                              <_item>Complexes immobiliers (désactivé)</_item>
                             </label>
                             <toolTip>
                               <_item>Complexes immobiliers (désactivé)</_item>
@@ -152,7 +152,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Unités de construction (désactivé)</_item>
+                              <_item>Unités de construction (désactivé)</_item>
                             </label>
                             <toolTip>
                               <_item>Unités de construction (désactivé)</_item>
@@ -199,7 +199,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Aménagements (désactivé)</_item>
+                              <_item>Aménagements (désactivé)</_item>
                             </label>
                             <toolTip>
                               <_item>Aménagements (désactivé)</_item>
@@ -246,7 +246,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Détail d&apos;inventaire (désactivé)</_item>
+                              <_item>Détail d&apos;inventaire (désactivé)</_item>
                             </label>
                             <toolTip>
                               <_item>Détail d&apos;inventaire (désactivé)</_item>

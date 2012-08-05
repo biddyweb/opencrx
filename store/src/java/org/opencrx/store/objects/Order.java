@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Order.java,v 1.17 2008/02/12 19:57:20 wfro Exp $
+ * Name:        $Id: Order.java,v 1.18 2008/11/08 00:21:53 wfro Exp $
  * Description: Order
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:57:20 $
+ * Date:        $Date: 2008/11/08 00:21:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -158,7 +158,7 @@ public final class Order
         // Create
         if(postalAddress == null) {
             postalAddress = context.getContractPackage().getPostalAddress().createPostalAddress();
-            postalAddress.refInitialize(false, true);
+            postalAddress.refInitialize(false, false);
             salesOrder.addAddress(
                 false,
                 uuids.next().toString(),

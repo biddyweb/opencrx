@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Заметки</_item>
+                        <_item>Заметки</_item>
                       </label>
                       <toolTip>
                         <_item>Приложеные заметки</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Документы</_item>
+                        <_item>Документы</_item>
                       </label>
                       <toolTip>
                         <_item>Приложеннные документы</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Медиаданные</_item>
+                        <_item>Медиаданные</_item>
                       </label>
                       <toolTip>
                         <_item>Приложенные медиаданные</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Рейтинги</_item>
+                        <_item>Рейтинги</_item>
                       </label>
                       <toolTip>
                         <_item>Приложенные рейтинги</_item>

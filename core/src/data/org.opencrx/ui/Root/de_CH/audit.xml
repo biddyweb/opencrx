@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Auditee:audit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Audit Einträge</_item>
+                        <_item>Audit Einträge</_item>
                       </label>
                       <toolTip>
                         <_item>Audit Einträge</_item>

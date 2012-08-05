@@ -888,6 +888,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PhoneNumberAddressable:automaticParsing">
 										<_object>
 											<columnBreak>true</columnBreak>
+                      <defaultValue>true</defaultValue>
 											<active>true</active>
 											<toolTip>
 												<_item>Automatic parsing</_item>

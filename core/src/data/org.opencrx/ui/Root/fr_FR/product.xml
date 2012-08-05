@@ -58,7 +58,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Produits (désactivé)</_item>
+                              <_item>Produits (désactivé)</_item>
                             </label>
                             <toolTip>
                               <_item>Produits (désactivé)</_item>

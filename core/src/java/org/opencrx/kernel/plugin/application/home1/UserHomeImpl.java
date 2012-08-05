@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserHomeImpl.java,v 1.5 2008/04/05 22:53:39 wfro Exp $
+ * Name:        $Id: UserHomeImpl.java,v 1.7 2008/11/06 01:14:13 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/05 22:53:39 $
+ * Date:        $Date: 2008/11/06 01:14:13 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,11 +57,8 @@ package org.opencrx.kernel.plugin.application.home1;
 
 import org.opencrx.kernel.backend.Backend;
 import org.opencrx.kernel.home1.jmi1.Home1Package;
-import org.opencrx.kernel.home1.jmi1.ObjectFinder;
-import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.jmi1.BasePackage;
+
 
 public class UserHomeImpl {
 
@@ -80,21 +77,6 @@ public class UserHomeImpl {
         return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
     }
         
-    //-----------------------------------------------------------------------
-    public org.openmdx.base.jmi1.Void refreshItems(
-
-    ) {
-        try {
-            this.getBackend().getUserHomes().refreshItems(
-                this.current
-            );
-            return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();            
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }            
-    }
-    
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.home1.jmi1.ChangePasswordResult changePassword(
         org.opencrx.kernel.home1.jmi1.ChangePasswordParams params
@@ -118,44 +100,6 @@ public class UserHomeImpl {
         return ((Home1Package)this.current.refOutermostPackage().refPackage(Home1Package.class.getName())).createChangePasswordResult(
             status
         );            
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.home1.jmi1.SearchResult searchBasic(
-        org.opencrx.kernel.home1.jmi1.SearchBasicParams params
-    ) {
-        try {
-            ObjectFinder objectFinder = this.getBackend().getUserHomes().searchBasic(
-                this.current.refGetPath(),
-                params.getSearchExpression()
-            );
-            return ((Home1Package)this.current.refOutermostPackage().refPackage(Home1Package.class.getName())).createSearchResult(
-                objectFinder
-            );   
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }              
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.home1.jmi1.SearchResult searchAdvanced(
-        org.opencrx.kernel.home1.jmi1.SearchAdvancedParams params
-    ) {
-        try {
-            ObjectFinder objectFinder = this.getBackend().getUserHomes().searchAdvanced(
-                this.current.refGetPath(),
-                params.getAllWords(),
-                params.getAtLeastOneOfTheWords(),
-                params.getWithoutWords()
-            );
-            return ((Home1Package)this.current.refOutermostPackage().refPackage(Home1Package.class.getName())).createSearchResult(
-                objectFinder
-            );   
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }              
     }
     
     //-----------------------------------------------------------------------

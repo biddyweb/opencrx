@@ -20,63 +20,193 @@
 										</_object>
 										<_content>
 											<entry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">
-													<_object>
-														<shortText>
-															<_item>NA</_item>
-														</shortText>
-														<longText>
+												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>N/A</_item>
+														</shortText>	
+														<longText>	
 															<_item> N/A</_item>
-														</longText>
-													</_object>
-													<_content/>
-												</org.opencrx.kernel.code1.CodeValueEntry>
-<!--
-												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
-													<_object>
-														<shortText>
-															<_item>Other</_item>
-														</shortText>
-														<longText>
-															<_item>Other</_item>
-														</longText>
-													</_object>
-													<_content/>
-												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="create">
-													<_object>
-														<shortText>
-															<_item>Account</_item>
-														</shortText>
-														<longText>
-															<_item>Account</_item>
-														</longText>
-													</_object>
-													<_content/>
-												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="200" _operation="create">
-													<_object>
-														<shortText>
-															<_item>Account Manager</_item>
-														</shortText>
-														<longText>
-															<_item>Account Manager</_item>
-														</longText>
-													</_object>
-													<_content/>
-												</org.opencrx.kernel.code1.CodeValueEntry>
-												<org.opencrx.kernel.code1.CodeValueEntry code="201" _operation="create">
-													<_object>
-														<shortText>
-															<_item>Sales Rep</_item>
-														</shortText>
-														<longText>
-															<_item>Sales Rep</_item>
-														</longText>
-													</_object>
-													<_content/>
-												</org.opencrx.kernel.code1.CodeValueEntry>
--->
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>priv. netw.</_item>
+														</shortText>	
+														<longText>	
+															<_item>private network</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>bus. netw.</_item>
+														</shortText>	
+														<longText>	
+															<_item>business network</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>friends &amp; family</_item>
+														</shortText>	
+														<longText>	
+															<_item>friends &amp; family</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>family</_item>
+														</shortText>	
+														<longText>	
+															<_item>family</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>parent/child</_item>
+														</shortText>	
+														<longText>	
+															<_item>parent/child</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>spouse</_item>
+														</shortText>	
+														<longText>	
+															<_item>spouse</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>sign. other</_item>
+														</shortText>	
+														<longText>	
+															<_item>significant other</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>sibling</_item>
+														</shortText>	
+														<longText>	
+															<_item>sibling</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="9" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>relative</_item>
+														</shortText>	
+														<longText>	
+															<_item>relative</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="10" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>shareholder</_item>
+														</shortText>	
+														<longText>	
+															<_item>shareholder</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="11" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>employee</_item>
+														</shortText>	
+														<longText>	
+															<_item>employee</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="12" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>founder</_item>
+														</shortText>	
+														<longText>	
+															<_item>founder</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="13" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>owner</_item>
+														</shortText>	
+														<longText>	
+															<_item>owner</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="14" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>investor</_item>
+														</shortText>	
+														<longText>	
+															<_item>investor</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="15" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>BoD</_item>
+														</shortText>	
+														<longText>	
+															<_item>Board of Directors</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
+												<org.opencrx.kernel.code1.CodeValueEntry code="16" _operation="create">			
+													<_object>		
+														<shortText>	
+															<_item>ExB</_item>
+														</shortText>	
+														<longText>	
+															<_item>Executive Board</_item>
+														</longText>	
+													</_object>		
+													<_content/>		
+												</org.opencrx.kernel.code1.CodeValueEntry>			
 											</entry>
 										</_content>
 									</org.opencrx.kernel.code1.CodeValueContainer>

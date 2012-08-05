@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Auditee:audit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Wprowadzenie Audy</_item>
+                        <_item>Wprowadzenie Audy</_item>
                       </label>
                       <toolTip>
-                        <_item>»Wprowadzenia Audy</_item>
+                        <_item>Wprowadzenia Audy</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ObjectModificationAuditEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Wprowadzenie Audy</_item>
+                        <_item>Wprowadzenie Audy</_item>
                       </label>
                       <toolTip>
-                        <_item>»Wprowadzenie Audy</_item>
+                        <_item>Wprowadzenie Audy</_item>
                       </toolTip>
                     </_object>
                     <_content/>

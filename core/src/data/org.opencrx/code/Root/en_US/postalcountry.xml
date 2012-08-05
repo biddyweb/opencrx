@@ -17,6 +17,15 @@
 												<_item>org:opencrx:kernel:address1:PostalAddressable:postalCountry</_item>
 												<_item>org:opencrx:kernel:account1:SearchIndexEntry:postalCountry</_item>
 												<_item>org:opencrx:kernel:account1:Contact:citizenship</_item>
+												<!-- CompositeObjectDataBinding -->
+												<_item>org:opencrx:kernel:account1:Contact:address!postalCountry</_item>
+												<_item>org:opencrx:kernel:account1:Account:address*Business!postalCountry</_item>
+												<!--
+												<_item>org:opencrx:kernel:account1:Contact:address*Business!postalCountry</_item>
+												<_item>org:opencrx:kernel:account1:LegalEntity:address*Business!postalCountry</_item>
+												<_item>org:opencrx:kernel:account1:UnspecifiedAccount:address*Business!postalCountry</_item>
+												<_item>org:opencrx:kernel:account1:Group:address*Business!postalCountry</_item>
+-->
 											</name>
 										</_object>
 										<_content>

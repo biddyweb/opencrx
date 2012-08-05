@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxServer</shortName>
     <fullName>openCRX Server</fullName>
-    <version>2.2.1</version>
+    <version>2.3.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-server/README</readmeFile>
     <licenseFile>../../image/opencrx-server/LICENSE</licenseFile>
@@ -20,16 +20,16 @@
             <desktopShortcutList>
                 <shortcut>
                     <comment>${product_fullname} ${product_version} HSQLDB Console (${hsqldb_port})</comment>
-                    <exec>${installdir}/data/crx_2_2/startdbmanager.sh</exec>
+                    <exec>${installdir}/data/crx_2_3/startdbmanager.sh</exec>
                     <icon>${installdir}/opencrx-server/favicon.ico</icon>
                     <name>${product_fullname} ${product_version} HSQLDB Console (${hsqldb_port})</name>
-                    <path>${installdir}/data/crx_2_2/</path>
+                    <path>${installdir}/data/crx_2_3/</path>
                     <platforms>all</platforms>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_2/startdbmanager.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_3/startdbmanager.bat</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
                     <windowsIcon>${installdir}/opencrx-server/favicon.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_2/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_3/</windowsPath>
                 </shortcut>
             </desktopShortcutList>
             <folderList>
@@ -40,7 +40,7 @@
                     <platforms>all</platforms>
                     <actionList>
                         <substitute>
-                            <files>*/*.bat; */*.sh; */*.properties; */ra.xml; */opencrx-core-CRX.xml; */opencrx-ical-CRX.xml; */opencrx-vcard-CRX.xml</files>
+                            <files>*/*.bat; */*.sh; */*.properties; */ra.xml; */opencrx-core-CRX.xml; */opencrx-ical-CRX.xml; */opencrx-vcard-CRX.xml; */opencrx-rest-CRX.xml</files>
                             <type>regexp</type>
                             <substitutionList>
                                 <substitution>
@@ -151,10 +151,10 @@
                     <comment>${product_fullname} HSQLDB Console (${hsqldb_port})</comment>
                     <name>${product_fullname} HSQLDB Console (${hsqldb_port})</name>
                     <runInTerminal>0</runInTerminal>
-                    <windowsExec>${installdir}/data/crx_2_2/startdbmanager.bat</windowsExec>
+                    <windowsExec>${installdir}/data/crx_2_3/startdbmanager.bat</windowsExec>
                     <windowsExecArgs></windowsExecArgs>
                     <windowsIcon>${installdir}/opencrx-server/favicon.ico</windowsIcon>
-                    <windowsPath>${installdir}/data/crx_2_2/</windowsPath>
+                    <windowsPath>${installdir}/data/crx_2_3/</windowsPath>
                 </startMenuShortcut>
             </startMenuShortcutList>
         </component>

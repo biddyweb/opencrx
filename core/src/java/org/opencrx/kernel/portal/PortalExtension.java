@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.40 2008/10/07 14:01:56 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.54 2008/12/17 13:43:03 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.40 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/07 14:01:56 $
+ * Date:        $Date: 2008/12/17 13:43:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,6 +86,7 @@ import org.opencrx.kernel.depot1.jmi1.DepotReport;
 import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
 import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
@@ -108,7 +109,7 @@ import org.openmdx.portal.servlet.DefaultPortalExtension;
 import org.openmdx.portal.servlet.HtmlPage;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ValueListAutocompleter;
-import org.openmdx.portal.servlet.control.ControlFactory;
+import org.openmdx.portal.servlet.control.Control;
 import org.openmdx.portal.servlet.view.ObjectView;
 import org.openmdx.portal.servlet.view.ShowObjectView;
 
@@ -260,6 +261,12 @@ public class PortalExtension
               return 
                   (activity == null ? "" : this.getTitle(activity, locale, localeAsString, application) + ": ") + 
                   toS(followUp.getTitle());
+          }
+          else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment) {
+              org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment obj = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)refObj;
+              return obj == null ? 
+                  "Untitled" : 
+                  this.getTitle(obj.getActivityGroup(), locale, localeAsString, application);
           }
           else if(refObj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroupMember) {
               org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = (org.opencrx.kernel.activity1.jmi1.AddressGroupMember)refObj;
@@ -517,6 +524,7 @@ public class PortalExtension
     }
 
     //-------------------------------------------------------------------------
+    @Override
     public boolean isEnabled(
         String elementName, 
         RefObject_1_0 refObj,
@@ -551,41 +559,55 @@ public class PortalExtension
     }
     
     //-------------------------------------------------------------------------
+    @Override
+    public boolean isEnabled(
+        Control control, 
+        RefObject_1_0 refObj,
+        ApplicationContext applicationContext
+    ) {
+        return super.isEnabled(
+            control, 
+            refObj, 
+            applicationContext
+        );
+    }
+    
+    //-------------------------------------------------------------------------
     public String getIdentityQueryFilterClause(
         String qualifiedReferenceName
     ) {
         if("org:opencrx:kernel:contract1:AbstractContract:salesRep".equals(qualifiedReferenceName)) {
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND UPPER(a.full_name) LIKE ?s0)"; 
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))"; 
         }
         else if("org:opencrx:kernel:contract1:AbstractContract:customer".equals(qualifiedReferenceName)) {
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND UPPER(a.full_name) LIKE ?s0)";             
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";             
         }
         else if("org:opencrx:kernel:contract1:AbstractContract:supplier".equals(qualifiedReferenceName)) {
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND UPPER(a.full_name) LIKE ?s0)";             
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";             
         }
         else if("org:opencrx:kernel:activity1:Activity:assignedTo".equals(qualifiedReferenceName)) {
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                         
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                         
         }        
         else if("org:opencrx:kernel:product1:PriceListEntry:product".equals(qualifiedReferenceName)) {
-            return "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND UPPER(p.name) LIKE ?s0)";
+            return "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND UPPER(p.name) LIKE UPPER(?s0))";
         }
         else if("org:opencrx:kernel:home1:UserHome:contact".equals(qualifiedReferenceName)) {            
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.contact = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.contact = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
         else if("org:opencrx:kernel:account1:AccountAssignment:account".equals(qualifiedReferenceName)) {            
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
         else if("org:opencrx:kernel:contract1:ContractRole:account".equals(qualifiedReferenceName)) {            
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
         else if("org:opencrx:kernel:account1:AccountMembership:accountFrom".equals(qualifiedReferenceName)) {            
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_from = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_from = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
         else if("org:opencrx:kernel:account1:AccountMembership:accountTo".equals(qualifiedReferenceName)) {            
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_to = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_to = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
         else if("org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedReferenceName)) {            
-            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND UPPER(a.full_name) LIKE ?s0)";                                     
+            return "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND UPPER(a.full_name) LIKE UPPER(?s0))";                                     
         }
         else {
             return super.getIdentityQueryFilterClause(qualifiedReferenceName);
@@ -870,7 +892,6 @@ public class PortalExtension
         ModelElement_1_0 lookupType, 
         RefObject_1_0 startFrom, 
         String filterValues,
-        ControlFactory controlFactory,
         ApplicationContext application
     ) throws ServiceException {
         Model_1_0 model = application.getModel();
@@ -894,17 +915,8 @@ public class PortalExtension
                 lookupType, 
                 startFrom, 
                 filterValues,
-                controlFactory, 
                 application
             );
-            // The grid of the lookup object can be postprocessed, i.e.
-            // select reference panes, set grid filters, set grid orders            
-//            Grid grid = view.selectReferencePane("address");
-//            Filter[] filters = grid.getFilters();
-//            grid.selectFilter(
-//                filters[5].getName(), // the filter position is defined by customization
-//                null
-//            );
             return view;
         }
         // Default lookup
@@ -914,7 +926,6 @@ public class PortalExtension
                 lookupType, 
                 startFrom, 
                 filterValues,
-                controlFactory, 
                 application
             );
         }
@@ -932,6 +943,20 @@ public class PortalExtension
     }
         
     //-------------------------------------------------------------------------
+    private boolean isPhoneNumber(
+        String text
+    ) {
+        if(!text.startsWith("+")) return false;
+        for(int i = 1; i < text.length(); i++) {
+            char c = text.charAt(i);
+            if(!Character.isDigit(c) && (c != '-') && (c != ' ') && (c != '(') && (c != ')')) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * The default implementation handles the following tags:
      * <ul>
@@ -943,9 +968,16 @@ public class PortalExtension
         HtmlPage p,
         String value
     ) throws ServiceException {
-        ApplicationContext application = p.getApplicationContext();        
+        ApplicationContext application = p.getApplicationContext();
+        // Format phone number
+        if(this.isPhoneNumber(value)) {
+            super.renderTextValue(
+                p,
+                "<a href=\"tel:" + value + "\">" + value + "</a>"
+            );            
+        }
         // Process Tag activity:#
-        if(
+        else if(
             (p.getView() instanceof ObjectView) && 
             (value.indexOf("activity:") >= 0)
         ) {
@@ -1028,26 +1060,60 @@ public class PortalExtension
         String dataBindingName,
         ApplicationContext application
     ) {
-        if(StringPropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new StringPropertyDataBinding();
+        if((dataBindingName != null) && dataBindingName.startsWith(StringPropertyDataBinding.class.getName())) {
+            return new StringPropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
         }
-        else if(IntegerPropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new IntegerPropertyDataBinding();
+        else if((dataBindingName != null) && dataBindingName.startsWith(IntegerPropertyDataBinding.class.getName())) {
+            return new IntegerPropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
         }
-        else if(BooleanPropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new BooleanPropertyDataBinding();
+        else if((dataBindingName != null) && dataBindingName.startsWith(BooleanPropertyDataBinding.class.getName())) {
+            return new BooleanPropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
         }
-        else if(DecimalPropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new DecimalPropertyDataBinding();
+        else if((dataBindingName != null) && dataBindingName.startsWith(DecimalPropertyDataBinding.class.getName())) {
+            return new DecimalPropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
         }
-        else if(DatePropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new DatePropertyDataBinding();
+        else if((dataBindingName != null) && dataBindingName.startsWith(DatePropertyDataBinding.class.getName())) {
+            return new DatePropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
         }
-        else if(DateTimePropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new DateTimePropertyDataBinding();
+        else if((dataBindingName != null) && dataBindingName.startsWith(DateTimePropertyDataBinding.class.getName())) {
+            return new DateTimePropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
         }
-        else if(ReferencePropertyDataBinding.class.getName().equals(dataBindingName)) {
-            return new ReferencePropertyDataBinding();
+        else if((dataBindingName != null) && dataBindingName.startsWith(ReferencePropertyDataBinding.class.getName())) {
+            return new ReferencePropertyDataBinding(
+                dataBindingName.indexOf("?") < 0 ? PropertySetHolderType.CrxObject : PropertySetHolderType.valueOf(dataBindingName.substring(dataBindingName.indexOf("?") + 1))
+            );
+        }
+        else if((dataBindingName != null) && dataBindingName.startsWith(EmailAddressDataBinding.class.getName())) {
+            return new EmailAddressDataBinding(
+                dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)
+            );
+        }
+        else if((dataBindingName != null) && dataBindingName.startsWith(PhoneNumberDataBinding.class.getName())) {
+            return new PhoneNumberDataBinding(
+                dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)
+            );
+        }
+        else if((dataBindingName != null) && dataBindingName.startsWith(PostalAddressDataBinding.class.getName())) {
+            return new PostalAddressDataBinding(
+                dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)
+            );
+        }
+        else if((dataBindingName != null) && dataBindingName.startsWith(WebAddressDataBinding.class.getName())) {
+            return new WebAddressDataBinding(
+                dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)
+            );
         }
         else if(AssignedActivityGroupsDataBinding.class.getName().equals(dataBindingName)) {
             return new AssignedActivityGroupsDataBinding();
@@ -1056,7 +1122,7 @@ public class PortalExtension
             return new FilteredActivitiesDataBinding(application.getCurrentUserRole());
         }
         else if(FormattedNoteDataBinding.class.getName().equals(dataBindingName)) {
-            return new FormattedNoteDataBinding();
+            return new FormattedNoteDataBinding(application);
         }
         else {
             return super.getDataBinding(

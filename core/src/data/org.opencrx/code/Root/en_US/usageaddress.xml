@@ -15,6 +15,7 @@
 										<_object>
 											<name>
 												<_item>org:opencrx:kernel:address1:Addressable:usage</_item>
+												<_item>org:opencrx:kernel:account1:AddressUsageFilterProperty:usage</_item>
 												<!--
 												<_item>org:opencrx:kernel:account1:PostalAddress:usage</_item>
 												<_item>org:opencrx:kernel:account1:EMailAddress:usage</_item>

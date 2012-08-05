@@ -694,7 +694,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Note</_item>
+                        <_item>Note</_item>
                       </label>
                       <toolTip>
                         <_item>note ataşate</_item>
@@ -705,7 +705,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dosare</_item>
+                        <_item>Dosare</_item>
                       </label>
                       <toolTip>
                         <_item>Dosare</_item>
@@ -716,7 +716,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Documente</_item>
+                        <_item>Documente</_item>
                       </label>
                       <toolTip>
                         <_item>documente ataşate</_item>
@@ -727,7 +727,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»suport stocare</_item>
+                        <_item>suport stocare</_item>
                       </label>
                       <toolTip>
                         <_item>Suport stocare ataşat</_item>
@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Clasificare</_item>
+                        <_item>Clasificare</_item>
                       </label>
                       <toolTip>
                         <_item>clasificări ataşate</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Setări de proprietăţi</_item>
+                        <_item>Setări de proprietăţi</_item>
                       </label>
                       <toolTip>
                         <_item>Setări de proprietăţi</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Setări de proprietăţi introduse</_item>
+                        <_item>Setări de proprietăţi introduse</_item>
                       </label>
                       <toolTip>
                         <_item>Setări de proprietăţi introduse</_item>

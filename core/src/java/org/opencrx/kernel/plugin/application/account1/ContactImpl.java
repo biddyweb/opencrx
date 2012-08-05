@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ContactImpl.java,v 1.7 2008/05/22 15:38:33 wfro Exp $
+ * Name:        $Id: ContactImpl.java,v 1.8 2008/11/05 15:44:49 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/22 15:38:33 $
+ * Date:        $Date: 2008/11/05 15:44:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,12 +56,7 @@
 package org.opencrx.kernel.plugin.application.account1;
 
 import org.opencrx.kernel.backend.Backend;
-import org.opencrx.kernel.backend.Base;
-import org.opencrx.kernel.backend.VCard;
-import org.opencrx.kernel.base.jmi1.BasePackage;
-import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.exception.ServiceException;
 
 public class ContactImpl {
 

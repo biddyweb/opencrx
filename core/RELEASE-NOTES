@@ -1,5 +1,5 @@
-Release Name: openCRX/Core 2.2.1
-Release Date: 2008-10-14
+Release Name: openCRX/Core 2.3.0
+Release Date: 2008-12-03
 
 ---------------------------------------------------------------------
 Notes:
@@ -51,154 +51,112 @@ openMDX (http://www.openmdx.org/)
 ---------------------------------------------------------------------
 
 0.    SUMMARY
-      * Model
-        - Contract relationships
-        - Document folder assignments
-        - Fax activity replaced by extended EMail activity. Faxes are handled 
-          the same way as EMails
-      * Improved performance
-      * Enhancements for mobile device support
+      * Ui Perspectives allow to modify the Root UI customizing
+      * REST servlet allows easy 3rd party integration with openCRX
+      * Performance improvements
       * Fixed bugs
             
-      For more information see below and http://www.opencrx.org/opencrx/2.2/new.htm
+      For more information see below and http://www.opencrx.org/opencrx/2.3/new.htm
 
 
 1.    NEW FEATURES
       
-      CR10008166: FormattedNoteDataBinding
-      DataBinding which allows to format Title / Text of a Note. This allows to 
-      improve the customizing of grids containing notes. The data binding 
-      concatenates title and text of a Note to one string separated by a <br />.
-      The title is set to bold. The title is filled up with &nbsp; according
-      to the longest line of the text up to a maximum of 140 characters.
+      CR0003539
+      Ui perspectives. Perspectives allow to modify the Root UI customizing. 
+      A perspective overrides the Root customizing, i.e. a perspective inherits 
+      all UI element definitions from the Root customizing. The WEB-INF/config/ui 
+      directory structure looks as follows:
       
-      Here is an example which shows how to configure the column 'formattedNote' 
-      of an ActivityFollowUp:
+      WEB-INF/config/ui
+          Root
+              locale 0
+              locale 1
+              ...
+          {1-Perspective A}
+              locale 0
+              locale 1
+              ...
+          {2-Perspective B}
+              locale 0
+              locale 1
+              ...
+              
+      The name of a Perspective must be of the form {order}-{name}, e.g.
+      1-Guest, 2-BackOffice, 3-FrontOffice, 4-Mgmt. The order defines in
+      which order the perspectives are rendered in the perspective selector
+      in the GUI. Root has the predefined order 0.
       
-      1. Configure a feature definition for formattedNote:
+      CR10008205
+      REST servlet added to openCRX/Core. The servlet allows easy 3rd party
+      integration with openCRX. The full functionality of the openCRX API
+      can be accessed via rest requests. See See http://code.google.com/p/rest-client/
+      for a REST client. Below are some sample requests:
       
-			<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
-				<_object>
-				  <type>org:w3c:string</type>
-				  <multiplicity>0..1</multiplicity>
-				  <changeable>false</changeable>
-				</_object>
-				<_content/>
-				</org.openmdx.ui1.StructuralFeatureDefinition>
-			</featureDefinition>							
+			Object creation                                                                                                     
+			  Method: POST
+			  Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account			
+			  Body:			
+					<?xml version="1.0"?>
+					<org.opencrx.kernel.account1.Contact>
+						<lastName>REST</lastName>
+						<firstName>Test #1</firstName>
+					</org.opencrx.kernel.account1.Contact>
+			
+			Object Retrievals                                                                                                                           
+			  Method: GET
+			  Urls:
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/extent?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=identity().like("xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/%25");orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=modifiedAt().between(:datetime:20080101T000000.000Z,:datetime:20081001T000000.000Z);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=modifiedAt().greaterThan(:datetime:20080101T000000.000Z);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsModifiedAt().greaterThan(:date:2008-01-01);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsNumberOfChildren().greaterThan(:integer:-1);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsNumberOfChildren().lessThan(0);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsNumberOfChildren().lessThan(3);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFullName().like("D%25, Joe");orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().elementOf("Joe", "Guest");orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().equalTo("Guest");orderByLastName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().equalTo("Guest")
+			
+			Object modification                                                                                                                        
+				Method: PUT			
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/2YlAOJYlEd2Y4zv65ePspg
+				Body:			
+					<?xml version="1.0"?>
+					<org.opencrx.kernel.account1.Contact>
+						<preferredContactMethod>1</preferredContactMethod>
+					  <preferredSpokenLanguage>1</preferredSpokenLanguage>
+					</org.opencrx.kernel.account1.Contact>
+			
+			Operation Invocation                                                                                                             
+				Method: POST			
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.home1/provider/CRX/segment/Standard/userHome/guest/sendAlert			
+				Body:			
+					<?xml version="1.0"?>
+					<org.opencrx.kernel.base.SendAlertParams>
+						<toUsers>guest</toUsers>
+						<name>Test REST</name>
+					  <importance>0</importance>
+					</org.opencrx.kernel.base.SendAlertParams>
+			
+			Object Deletion         
+				Method: DELETE		
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/2YlAOJYlEd2Y4zv65ePspg
 
-      2. Configure an element definition for formattedNote:
-      
-			<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote">
-				<_object>
-					<active>true</active>
-					<toolTip>
-						<_item>Title / Text</_item>
-					</toolTip>
-					<label>
-						<_item>Title / Text</_item>
-					</label>
-					<order>
-						<_item>90</_item>
-						<_item>70</_item>
-						<_item>10</_item>
-					</order>
-					<orderObjectContainer>
-						<_item>0</_item>
-						<_item>10</_item>
-						<_item>0</_item>
-					</orderObjectContainer>
-					<dataBindingName>org.opencrx.kernel.portal.FormattedNoteDataBinding</dataBindingName>
-				</_object>
-				<_content/>
-			</org.openmdx.ui1.ElementDefinition>
 
-      CR10008105
-      SecureObject: replaceOwningGroup().	Operation replaceOwningGroup allows 
-      to replace the owning groups of an object by a given set of groups.
-      
-      CR10008103
-      Workflow for scanning documents. Workflow which allows to scan a fs 
-      directory and its subdirs for files and map them to Documents and 
-      DocumentFolders. The DocumentScannerServlet is configured in web.xml
-      as follows:
-      * init-param for WorkflowController
-        <init-param>
-          <param-name>path[3]</param-name>
-          <param-value>/DocumentScannerServlet</param-value>
-        </init-param>
-      * Servlet declaration
-        <!-- DocumentScannerServlet -->
-        <servlet id="DocumentScannerServlet">
-          <servlet-name>DocumentScannerServlet</servlet-name>
-          <servlet-class>org.opencrx.application.document.DocumentScannerServlet</servlet-class>
-        </servlet>
-      * Mapping
-        <servlet-mapping>
-          <servlet-name>DocumentScannerServlet</servlet-name>
-          <url-pattern>/DocumentScannerServlet/*</url-pattern>
-        </servlet-mapping>
-      The workflow accepts the following component configuration options:
-      * scanDir: directory to be scanned for documents
-      * urlPrefix: Document revisions are created of type ResourceIdentifier. The
-        url of the resource identifier is set to urlPrefix + current directory 
-        name within scanDir + document name
-      * groups: List of principal groups. owningGroup of all created objects is
-        set to the specified list of principal groups. 
-      All options are multi-valued, i.e. can have an index suffix [0]..[9].
-      
-      CR10008084
-      DocumentFolderAssignment. Allow CrxObjects to be assigned to 
-      document folders. Document folders show assigned objects.
-      
-      CR10007776
-      Contract extensions:
-      * AccountAssignmentContract added
-      * ContractLinkTo, ContractLinkFrom added
-      
-      CR10008056
-      SendMailWorkflow supports mail gateway. Email activities allow to set
-      a gateway address. The gateway address is used for addresses which
-      are not of type EMailAddress (e.g. PhoneNumbers). In this case a
-      the address is converted to an email address as follows:
-      * take address (e.g. phoneNumberFull in case of phone numbers)
-      * Remove any characters except digits and letters
-      * append domain part of gateway address
-      E.g. the phone number +41441112233 is converted to the email address
-      _41441112233@fax-gateway.opencrx.org if the domain address is set to 
-      the email address noreply@fax-gateway.opencrx.org.
-      
-      
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
       
-      CR10008163
-      home1: replace Chart by Media. Replace class Chart by Media.
-      
-      CR10008086
-      AccessControl: Caching
-      * Cached objects should have a time-to-live (TTL)
-      * Any object modification must remove object from cache
-      * Cache must be shared by ejb multiple instances 
-      
-      CR10008032
-      AddressBook supports mobile devices. Optimize the AddressBook 
-      wizard for mobile devices.
-      
-      CR10008009
-      Migrate ICalServlet, VCardServlet, IMAPServer. Migrate ICalServlet, 
-      VCardServlet, IMAPServer from openCRX/Groupware to openCRX/Core. 
-      
-      
+      CR10008288
+      memberRole is embedded. The attribute Member.memberRole should be configured 
+      as embedded, i.e. move the column from table OOCKE1_ACCOUNTASSIGNMENT_ to 
+      OOCKE1_ACCOUNTASSIGNMENT.
+            
+            
 2.1.  FIXED BUGS
       none
 
-
 2.2   REMOVED FEATURES
-      
-      CR10008065
-      Deprecate Mms, Sms and Fax activities. Mms, Sms and Fax activities are 
-      replaced by Email activities.
+      none
       
 ---------------------------------------------------------------------

@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>»История</_item>
+                        <_item>История</_item>
                       </label>
                       <toolTip>
                         <_item>История</_item>
@@ -58,7 +58,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Закладки</_item>
+                        <_item>Закладки</_item>
                       </label>
                       <toolTip>
                         <_item>Закладки</_item>
@@ -69,7 +69,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Медиаданные</_item>
+                        <_item>Медиаданные</_item>
                       </label>
                       <toolTip>
                         <_item>Приложенные медиаданные</_item>

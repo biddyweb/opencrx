@@ -11,6 +11,12 @@
 		factory="org.openmdx.kernel.naming.tomcat.LinkingObjectFactory"
 		linkName="openmdx:application/(gateway.jar)/opencrx_core_CRX_EntityManagerFactory/local"
 	/>
+<!--
+	<Valve className="org.apache.catalina.valves.AccessLogValve"
+		directory="logs" prefix="combined_access_log."
+		suffix=".txt" pattern="combined" resolveHosts="false"
+	/>
+-->		
 	<!-- HSQLDB -->
 	<Realm  className="org.apache.catalina.realm.ExtendedJDBCRealm" 
 		debug="0"
@@ -19,7 +25,7 @@
 		digestFormat="base64"
 		flag="sufficient"
 		driverName="org.hsqldb.jdbcDriver"
-		connectionURL="jdbc:hsqldb:hsql://127.0.0.1:@@HSQLDB_PORT@@/CRX_2_2"
+		connectionURL="jdbc:hsqldb:hsql://127.0.0.1:@@HSQLDB_PORT@@/CRX_2_3"
 		connectionName="sa" connectionPassword="manager99"
 		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
 		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 
@@ -33,7 +39,7 @@
 		digestFormat="base64"
 		flag="sufficient"
 		driverName="org.postgresql.Driver"
-		connectionURL="jdbc:postgresql://127.0.0.1:5432/CRX_2_2"
+		connectionURL="jdbc:postgresql://127.0.0.1:5432/CRX_2_3"
 		connectionName="postgres" connectionPassword="manager99"
 		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
 		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 
@@ -48,7 +54,7 @@
 		digestFormat="base64"
 		flag="sufficient"
 		driverName="com.mysql.jdbc.Driver"
-		connectionURL="jdbc:mysql://127.0.0.1:3306/CRX_2_2"
+		connectionURL="jdbc:mysql://127.0.0.1:3306/CRX_2_3"
 		connectionName="root" connectionPassword="manager99"
 		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
 		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 
@@ -64,7 +70,7 @@
 		flag="sufficient"
 		driverName="oracle.jdbc.driver.OracleDriver"
 		connectionURL="jdbc:oracle:thin:@127.0.0.1:1521:XE"
-		connectionName="CRX_2_2" connectionPassword="manager99"
+		connectionName="CRX_2_3" connectionPassword="manager99"
 		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
 		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 
 	/>
@@ -78,7 +84,7 @@
 		digestFormat="base64"
 		flag="sufficient"
 		driverName="com.ibm.db2.jcc.DB2Driver"
-		connectionURL="jdbc:db2://127.0.0.1:50000/CRX_2_2"
+		connectionURL="jdbc:db2://127.0.0.1:50000/CRX_2_3"
 		connectionName="system" connectionPassword="manager99"
 		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
 		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 
@@ -93,7 +99,7 @@
 		digestFormat="base64"
 		flag="sufficient"
 		driverName="com.microsoft.sqlserver.jdbc.SQLServerDriver"
-		connectionURL="jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX_2_2;selectMethod=cursor"
+		connectionURL="jdbc:sqlserver://127.0.0.1:1433;databaseName=CRX_2_3;selectMethod=cursor"
 		connectionName="system" connectionPassword="manager99"
 		userTable="OOCSE1_TOBJ_USERS" userNameCol="principal_name" userCredCol="passwd"
 		userRoleTable="OOCSE1_TOBJ_ROLES" roleNameCol="role_name" 

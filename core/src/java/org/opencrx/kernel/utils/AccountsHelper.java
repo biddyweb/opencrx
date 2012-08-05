@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: AccountsHelper.java,v 1.1 2008/08/01 12:36:04 wfro Exp $
+ * Name:        $Id: AccountsHelper.java,v 1.2 2008/10/27 14:32:39 wfro Exp $
  * Description: ActivitiesHelper
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/01 12:36:04 $
+ * Date:        $Date: 2008/10/27 14:32:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -86,7 +86,7 @@ public class AccountsHelper {
     public int parseFilteredAccountsUri(
        String uri
     ) throws IllegalArgumentException  {
-        List<String> l = splitUri(uri, true);
+        List<String> l = splitUri(uri);
         if(l.size() >= 3) {
             // URL pattern is
             // ./provider.name/segment.name/filter/filter.name
@@ -153,24 +153,11 @@ public class AccountsHelper {
     
     //-----------------------------------------------------------------------
     public static List<String> splitUri(
-        String uri, 
-        boolean decoded
+        String uri 
     ) throws IllegalArgumentException  {
         try {
-            /*Remove all "." and ".." components */
-            if (decoded) {
-                uri = new URI(null, null, uri, null).toString();
-            }
-            uri = new URI(uri).normalize().getPath();
-            uri = URLDecoder.decode(uri, "UTF-8");
-            if (!uri.startsWith("/")) {
-                return null;
-            }
-            if (uri.endsWith("/")) {
-                uri = uri.substring(0, uri.length() - 1);
-            }
             String[] ss = uri.split("/");
-            int pathLength = ss.length - 1;  // First element is empty string
+            int pathLength = ss.length - 1;
             if (pathLength < 2) {
                 throw new IllegalArgumentException ("Bad uri: " + uri);
             }

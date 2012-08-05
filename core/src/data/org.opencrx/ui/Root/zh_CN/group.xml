@@ -29,7 +29,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>成员(已禁用)</_item>
+                              <_item>»成员(已禁用)</_item>
                             </label>
                             <toolTip>
                               <_item>成员(已禁用)</_item>

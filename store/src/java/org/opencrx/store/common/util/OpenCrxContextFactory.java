@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OpenCrxContextFactory.java,v 1.9 2008/10/13 13:27:29 wfro Exp $
+ * Name:        $Id: OpenCrxContextFactory.java,v 1.10 2008/11/07 23:03:51 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/13 13:27:29 $
+ * Date:        $Date: 2008/11/07 23:03:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,22 +55,13 @@
  */
 package org.opencrx.store.common.util;
 
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.servlet.http.HttpSession;
 
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.base.accessor.jmi.spi.PersistenceManagerFactory_1;
-import org.openmdx.base.object.jdo.ConfigurableProperties_2_0;
-import org.openmdx.compatibility.application.dataprovider.transport.ejb.cci.Dataprovider_1ConnectionFactoryImpl;
-import org.openmdx.compatibility.base.dataprovider.transport.cci.Dataprovider_1ConnectionFactory;
 import org.openmdx.model1.accessor.basic.cci.Model_1_0;
 
 /**

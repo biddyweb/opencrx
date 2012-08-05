@@ -1615,7 +1615,7 @@
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="__9tv7BgSEdqX8-3bnaVzdg" canonical="false"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="__9tv7RgSEdqX8-3bnaVzdg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="16772351" lineColor="3342489" showStereotype="Text"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="__9tv7hgSEdqX8-3bnaVzdg" x="27370" y="7938" width="9101" height="4681"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="__9tv7hgSEdqX8-3bnaVzdg" x="27370" y="7938" width="9101" height="5183"/>
         </children>
         <children xmi:id="_EthG4BgTEdqX8-3bnaVzdg" element="_3C7B8A60016D3F4892270132">
           <children xmi:id="_EthG4RgTEdqX8-3bnaVzdg" type="ImageCompartment" element="_3C7B8A60016D3F4892270132">
@@ -1636,7 +1636,7 @@
             <styles xmi:type="umlnotation:UMLShapeCompartmentStyle" xmi:id="_EthG7BgTEdqX8-3bnaVzdg" canonical="false"/>
           </children>
           <styles xmi:type="umlnotation:UMLShapeStyle" xmi:id="_EthG7RgTEdqX8-3bnaVzdg" fontName="Arial" fontHeight="11" showListStereotype="Text" showListVisibility="Text" showListSignature="true" fillColor="16772351" lineColor="3342489" showStereotype="Text"/>
-          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_EthG7hgTEdqX8-3bnaVzdg" x="27368" y="12902" width="9048" height="2274"/>
+          <layoutConstraint xmi:type="notation:Bounds" xmi:id="_EthG7hgTEdqX8-3bnaVzdg" x="27394" y="13325" width="9048" height="2274"/>
         </children>
         <children xmi:id="_V_yQUCVCEdqA2IVA8CET4w" targetEdges="_eMlSoCVCEdqA2IVA8CET4w">
           <children xmi:id="_V_yQUyVCEdqA2IVA8CET4w" type="ImageCompartment">
@@ -9148,6 +9148,11 @@
         <type xmi:type="uml:Class" href="org.opencrx.kernel.uom1.emx#_3C7B8A60016D3F3EBFB30391?uom1/uom1/Uom"/>
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Ioy-cbW4EdqnsfWGjqwM-g" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Ioy-cLW4EdqnsfWGjqwM-g"/>
+      </ownedAttribute>
+      <ownedAttribute xmi:id="_Kg1E8LexEd26L5Ju7ZekCw" name="ignoreProductConfiguration">
+        <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B63180083?w3c/w3c/boolean"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_WKLtsbexEd26L5Ju7ZekCw" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_WKLtsLexEd26L5Ju7ZekCw"/>
       </ownedAttribute>
     </ownedMember>
     <ownedMember xmi:type="uml:Class" xmi:id="_3C7B8A60016D3F4892270132" name="CreatePositionResult">

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.49 2008/05/29 23:12:38 wfro Exp $
+ * Name:        $Id: WorkflowControllerServlet.java,v 1.50 2008/12/15 09:53:53 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.49 $
+ * Revision:    $Revision: 1.50 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/05/29 23:12:38 $
+ * Date:        $Date: 2008/12/15 09:53:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -526,6 +526,9 @@ public class WorkflowControllerServlet
         
         // List status
         PrintWriter out = res.getWriter();
+        out.println("<html>");
+        out.println("<head><meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\"></head>");
+        out.println("<body>");
         out.println("<h2>openCRX Workflow Controller</h2>");
         out.println("<table>");
         for(
@@ -539,6 +542,8 @@ public class WorkflowControllerServlet
             out.println("</tr>");
         }
         out.println("</table>");
+        out.println("</body>");
+        out.println("</html>");
     }
 
     //-----------------------------------------------------------------------

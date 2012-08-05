@@ -25,7 +25,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Produtos</_item>
+                        <_item>Produtos</_item>
                       </label>
                       <toolTip>
                         <_item>Produtos</_item>
@@ -58,7 +58,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Produtos (inativos)</_item>
+                              <_item>Produtos (inativos)</_item>
                             </label>
                             <toolTip>
                               <_item>Produtos (inativos)</_item>

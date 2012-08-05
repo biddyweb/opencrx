@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Histórico</_item>
+                        <_item>Histórico</_item>
                       </label>
                       <toolTip>
                         <_item>Último Acesso</_item>
@@ -58,7 +58,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Favoritos</_item>
+                        <_item>Favoritos</_item>
                       </label>
                       <toolTip>
                         <_item>Favoritos</_item>
@@ -69,7 +69,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Mídia</_item>
+                        <_item>Mídia</_item>
                       </label>
                       <toolTip>
                         <_item>Mídia anexada</_item>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Pesquisador de Objetos</_item>
+                        <_item>Pesquisador de Objetos</_item>
                       </label>
                       <toolTip>
-                        <_item>»Pesquisador de Objetos</_item>
+                        <_item>Pesquisador de Objetos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,7 +91,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Exportar Perfis</_item>
+                        <_item>Exportar Perfis</_item>
                       </label>
                       <toolTip>
                         <_item>Exportar Perfis</_item>

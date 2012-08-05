@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.15 2008/10/15 11:02:46 wfro Exp $
+ * Name:        $Id: ICalServlet.java,v 1.22 2008/12/09 09:25:03 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/15 11:02:46 $
+ * Date:        $Date: 2008/12/09 09:25:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,12 +58,14 @@ package org.opencrx.application.ical;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 
 import javax.jdo.PersistenceManager;
@@ -88,7 +90,6 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.XMLEncoder;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.WebKeys;
 
@@ -112,16 +113,28 @@ public class ICalServlet extends FreeBusyServlet {
                 return null;
             }
             else {
-                return activities.iterator().next();
+                if(activities.size() > 1) {
+                    AppLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
+                    return null;
+                }
+                else {
+                    return activities.iterator().next();
+                }
             }
         }
         else {
-            return activities.iterator().next();
+            if(activities.size() > 1) {
+                AppLog.warning("Duplicate activities. Will not update", activities.iterator().next().refMofId());
+                return null;
+            }
+            else {
+                return activities.iterator().next();
+            }
         }
     }
         
     //-----------------------------------------------------------------------
-    protected String getSelectedActivityUrl(        
+    protected String getActivityUrl(        
         HttpServletRequest req,
         Activity activity,
         boolean htmlEncoded
@@ -147,6 +160,10 @@ public class ICalServlet extends FreeBusyServlet {
         HttpServletResponse resp
     ) throws ServletException, IOException {
         PersistenceManager pm = this.getPersistenceManager(req);
+        if(pm == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }        
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
         ActivitiesHelper activitiesHelper = this.getActivitiesHelper(
@@ -234,7 +251,7 @@ public class ICalServlet extends FreeBusyServlet {
                         String vevent = ical.substring(start, end).replace("BEGIN:VEVENTBEGIN:VCALENDAR", "BEGIN:VEVENT");
                         p.write(vevent);
                         if(vevent.indexOf("URL:") < 0) {
-                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getSelectedActivityUrl(req, activity, false) + "\n");
+                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, activity, false) + "\n");
                         }
                         p.write("END:VEVENT\n");
                     }
@@ -244,7 +261,7 @@ public class ICalServlet extends FreeBusyServlet {
                         String vtodo = ical.substring(start, end).replace("BEGIN:VTODOBEGIN:VCALENDAR", "BEGIN:VTODO");
                         p.write(vtodo);
                         if(vtodo.indexOf("URL:") < 0) {
-                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getSelectedActivityUrl(req, activity, false) + "\n");
+                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getActivityUrl(req, activity, false) + "\n");
                         }
                         p.write("END:VTODO\n");                        
                     }
@@ -276,7 +293,7 @@ public class ICalServlet extends FreeBusyServlet {
                 p.write("<data>\n");
                 int n = 0;
                 for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
-                    p.write("  <event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getSelectedActivityUrl(req, activity, true) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">\n");
+                    p.write("  <event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getActivityUrl(req, activity, true) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">\n");
                     String description = (activity.getDescription() == null) || (activity.getDescription().trim().length() == 0) ? 
                         activity.getName() : 
                         activity.getDescription();
@@ -431,7 +448,7 @@ public class ICalServlet extends FreeBusyServlet {
         }
         return null;
     }
-    
+
     //-----------------------------------------------------------------------
     @Override
     protected void doPut(
@@ -440,6 +457,10 @@ public class ICalServlet extends FreeBusyServlet {
     ) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         PersistenceManager pm = this.getPersistenceManager(req);
+        if(pm == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }        
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);        
         ActivitiesHelper activitiesHelper = this.getActivitiesHelper(
@@ -499,13 +520,31 @@ public class ICalServlet extends FreeBusyServlet {
                                 activitiesHelper, 
                                 uid
                             );
+                            StringBuilder dummy = new StringBuilder();
+                            Map<String,String> newICal = ICalendar.parseICal(
+                                new BufferedReader(new StringReader(calendar.toString())),
+                                dummy 
+                            );
+                            newICal.remove("LAST-MODIFIED");
+                            newICal.remove("DTSTAMP");                               
+                            newICal.remove("CREATED");                               
+                            dummy.setLength(0);
+                            Map<String,String> oldICal = null;
+                            if(activity != null) {
+                                oldICal = ICalendar.parseICal(
+                                    new BufferedReader(new StringReader(activity.getIcal())),
+                                    dummy
+                                );
+                                oldICal.remove("LAST-MODIFIED");
+                                oldICal.remove("DTSTAMP");                                   
+                                oldICal.remove("CREATED");                                   
+                                oldICal.keySet().retainAll(newICal.keySet());
+                            }
                             ActivityGroup activityGroup = activitiesHelper.getActivityGroup();                            
                             // Update existing activity
                             if(
                                 (activity != null) &&
-                                ((activity.getModifiedAt() == null) || 
-                                // only compare date, hours and minutes (a sample date is 20070922T005655Z)
-                                (lastModified.substring(0, 13).compareTo(ActivitiesHelper.formatDate(activity.getModifiedAt()).substring(0, 13)) > 0))
+                                !newICal.equals(oldICal)
                             ) {
                                 try {
                                     pm.currentTransaction().begin();

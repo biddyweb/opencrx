@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.14 2008/10/11 22:25:14 wfro Exp $
+ * Name:        $Id: Utils.java,v 1.19 2008/12/17 11:35:41 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/11 22:25:14 $
+ * Date:        $Date: 2008/12/17 11:35:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -469,7 +469,7 @@ public class Utils {
         s = s.replace('\'', '-');
         s = s.replace('&', '-');
         s = s.replace('.', '-');
-        s = s.replaceAll("-", "");
+        s = s.replace("-", "");
         if(s.length() > 50) {
             s = s.substring(0, 44) + s.substring(s.length()-5);
         }
@@ -481,8 +481,6 @@ public class Utils {
         new String[]{
             "org:w3c",
             "org:openmdx:base",
-            "org:openmdx:datastore1",
-            "org:openmdx:filter1",
             "org:opencrx",
             "org:opencrx:kernel:base",
             "org:opencrx:kernel:generic",
@@ -509,6 +507,7 @@ public class Utils {
             "org:opencrx:kernel:reservation1",
             "org:opencrx:kernel:admin1",
             "org:openmdx:compatibility:document1",
+            "org:openmdx:compatibility:datastore1",
             "org:opencrx:kernel:model1",
             "org:opencrx:kernel:ras1",
             "org:opencrx:kernel:depot1",
@@ -562,7 +561,24 @@ public class Utils {
         );
         return JDOHelper.getPersistenceManagerFactory(configuration);
     }
-            
+
+    //-------------------------------------------------------------------------
+    public static boolean areEqual(
+        Object v1,
+        Object v2
+    ) {
+        if(v1 == null) return v2 == null;
+        if(v2 == null) return v1 == null;
+        if(
+            (v1 instanceof Comparable) && 
+            (v2 instanceof Comparable) &&
+            (v1.getClass().equals(v2.getClass()))
+        ) {
+            return ((Comparable)v1).compareTo(v2) == 0;
+        }
+        return v1.equals(v2);
+    }
+
 }
 
 //--- End of File -----------------------------------------------------------

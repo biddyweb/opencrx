@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.24 2008/10/06 21:08:46 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.25 2008/10/16 16:37:48 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.24 $
+ * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 21:08:46 $
+ * Date:        $Date: 2008/10/16 16:37:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -509,7 +509,7 @@ public class Accounts {
                     // dateParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(
@@ -527,7 +527,7 @@ public class Accounts {
                     // dateTimeParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(

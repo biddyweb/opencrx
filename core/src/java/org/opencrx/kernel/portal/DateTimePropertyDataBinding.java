@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DateTimePropertyDataBinding.java,v 1.3 2008/10/01 00:28:29 wfro Exp $
+ * Name:        $Id: DateTimePropertyDataBinding.java,v 1.5 2008/11/28 17:02:53 wfro Exp $
  * Description: DateTimePropertyDataBinding
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:29 $
+ * Date:        $Date: 2008/11/28 17:02:53 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,12 +58,24 @@ package org.opencrx.kernel.portal;
 import java.util.Date;
 
 import javax.jmi.reflect.RefObject;
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.opencrx.kernel.base.jmi1.DateTimeProperty;
 import org.opencrx.kernel.base.jmi1.Property;
 
 public class DateTimePropertyDataBinding extends AbstractPropertyDataBinding {
 
+    public DateTimePropertyDataBinding(
+    ) {
+        super(PropertySetHolderType.CrxObject);
+    }
+    
+    public DateTimePropertyDataBinding(
+        PropertySetHolderType type
+    ) {
+        super(type);
+    }
+            
     public Object getValue(
         RefObject object, 
         String qualifiedFeatureName
@@ -95,7 +107,12 @@ public class DateTimePropertyDataBinding extends AbstractPropertyDataBinding {
             );                
         }                
         if(p instanceof DateTimeProperty) {
-            ((DateTimeProperty)p).setDateTimeValue((Date)newValue);
+            if(newValue instanceof XMLGregorianCalendar) {
+                ((DateTimeProperty)p).setDateTimeValue(((XMLGregorianCalendar)newValue).toGregorianCalendar().getTime());
+            }
+            else {
+                ((DateTimeProperty)p).setDateTimeValue((Date)newValue);                
+            }
         }
     }
         

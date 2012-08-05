@@ -11,7 +11,12 @@
 		factory="org.openmdx.kernel.naming.tomcat.LinkingObjectFactory"
 		linkName="openmdx:application/(gateway.jar)/opencrx_core_CRX_EntityManagerFactory/local"
 	/>
-	
+<!--
+	<Valve className="org.apache.catalina.valves.AccessLogValve"
+		directory="logs" prefix="combined_access_log."
+		suffix=".txt" pattern="combined" resolveHosts="false"
+	/>
+-->	
 	<!-- HSQLDB -->
 	<Realm  className="org.apache.catalina.realm.ExtendedJDBCRealm" 
 		debug="0"

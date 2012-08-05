@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.6 2008/08/12 15:56:26 cmu Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.8 2008/12/14 11:29:28 cmu Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/12 15:56:26 $
+ * Date:        $Date: 2008/12/14 11:29:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,8 +77,8 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.compatibility.base.naming.*,
 org.openmdx.compatibility.base.dataprovider.cci.*,
+org.openmdx.compatibility.base.naming.*,
 org.openmdx.application.log.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
@@ -162,6 +162,7 @@ org.openmdx.application.log.*
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@page import="org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes"%>
 <html dir="<%= texts.getDir() %>">
 <head>
   <title>Relationships</title>
@@ -431,6 +432,22 @@ org.openmdx.application.log.*
           membershipQuery.forAllDisabled().isFalse();
       		membershipQuery.distance().equalTo(new Short((short)-1));
       		membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
+    			// HINT_DBOBJECT allows to qualify the DbObject to use.
+    			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
+          org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilterDM1 =
+              (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
+          queryFilterDM1.setClause(
+            "(" + Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+            "( " +
+            "v.member IN ( " +
+            "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
+            "  where " +
+            "   ((m.disabled is null) or (m.disabled = false)) and " +
+            "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
+            "  ) " +
+            ") "
+          );
+    			membershipQuery.thereExistsContext().equalTo(queryFilterDM1);
       		Collection memberships = currentAccount.getAccountMembership(membershipQuery);
       		for(Iterator m = memberships.iterator(); m.hasNext(); ) {
       			org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)m.next();
@@ -462,6 +479,14 @@ org.openmdx.application.log.*
       		membershipQuery.distance().equalTo(new Short((short)1));
       		membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
       		memberships = currentAccount.getAccountMembership(membershipQuery);
+    			// HINT_DBOBJECT allows to qualify the DbObject to use.
+    			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
+                org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilterD1 =
+                    (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
+                queryFilterD1.setClause(
+                    Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+                );
+    			membershipQuery.thereExistsContext().equalTo(queryFilterD1);
       		for(Iterator m = memberships.iterator(); m.hasNext(); ) {
       			org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)m.next();
       			int distance = membership.getDistance();

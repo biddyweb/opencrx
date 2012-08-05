@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: UserManager.java,v 1.17 2008/02/12 19:57:20 wfro Exp $
+ * Name:        $Id: UserManager.java,v 1.18 2008/11/08 00:21:54 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:57:20 $
+ * Date:        $Date: 2008/11/08 00:21:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,7 +88,7 @@ public final class UserManager
             tx.begin();
             org.opencrx.kernel.account1.jmi1.Contact contact = 
                 this.context.getAccountPackage().getContact().createContact();
-            contact.refInitialize(false, true);
+            contact.refInitialize(false, false);
             newValue.update(
                 contact, 
                 this.context

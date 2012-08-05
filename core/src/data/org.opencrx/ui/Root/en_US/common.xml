@@ -3511,7 +3511,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:SendAlertParams:reference">
 										<_object>
-											<active>true</active>
+											<active>false</active>
 											<toolTip>
 												<_item>Reference</_item>
 											</toolTip>

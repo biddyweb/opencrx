@@ -559,10 +559,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:lastAppliedCreator" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Zuletzt angewandter Erzeuger</_item>
+												<_item>Letzter Erzeuger</_item>
 											</toolTip>
 											<label>
-												<_item>Zuletzt angewandter Erzeuger</_item>
+												<_item>Letzter Erzeuger</_item>
 											</label>
 										</_object>
 										<_content/>

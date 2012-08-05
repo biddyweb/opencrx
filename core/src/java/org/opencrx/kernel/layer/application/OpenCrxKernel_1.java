@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxKernel_1.java,v 1.269 2008/10/06 08:38:46 wfro Exp $
+ * Name:        $Id: OpenCrxKernel_1.java,v 1.270 2008/11/07 19:30:25 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.269 $
+ * Revision:    $Revision: 1.270 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 08:38:46 $
+ * Date:        $Date: 2008/11/07 19:30:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -275,17 +275,14 @@ public class OpenCrxKernel_1
             localObjectFactory,
             null, // impls
             this.backend, // OpenCrxKernel_1 plugin as context
-            Names.JMI1_PACKAGE_SUFFIX, // bindingPackageSuffix
-            false // throwNotFoundIfNull
+            Names.JMI1_PACKAGE_SUFFIX // bindingPackageSuffix
         );
         // Delegating manager
         this.delegatingPkg = new RefRootPackage_1(
             this.getManager(),
             this.getPackageImpls(),
             this.backend, // OpenCrxKernel_1 plugin as context
-            Names.JMI1_PACKAGE_SUFFIX, // bindingPackageSuffix
-            false, // throwNotFoundIfNull
-            false // useOpenMdx1UseImplLookup
+            Names.JMI1_PACKAGE_SUFFIX // bindingPackageSuffix
         );
         return new RefObjectFactory_1(
             (RefRootPackage_1)this.delegatingPkg,

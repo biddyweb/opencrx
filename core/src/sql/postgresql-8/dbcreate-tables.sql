@@ -380,7 +380,11 @@ CREATE TABLE oocke1_accountassignment (
     dtype character varying(256) NOT NULL,
     discount numeric,
     discount_is_percentage boolean,
-    member_role_ integer DEFAULT (-1) NOT NULL,
+    member_role_0 smallint,
+    member_role_1 smallint,
+    member_role_2 smallint,
+    member_role_3 smallint,
+    member_role_4 smallint,
     for_use_by_ integer DEFAULT (-1) NOT NULL,
     quality smallint
 );
@@ -405,7 +409,6 @@ CREATE TABLE oocke1_accountassignment_ (
     user_number4 numeric,
     user_string4 character varying(256),
     dtype character varying(256) NOT NULL,
-    member_role smallint,
     for_use_by character varying(256)
 );
 
@@ -2402,43 +2405,6 @@ CREATE TABLE oocke1_calendarprofile (
 --
 
 CREATE TABLE oocke1_calendarprofile_ (
-    object_id character varying(256) NOT NULL,
-    idx integer NOT NULL,
-    created_by character varying(256),
-    modified_by character varying(256),
-    owner character varying(256),
-    dtype character varying(256) NOT NULL
-);
-
-
---
--- Name: oocke1_chart; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE oocke1_chart (
-    object_id character varying(256) NOT NULL,
-    access_level_browse smallint,
-    access_level_delete smallint,
-    access_level_update smallint,
-    chart bytea,
-    chart_mime_type character varying(256),
-    chart_name character varying(256),
-    created_at timestamp with time zone,
-    created_by_ integer DEFAULT (-1) NOT NULL,
-    description character varying(256),
-    modified_by_ integer DEFAULT (-1) NOT NULL,
-    owner_ integer DEFAULT (-1) NOT NULL,
-    "p$$parent" character varying(256),
-    modified_at timestamp with time zone NOT NULL,
-    dtype character varying(256) NOT NULL
-);
-
-
---
--- Name: oocke1_chart_; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE oocke1_chart_ (
     object_id character varying(256) NOT NULL,
     idx integer NOT NULL,
     created_by character varying(256),

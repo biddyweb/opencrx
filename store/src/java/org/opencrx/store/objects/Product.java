@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: Product.java,v 1.18 2008/02/12 19:57:20 wfro Exp $
+ * Name:        $Id: Product.java,v 1.19 2008/11/08 00:21:54 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:57:20 $
+ * Date:        $Date: 2008/11/08 00:21:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -183,7 +183,7 @@ public final class Product implements IStandardObject
             String name =
                 OpenCrxContext.STORE_SCHEMA + Product.PRICE_LEVEL_NAME + " [" + DecimalFormat.getCurrencyInstance(context.getStoreLocale()).getCurrency().getSymbol() + "]";
             priceLevel = context.getProductPackage().getPriceLevel().createPriceLevel();
-            priceLevel.refInitialize(false, true);
+            priceLevel.refInitialize(false, false);
             priceLevel.setName(name);
             priceLevel.setDescription(name);
             priceLevel.setPriceCurrency(context.getStoreCurrencyCode());
@@ -202,7 +202,7 @@ public final class Product implements IStandardObject
         if(basePrice == null) {
             basePrice =
                 context.getProductPackage().getProductBasePrice().createProductBasePrice();
-            basePrice.refInitialize(false, true);
+            basePrice.refInitialize(false, false);
             basePrice.setPriceCurrency(context.getStoreCurrencyCode());
             basePrice.getUsage().add(new Short(OpenCrxContext.PRICE_USAGE_CONSUMER));
             basePrice.getPriceLevel().add(priceLevel);

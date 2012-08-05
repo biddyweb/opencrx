@@ -51,21 +51,10 @@
                       </additionalElementDefinition>
                     </_content>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>組成員</_item>
-                      </label>
-                      <toolTip>
-                        <_item>組成員</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
-                        <_item>»夥伴</_item>
+                        <_item>夥伴</_item>
                       </label>
                       <toolTip>
                         <_item>夥伴</_item>
@@ -76,7 +65,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>»聯繫人</_item>
+                        <_item>聯繫人</_item>
                       </label>
                       <toolTip>
                         <_item>聯繫人</_item>

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.6 2008/09/04 21:53:22 wfro Exp $
+ * Name:        $Id: FreeBusyServlet.java,v 1.7 2008/10/30 15:20:04 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/04 21:53:22 $
+ * Date:        $Date: 2008/10/30 15:20:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -161,10 +161,12 @@ public class FreeBusyServlet extends HttpServlet {
     protected PersistenceManager getPersistenceManager(
         HttpServletRequest req
     ) {
-        return this.persistenceManagerFactory.getPersistenceManager(
-            req.getUserPrincipal() == null ? "guest" : req.getUserPrincipal().getName(),
-            UUIDs.getGenerator().next().toString()
-        );
+        return req.getUserPrincipal() == null ?
+            null :
+            this.persistenceManagerFactory.getPersistenceManager(
+                req.getUserPrincipal().getName(),
+                UUIDs.getGenerator().next().toString()
+            );
     }
 
     //-----------------------------------------------------------------------
@@ -211,6 +213,10 @@ public class FreeBusyServlet extends HttpServlet {
         HttpServletResponse resp
     ) throws ServletException, IOException {
         PersistenceManager pm = this.getPersistenceManager(req);
+        if(pm == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
         ActivitiesHelper activitiesHelper = this.getActivitiesHelper(

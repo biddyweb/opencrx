@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: User.java,v 1.17 2008/02/12 19:57:20 wfro Exp $
+ * Name:        $Id: User.java,v 1.18 2008/11/08 00:21:54 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:57:20 $
+ * Date:        $Date: 2008/11/08 00:21:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -157,7 +157,7 @@ public final class User implements IStandardObject
         // Create
         if(postalAddress == null) {
             postalAddress = context.getAccountPackage().getPostalAddress().createPostalAddress();
-            postalAddress.refInitialize(false, true);
+            postalAddress.refInitialize(false, false);
             contact.addAddress(
                 false,
                 uuids.next().toString(),
@@ -185,7 +185,7 @@ public final class User implements IStandardObject
         );
         if(propertySet == null) {
             propertySet = context.getGenericPackage().getPropertySet().createPropertySet();
-            propertySet.refInitialize(false, true);
+            propertySet.refInitialize(false, false);
             propertySet.setName(OpenCrxContext.STORE_SCHEMA + "Properties");
             contact.addPropertySet(
                 false,
@@ -198,7 +198,7 @@ public final class User implements IStandardObject
             (org.opencrx.kernel.base.jmi1.StringProperty)this.getProperty(propertySet, "Password");
         if(passwordProperty == null) {
             passwordProperty = context.getBasePackage().getStringProperty().createStringProperty();
-            passwordProperty.refInitialize(false, true);
+            passwordProperty.refInitialize(false, false);
             passwordProperty.setName("Password");
             propertySet.addProperty(
                 false,
@@ -212,7 +212,7 @@ public final class User implements IStandardObject
             (org.opencrx.kernel.base.jmi1.StringProperty)this.getProperty(propertySet, "UserType");
         if(userTypeProperty == null) {
             userTypeProperty = context.getBasePackage().getStringProperty().createStringProperty();
-            userTypeProperty.refInitialize(false, true);
+            userTypeProperty.refInitialize(false, false);
             userTypeProperty.setName("UserType");
             propertySet.addProperty(
                 false,

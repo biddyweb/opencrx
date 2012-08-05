@@ -361,7 +361,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notities</_item>
+                        <_item>Notities</_item>
                       </label>
                       <toolTip>
                         <_item>toegevoegde notities</_item>
@@ -372,7 +372,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Documenten</_item>
+                        <_item>Documenten</_item>
                       </label>
                       <toolTip>
                         <_item>toegevoegde documenten</_item>
@@ -383,7 +383,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Media</_item>
+                        <_item>Media</_item>
                       </label>
                       <toolTip>
                         <_item>toegevoegde media</_item>
@@ -394,7 +394,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Beoordelingen</_item>
+                        <_item>Beoordelingen</_item>
                       </label>
                       <toolTip>
                         <_item>toegevoegde beoordelingen</_item>

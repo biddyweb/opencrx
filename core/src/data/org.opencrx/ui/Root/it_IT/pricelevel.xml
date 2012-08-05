@@ -40,7 +40,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Listino (prodotti disabilitati)</_item>
+                              <_item>Listino (prodotti disabilitati)</_item>
                             </label>
                             <toolTip>
                               <_item>Listino (prodotti disabilitati)</_item>
@@ -91,7 +91,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Listino (prodotti disabilitati)</_item>
+                              <_item>Listino (prodotti disabilitati)</_item>
                             </label>
                             <toolTip>
                               <_item>Listino (prodotti disabilitati)</_item>

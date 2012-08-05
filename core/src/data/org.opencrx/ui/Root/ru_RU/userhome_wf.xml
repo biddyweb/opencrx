@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:wfProcessInstance" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Ступени технол. процесса</_item>
+                        <_item>Ступени технол. процесса</_item>
                       </label>
                       <toolTip>
                         <_item>Ступени технол. процесса</_item>

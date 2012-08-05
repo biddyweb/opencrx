@@ -51,7 +51,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
-                        <_item>»همکارها</_item>
+                        <_item>همکارها</_item>
                       </label>
                       <toolTip>
                         <_item>همکار ها</_item>

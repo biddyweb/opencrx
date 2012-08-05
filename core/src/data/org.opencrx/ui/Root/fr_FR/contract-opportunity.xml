@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:quote" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Propositions associées</_item>
+                        <_item>Propositions associées</_item>
                       </label>
                       <toolTip>
                         <_item>Propositions associées</_item>

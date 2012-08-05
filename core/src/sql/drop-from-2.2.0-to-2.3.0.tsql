@@ -1,0 +1,23 @@
+#include "sql-definitions.tsql"
+
+ALTER TABLE OOCKE1_ACCOUNTASSIGNMENT
+    DROP_COLUMN_BEGIN
+        member_role_
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+REORG_TABLE(OOCKE1_ACCOUNTASSIGNMENT) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_ACCOUNTASSIGNMENT_
+    DROP_COLUMN_BEGIN
+        member_role
+    DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+REORG_TABLE(OOCKE1_ACCOUNTASSIGNMENT_) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+DROP TABLE OOCKE1_CHART COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+DROP TABLE OOCKE1_CHART_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

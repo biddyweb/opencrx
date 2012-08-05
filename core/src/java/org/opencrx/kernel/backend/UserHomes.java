@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.17 2008/10/13 12:32:24 wfro Exp $
+ * Name:        $Id: UserHomes.java,v 1.22 2008/11/06 12:23:54 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/13 12:32:24 $
+ * Date:        $Date: 2008/11/06 12:23:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,12 +74,16 @@ import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
+
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.jmi1.ObjectFinder;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.Base64;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSelectors;
 import org.openmdx.compatibility.base.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.compatibility.base.dataprovider.cci.DataproviderObject;
@@ -92,7 +96,8 @@ import org.openmdx.compatibility.base.naming.Path;
 import org.openmdx.compatibility.base.query.FilterOperators;
 import org.openmdx.compatibility.base.query.FilterProperty;
 import org.openmdx.compatibility.base.query.Quantors;
-import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObjects;
 
 public class UserHomes {
@@ -104,109 +109,63 @@ public class UserHomes {
         this.backend = backend;
     }
     
+    //-------------------------------------------------------------------------
+    public static String getUidAsString(
+    ) {
+        return UUIDConversion.toUID(UserHomes.uuidGenerator.next());        
+    }
+    
+    //-------------------------------------------------------------------------
+    public static void markAsAccepted(
+        org.opencrx.kernel.home1.jmi1.Alert alert,
+        PersistenceManager pm
+    ) throws ServiceException {
+        alert.setAlertState(
+            (short)3
+        );        
+    }
+    
+    //-------------------------------------------------------------------------
+    public static void markAsRead(
+        org.opencrx.kernel.home1.jmi1.Alert alert,
+        PersistenceManager pm
+    ) throws ServiceException {
+        alert.setAlertState(
+            (short)2
+        );        
+    }
+    
     //-----------------------------------------------------------------------
-    public void refreshItems(
-        org.opencrx.kernel.home1.jmi1.UserHome userHome
+    public static void refreshItems(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome,
+        PersistenceManager pm
     ) throws ServiceException {
         if(userHome.getContact() != null) {
-            // keep all non-accepted alerts
-            this.backend.removeAll(
-                userHome.refGetPath().getChild("alert"),
-                new FilterProperty[]{
-                    new FilterProperty(
-                        Quantors.THERE_EXISTS,
-                        "alertState",
-                        FilterOperators.IS_GREATER_OR_EQUAL,                              
-                        new Short((short)3)
-                    )
-                },
-                0,
-                100, // refresh must be applied multiple times if more wfInstances than limit
-                null                          
+            // Remove accepted alerts
+            Query query = pm.newQuery(org.opencrx.kernel.home1.jmi1.Alert.class);
+            org.opencrx.kernel.home1.cci2.AlertQuery alertQuery = (org.opencrx.kernel.home1.cci2.AlertQuery)query; 
+            alertQuery.alertState().greaterThanOrEqualTo((short)3);
+            query.setCandidates(userHome.getAlert());
+            List<org.opencrx.kernel.home1.jmi1.Alert> alerts = (List<org.opencrx.kernel.home1.jmi1.Alert>)query.execute();
+            for(org.opencrx.kernel.home1.jmi1.Alert alert: alerts) {
+                alert.refDelete();
+            }
+            // Update charts
+            Contracts.calculateUserHomeCharts(
+                userHome,
+                pm
             );
-            // Flush modified assigned activities and contracts before recalculating charts
-            this.backend.flushObjectModifications(
-                this.backend.getServiceHeader()
-            );
-            this.refreshCharts(
-                this.backend.retrieveObject(
-                    userHome.refGetPath()
-                )
+            Activities.calculateUserHomeCharts(
+                userHome,
+                pm
             );
         }
     }
-    
+       
     //-------------------------------------------------------------------------
-    public void markAsAccepted(
-        Path alertIdentity
-    ) throws ServiceException {
-        DataproviderObject alert = this.backend.retrieveObjectForModification(alertIdentity);        
-        alert.clearValues("alertState").add(
-            new Short((short)3)
-        );        
-    }
-    
-    //-------------------------------------------------------------------------
-    public void markAsRead(
-        Path alertIdentity
-    ) throws ServiceException {
-        DataproviderObject alert = this.backend.retrieveObjectForModification(alertIdentity);        
-        alert.clearValues("alertState").add(
-            new Short((short)2)
-        );        
-    }
-    
-    //-------------------------------------------------------------------------
-    public void refreshCharts(
-        DataproviderObject_1_0 userHome
-    ) throws ServiceException {
-        Path chartReference = userHome.path().getChild("chart");
-        List<DataproviderObject> charts = new ArrayList<DataproviderObject>();      
-        // Calculate new charts 
-        // id=0,1
-        charts.addAll(
-            Arrays.asList(
-                this.backend.getContracts().calculateUserHomeCharts(
-                    userHome.path(),
-                    chartReference
-                )
-            )
-        );
-        // id=2,3
-        charts.addAll(
-            Arrays.asList(
-                this.backend.getActivities().calculateUserHomeCharts(
-                    userHome.path(),
-                    chartReference
-                )
-            )      
-        );      
-        // Replace existing charts with new charts
-        for(Iterator<DataproviderObject> i = charts.iterator(); i.hasNext(); ) {
-            DataproviderObject chart = i.next();
-            try {
-                DataproviderObject existing = this.backend.retrieveObjectForModification(
-                    chart.path()
-                );
-                existing.attributeNames().clear();
-                existing.addClones(chart, true);
-            }
-            catch(ServiceException e) {
-                try {
-                    if(e.getExceptionCode() == BasicException.Code.NOT_FOUND) {
-                        this.backend.getDelegatingRequests().addCreateRequest(
-                            chart
-                        );
-                    }
-                }
-                catch(ServiceException e0) {
-                    AppLog.error(e0.getMessage(), e0.getCause());
-                }
-            }
-        }
-    }
-
-    //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */
     public DataproviderObject_1_0 getUserHome(
       Path from
     ) throws ServiceException {
@@ -218,6 +177,9 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */
     public DataproviderObject_1_0 getUserHome(
         String user,
         Path from
@@ -267,6 +229,8 @@ public class UserHomes {
     /**
      * Creates a password credential for the specified subject. The password
      * is not set by this method. This must be done with changePassword.
+     * 
+     * @deprecated
      */
     public DataproviderObject createPasswordCredential(
         Path subjectIdentity,
@@ -390,6 +354,8 @@ public class UserHomes {
      *   <li>user subject: segment administrator
      *   <li>all other objects (user home, password): user
      * </ul>
+     * 
+     * @deprecated
      */
     public UserHome createUserHome(
         Path realmIdentity,
@@ -610,6 +576,9 @@ public class UserHomes {
     }
 
     //-----------------------------------------------------------------------
+    /**
+     * @deprecated
+     */    
     private DataproviderObject_1_0 retrieveUserHome(
         Path userHomeSegment,
         String principalName
@@ -669,6 +638,9 @@ public class UserHomes {
     }
         
     //-----------------------------------------------------------------------
+    /**
+     * @deprecated
+     */    
     private DataproviderObject_1_0 retrievePrincipal(
         Path realm,
         String principalName
@@ -684,6 +656,9 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */    
     public String importUsers(
         Path homeSegmentIdentity,
         byte[] item
@@ -780,6 +755,9 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */    
     public void encodeEMailAccountPassword(
         DataproviderObject object,
         DataproviderObject_1_0 oldValues
@@ -810,6 +788,9 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */    
     public List completeUserHome(
       DataproviderObject_1_0 userHome
     ) throws ServiceException {
@@ -873,6 +854,9 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
+    /**
+     * @deprecated
+     */    
     public FilterProperty[] mapObjectFinderToFilter(
         DataproviderObject_1_0 objectFinder
     ) {
@@ -924,9 +908,10 @@ public class UserHomes {
     }
     
     //-------------------------------------------------------------------------
-    public ObjectFinder searchBasic(
-        Path userHomeIdentity,
-        String searchExpression
+    public static ObjectFinder searchBasic(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome,
+        String searchExpression,
+        PersistenceManager pm
     ) throws ServiceException {
         String words[] = searchExpression.split("[\\s,]");
         StringBuilder allWords = new StringBuilder();
@@ -948,47 +933,47 @@ public class UserHomes {
                 }
             }
         }
-        return this.searchAdvanced(
-            userHomeIdentity, 
+        return UserHomes.searchAdvanced(
+            userHome, 
             allWords.toString().trim(), 
             atLeastOneOfTheWords.toString().trim(), 
-            withoutWords.toString().trim()
+            withoutWords.toString().trim(),
+            pm
         );
     }
     
     //-------------------------------------------------------------------------
-    public ObjectFinder searchAdvanced(
-        Path userHomeIdentity,
+    public static ObjectFinder searchAdvanced(
+        org.opencrx.kernel.home1.jmi1.UserHome userHome,
         String allWords,
         String atLeastOneOfTheWords,
-        String withoutWords
+        String withoutWords,
+        PersistenceManager pm
     ) throws ServiceException {
-        DataproviderObject objectFinder = new DataproviderObject(
-            userHomeIdentity.getDescendant(new String[]{"objectFinder", this.backend.getUidAsString()})
-        );
-        objectFinder.values(SystemAttributes.OBJECT_CLASS).add(
-            "org:opencrx:kernel:home1:ObjectFinder"
-        );
-        objectFinder.values("name").add(
-            (allWords != null) && (allWords.length() > 0)
-                ? allWords
-                : (atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0)
-                    ? atLeastOneOfTheWords
-                    : withoutWords
+        org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = (org.opencrx.kernel.home1.jmi1.ObjectFinder)pm.newInstance(org.opencrx.kernel.home1.jmi1.ObjectFinder.class);
+        objectFinder.refInitialize(false, false);
+        objectFinder.setName(
+            (allWords != null) && (allWords.length() > 0) ? 
+                allWords : 
+                (atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0) ? 
+                    atLeastOneOfTheWords : 
+                    withoutWords
         );
         if(allWords != null) {
-            objectFinder.values("allWords").add(allWords.toLowerCase());
+            objectFinder.setAllWords(allWords.toLowerCase());
         }
         if(atLeastOneOfTheWords != null) {
-            objectFinder.values("atLeastOneOfTheWords").add(atLeastOneOfTheWords.toLowerCase());
+            objectFinder.setAtLeastOneOfTheWords(atLeastOneOfTheWords.toLowerCase());
         }
         if(withoutWords != null) {
-            objectFinder.values("withoutWords").add(withoutWords.toLowerCase());
+            objectFinder.setWithoutWords(withoutWords.toLowerCase());
         }
-        this.backend.createObject(objectFinder);
-        return objectFinder == null
-            ? null
-            : (ObjectFinder)this.backend.getDelegatingPkg().refObject(objectFinder.path().toXri());
+        userHome.addObjectFinder(
+            false, 
+            UserHomes.getUidAsString(), 
+            objectFinder
+        );
+        return objectFinder;
     }
     
     //-------------------------------------------------------------------------
@@ -1002,6 +987,7 @@ public class UserHomes {
     public static final short CAN_NOT_CHANGE_PASSWORD = 5;
     public static final short MISSING_OLD_PASSWORD = 6;
 
+    private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
     protected final Backend backend;
         
 }

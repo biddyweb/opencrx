@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractContractImpl.java,v 1.7 2008/07/08 23:11:54 wfro Exp $
+ * Name:        $Id: AbstractContractImpl.java,v 1.8 2008/11/21 10:07:01 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/07/08 23:11:54 $
+ * Date:        $Date: 2008/11/21 10:07:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -131,14 +131,14 @@ public class AbstractContractImpl {
     ) {
         ContractPosition position = this.getBackend().getContracts().createContractPosition(
             this.current.refGetPath(),
+            params.isIgnoreProductConfiguration(),
             params.getName(),
             params.getQuantity(),
             params.getPricingDate(),
             params.getProduct() == null ? null : params.getProduct().refGetPath(),
             params.getUom() == null ? null : params.getUom().refGetPath(),
             params.getPriceUom() == null ? null : params.getPriceUom().refGetPath(),
-            params.getPricingRule() == null ? null : params.getPricingRule().refGetPath(),
-            false
+            params.getPricingRule() == null ? null : params.getPricingRule().refGetPath()            
         );
         return ((Contract1Package)this.current.refOutermostPackage().refPackage(Contract1Package.class.getName())).createCreatePositionResult(
             position

@@ -9,6 +9,7 @@
 		<field name="group" visibility="none">
 			<column name="P$$PARENT"/>
 		</field>		
+		<field name="memberRole" visibility="cci" embedded="5"/>		
     </class>
   </package>
 </openmdxjdo>

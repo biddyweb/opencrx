@@ -21,29 +21,7 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard Account_Quick.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:accountQuick">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-
 <!-- Edit -->
-                <!-- Wizard Account_Quick.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:accountQuick">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:accountQuick">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-
                 <!-- Wizard UserSettings.jsp -->
 								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:userSettings">
 								    <_object>
@@ -53,37 +31,6 @@
 								  </org.openmdx.ui1.OperationDefinition>
 
 <!-- View -->
-                <!-- Wizard AddressBook.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:addressBook">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:addressBook">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:addressBook">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:addressBook">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:UnspecifiedAccount:addressBook">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
 
 <!-- Tools -->
                 <!-- Wizard MailMerge.jsp -->
@@ -106,6 +53,30 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:UnspecifiedAccount:mailMerge">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AccountFilterGlobal:mailMerge">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:PostalAddress:mailMerge">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AddressFilterGlobal:mailMerge">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:AddressGroup:mailMerge">
 								    <_object>
 								      <isQuery>true</isQuery>
 								    </_object>
@@ -157,131 +128,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard Account_Quick.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>New Contact or Legal Entity</_item>
-											</toolTip>
-											<label>
-												<_item>New Contact or Legal Entity</_item>
-											</label>
-											<order>
-												<_item>100</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
 <!-- Edit -->
-                <!-- Wizard AddressBook.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Edit Contact</_item>
-											</toolTip>
-											<label>
-												<_item>Edit Contact</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Edit Legal Entity</_item>
-											</toolTip>
-											<label>
-												<_item>Edit Legal Entity</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Edit Group</_item>
-											</toolTip>
-											<label>
-												<_item>Edit Group</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Edit Unspecified Account</_item>
-											</toolTip>
-											<label>
-												<_item>Edit Unspecified Account</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
-                <!-- Wizard Account_Quick.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Edit Contact  (Quick)</_item>
-											</toolTip>
-											<label>
-												<_item>Edit Contact (Quick)</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>1010</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Edit Legal Entity (Quick)</_item>
-											</toolTip>
-											<label>
-												<_item>Edit Legal Entity (Quick)</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>1010</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 
                 <!-- Wizard UserSettings.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings">
@@ -303,24 +150,6 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 <!-- View -->
-                <!-- Wizard AddressBook.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Address Book</_item>
-											</toolTip>
-											<label>
-												<_item>Address Book</_item>
-											</label>
-											<order>
-												<_item>300</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 
 <!-- Tools -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge">
@@ -330,7 +159,7 @@
 												<_item>Mail Merge --&gt; RTF Document</_item>
 											</toolTip>
 											<label>
-												<_item>Mail Merge --&gt; RTF Document</_item>
+												<_item>Mail Merge (Main Postal Address of Members) --&gt; RTF Document</_item>
 											</label>
 											<order>
 												<_item>400</_item>
@@ -347,7 +176,7 @@
 												<_item>Mail Merge --&gt; RTF Document</_item>
 											</toolTip>
 											<label>
-												<_item>Mail Merge --&gt; RTF Document</_item>
+												<_item>Mail Merge (Main Postal Address) --&gt; RTF Document</_item>
 											</label>
 											<order>
 												<_item>400</_item>
@@ -364,7 +193,7 @@
 												<_item>Mail Merge --&gt; RTF Document</_item>
 											</toolTip>
 											<label>
-												<_item>Mail Merge --&gt; RTF Document</_item>
+												<_item>Mail Merge (Main Postal Address) --&gt; RTF Document</_item>
 											</label>
 											<order>
 												<_item>400</_item>
@@ -381,7 +210,75 @@
 												<_item>Mail Merge --&gt; RTF Document</_item>
 											</toolTip>
 											<label>
+												<_item>Mail Merge (Main Postal Address) --&gt; RTF Document</_item>
+											</label>
+											<order>
+												<_item>400</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:mailMerge">
+										<_object>
+											<active>true</active>
+											<toolTip>
 												<_item>Mail Merge --&gt; RTF Document</_item>
+											</toolTip>
+											<label>
+												<_item>Mail Merge (Main Postal Address of filtered Accounts) --&gt; RTF Document</_item>
+											</label>
+											<order>
+												<_item>400</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress:Pane:Op:Tab:mailMerge">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Mail Merge --&gt; RTF Document</_item>
+											</toolTip>
+											<label>
+												<_item>Mail Merge --&gt; RTF Document</_item>
+											</label>
+											<order>
+												<_item>400</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressFilterGlobal:Pane:Op:Tab:mailMerge">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Mail Merge --&gt; RTF Document</_item>
+											</toolTip>
+											<label>
+												<_item>Mail Merge (Postal Addresses) --&gt; RTF Document</_item>
+											</label>
+											<order>
+												<_item>400</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:Pane:Op:Tab:mailMerge">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Mail Merge --&gt; RTF Document</_item>
+											</toolTip>
+											<label>
+												<_item>Mail Merge (Postal Address) --&gt; RTF Document</_item>
 											</label>
 											<order>
 												<_item>400</_item>

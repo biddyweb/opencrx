@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE application PUBLIC "-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN" "http://java.sun.com/dtd/application_1_3.dtd">
-<application id="Application_ID">
+<application id="Application_ID" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/application_5.xsd">
 	<display-name>openCRX EAR</display-name>
 	<module>
 		<ejb>kernel.jar</ejb>
@@ -35,6 +34,12 @@
 			<context-root>opencrx-vcard-CRX</context-root>
 		</web>
 	</module>		
+	<module id="WebModule_5">
+		<web>
+			<web-uri>opencrx-rest-CRX.war</web-uri>
+			<context-root>opencrx-rest-CRX</context-root>
+		</web>
+	</module>
 	<security-role id="SecurityRole_OpenCrxUser">
 		<description>openCRX Standard Users</description>
 		<role-name>OpenCrxUser</role-name>
@@ -47,4 +52,5 @@
 		<description>openCRX Root Users</description>
 		<role-name>OpenCrxRoot</role-name>
 	</security-role>	
+	<library-directory>APP-INF/lib</library-directory>	
 </application>

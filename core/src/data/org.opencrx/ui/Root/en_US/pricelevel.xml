@@ -446,6 +446,7 @@
 											<columnBreak>true</columnBreak>
 											<spanRow>5</spanRow>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Price usage</_item>
 											</toolTip>
@@ -1136,6 +1137,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:AbstractProductPrice:usage">
 										<_object>
 											<active>true</active>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Usage</_item>
 											</toolTip>

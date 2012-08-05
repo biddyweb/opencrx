@@ -87,7 +87,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Conjuntos de propriedades</_item>
+                        <_item>Conjuntos de propriedades</_item>
                       </label>
                       <toolTip>
                         <_item>Conjuntos de propriedades</_item>
@@ -281,7 +281,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Pastas</_item>
+                        <_item>Pastas</_item>
                       </label>
                       <toolTip>
                         <_item>Pastas</_item>
@@ -303,7 +303,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Conjuntos de propriedade</_item>
+                        <_item>Conjuntos de propriedade</_item>
                       </label>
                       <toolTip>
                         <_item>Conjuntos de propriedade</_item>
@@ -314,7 +314,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Links</_item>
+                        <_item>Links</_item>
                       </label>
                       <toolTip>
                         <_item>Links</_item>
@@ -325,7 +325,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Bloqueios</_item>
+                        <_item>Bloqueios</_item>
                       </label>
                       <toolTip>
                         <_item>Bloqueios</_item>

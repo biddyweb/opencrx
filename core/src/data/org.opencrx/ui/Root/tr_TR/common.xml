@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notlar</_item>
+                        <_item>Notlar</_item>
                       </label>
                       <toolTip>
                         <_item>İliştirilmiş notlar</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Belgeler</_item>
+                        <_item>Belgeler</_item>
                       </label>
                       <toolTip>
                         <_item>İliştirilmiş Belgeler</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Ortam</_item>
+                        <_item>Ortam</_item>
                       </label>
                       <toolTip>
                         <_item>İliştirilmiş Ortam</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Oranlamalar</_item>
+                        <_item>Oranlamalar</_item>
                       </label>
                       <toolTip>
                         <_item>İliştirilmiş Oranlamalar</_item>

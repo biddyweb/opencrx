@@ -87,10 +87,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Egenskaper</_item>
+                        <_item>Egenskaper</_item>
                       </label>
                       <toolTip>
-                        <_item>»Egenskaper</_item>
+                        <_item>Egenskaper</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,7 +278,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Mappar</_item>
+                        <_item>Mappar</_item>
                       </label>
                       <toolTip>
                         <_item>Mappar</_item>
@@ -300,10 +300,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Egenskaper</_item>
+                        <_item>Egenskaper</_item>
                       </label>
                       <toolTip>
-                        <_item>»Egenskaper</_item>
+                        <_item>Egenskaper</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -311,7 +311,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Länkar</_item>
+                        <_item>Länkar</_item>
                       </label>
                       <toolTip>
                         <_item>Länkar</_item>
@@ -322,10 +322,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Lås</_item>
+                        <_item>Lås</_item>
                       </label>
                       <toolTip>
-                        <_item>»Lås</_item>
+                        <_item>Lås</_item>
                       </toolTip>
                     </_object>
                     <_content/>

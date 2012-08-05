@@ -51,21 +51,10 @@
                       </additionalElementDefinition>
                     </_content>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Membresía a grupos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Membresía a grupos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Socios</_item>
+                        <_item>Socios</_item>
                       </label>
                       <toolTip>
                         <_item>Socios</_item>
@@ -76,7 +65,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Contactos</_item>
+                        <_item>Contactos</_item>
                       </label>
                       <toolTip>
                         <_item>Contactos</_item>

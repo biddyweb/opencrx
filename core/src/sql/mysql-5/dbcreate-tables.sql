@@ -376,7 +376,11 @@ CREATE TABLE  `oocke1_accountassignment` (
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `DISCOUNT_IS_PERCENTAGE` bit(1) default NULL,
   `DISCOUNT` decimal(17,9) default NULL,
-  `MEMBER_ROLE_` int(11) NOT NULL default '-1',
+  `MEMBER_ROLE_0` smallint(6) default NULL,
+  `MEMBER_ROLE_1` smallint(6) default NULL,
+  `MEMBER_ROLE_2` smallint(6) default NULL,
+  `MEMBER_ROLE_3` smallint(6) default NULL,
+  `MEMBER_ROLE_4` smallint(6) default NULL,
   `QUALITY` smallint(6) default NULL,
   `FOR_USE_BY_` int(11) NOT NULL default '-1',
   PRIMARY KEY  (`OBJECT_ID`)
@@ -398,7 +402,6 @@ CREATE TABLE  `oocke1_accountassignment_` (
   `USER_NUMBER4` decimal(17,9) default NULL,
   `USER_STRING4` varchar(256) character set latin1 collate latin1_bin default NULL,
   `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `MEMBER_ROLE` smallint(6) default NULL,
   `FOR_USE_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
   PRIMARY KEY  (`OBJECT_ID`,`IDX`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -2221,37 +2224,6 @@ CREATE TABLE  `oocke1_calendarprofile` (
 
 DROP TABLE IF EXISTS `oocke1_calendarprofile_`;
 CREATE TABLE  `oocke1_calendarprofile_` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `IDX` int(11) NOT NULL,
-  `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `OWNER` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`,`IDX`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_chart`;
-CREATE TABLE  `oocke1_chart` (
-  `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  `ACCESS_LEVEL_BROWSE` smallint(6) default NULL,
-  `ACCESS_LEVEL_DELETE` smallint(6) default NULL,
-  `ACCESS_LEVEL_UPDATE` smallint(6) default NULL,
-  `CHART` mediumblob,
-  `CHART_MIME_TYPE` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CHART_NAME` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `CREATED_AT` datetime default NULL,
-  `CREATED_BY_` int(11) NOT NULL default '-1',
-  `DESCRIPTION` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_BY_` int(11) NOT NULL default '-1',
-  `OWNER_` int(11) NOT NULL default '-1',
-  `P$$PARENT` varchar(256) character set latin1 collate latin1_bin default NULL,
-  `MODIFIED_AT` datetime NOT NULL,
-  `DTYPE` varchar(256) character set latin1 collate latin1_bin NOT NULL,
-  PRIMARY KEY  (`OBJECT_ID`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
-DROP TABLE IF EXISTS `oocke1_chart_`;
-CREATE TABLE  `oocke1_chart_` (
   `OBJECT_ID` varchar(256) character set latin1 collate latin1_bin NOT NULL,
   `IDX` int(11) NOT NULL,
   `CREATED_BY` varchar(256) character set latin1 collate latin1_bin default NULL,

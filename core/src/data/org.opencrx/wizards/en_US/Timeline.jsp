@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Timeline.jsp,v 1.11 2008/06/26 00:34:34 wfro Exp $
+ * Name:        $Id: Timeline.jsp,v 1.12 2008/11/07 15:01:57 cmu Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.11 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/26 00:34:34 $
+ * Date:        $Date: 2008/11/07 15:01:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -138,9 +138,10 @@ org.openmdx.application.log.*
       }
     }
     // activity group
-    else if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
+    if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
       org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker =
         (org.opencrx.kernel.activity1.jmi1.ActivityTracker)obj;
+      System.out.println("is Tracker");
       if ((activityTracker.getName() != null) && (activityTracker.getName().length() > 0)) {
         groupComponent = "/tracker/" + URLEncoder.encode(activityTracker.getName(), "UTF-8");
       }

@@ -66,6 +66,7 @@ DROP VIEW OOCKE1_TOBJ_CONTRACTROLE_ ;
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY ;
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY_ ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP ;
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ;
@@ -424,7 +425,7 @@ INNER JOIN
 ON
     c.sales_rep = h.contact
 
-UNION ALL
+UNION
 
 SELECT
     c.object_id AS assigned_contract,
@@ -434,7 +435,23 @@ FROM
 INNER JOIN
     OOCKE1_USERHOME h
 ON
-    c.customer = h.contact ;
+    c.customer = h.contact
+
+UNION
+
+SELECT
+   c.object_id AS assigned_contract,
+   h.object_id AS user_home
+FROM
+    OOCKE1_CONTRACT c
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass
+ON
+    ass.p$$parent = c.object_id
+INNER JOIN
+    OOCKE1_USERHOME h
+ON
+    ass.account = h.contact ;
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSCONTR AS
 SELECT
     c.object_id AS assigned_contract,
@@ -446,7 +463,7 @@ INNER JOIN
 ON
     c.customer = a.object_id
 
-UNION ALL
+UNION
 
 SELECT
     c.object_id AS assigned_contract,
@@ -458,7 +475,7 @@ INNER JOIN
 ON
     c.sales_rep = a.object_id
 
-UNION ALL
+UNION
 
 SELECT
     c.object_id AS assigned_contract,
@@ -468,7 +485,19 @@ FROM
 INNER JOIN
     OOCKE1_ACCOUNT a
 ON
-    c.supplier = a.object_id ;
+    c.supplier = a.object_id
+
+UNION
+
+SELECT
+   c.object_id AS assigned_contract,
+   ass.account AS account
+FROM
+    OOCKE1_CONTRACT c
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass
+ON
+    ass.p$$parent = c.object_id ;
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSBUDGET AS
 SELECT
     b.object_id AS assigned_budget,
@@ -944,7 +973,7 @@ INNER JOIN
     OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
 ON
     ass0.p$$parent = ass.account ;
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
 
 
@@ -975,8 +1004,12 @@ SELECT DISTINCT
     ass0.valid_from,
     ass0.valid_to,
     ass0.object_id AS member,
-    ass0.member_role_,
     ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
     1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1015,8 +1048,98 @@ SELECT DISTINCT
     ass0.valid_from,
     ass0.valid_to,
     ass0.object_id AS member,
-    ass0.member_role_,
     ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    -1 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+WHERE
+    ass0.dtype = 'org:opencrx:kernel:account1:Member' ;
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
+SELECT DISTINCT
+
+
+
+    ass0.p$$parent || '*' || ass0.object_id || '*1'
+
+
+
+    AS object_id,
+    ass0.p$$parent AS p$$parent,
+    ass0.p$$parent AS account_from,
+    ass0.p$$parent AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership' AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    1 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+WHERE
+    ass0.dtype = 'org:opencrx:kernel:account1:Member'
+
+UNION ALL
+
+SELECT DISTINCT
+
+
+
+    ass0.account || '*' || ass0.object_id || '*-1'
+
+
+
+    AS object_id,
+    ass0.account AS p$$parent,
+    ass0.p$$parent AS account_from,
+    ass0.p$$parent AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership' AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
     -1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1055,8 +1178,12 @@ SELECT DISTINCT
     ass0.valid_from,
     ass0.valid_to,
     ass0.object_id AS member,
-    ass0.member_role_,
     ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
     2 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1100,8 +1227,12 @@ SELECT DISTINCT
     ass0.valid_from,
     ass0.valid_to,
     ass0.object_id AS member,
-    ass0.member_role_,
     ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
     -2 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1148,8 +1279,12 @@ SELECT DISTINCT
     ass0.valid_from,
     ass0.valid_to,
     ass0.object_id AS member,
-    ass0.member_role_,
     ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
     3 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1193,103 +1328,17 @@ SELECT DISTINCT
     ass0.valid_from,
     ass0.valid_to,
     ass0.object_id AS member,
-    ass0.member_role_,
     ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
     -3 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 INNER JOIN
     OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    ass0.p$$parent = ass.account OR
-    ass0.account = ass.account
-WHERE
-    ass0.dtype = 'org:opencrx:kernel:account1:Member'
-
-UNION ALL
-
-SELECT DISTINCT
-
-
-
-    ass.p$$parent || '*' || ass0.object_id || '*4'
-
-
-
-    AS object_id,
-    ass.p$$parent AS p$$parent,
-    ass0.p$$parent AS account_from,
-    ass0.p$$parent AS account_from_id,
-    ass0.account AS account_to,
-    ass0.account AS account_to_id,
-    ass0.created_at,
-    ass0.created_by_,
-    ass0.modified_at,
-    ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership' AS dtype,
-    ass0.access_level_browse,
-    ass0.access_level_update,
-    ass0.access_level_delete,
-    ass0.owner_,
-    ass0.name,
-    ass0.description,
-    ass0.quality,
-    ass0.for_use_by_,
-    ass0.valid_from,
-    ass0.valid_to,
-    ass0.object_id AS member,
-    ass0.member_role_,
-    ass0.disabled,
-    4 AS distance
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
-ON
-    ass0.account = ass.p$$parent OR
-    ass0.p$$parent = ass.p$$parent
-WHERE
-    ass0.dtype = 'org:opencrx:kernel:account1:Member'
-
-UNION ALL
-
-SELECT DISTINCT
-
-
-
-    ass.p$$parent || '*' || ass0.object_id || '*-4'
-
-
-
-    AS object_id,
-    ass.p$$parent AS p$$parent,
-    ass0.p$$parent AS account_from,
-    ass0.p$$parent AS account_from_id,
-    ass0.account AS account_to,
-    ass0.account AS account_to_id,
-    ass0.created_at,
-    ass0.created_by_,
-    ass0.modified_at,
-    ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership' AS dtype,
-    ass0.access_level_browse,
-    ass0.access_level_update,
-    ass0.access_level_delete,
-    ass0.owner_,
-    ass0.name,
-    ass0.description,
-    ass0.quality,
-    ass0.for_use_by_,
-    ass0.valid_from,
-    ass0.valid_to,
-    ass0.object_id AS member,
-    ass0.member_role_,
-    ass0.disabled,
-    -4 AS distance
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
 ON
     ass0.p$$parent = ass.account OR
     ass0.account = ass.account
@@ -1303,7 +1352,6 @@ SELECT
     ass.p$$parent AS p$$parent,
     ass_.idx,
     ass_.created_by,
-    ass_.member_role,
     ass_.modified_by,
     ass_.owner,
     ass_.dtype,
@@ -1718,11 +1766,11 @@ SELECT
     w.duration_hours,
     w.duration_minutes,
     (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( CAST(w.duration_hours AS CHARACTER) || ':' || CAST(w.duration_minutes AS CHARACTER) || CHR(39) ) AS duration_hh_mm,
+    ( to_char(w.duration_hours, 'FM000') || ':' || to_char(w.duration_minutes, 'FM00') || CHR(39) ) AS duration_hh_mm,
     w.pause_duration_hours,
     w.pause_duration_minutes,
     (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( CAST(w.pause_duration_hours AS CHARACTER) || ':' || CAST(w.pause_duration_minutes AS CHARACTER) || CHR(39) ) AS pause_duration_hh_mm,
+    ( to_char(w.pause_duration_hours, 'FM000') || ':' || to_char(w.pause_duration_minutes, 'FM00') || CHR(39) ) AS pause_duration_hh_mm,
     w.billable_amount AS billable_amount,
     w.billing_currency AS billing_currency,
     a.activity_number,
@@ -1769,11 +1817,11 @@ SELECT
     w.duration_hours,
     w.duration_minutes,
     (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( CAST(w.duration_hours AS CHARACTER) || ':' || CAST(w.duration_minutes AS CHARACTER) || CHR(39) ) AS duration_hh_mm,
+    ( to_char(w.duration_hours, 'FM000') || ':' || to_char(w.duration_minutes, 'FM00') || CHR(39) ) AS duration_hh_mm,
     w.pause_duration_hours,
     w.pause_duration_minutes,
     (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( CAST(w.pause_duration_hours AS CHARACTER) || ':' || CAST(w.pause_duration_minutes AS CHARACTER) || CHR(39) ) AS pause_duration_hh_mm,
+    ( to_char(w.pause_duration_hours, 'FM000') || ':' || to_char(w.pause_duration_minutes, 'FM00') || CHR(39) ) AS pause_duration_hh_mm,
     w.billable_amount AS billable_amount,
     w.billing_currency AS billing_currency,
     a.activity_number,
@@ -1825,11 +1873,11 @@ SELECT
     w.duration_hours,
     w.duration_minutes,
     (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( CAST(w.duration_hours AS CHARACTER) || ':' || CAST(w.duration_minutes AS CHARACTER) || CHR(39) ) AS duration_hh_mm,
+    ( to_char(w.duration_hours, 'FM000') || ':' || to_char(w.duration_minutes, 'FM00') || CHR(39) ) AS duration_hh_mm,
     w.pause_duration_hours,
     w.pause_duration_minutes,
     (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( CAST(w.pause_duration_hours AS CHARACTER) || ':' || CAST(w.pause_duration_minutes AS CHARACTER) || CHR(39) ) AS pause_duration_hh_mm,
+    ( to_char(w.pause_duration_hours, 'FM000') || ':' || to_char(w.pause_duration_minutes, 'FM00') || CHR(39) ) AS pause_duration_hh_mm,
     w.billable_amount AS billable_amount,
     w.billing_currency AS billing_currency,
     a.activity_number,
@@ -1881,10 +1929,10 @@ SELECT
     w.duration_hours,
     w.duration_minutes,
     (w.duration_hours + (w.duration_minutes / 60.0)) AS duration_decimal,
-    ( CAST(w.duration_hours AS CHARACTER) || ':' || CAST(w.duration_minutes AS CHARACTER) || CHR(39) ) AS duration_hh_mm,
+    ( to_char(w.duration_hours, 'FM000') || ':' || to_char(w.duration_minutes, 'FM00') || CHR(39) ) AS duration_hh_mm,
     w.pause_duration_hours, w.pause_duration_minutes,
     (w.pause_duration_hours + (w.pause_duration_minutes / 60.0)) AS pause_duration_decimal,
-    ( CAST(w.pause_duration_hours AS CHARACTER) || ':' || CAST(w.pause_duration_minutes AS CHARACTER) || CHR(39) ) AS pause_duration_hh_mm,
+    ( to_char(w.pause_duration_hours, 'FM000') || ':' || to_char(w.pause_duration_minutes, 'FM00') || CHR(39) ) AS pause_duration_hh_mm,
     w.billable_amount AS billable_amount,
     w.billing_currency AS billing_currency,
     a.activity_number,

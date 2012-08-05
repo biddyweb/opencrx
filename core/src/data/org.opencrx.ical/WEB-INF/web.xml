@@ -9,7 +9,6 @@
 	<servlet>
 		<servlet-name>ICalServlet</servlet-name>
 		<servlet-class>org.opencrx.application.ical.ICalServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ICalServlet</servlet-name>

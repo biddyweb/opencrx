@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VCardServlet.java,v 1.5 2008/10/14 11:27:23 wfro Exp $
+ * Name:        $Id: VCardServlet.java,v 1.8 2008/10/30 15:20:04 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/14 11:27:23 $
+ * Date:        $Date: 2008/10/30 15:20:04 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -82,6 +82,8 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.log.AppLog;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.WebKeys;
 
 public class VCardServlet extends HttpServlet {
 
@@ -119,10 +121,12 @@ public class VCardServlet extends HttpServlet {
     protected PersistenceManager getPersistenceManager(
         HttpServletRequest req
     ) {
-        return this.persistenceManagerFactory.getPersistenceManager(
-            req.getUserPrincipal() == null ? "guest" : req.getUserPrincipal().getName(),
-            UUIDs.getGenerator().next().toString()
-        );
+        return req.getUserPrincipal() == null ?
+            null :
+            this.persistenceManagerFactory.getPersistenceManager(
+                req.getUserPrincipal().getName(),
+                UUIDs.getGenerator().next().toString()
+            );
     }
 
     //-----------------------------------------------------------------------
@@ -176,14 +180,34 @@ public class VCardServlet extends HttpServlet {
                 return null;
             }
             else {
-                return (Account)accounts.iterator().next();
+                return accounts.iterator().next();
             }
         }
         else {
-            return (Account)accounts.iterator().next();
+            return accounts.iterator().next();
         }
     }
         
+    //-----------------------------------------------------------------------
+    protected String getAccountUrl(        
+        HttpServletRequest req,
+        Account account,
+        boolean htmlEncoded
+    ) {
+        Action selectAccountAction = 
+            new Action(
+                Action.EVENT_SELECT_OBJECT, 
+                new Action.Parameter[]{
+                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, account.refMofId())
+                },
+                "",
+                true
+            );        
+        return htmlEncoded ? 
+            req.getContextPath().replace("-vcard-", "-core-") +  "/" + WebKeys.SERVLET_NAME + "?event=" + Action.EVENT_SELECT_OBJECT + "&amp;parameter=" + selectAccountAction.getParameterEncoded() : 
+            req.getContextPath().replace("-vcard-", "-core-") +  "/" + WebKeys.SERVLET_NAME + "?event=" + Action.EVENT_SELECT_OBJECT + "&parameter=" + selectAccountAction.getParameter();
+    }
+    
     //-----------------------------------------------------------------------
     @Override
     protected void doGet(
@@ -191,6 +215,10 @@ public class VCardServlet extends HttpServlet {
         HttpServletResponse resp
     ) throws ServletException, IOException {
         PersistenceManager pm = this.getPersistenceManager(req);
+        if(pm == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }        
         String requestedAccountFilter = req.getParameter("id");
         AccountsHelper accountsHelper = this.getAccountsHelper(pm, requestedAccountFilter);
         org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = 
@@ -221,8 +249,13 @@ public class VCardServlet extends HttpServlet {
                 for(Account account: accountsHelper.getFilteredAccounts(accountQuery)) {
                     String vcard = account.getVcard();
                     if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
-                        p.write(vcard);
-                        p.write("\n");
+                        int start = vcard.indexOf("BEGIN:VCARD");
+                        int end = vcard.indexOf("END:VCARD");
+                        p.write(vcard.substring(start, end));
+                        if(vcard.indexOf("URL:") < 0) {
+                            p.write("URL:" + req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + this.getAccountUrl(req, account, false) + "\n");
+                        }                        
+                        p.write("END:VCARD\n");
                     }
                     n++;
                     if(n % 50 == 0) pm.evictAll();                
@@ -248,6 +281,10 @@ public class VCardServlet extends HttpServlet {
     ) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
         PersistenceManager pm = this.getPersistenceManager(req);
+        if(pm == null) {
+            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }        
         String filterId = req.getParameter("id");
         AccountsHelper accountsHelper = this.getAccountsHelper(pm, filterId);
         if(

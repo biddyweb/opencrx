@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedNoteDataBinding.java,v 1.1 2008/10/01 00:28:28 wfro Exp $
+ * Name:        $Id: FormattedNoteDataBinding.java,v 1.5 2008/11/13 09:55:15 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.1 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:28 $
+ * Date:        $Date: 2008/11/13 09:55:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,10 +58,19 @@ package org.opencrx.kernel.portal;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.Note;
+import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 
 public class FormattedNoteDataBinding extends DefaultDataBinding {
 
+    //-----------------------------------------------------------------------
+    public FormattedNoteDataBinding(
+        ApplicationContext applicationContext
+    ) {
+        this.applicationContext = applicationContext;
+    }
+    
+    //-----------------------------------------------------------------------
     @Override
     public Object getValue(
         RefObject object, 
@@ -78,9 +87,11 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
                 int titleLength = title.length();
                 int indexBol = 0;
                 int indexEol = 0;
-                while((indexEol = text.indexOf('\n', indexBol)) > 0) {
-                    titleLength = Math.max(titleLength, indexEol - indexBol);
-                    indexBol = indexEol + 1;                    
+                if(text != null) {
+                    while((indexEol = text.indexOf('\n', indexBol)) > 0) {
+                        titleLength = Math.max(titleLength, indexEol - indexBol);
+                        indexBol = indexEol + 1;                    
+                    }
                 }
                 titleLength = Math.min(140, titleLength);
                 StringBuilder formattedNote = new StringBuilder("<b>");
@@ -90,7 +101,7 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
                 }
                 formattedNote
                     .append("</b><br />")
-                    .append(text == null ? "" : text);
+                    .append(text == null ? "" : text.startsWith("<") ? text : text.replace("\n", "<br />"));
                 return formattedNote.toString();
             }
         }
@@ -98,5 +109,10 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
             return null;
         }
     }
+
+    //-----------------------------------------------------------------------
+    // Members
+    //-----------------------------------------------------------------------
+    protected final ApplicationContext applicationContext;
     
 }

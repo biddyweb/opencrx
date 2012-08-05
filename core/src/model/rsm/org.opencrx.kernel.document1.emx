@@ -3158,9 +3158,13 @@
       </eAnnotations>
       <ownedAttribute xmi:id="_O89d0HKsEd2HfbwuP5YrMA" name="validFrom">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B630802BB?w3c/w3c/dateTime"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_e24EEbr-Ed2kaqMLKxcPFg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_e24EELr-Ed2kaqMLKxcPFg"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_Pu4C8HKsEd2HfbwuP5YrMA" name="validTo">
         <type xmi:type="uml:PrimitiveType" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.w3c.emx#_3C7B8A60016D3C8B630802BB?w3c/w3c/dateTime"/>
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_fdnT8br-Ed2kaqMLKxcPFg" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_fdnT8Lr-Ed2kaqMLKxcPFg"/>
       </ownedAttribute>
       <ownedAttribute xmi:id="_ac7hEXKsEd2HfbwuP5YrMA" name="documentFolder" type="_BTE4wOcdEdm9Uq_PGOuigA" association="_ac7hEHKsEd2HfbwuP5YrMA">
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ac7hFHKsEd2HfbwuP5YrMA" value="1"/>

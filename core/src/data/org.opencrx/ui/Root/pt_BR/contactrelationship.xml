@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:contactRelationship" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Relacionamentos do Contato</_item>
+                        <_item>Relacionamentos do Contato</_item>
                       </label>
                       <toolTip>
                         <_item>Relacionamentos do Contato</_item>

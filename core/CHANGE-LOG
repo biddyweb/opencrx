@@ -7,6 +7,111 @@
 
 
 ==============================================================================
+Version 2.3.0                                                       2008-12-03
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR0003539
+      Ui perspectives. Perspectives allow to modify the Root UI customizing. 
+      A perspective overrides the Root customizing, i.e. a perspective inherits 
+      all UI element definitions from the Root customizing. The WEB-INF/config/ui 
+      directory structure looks as follows:
+      
+      WEB-INF/config/ui
+          Root
+              locale 0
+              locale 1
+              ...
+          {1-Perspective A}
+              locale 0
+              locale 1
+              ...
+          {2-Perspective B}
+              locale 0
+              locale 1
+              ...
+              
+      The name of a Perspective must be of the form {order}-{name}, e.g.
+      1-Guest, 2-BackOffice, 3-FrontOffice, 4-Mgmt. The order defines in
+      which order the perspectives are rendered in the perspective selector
+      in the GUI. Root has the predefined order 0.
+      
+      CR10008205
+      REST servlet added to openCRX/Core. The servlet allows easy 3rd party
+      integration with openCRX. The full functionality of the openCRX API
+      can be accessed via rest requests. See See http://code.google.com/p/rest-client/
+      for a REST client. Below are some sample requests:
+      
+			Object creation                                                                                                     
+			  Method: POST
+			  Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account			
+			  Body:			
+					<?xml version="1.0"?>
+					<org.opencrx.kernel.account1.Contact>
+						<lastName>REST</lastName>
+						<firstName>Test #1</firstName>
+					</org.opencrx.kernel.account1.Contact>
+			
+			Object Retrievals                                                                                                                           
+			  Method: GET
+			  Urls:
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/extent?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=identity().like("xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/%25");orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=modifiedAt().between(:datetime:20080101T000000.000Z,:datetime:20081001T000000.000Z);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=modifiedAt().greaterThan(:datetime:20080101T000000.000Z);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsModifiedAt().greaterThan(:date:2008-01-01);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsNumberOfChildren().greaterThan(:integer:-1);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsNumberOfChildren().lessThan(0);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsNumberOfChildren().lessThan(3);orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFullName().like("D%25, Joe");orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().elementOf("Joe", "Guest");orderByFirstName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().equalTo("Guest");orderByLastName().ascending()
+					http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account?position=0&size=50&queryType=org:opencrx:kernel:account1:Contact&query=thereExistsFirstName().equalTo("Guest")
+			
+			Object modification                                                                                                                        
+				Method: PUT			
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/2YlAOJYlEd2Y4zv65ePspg
+				Body:			
+					<?xml version="1.0"?>
+					<org.opencrx.kernel.account1.Contact>
+						<preferredContactMethod>1</preferredContactMethod>
+					  <preferredSpokenLanguage>1</preferredSpokenLanguage>
+					</org.opencrx.kernel.account1.Contact>
+			
+			Operation Invocation                                                                                                             
+				Method: POST			
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.home1/provider/CRX/segment/Standard/userHome/guest/sendAlert			
+				Body:			
+					<?xml version="1.0"?>
+					<org.opencrx.kernel.base.SendAlertParams>
+						<toUsers>guest</toUsers>
+						<name>Test REST</name>
+					  <importance>0</importance>
+					</org.opencrx.kernel.base.SendAlertParams>
+			
+			Object Deletion         
+				Method: DELETE		
+				Url: http://localhost:8080/opencrx-rest-CRX/org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/2YlAOJYlEd2Y4zv65ePspg
+
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10008288
+      memberRole is embedded. The attribute Member.memberRole should be configured 
+      as embedded, i.e. move the column from table OOCKE1_ACCOUNTASSIGNMENT_ to 
+      OOCKE1_ACCOUNTASSIGNMENT.
+            
+            
+2.1.  FIXED BUGS
+      none
+
+2.2   REMOVED FEATURES
+      none
+
+
+==============================================================================
 Version 2.2.1                                                       2008-10-14
 ==============================================================================
 

@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Partners</_item>
+                        <_item>Partners</_item>
                       </label>
                       <toolTip>
                         <_item>Partners</_item>

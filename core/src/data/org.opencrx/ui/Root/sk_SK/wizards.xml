@@ -22,83 +22,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nový kontakt alebo právnicku osobu vyrobiť</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nový kontakt alebo právnicku osobu vyrobiť</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Upraviť kontakt</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Upraviť kontakt</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Upraviť právnicku osobu</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Upraviť právnicku osobu</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Upraviť skupinu</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Upraviť skupinu</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Upraviť nešpecifikovaný účet</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Upraviť nešpecifikovaný účet</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Upraviť kontakt (rýchlo)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Upraviť kontakt (rýchlo)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Upraviť právnickú osobu (rýchlo)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Upraviť právnickú osobu (rýchlo)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings" _operation="create">
                     <_object>
                       <label>
@@ -106,17 +29,6 @@
                       </label>
                       <toolTip>
                         <_item>Uživateľské nastavenia</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Adresár</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Adresár</_item>
                       </toolTip>
                     </_object>
                     <_content/>

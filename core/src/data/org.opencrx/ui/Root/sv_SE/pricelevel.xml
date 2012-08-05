@@ -40,7 +40,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Prislista (deaktiverade produkter)</_item>
+                              <_item>Prislista (deaktiverade produkter)</_item>
                             </label>
                             <toolTip>
                               <_item>Prislista (deaktiverade produkter)</_item>
@@ -91,7 +91,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Prislista (deaktiverade produkter)</_item>
+                              <_item>Prislista (deaktiverade produkter)</_item>
                             </label>
                             <toolTip>
                               <_item>Prislista (deaktiverade produkter)</_item>

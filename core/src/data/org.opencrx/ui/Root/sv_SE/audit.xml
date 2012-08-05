@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Auditee:audit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Granska Poster</_item>
+                        <_item>Granska Poster</_item>
                       </label>
                       <toolTip>
-                        <_item>»Granska Poster</_item>
+                        <_item>Granska Poster</_item>
                       </toolTip>
                     </_object>
                     <_content/>

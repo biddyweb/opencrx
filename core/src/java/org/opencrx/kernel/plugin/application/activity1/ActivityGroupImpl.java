@@ -28,7 +28,7 @@ public class ActivityGroupImpl {
     ) {
         try {
             int[] actualEffort = this.getBackend().getActivities().calcActualEffort(
-                this.current.refGetPath()
+                this.current
             );
             return ((Activity1Package)this.current.refOutermostPackage().refPackage(Activity1Package.class.getName())).createCalcActualEffortResult(
                 actualEffort[0],

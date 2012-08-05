@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notatka</_item>
+                        <_item>Notatka</_item>
                       </label>
                       <toolTip>
                         <_item>załączone notatki</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dokument</_item>
+                        <_item>Dokument</_item>
                       </label>
                       <toolTip>
                         <_item>załączone dokumenty</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Media</_item>
+                        <_item>Media</_item>
                       </label>
                       <toolTip>
                         <_item>załączone media</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Ocena</_item>
+                        <_item>Ocena</_item>
                       </label>
                       <toolTip>
                         <_item>załączone oceny</_item>

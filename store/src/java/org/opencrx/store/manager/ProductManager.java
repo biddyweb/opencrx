@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: ProductManager.java,v 1.15 2008/02/12 19:57:20 wfro Exp $
+ * Name:        $Id: ProductManager.java,v 1.16 2008/11/08 00:21:54 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.15 $
+ * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:57:20 $
+ * Date:        $Date: 2008/11/08 00:21:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,7 +88,7 @@ public final class ProductManager
             tx.begin();
             org.opencrx.kernel.product1.jmi1.Product product = 
                 this.context.getProductPackage().getProduct().createProduct();
-            product.refInitialize(false, true);
+            product.refInitialize(false, false);
             newValue.update(
                 product, 
                 this.context

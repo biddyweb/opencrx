@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Auditee:audit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»İnceleme Girişleri</_item>
+                        <_item>İnceleme Girişleri</_item>
                       </label>
                       <toolTip>
                         <_item>İnceleme Girişleri</_item>

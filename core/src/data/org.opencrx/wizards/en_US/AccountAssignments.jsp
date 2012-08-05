@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.7 2008/06/27 11:13:03 cmu Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.8 2008/12/14 11:25:01 cmu Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/06/27 11:13:03 $
+ * Date:        $Date: 2008/12/14 11:25:01 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -276,6 +276,7 @@ org.openmdx.application.log.*
             (org.opencrx.kernel.account1.jmi1.Account)obj
           );
         }
+        // else all accounts
         accountAssignmentInventoryItemQuery.identity().like(
           new Path(buildingSegment.refMofId()).getDescendant(new String[]{"inventoryItem", ":*", "assignedAccount", ":*"}).toString()
         );

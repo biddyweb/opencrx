@@ -2,6 +2,7 @@
 gunzip @@INSTALLDIR@@/repository/distribution/*.gz
 cd "@@INSTALLDIR@@"
 tar xf "@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-core.jre-1.5.tar"
+tar xf "@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-groupware.jre-1.5.tar"
 tar xf "@@INSTALLDIR@@/repository/distribution/opencrx-@@OPENCRX_VERSION@@-store.jre-1.5.tar"
 mkdir "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"
 cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/opt"
@@ -16,6 +17,11 @@ export JAVA_HOME=@@JAVA_HOME@@
 export PATH=$JAVA_HOME/bin:$ANT_HOME/bin:$PATH
 cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/core"
 ant install-src
+ant deliverables
+ant assemble
+cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/groupware"
+ant install-src
+ant deliverables
 ant assemble
 cd "@@INSTALLDIR@@/opencrx-@@OPENCRX_VERSION@@/store"
 ant install-src

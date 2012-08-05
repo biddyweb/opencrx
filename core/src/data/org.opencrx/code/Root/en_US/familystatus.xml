@@ -33,10 +33,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="create">
 													<_object>
 														<shortText>
-															<_item>Single</_item>
+															<_item>single</_item>
 														</shortText>
 														<longText>
-															<_item>Single</_item>
+															<_item>single</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -44,10 +44,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="create">
 													<_object>
 														<shortText>
-															<_item>Married</_item>
+															<_item>married</_item>
 														</shortText>
 														<longText>
-															<_item>Married</_item>
+															<_item>married</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -55,10 +55,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="create">
 													<_object>
 														<shortText>
-															<_item>Divorced</_item>
+															<_item>divorced</_item>
 														</shortText>
 														<longText>
-															<_item>Divorced</_item>
+															<_item>divorced</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -66,10 +66,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="create">
 													<_object>
 														<shortText>
-															<_item>Widowed</_item>
+															<_item>widowed</_item>
 														</shortText>
 														<longText>
-															<_item>Widowed</_item>
+															<_item>widowed</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -77,10 +77,43 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="5" _operation="create">
 													<_object>
 														<shortText>
-															<_item>With Partner</_item>
+															<_item>with partner</_item>
 														</shortText>
 														<longText>
-															<_item>With Partner</_item>
+															<_item>with partner</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="6" _operation="create">
+													<_object>
+														<shortText>
+															<_item>civil union</_item>
+														</shortText>
+														<longText>
+															<_item>civil union</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="create">
+													<_object>
+														<shortText>
+															<_item>separated</_item>
+														</shortText>
+														<longText>
+															<_item>separated</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="8" _operation="create">
+													<_object>
+														<shortText>
+															<_item>engaged</_item>
+														</shortText>
+														<longText>
+															<_item>engaged</_item>
 														</longText>
 													</_object>
 													<_content/>

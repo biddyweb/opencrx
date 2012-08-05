@@ -58,7 +58,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Byggnader (deaktiverade)</_item>
+                              <_item>Byggnader (deaktiverade)</_item>
                             </label>
                             <toolTip>
                               <_item>Byggnader (deaktiverade)</_item>
@@ -105,7 +105,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Byggnadskomplex (deaktiverade)</_item>
+                              <_item>Byggnadskomplex (deaktiverade)</_item>
                             </label>
                             <toolTip>
                               <_item>Byggnadskomplex (deaktiverade)</_item>
@@ -119,7 +119,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Alla Byggnadsenheter</_item>
+                        <_item>Alla Byggnadsenheter</_item>
                       </label>
                       <toolTip>
                         <_item>Byggnadsenheter</_item>
@@ -152,7 +152,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Byggnadsenheter (deaktiverade)</_item>
+                              <_item>Byggnadsenheter (deaktiverade)</_item>
                             </label>
                             <toolTip>
                               <_item>Byggnadsenheter (deaktiverade)</_item>
@@ -166,7 +166,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Alla faciliteter</_item>
+                        <_item>Alla faciliteter</_item>
                       </label>
                       <toolTip>
                         <_item>Alla faciliteter</_item>
@@ -199,7 +199,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Faciliteter (deaktiverade)</_item>
+                              <_item>Faciliteter (deaktiverade)</_item>
                             </label>
                             <toolTip>
                               <_item>Faciliteter (deaktiverade)</_item>
@@ -246,7 +246,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Lagerartiklar (deaktiverade)</_item>
+                              <_item>Lagerartiklar (deaktiverade)</_item>
                             </label>
                             <toolTip>
                               <_item>Lagerartiklar (deaktiverade)</_item>

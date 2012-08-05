@@ -1,7 +1,7 @@
 /* This software is published under the BSD license                          */
 /* as listed below.                                                          */
 /*                                                                           */
-/* Copyright (c) 2004-2007, CRIXP Corp., Switzerland                         */
+/* Copyright (c) 2004-2008, CRIXP Corp., Switzerland                         */
 /* All rights reserved.                                                      */
 /*                                                                           */
 /* Redistribution and use in source and binary forms, with or without        */
@@ -42,37 +42,63 @@
 /* This product includes software developed by contributors to               */
 /* openMDX (http://www.openmdx.org/)                                         */
 /*                                                                           */
-CREATE INDEX IDX_Act_full_name ON OOCKE1_Account(full_name) ;
-CREATE INDEX IDX_Act_alias_name ON OOCKE1_Account(alias_name) ;
-CREATE INDEX IDX_Act_external_link ON OOCKE1_Account_(external_link) ;
-CREATE INDEX IDX_Adr_parent ON OOCKE1_Address(p$$parent) ;
-CREATE INDEX IDX_Adr_emailaddress ON OOCKE1_Address(email_address) ;
-CREATE INDEX IDX_Activity_assigned_to ON OOCKE1_Activity(assigned_to) ;
-CREATE INDEX IDX_Activity_percent_complete ON OOCKE1_Activity(percent_complete) ;
-CREATE INDEX IDX_Act_activityNumber ON OOCKE1_Activity(activity_number) ;
-CREATE INDEX IDX_Activity_modifiedAt ON OOCKE1_Activity(modified_at) ;
-CREATE INDEX IDX_ActivityFollowUp_parent ON OOCKE1_ActivityFollowUp(p$$parent) ;
-CREATE INDEX IDX_ActFollowUp_modified_at ON OOCKE1_ActivityFollowUp(modified_at) ;
-CREATE INDEX IDX_ActivityParty_parent ON OOCKE1_ActivityParty(p$$parent) ;
-CREATE INDEX IDX_ActivityParty_party ON OOCKE1_ActivityParty(party) ;
-CREATE INDEX IDX_ActivityGrpAss_parent ON OOCKE1_ActivityGroupAss(p$$parent) ;
-CREATE INDEX IDX_ActivityGrpAss_group ON OOCKE1_ActivityGroupAss(activity_group) ;
-CREATE INDEX IDX_AuditEntry_created_at ON OOCKE1_AuditEntry(created_at) ;
-CREATE INDEX IDX_Contract_sales_rep ON OOCKE1_Contract(sales_rep) ;
-CREATE INDEX IDX_Contract_customer ON OOCKE1_Contract(customer) ;
-CREATE INDEX IDX_ModelElement_qualifiedName ON OOCKE1_ModelElement(qualified_name) ;
-CREATE INDEX IDX_ModelElement_container ON OOCKE1_ModelElement(container) ;
-CREATE INDEX IDX_Note_parent ON OOCKE1_Note(p$$parent) ;
-CREATE INDEX IDX_UserHome_contact ON OOCKE1_UserHome(contact) ;
-CREATE INDEX IDX_WfProcInst_started_on ON OOCKE1_WfProcessInstance(started_on) ;
-CREATE INDEX IDX_AuditEntry_visited_by ON OOCKE1_AuditEntry_(visited_by) ;
-CREATE INDEX IDX_AuditEntry_dtype ON OOCKE1_AuditEntry(DTYPE) ;
-CREATE INDEX IDX_Product_dtype ON OOCKE1_Product(DTYPE) ;
-CREATE INDEX IDX_Product_parent ON OOCKE1_Product(p$$parent) ;
-CREATE INDEX IDX_Product_price_uom ON OOCKE1_Product_(price_uom) ;
-CREATE INDEX IDX_ProductBasePrice_parent ON OOCKE1_ProductBasePrice(p$$parent) ;
-CREATE INDEX IDX_ProdBasePrice_price_level ON OOCKE1_ProductBasePrice_(price_level) ;
-CREATE INDEX IDX_ProductBasePrice_owner_ref ON OOCKE1_ProductBasePrice_(owner) ;
-CREATE INDEX IDX_ResourceAssignment_parent ON OOCKE1_ResourceAssignment(p$$parent) ;
-CREATE INDEX IDX_WorkRecord_parent ON OOCKE1_WorkRecord(p$$parent) ;
-CREATE INDEX IDX_INDEXEDOBJ_CREATEDAT ON OOCKE1_INDEXENTRY(INDEXED_OBJECT, CREATED_AT);
+
+CREATE INDEX I_OOCKE1_ACCOUNT_FULL_NAME ON OOCKE1_ACCOUNT(full_name) ;
+CREATE INDEX I_OOCKE1_ACCOUNT_ALIAS_NAME ON OOCKE1_ACCOUNT(alias_name) ;
+CREATE INDEX I_OOCKE1_ACCOUNT_EXTERNAL_LINK ON OOCKE1_ACCOUNT_(external_link) ;
+
+CREATE INDEX I_OOCKE1_ADDRESS_PARENT ON OOCKE1_ADDRESS(p$$parent) ;
+CREATE INDEX I_OOCKE1_ADDRESS_EMAILADDRESS ON OOCKE1_ADDRESS(email_address) ;
+
+CREATE INDEX I_OOCKE1_ACTIVITY_ASSIGNED_TO ON OOCKE1_ACTIVITY(assigned_to) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_PERC_COMPL ON OOCKE1_ACTIVITY(percent_complete) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_ACTIVITYNUM ON OOCKE1_ACTIVITY(activity_number) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_MOD_AT ON OOCKE1_ACTIVITY(modified_at) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_SCHEDSTART ON OOCKE1_ACTIVITY(scheduled_start) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_SCHEDEND ON OOCKE1_ACTIVITY(scheduled_end) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_CREATED_AT ON OOCKE1_ACTIVITY(created_at) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_DUE_BY ON OOCKE1_ACTIVITY(due_by) ;
+CREATE INDEX I_OOCKE1_ACTIVITY_SENDER ON OOCKE1_ACTIVITY(sender) ;
+
+CREATE INDEX I_OOCKE1_ACTIVITYASS_PARENT ON OOCKE1_ACCOUNTASSIGNMENT(p$$parent) ;
+CREATE INDEX I_OOCKE1_ACTIVITYASS_ACCOUNT ON OOCKE1_ACCOUNTASSIGNMENT(account) ;
+
+CREATE INDEX I_OOCKE1_ACTFLOLLOWUP_PARENT ON OOCKE1_ACTIVITYFOLLOWUP(p$$parent) ;
+CREATE INDEX I_OOCKE1_ACTFOLLOWUP_MODIFIED_AT ON OOCKE1_ACTIVITYFOLLOWUP(modified_at) ;
+CREATE INDEX I_OOCKE1_ACTFOLLOWUP_CREATED_AT ON OOCKE1_ACTIVITYFOLLOWUP(created_at) ;
+
+CREATE INDEX I_OOCKE1_ACTIVITYPARTY_PARENT ON OOCKE1_ACTIVITYPARTY(p$$parent) ;
+CREATE INDEX I_OOCKE1_ACTIVITYPARTY_PARTY ON OOCKE1_ACTIVITYPARTY(party) ;
+
+CREATE INDEX I_OOCKE1_ACTGROUPASS_PARENT ON OOCKE1_ACTIVITYGROUPASS(p$$parent) ;
+CREATE INDEX I_OOCKE1_ACTGROUPASS_GROUP ON OOCKE1_ACTIVITYGROUPASS(activity_group) ;
+
+CREATE INDEX I_OOCKE1_AUDITENTRY_CREATEDAT ON OOCKE1_AUDITENTRY(created_at) ;
+
+CREATE INDEX I_OOCKE1_CONTRACT_SALES_REP ON OOCKE1_CONTRACT(sales_rep) ;
+CREATE INDEX I_OOCKE1_CONTRACT_CUSTOMER ON OOCKE1_CONTRACT(customer) ;
+CREATE INDEX I_OOCKE1_CONTRACT_ACTIVE_ON ON OOCKE1_CONTRACT(active_on) ;
+CREATE INDEX I_OOCKE1_CONTRACT_EXPIRES_ON ON OOCKE1_CONTRACT(expires_on) ;
+CREATE INDEX I_OOCKE1_CONTRACT_MODIFIEDAT ON OOCKE1_CONTRACT(modified_at) ;
+CREATE INDEX I_OOCKE1_CONTRACT_CREATEDAT ON OOCKE1_CONTRACT(created_at) ;
+
+CREATE INDEX I_OOCKE1_NOTE_PARENT ON OOCKE1_NOTE(p$$parent) ;
+
+CREATE INDEX I_OOCKE1_USERHOME_CONTACT ON OOCKE1_USERHOME(contact) ;
+
+CREATE INDEX I_OOCKE1_WFPROCINST_STARTED_ON ON OOCKE1_WFPROCESSINSTANCE(started_on) ;
+
+CREATE INDEX I_OOCKE1_AUDITENTRY_VISITED_BY ON OOCKE1_AUDITENTRY_(visited_by) ;
+
+CREATE INDEX I_OOCKE1_PRODUCT_PARENT ON OOCKE1_PRODUCT(p$$parent) ;
+CREATE INDEX I_OOCKE1_PRODUCT_PRICE_UOM ON OOCKE1_PRODUCT_(price_uom) ;
+
+CREATE INDEX I_OOCKE1_PRODBPR_PARENT ON OOCKE1_PRODUCTBASEPRICE(p$$parent) ;
+CREATE INDEX I_OOCKE1_PRODBPR_PRICE_LEVEL ON OOCKE1_PRODUCTBASEPRICE_(price_level) ;
+
+CREATE INDEX I_OOCKE1_RESOURCEASSIGNMENT_PARENT ON OOCKE1_RESOURCEASSIGNMENT(p$$parent) ;
+
+CREATE INDEX I_OOCKE1_WORKRECORD_PARENT ON OOCKE1_WORKRECORD(p$$parent) ;
+
+CREATE INDEX I_OOCKE1_INDEXENTRY_CREATEDAT ON OOCKE1_INDEXENTRY(indexed_object, created_at);
+CREATE INDEX I_OOCKE1_INDEXENTRY_INDEXEDOBJ ON OOCKE1_INDEXENTRY(indexed_object);

@@ -672,7 +672,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»یادداشتها</_item>
+                        <_item>یادداشتها</_item>
                       </label>
                       <toolTip>
                         <_item>یادداشتهای الحاق شده</_item>
@@ -683,7 +683,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»اسناد</_item>
+                        <_item>اسناد</_item>
                       </label>
                       <toolTip>
                         <_item>اسناد الحاق شده</_item>
@@ -694,7 +694,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»رسانه</_item>
+                        <_item>رسانه</_item>
                       </label>
                       <toolTip>
                         <_item>رسانه الحاق شده</_item>
@@ -705,7 +705,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»ارزیابیها</_item>
+                        <_item>ارزیابیها</_item>
                       </label>
                       <toolTip>
                         <_item>ارزیابیهای الحاق شده</_item>

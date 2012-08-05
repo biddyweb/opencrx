@@ -87,7 +87,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Collections de propriété</_item>
+                        <_item>Collections de propriété</_item>
                       </label>
                       <toolTip>
                         <_item>Collections de propriétés</_item>
@@ -281,7 +281,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dossiers</_item>
+                        <_item>Dossiers</_item>
                       </label>
                       <toolTip>
                         <_item>Dossiers</_item>

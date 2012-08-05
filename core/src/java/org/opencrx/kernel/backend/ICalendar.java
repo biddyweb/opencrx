@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.27 2008/09/16 09:25:16 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.33 2008/12/05 00:45:17 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.27 $
+ * Revision:    $Revision: 1.33 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/09/16 09:25:16 $
+ * Date:        $Date: 2008/12/05 00:45:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -208,6 +208,14 @@ public class ICalendar {
         List<String> statusMessage
     ) throws ServiceException {
         short icalType = ((Number)activity.values("icalType").get(0)).shortValue();
+        if((icalType == ICAL_TYPE_NA) && !activity.values("lastAppliedCreator").isEmpty()) {
+            DataproviderObject_1_0 activityCreator = this.backend.retrieveObject(
+                (Path)activity.values("lastAppliedCreator").get(0)
+            );
+            if(!activityCreator.values("icalType").isEmpty()) {
+                icalType = ((Number)activityCreator.values("icalType").get(0)).shortValue();
+            }
+        }
         // DTSTART
         String dtStart = null;
         if(!activity.values("scheduledStart").isEmpty()) {
@@ -228,6 +236,11 @@ public class ICalendar {
         String dueBy = null;
         if(!activity.values("dueBy").isEmpty()) {
             dueBy = (String)activity.values("dueBy").get(0);
+        }
+        // COMPLETED
+        String completed = null;
+        if(!activity.values("actualEnd").isEmpty()) {
+            completed = (String)activity.values("actualEnd").get(0);
         }
         // LAST-MODIFIED
         String lastModified = DateFormat.getInstance().format(new Date());
@@ -343,6 +356,7 @@ public class ICalendar {
                 "DTSTART:\n" +
                 "DTEND:\n" +
                 "DUE:\n" +
+                "COMPLETED:\n" +
                 "LOCATION:\n" +
                 "DTSTAMP:\n" +
                 "SUMMARY:\n" +
@@ -437,6 +451,15 @@ public class ICalendar {
                             targetIcal.println("DUE:" + dueBy.substring(0, 15) + "Z");
                         }
                     }
+                    // COMPLETED
+                    if(completed != null) {
+                        if(completed.endsWith("T000000.000Z")) {
+                            targetIcal.println("COMPLETED;VALUE=DATE:" + completed.substring(0, 8));                            
+                        }
+                        else {
+                            targetIcal.println("COMPLETED:" + completed.substring(0, 15) + "Z");
+                        }
+                    }
                     // LAST-MODIFIED
                     if(lastModified != null) {
                         targetIcal.println("LAST-MODIFIED:" + lastModified.substring(0, 15) + "Z");
@@ -501,6 +524,8 @@ public class ICalendar {
                     isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("DUE");
                     isUpdatableTag |=
+                        tagStart.toUpperCase().startsWith("COMPLETED");
+                    isUpdatableTag |=
                         tagStart.toUpperCase().startsWith("LOCATION");
                     isUpdatableTag |= 
                         tagStart.toUpperCase().startsWith("DTSTAMP");
@@ -538,6 +563,155 @@ public class ICalendar {
         }
     }
 
+    //-----------------------------------------------------------------------
+    public static void removeProprietaryProperties(
+        Map<String,String> ical
+    ) {
+        for(Iterator<String> i = ical.keySet().iterator(); i.hasNext(); ) {
+            String prop = i.next();
+            if(prop.startsWith("X-")) {
+                i.remove();
+            }
+            else if(prop.startsWith("ATTENDEE") || prop.startsWith("ORGANIZER")) {
+                String[] components = ical.get(prop).replaceFirst(":", ";").split(";");
+                String role = null;
+                String rsvp = null;
+                String mailto = null;
+                for(String component: components) {
+                    if(component.startsWith("ROLE=")) {
+                        role = component;
+                    }
+                    else if(component.startsWith("RSVP=")) {
+                        rsvp = component;
+                    }
+                    else if(component.startsWith("MAILTO:") || component.startsWith("mailto:")) {
+                        mailto = component;
+                    }
+                }
+                String normalizedValue = "";
+                if(role != null) {
+                    normalizedValue += role;
+                }
+                if(rsvp != null) {
+                    if(normalizedValue.length() > 0) normalizedValue += ";";
+                    normalizedValue += rsvp;
+                }
+                if(mailto != null) {
+                    if(normalizedValue.length() > 0) normalizedValue += ":";
+                    normalizedValue += mailto.replace("mailto", "MAILTO");
+                }                
+                ical.put(
+                    prop,
+                    normalizedValue
+                );
+            }
+        }
+    }
+        
+    //-------------------------------------------------------------------------
+    public static Map<String,String> parseICal(
+        BufferedReader reader,
+        StringBuilder ical
+    ) throws IOException {
+        Map<String,String> icalFields = new HashMap<String,String>();
+        String line = null;
+        int nAttendees = 0;
+        String currentName = null;
+        /**
+         * Calendars with at most one event can be imported
+         * The event is mapped to an activity
+         */
+        boolean isEvent = false;
+        int nEvents = 0;
+        while((line = reader.readLine()) != null) {
+            // Skip tags: URL
+            if(
+                line.startsWith("URL") || 
+                line.startsWith("url") 
+            ) {
+                while(
+                    ((line = reader.readLine()) != null) &&
+                    line.startsWith(" ")
+                ) {}
+            }
+            if(line == null) {
+                break;
+            }
+            else {
+                ical.append(line).append("\n");
+                boolean addProperty = isEvent && (nEvents == 0);
+                if(
+                    line.startsWith("BEGIN:VEVENT") || 
+                    line.startsWith("begin:vevent") || 
+                    line.startsWith("BEGIN:VTODO") || 
+                    line.startsWith("begin:vtodo") 
+                ) {
+                    isEvent = true;
+                }
+                else if(
+                    line.startsWith("TZID") || 
+                    line.startsWith("tzid") 
+                ) {
+                    addProperty = true;
+                }
+                else if(
+                    line.startsWith("END:VEVENT") || 
+                    line.startsWith("end:vevent") || 
+                    line.startsWith("END:VTODO") || 
+                    line.startsWith("end:vtodo") 
+                ) {
+                    nEvents++;
+                    isEvent = false;
+                    addProperty = false;
+                }
+                if(addProperty) {
+                    int pos;
+                    if(line.startsWith(" ")) {
+                        if(icalFields.containsKey(currentName)) {
+                            icalFields.put(
+                                currentName,
+                                icalFields.get(currentName) + line.substring(1).replace("\\", "")
+                            );
+                        }
+                        else if((pos = line.indexOf(":")) >= 0) {
+                            currentName += line.substring(0, pos).toUpperCase();
+                            if(currentName.indexOf(";") > 0) {
+                                currentName = currentName.substring(0, currentName.indexOf(";"));
+                            }
+                            icalFields.put(
+                                currentName,
+                                line.substring(pos + 1).replace("\\", "")
+                            );                            
+                        }
+                    }
+                    else if(line.startsWith("ATTENDEE") || line.startsWith("attendee")) {
+                        currentName = "ATTENDEE[" + nAttendees + "]";
+                        icalFields.put(
+                            currentName,
+                            line.substring("ATTENDEE".length()).replace("\\", "")
+                        );
+                        nAttendees++;
+                    }
+                    else if((pos = line.indexOf(":")) >= 0) {
+                        currentName = line.substring(0, pos).toUpperCase();
+                        if(currentName.indexOf(";") > 0) {
+                            currentName = currentName.substring(0, currentName.indexOf(";"));
+                        }
+                        icalFields.put(
+                            currentName,
+                            line.substring(pos + 1).replace("\\", "")
+                        );
+                    }
+                    else {
+                        currentName = line;
+                    }
+                }
+            }                 
+        }      
+        ICalendar.removeProprietaryProperties(icalFields);
+        return icalFields;
+    }
+    
     //-------------------------------------------------------------------------
     public BasicObject importItem(
         byte[] item,
@@ -551,106 +725,15 @@ public class ICalendar {
         try {
             InputStream is = new ByteArrayInputStream(item);
             BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-            Map<String,String> fields = new HashMap<String,String>();
             StringBuilder ical = new StringBuilder();
-            String line = null;
-            int nAttendees = 0;
-            String currentName = null;
-            /**
-             * Calendars with at most one event can be imported
-             * The event is mapped to an activity
-             */
-            boolean isEvent = false;
-            int nEvents = 0;
-            while((line = reader.readLine()) != null) {
-                // Skip tags: URL
-                if(
-                    line.startsWith("URL") || 
-                    line.startsWith("url") 
-                ) {
-                    while(
-                        ((line = reader.readLine()) != null) &&
-                        line.startsWith(" ")
-                    ) {}
-                }
-                if(line == null) {
-                    break;
-                }
-                else {
-                    ical.append(line).append("\n");
-                    boolean addProperty = isEvent && (nEvents == 0);
-                    if(
-                        line.startsWith("BEGIN:VEVENT") || 
-                        line.startsWith("begin:vevent") || 
-                        line.startsWith("BEGIN:VTODO") || 
-                        line.startsWith("begin:vtodo") 
-                    ) {
-                        isEvent = true;
-                    }
-                    else if(
-                        line.startsWith("TZID") || 
-                        line.startsWith("tzid") 
-                    ) {
-                        addProperty = true;
-                    }
-                    else if(
-                        line.startsWith("END:VEVENT") || 
-                        line.startsWith("end:vevent") || 
-                        line.startsWith("END:VTODO") || 
-                        line.startsWith("end:vtodo") 
-                    ) {
-                        nEvents++;
-                        isEvent = false;
-                        addProperty = false;
-                    }
-                    if(addProperty) {
-                        int pos;
-                        if(line.startsWith(" ")) {
-                            if(fields.containsKey(currentName)) {
-                                fields.put(
-                                    currentName,
-                                    fields.get(currentName) + line.substring(1)
-                                );
-                            }
-                            else if((pos = line.indexOf(":")) >= 0) {
-                                currentName += line.substring(0, pos).toUpperCase();
-                                if(currentName.indexOf(";") > 0) {
-                                    currentName = currentName.substring(0, currentName.indexOf(";"));
-                                }
-                                fields.put(
-                                    currentName,
-                                    line.substring(pos + 1)
-                                );                            
-                            }
-                        }
-                        else if(line.startsWith("ATTENDEE") || line.startsWith("attendee")) {
-                            currentName = "ATTENDEE[" + nAttendees + "]";
-                            fields.put(
-                                currentName,
-                                line.substring("ATTENDEE".length())
-                            );
-                            nAttendees++;
-                        }
-                        else if((pos = line.indexOf(":")) >= 0) {
-                            currentName = line.substring(0, pos).toUpperCase();
-                            if(currentName.indexOf(";") > 0) {
-                                currentName = currentName.substring(0, currentName.indexOf(";"));
-                            }
-                            fields.put(
-                                currentName,
-                                line.substring(pos + 1)
-                            );
-                        }
-                        else {
-                            currentName = line;
-                        }
-                    }
-                }                 
-            }
-            AppLog.trace("ICalendar", fields);
+            Map<String,String> icalFields = parseICal(
+                reader,
+                ical
+            );
+            AppLog.trace("ICalendar", icalFields);
             return this.importItem(
                 ical.toString(),
-                fields,
+                icalFields,
                 activityIdentity,
                 accountSegmentIdentity,
                 locale,
@@ -858,6 +941,22 @@ public class ICalendar {
                 errors.add("DUE (" + s + ")");
             }
         }
+        s = fields.get("COMPLETED");
+        if((s != null) && (s.length() > 0)) {
+            try {
+                activity.clearValues("actualEnd").add(
+                    this.getUtcDateTime(
+                        s, 
+                        dateTimeFormatter
+                    )
+                );
+            } catch(Exception e) {
+                errors.add("COMPLETED (" + s + ")");
+            }
+        }
+        else {
+            activity.clearValues("actualEnd");            
+        }
         s = fields.get("PRIORITY");
         if((s != null) && (s.length() > 0)) {
             try {
@@ -946,7 +1045,7 @@ public class ICalendar {
                 Integer.MAX_VALUE,
                 Directions.ASCENDING      
             );
-            List<Path> existingParties = new ArrayList<Path>();
+            List<Object> existingParties = new ArrayList<Object>();
             for(DataproviderObject_1_0 party : parties) {
                 existingParties.addAll(
                     party.values("party")

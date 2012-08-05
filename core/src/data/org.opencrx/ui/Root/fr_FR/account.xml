@@ -58,10 +58,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Comptes (désactivé)</_item>
+                              <_item>Comptes (désactivé)</_item>
                             </label>
                             <toolTip>
-                              <_item>»Comptes (désactivé)</_item>
+                              <_item>Comptes (désactivé)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -101,10 +101,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Appartenances</_item>
+                        <_item>Relations</_item>
                       </label>
                       <toolTip>
-                        <_item>Appartenances</_item>
+                        <_item>Relations</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -113,7 +113,7 @@
                     <_object/>
                     <_content>
                       <additionalElementDefinition>
-                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                        <org.openmdx.ui1.AdditionalElementDefinition id="20" _operation="create">
                           <_object>
                             <label>
                               <_item>Appartenances</_item>
@@ -148,7 +148,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Partenaires</_item>
+                        <_item>Partenaires</_item>
                       </label>
                       <toolTip>
                         <_item>Partenaires</_item>
@@ -159,7 +159,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Contacts</_item>
+                        <_item>Contacts</_item>
                       </label>
                       <toolTip>
                         <_item>Contacts</_item>

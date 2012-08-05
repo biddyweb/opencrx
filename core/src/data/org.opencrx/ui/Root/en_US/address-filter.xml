@@ -176,7 +176,7 @@
 									<!--Tab Definitions Pane1-->
 									<!--FieldGroups in General Tab-->
 									<!--Element Definitions -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressCategoryFilterProperty:addressCategory">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressCategoryFilterProperty:category">
 										<_object>
 											<spanRow>5</spanRow>
 											<active>true</active>

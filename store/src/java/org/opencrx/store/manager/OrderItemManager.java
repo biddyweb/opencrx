@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderItemManager.java,v 1.17 2008/04/03 14:33:24 wfro Exp $
+ * Name:        $Id: OrderItemManager.java,v 1.19 2008/12/01 11:17:22 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/03 14:33:24 $
+ * Date:        $Date: 2008/12/01 11:17:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -192,6 +192,7 @@ public final class OrderItemManager
                 Transaction tx = this.context.getPersistenceManager().currentTransaction();       
                 tx.begin();
                 org.opencrx.kernel.contract1.jmi1.CreatePositionParams params = this.context.getContractPackage().createCreatePositionParams(
+                    null,
                     product.getName(), 
                     (org.opencrx.kernel.uom1.jmi1.Uom)context.getPersistenceManager().getObjectById("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + context.getProviderName() + "/segment/Root/uom/Unit"), // price uom 
                     null, // pricing date 
@@ -208,10 +209,10 @@ public final class OrderItemManager
                     (org.opencrx.kernel.contract1.jmi1.ContractPosition)this.context.getPersistenceManager().getObjectById(
                         result.getPosition().refMofId()
                     ); 
-                org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = this.getSalesTaxType();
+                org.opencrx.kernel.product1.jmi1.SalesTaxType salesTaxType = this.getSalesTaxType();                
                 if(salesTaxType != null) {
                     tx.begin();
-                    position.setSalesTaxType(salesTaxType);
+                    position.setSalesTaxType(salesTaxType);                    
                     tx.commit();
                 }
                 return this.get(

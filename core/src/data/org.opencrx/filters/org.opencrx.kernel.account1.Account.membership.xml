@@ -18,9 +18,9 @@
 			</array>
 		</void>
 		<void property="filter">
-			<array class="org.openmdx.portal.servlet.Filter" length="3">
+			<array class="org.openmdx.portal.servlet.Filter" length="4">
 
-				<!-- deep relationships -->
+				<!-- relationships, i.e. 1 hop member or membership -->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -30,7 +30,7 @@
 							<string>default.gif</string>
 						</void>
 						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="1">
+							<array class="org.openmdx.base.query.Condition" length="2">
 								<void index="0">
 									<object class="org.openmdx.base.query.IsInCondition">
 										<void property="quantor">
@@ -51,6 +51,29 @@
 										</void>
 									</object>
 								</void>
+								<void index="1">
+									<object class="org.openmdx.base.query.IsInCondition">
+										<void property="quantor">
+											<short>1</short> <!-- for all -->
+										</void>
+										<void property="feature">
+											<string>distance</string>
+										</void>
+										<void property="fulfil">
+											<boolean>true</boolean>
+										</void>
+										<void property="value">
+											<array class="java.lang.Short" length="2">
+												<void index="0">
+													<short>-1</short> <!-- inbound: < 0 / outbound: > 0 -->
+												</void>
+												<void index="1">
+													<short>1</short> <!-- inbound: < 0 / outbound: > 0 -->
+												</void>
+											</array>
+										</void>
+									</object>
+								</void>
 							</array>
 						</void>
 						<void property="groupName">
@@ -63,7 +86,7 @@
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
-							<string>accountMembership:0</string>
+							<string>accountMembership:20</string>
 						</void>
 						<void property="iconKey">
 							<string>default.gif</string>
@@ -118,8 +141,47 @@
 					</object>
 				</void>
 
-				<!-- memberships (disabled) -->
+				<!-- deep relationships -->
 				<void index="2">
+					<object class="org.openmdx.portal.servlet.Filter">
+						<void property="name">
+							<string>accountMembership:30</string>
+						</void>
+						<void property="iconKey">
+							<string>default.gif</string>
+						</void>
+						<void property="condition">
+							<array class="org.openmdx.base.query.Condition" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.query.IsInCondition">
+										<void property="quantor">
+											<short>1</short> <!-- for all -->
+										</void>
+										<void property="feature">
+											<string>disabled</string>
+										</void>
+										<void property="fulfil">
+											<boolean>false</boolean>
+										</void>
+										<void property="value">
+											<array class="java.lang.Boolean" length="1">
+												<void index="0">
+													<boolean>true</boolean>
+												</void>
+											</array>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="groupName">
+							<string>~</string>
+						</void>
+					</object>
+				</void>
+
+				<!-- memberships (disabled) -->
+				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
 							<string>accountMembership:9999</string>

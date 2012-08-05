@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Noteringar</_item>
+                        <_item>Noteringar</_item>
                       </label>
                       <toolTip>
                         <_item>Bifogade noteringar</_item>
@@ -749,10 +749,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Mappar</_item>
+                        <_item>Mappar</_item>
                       </label>
                       <toolTip>
-                        <_item>»Mappar</_item>
+                        <_item>Mappar</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dokument</_item>
+                        <_item>Dokument</_item>
                       </label>
                       <toolTip>
                         <_item>Bifogade dokument</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Media</_item>
+                        <_item>Media</_item>
                       </label>
                       <toolTip>
                         <_item>Bifogad media</_item>
@@ -782,7 +782,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Omdöme</_item>
+                        <_item>Omdöme</_item>
                       </label>
                       <toolTip>
                         <_item>Bifogade omdömen</_item>
@@ -793,10 +793,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Egenskaper</_item>
+                        <_item>Egenskaper</_item>
                       </label>
                       <toolTip>
-                        <_item>»Egenskaper</_item>
+                        <_item>Egenskaper</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -804,10 +804,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Egenskapsinmatningar</_item>
+                        <_item>Egenskapsinmatningar</_item>
                       </label>
                       <toolTip>
-                        <_item>»Egenskapsinmatningar</_item>
+                        <_item>Egenskapsinmatningar</_item>
                       </toolTip>
                     </_object>
                     <_content/>

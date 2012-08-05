@@ -1,7 +1,7 @@
 <project>
     <shortName>opencrxSdk</shortName>
     <fullName>openCRX SDK</fullName>
-    <version>2.2.1</version>
+    <version>2.3.0</version>
     <installerFilename></installerFilename>
     <readmeFile>../../image/opencrx-sdk/README</readmeFile>
     <licenseFile>../../image/opencrx-sdk/LICENSE</licenseFile>
@@ -46,7 +46,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.2.1</value>
+                                    <value>2.3.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -72,7 +72,7 @@
                                 </substitution>
                                 <substitution>
                                     <pattern>@@OPENMDX_VERSION@@</pattern>
-                                    <value>2.2.1</value>
+                                    <value>2.3.0</value>
                                 </substitution>
                             </substitutionList>
                         </substitute>
@@ -152,6 +152,17 @@
                     </distributionFileList>
                 </folder>
             </folderList>
+            <startMenuShortcutList>
+                <startMenuShortcut>
+                    <comment>Uninstall ${product_fullname}</comment>
+                    <name>Uninstall ${product_fullname}</name>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon></windowsIcon>
+                    <windowsPath>${installdir}</windowsPath>
+                </startMenuShortcut>
+            </startMenuShortcutList>
         </component>
     </componentList>
     <parameterList>

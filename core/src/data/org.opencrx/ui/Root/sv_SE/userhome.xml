@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Tidigare</_item>
+                        <_item>Tidigare</_item>
                       </label>
                       <toolTip>
                         <_item>Tidigare</_item>
@@ -58,7 +58,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Favoriter</_item>
+                        <_item>Favoriter</_item>
                       </label>
                       <toolTip>
                         <_item>Favoriter</_item>
@@ -69,7 +69,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Media</_item>
+                        <_item>Media</_item>
                       </label>
                       <toolTip>
                         <_item>Bifogad media</_item>
@@ -80,7 +80,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Objektsökare</_item>
+                        <_item>Objektsökare</_item>
                       </label>
                       <toolTip>
                         <_item>Objektsökare</_item>
@@ -91,7 +91,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Exporta profiler</_item>
+                        <_item>Exporta profiler</_item>
                       </label>
                       <toolTip>
                         <_item>Exporta profiler</_item>

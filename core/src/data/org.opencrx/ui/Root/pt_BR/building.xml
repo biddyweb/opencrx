@@ -58,7 +58,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Prédios (inativo)</_item>
+                              <_item>Prédios (inativo)</_item>
                             </label>
                             <toolTip>
                               <_item>Prédios (inativo)</_item>
@@ -72,7 +72,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingComplex" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Complexos de Prédios</_item>
+                        <_item>Complexos de Prédios</_item>
                       </label>
                       <toolTip>
                         <_item>Complexos de Prédios</_item>
@@ -105,7 +105,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Complexos de Prédios (inativo)</_item>
+                              <_item>Complexos de Prédios (inativo)</_item>
                             </label>
                             <toolTip>
                               <_item>Complexos de Prédios (inativo)</_item>
@@ -119,7 +119,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:buildingUnit" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Unidades de Prédios</_item>
+                        <_item>Unidades de Prédios</_item>
                       </label>
                       <toolTip>
                         <_item>Unidades de Prédios</_item>
@@ -152,7 +152,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Unidades de Prédios (inativo)</_item>
+                              <_item>Unidades de Prédios (inativo)</_item>
                             </label>
                             <toolTip>
                               <_item>Unidades de Prédios (inativo)</_item>
@@ -166,7 +166,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:facility" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Instalações</_item>
+                        <_item>Instalações</_item>
                       </label>
                       <toolTip>
                         <_item>Instalações</_item>
@@ -199,7 +199,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Instalações (inativo)</_item>
+                              <_item>Instalações (inativo)</_item>
                             </label>
                             <toolTip>
                               <_item>Instalações (inativo)</_item>
@@ -213,7 +213,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:Segment:inventoryItem" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Itens de inventário</_item>
+                        <_item>Itens de inventário</_item>
                       </label>
                       <toolTip>
                         <_item>Itens de inventário</_item>
@@ -246,7 +246,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Itens de inventário (inativo)</_item>
+                              <_item>Itens de inventário (inativo)</_item>
                             </label>
                             <toolTip>
                               <_item>Itens de inventário (inativo)</_item>

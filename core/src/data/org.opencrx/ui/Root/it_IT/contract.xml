@@ -80,7 +80,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:positionModification" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Modifiche Riga</_item>
+                        <_item>Modifiche Riga</_item>
                       </label>
                       <toolTip>
                         <_item>Modifiche Riga</_item>
@@ -91,7 +91,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:removedPosition" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Posizioni Rimosse</_item>
+                        <_item>Posizioni Rimosse</_item>
                       </label>
                       <toolTip>
                         <_item>Posizioni Rimosse</_item>

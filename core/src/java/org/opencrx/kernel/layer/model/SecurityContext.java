@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityContext.java,v 1.21 2008/10/07 14:37:49 wfro Exp $
+ * Name:        $Id: SecurityContext.java,v 1.22 2008/10/16 16:38:28 wfro Exp $
  * Description: SecurityContext
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/07 14:37:49 $
+ * Date:        $Date: 2008/10/16 16:38:28 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -409,8 +409,8 @@ public class SecurityContext {
 	                }	                
 	            }
                 // Add all supergroups
-	            for(Iterator<Path> i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
-	                Path groupIdentity = i.next();
+	            for(Iterator<Object> i = principal.values("isMemberOf").iterator(); i.hasNext(); ) {
+	                Path groupIdentity = (Path)i.next();
 	                allowedPrincipals.addAll(
 	                    this.getSupergroups(this.plugin.getQualifiedPrincipalName(groupIdentity))
 	                );

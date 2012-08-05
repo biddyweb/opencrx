@@ -58,7 +58,7 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
                           <_object>
                             <label>
-                              <_item>»Produkter (deaktiverade)</_item>
+                              <_item>Produkter (deaktiverade)</_item>
                             </label>
                             <toolTip>
                               <_item>Produkter (deaktiverade)</_item>

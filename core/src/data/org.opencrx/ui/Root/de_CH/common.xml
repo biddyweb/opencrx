@@ -408,7 +408,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notizen</_item>
+                        <_item>Notizen</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Notizen</_item>
@@ -422,7 +422,7 @@
 												<_item>Ordner</_item>
 											</toolTip>
 											<label>
-												<_item>»Ordner</_item>
+												<_item>Ordner</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -430,7 +430,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dokumente</_item>
+                        <_item>Dokumente</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Dokumente</_item>
@@ -441,7 +441,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dateien</_item>
+                        <_item>Dateien</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Dateien</_item>
@@ -452,7 +452,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Bewertungen</_item>
+                        <_item>Bewertungen</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Bewertungen</_item>
@@ -463,7 +463,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Eigenschaften</_item>
+                        <_item>Eigenschaften</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Eigenschaften</_item>
@@ -474,7 +474,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Eigenschaftseinträge</_item>
+                        <_item>Eigenschaftseinträge</_item>
                       </label>
                       <toolTip>
                         <_item>Eigenschaftseinträge</_item>

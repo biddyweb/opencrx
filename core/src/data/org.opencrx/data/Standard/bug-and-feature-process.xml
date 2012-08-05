@@ -192,6 +192,17 @@
 																</_object>
 																<_content/>
 															</org.opencrx.kernel.activity1.SetAssignedToAction>
+															<org.opencrx.kernel.activity1.SetActualEndAction id="ResetActualEndAction">
+																<_object>
+																	<name>Reset actual end</name>
+																	<owningGroup>
+																		<_item>xri:@openmdx:org.openmdx.security.realm1/provider/CRX/segment/Root/realm/Standard/principal/Administrators</_item>
+																	</owningGroup>
+																	<description>Reset actual end</description>
+																	<resetToNull>true</resetToNull>
+																</_object>
+																<_content/>
+															</org.opencrx.kernel.activity1.SetActualEndAction>
 														</action>
 													</_content>
 												</org.opencrx.kernel.activity1.ActivityProcessTransition>

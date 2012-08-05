@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notes</_item>
+                        <_item>Notes</_item>
                       </label>
                       <toolTip>
                         <_item>Notes associées</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dossiers</_item>
+                        <_item>Dossiers</_item>
                       </label>
                       <toolTip>
                         <_item>Dossiers</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Documents</_item>
+                        <_item>Documents</_item>
                       </label>
                       <toolTip>
                         <_item>Documents associés</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Media</_item>
+                        <_item>Media</_item>
                       </label>
                       <toolTip>
                         <_item>Media associés</_item>
@@ -782,7 +782,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notations</_item>
+                        <_item>Notations</_item>
                       </label>
                       <toolTip>
                         <_item>Notations associées</_item>
@@ -793,7 +793,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Collections de propriété</_item>
+                        <_item>Collections de propriété</_item>
                       </label>
                       <toolTip>
                         <_item>Collections de propriétés</_item>
@@ -804,7 +804,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Propriétés</_item>
+                        <_item>Propriétés</_item>
                       </label>
                       <toolTip>
                         <_item>Propriétés</_item>

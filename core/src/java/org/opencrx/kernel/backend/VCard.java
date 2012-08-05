@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.17 2008/10/14 11:27:24 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.24 2008/11/17 18:05:43 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/14 11:27:24 $
+ * Date:        $Date: 2008/11/17 18:05:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -137,6 +137,15 @@ public class VCard {
     }
     
     //-------------------------------------------------------------------------
+    protected String encodeString(
+        String s
+    ) {
+        if(s == null) return s;
+        s = s.replace(";", "\\;");
+        return s;
+    }
+    
+    //-------------------------------------------------------------------------
     /**
      * Update sourceVcard with account values and return merged vcard. 
      */
@@ -153,9 +162,13 @@ public class VCard {
                 String lastName = (String)account.values("lastName").get(0);
                 String firstName = account.values("firstName").isEmpty() ? "" : (String)account.values("firstName").get(0);
                 String middleName = account.values("middleName").isEmpty() ? "" : (String)account.values("middleName").get(0);
-                String salutation = account.values("salutation").isEmpty() ? "" : (String)account.values("salutation").get(0);
+                String salutation = account.values("salutation").isEmpty() ?
+                    account.values("salutationCode").isEmpty() || ((Number)account.values("salutationCode").get(0)).intValue() == 0 ?
+                        null :
+                        (String)this.backend.getCodes().getLongText("org:opencrx:kernel:account1:Contact:salutationCode", (short)0, true).get(Short.valueOf(((Number)account.values("salutationCode").get(0)).shortValue())) :
+                    (String)account.values("salutation").get(0);
                 String suffix = account.values("suffix").isEmpty() ? "" : (String)account.values("suffix").get(0);
-                n = lastName + ";" + firstName + ";"+ middleName + ";" + salutation + ";" + suffix;
+                n = lastName + ";" + firstName + ";"+ middleName + ";" + (salutation == null ? "" : salutation) + ";" + suffix;
             }
         }
         else {
@@ -182,7 +195,7 @@ public class VCard {
         // ORG
         String org = null;
         if(isContact) {
-            if(!account.values("jobTitle").isEmpty()) {
+            if(!account.values("organization").isEmpty()) {
                 org = (String)account.values("organization").get(0);
             }
         }
@@ -213,54 +226,54 @@ public class VCard {
             }
         }
         // TEL;WORK;VOICE
-        String telWorkVoice = addresses[Accounts.PHONE_BUSINESS] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.PHONE_BUSINESS].refGetPath()).values("phoneNumberFull").get(0);
+        String telWorkVoice = addresses[Accounts.PHONE_BUSINESS] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.PHONE_BUSINESS].refGetPath()).values("phoneNumberFull").get(0);
         // TEL;HOME;VOICE
-        String telHomeVoice = addresses[Accounts.PHONE_HOME] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.PHONE_HOME].refGetPath()).values("phoneNumberFull").get(0);
+        String telHomeVoice = addresses[Accounts.PHONE_HOME] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.PHONE_HOME].refGetPath()).values("phoneNumberFull").get(0);
         // TEL;CELL;VOICE
-        String telCellVoice = addresses[Accounts.MOBILE] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.MOBILE].refGetPath()).values("phoneNumberFull").get(0);
+        String telCellVoice = addresses[Accounts.MOBILE] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.MOBILE].refGetPath()).values("phoneNumberFull").get(0);
         // TEL;FAX
-        String telWorkFax = addresses[Accounts.FAX_BUSINESS] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.FAX_BUSINESS].refGetPath()).values("phoneNumberFull").get(0);
+        String telWorkFax = addresses[Accounts.FAX_BUSINESS] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.FAX_BUSINESS].refGetPath()).values("phoneNumberFull").get(0);
         // TEL;HOME;FAX
-        String telHomeFax = addresses[Accounts.FAX_HOME] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.FAX_HOME].refGetPath()).values("phoneNumberFull").get(0);
+        String telHomeFax = addresses[Accounts.FAX_HOME] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.FAX_HOME].refGetPath()).values("phoneNumberFull").get(0);
         // ADR;WORK
         String adrWork = "";
         if(addresses[Accounts.POSTAL_BUSINESS] != null) {
             DataproviderObject_1_0 postalAddress = this.backend.retrieveObject(addresses[Accounts.POSTAL_BUSINESS].refGetPath());
             StringBuilder adr = new StringBuilder();
             // postalAddressLine
-            List<String> addressLines = postalAddress.values("postalAddressLine");
+            List<Object> addressLines = postalAddress.values("postalAddressLine");
             for(int j = 0; j < addressLines.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(addressLines.get(j));
+                adr.append(this.encodeString((String)addressLines.get(j)));
             }
             // postalStreet
-            List<String> postalStreet = postalAddress.values("postalStreet");
+            List<Object> postalStreet = postalAddress.values("postalStreet");
             for(int j = 0; j < postalStreet.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(postalStreet.get(j));
+                adr.append(this.encodeString((String)postalStreet.get(j)));
             }
             // postalCity
             adr.append(
-                postalAddress.getValues("postalCity") == null
-                    ? ";"
-                    : ";" + postalAddress.getValues("postalCity").get(0)
+                postalAddress.getValues("postalCity") == null ? 
+                    ";" : 
+                    ";" + this.encodeString((String)postalAddress.getValues("postalCity").get(0))
             );
             // postalCode
             adr.append(";");
             adr.append(
-                postalAddress.getValues("postalCode") == null
-                    ? ";"
-                    : ";" + postalAddress.getValues("postalCode").get(0)
+                postalAddress.getValues("postalCode") == null ? 
+                    ";" : 
+                    ";" + this.encodeString((String)postalAddress.getValues("postalCode").get(0))
             );
             // postalCountry
             Map<Short,String> postalCountries = this.backend.getCodes().getLongText(
@@ -280,29 +293,29 @@ public class VCard {
             DataproviderObject_1_0 postalAddress = this.backend.retrieveObject(addresses[Accounts.POSTAL_HOME].refGetPath());
             StringBuilder adr = new StringBuilder();
             // postalAddressLine
-            List<String> addressLines = postalAddress.values("postalAddressLine");
+            List<Object> addressLines = postalAddress.values("postalAddressLine");
             for(int j = 0; j < addressLines.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(addressLines.get(j));
+                adr.append(this.encodeString((String)addressLines.get(j)));
             }
             // postalStreet
-            List<String> postalStreet = postalAddress.values("postalStreet");
+            List<Object> postalStreet = postalAddress.values("postalStreet");
             for(int j = 0; j < postalStreet.size(); j++) {
                 adr.append(adr.length() == 0 ? "" : "=0D=0A");
-                adr.append(postalStreet.get(j));
+                adr.append(this.encodeString((String)postalStreet.get(j)));
             }
             // postalCity
             adr.append(
-                postalAddress.getValues("postalCity") == null
-                    ? ";"
-                    : ";" + postalAddress.getValues("postalCity").get(0)
+                postalAddress.getValues("postalCity") == null ? 
+                    ";" : 
+                    ";" + this.encodeString((String)postalAddress.getValues("postalCity").get(0))
             );
             // postalCode
             adr.append(";");
             adr.append(
-                postalAddress.getValues("postalCode") == null
-                    ? ";"
-                    : ";" + postalAddress.getValues("postalCode").get(0)
+                postalAddress.getValues("postalCode") == null ? 
+                    ";" : 
+                    ";" + this.encodeString((String)postalAddress.getValues("postalCode").get(0))
             );
             // postalCountry
             Map<Short,String> postalCountries = this.backend.getCodes().getLongText(
@@ -321,17 +334,17 @@ public class VCard {
             ? ""
             : (String)this.backend.retrieveObject(addresses[Accounts.WEB_BUSINESS].refGetPath()).values("webUrl").get(0);
         // URL;HOME
-        String urlHome = addresses[Accounts.WEB_HOME] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.WEB_HOME].refGetPath()).values("webUrl").get(0);
+        String urlHome = addresses[Accounts.WEB_HOME] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.WEB_HOME].refGetPath()).values("webUrl").get(0);
         // EMAIL;PREF;INTERNET
-        String emailWork = addresses[Accounts.MAIL_BUSINESS] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.MAIL_BUSINESS].refGetPath()).values("emailAddress").get(0);
+        String emailWork = addresses[Accounts.MAIL_BUSINESS] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.MAIL_BUSINESS].refGetPath()).values("emailAddress").get(0);
         // EMAIL;INTERNET
-        String emailHome = addresses[Accounts.MAIL_HOME] == null
-            ? ""
-            : (String)this.backend.retrieveObject(addresses[Accounts.MAIL_HOME].refGetPath()).values("emailAddress").get(0);        
+        String emailHome = addresses[Accounts.MAIL_HOME] == null ? 
+            "" : 
+            (String)this.backend.retrieveObject(addresses[Accounts.MAIL_HOME].refGetPath()).values("emailAddress").get(0);        
         // return if data is missing
         if(!statusMessage.isEmpty()) {
             return null;
@@ -525,12 +538,17 @@ public class VCard {
     ) throws ServiceException {
         if((newValue != null) && (newValue.length() > 0)) {
             String[] tokens = new String[]{"", "", "", "", "", "", ""};
-            StringTokenizer tokenizer = new StringTokenizer(newValue, ";", true);
+            // Unescape semicolons
+            // Replace semicolons by tabs
+            newValue = newValue.replace("\\;", "\u0001");
+            newValue = newValue.replace(";", "\t");
+            newValue = newValue.replace("\u0001", ";");
+            StringTokenizer tokenizer = new StringTokenizer(newValue, "\t", true);
             int ii = 0;
             boolean hasTokens = false;
             while(tokenizer.hasMoreTokens() && (ii < tokens.length)) {
                 String t = tokenizer.nextToken();
-                if(";".equals(t)) {
+                if("\t".equals(t)) {
                     ii++;
                 }
                 else {
@@ -622,6 +640,35 @@ public class VCard {
     }
 
     //-------------------------------------------------------------------------
+    public static Map<String,String> parseVCard(
+        BufferedReader reader
+    ) throws IOException {
+        Map<String,String> vcard = new HashMap<String,String>();
+        String line = null;
+        boolean lineCont = false;
+        String currentName = null;
+        while((line = reader.readLine()) != null) {
+            int pos;
+            if(lineCont) {
+                vcard.put(
+                    currentName,
+                    vcard.get(currentName) + line
+                );
+                lineCont = false;
+            }
+            else if((pos = line.indexOf(":")) >= 0) {
+                currentName = line.substring(0, pos).toUpperCase();
+                lineCont = (currentName.indexOf("ENCODING=QUOTED-PRINTABLE") >= 0) && line.endsWith("=");
+                vcard.put(
+                    currentName,
+                    line.substring(pos + 1, lineCont ? line.length() - 1 : line.length())
+                );
+            }
+        }    
+        return vcard;
+    }
+    
+    //-------------------------------------------------------------------------
     public BasicObject importItem(
         byte[] item,
         Path accountIdentity,
@@ -630,33 +677,11 @@ public class VCard {
         List<String> report
     ) throws ServiceException {
         try {
-            // Parse vcard
             InputStream is = new ByteArrayInputStream(item);
             BufferedReader reader = new BufferedReader(
                 new InputStreamReader(is, "UTF-8")
             );
-            Map<String,String> vcard = new HashMap<String,String>();
-            String line = null;
-            boolean lineCont = false;
-            String currentName = null;
-            while((line = reader.readLine()) != null) {
-                int pos;
-                if(lineCont) {
-                    vcard.put(
-                        currentName,
-                        vcard.get(currentName) + line
-                    );
-                    lineCont = false;
-                }
-                else if((pos = line.indexOf(":")) >= 0) {
-                    currentName = line.substring(0, pos).toUpperCase();
-                    lineCont = (currentName.indexOf("ENCODING=QUOTED-PRINTABLE") >= 0) && line.endsWith("=");
-                    vcard.put(
-                        currentName,
-                        line.substring(pos + 1, lineCont ? line.length() - 1 : line.length())
-                    );
-                }
-            }
+            Map<String,String> vcard = parseVCard(reader);
             AppLog.trace("parsed vcard", vcard);
             return this.importItem(
                 vcard,

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractPropertyDataBinding.java,v 1.5 2008/10/01 00:28:30 wfro Exp $
+ * Name:        $Id: AbstractPropertyDataBinding.java,v 1.7 2008/11/21 00:34:46 wfro Exp $
  * Description: AbstractPropertyDataBinding
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:30 $
+ * Date:        $Date: 2008/11/21 00:34:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,17 +62,83 @@ import javax.jmi.reflect.RefObject;
 import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.opencrx.kernel.generic.jmi1.PropertySet;
+import org.opencrx.kernel.product1.jmi1.ProductConfiguration;
+import org.opencrx.kernel.product1.jmi1.ProductConfigurationSet;
+import org.opencrx.kernel.product1.jmi1.ProductConfigurationType;
+import org.opencrx.kernel.product1.jmi1.ProductConfigurationTypeSet;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
+import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.portal.servlet.DataBinding_1_0;
 
 public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
 
     //-----------------------------------------------------------------------
-    public Property findProperty(
+    public enum PropertySetHolderType {
+        CrxObject,
+        ProductConfigurationTypeSet,
+        ProductConfigurationSet
+    }
+
+    //-----------------------------------------------------------------------
+    public AbstractPropertyDataBinding(
+        PropertySetHolderType type
+    ) {
+        this.type = type;
+    }
+    
+    //-----------------------------------------------------------------------
+    protected Property findProperty(
         RefObject object,
         String qualifiedFeatureName
     ) {
+        // ProductConfigurationTypeSet
         if(
+            (this.type == PropertySetHolderType.ProductConfigurationTypeSet) &&
+            (object instanceof ProductConfigurationTypeSet) &&
+            (qualifiedFeatureName.indexOf("!") > 0)
+        ) {
+            ProductConfigurationTypeSet productConfigurationTypeSet = (ProductConfigurationTypeSet)object;
+            String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
+            String propertySetName = featureName.substring(0, featureName.indexOf("!"));
+            String propertyName = featureName.substring(featureName.indexOf("!") + 1);
+            Collection<ProductConfigurationType> configurationTypes = productConfigurationTypeSet.getConfigurationType();
+            for(ProductConfigurationType configurationType : configurationTypes) {
+                if(configurationType.getName().equals(propertySetName)) {
+                    Collection<Property> properties = configurationType.getProperty();
+                    for(Property p: properties) {
+                        if(p.getName().equals(propertyName)) {
+                            return p;
+                        }
+                    }
+                }
+            }
+        }  
+        // ProductConfigurationTypeSet
+        else if(
+            (this.type == PropertySetHolderType.ProductConfigurationSet) &&
+            (object instanceof ProductConfigurationSet) &&
+            (qualifiedFeatureName.indexOf("!") > 0)
+        ) {
+            ProductConfigurationSet productConfigurationSet = (ProductConfigurationSet)object;
+            String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
+            String propertySetName = featureName.substring(0, featureName.indexOf("!"));
+            String propertyName = featureName.substring(featureName.indexOf("!") + 1);
+            Collection<ProductConfiguration> configurations = productConfigurationSet.getConfiguration();
+            for(ProductConfiguration configuration : configurations) {
+                if(configuration.getName().equals(propertySetName)) {
+                    Collection<Property> properties = configuration.getProperty();
+                    for(Property p: properties) {
+                        if(p.getName().equals(propertyName)) {
+                            return p;
+                        }
+                    }
+                }
+            }
+        }  
+        // CrxObject
+        else if(
+            (this.type == PropertySetHolderType.CrxObject) &&
             (object instanceof CrxObject) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -96,12 +162,92 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
     }
 
     //-----------------------------------------------------------------------
-    public void createProperty(
+    protected void createProperty(
         RefObject object,
         String qualifiedFeatureName,
         Property property
     ) {
+        // ProductConfigurationTypeSet
         if(
+            (this.type == PropertySetHolderType.ProductConfigurationTypeSet) &&
+            (object instanceof ProductConfigurationTypeSet) &&
+            (qualifiedFeatureName.indexOf("!") > 0)
+        ) {
+            ProductConfigurationTypeSet productConfigurationTypeSet = (ProductConfigurationTypeSet)object;
+            String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
+            String propertySetName = featureName.substring(0, featureName.indexOf("!"));
+            String propertyName = featureName.substring(featureName.indexOf("!") + 1);
+            // Find / Create property set
+            ProductConfigurationType configurationType = null;
+            Collection<ProductConfigurationType> configurationTypes = productConfigurationTypeSet.getConfigurationType();
+            for(ProductConfigurationType ct : configurationTypes) {
+                if(ct.getName().equals(propertySetName)) {
+                    configurationType = ct;
+                    break;
+                }
+            }
+            if(configurationType == null) {
+                org.opencrx.kernel.product1.jmi1.Product1Package productPkg = 
+                    (org.opencrx.kernel.product1.jmi1.Product1Package)object.refOutermostPackage().refPackage(
+                        org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
+                    );                
+                configurationType = productPkg.getProductConfigurationType().createProductConfigurationType();
+                configurationType.setName(propertySetName);
+                productConfigurationTypeSet.addConfigurationType(
+                    UUIDConversion.toUID(uuids.next()),
+                    configurationType
+                );
+            }
+            // Add property to property set
+            property.setName(propertyName);
+            configurationType.addProperty(
+                false,
+                UUIDConversion.toUID(uuids.next()),
+                property
+            );
+        }          
+        // ProductConfigurationTypeSet
+        else if(
+            (this.type == PropertySetHolderType.ProductConfigurationSet) &&
+            (object instanceof ProductConfigurationSet) &&
+            (qualifiedFeatureName.indexOf("!") > 0)
+        ) {
+            ProductConfigurationSet productConfigurationSet = (ProductConfigurationSet)object;
+            String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
+            String propertySetName = featureName.substring(0, featureName.indexOf("!"));
+            String propertyName = featureName.substring(featureName.indexOf("!") + 1);
+            // Find / Create property set
+            ProductConfiguration configuration = null;
+            Collection<ProductConfiguration> configurations = productConfigurationSet.getConfiguration();
+            for(ProductConfiguration c : configurations) {
+                if(c.getName().equals(propertySetName)) {
+                    configuration = c;
+                    break;
+                }
+            }
+            if(configuration == null) {
+                org.opencrx.kernel.product1.jmi1.Product1Package productPkg = 
+                    (org.opencrx.kernel.product1.jmi1.Product1Package)object.refOutermostPackage().refPackage(
+                        org.opencrx.kernel.product1.jmi1.Product1Package.class.getName()
+                    );                
+                configuration = productPkg.getProductConfiguration().createProductConfiguration();
+                configuration.setName(propertySetName);
+                productConfigurationSet.addConfiguration(
+                    UUIDConversion.toUID(uuids.next()),
+                    configuration
+                );
+            }
+            // Add property to property set
+            property.setName(propertyName);
+            configuration.addProperty(
+                false,
+                UUIDConversion.toUID(uuids.next()),
+                property
+            );
+        }          
+        // CrxObject
+        else if(
+            (this.type == PropertySetHolderType.CrxObject) &&
             (object instanceof CrxObject) &&
             (qualifiedFeatureName.indexOf("!") > 0)
         ) {
@@ -127,7 +273,7 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
                 propertySet.setName(propertySetName);
                 crxObject.addPropertySet(
                     false,
-                    UUIDs.getGenerator().next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     propertySet
                 );
             }
@@ -135,10 +281,15 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
             property.setName(propertyName);
             propertySet.addProperty(
                 false,
-                UUIDs.getGenerator().next().toString(),
+                UUIDConversion.toUID(uuids.next()),
                 property
             );
         }          
     }
     
+    //-----------------------------------------------------------------------
+    // Members
+    //-----------------------------------------------------------------------
+    private static final UUIDGenerator uuids = UUIDs.getGenerator();
+    private final PropertySetHolderType type;
 }

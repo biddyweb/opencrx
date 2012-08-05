@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Hesap Süzgeçleri</_item>
+                        <_item>Hesap Süzgeçleri</_item>
                       </label>
                       <toolTip>
                         <_item>Hesap Süzgeçleri</_item>

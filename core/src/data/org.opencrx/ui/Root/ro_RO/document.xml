@@ -87,7 +87,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Setări proprietăţi</_item>
+                        <_item>Setări proprietăţi</_item>
                       </label>
                       <toolTip>
                         <_item>Setări proprietăţi</_item>
@@ -281,7 +281,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Fişiere</_item>
+                        <_item>Fişiere</_item>
                       </label>
                       <toolTip>
                         <_item>Fişiere</_item>
@@ -303,7 +303,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Setări proprietăţi</_item>
+                        <_item>Setări proprietăţi</_item>
                       </label>
                       <toolTip>
                         <_item>Setări proprietăţi</_item>
@@ -314,7 +314,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Legături</_item>
+                        <_item>Legături</_item>
                       </label>
                       <toolTip>
                         <_item>Legături</_item>
@@ -325,7 +325,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Blocări</_item>
+                        <_item>Blocări</_item>
                       </label>
                       <toolTip>
                         <_item>Blocări</_item>

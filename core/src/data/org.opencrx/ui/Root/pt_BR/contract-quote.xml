@@ -36,7 +36,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:salesOrder" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Pedidos de Vendas Relacionados</_item>
+                        <_item>Pedidos de Vendas Relacionados</_item>
                       </label>
                       <toolTip>
                         <_item>Pedidos de Vendas Relacionados</_item>

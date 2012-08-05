@@ -12,4 +12,10 @@
        factory="org.openmdx.kernel.naming.tomcat.LinkingObjectFactory"
        linkName="org/opencrx/core/CRX/Gateway"
    />
+<!--
+	<Valve className="org.apache.catalina.valves.AccessLogValve"
+		directory="logs" prefix="combined_access_log."
+		suffix=".txt" pattern="combined" resolveHosts="false"
+	/>
+-->   
 </Context>

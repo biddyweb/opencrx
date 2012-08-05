@@ -98,53 +98,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Priame/nepriame členstvo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Priame/nepriame členstvo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
-                    <_object/>
-                    <_content>
-                      <additionalElementDefinition>
-                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>Priame členstvo</_item>
-                            </label>
-                            <toolTip>
-                              <_item>Priame členstvo</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AdditionalElementDefinition>
-                      </additionalElementDefinition>
-                    </_content>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
-                    <_object/>
-                    <_content>
-                      <additionalElementDefinition>
-                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>Priame členstvo (deaktivované)</_item>
-                            </label>
-                            <toolTip>
-                              <_item>Priame členstvo (deaktivované)</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AdditionalElementDefinition>
-                      </additionalElementDefinition>
-                    </_content>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>

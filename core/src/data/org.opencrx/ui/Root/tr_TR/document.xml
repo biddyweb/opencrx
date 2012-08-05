@@ -157,7 +157,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Öznitelik Kümeleri</_item>
+                        <_item>Öznitelik Kümeleri</_item>
                       </label>
                       <toolTip>
                         <_item>Öznitelik Kümeleri</_item>
@@ -168,7 +168,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Bağlar</_item>
+                        <_item>Bağlar</_item>
                       </label>
                       <toolTip>
                         <_item>Bağlar</_item>
@@ -179,7 +179,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Kilitler</_item>
+                        <_item>Kilitler</_item>
                       </label>
                       <toolTip>
                         <_item>Kilitler</_item>

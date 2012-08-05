@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.13 2008/10/06 21:08:48 wfro Exp $
+ * Name:        $Id: Addresses.java,v 1.14 2008/10/16 16:37:48 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.13 $
+ * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 21:08:48 $
+ * Date:        $Date: 2008/10/16 16:37:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -174,7 +174,7 @@ public class Addresses {
                     // dateParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(
@@ -192,7 +192,7 @@ public class Addresses {
                     // dateTimeParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(
@@ -237,8 +237,8 @@ public class Addresses {
                     }
                     else if("org:opencrx:kernel:account1:AddressTypeFilterProperty".equals(filterPropertyClass)) {
                         List<String> addressTypes = new ArrayList<String>();
-                        for(Iterator<Number> j = filterProperty.values("addressType").iterator(); j.hasNext(); ) {
-                            int addressType = j.next().intValue();
+                        for(Iterator<Object> j = filterProperty.values("addressType").iterator(); j.hasNext(); ) {
+                            int addressType = ((Number)j.next()).intValue();
                             addressTypes.add(
                                 Addresses.ADDRESS_TYPES[addressType]
                             );

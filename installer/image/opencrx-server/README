@@ -1,18 +1,18 @@
 Welcome to openCRX!
 -------------------
 
-This installer has created an openCRX instance running on 
-Tomcat 6 (extended by the openMDX Lightweight EJB Container) 
+This installer has created an openCRX instance running on
+Tomcat 6 (extended by the openMDX Lightweight EJB Container)
 and HSQLDB 1. The installation comes with a preconfigured
-database. It contains data which is created when working 
-through the openCRX quick start guide (see 
-http://www.opencrx.org/opencrx/2.2/QuickStart/openCRX_quickstart.html).
+database. It contains data which is created when working
+through the openCRX quick start guide (see
+http://www.opencrx.org/opencrx/2.3/QuickStart/openCRX_quickstart.html).
 
 You can start and stop openCRX using the corresponding shortcuts
-on the desktop by the installer. After starting openCRX you can 
+on the desktop by the installer. After starting openCRX you can
 login using a browser. Valid URLs are:
 
-* openCRX/Core: http://localhost:<tomcat_port>/opencrx-core-CRX 
+* openCRX/Core: http://localhost:<tomcat_port>/opencrx-core-CRX
 * openCRX/Store: http://localhost:<tomcat_port>/opencrx-store-CRX/Store.jsp
 
 The following accounts are preconfigured:
@@ -38,24 +38,24 @@ Here is how to start the workflow controller:
 * Login as admin-Root
 * Select Administration then the menu entry
   Wizards > openCRX Workflow Controller.
-* This activates and opens the WorkflowController servlet. 
+* This activates and opens the WorkflowController servlet.
   'Turn on' / 'Turn off' allows to activate and deactivate
   openCRX background services.
 
 Configure your own database
 ---------------------------
-If you want to use another database system than HSQLDB or if you 
+If you want to use another database system than HSQLDB or if you
 want to use another existing database instance you can configure
 the database connector as follows:
 
-* Copy the connector which matches your database from the 
-  directory ${installdir}/connector to 
-  ${installdir}/apache-tomcat-6/deployment-units. 
-* Remove the unused connector directory in 
+* Copy the connector which matches your database from the
+  directory ${installdir}/connector to
+  ${installdir}/apache-tomcat-6/deployment-units.
+* Remove the unused connector directory in
   ${installdir}/apache-tomcat-6/deployment-units.
 * Adapt ra.xml which is located in the connector directory so
   that it matches your database instance.
-* Copy the matching JDBC driver to 
+* Copy the matching JDBC driver to
   ${installdir}/apache-tomcat-6/lib.
 
 ----

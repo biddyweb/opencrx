@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AlertImpl.java,v 1.5 2008/04/05 22:53:39 wfro Exp $
+ * Name:        $Id: AlertImpl.java,v 1.8 2008/11/05 17:32:17 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/04/05 22:53:39 $
+ * Date:        $Date: 2008/11/05 17:32:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,11 +55,6 @@
  */
 package org.opencrx.kernel.plugin.application.home1;
 
-import org.opencrx.kernel.backend.Backend;
-import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_3;
-import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.jmi1.BasePackage;
 
 public class AlertImpl {
 
@@ -72,40 +67,6 @@ public class AlertImpl {
         this.next = next;
     }
 
-    //-----------------------------------------------------------------------
-    public Backend getBackend(
-    ) {
-        return (Backend)((RefPackage_1_3)this.current.refOutermostPackage()).refUserContext();
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.openmdx.base.jmi1.Void markAsAccepted(
-    ) {
-        try {        
-            this.getBackend().getUserHomes().markAsAccepted(
-                this.current.refGetPath()
-            );
-            return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }                        
-    }
-    
-    //-----------------------------------------------------------------------
-    public org.openmdx.base.jmi1.Void markAsRead(
-    ) {
-        try {        
-            this.getBackend().getUserHomes().markAsRead(
-                this.current.refGetPath()
-            );
-            return ((BasePackage)this.current.refOutermostPackage().refPackage(BasePackage.class.getName())).createVoid();
-        }
-        catch(ServiceException e) {
-            throw new JmiServiceException(e);
-        }                        
-    }
-    
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

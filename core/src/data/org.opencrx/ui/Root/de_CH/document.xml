@@ -72,7 +72,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Eigenschaften</_item>
+                        <_item>Eigenschaften</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Eigenschaften</_item>
@@ -278,7 +278,7 @@
 												<_item>Ordner</_item>
 											</toolTip>
 											<label>
-												<_item>»Ordner</_item>
+												<_item>Ordner</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -286,7 +286,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Eigenschaften</_item>
+                        <_item>Eigenschaften</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Eigenschaften</_item>
@@ -311,7 +311,7 @@
 												<_item>Verweise</_item>
 											</toolTip>
 											<label>
-												<_item>»Verweise</_item>
+												<_item>Verweise</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -322,7 +322,7 @@
 												<_item>Blockierungen</_item>
 											</toolTip>
 											<label>
-												<_item>»Blockierungen</_item>
+												<_item>Blockierungen</_item>
 											</label>
 										</_object>
 										<_content/>

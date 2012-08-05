@@ -26,90 +26,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard Account_Quick.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:accountQuick">
-										<_object>
-											<toolTip>
-												<_item>Neue Kontaktperson oder neue juristische Person erstellen</_item>
-											</toolTip>
-											<label>
-												<_item>Neue Kontaktperson oder neue juristische Person erstellen</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
 <!-- Edit -->
-                <!-- Wizard AddressBook.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:addressBook">
-										<_object>
-											<toolTip>
-												<_item>Kontaktperson bearbeiten</_item>
-											</toolTip>
-											<label>
-												<_item>Kontaktperson bearbeiten</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:addressBook">
-										<_object>
-											<toolTip>
-												<_item>Juristische Person bearbeiten</_item>
-											</toolTip>
-											<label>
-												<_item>Juristische Person bearbeiten</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:addressBook">
-										<_object>
-											<toolTip>
-												<_item>Gruppe bearbeiten</_item>
-											</toolTip>
-											<label>
-												<_item>Gruppe bearbeiten</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:addressBook">
-										<_object>
-											<toolTip>
-												<_item>Allgemeinen Kontakt bearbeiten</_item>
-											</toolTip>
-											<label>
-												<_item>Allgemeinen Kontakt bearbeiten</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
-                <!-- Wizard Account_Quick.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:accountQuick">
-										<_object>
-											<toolTip>
-												<_item>Kontaktperson bearbeiten (Quick)</_item>
-											</toolTip>
-											<label>
-												<_item>Kontaktperson bearbeiten (Quick)</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:accountQuick">
-										<_object>
-											<toolTip>
-												<_item>Juristische Person bearbeiten (Quick)</_item>
-											</toolTip>
-											<label>
-												<_item>Juristische Person bearbeiten (Quick)</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
                 <!-- Wizard UserSettings.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings">
 										<_object>
@@ -124,18 +41,6 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 <!-- View -->
-                <!-- Wizard AddressBook.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:addressBook">
-										<_object>
-											<toolTip>
-												<_item>Adressbuch</_item>
-											</toolTip>
-											<label>
-												<_item>Adressbuch</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 
 <!-- Tools -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge">
@@ -144,7 +49,7 @@
 												<_item>Serienbrief --&gt; RTF Dokument</_item>
 											</toolTip>
 											<label>
-												<_item>Serienbrief --&gt; RTF Dokument</_item>
+												<_item>Serienbrief (postalische Hauptadresse der Mitglieder) --&gt; RTF Dokument</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -155,7 +60,7 @@
 												<_item>Serienbrief --&gt; RTF Dokument</_item>
 											</toolTip>
 											<label>
-												<_item>Serienbrief --&gt; RTF Dokument</_item>
+												<_item>Serienbrief (postalische Hauptadresse) --&gt; RTF Dokument</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -166,7 +71,7 @@
 												<_item>Serienbrief --&gt; RTF Dokument</_item>
 											</toolTip>
 											<label>
-												<_item>Serienbrief --&gt; RTF Dokument</_item>
+												<_item>Serienbrief (postalische Hauptadresse) --&gt; RTF Dokument</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -177,7 +82,51 @@
 												<_item>Serienbrief --&gt; RTF Dokument</_item>
 											</toolTip>
 											<label>
+												<_item>Serienbrief (postalische Hauptadresse) --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
 												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief (postalische Hauptadresse der gefilterten Kontakte) --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressFilterGlobal:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief (postalische Adressen) --&gt; RTF Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:Pane:Op:Tab:mailMerge">
+										<_object>
+											<toolTip>
+												<_item>Serienbrief --&gt; RTF Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Serienbrief (postalische Adressen) --&gt; RTF Dokument</_item>
 											</label>
 										</_object>
 										<_content/>

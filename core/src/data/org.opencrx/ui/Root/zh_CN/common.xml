@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»注释</_item>
+                        <_item>注释</_item>
                       </label>
                       <toolTip>
                         <_item>附加注释</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»文档</_item>
+                        <_item>文档</_item>
                       </label>
                       <toolTip>
                         <_item>附加文档</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»多媒体</_item>
+                        <_item>多媒体</_item>
                       </label>
                       <toolTip>
                         <_item>附加多媒体</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»比率</_item>
+                        <_item>比率</_item>
                       </label>
                       <toolTip>
                         <_item>附加比率</_item>
@@ -782,7 +782,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>»属性集</_item>
+                        <_item>属性集</_item>
                       </label>
                       <toolTip>
                         <_item>属性集</_item>
@@ -793,7 +793,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:propertySetEntry" _operation="create">
                     <_object>
                       <label>
-                        <_item>»属性集条目</_item>
+                        <_item>属性集条目</_item>
                       </label>
                       <toolTip>
                         <_item>属性集条目</_item>

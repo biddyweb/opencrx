@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.60 2008/10/14 15:29:56 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.63 2008/12/16 23:59:46 wfro Exp $
  * = Description: openCRX/Groupware build.xml
- * = Revision:    $Revision: 1.60 $
- * = Date:        $Date: 2008/10/14 15:29:56 $
+ * = Revision:    $Revision: 1.63 $
+ * = Date:        $Date: 2008/12/16 23:59:46 $
  * = Copyright:   (c) 2003-2007 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.5"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.2.1"/>
+	<property name="openmdx.version" value="2.3.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
 	<import file="../../openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
@@ -86,7 +86,6 @@
 		<path refid="java2.extension.lib"/>		
 		<pathelement location="../${build.target.platform}/core/lib/opencrx-kernel.jar"/>
 		<pathelement location="../${build.target.platform}/core/lib/opencrx-security.jar"/>
-		<pathelement location="../fortuna/${build.target.platform}/ical4j/lib/ical4j.jar"/>
 		<pathelement location="../apache/${build.target.platform}/lucene/lib/lucene-core.jar"/>
 		<pathelement location="../apache/${build.target.platform}/lucene/lib/lucene-misc.jar"/>
 		<pathelement location="../apache/${build.target.platform}/log4j/lib/log4j.jar"/>
@@ -209,7 +208,6 @@
 				<include name="source-archive/groupware/**"/>
 				<include name="${build.target.platform}/groupware/src/opencrx-*"/>
 				<include name="${build.target.platform}/groupware/lib/opencrx-*"/>
-				<include name="fortuna/${build.target.platform}/ical4j/**"/>
 				<include name="apache/${build.target.platform}/lucene/**"/>
 				<include name="apache/${build.target.platform}/lang/**"/>
 				<include name="apache/${build.target.platform}/codec/**"/>
@@ -368,9 +366,6 @@
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/tuckey/${build.target.platform}/filters/lib" prefix="APP-INF/lib">
 				<include name="urlrewrite.jar"/>
-			</zipfileset>
-			<zipfileset dir="../fortuna/${build.target.platform}/ical4j/lib" prefix="APP-INF/lib">
-				<include name="ical4j.jar"/>
 			</zipfileset>
 			<zipfileset dir="../apache/${build.target.platform}/lang/lib" prefix="APP-INF/lib">
 				<include name="commons-lang.jar"/>

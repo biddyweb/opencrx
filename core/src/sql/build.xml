@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.26 2008/10/13 09:05:10 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.27 2008/12/01 01:43:35 wfro Exp $
  * = Description: openCRX/sql build.xml
- * = Revision:    $Revision: 1.26 $
- * = Date:        $Date: 2008/10/13 09:05:10 $
+ * = Revision:    $Revision: 1.27 $
+ * = Date:        $Date: 2008/12/01 01:43:35 $
  * = Copyright:   (c) 2003-2008 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
@@ -57,10 +57,10 @@
 		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DPOSTGRESQL_7 -opostgresql-8/delete-segment.sql delete-segment.tsql"/>
@@ -78,10 +78,10 @@
 		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DSQL_SERVER_2000 -osql-server-2005/delete-segment.sql delete-segment.tsql"/>
@@ -99,10 +99,10 @@
 		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DMYSQL_5 -omysql-5/delete-segment.sql delete-segment.tsql"/>
@@ -120,10 +120,10 @@
 		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DORACLE_8 -ooracle-8/delete-segment.sql delete-segment.tsql"/>
@@ -141,10 +141,10 @@
 		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DDB2_8 -odb2-9/delete-segment.sql delete-segment.tsql"/>
@@ -162,10 +162,10 @@
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/migrate-from-2.1.0-to-2.2.0.sql migrate-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/migrate-from-2.2.0-to-2.3.0.sql migrate-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.1.0-to-2.2.0.sql drop-from-2.1.0-to-2.2.0.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/drop-from-2.2.0-to-2.3.0.sql drop-from-2.2.0-to-2.3.0.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_1 -ohsqldb-1/delete-segment.sql delete-segment.tsql"/>

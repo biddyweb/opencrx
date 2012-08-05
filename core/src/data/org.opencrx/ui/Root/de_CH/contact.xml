@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Kontakte</_item>
+                        <_item>Kontakte</_item>
                       </label>
                       <toolTip>
                         <_item>Kontakte</_item>
@@ -165,6 +165,120 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!phoneNumberFull" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Telefon Privat</_item>
+											</toolTip>
+											<label>
+												<_item>Telefon Privat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>E-mail Privat</_item>
+											</toolTip>
+											<label>
+												<_item>E-mail Privat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!webUrl" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Internetseite Privat</_item>
+											</toolTip>
+											<label>
+												<_item>Internetseite Privat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:15" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Hauptadresse Privat</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Hauptadresse Privat</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalAddressLine" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Adresszeile(n)</_item>
+											</toolTip>
+											<label>
+												<_item>Adresszeile(n)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalStreet" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Strasse / Postfach</_item>
+											</toolTip>
+											<label>
+												<_item>Strasse / Postfach</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalState" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Kanton/Bundesland</_item>
+											</toolTip>
+											<label>
+												<_item>Kanton/Bundesland</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCode" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Postleitzahl / Code</_item>
+											</toolTip>
+											<label>
+												<_item>Postleitzahl / Code</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCity" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Ort</_item>
+											</toolTip>
+											<label>
+												<_item>Ort</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCountry" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Land/Region</_item>
+											</toolTip>
+											<label>
+												<_item>Land/Region</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod" _operation="create">
                     <_object>
                       <label>

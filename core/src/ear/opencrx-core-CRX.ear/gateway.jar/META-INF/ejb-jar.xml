@@ -10,6 +10,21 @@
 			<session-type>Stateless</session-type>
 			<transaction-type>Container</transaction-type>			
 			<env-entry>
+				<env-entry-name>EntityManager/plugIn[0]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>OpenCRX</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/OpenCRX/modelPackage[0]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org:opencrx:kernel:home1</env-entry-value>
+			</env-entry>
+			<env-entry>
+				<env-entry-name>EntityManager/OpenCRX/packageImpl[0]</env-entry-name>
+				<env-entry-type>java.lang.String</env-entry-type>
+				<env-entry-value>org.opencrx.kernel.home1.aop2</env-entry-value>
+			</env-entry>
+			<env-entry>
 				<env-entry-name>PersistenceManager/Multithreaded</env-entry-name>
 				<env-entry-type>java.lang.String</env-entry-type>
 				<env-entry-value>true</env-entry-value>

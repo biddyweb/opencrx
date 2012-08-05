@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Historie</_item>
+                        <_item>Historie</_item>
                       </label>
                       <toolTip>
                         <_item>Historie</_item>
@@ -58,7 +58,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Favoriten</_item>
+                        <_item>Favoriten</_item>
                       </label>
                       <toolTip>
                         <_item>Favoriten</_item>
@@ -69,7 +69,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Dateien</_item>
+                        <_item>Dateien</_item>
                       </label>
                       <toolTip>
                         <_item>hinzugefügte Dateien</_item>
@@ -83,7 +83,7 @@
 												<_item>Objektsucher</_item>
 											</toolTip>
 											<label>
-												<_item>»Objektsucher</_item>
+												<_item>Objektsucher</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -94,7 +94,7 @@
 												<_item>Export-Profile</_item>
 											</toolTip>
 											<label>
-												<_item>»Export-Profile</_item>
+												<_item>Export-Profile</_item>
 											</label>
 										</_object>
 										<_content/>

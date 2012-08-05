@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: StringPropertyDataBinding.java,v 1.3 2008/10/01 00:28:28 wfro Exp $
+ * Name:        $Id: StringPropertyDataBinding.java,v 1.4 2008/11/21 00:34:46 wfro Exp $
  * Description: StringPropertyDataBinding
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/01 00:28:28 $
+ * Date:        $Date: 2008/11/21 00:34:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,6 +62,17 @@ import org.opencrx.kernel.base.jmi1.StringProperty;
 
 public class StringPropertyDataBinding extends AbstractPropertyDataBinding {
 
+    public StringPropertyDataBinding(
+    ) {
+        super(PropertySetHolderType.CrxObject);
+    }
+    
+    public StringPropertyDataBinding(
+        PropertySetHolderType type
+    ) {
+        super(type);
+    }
+     
     public Object getValue(
         RefObject object, 
         String qualifiedFeatureName

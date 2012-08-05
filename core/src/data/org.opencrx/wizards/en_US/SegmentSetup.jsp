@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.37 2008/08/27 09:30:31 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.41 2008/12/11 14:27:48 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.41 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/27 09:30:31 $
+ * Date:        $Date: 2008/12/11 14:27:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -467,6 +467,10 @@ org.openmdx.base.text.conversion.*
 	final String EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST = "Activity List with Follow-Ups (Excel)";
 	final String EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST = "Account Member List (Excel)";
 	final String EXPORT_PROFILE_NAME_ACCOUNT_LIST = "Account List (Excel)";
+
+	final String MAILMERGE_TEMPLATE_FOLDER_NAME = "Mail Merge Templates";
+	final String MAILMERGE_TEMPLATE_NAME_LETTER = "Letter Template";
+	final String MAILMERGE_TEMPLATE_NAME_LABEL = "Label Template";
 
 	final String REPORT_TEMPLATE_FOLDER_NAME = "Report Templates";
 	final String REPORT_TEMPLATE_NAME_CONTRACT_LIST = "Contract Report Template";
@@ -1076,8 +1080,34 @@ org.openmdx.base.text.conversion.*
 				allUsers
 			);
 
-			// Templates
+			// Mail Merge Templates
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolder = initDocumentFolder(
+				MAILMERGE_TEMPLATE_FOLDER_NAME,
+				pm,
+				documentSegment,
+				allUsers
+			);
+			org.opencrx.kernel.document1.jmi1.Document templateMailMergeLetter = initDocument(
+				MAILMERGE_TEMPLATE_NAME_LETTER,
+				"Template_MailMergeLetter.rtf",
+				"application/rtf",
+				templateFolder,
+				pm,
+				documentSegment,
+				allUsers
+			);
+			org.opencrx.kernel.document1.jmi1.Document templateMailMergeEtiquette = initDocument(
+				MAILMERGE_TEMPLATE_NAME_LABEL,
+				"Template_MailMergeLabel.rtf",
+				"application/rtf",
+				templateFolder,
+				pm,
+				documentSegment,
+				allUsers
+			);
+
+			// Report Templates
+			templateFolder = initDocumentFolder(
 				REPORT_TEMPLATE_FOLDER_NAME,
 				pm,
 				documentSegment,
@@ -1623,6 +1653,17 @@ org.openmdx.base.text.conversion.*
 				<tr>
 					<td><%= EXPORT_PROFILE_NAME_ACCOUNT_LIST %></td>
 					<td><%= findExportProfile(EXPORT_PROFILE_NAME_ACCOUNT_LIST, userHome, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td colspan="2"><h2>Mail Merge Templates</h2></td>
+				</tr>
+				<tr>
+					<td><%= MAILMERGE_TEMPLATE_NAME_LETTER %></td>
+					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LETTER, documentSegment, pm) == null ? MISSING : OK %></td>
+				</tr>
+				<tr>
+					<td><%= MAILMERGE_TEMPLATE_NAME_LABEL %></td>
+					<td><%= findDocument(MAILMERGE_TEMPLATE_NAME_LABEL, documentSegment, pm) == null ? MISSING : OK %></td>
 				</tr>
 				<tr>
 					<td colspan="2"><h2>Report Templates</h2></td>

@@ -47,7 +47,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Istoric</_item>
+                        <_item>Istoric</_item>
                       </label>
                       <toolTip>
                         <_item>Istoric</_item>
@@ -58,7 +58,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Favoriţi</_item>
+                        <_item>Favoriţi</_item>
                       </label>
                       <toolTip>
                         <_item>Favoriţi</_item>
@@ -69,7 +69,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Diagrame</_item>
+                        <_item>Diagrame</_item>
                       </label>
                       <toolTip>
                         <_item>Diagrame</_item>
@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Căutare obiecte</_item>
+                        <_item>Căutare obiecte</_item>
                       </label>
                       <toolTip>
-                        <_item>»Căutare obiecte</_item>
+                        <_item>Căutare obiecte</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -91,7 +91,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Profile export</_item>
+                        <_item>Profile export</_item>
                       </label>
                       <toolTip>
                         <_item>Profile export</_item>

@@ -80,10 +80,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ContractPosition:positionModification" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Positionsmodifikationer</_item>
+                        <_item>Positionsmodifikationer</_item>
                       </label>
                       <toolTip>
-                        <_item>»Positionsmodifikationer</_item>
+                        <_item>Positionsmodifikationer</_item>
                       </toolTip>
                     </_object>
                     <_content/>

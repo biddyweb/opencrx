@@ -98,57 +98,10 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>组成员</_item>
-                      </label>
-                      <toolTip>
-                        <_item>组成员</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
-                    <_object/>
-                    <_content>
-                      <additionalElementDefinition>
-                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>会员关系</_item>
-                            </label>
-                            <toolTip>
-                              <_item>会员关系</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AdditionalElementDefinition>
-                      </additionalElementDefinition>
-                    </_content>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountMembership" _operation="null">
-                    <_object/>
-                    <_content>
-                      <additionalElementDefinition>
-                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>会员关系(禁用)</_item>
-                            </label>
-                            <toolTip>
-                              <_item>会员关系(禁用)</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AdditionalElementDefinition>
-                      </additionalElementDefinition>
-                    </_content>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:partner" _operation="create">
                     <_object>
                       <label>
-                        <_item>»伙伴</_item>
+                        <_item>伙伴</_item>
                       </label>
                       <toolTip>
                         <_item>伙伴</_item>
@@ -159,7 +112,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>»联系人</_item>
+                        <_item>联系人</_item>
                       </label>
                       <toolTip>
                         <_item>联系人</_item>

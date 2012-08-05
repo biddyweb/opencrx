@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.36 2008/10/06 21:08:47 wfro Exp $
+ * Name:        $Id: Products.java,v 1.37 2008/10/16 16:37:48 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.36 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/10/06 21:08:47 $
+ * Date:        $Date: 2008/10/16 16:37:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -545,7 +545,7 @@ public class Products {
                     // dateParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(
@@ -563,7 +563,7 @@ public class Products {
                     // dateTimeParam
                     values = new ArrayList<Object>();
                     for(
-                        Iterator<String> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
+                        Iterator<Object> j = filterProperty.values(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
                         j.hasNext();
                     ) {
                         values.add(

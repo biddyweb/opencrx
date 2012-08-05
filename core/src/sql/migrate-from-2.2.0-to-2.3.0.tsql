@@ -1,0 +1,16 @@
+#include "sql-definitions.tsql"
+
+UPDATE OOCKE1_ACCOUNTASSIGNMENT SET member_role_0 = (SELECT member_role FROM OOCKE1_ACCOUNTASSIGNMENT_ ass_ WHERE ass_.object_id = OOCKE1_ACCOUNTASSIGNMENT.object_id AND ass_.idx = 0) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_ACCOUNTASSIGNMENT SET member_role_1 = (SELECT member_role FROM OOCKE1_ACCOUNTASSIGNMENT_ ass_ WHERE ass_.object_id = OOCKE1_ACCOUNTASSIGNMENT.object_id AND ass_.idx = 1) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_ACCOUNTASSIGNMENT SET member_role_2 = (SELECT member_role FROM OOCKE1_ACCOUNTASSIGNMENT_ ass_ WHERE ass_.object_id = OOCKE1_ACCOUNTASSIGNMENT.object_id AND ass_.idx = 2) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_ACCOUNTASSIGNMENT SET member_role_3 = (SELECT member_role FROM OOCKE1_ACCOUNTASSIGNMENT_ ass_ WHERE ass_.object_id = OOCKE1_ACCOUNTASSIGNMENT.object_id AND ass_.idx = 3) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+UPDATE OOCKE1_ACCOUNTASSIGNMENT SET member_role_4 = (SELECT member_role FROM OOCKE1_ACCOUNTASSIGNMENT_ ass_ WHERE ass_.object_id = OOCKE1_ACCOUNTASSIGNMENT.object_id AND ass_.idx = 4) COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

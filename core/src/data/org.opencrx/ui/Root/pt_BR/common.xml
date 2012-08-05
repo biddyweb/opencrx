@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notas</_item>
+                        <_item>Notas</_item>
                       </label>
                       <toolTip>
                         <_item>Notas anexadas</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Pastas</_item>
+                        <_item>Pastas</_item>
                       </label>
                       <toolTip>
                         <_item>Pastas</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Documentos</_item>
+                        <_item>Documentos</_item>
                       </label>
                       <toolTip>
                         <_item>Documentos anexos</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Mídia</_item>
+                        <_item>Mídia</_item>
                       </label>
                       <toolTip>
                         <_item>Mídia anexada</_item>
@@ -782,7 +782,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Classificação</_item>
+                        <_item>Classificação</_item>
                       </label>
                       <toolTip>
                         <_item>Classificação em anexo</_item>

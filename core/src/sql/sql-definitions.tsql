@@ -189,8 +189,8 @@
 #define SET_NOT_NULL(column_name, type_name) column_name SET NOT NULL
 #define CREATE_INDEX(table_name, index_name) CREATE INDEX index_name
 #define CREATE_UNIQUE_INDEX(table_name, index_name) CREATE UNIQUE INDEX index_name
-#define FORMAT_NUMBER_3_0(column_name) CAST(column_name AS CHARACTER)
-#define FORMAT_NUMBER_2_0(column_name) CAST(column_name AS CHARACTER)
+#define FORMAT_NUMBER_3_0(column_name) to_char(column_name, 'FM000')
+#define FORMAT_NUMBER_2_0(column_name) to_char(column_name, 'FM00')
 #define AS_CHAR(n) CHR(n)
 #define STRSUB SUBSTRING
 #define STRLEN LEN

@@ -738,7 +738,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:note" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Notas</_item>
+                        <_item>Notas</_item>
                       </label>
                       <toolTip>
                         <_item>Notas incrustadas</_item>
@@ -749,7 +749,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Documentos</_item>
+                        <_item>Documentos</_item>
                       </label>
                       <toolTip>
                         <_item>documentos incrustados</_item>
@@ -760,7 +760,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:media" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Medio</_item>
+                        <_item>Medio</_item>
                       </label>
                       <toolTip>
                         <_item>Medio incrustado</_item>
@@ -771,7 +771,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Calificaciones</_item>
+                        <_item>Calificaciones</_item>
                       </label>
                       <toolTip>
                         <_item>Calificaciones incrustados</_item>

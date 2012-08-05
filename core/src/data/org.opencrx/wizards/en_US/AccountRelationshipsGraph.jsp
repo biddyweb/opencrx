@@ -1,12 +1,12 @@
-<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.6 2008/08/12 16:43:31 cmu Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.8 2008/12/14 10:32:52 cmu Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/12 16:43:31 $
+ * Date:        $Date: 2008/12/14 10:32:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,6 +80,45 @@ org.openmdx.application.log.*
 
 <%!
 
+	private static String getNodeTitle(
+		org.opencrx.kernel.account1.jmi1.Account account,
+		ApplicationContext app
+	) {
+	  StringBuilder title = new StringBuilder();
+	  boolean isDisabled = account.isDisabled() != null && account.isDisabled().booleanValue();
+
+	  title.append(
+	    isDisabled ? "<del>" : ""
+	  ).append(
+		  app.getHtmlEncoder().encode(new ObjectReference(account, app).getTitle(), false)
+		).append(
+		  isDisabled ? "</del>" : ""
+		);
+		return title.toString();
+  }
+
+	private static String getClickableNodeTitle(
+		org.opencrx.kernel.account1.jmi1.Account account,
+		ApplicationContext app,
+		String requestId
+	) {
+    ObjectReference accountRef = new ObjectReference(account, app);
+	  boolean isDisabled = account.isDisabled() != null && account.isDisabled().booleanValue();
+		String test = account.refMofId();
+		int plusLocation = test.indexOf("+");
+		while (plusLocation >= 0) {
+			test = test.substring(0, plusLocation) + "%2B" + test.substring(plusLocation + 1);
+			plusLocation = test.indexOf("+");
+		}
+		String encodedAccountXri = test;
+
+	  StringBuilder title = new StringBuilder();
+		title.append(
+		  "<a href='../../" + accountRef.getSelectObjectAction().getEncodedHRef(requestId) + "'>*</a> <a href='AccountRelationshipsGraph.jsp?xri=" + encodedAccountXri + "&requestId=" + requestId + "'>" + getNodeTitle(account,app) + "</a>"
+		);
+		return title.toString();
+  }
+
 	private static String getJSON(
 		Set parents,
 		org.opencrx.kernel.account1.jmi1.Account account,
@@ -95,8 +134,6 @@ org.openmdx.application.log.*
 	) {
 	  StringBuilder json = new StringBuilder();
 		if(level > 0) {
-			ObjectReference accountRef = new ObjectReference(account, app);
-			String accountTitle = app.getHtmlEncoder().encode(accountRef.getTitle(), false);
 			String relationships = new String();
 			if (membership != null && memberRoleTexts != null) {
 			  for(Iterator roles = membership.getMemberRole().iterator(); roles.hasNext(); ) {
@@ -107,14 +144,6 @@ org.openmdx.application.log.*
 			  }
 			}
 
-			String test = account.refMofId();
-			int plusLocation = test.indexOf("+");
-			while (plusLocation >= 0) {
-				test = test.substring(0, plusLocation) + "%2B" + test.substring(plusLocation + 1);
-				plusLocation = test.indexOf("+");
-			}
-			String encodedAccountXri = test;
-
 			String accountId = account.refGetPath().getBase();
 			if (accountId.indexOf("+") > 0) {
 			  System.out.println("accountId="+accountId);
@@ -124,7 +153,7 @@ org.openmdx.application.log.*
 			).append(
 				"{id:\"" + accountId + "\""
 			).append(
-				 ",name:\"<a href='../../" + accountRef.getSelectObjectAction().getEncodedHRef(requestId) + "'>*</a> <a href='AccountRelationshipsGraph.jsp?xri=" + encodedAccountXri + "&requestId=" + requestId + "'>" + accountTitle + "</a>\""
+				 ",name:\"" + getClickableNodeTitle(account, app, requestId) + "\""
 			).append(
 				",children:["
 			);
@@ -203,39 +232,59 @@ org.openmdx.application.log.*
 			int[] maxCounts = new int[]{5, 5, 25};
 			int maxCount = maxCounts[level];
 
-			// acountFrom=account
-			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
-			membershipQuery.forAllDisabled().isFalse();
-			membershipQuery.distance().greaterThanOrEqualTo(new Integer(-1));
-			membershipQuery.distance().lessThanOrEqualTo(new Integer(1));
-			membershipQuery.thereExistsAccountFrom().equalTo(account);
-			Collection memberships = account.getAccountMembership(membershipQuery);
-			int count = 0;
-			for(Iterator i = memberships.iterator(); i.hasNext(); ) {
-				org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)i.next();
-				addNode(
-					membership,
-					membership.getAccountFrom(),
-					membership.getAccountTo(),
-					M
-				);
-				addNode(
-					membership,
-					membership.getAccountTo(),
-					membership.getAccountFrom(),
-					M
-				);
-				if (membership.getAccountTo() != null) {
-  				addRelationships(
+ 			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
+      org.openmdx.compatibility.datastore1.jmi1.QueryFilter queryFilter =
+          (org.openmdx.compatibility.datastore1.jmi1.QueryFilter)pm.newInstance(org.openmdx.compatibility.datastore1.jmi1.QueryFilter.class);
+      Collection memberships = null;
+ 			int count = 0;
+
+			// acountFrom=account [ignore mebers if account is disabled!!!]
+			if ((account.isDisabled() == null) || (!account.isDisabled().booleanValue())) {
+  			membershipQuery.forAllDisabled().isFalse();
+  			membershipQuery.distance().greaterThanOrEqualTo(new Integer(-1));
+  			membershipQuery.distance().lessThanOrEqualTo(new Integer(1));
+  			membershipQuery.thereExistsAccountFrom().equalTo(account);
+  			// HINT_DBOBJECT allows to qualify the DbObject to use.
+  			// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
+        queryFilter.setClause(
+          "(" + Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+          "( " +
+          "v.member IN ( " +
+          "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
+          "  where " +
+          "   ((m.disabled is null) or (m.disabled = false)) and " +
+          "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
+          "  ) " +
+          ") "
+        );
+  			membershipQuery.thereExistsContext().equalTo(queryFilter);
+  			memberships = account.getAccountMembership(membershipQuery);
+  			for(Iterator i = memberships.iterator(); i.hasNext(); ) {
+  				org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)i.next();
+  				addNode(
+  					membership,
+  					membership.getAccountFrom(),
   					membership.getAccountTo(),
-  					M,
-  					level - 1,
-  					pm
+  					M
   				);
-  				count++;
-  		  }
-				if(count > maxCount) break;
-			}
+  				addNode(
+  					membership,
+  					membership.getAccountTo(),
+  					membership.getAccountFrom(),
+  					M
+  				);
+  				if (membership.getAccountTo() != null) {
+  	  				addRelationships(
+  	  					membership.getAccountTo(),
+  	  					M,
+  	  					level - 1,
+  	  					pm
+  	  				);
+  	  				count++;
+    			    }
+  				if(count > maxCount) break;
+  			}
+  	  }
 
 			// acountTo=account
 			membershipQuery = accountPkg.createAccountMembershipQuery();
@@ -243,6 +292,12 @@ org.openmdx.application.log.*
 			membershipQuery.distance().greaterThanOrEqualTo(new Integer(-1));
 			membershipQuery.distance().lessThanOrEqualTo(new Integer(1));
 			membershipQuery.thereExistsAccountTo().equalTo(account);
+			// HINT_DBOBJECT allows to qualify the DbObject to use.
+			// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
+      queryFilter.setClause(
+        Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+      );
+			membershipQuery.thereExistsContext().equalTo(queryFilter);
 			memberships = account.getAccountMembership(membershipQuery);
 			count = 0;
 			for(Iterator i = memberships.iterator(); i.hasNext(); ) {
@@ -334,7 +389,8 @@ org.openmdx.application.log.*
 		//System.out.println("JSON1=" + json);
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+
+<%@page import="org.openmdx.compatibility.base.dataprovider.layer.persistence.jdbc.Database_1_Attributes"%><html>
 <head>
 	<title>Relationships Graph</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -440,7 +496,7 @@ org.openmdx.application.log.*
 				onAfterCompute:function(){
 					var H=GraphUtil.getClosestNodeToOrigin(B.graph,"pos");
 					var F=this;
-					var G="<h4>"+H.name+"</h4><b>Connections:</b>";
+					var G="<h4>"+H.name+"</h4><b>Relationships:</b>";
 					G+="<ul>";
 					GraphUtil.eachAdjacency(
 						B.graph,
@@ -462,7 +518,7 @@ org.openmdx.application.log.*
   			B.prepareCanvasEvents();
   			B.controller.onAfterCompute();
 			}catch(e) {
-			  $('inner-details').innerHTML = 'no relationships';
+			  $('inner-details').innerHTML = 'root node disabled or no relationships<br>or relationships to disabled accounts only';
 			}
 		}
 	</script>
@@ -471,7 +527,11 @@ org.openmdx.application.log.*
   <div id="header"></div>
 	<div id="visheader"></div>
 	<div id="left">
-		<div id="details" class="toggler left-item">Details (Node Limits: 25-5-5)</div>
+		<div id="details" class="toggler left-item">
+		  Root: <b><%= getClickableNodeTitle(account, app, requestId) %></b><br>
+		  <input type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" style="float:right;margin:5px 5px 0px 0px;" /><br>
+		  Node Limits: 25 - 5 - 5
+		</div>
 		<div class="element contained-item">
 			<div class="inner" id="inner-details"></div>
 		</div>
@@ -481,15 +541,8 @@ org.openmdx.application.log.*
 <%
 	}
 	catch (Exception e) {
-    //out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-    PrintWriter pw = new PrintWriter(out);
-    ServiceException e0 = new ServiceException(e);
-    pw.println(e0.getMessage());
-    pw.println(e0.getCause());
-    out.println("</pre>");
-    AppLog.warning(e0.getMessage(), e0.getCause());
+ 	  new ServiceException(e).log();
   }
 %>
-  <input type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" />
 </body>
 </html>

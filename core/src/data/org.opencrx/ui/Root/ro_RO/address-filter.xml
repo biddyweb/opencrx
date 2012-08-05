@@ -14,7 +14,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:addressFilter" _operation="create">
                     <_object>
                       <label>
-                        <_item>»Filtre de adrese</_item>
+                        <_item>Filtre de adrese</_item>
                       </label>
                       <toolTip>
                         <_item>Filtre de adrese</_item>
@@ -110,7 +110,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressCategoryFilterProperty:addressCategory" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressCategoryFilterProperty:category" _operation="create">
                     <_object>
                       <label>
                         <_item>Categorii de adrese</_item>

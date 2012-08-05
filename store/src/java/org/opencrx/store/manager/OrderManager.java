@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Store, http://www.opencrx.org/
- * Name:        $Id: OrderManager.java,v 1.17 2008/02/12 19:57:20 wfro Exp $
+ * Name:        $Id: OrderManager.java,v 1.18 2008/11/08 00:21:54 wfro Exp $
  * Description: ProductManager
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/02/12 19:57:20 $
+ * Date:        $Date: 2008/11/08 00:21:54 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -119,7 +119,7 @@ public final class OrderManager
         tx.begin();
         org.opencrx.kernel.contract1.jmi1.SalesOrder salesOrder = 
             this.context.getContractPackage().getSalesOrder().createSalesOrder();
-        salesOrder.refInitialize(false, true);
+        salesOrder.refInitialize(false, false);
         order.update(
             salesOrder,
             this.context

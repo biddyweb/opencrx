@@ -84,9 +84,6 @@
         <contents xmi:type="ecore:EAnnotation" xmi:id="_9lAu0N8JEdmKapscEl8OLg" source="eObjectShortcut">
           <references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.base.emx#_phn1cN67EdmkJO73lqONhA?base"/>
         </contents>
-        <contents xmi:type="ecore:EAnnotation" xmi:id="__ZDfUN8JEdmKapscEl8OLg" source="eObjectShortcut">
-          <references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.filter1.emx#_r0nLwN67EdmkJO73lqONhA?filter1"/>
-        </contents>
         <contents xmi:type="ecore:EAnnotation" xmi:id="_BR3bEN8KEdmKapscEl8OLg" source="eObjectShortcut">
           <references xmi:type="uml:Model" href="platform:/resource/openMDX%202%20~%20Core%20(RSM)/org.openmdx.generic1.emx#_tjGt4N67EdmkJO73lqONhA?generic1"/>
         </contents>
