@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSyncBackend.java,v 1.49 2011/12/16 13:41:40 wfro Exp $
+ * Name:        $Id: OpenCrxSyncBackend.java,v 1.50 2012/01/13 17:13:48 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.49 $
+ * Revision:    $Revision: 1.50 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/16 13:41:40 $
+ * Date:        $Date: 2012/01/13 17:13:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -541,7 +541,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				new Path("xri://@openmdx*org.opencrx.kernel.document1").getDescendant("provider", providerName, "segment", segmentName)
 			);		
 		Document document = pm.newInstance(Document.class);
-		document.refInitialize(false, false);
 		document.setName(name);
 		document.setTitle(name);
 		document.getOwningGroup().addAll(
@@ -610,7 +609,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 							org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
 							ContactT contactT = (ContactT)data;
 							Account account = this.datatypeMapper.newAccount(pm, contactT);
-							account.refInitialize(false, false);
 							if(account instanceof Contact) {
 								Contact contact = (Contact)account;
 								contact.setLastName(contactT.getLastName());
@@ -624,7 +622,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								group.getOwningGroup()
 							);
 							Member member = pm.newInstance(Member.class);
-							member.refInitialize(false, false);
 							member.setName(
 								contactT.getLastName() + 
 								(contactT.getFirstName() == null ? "" : ", " + contactT.getFirstName())
@@ -704,7 +701,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								if(members.isEmpty()) {
 									pm.currentTransaction().begin();
 									Member member = pm.newInstance(Member.class);
-									member.refInitialize(false, false);
 									member.setName(
 										contactT.getLastName() + 
 										(contactT.getFirstName() == null ? "" : ", " + contactT.getFirstName())
@@ -732,7 +728,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								if(assignments.isEmpty()) {
 									pm.currentTransaction().begin();
 									FolderAssignment folderAssignment = pm.newInstance(FolderAssignment.class);
-									folderAssignment.refInitialize(false, false);
 									folderAssignment.setName(documentFolder.getName());
 									folderAssignment.setDocumentFolder(documentFolder);
 									document.addDocumentFolderAssignment(
@@ -824,7 +819,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						pm.currentTransaction().begin();
 						srcMember.refDelete();
 						Member dstMember = pm.newInstance(Member.class);
-						dstMember.refInitialize(false, false);
 						dstMember.setName(srcMember.getName());
 						dstMember.setAccount(contact);
 						dstGroup.addMember(
@@ -1824,7 +1818,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 									pm.currentTransaction().begin();
 									if(mappingData == null) {
 										mappingData = pm.newInstance(org.opencrx.kernel.home1.jmi1.SyncData.class);
-										mappingData.refInitialize(false, false);
 										mappingData.setTitle("Mapping");
 										feed.addSyncData(
 											Base.getInstance().getUidAsString(),
@@ -1861,7 +1854,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 									break;
 							}
 							if(feed != null) {
-								feed.refInitialize(false, false);
 								feed.setName(folder.getName());		
 								feed.setActive(false);
 								feed.setAllowAddDelete(true);

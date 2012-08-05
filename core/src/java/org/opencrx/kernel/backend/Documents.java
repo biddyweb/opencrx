@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Documents.java,v 1.6 2011/03/28 21:24:33 wfro Exp $
+ * Name:        $Id: Documents.java,v 1.7 2012/01/13 17:15:42 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/28 21:24:33 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -130,7 +130,6 @@ public class Documents extends AbstractImpl {
 		try {
 			pm.currentTransaction().begin();
 	  		documentFolder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
-	  		documentFolder.refInitialize(false, false);
 	  		documentFolder.setName(documentFolderName);
 	  		documentFolder.getOwningGroup().addAll(allUsers);
 	  		segment.addFolder(
@@ -169,7 +168,6 @@ public class Documents extends AbstractImpl {
 		try {
 			pm.currentTransaction().begin();
 			document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
-			document.refInitialize(false, false);
 			document.setName(documentName);
 			document.setTitle(documentTitle);
 			document.getOwningGroup().addAll(allUsers);
@@ -179,7 +177,6 @@ public class Documents extends AbstractImpl {
 				document
 			);
 			org.opencrx.kernel.document1.jmi1.MediaContent documentRevision = pm.newInstance(org.opencrx.kernel.document1.jmi1.MediaContent.class);
-			documentRevision.refInitialize(false, false);
 			documentRevision.setContentName(revisionName);
 			documentRevision.setContentMimeType(revisionMimeType);
 			documentRevision.setContent(

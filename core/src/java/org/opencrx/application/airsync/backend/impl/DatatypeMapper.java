@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMapper.java,v 1.45 2011/12/23 09:55:29 wfro Exp $
+ * Name:        $Id: DatatypeMapper.java,v 1.46 2012/01/13 17:13:48 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.45 $
+ * Revision:    $Revision: 1.46 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/23 09:55:29 $
+ * Date:        $Date: 2012/01/13 17:13:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -496,7 +496,6 @@ public class DatatypeMapper {
 						media = medias.iterator().next();
 					} else {
 						media = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
-						media.refInitialize(false, false);
 						media.setContentMimeType("image/jpeg");
 						media.setContentName("me.jpg");
 						account.addMedia(
@@ -550,7 +549,6 @@ public class DatatypeMapper {
 		document.setName(noteT.getSubject());
 		document.setTitle(noteT.getSubject());
 		MediaContent revision = pm.newInstance(MediaContent.class);
-		revision.refInitialize(false, false);
 		revision.setName(noteT.getSubject());
 		if(document.getHeadRevision() != null) {
 			revision.setVersion(document.getHeadRevision().getVersion() + 1);
@@ -863,7 +861,6 @@ public class DatatypeMapper {
 	            addressesBcc
 	        );
 			org.opencrx.kernel.generic.jmi1.Note note = pm.newInstance(org.opencrx.kernel.generic.jmi1.Note.class);
-			note.refInitialize(false, false);
 			note.setTitle("Recipients");
 			note.setText(recipientsAsText);
 			email.addNote(

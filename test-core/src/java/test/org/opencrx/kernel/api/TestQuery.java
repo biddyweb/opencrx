@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestQuery.java,v 1.23 2011/10/22 11:07:47 wfro Exp $
+ * Name:        $Id: TestQuery.java,v 1.24 2012/01/13 10:22:15 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/22 11:07:47 $
+ * Date:        $Date: 2012/01/13 10:22:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -319,6 +319,17 @@ public class TestQuery {
 		        		System.out.println("Contact " + contact.getFullName() + " (" + contact.refMofId() + ")" + " has an email address like '.*com'");
 		        		n++;
 		        		if(n > 100) break;		    			
+		    		}
+		    	}
+		    	// Test 9: Accounts having members with given memberRole
+		    	{
+		    		ContactQuery contactQuery = (ContactQuery)pm.newQuery(Contact.class);
+		    		contactQuery.thereExistsMember().thereExistsMemberRole().equalTo((short)13);
+		    		int n = 0;
+		    		for(Contact contact: accountSegment.<Contact>getAccount(contactQuery)) {
+		        		System.out.println("Contact " + contact.getFullName() + " (" + contact.refMofId() + ")" + " has member having memberRole 13");
+		        		n++;
+		        		if(n > 100) break;
 		    		}
 		    	}
 	        } finally {

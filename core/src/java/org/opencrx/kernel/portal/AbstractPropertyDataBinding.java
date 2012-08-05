@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractPropertyDataBinding.java,v 1.10 2012/01/06 13:22:51 wfro Exp $
+ * Name:        $Id: AbstractPropertyDataBinding.java,v 1.11 2012/01/13 17:16:05 wfro Exp $
  * Description: AbstractPropertyDataBinding
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/06 13:22:51 $
+ * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -189,7 +189,6 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
             }
             if(configurationType == null) {
                 configurationType = pm.newInstance(ProductConfigurationType.class);
-                configurationType.refInitialize(false, false);
                 configurationType.setName(propertySetName);
                 productConfigurationTypeSet.addConfigurationType(
                     Utils.getUidAsString(),
@@ -224,7 +223,6 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
             }
             if(configuration == null) {
                 configuration = pm.newInstance(ProductConfiguration.class);
-                configuration.refInitialize(false, false);
                 configuration.setName(propertySetName);
                 productConfigurationSet.addConfiguration(
                     Utils.getUidAsString(),
@@ -259,7 +257,6 @@ public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
             }
             if(propertySet == null) {
                 propertySet = pm.newInstance(PropertySet.class);
-                propertySet.refInitialize(false, false);
                 propertySet.setName(propertySetName);
                 crxObject.addPropertySet(
                     Utils.getUidAsString(),

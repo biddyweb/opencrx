@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: CreateContactWizard.jsp,v 1.32 2011/10/22 12:01:53 wfro Exp $
+ * Name:        $Id: CreateContactWizard.jsp,v 1.34 2012/01/20 09:13:18 cmu Exp $
  * Description: CreateContact wizard
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.34 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/22 12:01:53 $
+ * Date:        $Date: 2012/01/20 09:13:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,6 +72,7 @@ org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
+org.openmdx.base.exception.*,
 org.openmdx.base.naming.*
 " %><%
 	request.setCharacterEncoding("UTF-8");
@@ -92,6 +93,7 @@ org.openmdx.base.naming.*
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
 	String formName = "ContactForm";
+	String membershipFormName = "MembershipForm";
 	String wizardName = "CreateContactWizard";
 
 	// Get Parameters
@@ -101,7 +103,24 @@ org.openmdx.base.naming.*
 	boolean actionCancel = "Cancel".equals(command);
 	boolean actionSearch = "Search".equals(command);
 	boolean actionCreate = "Create".equals(command);
+	String ACCOUNTMEMBERSHIP_XRI = request.getParameter("ACCOUNTMEMBERSHIP_XRI") == null ? "" : request.getParameter("ACCOUNTMEMBERSHIP_XRI");
 
+	boolean isAddMembershipMode = request.getParameter("isAddMembershipMode") != null;
+
+	if ("ACTION.deleteMember".equals(command)) {
+			//System.out.println("delete member: " + request.getParameter("Para0"));
+			try {
+					pm.currentTransaction().begin();
+					org.opencrx.kernel.account1.jmi1.Member member =
+						(org.opencrx.kernel.account1.jmi1.Member)pm.getObjectById(new Path(request.getParameter("Para0")));
+					//member.refDelete();
+					// do NOT delete, just disable member
+					member.setDisabled(new Boolean(true));
+					pm.currentTransaction().commit();
+			} catch (Exception e) {
+					new ServiceException(e);
+			}
+	}
 	List matchingAccounts = null;
 	if(actionCancel) {
 	  session.setAttribute(wizardName, null);
@@ -139,6 +158,16 @@ org.openmdx.base.naming.*
 		app.getUiContext(),
 		formDefinition
 	);
+	// Membership form
+	org.openmdx.ui1.jmi1.FormDefinition membershipFormDefinition = app.getUiFormDefinition(membershipFormName);
+	org.openmdx.portal.servlet.control.FormControl membershipForm = new org.openmdx.portal.servlet.control.FormControl(
+		membershipFormDefinition.refGetPath().getBase(),
+		app.getCurrentLocaleAsString(),
+		app.getCurrentLocaleAsIndex(),
+		app.getUiContext(),
+		membershipFormDefinition
+	);
+
 	Map formValues = new HashMap();
 	// Initialize formValues with account values
 	if(account != null && account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
@@ -193,8 +222,38 @@ org.openmdx.base.naming.*
 		app,
 		pm
 	);
+	membershipForm.updateObject(
+			request.getParameterMap(),
+			formValues,
+			app,
+			pm
+		);
+
+	// Initialize formValues with member values
+	if (ACCOUNTMEMBERSHIP_XRI != null && ACCOUNTMEMBERSHIP_XRI.length() > 0) {
+			// an existing membership is being edited
+			try {
+					org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
+						(org.opencrx.kernel.account1.jmi1.AccountMembership)pm.getObjectById(new Path(ACCOUNTMEMBERSHIP_XRI));
+					formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", accountMembership.getAccountFrom().refGetPath()); // must not change parent account!
+					if ("editMembership".equals(command)) {
+							formValues.put("org:opencrx:kernel:account1:Member:memberRole", accountMembership.getMember().getMemberRole());
+					}
+			} catch (Exception e) {
+					ACCOUNTMEMBERSHIP_XRI = "";
+			}
+	}
+  if ("AddMembership".equals(command)) {
+	  	//System.out.println("entering mode to add new membership");
+	  	ACCOUNTMEMBERSHIP_XRI = "";
+			formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", null);
+			formValues.put("org:opencrx:kernel:account1:Member:memberRole", null);
+			// default: set role for employee
+			formValues.put("org:opencrx:kernel:account1:Member:memberRole", Arrays.asList(new Short[]{(short)11}));
+	}
+
 	// Search
-    List matchingContacts = null;
+	List matchingContacts = null;
 	if(actionSearch) {
 	    boolean hasQueryProperty = false;
 	    org.opencrx.kernel.account1.cci2.ContactQuery contactQuery =
@@ -436,7 +495,79 @@ org.openmdx.base.naming.*
 	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCountry")
 	    );
 	    pm.currentTransaction().commit();
+	    
+	    if (isAddMembershipMode || ACCOUNTMEMBERSHIP_XRI.length() > 0) {
+	    		// create/update data for membership
+	    		try {
+	            org.opencrx.kernel.account1.jmi1.Account parentAccount = null;
+	            org.opencrx.kernel.account1.jmi1.Member member = null;
+	            if (ACCOUNTMEMBERSHIP_XRI.length() > 0) {
+	            		// update existing membership
+			            // get parent account
+									org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
+										(org.opencrx.kernel.account1.jmi1.AccountMembership)pm.getObjectById(new Path(ACCOUNTMEMBERSHIP_XRI));
+			            parentAccount = accountMembership.getAccountFrom();
+			            member = accountMembership.getMember();
+	            } else {
+	            		// create new membership
+			            // get parent account
+						 	    try {
+						 	    	parentAccount = formValues.get("org:opencrx:kernel:account1:AccountAssignment:account") != null ?
+							 	    	(org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
+							 	    		formValues.get("org:opencrx:kernel:account1:AccountAssignment:account")
+							 	    	) : null;
+						 	    } catch (Exception e) {}
+						 	    if (parentAccount != null) {
+			            		// create new member
+			            		try {
+					            		pm.currentTransaction().begin();
+							            member = pm.newInstance(org.opencrx.kernel.account1.jmi1.Member.class);
+							            member.refInitialize(false, false);
+							            member.setValidFrom(new java.util.Date());
+							            member.setQuality((short)5);
+							            member.setName(account.getFullName());
+							            member.setAccount(account);
+							            parentAccount.addMember(
+						  	              false,
+						  	              org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+						  	              member
+						  	            );
+					  	            pm.currentTransaction().commit();
+					  	        } catch (Exception e) {
+					  	        		member = null;
+					  	            new ServiceException(e).log();
+					  	            try {
+					  	                pm.currentTransaction().rollback();
+					  	            } catch (Exception er) {}
+					  	        }
+					            
+						 	    }
+	            }
+	            if (member != null && formValues.get("org:opencrx:kernel:account1:Member:memberRole") != null) {
+	            		// update member roles
+	            		try {
+	            				List<Short> memberRole = (List<Short>)formValues.get("org:opencrx:kernel:account1:Member:memberRole");
+					            pm.currentTransaction().begin();
+					            member.setMemberRole(memberRole);
+					            pm.currentTransaction().commit();
+					        } catch (Exception e) {
+					            new ServiceException(e).log();
+					            try {
+					                pm.currentTransaction().rollback();
+					            } catch (Exception er) {}
+					        }
+	            }
+	    		} catch (Exception e) {
+	    				new ServiceException(e).log();
+	    		}
+	    }
+
+	    ACCOUNTMEMBERSHIP_XRI = "";
+	    isAddMembershipMode = false;
+			formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", null);
+			formValues.put("org:opencrx:kernel:account1:Member:memberRole", null);
 	}
+	
 	TransientObjectView view = new TransientObjectView(
 		formValues,
 		app,
@@ -448,12 +579,17 @@ org.openmdx.base.naming.*
 		request,
 		out
 	);
+	int tabIndex = 100;
 %>
 <br />
 <form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" action="<%= servletPath %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 	<input type="Hidden" id="Command" name="Command" value="" />
+	<input type="Hidden" id="Para0" name="Para0" value="" />
+	<input type="hidden" name="ACCOUNTMEMBERSHIP_XRI" id="ACCOUNTMEMBERSHIP_XRI" value="<%= ACCOUNTMEMBERSHIP_XRI %>" />
+	<input type="checkbox" style="display:none;" name="isAddMembershipMode" id="isAddMembershipMode" <%= isAddMembershipMode ? "checked" : "" %>/>
+	
 	<table cellspacing="8" class="tableLayout">
 		<tr>
 			<td class="cellObject">
@@ -465,30 +601,120 @@ org.openmdx.base.naming.*
 						true // forEditing
 					);
 					p.flush();
+
+					if(account != null) {
+						// list existing memberships
+
+%>
+						<div class="fieldGroupName">&nbsp;</div>
+						<table class="fieldGroup">
+							<tr>
+								<td class="label">
+									<%= app.getLabel("org:opencrx:kernel:account1:AccountMembership") %><br>
+									<input type="submit" name="AddMembership" id="AddMembership.Button" tabindex="<%= tabIndex++ %>" title="<%= app.getTexts().getNewText() + " " + app.getLabel("org:opencrx:kernel:account1:AccountMembership") %>" value="+" onclick="javascript:$('Command').value=this.name;$('isAddMembershipMode').checked=true;" />
+								</td>
+								<td>
+									<table class="gridTableFull">
+										<tr class="gridTableHeaderFull">
+											<td/>
+											<td><strong><%= view.getFieldLabel("org:opencrx:kernel:account1:AccountMembership", "accountFrom", app.getCurrentLocaleAsIndex()) %></strong></td>
+											<td><strong><%= view.getFieldLabel("org:opencrx:kernel:account1:AccountMembership", "accountTo", app.getCurrentLocaleAsIndex()) %></strong></td>
+											<td><strong><%= view.getFieldLabel("org:opencrx:kernel:account1:AccountMembership", "memberRole", app.getCurrentLocaleAsIndex()) %></strong></td>
+											<td/>
+										</tr>
+<%
+										try {
+												org.opencrx.kernel.account1.cci2.AccountMembershipQuery accountMembershipFilter = org.opencrx.kernel.utils.Utils.getAccountPackage(pm).createAccountMembershipQuery();
+												accountMembershipFilter.distance().equalTo(
+														new Short((short)-1) // only direct/immediate memberships are of interest
+													);
+												accountMembershipFilter.forAllDisabled().isFalse();
+												for(
+														Iterator am = account.getAccountMembership(accountMembershipFilter).iterator();
+														am.hasNext();
+												) {
+														org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
+															(org.opencrx.kernel.account1.jmi1.AccountMembership)am.next();
+														try {
+																org.opencrx.kernel.account1.jmi1.Member member = accountMembership.getMember();
+																org.opencrx.kernel.account1.jmi1.Account accountFrom = accountMembership.getAccountFrom();
+							                  String accountHref = "";
+							                  Action action = new ObjectReference(
+							                		  accountFrom,
+							                      app
+							                  ).getSelectObjectAction();
+							                  accountHref = action.getEncodedHRef();
+																//memberOfList.add(accountFrom.getFullName());
+																String rolesText = "";
+																for(Iterator roles = accountMembership.getMemberRole().iterator(); roles.hasNext(); ) {
+																		if (rolesText.length() > 0) {
+																				rolesText += ";";
+																		}
+																		rolesText += (String)codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short(((Short)roles.next()).shortValue()));
+																}
+																//memberRoleList.add(rolesText);
+%>
+																<tr class="gridTableRow" <%= ACCOUNTMEMBERSHIP_XRI.compareTo(accountMembership.refMofId()) == 0 ? "style='background-color:#E4FF79;'" : "" %>>
+																	<td class="addon">
+																		<button type="submit" name="editMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getEditTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('ACCOUNTMEMBERSHIP_XRI').value='<%=accountMembership.refMofId() %>';" ><img src="images/edit.gif" /></button>
+																	</td>
+																	<td><a href="<%= accountHref %>" target="_blank"><%= app.getHtmlEncoder().encode(new ObjectReference(accountMembership.getAccountFrom(), app).getTitle(), false) %></a></td>
+																	<td><%= app.getHtmlEncoder().encode(new ObjectReference(accountMembership.getAccountTo(), app).getTitle(), false) %></td>
+																	<td style="overflow:hidden;text-overflow:ellipsis;"><%= rolesText %></td>
+																	<td class="addon">
+																		<button type="submit" name="deleteMember" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('ACCOUNTMEMBERSHIP_XRI').value='';$('Command').value='ACTION.'+this.name;$('Para0').value='<%= member.refMofId() %>';" ><img src="images/deletesmall.gif" /></button>
+																	</td>
+																</tr>
+<%
+																
+														}	catch(Exception em) {
+																new ServiceException(em).log();
+														}
+												}
+										}	catch(Exception e) {
+												new ServiceException(e).log();
+										}
+%>
+									</table>
+								</td>
+								<td class="addon"/>
+							</tr>
+						</table>
+<%						
+						if (isAddMembershipMode || ACCOUNTMEMBERSHIP_XRI.length() > 0) {
+								membershipForm.paint(
+									p,
+									null, // frame
+									true // forEditing
+								);
+								p.flush();
+						}
+					}
 %>
 					<div class="fieldGroupName">&nbsp;</div>
+					
 				</div>
-				<input type="submit" class="abutton" name="Search" id="Search.Button" tabindex="9000" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('Command').value=this.name" />
-				<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
+				<input type="submit" name="Search" id="Search.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('Command').value=this.name;" />
+				<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
 <%
 				if(account != null) {
 %>
-					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
-					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
-					<input type="button" class="abutton" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
-					<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9060" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
+					<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
+					<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
+					<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
+					<input type="submit" name="OK" id="OK.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
 <%
 				}
 				else {
 				    if(matchingContacts != null) {
 %>
-						<input type="submit" class="abutton" name="Create" id="Create.Button" tabindex="9070" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('Command').value=this.name;"/>
+						<input type="submit" name="Create" id="Create.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('Command').value=this.name;"/>
 <%
 
 				    }
 				}
 %>
-				<input type="submit" class="abutton" name="Cancel" tabindex="9080" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
+				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
 <%
 				if(matchingContacts != null) {
 %>
@@ -507,7 +733,7 @@ org.openmdx.base.naming.*
 							<td class="addon"/>
 						</tr>
 <%
-					    int count = 0;
+						int count = 0;
 						for(Iterator i = matchingContacts.iterator(); i.hasNext(); ) {
 						    org.opencrx.kernel.account1.jmi1.Contact contact = ( org.opencrx.kernel.account1.jmi1.Contact)i.next();
 						    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getInstance().getMainAddresses(contact);

@@ -1,17 +1,17 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.113 2011/12/23 13:49:49 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Name:        $Id: UserHomes.java,v 1.117 2012/01/20 01:36:56 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.113 $
+ * Revision:    $Revision: 1.117 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/23 13:49:49 $
+ * Date:        $Date: 2012/01/20 01:36:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -311,10 +311,9 @@ public class UserHomes extends AbstractImpl {
         String providerName = subject.refGetPath().get(2);        
         org.openmdx.security.authentication1.jmi1.Segment authenticationSegment =
         	(org.openmdx.security.authentication1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri://@openmdx*org.openmdx.security.authentication1/provider/" + providerName + "/segment/Root")
+        		new Path("xri://@openmdx*org.openmdx.security.authentication1").getDescendant("provider", providerName, "segment", "Root")
         	);
         org.openmdx.security.authentication1.jmi1.Password passwordCredential = pm.newInstance(org.openmdx.security.authentication1.jmi1.Password.class);
-        passwordCredential.refInitialize(false, false);
         passwordCredential.setSubject(subject);
         passwordCredential.setLocked(Boolean.FALSE);
         authenticationSegment.addCredential(
@@ -454,22 +453,21 @@ public class UserHomes extends AbstractImpl {
     public UserHome createUserHome(
         org.openmdx.security.realm1.jmi1.Realm realm,
         Contact contact,
-        org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup,
+        PrincipalGroup primaryGroup,
         String principalName,
         List<org.openmdx.security.realm1.jmi1.Group> requiredGroups,
         boolean isAdministrator,
         String initialPassword,
         String initialPasswordVerification,
-        List<String> errors,
-        PersistenceManager pmRoot
+        List<String> errors
     ) throws ServiceException {
         if(principalName == null) {
             errors.add("missing principal name");
-            return null;                        
+            return null;
         }
         if(contact == null) {
             errors.add("missing contact");
-            return null;            
+            return null;
         }
         if(!this.testPasswordPolicy(initialPassword)) {
         	errors.add("password policy violation");
@@ -478,196 +476,208 @@ public class UserHomes extends AbstractImpl {
         PersistenceManager pm = JDOHelper.getPersistenceManager(realm); 
         String providerName = contact.refGetPath().get(2);
         String segmentName = contact.refGetPath().get(4);
-        Path loginRealmIdentity = SecureObject.getInstance().getLoginRealmIdentity(providerName);   
-        org.openmdx.security.realm1.jmi1.Realm loginRealm = 
-        	(org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(
-        		loginRealmIdentity
-        	);
-        // Get login principal. Get subject and set password credential
-        
+        org.opencrx.security.realm1.jmi1.User user = null;
+        PrincipalGroup groupAdministrators = null;
         // --- BEGIN pmRoot
-        org.openmdx.security.realm1.jmi1.Subject subject = null;
-        boolean rootUowIsActive = pmRoot.currentTransaction().isActive();
-        if(!rootUowIsActive) {        	
-        	pmRoot.currentTransaction().begin();
-        }
-        try {
-            // Create login principal and subject on-demand. Create principal
-            // and subject using the importLoginPrincipals() operation. Prepare
-            // an import stream containing the principal and subject to be imported
-            QuotaByteArrayOutputStream item = new QuotaByteArrayOutputStream(UserHomes.class.getName());
-            PrintWriter pw = new PrintWriter(item);
-            pw.println("Subject;" + principalName + ";" + contact.getFullName());
-            pw.println("Principal;" + principalName + ";" + segmentName + "\\\\" + principalName + ";" + principalName + ";Users");
-            pw.close();
-            Admin.getInstance().importLoginPrincipals(
-                (org.opencrx.kernel.admin1.jmi1.Segment)pmRoot.getObjectById(
-                	new Path("xri://@openmdx*org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
-                ), 
-                item.toByteArray()
-            ); 
-            // Get login principal and subject
-            org.openmdx.security.realm1.jmi1.Principal loginPrincipal = loginRealm.getPrincipal(principalName);
-            if(loginPrincipal.getSubject() == null) {
-                errors.add("Undefined subject for principal " + principalName);
-                return null;
-            }
-            subject = loginPrincipal.getSubject();            
-            // Create password credential
-            if((initialPassword != null) && (initialPassword.length() > 0)) {
-            	org.openmdx.security.authentication1.jmi1.Password passwordCredential = this.createPasswordCredential(
-                    subject,
-                    errors
-                );
-                if(passwordCredential == null) {
-                    return null;
-                }            
-                // Set initial password
-                this.changePassword(
-                    passwordCredential,
-                    null,
-                    initialPassword
-                );
-                // Update principal's credential
-                loginPrincipal.setCredential(passwordCredential);
-            }
-            if((loginPrincipal.getCredential() == null)) {
-                errors.add("No credential specified for principal " + principalName);                
-            }
-        }
-        catch(Exception e) {
-            ServiceException e1 = new ServiceException(e);
-            SysLog.warning(e1.getMessage(), e1.getCause());
-            errors.add("can not retrieve principal " + principalName + " in realm " + loginRealmIdentity);
-            errors.add("reason is " + e.getMessage());
-            return null;
-        }
-        // Add User 
-        org.openmdx.security.realm1.jmi1.Realm realmByRoot = 
-        	(org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath());
-        org.opencrx.security.realm1.jmi1.User user = (org.opencrx.security.realm1.jmi1.User)Admin.getInstance().createPrincipal(
-            principalName + "." + SecurityKeys.USER_SUFFIX,
-            null,
-            realmByRoot,
-            PrincipalType.USER,
-            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
-            subject
-        );
-        org.opencrx.security.realm1.jmi1.PrincipalGroup groupAdministrators = 
-        	(org.opencrx.security.realm1.jmi1.PrincipalGroup)realmByRoot.getPrincipal(SecurityKeys.USER_GROUP_ADMINISTRATORS);
-        org.opencrx.security.realm1.jmi1.PrincipalGroup groupUsers = 
-        	(org.opencrx.security.realm1.jmi1.PrincipalGroup)realmByRoot.getPrincipal(SecurityKeys.USER_GROUP_USERS);
-        List<org.openmdx.security.realm1.jmi1.Group> groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
-        if(isAdministrator) {
-        	groups.add(groupAdministrators);
-        	groups.add(user);
-        	groups.add(groupUsers);
-        }
-        else {
-        	groups.add(groupUsers);
-        	groups.add(user);
-        }
-        if(requiredGroups != null) {
-        	groups.addAll(requiredGroups);
-        }
-        // Add principal
-        Admin.getInstance().createPrincipal(
-            principalName, 
-            null,
-            realmByRoot,
-            PrincipalType.PRINCIPAL,
-            groups,
-            subject
-        );
-        // Add principal to Root realm (each principal should be registered
-        // in the Root realm because the Root segment provides data common
-        // to all segments, e.g. code tables
-        Admin.getInstance().createPrincipal(
-            principalName, 
-            null,
-            (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath().getParent().getChild("Root")),
-            PrincipalType.PRINCIPAL,
-            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
-            subject
-        );
-        // Add user principal to Root realm 
-        Admin.getInstance().createPrincipal(
-            principalName + "." + SecurityKeys.USER_SUFFIX,
-            null,
-            (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath().getParent().getChild("Root")),
-            PrincipalType.USER,
-            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
-            subject
-        );
-        initialPassword = initialPassword == null ? "" : initialPassword;
-        initialPasswordVerification = initialPasswordVerification == null ? "" : initialPasswordVerification;
-        if(!initialPassword.equals(initialPasswordVerification)) {
-            errors.add("the passwords you typed do not match");
-            return null;
-        }
-        if(!rootUowIsActive) {
+        {
+            // Get login principal. Get subject and set password credential
+	        org.openmdx.security.realm1.jmi1.Subject subject = null;
+    		PersistenceManager pmRoot = pm.getPersistenceManagerFactory().getPersistenceManager(
+				SecurityKeys.ROOT_PRINCIPAL,
+				null
+			);
+            Path loginRealmIdentity = SecureObject.getInstance().getLoginRealmIdentity(providerName);
+            org.openmdx.security.realm1.jmi1.Realm loginRealm =
+            	(org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(
+            		loginRealmIdentity
+            	);
+    		pmRoot.currentTransaction().begin();
+	        try {
+	            // Create login principal and subject on-demand. Create principal
+	            // and subject using the importLoginPrincipals() operation. Prepare
+	            // an import stream containing the principal and subject to be imported
+	            QuotaByteArrayOutputStream item = new QuotaByteArrayOutputStream(UserHomes.class.getName());
+	            PrintWriter pw = new PrintWriter(item);
+	            pw.println("Subject;" + principalName + ";" + contact.getFullName());
+	            pw.println("Principal;" + principalName + ";" + segmentName + "\\\\" + principalName + ";" + principalName + ";Users");
+	            pw.close();
+	            Admin.getInstance().importLoginPrincipals(
+	                (org.opencrx.kernel.admin1.jmi1.Segment)pmRoot.getObjectById(
+	                	new Path("xri://@openmdx*org.opencrx.kernel.admin1").getDescendant("provider", providerName, "segment", "Root")
+	                ),
+	                item.toByteArray()
+	            );
+	            // Get login principal and subject
+	            org.openmdx.security.realm1.jmi1.Principal loginPrincipal = loginRealm.getPrincipal(principalName);
+	            if(loginPrincipal.getSubject() == null) {
+	                errors.add("Undefined subject for principal " + principalName);
+	                return null;
+	            }
+	            subject = loginPrincipal.getSubject();            
+	            // Create password credential
+	            if((initialPassword != null) && !initialPassword.isEmpty()) {
+	            	org.openmdx.security.authentication1.jmi1.Password passwordCredential = this.createPasswordCredential(
+	                    subject,
+	                    errors
+	                );
+	                if(passwordCredential == null) {
+	                    return null;
+	                }            
+	                // Set initial password
+	                this.changePassword(
+	                    passwordCredential,
+	                    null,
+	                    initialPassword
+	                );
+	                // Update principal's credential
+	                loginPrincipal.setCredential(passwordCredential);
+	            }
+	            if((loginPrincipal.getCredential() == null)) {
+	                errors.add("No credential specified for principal " + principalName);                
+	            }
+	        }
+	        catch(Exception e) {
+	            ServiceException e1 = new ServiceException(e);
+	            SysLog.warning(e1.getMessage(), e1.getCause());
+	            errors.add("can not retrieve principal " + principalName + " in realm " + loginRealmIdentity);
+	            errors.add("reason is " + e.getMessage());
+	            return null;
+	        }
+	        // Add User 
+	        org.openmdx.security.realm1.jmi1.Realm realmByRoot = 
+	        	(org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath());
+	        user = (org.opencrx.security.realm1.jmi1.User)Admin.getInstance().createPrincipal(
+	            principalName + "." + SecurityKeys.USER_SUFFIX,
+	            null,
+	            realmByRoot,
+	            PrincipalType.USER,
+	            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+	            subject
+	        );
+	        groupAdministrators = (PrincipalGroup)realmByRoot.getPrincipal(SecurityKeys.USER_GROUP_ADMINISTRATORS);
+	        PrincipalGroup groupUsers = (PrincipalGroup)realmByRoot.getPrincipal(SecurityKeys.USER_GROUP_USERS);
+	        List<org.openmdx.security.realm1.jmi1.Group> groups = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
+	        if(isAdministrator) {
+	        	groups.add(groupAdministrators);
+	        	groups.add(user);
+	        	groups.add(groupUsers);
+	        }
+	        else {
+	        	groups.add(groupUsers);
+	        	groups.add(user);
+	        }
+	        if(requiredGroups != null) {
+	        	for(org.openmdx.security.realm1.jmi1.Group requiredGroup: requiredGroups) {
+	        		groups.add((org.openmdx.security.realm1.jmi1.Group)pmRoot.getObjectById(requiredGroup.refGetPath()));
+	        	}
+	        }
+	        // Add principal
+	        Admin.getInstance().createPrincipal(
+	            principalName, 
+	            null,
+	            realmByRoot,
+	            PrincipalType.PRINCIPAL,
+	            groups,
+	            subject
+	        );
+	        // Add principal to Root realm (each principal should be registered
+	        // in the Root realm because the Root segment provides data common
+	        // to all segments, e.g. code tables
+	        Admin.getInstance().createPrincipal(
+	            principalName, 
+	            null,
+	            (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath().getParent().getChild("Root")),
+	            PrincipalType.PRINCIPAL,
+	            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+	            subject
+	        );
+	        // Add user principal to Root realm 
+	        Admin.getInstance().createPrincipal(
+	            principalName + "." + SecurityKeys.USER_SUFFIX,
+	            null,
+	            (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realm.refGetPath().getParent().getChild("Root")),
+	            PrincipalType.USER,
+	            new ArrayList<org.openmdx.security.realm1.jmi1.Group>(),
+	            subject
+	        );
+	        initialPassword = initialPassword == null ? "" : initialPassword;
+	        initialPasswordVerification = initialPasswordVerification == null ? "" : initialPasswordVerification;
+	        if(!initialPassword.equals(initialPasswordVerification)) {
+	            errors.add("the passwords you typed do not match");
+	            return null;
+	        }
         	pmRoot.currentTransaction().commit();
         }
-        
         //--- END pmRoot
-        
+
         /**
          * User home
          */
-        user = (org.opencrx.security.realm1.jmi1.User)pm.getObjectById(user.refGetPath());
-        groupAdministrators = (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(groupAdministrators.refGetPath());
-        org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = 
-        	(org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-        		 new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-        	);        
-        UserHome userHome = userHomeSegment.getUserHome(principalName);
-        if(userHome != null) {
-        	if(primaryGroup != null) {
-        		userHome.setPrimaryGroup(primaryGroup);
-        	}
+        Path userHomeIdentity = null;
+        {
+    		PersistenceManager pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
+    			UserObjects.getPrincipalChain(pm).toString(),
+				null
+			);
+    		pmAdmin.currentTransaction().begin();
+	        user = (org.opencrx.security.realm1.jmi1.User)pmAdmin.getObjectById(user.refGetPath());
+	        groupAdministrators = (PrincipalGroup)pmAdmin.getObjectById(groupAdministrators.refGetPath());
+	        org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = 
+	        	(org.opencrx.kernel.home1.jmi1.Segment)pmAdmin.getObjectById(
+	        		 new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName)
+	        	);
+	        primaryGroup = (PrincipalGroup)pmAdmin.getObjectById(primaryGroup.refGetPath());
+	        UserHome userHome = userHomeSegment.getUserHome(principalName);
+	        if(userHome != null) {
+	        	if(primaryGroup != null) {
+	        		userHome.setPrimaryGroup(primaryGroup);
+	        	}
+	        }
+	        else {
+	            userHome = pmAdmin.newInstance(UserHome.class);
+	            userHome.setContact(
+	            	(Contact)pmAdmin.getObjectById(contact.refGetPath())
+	            );
+	            // owning user of home is user itself
+	            userHome.setOwningUser(user);
+	            // owning group of home is segment administrator
+	            userHome.getOwningGroup().add(groupAdministrators);
+	            // access level delete
+	            userHome.setAccessLevelDelete(
+	                new Short((short)0)
+	            );
+	            userHome.setAccessLevelUpdate(
+	            	new Short(SecurityKeys.ACCESS_LEVEL_BASIC)
+	            );
+	            userHomeSegment.addUserHome(
+	            	principalName,
+	            	userHome
+	            );
+	            Properties userSettings = this.getSettings(userHome);
+	            this.applyUserSettings(
+	            	userHome, 
+	            	0, // currentPerspective
+	            	userSettings, 
+	            	true, // Do not init user home at this stage. Let user do it interactively
+	            	true, // storeSettings 
+	            	primaryGroup,
+	            	null, // settingTimezone, 
+	            	"1", // settingStoreSettingsOnLogoff
+	            	null, // settingDefaultEmailAccount 
+	            	"[" + providerName + ":" + segmentName + "]", 
+	            	null, // settingWebAccessUrl 
+	            	"8", // settingTopNavigationShowMax
+	            	true, // settingShowTopNavigationSublevel
+	            	false, // settingGridDefaultAlignmentIsWide
+	            	false, // settingHideWorkspaceDashboard
+	            	null, // settingRootObjects 
+	            	null // settingSubscriptions
+	            );
+	            pmAdmin.currentTransaction().commit();
+	            userHomeIdentity = userHome.refGetPath();
+	        }
         }
-        else {
-            userHome = pm.newInstance(UserHome.class);
-            userHome.refInitialize(false, false);
-            userHome.setContact(contact);
-            // owning user of home is user itself
-            userHome.setOwningUser(user);
-            // owning group of home is segment administrator
-            userHome.getOwningGroup().add(groupAdministrators);
-            // access level delete
-            userHome.setAccessLevelDelete(
-                new Short((short)0)
-            );
-            userHome.setAccessLevelUpdate(
-            	new Short(SecurityKeys.ACCESS_LEVEL_BASIC)
-            );
-            userHomeSegment.addUserHome(
-            	false,
-            	principalName,
-            	userHome
-            );
-            Properties userSettings = this.getSettings(userHome);
-            this.applyUserSettings(
-            	userHome, 
-            	0, // currentPerspective
-            	userSettings, 
-            	true, // Do not init user home at this stage. Let user do it interactively
-            	true, // storeSettings 
-            	primaryGroup,
-            	null, // settingTimezone, 
-            	"1", // settingStoreSettingsOnLogoff
-            	null, // settingDefaultEmailAccount 
-            	"[" + providerName + ":" + segmentName + "]", 
-            	null, // settingWebAccessUrl 
-            	"8", // settingTopNavigationShowMax
-            	true, // settingShowTopNavigationSublevel
-            	false, // settingGridDefaultAlignmentIsWide
-            	false, // settingHideWorkspaceDashboard
-            	null, // settingRootObjects 
-            	null // settingSubscriptions
-            );
-        }
-        return userHome;
+        return userHomeIdentity == null ? null : (UserHome)pm.getObjectById(userHomeIdentity);
     }
 
     //-----------------------------------------------------------------------
@@ -749,10 +759,10 @@ public class UserHomes extends AbstractImpl {
                             	accountFullName
                             );                            
                             if(contact != null) {
-                            	org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup = null;
+                            	PrincipalGroup primaryGroup = null;
                                 try {
                                 	if("-".equals(primaryGroupName)) {
-                                		primaryGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)realm.getPrincipal(primaryGroupName);
+                                		primaryGroup = (PrincipalGroup)realm.getPrincipal(primaryGroupName);
                                 	}
                                 }
                                 catch(Exception e) {}
@@ -777,8 +787,7 @@ public class UserHomes extends AbstractImpl {
                                     false, 
                                     password, 
                                     password, 
-                                    errors,
-                                    pm
+                                    errors
                                 );
                                 if(errors.isEmpty()) {
                                     nCreatedUsers++;
@@ -852,7 +861,6 @@ public class UserHomes extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);    	
         org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = pm.newInstance(org.opencrx.kernel.home1.jmi1.ObjectFinder.class);
-        objectFinder.refInitialize(false, false);
         objectFinder.setName(
             (allWords != null) && (allWords.length() > 0) ? 
                 allWords : 
@@ -1040,35 +1048,27 @@ public class UserHomes extends AbstractImpl {
     	String providerName = userHome.refGetPath().get(2);
     	String segmentName = userHome.refGetPath().get(4);
     	String principalName = userHome.refGetPath().getBase();
-    	// Must run as admin (either segment admin or Root). If running as user create new pm
+    	// Run realm-related operations in separate unit-of-work
     	{
-    		List<String> currentPrincipal = UserObjects.getPrincipalChain(pm);
-    		PersistenceManager pmAdmin = !currentPrincipal.isEmpty() && currentPrincipal.get(0).startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR) ?
-    			pm : 
-    				pm.getPersistenceManagerFactory().getPersistenceManager(
-    					SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
-						null
-					);
-    		boolean isTxLocal = !pmAdmin.currentTransaction().isActive();
-    		if(isTxLocal) {
-    			pmAdmin.currentTransaction().begin();
-    		}
+    		PersistenceManager pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
+				SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+				null
+			);
+   			pmAdmin.currentTransaction().begin();
 			// Get principal group with name <principal>.Group. This is the private group of the owner of the user home page    	
-			org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
+			org.openmdx.security.realm1.jmi1.Realm realm = SecureObject.getInstance().getRealm(
 				pmAdmin,
 				providerName,
 				segmentName
 			);
-			PrincipalGroup privatePrincipalGroup = (PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+			PrincipalGroup privatePrincipalGroup = (PrincipalGroup)SecureObject.getInstance().findPrincipal(
 				principalName + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
 				realm
 			);
 			if(privatePrincipalGroup == null) {
 				privatePrincipalGroup = pmAdmin.newInstance(PrincipalGroup.class);
-				privatePrincipalGroup.refInitialize(false, false);
-				privatePrincipalGroup.setDescription(segmentName + "\\\\" + principalName + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX);
+				privatePrincipalGroup.setDescription(segmentName + "\\\\" + principalName + "." + SecurityKeys.GROUP_SUFFIX);
 				realm.addPrincipal(
-					false,
 					principalName + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
 					privatePrincipalGroup
 				);
@@ -1084,7 +1084,7 @@ public class UserHomes extends AbstractImpl {
 					principal.getIsMemberOf().add(privatePrincipalGroup);
 				}
 				// Validate that user is member of group 'Public'
-				PrincipalGroup publicGroup = (PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+				PrincipalGroup publicGroup = (PrincipalGroup)SecureObject.getInstance().findPrincipal(
 					"Public",
 					realm
 				);
@@ -1096,10 +1096,8 @@ public class UserHomes extends AbstractImpl {
 			if((principal != null) && (privatePrincipalGroup != null)) {
 				privatePrincipalGroup.setSubject(principal.getSubject());
 			}
-			if(isTxLocal) {
-				pmAdmin.currentTransaction().commit();
-				pmAdmin.close();
-			}
+			pmAdmin.currentTransaction().commit();
+			pmAdmin.close();
     	}
     	if(!doNotInitUserHome) {
         	List<String> currentPrincipals = UserObjects.getPrincipalChain(pm);
@@ -1116,12 +1114,12 @@ public class UserHomes extends AbstractImpl {
     	}
 		// Set UserHome's primary group
 		if(primaryGroup == null) {
-			org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
+			org.openmdx.security.realm1.jmi1.Realm realm = SecureObject.getInstance().getRealm(
 				pm,
 				providerName,
 				segmentName
 			);
-			PrincipalGroup privatePrincipalGroup = (PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+			PrincipalGroup privatePrincipalGroup = (PrincipalGroup)SecureObject.getInstance().findPrincipal(
 				principalName + "." + org.opencrx.kernel.generic.SecurityKeys.GROUP_SUFFIX,
 				realm
 			);	
@@ -1155,13 +1153,11 @@ public class UserHomes extends AbstractImpl {
 			(newSettings.getDefaultEmailAccount().length() > 0)
 		) {
 			defaultEmailAccount = pm.newInstance(EMailAccount.class);
-			defaultEmailAccount.refInitialize(false, false);
 			defaultEmailAccount.setDefault(Boolean.TRUE);
 			defaultEmailAccount.setActive(Boolean.TRUE);
 			defaultEmailAccount.setName(newSettings.getDefaultEmailAccount());
 			userHome.addEMailAccount(
-				false,
-				Activities.getInstance().getUidAsString(),
+				this.getUidAsString(),
 				defaultEmailAccount
 			);
 		}
@@ -1223,12 +1219,10 @@ public class UserHomes extends AbstractImpl {
 			org.opencrx.kernel.home1.jmi1.Subscription subscription = null;
 			if(subscriptions.isEmpty()) {
 				subscription = pm.newInstance(Subscription.class);
-				subscription.refInitialize(false, false);
 				subscription.setName(topic.getName());
 				subscription.setTopic(topic);
 				userHome.addSubscription(
-					false,
-					org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+					this.getUidAsString(),
 					subscription
 				);
 			}
@@ -1311,7 +1305,6 @@ public class UserHomes extends AbstractImpl {
 			catch(Exception e) {}
 			if(privateTracker == null) {
 				privateTracker = pm.newInstance(ActivityTracker.class);
-				privateTracker.refInitialize(false, false);
 				privateTracker.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				if(privatePrincipalGroup != null) {
 					privateTracker.getOwningGroup().clear();
@@ -1333,7 +1326,6 @@ public class UserHomes extends AbstractImpl {
 			catch(Exception e) {}
 			if(privateIncidentsCreator == null) {
 				privateIncidentsCreator = pm.newInstance(ActivityCreator.class);
-				privateIncidentsCreator.refInitialize(false, false);
 				privateIncidentsCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				privateIncidentsCreator.getActivityGroup().add(privateTracker);
 				privateIncidentsCreator.setActivityType(
@@ -1366,7 +1358,6 @@ public class UserHomes extends AbstractImpl {
 			catch(Exception e) {}
 			if(privateEMailsCreator == null) {
 				privateEMailsCreator = pm.newInstance(ActivityCreator.class);
-				privateEMailsCreator.refInitialize(false, false);
 				privateEMailsCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX + "~E-Mails");
 				privateEMailsCreator.getActivityGroup().add(privateTracker);
 				privateEMailsCreator.setActivityType(
@@ -1400,7 +1391,6 @@ public class UserHomes extends AbstractImpl {
 			catch(Exception e) {}
 			if(privateTasksCreator == null) {
 				privateTasksCreator = pm.newInstance(ActivityCreator.class);
-				privateTasksCreator.refInitialize(false, false);
 				privateTasksCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX + "~Tasks");
 				privateTasksCreator.getActivityGroup().add(privateTracker);
 				privateTasksCreator.setActivityType(
@@ -1434,7 +1424,6 @@ public class UserHomes extends AbstractImpl {
 			catch(Exception e) {}
 			if(privateMeetingsCreator == null) {
 				privateMeetingsCreator = pm.newInstance(ActivityCreator.class);
-				privateMeetingsCreator.refInitialize(false, false);
 				privateMeetingsCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX + "~Meetings");
 				privateMeetingsCreator.getActivityGroup().add(privateTracker);
 				privateMeetingsCreator.setActivityType(
@@ -1468,7 +1457,6 @@ public class UserHomes extends AbstractImpl {
 			} catch(Exception e) {}
 			if(resource == null) {
 				resource = pm.newInstance(Resource.class);
-				resource.refInitialize(false, false);
 				if(userHome.getContact() != null) {
 					resource.setName(userHome.getContact().getFullName());
 					resource.setContact(userHome.getContact());
@@ -1491,7 +1479,6 @@ public class UserHomes extends AbstractImpl {
 			} catch(Exception e) {}
 			if(privateAccountGroup == null) {
 				privateAccountGroup = pm.newInstance(org.opencrx.kernel.account1.jmi1.Group.class);
-				privateAccountGroup.refInitialize(false, false);
 				privateAccountGroup.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				if(privatePrincipalGroup != null) {
 					privateAccountGroup.getOwningGroup().clear();
@@ -1511,7 +1498,6 @@ public class UserHomes extends AbstractImpl {
 			} catch(Exception e) {}		
 			if(privateDocumentFolder == null) {
 				privateDocumentFolder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
-				privateDocumentFolder.refInitialize(false, false);
 				privateDocumentFolder.setName(principalName + Documents.PRIVATE_DOCUMENTS_FOLDER_SUFFIX);
 				if(privateDocumentFolder != null) {
 					privateDocumentFolder.getOwningGroup().clear();
@@ -1539,7 +1525,6 @@ public class UserHomes extends AbstractImpl {
 			} catch(Exception e) {}
 			if(airSyncProfile == null) {
 				airSyncProfile = pm.newInstance(org.opencrx.kernel.home1.jmi1.AirSyncProfile.class);
-				airSyncProfile.refInitialize(false, false);
 				airSyncProfile.setName("AirSync");
 				userHome.addSyncProfile(
 					false, 
@@ -1547,7 +1532,6 @@ public class UserHomes extends AbstractImpl {
 					airSyncProfile
 				);
 				ActivityGroupCalendarFeed calendarFeed = pm.newInstance(ActivityGroupCalendarFeed.class);
-				calendarFeed.refInitialize(false, false);
 				calendarFeed.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				calendarFeed.setDescription("Calendar Feed");
 				calendarFeed.setActivityGroup(privateTracker);
@@ -1559,7 +1543,6 @@ public class UserHomes extends AbstractImpl {
 					calendarFeed
 				);
 				ContactsFeed contactsFeed = pm.newInstance(ContactsFeed.class);
-				contactsFeed.refInitialize(false, false);
 				contactsFeed.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				contactsFeed.setDescription("Contacts Feed");
 				contactsFeed.setAccountGroup(privateAccountGroup);
@@ -1571,7 +1554,6 @@ public class UserHomes extends AbstractImpl {
 					contactsFeed
 				);
 				DocumentFeed notesFeed = pm.newInstance(DocumentFeed.class);
-				notesFeed.refInitialize(false, false);
 				notesFeed.setName(principalName + Documents.PRIVATE_DOCUMENTS_FOLDER_SUFFIX);
 				notesFeed.setDescription("Notes Feed");
 				notesFeed.setDocumentFolder(privateDocumentFolder);
@@ -1592,7 +1574,6 @@ public class UserHomes extends AbstractImpl {
 			} catch(Exception e) {}
 			if(cardProfile == null) {
 				cardProfile = pm.newInstance(org.opencrx.kernel.home1.jmi1.CardProfile.class);
-				cardProfile.refInitialize(false, false);
 				cardProfile.setName(principalName + "~Contacts");
 				cardProfile.setDescription("Contacts profile");
 				userHome.addSyncProfile(
@@ -1601,7 +1582,6 @@ public class UserHomes extends AbstractImpl {
 					cardProfile
 				);
 				ContactsFeed contactsFeed = pm.newInstance(ContactsFeed.class);
-				contactsFeed.refInitialize(false, false);
 				contactsFeed.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				contactsFeed.setDescription("Contacts Feed");
 				contactsFeed.setAccountGroup(privateAccountGroup);
@@ -1622,7 +1602,6 @@ public class UserHomes extends AbstractImpl {
 			} catch(Exception e) {}
 			if(documentProfile == null) {
 				documentProfile = pm.newInstance(org.opencrx.kernel.home1.jmi1.DocumentProfile.class);
-				documentProfile.refInitialize(false, false);
 				documentProfile.setName(principalName + "~Documents");
 				documentProfile.setDescription("Documents profile");
 				userHome.addSyncProfile(
@@ -1631,7 +1610,6 @@ public class UserHomes extends AbstractImpl {
 					documentProfile
 				);
 				DocumentFeed documentFeed = pm.newInstance(DocumentFeed.class);
-				documentFeed.refInitialize(false, false);
 				documentFeed.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
 				documentFeed.setDescription("Documents Feed");
 				documentFeed.setDocumentFolder(privateDocumentFolder);

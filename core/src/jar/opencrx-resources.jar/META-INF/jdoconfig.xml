@@ -18,30 +18,32 @@
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.Configuration.EMailAddressLookupCaseInsensitive" value="(java.lang.Boolean)true"/>
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.Configuration.EMailAddressLookupIgnoreDisabled" value="(java.lang.Boolean)false"/>
 
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[0]" value="org:opencrx:kernel:home1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[0]" value="org.opencrx.kernel.home1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[1]" value="org:opencrx:kernel:depot1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[1]" value="org.opencrx.kernel.depot1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[2]" value="org:opencrx:kernel:activity1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[2]" value="org.opencrx.kernel.activity1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[3]" value="org:opencrx:kernel:base"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[3]" value="org.opencrx.kernel.base.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[4]" value="org:opencrx:kernel:admin1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[4]" value="org.opencrx.kernel.admin1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[5]" value="org:opencrx:kernel:address1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[5]" value="org.opencrx.kernel.address1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[6]" value="org:opencrx:kernel:account1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[6]" value="org.opencrx.kernel.account1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[7]" value="org:opencrx:kernel:contract1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[7]" value="org.opencrx.kernel.contract1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[8]" value="org:opencrx:kernel:product1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[8]" value="org.opencrx.kernel.product1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[9]" value="org:opencrx:kernel:model1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[9]" value="org.opencrx.kernel.model1.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[10]" value="org:opencrx:kernel:generic"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[10]" value="org.opencrx.kernel.generic.aop2"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[11]" value="org:opencrx:kernel:forecast1"/>
-        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[11]" value="org.opencrx.kernel.forecast1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[0]" value="org:openmdx:base"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[0]" value="org.opencrx.generic.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[1]" value="org:opencrx:kernel:home1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[1]" value="org.opencrx.kernel.home1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[2]" value="org:opencrx:kernel:depot1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[2]" value="org.opencrx.kernel.depot1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[3]" value="org:opencrx:kernel:activity1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[3]" value="org.opencrx.kernel.activity1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[4]" value="org:opencrx:kernel:base"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[4]" value="org.opencrx.kernel.base.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[5]" value="org:opencrx:kernel:admin1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[5]" value="org.opencrx.kernel.admin1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[6]" value="org:opencrx:kernel:address1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[6]" value="org.opencrx.kernel.address1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[7]" value="org:opencrx:kernel:account1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[7]" value="org.opencrx.kernel.account1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[8]" value="org:opencrx:kernel:contract1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[8]" value="org.opencrx.kernel.contract1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[9]" value="org:opencrx:kernel:product1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[9]" value="org.opencrx.kernel.product1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[10]" value="org:opencrx:kernel:model1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[10]" value="org.opencrx.kernel.model1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[11]" value="org:opencrx:kernel:generic"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[11]" value="org.opencrx.kernel.generic.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[12]" value="org:opencrx:kernel:forecast1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[12]" value="org.opencrx.kernel.forecast1.aop2"/>
     </persistence-manager-factory>
 
     <!-- Data manager -->

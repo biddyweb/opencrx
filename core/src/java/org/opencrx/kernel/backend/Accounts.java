@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.99 2011/12/23 09:57:21 wfro Exp $
+ * Name:        $Id: Accounts.java,v 1.100 2012/01/13 17:15:42 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.99 $
+ * Revision:    $Revision: 1.100 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/23 09:57:21 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -556,7 +556,6 @@ public class Accounts extends AbstractImpl {
         	if(segmentAdmin != null) {
         		pmAdmin.currentTransaction().begin();
         		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
-        		emailAddress.refInitialize(false, false);
         		emailAddress.setEmailAddress(email);
         		emailAddress.setEmailType((short)1);
         		segmentAdmin.addAddress(

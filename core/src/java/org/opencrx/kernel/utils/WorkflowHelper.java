@@ -1,17 +1,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHelper.java,v 1.2 2010/10/02 22:14:19 wfro Exp $
+ * Name:        $Id: WorkflowHelper.java,v 1.3 2012/01/13 17:16:22 wfro Exp $
  * Description: WorkflowHelper
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 22:14:19 $
+ * Date:        $Date: 2012/01/13 17:16:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -73,7 +73,6 @@ public abstract class WorkflowHelper {
         if(wfProcessInstance == null) return;
         PersistenceManager pm = JDOHelper.getPersistenceManager(wfProcessInstance);
         WfActionLogEntry logEntry = pm.newInstance(WfActionLogEntry.class);
-        logEntry.refInitialize(false, false);
         try {
             boolean isTxLocal = !pm.currentTransaction().isActive();
             if(isTxLocal) {

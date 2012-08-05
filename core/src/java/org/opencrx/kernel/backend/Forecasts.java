@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Forecasts.java,v 1.7 2011/12/18 22:14:52 wfro Exp $
+ * Name:        $Id: Forecasts.java,v 1.8 2012/01/13 17:15:42 wfro Exp $
  * Description: Forecasts
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/18 22:14:52 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -305,7 +305,6 @@ public class Forecasts extends AbstractImpl {
 					List<SimpleBooking> bookings = depotPosition.getSimpleBooking(bookingQuery);
 					if(bookings.isEmpty()) {
 						booking = pm.newInstance(SimpleBooking.class);
-						booking.refInitialize(false, false);
 						booking.setName(bookingText);
 						if(originId != null) {
 							booking.setOriginId(originId);

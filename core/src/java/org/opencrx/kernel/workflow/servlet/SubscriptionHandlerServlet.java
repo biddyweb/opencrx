@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.70 2011/12/27 17:20:24 wfro Exp $
+ * Name:        $Id: SubscriptionHandlerServlet.java,v 1.71 2012/01/21 17:08:18 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.70 $
+ * Revision:    $Revision: 1.71 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/27 17:20:24 $
+ * Date:        $Date: 2012/01/21 17:08:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -101,6 +101,7 @@ import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
 import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByParams;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByResult;
+import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.ReminderQuery;
 import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
 import org.opencrx.kernel.home1.jmi1.Reminder;
@@ -633,13 +634,14 @@ public class SubscriptionHandlerServlet
         
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Reminders] " + providerName + "/" + segmentName);
 
+        PersistenceManager pmAdmin = null;
         try {
-            PersistenceManager pm = this.pmf.getPersistenceManager(
-                "admin-" + segmentName,
-                UUIDs.getGenerator().next().toString()
+            pmAdmin = this.pmf.getPersistenceManager(
+                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+                null
             );
             ReminderQuery reminderQuery = (ReminderQuery)PersistenceHelper.newQuery(
-            	pm.getExtent(Reminder.class), 
+            	pmAdmin.getExtent(Reminder.class), 
             	new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", ":*", "reminder", ":*")
             );
             reminderQuery.forAllDisabled().isFalse();
@@ -651,7 +653,7 @@ public class SubscriptionHandlerServlet
             	"last_alarm_at + CAST(CAST(alarm_interval_minutes * 60 as VARCHAR(10)) AS INTERVAL DAY TO SECOND) AND " + 
             	"trigger_end_at)"
             );
-            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pmAdmin, providerName, segmentName);
             Collection<Reminder> reminders = userHomeSegment.getExtent(reminderQuery);
             List<Path> matchingReminderIdentities = new ArrayList<Path>();
             try {
@@ -666,27 +668,39 @@ public class SubscriptionHandlerServlet
             	ServiceException e0 = new ServiceException(e);
             	SysLog.detail(e0.getMessage(), e0.getCause());
             }
-            for(Path matchingReminderIdentity: matchingReminderIdentities) {
+            for(Path reminderIdentity: matchingReminderIdentities) {
+            	PersistenceManager pm = null;
             	try {
-            		Reminder reminder = (Reminder)pm.getObjectById(matchingReminderIdentity);
+            		// Reminders have path pattern xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/reminder/:*
+            		pm = this.pmf.getPersistenceManager(
+                        reminderIdentity.get(6), // userId
+                        null
+                    );
+            		Reminder reminder = (Reminder)pm.getObjectById(reminderIdentity);
             		pm.currentTransaction().begin();
             		reminder.setLastAlarmAt(new Date());
             		pm.currentTransaction().commit();
-            	}
-            	catch(Exception e) {
+            	} catch(Exception e) {
             		new ServiceException(e).log();
             		try {
             			pm.currentTransaction().rollback();
             		} catch(Exception e0) {}
+            	} finally {
+            		try {
+            			pm.close();
+            		} catch(Exception e) {}
             	}
             }
-            try {
-                pm.close();
-            } catch(Exception e) {}
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             new ServiceException(e).log();
             System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+            try {
+            	pmAdmin.currentTransaction().rollback();
+            } catch(Exception e0) {}
+        } finally {
+            try {
+                pmAdmin.close();
+            } catch(Exception e) {}
         }
     }
 

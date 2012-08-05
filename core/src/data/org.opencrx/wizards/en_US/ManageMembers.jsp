@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ManageMembers.jsp,v 1.37 2011/12/21 16:05:03 cmu Exp $
+ * Name:		$Id: ManageMembers.jsp,v 1.38 2012/01/20 09:38:19 cmu Exp $
  * Description:	Manage members
- * Revision:	$Revision: 1.37 $
+ * Revision:	$Revision: 1.38 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2011/12/21 16:05:03 $
+ * Date:		$Date: 2012/01/20 09:38:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -716,6 +716,12 @@ org.apache.poi.hssf.util.*
         //Categories
         cell = row.createCell(nCell++);
 
+        //extString0, extString1, extString2, extString3
+        cell = row.createCell(nCell++);
+        cell = row.createCell(nCell++);
+        cell = row.createCell(nCell++);
+        cell = row.createCell(nCell++);
+
         //Dtype
         cell = row.createCell(nCell++);
 
@@ -1256,7 +1262,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						            Action.EVENT_DOWNLOAD_FROM_LOCATION,
 						            new Action.Parameter[]{
 						                new Action.Parameter(Action.PARAMETER_LOCATION, location),
-						                new Action.Parameter(Action.PARAMETER_NAME, sheetName),
+						                new Action.Parameter(Action.PARAMETER_NAME, sheetName + ".xls"),
 						                new Action.Parameter(Action.PARAMETER_MIME_TYPE, "application/vnd.ms-excel")
 						            },
 						            app.getTexts().getClickToDownloadText() + " " + sheetName,

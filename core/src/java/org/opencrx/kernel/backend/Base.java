@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.53 2011/12/21 13:43:22 wfro Exp $
+ * Name:        $Id: Base.java,v 1.54 2012/01/13 17:15:42 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.53 $
+ * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/21 13:43:22 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -208,7 +208,6 @@ public class Base extends AbstractImpl {
                 List<Alert> existingAlerts = userHomeByRoot.getAlert(alertQuery);
                 if(existingAlerts.isEmpty()) {
                 	Alert newAlert = pmRoot.newInstance(Alert.class);
-                	newAlert.refInitialize(false, false);
                 	newAlert.setAlertState(new Short((short)1));
                 	newAlert.setName(
                         name == null || name.length() == 0 ?
@@ -400,7 +399,6 @@ public class Base extends AbstractImpl {
         }
         if(media == null) {    	    	
 	        media = pm.newInstance(Media.class);
-	        media.refInitialize(false, false);
 	        object.addMedia(
 	            false,
 	            this.getUidAsString(),

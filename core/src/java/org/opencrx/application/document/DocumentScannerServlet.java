@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.21 2011/09/23 15:59:12 wfro Exp $
+ * Name:        $Id: DocumentScannerServlet.java,v 1.22 2012/01/13 17:14:09 wfro Exp $
  * Description: DocumentScannerServlet
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/23 15:59:12 $
+ * Date:        $Date: 2012/01/13 17:14:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -245,7 +245,6 @@ public class DocumentScannerServlet
                     org.opencrx.kernel.document1.jmi1.Document document = null;
                     if(documents.isEmpty()) {
                         document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
-                        document.refInitialize(false, false);
                         document.setName(documentName);
                         document.setActiveOn(activeOn);
                         document.getOwningGroup().clear();
@@ -289,7 +288,6 @@ public class DocumentScannerServlet
                         // Upload file
                         if(upload) {
                             MediaContent mediaContent = pm.newInstance(MediaContent.class);
-                            mediaContent.refInitialize(false, false);
                             mediaContent.setContent(BinaryLargeObjects.valueOf(file));
                             mediaContent.setContentMimeType(
                                 MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(file.getName())
@@ -300,7 +298,6 @@ public class DocumentScannerServlet
                         // Create a document link
                         else {
                             ResourceIdentifier resourceIdentifier = pm.newInstance(ResourceIdentifier.class);
-                            resourceIdentifier.refInitialize(false, false);
                             resourceIdentifier.setUri(
                                 uriPrefix + 
                                 currentDir.getPath().substring(rootDir.getPath().length()).replace("\\", "/") + 
@@ -355,7 +352,6 @@ public class DocumentScannerServlet
                         org.opencrx.kernel.document1.jmi1.DocumentFolder folder = null;
                         if(folders.isEmpty()) {
                             folder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
-                            folder.refInitialize(false, false);
                             folder.setName(folderName);
                             // Default security for folders
                             try {
@@ -413,7 +409,6 @@ public class DocumentScannerServlet
                         // Add assignment
                         if(assignments.isEmpty()) {
                             FolderAssignment assignment = pm.newInstance(FolderAssignment.class);
-                            assignment.refInitialize(false, false);
                             assignment.setName(folder.getName());
                             assignment.setDocumentFolder(folder);
                             assignment.getOwningGroup().clear();

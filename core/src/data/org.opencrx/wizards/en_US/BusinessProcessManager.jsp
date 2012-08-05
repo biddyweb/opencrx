@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BusinessProcessManager.jsp,v 1.9 2011/12/16 09:35:26 cmu Exp $
+ * Name:        $Id: BusinessProcessManager.jsp,v 1.12 2012/01/20 12:51:08 cmu Exp $
  * Description: Manage Activities of a Business Process
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/16 09:35:26 $
+ * Date:        $Date: 2012/01/20 12:51:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -93,6 +93,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 		PREPARE_FOLLOWUP,
 		CREATE_FOLLOWUP,
 		CANCEL_FOLLOWUP,
+		SET_FAVORITEACTIVITY,
 		FILE_UPLOAD,
 		EMAIL_UPLOAD,
 		RELOAD
@@ -593,7 +594,11 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 							}
 							
 							boolean hasValidTransitions = processNode.nodeActivity != null ? (getNextTransitionsOfActivity(processNode.nodeActivity, false, false, pm).size() > 0) : false;;
-							String title = "<td title='" + processNode.name + "' class='processName " + actStatus + "' rowspan='" + processNode.subProcessNodes.size() + "'>" 
+							String title = "<td title='" + processNode.name + "' class='processName " + actStatus + "' rowspan='" + processNode.subProcessNodes.size() + "'>"
+															+ "<div class='actPicker' onclick='javascript:$(\"FAVORITEACTIVITY_XRI\").value=\"" + (processNode.nodeActivity == null ? "" : processNode.nodeActivity.refMofId()) + "\";"
+															+ "$(\"DOCSFAVORITEACTIVITY_XRI\").value=\"" + (processNode.nodeActivity == null ? "" : processNode.nodeActivity.refMofId()) + "\";"
+															+ "$(\"EMAILFAVORITEACTIVITY_XRI\").value=\"" + (processNode.nodeActivity == null ? "" : processNode.nodeActivity.refMofId()) + "\";"
+															+ "$(\"command\").value=\"SET_FAVORITEACTIVITY\";$(\"Reload\").click();'><img src='../../images/favorites.gif'/></div>"
 															+ "<div class='processNode noact'>"
 															+ processNode.name + "</div>"
 															+ "<div class='" + (hasValidTransitions ? "followUp actFollowUp" : "invisible") + "' title='" + app.getLabel(ACTIVITYFOLLOWUP_CLASS)  + "' onclick=\"javascript:"
@@ -655,6 +660,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	String objectXri = null;
 	String commandAsString = null;
 	List filecb = new ArrayList();
+
+	String FAVORITEACTIVITY_XRI = null;
 
 	if(FileUpload.isMultipartContent(request)) {
 			try {
@@ -730,6 +737,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 				requestId = (requestIds == null) || (requestIds.length == 0) ? "" : requestIds[0];
 				String[] objectXris = (String[])parameterMap.get("xri");
 				objectXri = (objectXris == null) || (objectXris.length == 0) ? "" : objectXris[0];
+				String[] favactXris = (String[])parameterMap.get("FAVORITEACTIVITY_XRI");
+				FAVORITEACTIVITY_XRI = (favactXris == null) || (favactXris.length == 0) ? "" : favactXris[0];
 				String[] commandAsStrings = (String[])parameterMap.get("DOCcommand");
 				commandAsString = (commandAsStrings == null) || (commandAsStrings.length == 0) ? "" : commandAsStrings[0];
 			} catch (Exception e) {
@@ -738,6 +747,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	} else {
 		requestId =	request.getParameter(Action.PARAMETER_REQUEST_ID);
 		objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
+		FAVORITEACTIVITY_XRI = (request.getParameter("FAVORITEACTIVITY_XRI") == null ? "" : request.getParameter("FAVORITEACTIVITY_XRI"));
 		commandAsString = request.getParameter("command");
 		if (request.getParameter("Fcommand") != null && request.getParameter("Fcommand").length() > 0) {
 				commandAsString = request.getParameter("Fcommand");
@@ -774,6 +784,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	//System.out.println("ACTIVITY_XRI = " + ACTIVITY_XRI);
 	//System.out.println("TRANSITION_XRI = " + TRANSITION_XRI);
 
+	System.out.println("FAVORITEACT_XRI = " + FAVORITEACTIVITY_XRI);
 
 	boolean showCompleteProcess = (request.getParameter("showCompleteProcess") != null) && (request.getParameter("showCompleteProcess").length() > 0);
 
@@ -785,6 +796,15 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 			request.getContextPath() + "/" + nextAction.getEncodedHRef()
 		);
 		return;
+	}
+
+	org.opencrx.kernel.activity1.jmi1.Activity favoriteActivity = null;
+	if(FAVORITEACTIVITY_XRI != null && FAVORITEACTIVITY_XRI.length() > 0) {
+		try {
+				favoriteActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(FAVORITEACTIVITY_XRI));
+		} catch (Exception e) {
+				new ServiceException(e).log();
+		}
 	}
 
 	if(command == Command.DO_FOLLOWUP) {
@@ -860,6 +880,9 @@ org.openmdx.uses.org.apache.commons.fileupload.*
     .normal{font-weight:normal;}
     .transition{overflow:hidden;cursor:pointer;}
 
+		.actPicker{float:right;cursor:pointer;}
+		DIV.actclosed TD.noact{background-color:#83A500;}
+		
 		.accountEntryTable{float:left;margin:0px 5px 5px 5px; border-width: 1px;	border-spacing: 2px;border-style: solid; border-color: gray; border-collapse: separate;	width:161px;}
 		.accountEntryTable caption {padding:2px 2px 1px 5px;background-color:#eee; font-weight: bold; text-align:left;}
 		.accountEntryTable td {border-width: 1px;	padding: 1px;	border-style: none;	border-color: gray;	vertical-align:middle;white-space:nowrap;text-overflow:ellipsis;overflow:}
@@ -868,16 +891,16 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 		.contact{background-color:#FFFB99;}
 		.salesRep{;}
 		
-		.fileDropTable{float:left;margin:0px 5px 5px 5px; border-width: 1px;	border-spacing: 2px;border-style: solid; border-color: #eee; border-collapse: separate;	width:120px;}
-		.fileDropTable caption {padding:2px 2px 1px 5px;background-color:#eee; font-weight: bold; text-align:left;}
+		.fileDropTable{float:left;margin:0px 5px 5px 5px; border-width: 1px;	border-spacing: 2px;border-style: solid; border-color: #eee; border-collapse: separate;	table-layout:fixed; overflow:hidden; width:200px;}
+		.fileDropTable caption {padding:2px 2px 1px 5px;background-color:#eee; font-weight: bold; text-align:left;white-space:nowrap;width:200px;}
 		.fileDropTable tbody {border-style:0px none white;}
-		.fileDropTable td {border-width: 1px;	padding: 1px;	border-style: none;	border-color: gray;	vertical-align:middle;white-space:nowrap;text-overflow:ellipsis;overflow:}
+		.fileDropTable td {border-width: 1px;	padding: 1px;	border-style: none;	border-color: gray;	vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 		.fileDrop {border:1px solid #ddd;}
 
-		.emailDropTable{float:left;margin:0px 5px 5px 5px; border-width: 1px;	border-spacing: 2px;border-style: solid; border-color: #eee; border-collapse: separate;	width:120px;}
-		.emailDropTable caption {padding:2px 2px 1px 5px;background-color:#eee; font-weight: bold; text-align:left;}
+		.emailDropTable{float:left;margin:0px 5px 5px 5px; border-width: 1px;	border-spacing: 2px;border-style: solid; border-color: #eee; border-collapse: separate;	table-layout:fixed; overflow:hidden; width:200px;}
+		.emailDropTable caption {padding:2px 2px 1px 5px;background-color:#eee; font-weight: bold; text-align:left;white-space:nowrap;width:200px;}
 		.emailDropTable tbody {border-style:0px none white;}
-		.emailDropTable td {border-width: 1px;	padding: 1px;	border-style: none;	border-color: gray;	vertical-align:middle;white-space:nowrap;text-overflow:ellipsis;overflow:}
+		.emailDropTable td {border-width: 1px;	padding: 1px;	border-style: none;	border-color: gray;	vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 		.emailDrop {border:1px solid #ddd;}
 
 
@@ -1147,22 +1170,25 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 <%
 	ProcessNode processNode = getProcess(activity, pm);
 	org.opencrx.kernel.activity1.jmi1.Activity topLevelActivity = processNode.nodeActivity;
+	if (favoriteActivity == null) {
+			favoriteActivity = topLevelActivity;
+	}
 
-	String activityHref = null;
-	if (topLevelActivity != null) {
+	String favoriteActivityHref = null;
+	if (favoriteActivity != null) {
 		Action action = new Action(
 				SelectObjectAction.EVENT_ID,
 				new Action.Parameter[]{
-						new Action.Parameter(Action.PARAMETER_OBJECTXRI, topLevelActivity.refMofId())
+						new Action.Parameter(Action.PARAMETER_OBJECTXRI, favoriteActivity.refMofId())
 				},
 				"",
 				true // enabled
 			);
-		activityHref = "../../" + action.getEncodedHRef();
+		favoriteActivityHref = "../../" + action.getEncodedHRef();
 	}
 	
 	//FileUpload
-	if(topLevelActivity != null && (command == Command.FILE_UPLOAD)) {
+	if(favoriteActivity != null && (command == Command.FILE_UPLOAD)) {
 		int fileCounter = 1;
 		String location = app.getTempFileName(fileCounter + "." + UPLOAD_FILE_FIELD_NAME, "");
 		while(
@@ -1189,7 +1215,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 				try {
 					pm.currentTransaction().begin();
 
-					RefObject_1_0 actobj = (RefObject_1_0)topLevelActivity;
+					RefObject_1_0 actobj = (RefObject_1_0)favoriteActivity;
 					
 					boolean isChecked = false;
 					try {
@@ -1239,14 +1265,14 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
 	int numOfDocuments = 0;
 	try {
-		if (topLevelActivity != null && !topLevelActivity.getMedia().isEmpty()) {
-			numOfDocuments = topLevelActivity.getMedia().size();
+		if (favoriteActivity != null && !favoriteActivity.getMedia().isEmpty()) {
+			numOfDocuments = favoriteActivity.getMedia().size();
 		}
 	} catch (Exception e) {}
 
 		
 	//EMailUpload
-	if(topLevelActivity != null && (command == Command.EMAIL_UPLOAD)) {
+	if(favoriteActivity != null && (command == Command.EMAIL_UPLOAD)) {
 		int fileCounter = 1;
 		String location = app.getTempFileName(fileCounter + "." + UPLOAD_EMAIL_FIELD_NAME, "");
 		while(
@@ -1271,7 +1297,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 				(contentMimeType.length() > 0)
 			) {
 				try {
-					//RefObject_1_0 actobj = (RefObject_1_0)topLevelActivity;
+					//RefObject_1_0 actobj = (RefObject_1_0)favoriteActivity;
 					
 					boolean isChecked = false;
 					try {
@@ -1280,7 +1306,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
 					System.out.println(contentName + " is " + (isChecked ? "" : "not") + " checked");
 					if (isChecked) {
-						System.out.println("calling importMimeMessage");
+						//System.out.println("calling importMimeMessage");
 						List<org.opencrx.kernel.activity1.jmi1.EMail> emails = Activities.getInstance().importMimeMessage(
 								pm,
 								providerName,
@@ -1288,17 +1314,17 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 								new MimeMessageImpl(new FileInputStream(location)),
 								null //obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCreator ? (org.opencrx.kernel.activity1.jmi1.ActivityCreator)obj : null
 							);
-						System.out.println("calling importMimeMessage done");
-						System.out.println("emails = " + emails);
+						//System.out.println("calling importMimeMessage done");
+						//System.out.println("emails = " + emails);
 						if (emails != null && !emails.isEmpty()) {
 							try {	
-								// link e-mails to topLevelActivity
+								// link e-mails to favoriteActivity
 								pm.currentTransaction().begin();
 								org.opencrx.kernel.activity1.jmi1.EMail importedEMail = (org.opencrx.kernel.activity1.jmi1.EMail)emails.iterator().next();
 								org.opencrx.kernel.activity1.jmi1.ActivityLinkTo activityLinkTo = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).getActivityLinkTo().createActivityLinkTo();
 								activityLinkTo.refInitialize(false, false);
-								activityLinkTo.setLinkTo(topLevelActivity);
-								activityLinkTo.setName("activity:" + topLevelActivity.getActivityNumber());
+								activityLinkTo.setLinkTo(favoriteActivity);
+								activityLinkTo.setName("activity:" + favoriteActivity.getActivityNumber());
 								activityLinkTo.setActivityLinkType(Activities.ActivityLinkType.RELATES_TO.getValue()); // relates to
 								importedEMail.addActivityLinkTo(
 									false,
@@ -1331,11 +1357,11 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	}
 
 	int numOfEmails = 0;
-	if (topLevelActivity != null) {
+	if (favoriteActivity != null) {
 		try {
 			org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery linkFromQuery = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityLinkFromQuery();
 			linkFromQuery.activityLinkType().equalTo(new Short((short)(100 - Activities.ActivityLinkType.RELATES_TO.getValue())));
-			for (Iterator linkFrom = topLevelActivity.getActivityLinkFrom(linkFromQuery).iterator(); linkFrom.hasNext();) {
+			for (Iterator linkFrom = favoriteActivity.getActivityLinkFrom(linkFromQuery).iterator(); linkFrom.hasNext();) {
 					try {
 							org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom activityLinkFrom = (org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom)linkFrom.next();
 							if (activityLinkFrom.getLinkFrom() != null && activityLinkFrom.getLinkFrom() instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
@@ -1397,104 +1423,125 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
 		<table class='fileDropTable'>
 		<caption>
-		  <input type="submit" name="UploadDocs" id="UploadDocs" style="float:right;visibility:hidden;" value="<%= app.getTexts().getSaveTitle() %>" tabindex="<%= tabIndex++ %>" onclick="javascript:$('DOCcommand').value='FILE_UPLOAD';this.name='--';" />
-			<a href='<%= activityHref %>' target='_blank'>
+		  <input type="submit" name="UploadDocs" id="UploadDocs" style="float:right;visibility:visible;" value="<%= app.getTexts().getSaveTitle() %>" tabindex="<%= tabIndex++ %>" onclick="javascript:$('DOCcommand').value='FILE_UPLOAD';this.name='--';document.forms['DOCS<%= WIZARD_NAME %>'].submit();" />
+			<a href='<%= favoriteActivityHref %>' target='_blank'>
 			  <img src='../../images/Media.gif'/>
 			  <%= app.getLabel("org:opencrx:kernel:generic:DocumentAttachment") %> (<%= numOfDocuments %>)
 		  </a>
+<%
+			if (favoriteActivity != null) {
+	%>
+			  <tr><td style="overflow:hidden;" title=" <%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>">
+			 		<%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>
+			  </td></tr>
+	<%				
+			}
+%>
 		</caption>
-		<tr>
-			<td>
-				<form id="DOCS<%= WIZARD_NAME %>" name="DOCS<%= WIZARD_NAME %>" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
-					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-					<input type="hidden" name="DOCcommand" id="DOCcommand" value="NA"/>
-				
-					<input name="<%= UPLOAD_FILE_FIELD_NAME %>" id="<%= UPLOAD_FILE_FIELD_NAME %>" size="5" class="fileDrop" title="drop files here" type="file" multiple="multiple" onChange="javascript:$('UploadDocs').style.visibility='visible' ; makeFileList();" />
-					<div id="fileList"></div>
-					<script type="text/javascript">
-						$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='75px';
+			<tr>
+				<td>
+					<form id="DOCS<%= WIZARD_NAME %>" name="DOCS<%= WIZARD_NAME %>" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
+						<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+						<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+						<input type="hidden" name="DOCcommand" id="DOCcommand" value="NA"/>
+						<input type="hidden" name="FAVORITEACTIVITY_XRI" id="DOCSFAVORITEACTIVITY_XRI" value="<%= FAVORITEACTIVITY_XRI %>" />
 					
-						function makeFileList() {
-							$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='';
-							var input = $("<%= UPLOAD_FILE_FIELD_NAME %>");
-							var outerdiv = $("fileList");
-							while (outerdiv.hasChildNodes()) {
-								outerdiv.removeChild(outerdiv.firstChild);
+						<input name="<%= UPLOAD_FILE_FIELD_NAME %>" id="<%= UPLOAD_FILE_FIELD_NAME %>" size="8" class="fileDrop" title="drop files here" type="file" multiple="multiple" onChange="javascript:$('UploadDocs').style.visibility='visible' ; makeFileList();" />
+						<div id="fileList"></div>
+						<script type="text/javascript">
+							$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='60px';
+						
+							function makeFileList() {
+								$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='';
+								var input = $("<%= UPLOAD_FILE_FIELD_NAME %>");
+								var outerdiv = $("fileList");
+								while (outerdiv.hasChildNodes()) {
+									outerdiv.removeChild(outerdiv.firstChild);
+								}
+								for (var i = 0; i < input.files.length; i++) {
+									var div = document.createElement("div");
+									var cb = document.createElement("input");
+									cb.type = "checkbox";
+									cb.name = "filecb"+(i+1);
+					        cb.id = "filecb"+(i+1);
+					        cb.value = input.files[i].name;
+					        cb.checked = true;
+					        var text = document.createTextNode(input.files[i].name);
+									div.appendChild(cb);
+									div.appendChild(text);
+									outerdiv.appendChild(div);
+								}
+								if(!outerdiv.hasChildNodes()) {
+									outerdiv.innerHTML = '--';
+									$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='60px';
+								}
 							}
-							for (var i = 0; i < input.files.length; i++) {
-								var div = document.createElement("div");
-								var cb = document.createElement("input");
-								cb.type = "checkbox";
-								cb.name = "filecb"+(i+1);
-				        cb.id = "filecb"+(i+1);
-				        cb.value = input.files[i].name;
-				        cb.checked = true;
-				        var text = document.createTextNode(input.files[i].name);
-								div.appendChild(cb);
-								div.appendChild(text);
-								outerdiv.appendChild(div);
-							}
-							if(!outerdiv.hasChildNodes()) {
-								outerdiv.innerHTML = '--';
-								$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='75px';
-							}
-						}
-					</script>
-				</form>
-			</td>
-		</tr>
+						</script>
+					</form>
+				</td>
+			</tr>
 		</table>
 
 		<table class='emailDropTable'>
-		<caption>
-		  <input type="submit" name="UploadEmails" id="UploadEmails" style="float:right;visibility:hidden;" value="<%= app.getTexts().getSaveTitle() %>" tabindex="<%= tabIndex++ %>" onclick="javascript:$('EMAILcommand').value='EMAIL_UPLOAD';this.name='--';document.forms['EMAILS<%= WIZARD_NAME %>'].submit();" />
-			<a href='<%= activityHref %>' target='_blank'>
-			  <img src='../../images/EMail.gif'/>
-			  <%= app.getLabel("org:opencrx:kernel:activity1:EMail") %> (<%= numOfEmails %>)
-		  </a>
-		</caption>
-		<tr>
-			<td>
-				<form id="EMAILS<%= WIZARD_NAME %>" name="EMAILS<%= WIZARD_NAME %>" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
-					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-					<input type="hidden" name="DOCcommand" id="EMAILcommand" value="NA"/>
-				
-					<input name="<%= UPLOAD_EMAIL_FIELD_NAME %>" id="<%= UPLOAD_EMAIL_FIELD_NAME %>" size="5" class="fileDrop" title="drop files here" type="file" multiple="multiple" onChange="javascript:$('UploadEmails').style.visibility='visible' ; makeEmailList();" />
-					<div id="emailList"></div>
-					<script type="text/javascript">
-						$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='75px';
+			<caption>
+			  <input type="submit" name="UploadEmails" id="UploadEmails" style="float:right;visibility:hidden;" value="<%= app.getTexts().getSaveTitle() %>" tabindex="<%= tabIndex++ %>" onclick="javascript:$('EMAILcommand').value='EMAIL_UPLOAD';this.name='--';document.forms['EMAILS<%= WIZARD_NAME %>'].submit();" />
+				<a href='<%= favoriteActivityHref %>' target='_blank'>
+				  <img src='../../images/EMail.gif'/>
+				  <%= app.getLabel("org:opencrx:kernel:activity1:EMail") %> (<%= numOfEmails %>)
+			  </a>
+			</caption>
+<%
+			if (favoriteActivity != null) {
+%>
+			  <tr><td style="overflow:hidden;" title=" <%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>">
+			 		<%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>
+			  </td></tr>
+<%				
+			}
+%>
+			
+			<tr>
+				<td>
+					<form id="EMAILS<%= WIZARD_NAME %>" name="EMAILS<%= WIZARD_NAME %>" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
+						<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+						<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+						<input type="hidden" name="DOCcommand" id="EMAILcommand" value="NA"/>
+						<input type="hidden" name="FAVORITEACTIVITY_XRI" id="EMAILFAVORITEACTIVITY_XRI" value="<%= FAVORITEACTIVITY_XRI %>" />
 					
-						function makeEmailList() {
-							$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='';
-							var input = $("<%= UPLOAD_EMAIL_FIELD_NAME %>");
-							var outerdiv = $("emailList");
-							while (outerdiv.hasChildNodes()) {
-								outerdiv.removeChild(outerdiv.firstChild);
+						<input name="<%= UPLOAD_EMAIL_FIELD_NAME %>" id="<%= UPLOAD_EMAIL_FIELD_NAME %>" size="8" class="fileDrop" title="drop files here" type="file" multiple="multiple" onChange="javascript:$('UploadEmails').style.visibility='visible' ; makeEmailList();" />
+						<div id="emailList"></div>
+						<script type="text/javascript">
+							$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='60px';
+						
+							function makeEmailList() {
+								$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='';
+								var input = $("<%= UPLOAD_EMAIL_FIELD_NAME %>");
+								var outerdiv = $("emailList");
+								while (outerdiv.hasChildNodes()) {
+									outerdiv.removeChild(outerdiv.firstChild);
+								}
+								for (var i = 0; i < input.files.length; i++) {
+									var div = document.createElement("div");
+									var cbtn = document.createElement("input");
+									cbtn.type = "checkbox";
+									cbtn.name = "filecb"+(i+1);
+					        cbtn.id = "filecb"+(i+1);
+					        cbtn.value = input.files[i].name;
+					        cbtn.checked = true;
+					        var text = document.createTextNode(input.files[i].name);
+									div.appendChild(cbtn);
+									div.appendChild(text);
+									outerdiv.appendChild(div);
+								}
+								if(!outerdiv.hasChildNodes()) {
+									outerdiv.innerHTML = '--';
+									$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='60px';
+								}
 							}
-							for (var i = 0; i < input.files.length; i++) {
-								var div = document.createElement("div");
-								var cbtn = document.createElement("input");
-								cbtn.type = "checkbox";
-								cbtn.name = "filecb"+(i+1);
-				        cbtn.id = "filecb"+(i+1);
-				        cbtn.value = input.files[i].name;
-				        cbtn.checked = true;
-				        var text = document.createTextNode(input.files[i].name);
-								div.appendChild(cbtn);
-								div.appendChild(text);
-								outerdiv.appendChild(div);
-							}
-							if(!outerdiv.hasChildNodes()) {
-								outerdiv.innerHTML = '--';
-								$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='75px';
-							}
-						}
-					</script>
-				</form>
-			</td>
-		</tr>
+						</script>
+					</form>
+				</td>
+			</tr>
 		</table>
 				
 	<div style="clear:both;height:3px;"></div>
@@ -1503,6 +1550,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 		<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 		<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 		<input type="hidden" name="command" id="command" value="NA"/>
+		<input type="hidden" name="FAVORITEACTIVITY_XRI" id="FAVORITEACTIVITY_XRI" value="<%= FAVORITEACTIVITY_XRI %>" />
 
 		<input type="hidden" name="ACTIVITY_XRI" id="ACTIVITY_XRI" value="" />
 		<input type="hidden" name="TRANSITION_XRI" id="TRANSITION_XRI" value="" />

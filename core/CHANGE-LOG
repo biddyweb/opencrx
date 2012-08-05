@@ -5,6 +5,33 @@
                     =====================================
 
 ==============================================================================
+Version 2.9.1                                                       2012-01-21
+==============================================================================
+
+1.    NEW FEATURES
+      none
+      
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+
+      CR10010458
+      User-specific pm for triggering reminders. 
+            
+      CR10010477
+      refInitialize() to backend. Move refInitialize() to 
+      BasicObjectImpl.openmdxjdoPostConstruct(). It is now optional for client 
+      code to call refInitialize() after newInstance().
+
+2.1.  FIXED BUGS
+      
+      CR10010473
+      Fix Outermost RefPackage mismatch in UserHome.createUserHome()      
+ 
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
 Version 2.9.0                                                       2011-12-28
 ==============================================================================
 

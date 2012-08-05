@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IntegerPropertyDataBinding.java,v 1.9 2011/10/23 10:26:57 wfro Exp $
+ * Name:        $Id: IntegerPropertyDataBinding.java,v 1.10 2012/01/13 17:16:05 wfro Exp $
  * Description: IntegerPropertyDataBinding
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/23 10:26:57 $
+ * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -97,7 +97,6 @@ public class IntegerPropertyDataBinding extends AbstractPropertyDataBinding {
         if(p == null) {
         	PersistenceManager pm = JDOHelper.getPersistenceManager(object);
         	p = pm.newInstance(IntegerProperty.class);
-        	p.refInitialize(false, false);
             this.createProperty(
                 object,
                 qualifiedFeatureName,

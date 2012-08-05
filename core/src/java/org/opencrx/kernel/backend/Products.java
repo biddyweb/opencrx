@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.94 2011/06/29 14:17:10 wfro Exp $
+ * Name:        $Id: Products.java,v 1.95 2012/01/13 17:15:41 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.94 $
+ * Revision:    $Revision: 1.95 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/29 14:17:10 $
+ * Date:        $Date: 2012/01/13 17:15:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -411,7 +411,6 @@ public class Products extends AbstractImpl {
     	Collection<ProductConfigurationType> configurationTypes = configurationTypeSet.getConfigurationType();
     	for(ProductConfigurationType configurationType: configurationTypes) {
     		ProductConfiguration configuration = pm.newInstance(ProductConfiguration.class);
-    		configuration.refInitialize(false, false);
     		configuration.setDefault(configurationType.isDefault());
     		configuration.setName(configurationType.getName());
     		configuration.setDescription(configurationType.getDescription());
@@ -1319,7 +1318,6 @@ public class Products extends AbstractImpl {
             );
             if(basePrices.isEmpty()) {
                 ProductBasePrice basePrice = pm.newInstance(ProductBasePrice.class);
-                basePrice.refInitialize(false, false);
                 basePrice.getPriceLevel().add(
                     priceLevel
                 );

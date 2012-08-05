@@ -50,18 +50,18 @@
 													</_object>
 													<_content />
 												</org.openmdx.ui1.FormFieldDefinition>					
-												<org.openmdx.ui1.FormFieldDefinition id="reportingContact">
-													<_object>
-														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
-														<featureName>reportingContact</featureName>
-														<order>300</order>	
-													</_object>
-													<_content />
-												</org.openmdx.ui1.FormFieldDefinition>												
 												<org.openmdx.ui1.FormFieldDefinition id="reportingAccount">
 													<_object>
 														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
 														<featureName>reportingAccount</featureName>
+														<order>300</order>	
+													</_object>
+													<_content />
+												</org.openmdx.ui1.FormFieldDefinition>												
+												<org.openmdx.ui1.FormFieldDefinition id="reportingContact">
+													<_object>
+														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
+														<featureName>reportingContact</featureName>
 														<order>400</order>	
 													</_object>
 													<_content />

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Activities.java,v 1.225 2011/12/21 13:42:15 wfro Exp $
+ * Name:        $Id: Activities.java,v 1.228 2012/01/13 17:15:42 wfro Exp $
  * Description: Activities
- * Revision:    $Revision: 1.225 $
+ * Revision:    $Revision: 1.228 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/21 13:42:15 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -481,7 +481,6 @@ public class Activities extends AbstractImpl {
         	pm.currentTransaction().begin();
         }
         calendar = pm.newInstance(Calendar.class);
-        calendar.refInitialize(false, false);
         calendar.setName(calendarName);
         calendar.getOwningGroup().addAll(owningGroups);
         calendar.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -492,7 +491,6 @@ public class Activities extends AbstractImpl {
         );
         // Sunday
         WeekDay weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)1);
         weekDay.setWorkingDay(false);
         weekDay.getOwningGroup().addAll(owningGroups);
@@ -504,7 +502,6 @@ public class Activities extends AbstractImpl {
         );
         // Monday
         weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)2);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -518,7 +515,6 @@ public class Activities extends AbstractImpl {
         );
         // Tuesday
         weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)3);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -532,7 +528,6 @@ public class Activities extends AbstractImpl {
         );
         // Wednesday
         weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)4);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -546,7 +541,6 @@ public class Activities extends AbstractImpl {
         );
         // Thursday
         weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)5);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -560,7 +554,6 @@ public class Activities extends AbstractImpl {
         );
         // Friday
         weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)6);
         weekDay.setWorkingDay(true);
         weekDay.setWorkDurationHours((short)8);
@@ -574,7 +567,6 @@ public class Activities extends AbstractImpl {
         );
         // Saturday
         weekDay = pm.newInstance(WeekDay.class);
-        weekDay.refInitialize(false, false);
         weekDay.setDayOfWeek((short)7);
         weekDay.setWorkingDay(false);
         weekDay.getOwningGroup().addAll(owningGroups);
@@ -616,7 +608,6 @@ public class Activities extends AbstractImpl {
         	pm.currentTransaction().begin();
         }
         process = pm.newInstance(ActivityProcess.class);
-        process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_EMAILS);
         process.getOwningGroup().addAll(owningGroups);
         process.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -627,7 +618,6 @@ public class Activities extends AbstractImpl {
         );
         // State New
         ActivityProcessState newState = pm.newInstance(ActivityProcessState.class);
-        newState.refInitialize(false, false);
         newState.setName("New");
         newState.getOwningGroup().addAll(owningGroups);
         newState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -638,7 +628,6 @@ public class Activities extends AbstractImpl {
         );
         // State Open
         ActivityProcessState openState = pm.newInstance(ActivityProcessState.class);
-        openState.refInitialize(false, false);
         openState.setName("Open");
         openState.getOwningGroup().addAll(owningGroups);
         openState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -649,7 +638,6 @@ public class Activities extends AbstractImpl {
         );
         // State Closed
         ActivityProcessState closedState = pm.newInstance(ActivityProcessState.class);
-        closedState.refInitialize(false, false);
         closedState.setName("Closed");
         closedState.getOwningGroup().addAll(owningGroups);
         closedState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -668,7 +656,6 @@ public class Activities extends AbstractImpl {
         process.setStartState(newState);                    
         // Transition Assign: New->Open
         ActivityProcessTransition processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Assign");
         processTransition.setPrevState(newState);
         processTransition.setNextState(openState);
@@ -683,7 +670,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetAssignedToAction
         SetAssignedToAction setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
-        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
         setAssignedToAction.getOwningGroup().addAll(owningGroups);
@@ -695,7 +681,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetActualStartAction
         SetActualStartAction setActualStartAction = pm.newInstance(SetActualStartAction.class);
-        setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
         setActualStartAction.getOwningGroup().addAll(owningGroups);
@@ -707,7 +692,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Add Note: Open->Open
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Add Note");
         processTransition.setPrevState(openState);
         processTransition.setNextState(openState);
@@ -722,7 +706,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Export: Open->Open
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Export as mail attachment");
         processTransition.setPrevState(openState);
         processTransition.setNextState(openState);
@@ -737,7 +720,6 @@ public class Activities extends AbstractImpl {
         );
         // Create WorkflowAction for ExportMail
         WfAction wfAction = pm.newInstance(WfAction.class);
-        wfAction.refInitialize(false, false);
         wfAction.setName("Export Mail");
         wfAction.setName("Export Mail as attachment to current user");
         wfAction.setWfProcess(
@@ -754,7 +736,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Send: Open->Open
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Send as mail");
         processTransition.setPrevState(openState);
         processTransition.setNextState(openState);
@@ -769,7 +750,6 @@ public class Activities extends AbstractImpl {
         );
         // Create WorkflowAction for SendMail
         wfAction = pm.newInstance(WfAction.class);
-        wfAction.refInitialize(false, false);
         wfAction.setName("Send Mail");
         wfAction.setName("Send as mail");
         wfAction.setWfProcess(
@@ -786,7 +766,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Close: Open->Closed
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Close");
         processTransition.setPrevState(openState);
         processTransition.setNextState(closedState);
@@ -801,7 +780,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetActualEndAction
         SetActualEndAction setActualEndAction = pm.newInstance(SetActualEndAction.class);
-        setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
         setActualEndAction.getOwningGroup().addAll(owningGroups);
@@ -861,7 +839,6 @@ public class Activities extends AbstractImpl {
         	pm.currentTransaction().begin();
         }
         process = pm.newInstance(ActivityProcess.class);
-        process.refInitialize(false, false);
         process.setName(ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING);
         process.getOwningGroup().addAll(owningGroups);
         process.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -872,7 +849,6 @@ public class Activities extends AbstractImpl {
         );
         // State New
         ActivityProcessState newState = pm.newInstance(ActivityProcessState.class);
-        newState.refInitialize(false, false);
         newState.setName("New");
         newState.getOwningGroup().addAll(owningGroups);
         newState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -883,7 +859,6 @@ public class Activities extends AbstractImpl {
         );
         // State In Progress
         ActivityProcessState inProgressState = pm.newInstance(ActivityProcessState.class);
-        inProgressState.refInitialize(false, false);
         inProgressState.setName("In Progress");
         inProgressState.getOwningGroup().addAll(owningGroups);
         inProgressState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -894,7 +869,6 @@ public class Activities extends AbstractImpl {
         );
         // State Complete
         ActivityProcessState completeState = pm.newInstance(ActivityProcessState.class);
-        completeState.refInitialize(false, false);
         completeState.setName("Complete");
         completeState.getOwningGroup().addAll(owningGroups);
         completeState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -905,7 +879,6 @@ public class Activities extends AbstractImpl {
         );
         // State Closed
         ActivityProcessState closedState = pm.newInstance(ActivityProcessState.class);
-        closedState.refInitialize(false, false);
         closedState.setName("Closed");
         closedState.getOwningGroup().addAll(owningGroups);
         closedState.setAccessLevelUpdate(accessLevelUpdateDelete);
@@ -924,7 +897,6 @@ public class Activities extends AbstractImpl {
         process.setStartState(newState);                    
         // Transition Add Note: Open->Open
         ActivityProcessTransition processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Add Note");
         processTransition.setPrevState(inProgressState);
         processTransition.setNextState(inProgressState);
@@ -939,7 +911,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Assign: New->In Progress
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Assign");
         processTransition.setPrevState(newState);
         processTransition.setNextState(inProgressState);
@@ -954,7 +925,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetAssignedToAction
         SetAssignedToAction setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
-        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
         setAssignedToAction.getOwningGroup().addAll(owningGroups);
@@ -966,7 +936,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetActualStartAction
         SetActualStartAction setActualStartAction = pm.newInstance(SetActualStartAction.class);
-        setActualStartAction.refInitialize(false, false);
         setActualStartAction.setName("Set actual start");
         setActualStartAction.setDescription("Set actual start on activity assignment");
         setActualStartAction.getOwningGroup().addAll(owningGroups);
@@ -978,7 +947,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Close: Complete->Closed
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Close");
         processTransition.setPrevState(completeState);
         processTransition.setNextState(closedState);
@@ -993,7 +961,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Complete: In Progress->Complete
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Complete");
         processTransition.setPrevState(inProgressState);
         processTransition.setNextState(completeState);
@@ -1008,7 +975,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetActualEndAction
         SetActualEndAction setActualEndAction = pm.newInstance(SetActualEndAction.class);
-        setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Set actual end");
         setActualEndAction.setName("Set actual end to current dateTime");
         setActualEndAction.getOwningGroup().addAll(owningGroups);
@@ -1020,7 +986,6 @@ public class Activities extends AbstractImpl {
         );
         // Create SetAssignedToAction
         setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
-        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to reporting contact");
         setAssignedToAction.getOwningGroup().addAll(owningGroups);
@@ -1032,7 +997,6 @@ public class Activities extends AbstractImpl {
         );
         // Transition Create: New->New
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Create");
         processTransition.setPrevState(newState);
         processTransition.setNextState(newState);
@@ -1047,7 +1011,6 @@ public class Activities extends AbstractImpl {
         );        
         // Transition Reopen: Complete->In Progress
         processTransition = pm.newInstance(ActivityProcessTransition.class);
-        processTransition.refInitialize(false, false);
         processTransition.setName("Reopen");
         processTransition.setPrevState(completeState);
         processTransition.setNextState(inProgressState);
@@ -1062,7 +1025,6 @@ public class Activities extends AbstractImpl {
         );        
         // Create SetAssignedToAction
         setAssignedToAction = pm.newInstance(SetAssignedToAction.class);
-        setAssignedToAction.refInitialize(false, false);
         setAssignedToAction.setName("Set assignedTo");
         setAssignedToAction.setDescription("Set assignedTo to current user");
         setAssignedToAction.getOwningGroup().addAll(owningGroups);
@@ -1074,7 +1036,6 @@ public class Activities extends AbstractImpl {
         );        
         // Create SetActualEndAction
         setActualEndAction = pm.newInstance(SetActualEndAction.class);
-        setActualEndAction.refInitialize(false, false);
         setActualEndAction.setName("Reset actualEnd");
         setActualEndAction.setDescription("Reset actualEnd");
         setActualEndAction.setResetToNull(true);
@@ -1119,7 +1080,6 @@ public class Activities extends AbstractImpl {
         	pm.currentTransaction().begin();
         }
         activityType = pm.newInstance(ActivityType.class);
-        activityType.refInitialize(false, false);
         activityType.setName(activityTypeName);
         activityType.setActivityClass(activityClass);
         activityType.setControlledBy(activityProcess);
@@ -1155,7 +1115,6 @@ public class Activities extends AbstractImpl {
         }        
         pm.currentTransaction().begin();
         activityTracker = pm.newInstance(ActivityTracker.class);
-        activityTracker.refInitialize(false, false);
         activityTracker.setName(trackerName);
         activityTracker.getOwningGroup().addAll(
             owningGroups == null
@@ -1189,7 +1148,6 @@ public class Activities extends AbstractImpl {
         }        
         pm.currentTransaction().begin();
         activityCategory = pm.newInstance(ActivityCategory.class);
-        activityCategory.refInitialize(false, false);
         activityCategory.setName(categoryName);
         activityCategory.getOwningGroup().addAll(
             owningGroups == null
@@ -1246,7 +1204,6 @@ public class Activities extends AbstractImpl {
         		pm.currentTransaction().begin();
         	}
             activityCreator = pm.newInstance(ActivityCreator.class);
-            activityCreator.refInitialize(false, false);
             activityCreator.setName(creatorName);
             activityCreator.setPriority((short)0);
             activityCreator.getOwningGroup().addAll(owningGroups);
@@ -1474,7 +1431,6 @@ public class Activities extends AbstractImpl {
 			catch(ClassNotFoundException e) {
 				throw new ServiceException(e);
 			}
-            newActivity.refInitialize(false, false);
             if(name != null) {
                 newActivity.setName(name);
             }
@@ -1568,7 +1524,6 @@ public class Activities extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
         ActivityVote vote = pm.newInstance(ActivityVote.class);
-        vote.refInitialize(false, false);
         if(name != null) {
             vote.setName(name);
         }
@@ -1663,7 +1618,6 @@ public class Activities extends AbstractImpl {
     	);
     	followUp.setActivity(linkTo);
     	ActivityLinkTo activityLink = pm.newInstance(ActivityLinkTo.class);
-    	activityLink.refInitialize(false, false);
     	activityLink.setName("#" + linkTo.getActivityNumber() + ": " + activity.getName());
     	activityLink.setActivityLinkType(ActivityLinkType.RELATES_TO.getValue());
     	activityLink.setLinkTo(linkTo);
@@ -1938,7 +1892,6 @@ public class Activities extends AbstractImpl {
                             );
                             // Link new activity with original
                             ActivityLinkTo activityLinkTo = pm.newInstance(ActivityLinkTo.class);
-                            activityLinkTo.refInitialize(false, false);
                             activityLinkTo.setName(activity.getName());
                             activityLinkTo.setActivityLinkType(ActivityLinkType.IS_DERIVED_FROM.getValue());
                             activityLinkTo.setLinkTo(activity);
@@ -1995,7 +1948,6 @@ public class Activities extends AbstractImpl {
         ActivityFollowUp followUp = null;
         if(processTransition instanceof SubActivityTransition) {
         	followUp = pm.newInstance(SubActivity.class);        	
-            followUp.refInitialize(false, false);
             SubActivityTransition transition = (SubActivityTransition)processTransition;
             Activity subActivity = null;
             if(transition.getActivityCreator() != null) {
@@ -2060,7 +2012,6 @@ public class Activities extends AbstractImpl {
                 );            		
                 // Link sub activity with original
                 ActivityLinkTo activityLinkTo = pm.newInstance(ActivityLinkTo.class);
-                activityLinkTo.refInitialize(false, false);
                 activityLinkTo.setName(activity.getName());
                 activityLinkTo.setActivityLinkType(ActivityLinkType.IS_CHILD_OF.getValue());
                 activityLinkTo.setLinkTo(activity);
@@ -2072,7 +2023,6 @@ public class Activities extends AbstractImpl {
             followUp.setActivity(subActivity);
         } else {
         	followUp = pm.newInstance(ActivityFollowUp.class);
-            followUp.refInitialize(false, false);
         }
         followUp.setTransition(processTransition);
         followUp.setTitle(followUpTitle);
@@ -2282,7 +2232,6 @@ public class Activities extends AbstractImpl {
             resourceAssignment = resourceAssignments.iterator().next();
         }            
         workRecord = pm.newInstance(ActivityWorkRecord.class);
-        workRecord.refInitialize(false, false);
         if(name != null) {
             workRecord.setName(name);
         }
@@ -2570,7 +2519,6 @@ public class Activities extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
         ResourceAssignment resourceAssignment = pm.newInstance(ResourceAssignment.class);
-        resourceAssignment.refInitialize(false, false);
         resourceAssignment.setName(
             resource.getName()
         );
@@ -2673,7 +2621,6 @@ public class Activities extends AbstractImpl {
                     for(ActivityGroup activityGroup: activityGroups) {
                         if(!excludeActivityGroups.contains(activityGroup)) {
                             ActivityGroupAssignment activityGroupAssignment = pm.newInstance(ActivityGroupAssignment.class);
-                            activityGroupAssignment.refInitialize(false, false);
                             activityGroupAssignment.setActivityGroup(activityGroup);
                             activityGroupAssignment.getOwningGroup().addAll(owningGroups);
                             activity.addAssignedGroup(
@@ -2844,7 +2791,6 @@ public class Activities extends AbstractImpl {
             // Create a resource assignment
             if(!hasAssignment) {
                 ResourceAssignment resourceAssignment = pm.newInstance(ResourceAssignment.class);
-                resourceAssignment.refInitialize(false, false);
                 resourceAssignment.setName(resource.getName());
                 resourceAssignment.setDescription(
                     "#" + (activity.getActivityNumber() == null ? "" : activity.getActivityNumber()) + ": " + (activity.getName() == null ? "" : activity.getName())
@@ -3116,7 +3062,6 @@ public class Activities extends AbstractImpl {
         	pm.currentTransaction().begin();
         }
         EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
-        recipient.refInitialize(false, false);
         emailActivity.addEmailRecipient(
             this.getUidAsString(),
             recipient
@@ -3181,7 +3126,6 @@ public class Activities extends AbstractImpl {
             	if(segmentAdmin != null) {
             		pmAdmin.currentTransaction().begin();
             		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
-            		emailAddress.refInitialize(false, false);
             		emailAddress.setEmailAddress(address);
             		emailAddress.setEmailType((short)1);
             		segmentAdmin.addAddress(
@@ -3411,7 +3355,6 @@ public class Activities extends AbstractImpl {
     		pm.currentTransaction().begin();
     	}
         Note note = pm.newInstance(Note.class);
-        note.refInitialize(false, false);
         emailActivity.addNote(
             this.getUidAsString(),
             note
@@ -4126,7 +4069,6 @@ public class Activities extends AbstractImpl {
         	if(segmentAdmin != null) {
         		pmAdmin.currentTransaction().begin();
         		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
-        		emailAddress.refInitialize(false, false);
         		emailAddress.setEmailAddress(this.getInternetAddresses(addressesFrom)[0]);
         		emailAddress.setEmailType((short)1);
         		segmentAdmin.addAddress(
@@ -4409,7 +4351,6 @@ public class Activities extends AbstractImpl {
 				);        	
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
-				recipient.refInitialize(false, false);
 				recipient.setParty(emailAddresses.iterator().next());
 				recipient.setPartyType(PartyType.EMAIL_TO.getValue());
 				email.addEmailRecipient(
@@ -4429,7 +4370,6 @@ public class Activities extends AbstractImpl {
 				);
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
-				recipient.refInitialize(false, false);
 				recipient.setParty(emailAddresses.iterator().next());
 				recipient.setPartyType(PartyType.EMAIL_CC.getValue());
 				email.addEmailRecipient(
@@ -4449,7 +4389,6 @@ public class Activities extends AbstractImpl {
 				);        	
 			if(!emailAddresses.isEmpty()) {
 				EMailRecipient recipient = pm.newInstance(EMailRecipient.class);
-				recipient.refInitialize(false, false);
 				recipient.setParty(emailAddresses.iterator().next());
 				recipient.setPartyType(PartyType.EMAIL_BCC.getValue());
 				email.addEmailRecipient(
@@ -4579,7 +4518,6 @@ public class Activities extends AbstractImpl {
 						List<org.opencrx.kernel.activity1.jmi1.ActivityProcess> activityProcesses = activitySegment.getActivityProcess(activityProcessQuery);
 						if(activityProcesses.isEmpty()) {
 							activityProcess = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcess.class);
-							activityProcess.refInitialize(false, false);
 							activityProcess.setName(activityProcessName);
 							activitySegment.addActivityProcess(
 								activityProcessId == null ? 
@@ -4605,7 +4543,6 @@ public class Activities extends AbstractImpl {
 		    					org.opencrx.kernel.activity1.jmi1.ActivityProcessState processState = activityProcess.getState(stateId);
 		    					if(processState == null) {
 		    						processState = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessState.class);
-		    						processState.refInitialize(false, false);
 		    						processState.setName(stateName);
 		    						activityProcess.addState(
 		    							stateId,
@@ -4652,7 +4589,6 @@ public class Activities extends AbstractImpl {
 					    						} else {
 					    							processTransition = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition.class);
 					    						}
-					    						processTransition.refInitialize(false, false);
 					    						processTransition.setName(transitionName);
 					    						activityProcess.addTransition(
 					    							transitionId,
@@ -4955,13 +4891,22 @@ public class Activities extends AbstractImpl {
 
 	public enum ActivityLinkType {
 		
-    	RELATES_TO((short)6),
+		IS_PARENT_OF((short)1),
+		BLOCKS((short)2),
+		WAS_CLONED_AS((short)3),
+		DUPLICATES((short)4),
+		INCORPORATES((short)5),
+		RELATES_TO((short)6),
 		IS_REPLICA_OF((short)7),
 		IS_REPLICA_OF_OBFUSCATED((short)8),
-		IS_ORIGINAL_OF((short)93),
 		IS_ORIGINAL_OF_OBFUSCATED((short)92),
-    	IS_DERIVED_FROM((short)97),
-    	IS_CHILD_OF((short)99);
+		IS_ORIGINAL_OF((short)93),
+		IS_RELATED_TO((short)94),
+		IS_PART_OF((short)95),
+		IS_DUPLICATED_BY((short)96),
+		IS_DERIVED_FROM((short)97),
+		IS_BLOCKED_BY((short)98),
+		IS_CHILD_OF((short)99);
 		
 		private short value;
 		

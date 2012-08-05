@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceImpl.java,v 1.61 2011/06/13 17:46:24 wfro Exp $
+ * Name:        $Id: ShopServiceImpl.java,v 1.64 2012/01/13 17:14:46 wfro Exp $
  * Description: ShopServiceImpl
- * Revision:    $Revision: 1.61 $
+ * Revision:    $Revision: 1.64 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/13 17:46:24 $
+ * Date:        $Date: 2012/01/13 17:14:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -101,10 +101,10 @@ import org.opencrx.kernel.activity1.jmi1.NewActivityParams;
 import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.Products;
-import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.base.jmi1.SecureObject;
 import org.opencrx.kernel.base.jmi1.StringProperty;
@@ -130,6 +130,7 @@ import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.SalesContract;
 import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
+import org.opencrx.kernel.contract1.jmi1.SalesOrderCreateInvoiceResult;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.depot1.jmi1.Depot1Package;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
@@ -844,7 +845,6 @@ public class ShopServiceImpl
             StringProperty property = this.pm.newInstance(StringProperty.class);
             StringPropertyT propertyT = (StringPropertyT)newProperty.getValue()[0];
             Integer index = (Integer)newProperty.getValue()[1];
-            property.refInitialize(false, false);
             this.datatypeMappers.mapStringProperty(
                propertyT.getName() + "[" + index + "]",
                this.findCodeValueContainer(propertyT.getDomain(), false),
@@ -874,7 +874,6 @@ public class ShopServiceImpl
         if(postalAddressInvoiceT != null) {
             org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressInvoice = 
                 this.getContractPackage().getPostalAddress().createPostalAddress();
-            postalAddressInvoice.refInitialize(false, false);
             this.datatypeMappers.mapPostalAddress(
                 postalAddressInvoiceT, 
                 postalAddressInvoice
@@ -893,7 +892,6 @@ public class ShopServiceImpl
         if(postalAddressDeliveryT != null) {
             org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressDelivery = 
                 this.getContractPackage().getPostalAddress().createPostalAddress();
-            postalAddressDelivery.refInitialize(false, false);
             this.datatypeMappers.mapPostalAddress(
                 postalAddressDeliveryT,
                 postalAddressDelivery
@@ -1062,7 +1060,6 @@ public class ShopServiceImpl
             }
             if(description == null) {
                 description = this.getGenericPackage().getDescription().createDescription();
-                description.refInitialize(false, false);      
                 description.getOwningGroup().addAll(
                     product.getOwningGroup()
                 );
@@ -1097,7 +1094,6 @@ public class ShopServiceImpl
             }
             if(picture == null) {
                 picture = this.getGenericPackage().getMedia().createMedia();
-                picture.refInitialize(false, false);
                 picture.getOwningGroup().addAll(
                     product.getOwningGroup()
                 );
@@ -1131,7 +1127,6 @@ public class ShopServiceImpl
         }
         for(ProductPhaseT productPhaseT: productT.getProductPhase()) {
             ProductPhase productPhase = this.getProductPackage().getProductPhase().createProductPhase();
-            productPhase.refInitialize(false, false);
             productPhase.setName(productPhaseT.getName());
             productPhase.setProductPhaseKey(productPhaseT.getProductPhaseKey());
             productPhase.setValidFrom(productPhaseT.getValidFrom());
@@ -1211,7 +1206,6 @@ public class ShopServiceImpl
 	        }
 	        if(contractStatusProperties == null) {
 	            contractStatusProperties = this.getGenericPackage().getPropertySet().createPropertySet();
-	            contractStatusProperties.refInitialize(false, false);
 	            contractStatusProperties.setName(contractStatusPropertySetName);
 	            contractStatusProperties.getOwningGroup().addAll(
 	            	contract.getOwningGroup()
@@ -1251,7 +1245,6 @@ public class ShopServiceImpl
         	// Create if it does not exist
         	if(bundleFilter == null) {
 	            bundleFilter = Utils.getProductPackage(this.pm).getProductFilterGlobal().createProductFilterGlobal();
-	            bundleFilter.refInitialize(false, false);
 	            bundleFilter.setName(productT.getProductNumber());
 	            bundleFilter.setDescription("Filter for product bundle " + productT.getProductNumber());
 	            this.datatypeMappers.getProductFilterFieldMapper().setProductFilterType(
@@ -1279,7 +1272,6 @@ public class ShopServiceImpl
         	// Create if it does not exist
         	if(filterProperty == null) {
         		filterProperty = Utils.getProductPackage(this.pm).getProductClassificationFilterProperty().createProductClassificationFilterProperty();
-        		filterProperty.refInitialize(false, false);
         		filterProperty.setName("Classifications");
         		filterProperty.setActive(Boolean.TRUE);
         		filterProperty.setFilterOperator(ConditionType.IS_IN.code());
@@ -1443,7 +1435,6 @@ public class ShopServiceImpl
             		if(customerContracts == null || !customerContracts.contains(customerContract)) {
         				this.pm.currentTransaction().begin();
         				AccountAssignmentContract accountAssignment = this.pm.newInstance(AccountAssignmentContract.class);
-        				accountAssignment.refInitialize(false, false);
         				accountAssignment.setAccount(customer);
         				customerContract.addAssignedAccount(
         					this.uuidAsString(), 
@@ -1556,7 +1547,6 @@ public class ShopServiceImpl
 	        		if(position != null) {
 	        			this.pm.currentTransaction().begin();
 	        			DeliveryInformation deliveryInformation = this.pm.newInstance(DeliveryInformation.class);
-	        			deliveryInformation.refInitialize(false, false);
 	        			deliveryInformation.setActualDeliveryOn(deliveryInformationT.getActualDeliveryOn());
 	        			deliveryInformation.setQuantityShipped(
 	        				deliveryInformationT.getQuantityShipped() == null ?
@@ -2022,7 +2012,6 @@ public class ShopServiceImpl
                     // Create Customer
                     this.pm.currentTransaction().begin();
                     Contact customer = this.pm.newInstance(Contact.class);
-                    customer.refInitialize(false, false);
                     customer.setLastName(params.getLastName());
                     customer.setFirstName(params.getFirstName());
                     this.datatypeMappers.getAccountFieldMapper().setUserName(customer, params.getUserName());
@@ -2037,7 +2026,6 @@ public class ShopServiceImpl
                     // Create Email address home
                     if(params.getEmailAddressHome() != null && params.getEmailAddressHome().length() > 0) {
 	                    EMailAddress emailAddressHome = this.pm.newInstance(EMailAddress.class);
-	                    emailAddressHome.refInitialize(false, false);
 	                    emailAddressHome.setEmailAddress(params.getEmailAddressHome());
 	                    emailAddressHome.getUsage().add(Addresses.USAGE_HOME);
 	                    this.datatypeMappers.getEmailAddressFieldMapper().setEmailValid(emailAddressHome, false); // emailValid
@@ -2053,7 +2041,6 @@ public class ShopServiceImpl
                     // Create Email address business
                     if(params.getEmailAddressBusiness() != null && params.getEmailAddressBusiness().length() > 0) {
 	                    EMailAddress emailAddressBusiness = this.pm.newInstance(EMailAddress.class);
-	                    emailAddressBusiness.refInitialize(false, false);
 	                    emailAddressBusiness.setEmailAddress(params.getEmailAddressBusiness());
 	                    emailAddressBusiness.getUsage().add(Addresses.USAGE_BUSINESS);
 	                    this.datatypeMappers.getEmailAddressFieldMapper().setEmailValid(emailAddressBusiness, false); // emailValid
@@ -2149,7 +2136,6 @@ public class ShopServiceImpl
                 // Create Customer
                 this.pm.currentTransaction().begin();
                 LegalEntity customer = this.pm.newInstance(LegalEntity.class);
-                customer.refInitialize(false, false);
                 customer.setName(params.getLegalName());
                 customer.getOwningGroup().addAll(
                     this.getAccountSegment().getOwningGroup()
@@ -2231,7 +2217,6 @@ public class ShopServiceImpl
                     // Create customer contract
 	            	CustomerContractT customerContractT = params.getCustomerContract();
                     customerContract = this.pm.newInstance(Lead.class);
-                    customerContract.refInitialize(false, false);
                     customerContract.setCustomer(customer);
                     customerContract.setPricingRule(this.findPricingRule());
                     String contractCategory = this.getShopCategory();
@@ -2588,16 +2573,15 @@ public class ShopServiceImpl
             if(salesOrder != null) {
                 String invoiceNumber = this.getNextInvoiceNumber(salesOrder.getCustomer());
                 this.pm.currentTransaction().begin();
-                org.opencrx.kernel.contract1.jmi1.SalesOrderCreateInvoiceResult createInvoiceResult = salesOrder.createInvoice();
-                this.pm.currentTransaction().commit();
-                Invoice invoice = (Invoice)this.pm.getObjectById(createInvoiceResult.getInvoice().refGetPath());
-                this.pm.currentTransaction().begin();
+                SalesOrderCreateInvoiceResult createInvoiceResult = salesOrder.createInvoice();
+                this.pm.flush();
+                Invoice invoice = createInvoiceResult.getInvoice();
                 this.datatypeMappers.mapInvoice(
-                    invoice, 
-                    salesOrder, 
-                    salesOrder.getCustomer(), 
-                    invoiceNumber, 
-                    Boolean.FALSE, 
+                    invoice,
+                    salesOrder,
+                    salesOrder.getCustomer(),
+                    invoiceNumber,
+                    Boolean.FALSE,
                     InvoiceState.DRAFT,
                     salesOrder.getPricingRule()
                 );
@@ -2605,7 +2589,7 @@ public class ShopServiceImpl
                 String contractCategory = this.getShopCategory();
                 if(contractCategory != null) {
                 	invoice.getCategory().add(contractCategory);
-                }                
+                }
                 this.pm.currentTransaction().commit();
                 this.pm.refresh(invoice);
                 result.add(
@@ -2671,7 +2655,6 @@ public class ShopServiceImpl
                 if(classification == null) {
                     this.pm.currentTransaction().begin();
                     classification = this.getProductPackage().getProductClassification().createProductClassification();
-                    classification.refInitialize(false, false);
                     classification.setName(classificationT.getClassificationId());
                     classification.setDescription(classificationT.getDescription());
                     classification.getOwningGroup().addAll(
@@ -2745,7 +2728,6 @@ public class ShopServiceImpl
                 Product product = this.findProduct(productT.getProductNumber());
                 if(product == null) {
                      product = this.getProductPackage().getProduct().createProduct();
-                     product.refInitialize(false, false);
                      // Product classification
                      List<ProductClassification> productClassifications = new ArrayList<ProductClassification>();
                      for(String classificationId: productT.getClassificationId()) {
@@ -2971,7 +2953,6 @@ public class ShopServiceImpl
 	                    	this.getNextSalesOrderNumber(customer) :
 	                    		contractNumber;
 	                    SalesOrder salesOrder = this.getContractPackage().getSalesOrder().createSalesOrder();
-	                    salesOrder.refInitialize(false, false);
 	                    this.getContractSegment().addSalesOrder(
 	                        false,
 	                        this.uuidAsString(),
@@ -4206,7 +4187,6 @@ public class ShopServiceImpl
 		        customerContract = this.findCustomerContractByContractNumber(customerNumber);
 		        if(customerContract == null) {
 		            customerContract = this.getContractPackage().getLead().createLead();
-		            customerContract.refInitialize(false, false);
 		            this.datatypeMappers.getLeadFieldMapper().setContractNumber(customerContract, customerNumber);
 		            this.datatypeMappers.getLeadFieldMapper().setContractCurrency(customerContract, params.getPriceCurrency());
 		            customerContract.getOwningGroup().addAll(
@@ -5231,7 +5211,6 @@ public class ShopServiceImpl
 		                        	List<Member> members = customer.getMember(memberQuery);
 		                        	if(members.isEmpty()) {
 		                        		Member member = pm.newInstance(Member.class);
-		                        		member.refInitialize(false, false);
 		                        		member.setName(primaryContact.getFullName());
 		                        		member.setAccount(primaryContact);
 		                        		member.getMemberRole().add(Accounts.MEMBER_ROLE_EMPLOYEE);
@@ -5262,7 +5241,6 @@ public class ShopServiceImpl
 		                            PostalAddress address = (PostalAddress)addresses[Accounts.POSTAL_BUSINESS];
 		                            if(address == null) {
 		                                address = this.pm.newInstance(PostalAddress.class);
-		                                address.refInitialize(false, false);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
@@ -5288,7 +5266,6 @@ public class ShopServiceImpl
 		                            EMailAddress address = (EMailAddress)addresses[Accounts.MAIL_BUSINESS];
 		                            if(address == null) {
 		                                address = this.getAccountPackage().getEMailAddress().createEMailAddress();
-		                                address.refInitialize(false, false);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
@@ -5314,7 +5291,6 @@ public class ShopServiceImpl
 		                            PhoneNumber address = (PhoneNumber)addresses[Accounts.FAX_BUSINESS];
 		                            if(address == null) {
 		                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-		                                address.refInitialize(false, false);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
@@ -5340,7 +5316,6 @@ public class ShopServiceImpl
 		                            PhoneNumber address = (PhoneNumber)addresses[Accounts.PHONE_BUSINESS];
 		                            if(address == null) {
 		                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-		                                address.refInitialize(false, false);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
@@ -5366,7 +5341,6 @@ public class ShopServiceImpl
 		                            WebAddress address = (WebAddress)addresses[Accounts.WEB_BUSINESS];
 		                            if(address == null) {
 		                                address = this.getAccountPackage().getWebAddress().createWebAddress();
-		                                address.refInitialize(false, false);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
@@ -5401,7 +5375,6 @@ public class ShopServiceImpl
 		                            }
 		                            if(isNew) {
 		                                PropertySet propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
-		                                propertySet.refInitialize(false, false);
 		                                propertySet.setName(PropertySetName.GenericData.toString());
 		                                propertySet.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
@@ -5586,7 +5559,6 @@ public class ShopServiceImpl
 	                            PostalAddress address = (PostalAddress)addresses[Accounts.POSTAL_HOME];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPostalAddress().createPostalAddress();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5612,7 +5584,6 @@ public class ShopServiceImpl
 	                            PostalAddress address = (PostalAddress)addresses[Accounts.POSTAL_BUSINESS];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPostalAddress().createPostalAddress();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5638,7 +5609,6 @@ public class ShopServiceImpl
 	                            EMailAddress address = (EMailAddress)addresses[Accounts.MAIL_HOME];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getEMailAddress().createEMailAddress();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5664,7 +5634,6 @@ public class ShopServiceImpl
 	                            EMailAddress address = (EMailAddress)addresses[Accounts.MAIL_BUSINESS];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getEMailAddress().createEMailAddress();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5690,7 +5659,6 @@ public class ShopServiceImpl
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.FAX_HOME];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_HOME_FAX);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5716,7 +5684,6 @@ public class ShopServiceImpl
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.FAX_BUSINESS];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5742,7 +5709,6 @@ public class ShopServiceImpl
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.PHONE_HOME];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5768,7 +5734,6 @@ public class ShopServiceImpl
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.PHONE_BUSINESS];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5794,7 +5759,6 @@ public class ShopServiceImpl
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.MOBILE];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_MOBILE);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5820,7 +5784,6 @@ public class ShopServiceImpl
 	                            WebAddress address = (WebAddress)addresses[Accounts.WEB_HOME];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getWebAddress().createWebAddress();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5846,7 +5809,6 @@ public class ShopServiceImpl
 	                            WebAddress address = (WebAddress)addresses[Accounts.WEB_BUSINESS];
 	                            if(address == null) {
 	                                address = this.getAccountPackage().getWebAddress().createWebAddress();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5891,7 +5853,6 @@ public class ShopServiceImpl
 	                            }
 	                            while(i < contactT.getMessengerAddress().size()) {
 	                                PhoneNumber address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
-	                                address.refInitialize(false, false);
 	                                address.getUsage().add(Addresses.USAGE_OTHER);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
@@ -5923,7 +5884,6 @@ public class ShopServiceImpl
 	                        	PropertySet propertySet = null;
 	                        	if(propertySets.isEmpty()) {
 	                                propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
-	                                propertySet.refInitialize(false, false);
 	                                propertySet.setName(PropertySetName.GenericData.toString());
 	                                propertySet.getOwningGroup().addAll(
 	                                    customer.getOwningGroup()
@@ -5966,7 +5926,6 @@ public class ShopServiceImpl
 	                        	PropertySet propertySet = null;
 	                        	if(propertySets.isEmpty()) {
 	                                propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
-	                                propertySet.refInitialize(false, false);
 	                                propertySet.setName(PropertySetName.Bookmarks.toString());
 	                                propertySet.getOwningGroup().addAll(
 	                                    customer.getOwningGroup()

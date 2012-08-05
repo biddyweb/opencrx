@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.129 2011/12/21 13:44:06 wfro Exp $
+ * Name:        $Id: Contracts.java,v 1.130 2012/01/13 17:15:42 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.129 $
+ * Revision:    $Revision: 1.130 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/21 13:44:06 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -224,7 +224,6 @@ public class Contracts extends AbstractImpl {
         }                
         pm.currentTransaction().begin();
         calculationRule = pm.newInstance(CalculationRule.class);
-        calculationRule.refInitialize(false, false);
         calculationRule.setName(calculationRuleName);
         calculationRule.setDescription(description);
         calculationRule.setGetPositionAmountsScript(getPositionAmountsScript);
@@ -1228,7 +1227,6 @@ public class Contracts extends AbstractImpl {
     				SalesOrder salesOrder = (SalesOrder)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(salesOrder);
     				Invoice invoice = pm.newInstance(Invoice.class);
-    				invoice.refInitialize(false, false);
     				Contracts.getInstance().copySalesContract(
     					salesOrder,
     					invoice
@@ -1249,7 +1247,6 @@ public class Contracts extends AbstractImpl {
     				SalesOrderPosition salesOrderPosition = (SalesOrderPosition)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(salesOrderPosition);
     				InvoicePosition invoicePosition = pm.newInstance(InvoicePosition.class);
-    				invoicePosition.refInitialize(false, false);
     				Contracts.getInstance().copySalesContractPosition(
     					salesOrderPosition,
     					invoicePosition
@@ -1303,7 +1300,6 @@ public class Contracts extends AbstractImpl {
     				Quote quote = (Quote)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(quote);
     				SalesOrder salesOrder = pm.newInstance(SalesOrder.class);
-    				salesOrder.refInitialize(false, false);
     				Contracts.getInstance().copySalesContract(
     					quote,
     					salesOrder
@@ -1324,7 +1320,6 @@ public class Contracts extends AbstractImpl {
     				QuotePosition quotePosition = (QuotePosition)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(quotePosition);
     				SalesOrderPosition salesOrderPosition = pm.newInstance(SalesOrderPosition.class);
-    				salesOrderPosition.refInitialize(false, false);
     				Contracts.getInstance().copySalesContractPosition(
     					quotePosition,
     					salesOrderPosition
@@ -1378,7 +1373,6 @@ public class Contracts extends AbstractImpl {
     				Opportunity opportunity = (Opportunity)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(opportunity);
     				Quote quote = pm.newInstance(Quote.class);
-    				quote.refInitialize(false, false);
     				Contracts.getInstance().copySalesContract(
     					opportunity,
     					quote
@@ -1399,7 +1393,6 @@ public class Contracts extends AbstractImpl {
     				OpportunityPosition opportunityPosition = (OpportunityPosition)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(opportunityPosition);
     				QuotePosition quotePosition = pm.newInstance(QuotePosition.class);
-    				quotePosition.refInitialize(false, false);
     				Contracts.getInstance().copySalesContractPosition(
     					opportunityPosition,
     					quotePosition
@@ -1453,7 +1446,6 @@ public class Contracts extends AbstractImpl {
     				Lead lead = (Lead)s;
     				PersistenceManager pm = JDOHelper.getPersistenceManager(lead);
     				Opportunity opportunity = pm.newInstance(Opportunity.class);
-    				opportunity.refInitialize(false, false);
     				Contracts.getInstance().copySalesContract(
     					lead,
     					opportunity
@@ -1711,7 +1703,6 @@ public class Contracts extends AbstractImpl {
             	position.setPricingRule(pricingRule);
             	// PositionCreation
             	PositionCreation positionCreation = pm.newInstance(PositionCreation.class);
-                positionCreation.refInitialize(false, false);
                 positionCreation.setInvolved(position);
                 contract.addPositionModification(
                 	false,
@@ -1731,7 +1722,6 @@ public class Contracts extends AbstractImpl {
                 BigDecimal quantityNew = position.getQuantity();
                 if(quantityOld.compareTo(quantityNew) != 0) {
                 	QuantityModification quantityModification = pm.newInstance(QuantityModification.class);
-                	quantityModification.refInitialize(false, false);
                 	quantityModification.setInvolved(position);
                 	quantityModification.setQuantity(quantityOld);
                     contract.addPositionModification(
@@ -1777,7 +1767,6 @@ public class Contracts extends AbstractImpl {
         		positions.addAll(c);
         		maxLineItemNumber = this.getMaxLineItemNumber(positions);
         		position = pm.newInstance(OpportunityPosition.class);
-        		position.refInitialize(false, false);
         		((Opportunity)contract).addPosition(
         			false,
         			this.getUidAsString(),
@@ -1790,7 +1779,6 @@ public class Contracts extends AbstractImpl {
         		positions.addAll(c);
         		maxLineItemNumber = this.getMaxLineItemNumber(positions);
         		position = pm.newInstance(QuotePosition.class);
-        		position.refInitialize(false, false);
         		((Quote)contract).addPosition(
         			false,
         			this.getUidAsString(),
@@ -1803,7 +1791,6 @@ public class Contracts extends AbstractImpl {
         		positions.addAll(c);
         		maxLineItemNumber = this.getMaxLineItemNumber(positions);
         		position = pm.newInstance(SalesOrderPosition.class);
-        		position.refInitialize(false, false);
         		((SalesOrder)contract).addPosition(
         			false,
         			this.getUidAsString(),
@@ -1816,7 +1803,6 @@ public class Contracts extends AbstractImpl {
         		positions.addAll(c);
         		maxLineItemNumber = this.getMaxLineItemNumber(positions);
         		position = pm.newInstance(InvoicePosition.class);
-        		position.refInitialize(false, false);
         		((Invoice)contract).addPosition(
         			false,
         			this.getUidAsString(),
@@ -1924,7 +1910,6 @@ public class Contracts extends AbstractImpl {
             		SalesContractPosition position = (SalesContractPosition)s;
             		PersistenceManager pm = JDOHelper.getPersistenceManager(position);
             		RemovedPosition removedPosition = pm.newInstance(RemovedPosition.class);
-            		removedPosition.refInitialize(false, false);
             		Contracts.getInstance().copySalesContractPosition(
             			position, 
             			removedPosition
@@ -1965,7 +1950,6 @@ public class Contracts extends AbstractImpl {
         	catch(Exception e) {}
         }
         PositionRemoval positionRemoval = pm.newInstance(PositionRemoval.class);
-        positionRemoval.refInitialize(false, false);
         positionRemoval.setInvolved(removedPosition);
         contract.addPositionModification(
         	false,
@@ -2566,7 +2550,6 @@ public class Contracts extends AbstractImpl {
     	// Lead
     	if(contractType == CONTRACT_TYPE_LEAD) {
     		contract = pm.newInstance(Lead.class);
-    		contract.refInitialize(false, false);    		
 	        contractSegment.addLead(
 	        	false,
 	        	this.getUidAsString(),
@@ -2590,7 +2573,6 @@ public class Contracts extends AbstractImpl {
 	    		);
     		} else {
     	        contract = pm.newInstance(Opportunity.class);
-    	        contract.refInitialize(false, false);
     	        contractSegment.addOpportunity(
     	        	false,
     	        	this.getUidAsString(),
@@ -2615,7 +2597,6 @@ public class Contracts extends AbstractImpl {
 	    		);
     		} else {
     	        contract = pm.newInstance(Quote.class);
-    	        contract.refInitialize(false, false);
     	        contractSegment.addQuote(
     	        	false,
     	        	this.getUidAsString(),
@@ -2640,7 +2621,6 @@ public class Contracts extends AbstractImpl {
 	    		);
     		} else {
     	        contract = pm.newInstance(SalesOrder.class);
-    	        contract.refInitialize(false, false);
     	        contractSegment.addSalesOrder(
     	        	false,
     	        	this.getUidAsString(),
@@ -2665,7 +2645,6 @@ public class Contracts extends AbstractImpl {
 	    		);
     		} else {
     	        contract = pm.newInstance(Invoice.class);
-    	        contract.refInitialize(false, false);
     	        contractSegment.addInvoice(
     	        	false,
     	        	this.getUidAsString(),
@@ -2687,7 +2666,6 @@ public class Contracts extends AbstractImpl {
 	    		);
     		} else {
     	        contract = pm.newInstance(SalesVolumeContract.class);
-    	        contract.refInitialize(false, false);
     	        contractSegment.addContract(
     	        	false,
     	        	this.getUidAsString(),
@@ -2888,7 +2866,6 @@ public class Contracts extends AbstractImpl {
 	        for(ContractGroup contractGroup: contractGroups) {
 	            if(!excludeGroups.contains(contractGroup)) {
 	    			ContractGroupAssignment assignment = pm.newInstance(ContractGroupAssignment.class);
-	    			assignment.refInitialize(false, false);
 	    			assignment.setName(contractGroup.getName());
 	    			assignment.setContractGroup(contractGroup);
 	    			assignment.getOwningGroup().addAll(owningGroups);
@@ -2897,7 +2874,7 @@ public class Contracts extends AbstractImpl {
 	    				assignment
 	    			);
 	            }
-	        }    
+	        }
 	        // Update PropertySet
 	        Collection<PropertySet> existingPropertySets = contract.getPropertySet();
 	        List<String> excludePropertySets = new ArrayList<String>();

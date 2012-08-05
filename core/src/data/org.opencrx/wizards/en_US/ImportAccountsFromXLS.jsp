@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.30 2011/11/02 16:30:55 cmu Exp $
+ * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.32 2012/01/20 12:32:58 cmu Exp $
  * Description: import accounts from Excel Sheet (xls or xslx format)
- * Revision:    $Revision: 1.30 $
+ * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/02 16:30:55 $
+ * Date:        $Date: 2012/01/20 12:32:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,10 +89,11 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 " %>
 <%!
 
-    public List<org.opencrx.kernel.account1.jmi1.Contact> findContact(
+		public List<org.opencrx.kernel.account1.jmi1.Contact> findContact(
         String firstName,
         String lastName,
         String aliasName,
+        String emailAddress,
         String extString0,
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         javax.jdo.PersistenceManager pm
@@ -122,6 +123,12 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                     //contactFilter.thereExistsLastName().like("(?i).*" + lastName + ".*");
                     contactFilter.thereExistsAliasName().equalTo(aliasName); // exact match
                 }
+                if(emailAddress != null) {
+                    hasQueryProperty = true;
+							    	org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
+							    	query.thereExistsEmailAddress().equalTo(emailAddress);
+										contactFilter.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));						    	
+                }
             }
             if (hasQueryProperty) {
                 Collection contacts = accountSegment.getAccount(contactFilter);
@@ -143,6 +150,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
     public List<org.opencrx.kernel.account1.jmi1.AbstractGroup> findAbstractGroup(
         String name,
         String aliasName,
+        String emailAddress,
         String extString0,
         boolean allowDtypeGroup,
         boolean allowDtypeLegalEntity,
@@ -168,6 +176,12 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                     hasQueryProperty = true;
                     //abstractGroupFilter.thereExistsLastName().like("(?i).*" + lastName + ".*");
                     abstractGroupFilter.thereExistsAliasName().equalTo(aliasName); // exact match
+                }
+                if(emailAddress != null) {
+                    hasQueryProperty = true;
+							    	org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
+							    	query.thereExistsEmailAddress().equalTo(emailAddress);
+							    	abstractGroupFilter.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));						    	
                 }
             }
             if (hasQueryProperty) {
@@ -303,7 +317,10 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                 new ServiceException(e).log();
             }
             if (member != null) {
-                member.setMemberRole(memberRoles);
+            		if (!memberRoles.isEmpty()) {
+            				// do NOT reset existing member roles if there are no new ones provided
+                		member.setMemberRole(memberRoles);
+            		}
                 member.setAccount(memberAccount);
                 member.setName(memberAccount.getFullName());
                 member.setQuality((short)5); // normal
@@ -382,13 +399,13 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 %>
 
 <%
-    final String ATTR_EXTSTRING0 = "extString0";
-    final String ATTR_FIRSTNAME = "FirstName";
-    final String ATTR_LASTNAME = "LastName";
-    final String ATTR_ALIASNAME = "AliasName";
-    final String ATTR_COMPANY = "Company";
-    final String ATTR_DTYPE = "Dtype";
-    final String ATTR_XRI = "xri";
+    final String ATTR_EXTSTRING0 = "extString0"; // index attribute
+    final String ATTR_FIRSTNAME = "FirstName";   // index attribute
+    final String ATTR_LASTNAME = "LastName";     // index attribute
+    final String ATTR_ALIASNAME = "AliasName";   // index attribute
+    final String ATTR_COMPANY = "Company";       // index attribute
+    final String ATTR_DTYPE = "Dtype";           // index attribute
+    final String ATTR_XRI = "xri";               // index attribute
 
     final String ATTR_MEMBEROF = "MemberOf";
     final String ATTR_MEMBERROLE = "MemberRole";
@@ -420,7 +437,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
     final String ATTR_BUSINESSPHONE2 = "BUSINESSPHONE2";
     final String ATTR_BUSINESSFAX = "BUSINESSFAX";
     final String ATTR_MOBILEPHONE = "MOBILEPHONE";
-    final String ATTR_EMAILADDRESS = "EMAILADDRESS";
+    final String ATTR_EMAILADDRESS = "EMAILADDRESS";   // index attribute
     final String ATTR_EMAIL2ADDRESS = "EMAIL2ADDRESS";
     final String ATTR_EMAIL3ADDRESS = "EMAIL3ADDRESS";
     final String ATTR_WEBPAGE = "WEBPAGE";
@@ -564,7 +581,9 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
   <meta name="UNUSEDtoolTip" content="Import Accounts from Excel Sheet (XLS/XSLX)">
   <meta name="targetType" content="_self">
   <meta name="forClass" content="org:opencrx:kernel:account1:Segment">
+  <meta name="forClass" content="org:opencrx:kernel:account1:Group">
   <meta name="order" content="org:opencrx:kernel:account1:Segment:importAccountsFromXLS">
+  <meta name="order" content="org:opencrx:kernel:account1:Group:importAccountsFromXLS">
   <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
   <link href="../../_style/n2default.css" rel="stylesheet" type="text/css" />
   <script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
@@ -634,6 +653,14 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
       // openCRX object requests
 
       RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+      boolean isImportMembershipMode = obj instanceof org.opencrx.kernel.account1.jmi1.Group; 
+		  org.opencrx.kernel.account1.jmi1.Group parentGroup = null;
+		  org.opencrx.kernel.account1.jmi1.Member groupMember = null;
+		  int parentGroupMemberSize = 0;
+		  if (isImportMembershipMode) {
+			  	parentGroup = (org.opencrx.kernel.account1.jmi1.Group)obj;
+			  	parentGroupMemberSize = parentGroup.getMember().size();
+		  }
 
       Path objectPath = new Path(objectXri);
       String providerName = objectPath.get(2);
@@ -711,6 +738,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                       int idxFirstName = -1;
                       int idxLastName = -1;
                       int idxAliasName = -1;
+                      int idxEMailAddress = -1;
                       int idxCompany = -1;
                       int idxDtype = -1;
                       int idxXri = -1;
@@ -860,6 +888,9 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                           } else if (ATTR_ALIASNAME.compareToIgnoreCase(cellValue) == 0) {
                                                               idxAliasName = nCell;
                                                               isSearchAttribute = true;
+                                                          } else if (ATTR_EMAILADDRESS.compareToIgnoreCase(cellValue) == 0) {
+                                                              idxEMailAddress = nCell;
+                                                              isSearchAttribute = true;
                                                           } else if (ATTR_COMPANY.compareToIgnoreCase(cellValue) == 0) {
                                                               idxCompany = nCell;
                                                               isSearchAttribute = true;
@@ -915,6 +946,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       String firstName = null;
                                       String lastName = null;
                                       String aliasName = null;
+                                      String emailAddress = null;
                                       String company = null;
                                       String xri = null;
 
@@ -978,6 +1010,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                                               lastName = cellValue;
                                                           } else if (nCell == idxAliasName) {
                                                               aliasName = cellValue;
+                                                          } else if (nCell == idxEMailAddress) {
+                                                              emailAddress = cellValue;
                                                           } else if (nCell == idxCompany) {
                                                               company = cellValue;
                                                           } else if (nCell == idxXri) {
@@ -1026,1071 +1060,1217 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                               <td class="err" colspan="<%= maxCell+2 %>">ERROR in Attribute Row!</td>
 <%
                                           }
-                                          boolean createNew = true;
-                                          boolean updateExisting = false;
-
-                                          List<org.opencrx.kernel.account1.jmi1.Contact> matchingContacts = null;
-                                          List<org.opencrx.kernel.account1.jmi1.AbstractGroup> matchingAbstractGroups = null;
+                                          
                                           String accountHref = "";
                                           org.opencrx.kernel.account1.jmi1.Account account = null;
-
-                                          if (xriExplicitlySet) {
-                                              // try to find existing account with provided xri
-                                              try {
-                                                  account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(xri));
-                                              } catch (Exception e) {
-                                                  new ServiceException(e).log();
-                                              }
-                                              if (account != null) {
-                                                  dtypeExplicitlySet = true;
-                                                  isDtypeContact = false;
-                                                  isDtypeGroup = false;
-                                                  isDtypeLegalEntity = false;
-                                                  isDtypeUnspecifiedAccount = false;
-                                                  if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-                                                      isDtypeContact = true;
-                                                      matchingContacts = new ArrayList();
-                                                      matchingContacts.add((org.opencrx.kernel.account1.jmi1.Contact)account);
-                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.Group) {
-                                                      isDtypeGroup = true;
-                                                      matchingAbstractGroups = new ArrayList();
-                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
-                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
-                                                      isDtypeLegalEntity = true;
-                                                      matchingAbstractGroups = new ArrayList();
-                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
-                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
-                                                      isDtypeUnspecifiedAccount = true;
-                                                      matchingAbstractGroups = new ArrayList();
-                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
-                                                  }
-                                              }
-                                          }
-
-                                          if (!dtypeExplicitlySet) {
-                                              // try to find existing account to determine dtype
-                                              matchingContacts = findContact(
-                                                  firstName,
-                                                  lastName,
-                                                  aliasName,
-                                                  extString0,
-                                                  accountSegment,
-                                                  pm
-                                              );
-                                              if (matchingContacts == null) {
-                                                  // try again without aliasName
-                                                  matchingContacts = findContact(
-                                                      firstName,
-                                                      lastName,
-                                                      null,
-                                                      extString0,
-                                                      accountSegment,
-                                                      pm
-                                                  );
-                                              }
-                                              if (matchingContacts != null) {
-                                                  dtypeExplicitlySet = true;
-                                              } else {
-                                                  matchingAbstractGroups = findAbstractGroup(
-                                                      company,
-                                                      aliasName,
-                                                      extString0,
-                                                      true,
-                                                      true,
-                                                      true,
-                                                      accountSegment,
-                                                      pm
-                                                  );
-                                                  if (matchingAbstractGroups != null) {
-                                                      org.opencrx.kernel.account1.jmi1.AbstractGroup matchingAbstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)(matchingAbstractGroups.iterator().next());
-                                                      if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.Group) {
-                                                          dtypeExplicitlySet = true;
-                                                          isDtypeGroup = true;
-                                                          isDtypeContact = false;
-                                                          className = DTYPE_GROUP;
-                                                      } else if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
-                                                          dtypeExplicitlySet = true;
-                                                          isDtypeLegalEntity = true;
-                                                          isDtypeContact = false;
-                                                          className = DTYPE_LEGALENTITY;
-                                                      } else if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
-                                                          dtypeExplicitlySet = true;
-                                                          isDtypeUnspecifiedAccount = true;
-                                                          isDtypeContact = false;
-                                                          className = DTYPE_UNSPECIFIEDACCOUNT;
-                                                      }
-                                                  }
-                                              }
-                                          }
-
-                                          if (isDtypeContact) {
-                                              if (matchingContacts == null) {
-                                                  matchingContacts = findContact(
-                                                      firstName,
-                                                      lastName,
-                                                      aliasName,
-                                                      extString0,
-                                                      accountSegment,
-                                                      pm
-                                                  );
-                                              }
-                                              if (matchingContacts == null) {
-                                                  // try again without aliasName
-                                                  matchingContacts = findContact(
-                                                      firstName,
-                                                      lastName,
-                                                      null,
-                                                      extString0,
-                                                      accountSegment,
-                                                      pm
-                                                  );
-                                              }
-                                              if (matchingContacts != null) {
-                                                  // at least 1 match with existing contacts
-                                                  updateExisting = true;
-                                                  createNew = false;
-                                                  for(Iterator c = matchingContacts.iterator(); c.hasNext(); ) {
-                                                      org.opencrx.kernel.account1.jmi1.Contact matchingContact = (org.opencrx.kernel.account1.jmi1.Contact)c.next();
-                                                      if (c.hasNext()) {
-                                                          // more than 1 match
-                                                          updateExisting = false;;
-                                                          Action action = new Action(
-                                                        	  SelectObjectAction.EVENT_ID,
-                                                              new Action.Parameter[]{
-                                                                  new Action.Parameter(Action.PARAMETER_OBJECTXRI, matchingContact.refMofId())
-                                                              },
-                                                              "",
-                                                              true // enabled
-                                                          );
-                                                          accountHref = "../../" + action.getEncodedHRef();
-                                                          multiMatchList += "<br><a href='" + accountHref + " target='_blank'><b>" + (new ObjectReference(matchingContact, app)).getTitle() + "</b> [" + matchingContact.refMofId() + "]</a>";
-                                                      } else if (updateExisting) {
-                                                          contactsUpdated += 1;
-                                                          isUpdate = true;
-                                                          contact = matchingContact;
-                                                      }
-                                                  }
-                                              } else {
-                                                  // no match with existing contacts
-                                                  if (
-                                                      // minimum requirements to create contact
-                                                      ((firstName != null) || (lastName != null))
-                                                  ) {
-                                                      try {
-                                                          pm.currentTransaction().begin();
-                                                          contact = pm.newInstance(org.opencrx.kernel.account1.jmi1.Contact.class);
-                                                          contact.refInitialize(false, false);
-                                                          contact.setFirstName(firstName);
-                                                          contact.setLastName(lastName);
-                                                          contact.setExtString0(extString0);
-                                                          accountSegment.addAccount(
-                                                              false,
-                                                              org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-                                                              contact
-                                                          );
-                                                          pm.currentTransaction().commit();
-                                                      } catch (Exception e) {
-                                                          new ServiceException(e).log();
-                                                          contact = null;
-                                                          try {
-                                                              pm.currentTransaction().rollback();
-                                                          } catch(Exception e1) {}
-                                                      }
-                                                  }
-                                                  if (contact != null) {
-                                                      contactsCreated += 1;
-                                                      isCreation = true;
-                                                  } else {
-                                                      // creation failed
-                                                      appendErrorRow = "<tr><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + className + "</b>]</td></tr>";
-                                                  }
-                                              }
-
-                                              if (contact != null) {
-                                                  // update new or existing contact
-                                                  Action action = new Action(
-                                                	  SelectObjectAction.EVENT_ID,
-                                                      new Action.Parameter[]{
-                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, contact.refMofId())
-                                                      },
-                                                      "",
-                                                      true // enabled
-                                                  );
-                                                  accountHref = "../../" + action.getEncodedHRef();
-                                                  account = (org.opencrx.kernel.account1.jmi1.Account)contact;
-                                                  try {
-                                                      pm.currentTransaction().begin();
-                                                      for (
-                                                          Iterator c = valueMap.keySet().iterator();
-                                                          c.hasNext();
-                                                      ) {
-                                                          String key = (String)c.next(); // key is equal to name of attribute
-                                                          cellId =  "r" + nRow + key.toUpperCase();
-
-                                                          /*--------------------------------------------------------------*\
-                                                          | BEGIN   M a p p i n g   C o n t a c t   t o   o p e n C R X    |
-                                                          \---------------------------------------------------------------*/
-
-                                                          boolean isOk = false;
-                                                          boolean isNok = false;
-                                                          try {
-                                                              DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
-
-                                                              if (key.equalsIgnoreCase(ATTR_TITLE)) {
-                                                                  // salutationCode
-                                                                  short salutationCode = codes.findCodeFromValue(
-                                                                      (String)valueMap.get(key),
-                                                                      FEATURE_SALUTATION_CODE
-                                                                  );
-                                                                  contact.setSalutationCode(salutationCode);
-                                                                  if (salutationCode != 0) {
-                                                                      isOk = true;
-                                                                  } else {
-                                                                      isNok = true;
-                                                                  }
-                                                                  if ((String)valueMap.get(key) != null && ((String)valueMap.get(key)).length() > 0) {
-                                                                      contact.setSalutation((String)valueMap.get(key));
-                                                                  }
-                                                              } else if (key.equalsIgnoreCase(ATTR_ACADEMICTITLE)) {
-                                                                  // academic Title (
-                                                                  short academicTitle = codes.findCodeFromValue(
-                                                                      (String)valueMap.get(key),
-                                                                      FEATURE_ACADEMICTITLE
-                                                                  );
-                                                                  contact.setUserCode1(academicTitle);
-                                                                  if (academicTitle != 0) {
-                                                                          isOk = true;
-                                                                  } else {
-                                                                          isNok = true;
-                                                                  }
-                                                              } else if (key.equalsIgnoreCase(ATTR_FIRSTNAME)) {
-                                                                  contact.setFirstName((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_MIDDLENAME)) {
-                                                                  contact.setMiddleName((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_LASTNAME)) {
-                                                                  contact.setLastName((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_SUFFIX)) {
-                                                                  contact.setSuffix((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_ALIASNAME)) {
-                                                                  contact.setAliasName((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_NICKNAME)) {
-                                                                  contact.setNickName((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_COMPANY)) {
-                                                                  String memberRole = null;
-                                                                  if (valueMap.containsKey(ATTR_COMPANYROLE)) {
-                                                                          memberRole = (String)valueMap.get(ATTR_COMPANYROLE);
-                                                                  }
-                                                                  org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
-                                                                  org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
-                                                                      parentAccount,
-                                                                      account,
-                                                                      memberRole,
-                                                                      FEATURE_MEMBERROLE,
-                                                                      codes,
-                                                                      accountPkg,
-                                                                      accountSegment,
-                                                                      pm
-                                                                  );
-                                                                  if (member != null) {
-                                                                      if (valueMap.containsKey(ATTR_JOBTITLE)) {
-                                                                          member.setDescription((String)valueMap.get(ATTR_JOBTITLE));
-                                                                      }
-                                                                      isOk = true;
-                                                                      if (memberRole != null) {
-                                                                          jsBuffer += "$('r" + nRow +  ATTR_COMPANYROLE.toUpperCase() + "').className += ' ok';";
-                                                                      }
-                                                                      // add clickable links
-                                                                      jsBuffer += "$('r" + nRow + ATTR_COMPANY.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-                                                                        + getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-                                                                        + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
-                                                                      contact.setOrganization(parentAccount.getFullName()); isOk = true;
-                                                                  } else {
-                                                                      contact.setOrganization((String)valueMap.get(key)); isOk = true;
-                                                                  }
-                                                              } else if (key.equalsIgnoreCase(ATTR_DEPARTMENT)) {
-                                                                  contact.setDepartment((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_JOBTITLE)) {
-                                                                  contact.setJobTitle((String)valueMap.get(key)); isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_BIRTHDAY)) {
-                                                                  String value = (String)valueMap.get(key);
-                                                                  if (!value.startsWith("00") && !value.startsWith("0.") && !value.startsWith("0-")) {
-                                                                      java.util.Date birthdate = null;
-                                                                      try {
-                                                                          SimpleDateFormat sd = new SimpleDateFormat("MM/dd/yyyy");
-                                                                          birthdate = sd.parse((String)valueMap.get(key));
-                                                                      } catch (Exception e) {}
-                                                                      if (birthdate == null) {
-                                                                          try {
-                                                                              SimpleDateFormat sd = new SimpleDateFormat("MM/dd/yy");
-                                                                              birthdate = sd.parse((String)valueMap.get(key));
-                                                                          } catch (Exception e) {}
-                                                                      }
-                                                                      if (birthdate == null) {
-                                                                          try {
-                                                                              SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
-                                                                              birthdate = sd.parse((String)valueMap.get(key));
-                                                                          } catch (Exception e) {}
-                                                                      }
-                                                                      if (birthdate == null) {
-                                                                          try {
-                                                                              SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yy");
-                                                                              birthdate = sd.parse((String)valueMap.get(key));
-                                                                          } catch (Exception e) {}
-                                                                      }
-                                                                      if (birthdate != null) {
-                                                                          contact.setBirthdate(birthdate); isOk = true;
-                                                                      }
-                                                                  }
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPHONE)) {
-                                                                  // Phone Home
-                                                                  DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
-                                                                  phoneHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address!phoneNumberFull",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPHONE2)) {
-                                                                  // Phone other
-                                                                  DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
-                                                                  phoneOtherDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEFAX)) {
-                                                                  // Fax Home
-                                                                  DataBinding_1_0 faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
-                                                                  faxHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-/*
-                                                              } else if (key.equalsIgnoreCase("WebPage")) {
-                                                                  // Web page
-                                                                  org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageHomeDataBinding =
-                                                                      new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400");
-                                                                  webPageHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address!webUrl",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-*/
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEADDRESSLINE)) {
-                                                                  // Postal Address Business / addressLine
-                                                                  List<String> postalAddressLines = new ArrayList<String>();
-                                                                  if (valueMap.get(key).toString() != null) {
-                                                                      StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
-                                                                      while(tokenizer.hasMoreTokens()) {
-                                                                          postalAddressLines.add(tokenizer.nextToken());
-                                                                      }
-                                                                      postalHomeDataBinding.setValue(
-                                                                          contact,
-                                                                          "org:opencrx:kernel:account1:Contact:address!postalAddressLine",
-                                                                          postalAddressLines
-                                                                      );
-                                                                  }
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMESTREET)) {
-                                                                  // Postal Address Business / postalStreet
-                                                                  List<String> postalStreetLines = new ArrayList<String>();
-                                                                  if (valueMap.get(key).toString() != null) {
-                                                                      StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
-                                                                      while(tokenizer.hasMoreTokens()) {
-                                                                          postalStreetLines.add(tokenizer.nextToken());
-                                                                      }
-                                                                      postalHomeDataBinding.setValue(
-                                                                          contact,
-                                                                          "org:opencrx:kernel:account1:Contact:address!postalStreet",
-                                                                          postalStreetLines
-                                                                      );
-                                                                  }
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMECITY)) {
-                                                                  // Postal Address Business / postalCity
-                                                                  postalHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address!postalCity",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPOSTALCODE)) {
-                                                                  // Postal Address Business / postalCode
-                                                                  postalHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address!postalCode",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMESTATE)) {
-                                                                  // Postal Address Business / postalState
-                                                                  postalHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address!postalState",
-                                                                      (String)valueMap.get(key)
-                                                                  );
-                                                                  isOk = true;
-                                                              } else if (key.equalsIgnoreCase(ATTR_HOMECOUNTRY) || key.equalsIgnoreCase(ATTR_HOMECOUNTRYREGION)) {
-                                                                  // Postal Address Business / postalCountry
-                                                                  short postalCountry = codes.findCodeFromValue(
-                                                                      (String)valueMap.get(key),
-                                                                      FEATURE_POSTALCOUNTRY_CODE
-                                                                  );
-                                                                  postalHomeDataBinding.setValue(
-                                                                      contact,
-                                                                      "org:opencrx:kernel:account1:Contact:address!postalCountry",
-                                                                      postalCountry
-                                                                  );
-                                                                  if (postalCountry != 0) {
-                                                                      isOk = true;
-                                                                  } else {
-                                                                      isNok = true;
-                                                                  }
-                                                              }
-                                                          } catch (Exception e) {
-                                                              new ServiceException(e).log();
-                                                              isNok = true;
-                                                          }
-                                                          if (isOk) {
-                                                              jsBuffer += "$('" + cellId + "').className += ' ok';";
-                                                          }
-                                                          if (isNok) {
-                                                              jsBuffer += "$('" + cellId + "').className += ' nok';";
-                                                          }
-                                                          /*--------------------------------------------------------------*\
-                                                          | END   M a p p i n g   C o n t a c t   t o   o p e n C R X      |
-                                                          \---------------------------------------------------------------*/
-                                                      }
-                                                      pm.currentTransaction().commit();
-                                                  } catch (Exception e) {
-                                                      new ServiceException(e).log();
-                                                      contact = null;
-                                                      try {
-                                                          pm.currentTransaction().rollback();
-                                                      } catch(Exception e1) {}
-                                                  }
-                                              }
-                                          } else if (
-                                                  isDtypeGroup ||
-                                                  isDtypeLegalEntity ||
-                                                  isDtypeUnspecifiedAccount
-                                          ) {
-                                              org.opencrx.kernel.account1.jmi1.AbstractGroup abstractGroup = null;
-                                              if (matchingAbstractGroups == null) {
-                                                  matchingAbstractGroups = findAbstractGroup(
-                                                      company,
-                                                      aliasName,
-                                                      extString0,
-                                                      isDtypeGroup,
-                                                      isDtypeLegalEntity,
-                                                      isDtypeUnspecifiedAccount,
-                                                      accountSegment,
-                                                      pm
-                                                  );
-                                              }
-                                              if (matchingAbstractGroups != null) {
-                                                  // at least 1 match with existing AbstractGroups
-                                                  updateExisting = true;
-                                                  createNew = false;
-                                                  for(Iterator c = matchingAbstractGroups.iterator(); c.hasNext(); ) {
-                                                      org.opencrx.kernel.account1.jmi1.AbstractGroup matchingAbstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)c.next();
-                                                      if (c.hasNext()) {
-                                                          // more than 1 match
-                                                          updateExisting = false;;
-                                                          Action action = new Action(
-                                                        	  SelectObjectAction.EVENT_ID,
-                                                              new Action.Parameter[]{
-                                                                  new Action.Parameter(Action.PARAMETER_OBJECTXRI, matchingAbstractGroup.refMofId())
-                                                              },
-                                                              "",
-                                                              true // enabled
-                                                          );
-                                                          accountHref = "../../" + action.getEncodedHRef();
-                                                          multiMatchList += "<br><a href='" + accountHref + " target='_blank'><b>" + (new ObjectReference(matchingAbstractGroup, app)).getTitle() + "</b> [" + matchingAbstractGroup.refMofId() + "]</a>";
-                                                    } else if (updateExisting) {
-                                                          isUpdate = true;
-                                                          if (isDtypeGroup) {
-                                                              groupsUpdated += 1;
-                                                              group = (org.opencrx.kernel.account1.jmi1.Group)matchingAbstractGroup;
-                                                              abstractGroup = matchingAbstractGroup;
-                                                          } else if (isDtypeLegalEntity) {
-                                                              legalEntitiesUpdated += 1;
-                                                              legalEntity = (org.opencrx.kernel.account1.jmi1.LegalEntity)matchingAbstractGroup;
-                                                              abstractGroup = matchingAbstractGroup;
-                                                          } else if (isDtypeUnspecifiedAccount) {
-                                                              unspecifiedAccountsUpdated += 1;
-                                                              unspecifiedAccount = (org.opencrx.kernel.account1.jmi1.UnspecifiedAccount)matchingAbstractGroup;
-                                                              abstractGroup = matchingAbstractGroup;
-                                                          }
-                                                      }
-                                                  }
-                                              } else {
-                                                  // no match with existing AbstractGroups
-                                                  if (
-                                                      // minimum requirements to create AbstractGroup
-                                                      (company != null)
-                                                  ) {
-                                                      try {
-                                                          pm.currentTransaction().begin();
-                                                          if (isDtypeGroup) {
-                                                              group = pm.newInstance(org.opencrx.kernel.account1.jmi1.Group.class);
-                                                              group.refInitialize(false, false);
-                                                              group.setName(company);
-                                                              group.setExtString0(extString0);
-                                                              accountSegment.addAccount(
-                                                                  false,
-                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-                                                                  group
-                                                              );
-                                                          } else if (isDtypeLegalEntity) {
-                                                              legalEntity = pm.newInstance(org.opencrx.kernel.account1.jmi1.LegalEntity.class);
-                                                              legalEntity.refInitialize(false, false);
-                                                              legalEntity.setName(company);
-                                                              legalEntity.setExtString0(extString0);
-                                                              accountSegment.addAccount(
-                                                                  false,
-                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-                                                                  legalEntity
-                                                              );
-                                                          } else if (isDtypeUnspecifiedAccount) {
-                                                              unspecifiedAccount = pm.newInstance(org.opencrx.kernel.account1.jmi1.UnspecifiedAccount.class);
-                                                              unspecifiedAccount.refInitialize(false, false);
-                                                              unspecifiedAccount.setName(company);
-                                                              unspecifiedAccount.setExtString0(extString0);
-                                                              accountSegment.addAccount(
-                                                                  false,
-                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-                                                                  unspecifiedAccount
-                                                              );
-                                                          }
-                                                          pm.currentTransaction().commit();
-                                                      } catch (Exception e) {
-                                                          new ServiceException(e).log();
-                                                          contact = null;
-                                                          try {
-                                                              pm.currentTransaction().rollback();
-                                                          } catch(Exception e1) {}
-                                                      }
-                                                  }
-
-                                                  if (isDtypeGroup && group != null) {
-                                                      groupsCreated += 1;
-                                                      isCreation = true;
-                                                      abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)group;
-                                                  } else if (isDtypeLegalEntity && legalEntity != null) {
-                                                      legalEntitiesCreated += 1;
-                                                      isCreation = true;
-                                                      abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)legalEntity;
-                                                  } else if (isDtypeUnspecifiedAccount && unspecifiedAccount != null) {
-                                                      unspecifiedAccountsCreated += 1;
-                                                      isCreation = true;
-                                                      abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)unspecifiedAccount;
-                                                  } else {
-                                                      // creation failed
-                                                      appendErrorRow = "<tr><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + className + "</b>]</td></tr>";
-                                                  }
-                                              }
-
-                                              if (abstractGroup != null) {
-                                                  // update new or existing abstractGroup
-                                                  Action action = new Action(
-                                                	  SelectObjectAction.EVENT_ID,
-                                                      new Action.Parameter[]{
-                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, abstractGroup.refMofId())
-                                                      },
-                                                      "",
-                                                      true // enabled
-                                                  );
-                                                  accountHref = "../../" + action.getEncodedHRef();
-                                                  account = (org.opencrx.kernel.account1.jmi1.Account)abstractGroup;
-                                                  try {
-                                                      pm.currentTransaction().begin();
-                                                      for (
-                                                          Iterator c = valueMap.keySet().iterator();
-                                                          c.hasNext();
-                                                      ) {
-                                                          String key = (String)c.next(); // key is equal to name of attribute
-                                                          cellId =  "r" + nRow + key.toUpperCase();
-
-                                                          boolean isOk = false;
-                                                          try {
-                                                              if (isDtypeGroup) {
-                                                                  /*----------------------------------------------------------*\
-                                                                  | BEGIN   M a p p i n g   G r o u p   t o   o p e n C R X    |
-                                                                  \-----------------------------------------------------------*/
-                                                                  if (key.equalsIgnoreCase(ATTR_COMPANY)) {
-                                                                      group.setName((String)valueMap.get(key)); isOk = true;
-                                                                  }
-                                                                  /*----------------------------------------------------------*\
-                                                                  | END     M a p p i n g   G r o u p   t o   o p e n C R X    |
-                                                                  \-----------------------------------------------------------*/
-                                                              } else if (isDtypeLegalEntity) {
-                                                                  /*----------------------------------------------------------------------*\
-                                                                  | BEGIN   M a p p i n g   L e g a l E n t i t y   t o   o p e n C R X    |
-                                                                  \-----------------------------------------------------------------------*/
-                                                                  if (key.equalsIgnoreCase(ATTR_COMPANY)) {
-                                                                      legalEntity.setName((String)valueMap.get(key)); isOk = true;
-                                                                  }
-                                                                  /*----------------------------------------------------------------------*\
-                                                                  | END     M a p p i n g   L e g a l E n t i t y   t o   o p e n C R X    |
-                                                                  \-----------------------------------------------------------------------*/
-                                                              } else if (isDtypeUnspecifiedAccount) {
-                                                                  /*------------------------------------------------------------------------------------*\
-                                                                  | BEGIN   M a p p i n g   U n s p e c i f i e d A c c o u n t   t o   o p e n C R X    |
-                                                                  \-------------------------------------------------------------------------------------*/
-                                                                  if (key.equalsIgnoreCase(ATTR_COMPANY)) {
-                                                                      unspecifiedAccount.setName((String)valueMap.get(key)); isOk = true;
-                                                                  }
-                                                                  /*------------------------------------------------------------------------------------*\
-                                                                  | END     M a p p i n g   U n s p e c i f i e d A c c o u n t   t o   o p e n C R X    |
-                                                                  \-------------------------------------------------------------------------------------*/
-                                                              }
-                                                          } catch (Exception e) {
-                                                              jsBuffer += "$('" + cellId + "').className += ' nok';";
-                                                          }
-                                                          if (isOk) {
-                                                              jsBuffer += "$('" + cellId + "').className += ' ok';";
-                                                          }
-                                                      }
-                                                      pm.currentTransaction().commit();
-                                                  } catch (Exception e) {
-                                                      new ServiceException(e).log();
-                                                      try {
-                                                          pm.currentTransaction().rollback();
-                                                      } catch(Exception e1) {}
-                                                      abstractGroup = null;
-                                                      group = null;
-                                                      legalEntity = null;
-                                                      unspecifiedAccount = null;
-                                                  }
-                                              }
-                                          }
-
                                           boolean isOk = false;
                                           boolean isNok = false;
-
-                                          if (account != null) {
-                                              // update attributes common to all subclasses of Account
-                                              try {
-                                                  pm.currentTransaction().begin();
-                                                  for (
-                                                      Iterator c = valueMap.keySet().iterator();
-                                                      c.hasNext();
-                                                  ) {
-                                                      String key = (String)c.next(); // key is equal to name of attribute
-                                                      cellId =  "r" + nRow + key.toUpperCase();
-
-                                                      /*--------------------------------------------------------------*\
-                                                      | BEGIN   M a p p i n g   A c c o u n t   t o   o p e n C R X    |
-                                                      \---------------------------------------------------------------*/
-
-                                                      isOk = false;
-                                                      isNok = false;
-                                                      try {
-                                                          DataBinding_1_0 postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
-
-                                                          if (key.equalsIgnoreCase(ATTR_XRI)) {
-                                                              // set isOk to true
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_EXTSTRING0)) {
-                                                              // verify, but do NOT set extString0 (may only be set during creation of new contact!!!)
-                                                              isOk = (valueMap.get(key) != null) && (account.getExtString0() != null) && (valueMap.get(key).toString().compareTo(account.getExtString0()) == 0);
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSTYPE)) {
-                                                              // businessType
-                                                              List<Short> businessTypes = new ArrayList<Short>();
-                                                              if (valueMap.get(key).toString() != null) {
-                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
-                                                                  while(tokenizer.hasMoreTokens()) {
-                                                                      businessTypes.add(Short.parseShort(tokenizer.nextToken()));
-                                                                  }
-                                                                  account.setBusinessType(businessTypes);
-                                                              }
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_NOTES)) {
-                                                              // description
-                                                              account.setDescription((String)valueMap.get(key));
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE)) {
-                                                              // Phone Business
-                                                              DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
-                                                              phoneBusinessDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE2)) {
-                                                              // Phone other
-                                                              DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
-                                                              phoneOtherDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSFAX)) {
-                                                              // Fax Business
-                                                              DataBinding_1_0 faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
-                                                              faxBusinessDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_MOBILEPHONE)) {
-                                                              // Phone Mobile
-                                                              DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
-                                                              phoneMobileDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_EMAILADDRESS)) {
-                                                              // Mail Business
-                                                              DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
-                                                              mailBusinessDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Business!emailAddress",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_EMAIL2ADDRESS)) {
-                                                              // Mail Home
-                                                              DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
-                                                              mailHomeDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Contact:address!emailAddress",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_EMAIL3ADDRESS)) {
-                                                              // Mail Other
-                                                              DataBinding_1_0 mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
-                                                              mailOtherDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Other!emailAddress",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_WEBPAGE)) {
-                                                              // Web page
-                                                              org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageBusinessDataBinding =
-                                                                  new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500");
-                                                              webPageBusinessDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:LegalEntity:address!webUrl",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSADDRESSLINE)) {
-                                                              // Postal Address Business / addressLine
-                                                              List<String> postalAddressLines = new ArrayList<String>();
-                                                              if (valueMap.get(key).toString() != null) {
-                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
-                                                                  while(tokenizer.hasMoreTokens()) {
-                                                                      postalAddressLines.add(tokenizer.nextToken());
-                                                                  }
-                                                                  postalBusinessDataBinding.setValue(
-                                                                      account,
-                                                                      "org:opencrx:kernel:account1:Account:address*Business!postalAddressLine",
-                                                                      postalAddressLines
-                                                                  );
-                                                              }
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSSTREET)) {
-                                                              // Postal Address Business / postalStreet
-                                                              List<String> postalStreetLines = new ArrayList<String>();
-                                                              if (valueMap.get(key).toString() != null) {
-                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
-                                                                  while(tokenizer.hasMoreTokens()) {
-                                                                      postalStreetLines.add(tokenizer.nextToken());
-                                                                  }
-                                                                  postalBusinessDataBinding.setValue(
-                                                                      account,
-                                                                      "org:opencrx:kernel:account1:Account:address*Business!postalStreet",
-                                                                      postalStreetLines
-                                                                  );
-                                                              }
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSCITY)) {
-                                                              // Postal Address Business / postalCity
-                                                              postalBusinessDataBinding.setValue(
-                                                                      account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalCity",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPOSTALCODE)) {
-                                                              // Postal Address Business / postalCode
-                                                              postalBusinessDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalCode",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSSTATE)) {
-                                                              // Postal Address Business / postalState
-                                                              postalBusinessDataBinding.setValue(
-                                                                      account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalState",
-                                                                  (String)valueMap.get(key)
-                                                              );
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSCOUNTRY) || key.equalsIgnoreCase(ATTR_BUSINESSCOUNTRYREGION)) {
-                                                              // Postal Address Business / postalCountry
-                                                              short postalCountry = codes.findCodeFromValue(
-                                                                  (String)valueMap.get(key),
-                                                                  FEATURE_POSTALCOUNTRY_CODE
-                                                              );
-                                                              postalBusinessDataBinding.setValue(
-                                                                  account,
-                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalCountry",
-                                                                  postalCountry
-                                                              );
-                                                              if (postalCountry != 0) {
-                                                                  isOk = true;
-                                                              } else {
-                                                                  isNok = true;
-                                                              }
-                                                          } else if (key.equalsIgnoreCase(ATTR_ASSISTANTSNAME)) {
-                                                              String memberRole = null;
-                                                              if (valueMap.containsKey(ATTR_ASSISTANTSNAMEROLE)) {
-                                                                  memberRole = (String)valueMap.get(ATTR_ASSISTANTSNAMEROLE);
-                                                              }
-                                                              org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
-                                                              org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
-                                                                  parentAccount,
-                                                                  account,
-                                                                  memberRole,
-                                                                  FEATURE_MEMBERROLE,
-                                                                  codes,
-                                                                  accountPkg,
-                                                                  accountSegment,
-                                                                  pm
-                                                              );
-                                                              if (member != null) {
-                                                                  isOk = true;
-                                                                  if (memberRole != null) {
-                                                                      jsBuffer += "$('r" + nRow +  ATTR_ASSISTANTSNAMEROLE.toUpperCase() + "').className += ' ok';";
-                                                                  }
-                                                                  // add clickable links
-                                                                  jsBuffer += "$('r" + nRow + ATTR_ASSISTANTSNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-                                                                    + getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-                                                                    + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
-                                                              }
-                                                          } else if (key.equalsIgnoreCase(ATTR_MANAGERSNAME)) {
-                                                              String memberRole = null;
-                                                              if (valueMap.containsKey(ATTR_MANAGERSROLE)) {
-                                                                      memberRole = (String)valueMap.get(ATTR_MANAGERSROLE);
-                                                              }
-                                                              org.opencrx.kernel.account1.jmi1.Account manager = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
-                                                              org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
-                                                                  account,
-                                                                  manager,
-                                                                  memberRole,
-                                                                  FEATURE_MEMBERROLE,
-                                                                  codes,
-                                                                  accountPkg,
-                                                                  accountSegment,
-                                                                  pm
-                                                              );
-                                                              if (member != null) {
-                                                                  isOk = true;
-                                                                  if (memberRole != null) {
-                                                                      jsBuffer += "$('r" + nRow +  ATTR_MANAGERSROLE.toUpperCase() + "').className += ' ok';";
-                                                                  }
-                                                                  // add clickable links
-                                                                  jsBuffer += "$('r" + nRow + ATTR_MANAGERSNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-                                                                    + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-                                                                    + getObjectHref(manager) + "\" target=\"_blank\"><b>" + (new ObjectReference(manager, app)).getTitle() + "</b></a>&gt;';";
-                                                              }
-                                                          } else if (key.equalsIgnoreCase(ATTR_CATEGORIES)) {
-                                                              // semicolon-separated categories
-                                                              if (valueMap.get(key).toString() != null) {
-                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), ";", false);
-                                                                  while(tokenizer.hasMoreTokens()) {
-                                                                      String category = (String)tokenizer.nextToken();
-                                                                      if (!account.getCategory().contains(category)) {
-                                                                          account.getCategory().add(category);
-                                                                      }
-                                                                  }
-                                                              }
-                                                              isOk = true;
-                                                          } else if (key.equalsIgnoreCase(ATTR_MEMBEROF)) {
-                                                              // businessType
-                                                              String memberRoles = null;
-                                                              if (valueMap.containsKey(ATTR_MEMBERROLE)) {
-                                                                  memberRoles = (String)valueMap.get(ATTR_MEMBERROLE);
-                                                              }
-                                                              org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
-                                                              org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
-                                                                  parentAccount,
-                                                                  account,
-                                                                  memberRoles,
-                                                                  FEATURE_MEMBERROLE,
-                                                                  codes,
-                                                                  accountPkg,
-                                                                  accountSegment,
-                                                                  pm
-                                                              );
-                                                              if (member != null) {
-                                                                  if (valueMap.containsKey(ATTR_MEMBERROLE)) {
-                                                                      member.setDescription((String)valueMap.get(ATTR_MEMBERROLE));
-                                                                  }
-                                                                  isOk = true;
-                                                                  if (memberRoles != null) {
-                                                                      jsBuffer += "$('r" + nRow +  ATTR_MEMBERROLE.toUpperCase() + "').className += ' ok';";
-                                                                  }
-                                                                  // add clickable links
-                                                                  jsBuffer += "$('r" + nRow + ATTR_MEMBEROF.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-                                                                    + getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-                                                                    + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
-                                                              }
-                                                          } else if (key.equalsIgnoreCase(ATTR_NOTETITLE)) {
-                                                              // note
-                                                              String noteTitle = (String)valueMap.get(key);
-                                                              String noteText = null;
-                                                              if (valueMap.containsKey(ATTR_NOTETEXT)) {
-                                                                  noteText = (String)valueMap.get(ATTR_NOTETEXT);
-                                                              }
-                                                              org.opencrx.kernel.generic.jmi1.Note note = createOrUpdateNote(
-                                                                  account,
-                                                                  noteTitle,
-                                                                  noteText,
-                                                                  genericPkg,
-                                                                  pm
-                                                              );
-                                                              isOk = note != null;
-                                                              if (isOk && noteText != null) {
-                                                                  jsBuffer += "$('r" + nRow +  ATTR_NOTETEXT.toUpperCase() + "').className += ' ok';";
-                                                              }
-                                                          } else if (!(explicitlyMappedAttributes.contains(key.toUpperCase()))) {
-                                                              // try to set attribute with reflective coding
-                                                              try {
-                                                                  org.openmdx.base.mof.cci.Model_1_0 model = org.openmdx.base.mof.spi.Model_1Factory.getModel();
-                                                                  Map features = null;
-                                                                  if (isDtypeContact) {
-                                                                      features = (Map)model.getElement(contact.refClass().refMofId()).objGetValue("allFeature");
-                                                                  } else if (isDtypeGroup) {
-                                                                      features = (Map)model.getElement(group.refClass().refMofId()).objGetValue("allFeature");
-                                                                  } else if (isDtypeLegalEntity) {
-                                                                      features = (Map)model.getElement(legalEntity.refClass().refMofId()).objGetValue("allFeature");
-                                                                  } else if (isDtypeUnspecifiedAccount) {
-                                                                      features = (Map)model.getElement(unspecifiedAccount.refClass().refMofId()).objGetValue("allFeature");
-                                                                  }
-                                                                  org.openmdx.base.mof.cci.ModelElement_1_0 featureDef = (features == null ? null : (org.openmdx.base.mof.cci.ModelElement_1_0)features.get(key));
-                                                                  if (featureDef != null) {
-                                                                      if(
-                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.STRING.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
-                                                                          (
-                                                                              org.openmdx.base.mof.cci.Multiplicities.SINGLE_VALUE.equals(featureDef.objGetValue("multiplicity")) ||
-                                                                              org.openmdx.base.mof.cci.Multiplicities.OPTIONAL_VALUE.equals(featureDef.objGetValue("multiplicity"))
-                                                                          )
-                                                                      ) {
-                                                                          // optional, single-valued String
-                                                                          if (isDtypeContact) {
-                                                                              contact.refSetValue(key, valueMap.get(key).toString());
-                                                                          } else if (isDtypeGroup) {
-                                                                              group.refSetValue(key, valueMap.get(key).toString());
-                                                                          } else if (isDtypeLegalEntity) {
-                                                                              legalEntity.refSetValue(key, valueMap.get(key).toString());
-                                                                          } else if (isDtypeUnspecifiedAccount) {
-                                                                              unspecifiedAccount.refSetValue(key, valueMap.get(key).toString());
-                                                                          }
-                                                                          isOk = true;
-                                                                      }
-                                                                      if(
-                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.SHORT.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
-                                                                          (
-                                                                              org.openmdx.base.mof.cci.Multiplicities.SINGLE_VALUE.equals(featureDef.objGetValue("multiplicity")) ||
-                                                                              org.openmdx.base.mof.cci.Multiplicities.OPTIONAL_VALUE.equals(featureDef.objGetValue("multiplicity"))
-                                                                          )
-                                                                      ) {
-                                                                          // optional, single-valued Short
-                                                                          if (isDtypeContact) {
-                                                                              contact.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeGroup) {
-                                                                              group.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeLegalEntity) {
-                                                                              legalEntity.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeUnspecifiedAccount) {
-                                                                              unspecifiedAccount.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
-                                                                          }
-                                                                          isOk = true;
-                                                                      }
-                                                                      if(
-                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.BOOLEAN.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
-                                                                          (
-                                                                              org.openmdx.base.mof.cci.Multiplicities.SINGLE_VALUE.equals(featureDef.objGetValue("multiplicity")) ||
-                                                                              org.openmdx.base.mof.cci.Multiplicities.OPTIONAL_VALUE.equals(featureDef.objGetValue("multiplicity"))
-                                                                          )
-                                                                      ) {
-                                                                          // optional, single-valued Boolean
-                                                                          if (isDtypeContact) {
-                                                                              contact.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeGroup) {
-                                                                              group.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeLegalEntity) {
-                                                                              legalEntity.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeUnspecifiedAccount) {
-                                                                              unspecifiedAccount.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
-                                                                          }
-                                                                          isOk = true;
-                                                                      }
-                                                                      if(
-                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.DECIMAL.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
-                                                                          (
-                                                                              org.openmdx.base.mof.cci.Multiplicities.SINGLE_VALUE.equals(featureDef.objGetValue("multiplicity")) ||
-                                                                              org.openmdx.base.mof.cci.Multiplicities.OPTIONAL_VALUE.equals(featureDef.objGetValue("multiplicity"))
-                                                                          )
-                                                                      ) {
-                                                                          // optional, single-valued BigDecimal
-                                                                          if (isDtypeContact) {
-                                                                              contact.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeGroup) {
-                                                                              group.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeLegalEntity) {
-                                                                              legalEntity.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
-                                                                          } else if (isDtypeUnspecifiedAccount) {
-                                                                              unspecifiedAccount.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
-                                                                          }
-                                                                          isOk = true;
-                                                                      }
-                                                                  }
-                                                              } catch (Exception e) {
-                                                                  new ServiceException(e).log();
-                                                              }
-                                                          }
-                                                      } catch (Exception e) {
+                                          
+                                          if (isImportMembershipMode) {
+/*--------------------------------------------------------------------------------------------------------------------------------------------\
+|  IMPORT MEMBERSHIP MODE
+\---------------------------------------------------------------------------------------------------------------------------------------------*/
+		                                          List<org.opencrx.kernel.account1.jmi1.Account> matchingAccounts = null;
+                                        	  	// try to locate contacts with firstName and lastName only
+                                        	  	List<org.opencrx.kernel.account1.jmi1.Contact> matchingContacts = findContact(
+	                                                  firstName,
+	                                                  lastName,
+	                                                  null,
+	                                                  emailAddress,
+	                                                  null,
+	                                                  accountSegment,
+	                                                  pm
+	                                              );
+                                        	  	if (matchingContacts != null) {
+                                        	  			matchingAccounts = new ArrayList();
+                                        	  			for (Iterator c = matchingContacts.iterator(); c.hasNext();) {
+                                        	  					try {
+		                                        	  					matchingAccounts.add((org.opencrx.kernel.account1.jmi1.Account)c.next());
+                                        	  					} catch (Exception e) {}
+                                        	  			}
+                                        	  	}
+                                        	  	// try to locate legal entities with name only
+                                        	  	List<org.opencrx.kernel.account1.jmi1.AbstractGroup> matchingAbstractGroups = findAbstractGroup(
+                                                     company,
+                                                     null,
+                                                     null,
+                                                     null,
+                                                     false, /* Group allowed: no */
+                                                     true,  /* LegalEntity allowed: yes */
+                                                     false, /* UnspecifiedAccount allowed: no */
+                                                     accountSegment,
+                                                     pm
+                                                 );
+                                        	  	if (matchingAbstractGroups != null) {
+                                        	  			if (matchingAccounts == null) {
+                                        	  					matchingAccounts = new ArrayList();
+                                        	  			}
+                                        	  			for (Iterator l = matchingAbstractGroups.iterator(); l.hasNext();) {
+                                        	  					try {
+		                                        	  					matchingAccounts.add((org.opencrx.kernel.account1.jmi1.Account)l.next());
+                                        	  					} catch (Exception e) {}
+                                        	  			}
+		                                          }
+		                                          if (matchingAccounts != null) {
+                                        	  			for (Iterator a = matchingAccounts.iterator(); a.hasNext();) {
+                                        	  					try {
+                                        	  							pm.currentTransaction().begin();
+		                                    	  							org.opencrx.kernel.account1.jmi1.Account acct = (org.opencrx.kernel.account1.jmi1.Account)a.next();
+																													// create or update membership
+																													groupMember = createOrUpdateMember(
+																															parentGroup,
+																															acct,
+																															null, /* no particular membership role */
+																															FEATURE_MEMBERROLE,
+																															codes,
+																															accountPkg,
+																															accountSegment,
+																															pm
+																														);
+				                                                  if (groupMember != null) {
+				                                                      isOk = true;
+				                                                      if (idxEMailAddress >= 0) {
+						                                                      // add clickable links to emailaddress
+						                                                      jsBuffer += "$('r" + nRow + ATTR_EMAILADDRESS.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+						                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+						                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
+				                                                      }
+				                                                      if (idxLastName >= 0) {
+						                                                      // add clickable links to emailaddress
+						                                                      jsBuffer += "$('r" + nRow + ATTR_LASTNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+						                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+						                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
+				                                                      }
+				                                                      if (idxCompany >= 0) {
+						                                                      // add clickable links to emailaddress
+						                                                      jsBuffer += "$('r" + nRow + ATTR_COMPANY.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+						                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+						                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
+				                                                      }
+				                                                  }
+																													pm.currentTransaction().commit();
+                                        	  					} catch (Exception e) {
                                                           new ServiceException(e).log();
-                                                          isNok = true;
-                                                      }
-                                                      /*--------------------------------------------------------------*\
-                                                      | END   M a p p i n g   A c c o u n t   t o   o p e n C R X      |
-                                                      \---------------------------------------------------------------*/
-                                                      if (isOk) {
-                                                          jsBuffer += "$('" + cellId + "').className += ' ok';";
-                                                      }
-                                                      if (isNok) {
-                                                          jsBuffer += "$('" + cellId + "').className += ' nok';";
-                                                      }
-                                                  }
-                                                  pm.currentTransaction().commit();
-                                              } catch (Exception e) {
-                                                  new ServiceException(e).log();
-                                                  isOk = false;
-                                                  isNok = true;
-                                                  contact = null;
-                                                  try {
-                                                      pm.currentTransaction().rollback();
-                                                  } catch(Exception e1) {}
-                                              }
-                                          }
+                                                          contact = null;
+                                                          try {
+                                                              pm.currentTransaction().rollback();
+                                                          } catch(Exception e1) {}
+                                        	  					}
+                                        	  			}
+		                                          }
+                                        	  
+                                          } else {
+/*--------------------------------------------------------------------------------------------------------------------------------------------\
+|  IMPORT ACCOUNT MODE
+\---------------------------------------------------------------------------------------------------------------------------------------------*/
+		                                          boolean createNew = true;
+		                                          boolean updateExisting = false;
+		
+		                                          List<org.opencrx.kernel.account1.jmi1.Contact> matchingContacts = null;
+		                                          List<org.opencrx.kernel.account1.jmi1.AbstractGroup> matchingAbstractGroups = null;
+		
+		                                          if (xriExplicitlySet) {
+		                                              // try to find existing account with provided xri
+		                                              try {
+		                                                  account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(xri));
+		                                              } catch (Exception e) {
+		                                                  new ServiceException(e).log();
+		                                              }
+		                                              if (account != null) {
+		                                                  dtypeExplicitlySet = true;
+		                                                  isDtypeContact = false;
+		                                                  isDtypeGroup = false;
+		                                                  isDtypeLegalEntity = false;
+		                                                  isDtypeUnspecifiedAccount = false;
+		                                                  if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+		                                                      isDtypeContact = true;
+		                                                      matchingContacts = new ArrayList();
+		                                                      matchingContacts.add((org.opencrx.kernel.account1.jmi1.Contact)account);
+		                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.Group) {
+		                                                      isDtypeGroup = true;
+		                                                      matchingAbstractGroups = new ArrayList();
+		                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
+		                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
+		                                                      isDtypeLegalEntity = true;
+		                                                      matchingAbstractGroups = new ArrayList();
+		                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
+		                                                  } else if (account instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
+		                                                      isDtypeUnspecifiedAccount = true;
+		                                                      matchingAbstractGroups = new ArrayList();
+		                                                      matchingAbstractGroups.add((org.opencrx.kernel.account1.jmi1.AbstractGroup)account);
+		                                                  }
+		                                              }
+		                                          }
+		
+		                                          if (!dtypeExplicitlySet) {
+		                                              // try to find existing account to determine dtype
+		                                              matchingContacts = findContact(
+		                                                  firstName,
+		                                                  lastName,
+		                                                  aliasName,
+		                                                  emailAddress,
+		                                                  extString0,
+		                                                  accountSegment,
+		                                                  pm
+		                                              );
+		                                              if (matchingContacts == null) {
+		                                                  // try again without aliasName
+		                                                  matchingContacts = findContact(
+		                                                      firstName,
+		                                                      lastName,
+		                                                      null,
+		                                                      emailAddress,
+		                                                      extString0,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                              }
+		                                              if (matchingContacts == null) {
+		                                                  // try again without aliasName and without emailAddress
+		                                                  matchingContacts = findContact(
+		                                                      firstName,
+		                                                      lastName,
+		                                                      null,
+		                                                      null,
+		                                                      extString0,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                              }
+		                                              if (matchingContacts != null) {
+		                                                  dtypeExplicitlySet = true;
+		                                              } else {
+		                                                  matchingAbstractGroups = findAbstractGroup(
+		                                                      company,
+		                                                      aliasName,
+		                                                      emailAddress,
+		                                                      extString0,
+		                                                      true,
+		                                                      true,
+		                                                      true,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                                  if (matchingAbstractGroups == null) {
+		                                                	  	// try again without emailaddress
+				                                                  matchingAbstractGroups = findAbstractGroup(
+				                                                          company,
+				                                                          aliasName,
+				                                                          null,
+				                                                          extString0,
+				                                                          true,
+				                                                          true,
+				                                                          true,
+				                                                          accountSegment,
+				                                                          pm
+				                                                      );
+		                                                  }
+		                                                  if (matchingAbstractGroups != null) {
+		                                                      org.opencrx.kernel.account1.jmi1.AbstractGroup matchingAbstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)(matchingAbstractGroups.iterator().next());
+		                                                      if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.Group) {
+		                                                          dtypeExplicitlySet = true;
+		                                                          isDtypeGroup = true;
+		                                                          isDtypeContact = false;
+		                                                          className = DTYPE_GROUP;
+		                                                      } else if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.LegalEntity) {
+		                                                          dtypeExplicitlySet = true;
+		                                                          isDtypeLegalEntity = true;
+		                                                          isDtypeContact = false;
+		                                                          className = DTYPE_LEGALENTITY;
+		                                                      } else if (matchingAbstractGroup instanceof org.opencrx.kernel.account1.jmi1.UnspecifiedAccount) {
+		                                                          dtypeExplicitlySet = true;
+		                                                          isDtypeUnspecifiedAccount = true;
+		                                                          isDtypeContact = false;
+		                                                          className = DTYPE_UNSPECIFIEDACCOUNT;
+		                                                      }
+		                                                  }
+		                                              }
+		                                          }
+		
+		                                          if (isDtypeContact) {
+		                                              if (matchingContacts == null) {
+		                                                  matchingContacts = findContact(
+		                                                      firstName,
+		                                                      lastName,
+		                                                      aliasName,
+		                                                      emailAddress,
+		                                                      extString0,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                              }
+		                                              if (matchingContacts == null) {
+		                                                  // try again without aliasName
+		                                                  matchingContacts = findContact(
+		                                                      firstName,
+		                                                      lastName,
+		                                                      null,
+		                                                      emailAddress,
+		                                                      extString0,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                              }
+		                                              if (matchingContacts == null) {
+		                                                  // try again without aliasName and without emailaddress
+		                                                  matchingContacts = findContact(
+		                                                      firstName,
+		                                                      lastName,
+		                                                      null,
+		                                                      null,
+		                                                      extString0,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                              }
+		                                              if (matchingContacts != null) {
+		                                                  // at least 1 match with existing contacts
+		                                                  updateExisting = true;
+		                                                  createNew = false;
+		                                                  for(Iterator c = matchingContacts.iterator(); c.hasNext(); ) {
+		                                                      org.opencrx.kernel.account1.jmi1.Contact matchingContact = (org.opencrx.kernel.account1.jmi1.Contact)c.next();
+		                                                      if (c.hasNext()) {
+		                                                          // more than 1 match
+		                                                          updateExisting = false;;
+		                                                          Action action = new Action(
+		                                                        	  SelectObjectAction.EVENT_ID,
+		                                                              new Action.Parameter[]{
+		                                                                  new Action.Parameter(Action.PARAMETER_OBJECTXRI, matchingContact.refMofId())
+		                                                              },
+		                                                              "",
+		                                                              true // enabled
+		                                                          );
+		                                                          accountHref = "../../" + action.getEncodedHRef();
+		                                                          multiMatchList += "<br><a href='" + accountHref + " target='_blank'><b>" + (new ObjectReference(matchingContact, app)).getTitle() + "</b> [" + matchingContact.refMofId() + "]</a>";
+		                                                      } else if (updateExisting) {
+		                                                          contactsUpdated += 1;
+		                                                          isUpdate = true;
+		                                                          contact = matchingContact;
+		                                                      }
+		                                                  }
+		                                              } else {
+		                                                  // no match with existing contacts
+		                                                  if (
+		                                                      // minimum requirements to create contact
+		                                                      ((firstName != null) || (lastName != null))
+		                                                  ) {
+		                                                      try {
+		                                                          pm.currentTransaction().begin();
+		                                                          contact = pm.newInstance(org.opencrx.kernel.account1.jmi1.Contact.class);
+		                                                          contact.refInitialize(false, false);
+		                                                          contact.setFirstName(firstName);
+		                                                          contact.setLastName(lastName);
+		                                                          contact.setExtString0(extString0);
+		                                                          accountSegment.addAccount(
+		                                                              false,
+		                                                              org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+		                                                              contact
+		                                                          );
+		                                                          pm.currentTransaction().commit();
+		                                                      } catch (Exception e) {
+		                                                          new ServiceException(e).log();
+		                                                          contact = null;
+		                                                          try {
+		                                                              pm.currentTransaction().rollback();
+		                                                          } catch(Exception e1) {}
+		                                                      }
+		                                                  }
+		                                                  if (contact != null) {
+		                                                      contactsCreated += 1;
+		                                                      isCreation = true;
+		                                                  } else {
+		                                                      // creation failed
+		                                                      appendErrorRow = "<tr><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + className + "</b>]</td></tr>";
+		                                                  }
+		                                              }
+		
+		                                              if (contact != null) {
+		                                                  // update new or existing contact
+		                                                  Action action = new Action(
+		                                                	  SelectObjectAction.EVENT_ID,
+		                                                      new Action.Parameter[]{
+		                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, contact.refMofId())
+		                                                      },
+		                                                      "",
+		                                                      true // enabled
+		                                                  );
+		                                                  accountHref = "../../" + action.getEncodedHRef();
+		                                                  account = (org.opencrx.kernel.account1.jmi1.Account)contact;
+		                                                  try {
+		                                                      pm.currentTransaction().begin();
+		                                                      for (
+		                                                          Iterator c = valueMap.keySet().iterator();
+		                                                          c.hasNext();
+		                                                      ) {
+		                                                          String key = (String)c.next(); // key is equal to name of attribute
+		                                                          cellId =  "r" + nRow + key.toUpperCase();
+		
+		                                                          /*--------------------------------------------------------------*\
+		                                                          | BEGIN   M a p p i n g   C o n t a c t   t o   o p e n C R X    |
+		                                                          \---------------------------------------------------------------*/
+		
+		                                                          try {
+		                                                              DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
+		
+		                                                              if (key.equalsIgnoreCase(ATTR_TITLE)) {
+		                                                                  // salutationCode
+		                                                                  short salutationCode = codes.findCodeFromValue(
+		                                                                      (String)valueMap.get(key),
+		                                                                      FEATURE_SALUTATION_CODE
+		                                                                  );
+		                                                                  contact.setSalutationCode(salutationCode);
+		                                                                  if (salutationCode != 0) {
+		                                                                      isOk = true;
+		                                                                  } else {
+		                                                                      isNok = true;
+		                                                                  }
+		                                                                  if ((String)valueMap.get(key) != null && ((String)valueMap.get(key)).length() > 0) {
+		                                                                      contact.setSalutation((String)valueMap.get(key));
+		                                                                  }
+		                                                              } else if (key.equalsIgnoreCase(ATTR_ACADEMICTITLE)) {
+		                                                                  // academic Title (
+		                                                                  short academicTitle = codes.findCodeFromValue(
+		                                                                      (String)valueMap.get(key),
+		                                                                      FEATURE_ACADEMICTITLE
+		                                                                  );
+		                                                                  contact.setUserCode1(academicTitle);
+		                                                                  if (academicTitle != 0) {
+		                                                                          isOk = true;
+		                                                                  } else {
+		                                                                          isNok = true;
+		                                                                  }
+		                                                              } else if (key.equalsIgnoreCase(ATTR_FIRSTNAME)) {
+		                                                                  contact.setFirstName((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_MIDDLENAME)) {
+		                                                                  contact.setMiddleName((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_LASTNAME)) {
+		                                                                  contact.setLastName((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_SUFFIX)) {
+		                                                                  contact.setSuffix((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_ALIASNAME)) {
+		                                                                  contact.setAliasName((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_NICKNAME)) {
+		                                                                  contact.setNickName((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_COMPANY)) {
+		                                                                  String memberRole = null;
+		                                                                  if (valueMap.containsKey(ATTR_COMPANYROLE)) {
+		                                                                          memberRole = (String)valueMap.get(ATTR_COMPANYROLE);
+		                                                                  }
+		                                                                  org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
+		                                                                  org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
+		                                                                      parentAccount,
+		                                                                      account,
+		                                                                      memberRole,
+		                                                                      FEATURE_MEMBERROLE,
+		                                                                      codes,
+		                                                                      accountPkg,
+		                                                                      accountSegment,
+		                                                                      pm
+		                                                                  );
+		                                                                  if (member != null) {
+		                                                                      if (valueMap.containsKey(ATTR_JOBTITLE)) {
+		                                                                          member.setDescription((String)valueMap.get(ATTR_JOBTITLE));
+		                                                                      }
+		                                                                      isOk = true;
+		                                                                      if (memberRole != null) {
+		                                                                          jsBuffer += "$('r" + nRow +  ATTR_COMPANYROLE.toUpperCase() + "').className += ' ok';";
+		                                                                      }
+		                                                                      // add clickable links
+		                                                                      jsBuffer += "$('r" + nRow + ATTR_COMPANY.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+		                                                                        + getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+		                                                                        + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
+		                                                                      contact.setOrganization(parentAccount.getFullName()); isOk = true;
+		                                                                  } else {
+		                                                                      contact.setOrganization((String)valueMap.get(key)); isOk = true;
+		                                                                  }
+		                                                              } else if (key.equalsIgnoreCase(ATTR_DEPARTMENT)) {
+		                                                                  contact.setDepartment((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_JOBTITLE)) {
+		                                                                  contact.setJobTitle((String)valueMap.get(key)); isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_BIRTHDAY)) {
+		                                                                  String value = (String)valueMap.get(key);
+		                                                                  if (!value.startsWith("00") && !value.startsWith("0.") && !value.startsWith("0-")) {
+		                                                                      java.util.Date birthdate = null;
+		                                                                      try {
+		                                                                          SimpleDateFormat sd = new SimpleDateFormat("MM/dd/yyyy");
+		                                                                          birthdate = sd.parse((String)valueMap.get(key));
+		                                                                      } catch (Exception e) {}
+		                                                                      if (birthdate == null) {
+		                                                                          try {
+		                                                                              SimpleDateFormat sd = new SimpleDateFormat("MM/dd/yy");
+		                                                                              birthdate = sd.parse((String)valueMap.get(key));
+		                                                                          } catch (Exception e) {}
+		                                                                      }
+		                                                                      if (birthdate == null) {
+		                                                                          try {
+		                                                                              SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yyyy");
+		                                                                              birthdate = sd.parse((String)valueMap.get(key));
+		                                                                          } catch (Exception e) {}
+		                                                                      }
+		                                                                      if (birthdate == null) {
+		                                                                          try {
+		                                                                              SimpleDateFormat sd = new SimpleDateFormat("dd-MM-yy");
+		                                                                              birthdate = sd.parse((String)valueMap.get(key));
+		                                                                          } catch (Exception e) {}
+		                                                                      }
+		                                                                      if (birthdate != null) {
+		                                                                          contact.setBirthdate(birthdate); isOk = true;
+		                                                                      }
+		                                                                  }
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPHONE)) {
+		                                                                  // Phone Home
+		                                                                  DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
+		                                                                  phoneHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address!phoneNumberFull",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPHONE2)) {
+		                                                                  // Phone other
+		                                                                  DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
+		                                                                  phoneOtherDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEFAX)) {
+		                                                                  // Fax Home
+		                                                                  DataBinding_1_0 faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
+		                                                                  faxHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+/*
+		                                                              } else if (key.equalsIgnoreCase("WebPage")) {
+		                                                                  // Web page
+		                                                                  org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageHomeDataBinding =
+		                                                                      new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400");
+		                                                                  webPageHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address!webUrl",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+*/
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEADDRESSLINE)) {
+		                                                                  // Postal Address Business / addressLine
+		                                                                  List<String> postalAddressLines = new ArrayList<String>();
+		                                                                  if (valueMap.get(key).toString() != null) {
+		                                                                      StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
+		                                                                      while(tokenizer.hasMoreTokens()) {
+		                                                                          postalAddressLines.add(tokenizer.nextToken());
+		                                                                      }
+		                                                                      postalHomeDataBinding.setValue(
+		                                                                          contact,
+		                                                                          "org:opencrx:kernel:account1:Contact:address!postalAddressLine",
+		                                                                          postalAddressLines
+		                                                                      );
+		                                                                  }
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMESTREET)) {
+		                                                                  // Postal Address Business / postalStreet
+		                                                                  List<String> postalStreetLines = new ArrayList<String>();
+		                                                                  if (valueMap.get(key).toString() != null) {
+		                                                                      StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
+		                                                                      while(tokenizer.hasMoreTokens()) {
+		                                                                          postalStreetLines.add(tokenizer.nextToken());
+		                                                                      }
+		                                                                      postalHomeDataBinding.setValue(
+		                                                                          contact,
+		                                                                          "org:opencrx:kernel:account1:Contact:address!postalStreet",
+		                                                                          postalStreetLines
+		                                                                      );
+		                                                                  }
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMECITY)) {
+		                                                                  // Postal Address Business / postalCity
+		                                                                  postalHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address!postalCity",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPOSTALCODE)) {
+		                                                                  // Postal Address Business / postalCode
+		                                                                  postalHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address!postalCode",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMESTATE)) {
+		                                                                  // Postal Address Business / postalState
+		                                                                  postalHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address!postalState",
+		                                                                      (String)valueMap.get(key)
+		                                                                  );
+		                                                                  isOk = true;
+		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMECOUNTRY) || key.equalsIgnoreCase(ATTR_HOMECOUNTRYREGION)) {
+		                                                                  // Postal Address Business / postalCountry
+		                                                                  short postalCountry = codes.findCodeFromValue(
+		                                                                      (String)valueMap.get(key),
+		                                                                      FEATURE_POSTALCOUNTRY_CODE
+		                                                                  );
+		                                                                  postalHomeDataBinding.setValue(
+		                                                                      contact,
+		                                                                      "org:opencrx:kernel:account1:Contact:address!postalCountry",
+		                                                                      postalCountry
+		                                                                  );
+		                                                                  if (postalCountry != 0) {
+		                                                                      isOk = true;
+		                                                                  } else {
+		                                                                      isNok = true;
+		                                                                  }
+		                                                              }
+		                                                          } catch (Exception e) {
+		                                                              new ServiceException(e).log();
+		                                                              isNok = true;
+		                                                          }
+		                                                          if (isOk) {
+		                                                              jsBuffer += "$('" + cellId + "').className += ' ok';";
+		                                                          }
+		                                                          if (isNok) {
+		                                                              jsBuffer += "$('" + cellId + "').className += ' nok';";
+		                                                          }
+		                                                          /*--------------------------------------------------------------*\
+		                                                          | END   M a p p i n g   C o n t a c t   t o   o p e n C R X      |
+		                                                          \---------------------------------------------------------------*/
+		                                                      }
+		                                                      pm.currentTransaction().commit();
+		                                                  } catch (Exception e) {
+		                                                      new ServiceException(e).log();
+		                                                      contact = null;
+		                                                      try {
+		                                                          pm.currentTransaction().rollback();
+		                                                      } catch(Exception e1) {}
+		                                                  }
+		                                              }
+		                                          } else if (
+		                                                  isDtypeGroup ||
+		                                                  isDtypeLegalEntity ||
+		                                                  isDtypeUnspecifiedAccount
+		                                          ) {
+		                                              org.opencrx.kernel.account1.jmi1.AbstractGroup abstractGroup = null;
+		                                              if (matchingAbstractGroups == null) {
+		                                                  matchingAbstractGroups = findAbstractGroup(
+		                                                      company,
+		                                                      aliasName,
+		                                                      emailAddress,
+		                                                      extString0,
+		                                                      isDtypeGroup,
+		                                                      isDtypeLegalEntity,
+		                                                      isDtypeUnspecifiedAccount,
+		                                                      accountSegment,
+		                                                      pm
+		                                                  );
+		                                                  if (matchingAbstractGroups == null) {
+		                                                	  	// try again without emailaddress
+		                                                	  	matchingAbstractGroups = findAbstractGroup(
+		                                                          company,
+		                                                          aliasName,
+		                                                          null,
+		                                                          extString0,
+		                                                          isDtypeGroup,
+		                                                          isDtypeLegalEntity,
+		                                                          isDtypeUnspecifiedAccount,
+		                                                          accountSegment,
+		                                                          pm
+		                                                      );
+		                                                  }
+		                                              }
+		                                              if (matchingAbstractGroups != null) {
+		                                                  // at least 1 match with existing AbstractGroups
+		                                                  updateExisting = true;
+		                                                  createNew = false;
+		                                                  for(Iterator c = matchingAbstractGroups.iterator(); c.hasNext(); ) {
+		                                                      org.opencrx.kernel.account1.jmi1.AbstractGroup matchingAbstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)c.next();
+		                                                      if (c.hasNext()) {
+		                                                          // more than 1 match
+		                                                          updateExisting = false;;
+		                                                          Action action = new Action(
+		                                                        	  SelectObjectAction.EVENT_ID,
+		                                                              new Action.Parameter[]{
+		                                                                  new Action.Parameter(Action.PARAMETER_OBJECTXRI, matchingAbstractGroup.refMofId())
+		                                                              },
+		                                                              "",
+		                                                              true // enabled
+		                                                          );
+		                                                          accountHref = "../../" + action.getEncodedHRef();
+		                                                          multiMatchList += "<br><a href='" + accountHref + " target='_blank'><b>" + (new ObjectReference(matchingAbstractGroup, app)).getTitle() + "</b> [" + matchingAbstractGroup.refMofId() + "]</a>";
+		                                                    } else if (updateExisting) {
+		                                                          isUpdate = true;
+		                                                          if (isDtypeGroup) {
+		                                                              groupsUpdated += 1;
+		                                                              group = (org.opencrx.kernel.account1.jmi1.Group)matchingAbstractGroup;
+		                                                              abstractGroup = matchingAbstractGroup;
+		                                                          } else if (isDtypeLegalEntity) {
+		                                                              legalEntitiesUpdated += 1;
+		                                                              legalEntity = (org.opencrx.kernel.account1.jmi1.LegalEntity)matchingAbstractGroup;
+		                                                              abstractGroup = matchingAbstractGroup;
+		                                                          } else if (isDtypeUnspecifiedAccount) {
+		                                                              unspecifiedAccountsUpdated += 1;
+		                                                              unspecifiedAccount = (org.opencrx.kernel.account1.jmi1.UnspecifiedAccount)matchingAbstractGroup;
+		                                                              abstractGroup = matchingAbstractGroup;
+		                                                          }
+		                                                      }
+		                                                  }
+		                                              } else {
+		                                                  // no match with existing AbstractGroups
+		                                                  if (
+		                                                      // minimum requirements to create AbstractGroup
+		                                                      (company != null)
+		                                                  ) {
+		                                                      try {
+		                                                          pm.currentTransaction().begin();
+		                                                          if (isDtypeGroup) {
+		                                                              group = pm.newInstance(org.opencrx.kernel.account1.jmi1.Group.class);
+		                                                              group.refInitialize(false, false);
+		                                                              group.setName(company);
+		                                                              group.setExtString0(extString0);
+		                                                              accountSegment.addAccount(
+		                                                                  false,
+		                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+		                                                                  group
+		                                                              );
+		                                                          } else if (isDtypeLegalEntity) {
+		                                                              legalEntity = pm.newInstance(org.opencrx.kernel.account1.jmi1.LegalEntity.class);
+		                                                              legalEntity.refInitialize(false, false);
+		                                                              legalEntity.setName(company);
+		                                                              legalEntity.setExtString0(extString0);
+		                                                              accountSegment.addAccount(
+		                                                                  false,
+		                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+		                                                                  legalEntity
+		                                                              );
+		                                                          } else if (isDtypeUnspecifiedAccount) {
+		                                                              unspecifiedAccount = pm.newInstance(org.opencrx.kernel.account1.jmi1.UnspecifiedAccount.class);
+		                                                              unspecifiedAccount.refInitialize(false, false);
+		                                                              unspecifiedAccount.setName(company);
+		                                                              unspecifiedAccount.setExtString0(extString0);
+		                                                              accountSegment.addAccount(
+		                                                                  false,
+		                                                                  org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+		                                                                  unspecifiedAccount
+		                                                              );
+		                                                          }
+		                                                          pm.currentTransaction().commit();
+		                                                      } catch (Exception e) {
+		                                                          new ServiceException(e).log();
+		                                                          contact = null;
+		                                                          try {
+		                                                              pm.currentTransaction().rollback();
+		                                                          } catch(Exception e1) {}
+		                                                      }
+		                                                  }
+		
+		                                                  if (isDtypeGroup && group != null) {
+		                                                      groupsCreated += 1;
+		                                                      isCreation = true;
+		                                                      abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)group;
+		                                                  } else if (isDtypeLegalEntity && legalEntity != null) {
+		                                                      legalEntitiesCreated += 1;
+		                                                      isCreation = true;
+		                                                      abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)legalEntity;
+		                                                  } else if (isDtypeUnspecifiedAccount && unspecifiedAccount != null) {
+		                                                      unspecifiedAccountsCreated += 1;
+		                                                      isCreation = true;
+		                                                      abstractGroup = (org.opencrx.kernel.account1.jmi1.AbstractGroup)unspecifiedAccount;
+		                                                  } else {
+		                                                      // creation failed
+		                                                      appendErrorRow = "<tr><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + className + "</b>]</td></tr>";
+		                                                  }
+		                                              }
+		
+		                                              if (abstractGroup != null) {
+		                                                  // update new or existing abstractGroup
+		                                                  Action action = new Action(
+		                                                	  SelectObjectAction.EVENT_ID,
+		                                                      new Action.Parameter[]{
+		                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, abstractGroup.refMofId())
+		                                                      },
+		                                                      "",
+		                                                      true // enabled
+		                                                  );
+		                                                  accountHref = "../../" + action.getEncodedHRef();
+		                                                  account = (org.opencrx.kernel.account1.jmi1.Account)abstractGroup;
+		                                                  try {
+		                                                      pm.currentTransaction().begin();
+		                                                      for (
+		                                                          Iterator c = valueMap.keySet().iterator();
+		                                                          c.hasNext();
+		                                                      ) {
+		                                                          String key = (String)c.next(); // key is equal to name of attribute
+		                                                          cellId =  "r" + nRow + key.toUpperCase();
+		
+		                                                          boolean isGOk = false;
+		                                                          try {
+		                                                              if (isDtypeGroup) {
+		                                                                  /*----------------------------------------------------------*\
+		                                                                  | BEGIN   M a p p i n g   G r o u p   t o   o p e n C R X    |
+		                                                                  \-----------------------------------------------------------*/
+		                                                                  if (key.equalsIgnoreCase(ATTR_COMPANY)) {
+		                                                                      group.setName((String)valueMap.get(key)); isGOk = true;
+		                                                                  }
+		                                                                  /*----------------------------------------------------------*\
+		                                                                  | END     M a p p i n g   G r o u p   t o   o p e n C R X    |
+		                                                                  \-----------------------------------------------------------*/
+		                                                              } else if (isDtypeLegalEntity) {
+		                                                                  /*----------------------------------------------------------------------*\
+		                                                                  | BEGIN   M a p p i n g   L e g a l E n t i t y   t o   o p e n C R X    |
+		                                                                  \-----------------------------------------------------------------------*/
+		                                                                  if (key.equalsIgnoreCase(ATTR_COMPANY)) {
+		                                                                      legalEntity.setName((String)valueMap.get(key)); isGOk = true;
+		                                                                  }
+		                                                                  /*----------------------------------------------------------------------*\
+		                                                                  | END     M a p p i n g   L e g a l E n t i t y   t o   o p e n C R X    |
+		                                                                  \-----------------------------------------------------------------------*/
+		                                                              } else if (isDtypeUnspecifiedAccount) {
+		                                                                  /*------------------------------------------------------------------------------------*\
+		                                                                  | BEGIN   M a p p i n g   U n s p e c i f i e d A c c o u n t   t o   o p e n C R X    |
+		                                                                  \-------------------------------------------------------------------------------------*/
+		                                                                  if (key.equalsIgnoreCase(ATTR_COMPANY)) {
+		                                                                      unspecifiedAccount.setName((String)valueMap.get(key)); isGOk = true;
+		                                                                  }
+		                                                                  /*------------------------------------------------------------------------------------*\
+		                                                                  | END     M a p p i n g   U n s p e c i f i e d A c c o u n t   t o   o p e n C R X    |
+		                                                                  \-------------------------------------------------------------------------------------*/
+		                                                              }
+		                                                          } catch (Exception e) {
+		                                                              jsBuffer += "$('" + cellId + "').className += ' nok';";
+		                                                          }
+		                                                          if (isGOk) {
+		                                                              jsBuffer += "$('" + cellId + "').className += ' ok';";
+		                                                          }
+		                                                      }
+		                                                      pm.currentTransaction().commit();
+		                                                  } catch (Exception e) {
+		                                                      new ServiceException(e).log();
+		                                                      try {
+		                                                          pm.currentTransaction().rollback();
+		                                                      } catch(Exception e1) {}
+		                                                      abstractGroup = null;
+		                                                      group = null;
+		                                                      legalEntity = null;
+		                                                      unspecifiedAccount = null;
+		                                                  }
+		                                              }
+		                                          }
+		
+		                                          isOk = false;
+		                                          isNok = false;
+		
+		                                          if (account != null) {
+		                                              // update attributes common to all subclasses of Account
+		                                              try {
+		                                                  pm.currentTransaction().begin();
+		                                                  for (
+		                                                      Iterator c = valueMap.keySet().iterator();
+		                                                      c.hasNext();
+		                                                  ) {
+		                                                      String key = (String)c.next(); // key is equal to name of attribute
+		                                                      cellId =  "r" + nRow + key.toUpperCase();
+		
+		                                                      /*--------------------------------------------------------------*\
+		                                                      | BEGIN   M a p p i n g   A c c o u n t   t o   o p e n C R X    |
+		                                                      \---------------------------------------------------------------*/
+		
+		                                                      isOk = false;
+		                                                      isNok = false;
+		                                                      try {
+		                                                          DataBinding_1_0 postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
+		
+		                                                          if (key.equalsIgnoreCase(ATTR_XRI)) {
+		                                                              // set isOk to true
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_EXTSTRING0)) {
+		                                                              // verify, but do NOT set extString0 (may only be set during creation of new contact!!!)
+		                                                              isOk = (valueMap.get(key) != null) && (account.getExtString0() != null) && (valueMap.get(key).toString().compareTo(account.getExtString0()) == 0);
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSTYPE)) {
+		                                                              // businessType
+		                                                              List<Short> businessTypes = new ArrayList<Short>();
+		                                                              if (valueMap.get(key).toString() != null) {
+		                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
+		                                                                  while(tokenizer.hasMoreTokens()) {
+		                                                                      businessTypes.add(Short.parseShort(tokenizer.nextToken()));
+		                                                                  }
+		                                                                  account.setBusinessType(businessTypes);
+		                                                              }
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_NOTES)) {
+		                                                              // description
+		                                                              account.setDescription((String)valueMap.get(key));
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE)) {
+		                                                              // Phone Business
+		                                                              DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
+		                                                              phoneBusinessDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE2)) {
+		                                                              // Phone other
+		                                                              DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
+		                                                              phoneOtherDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSFAX)) {
+		                                                              // Fax Business
+		                                                              DataBinding_1_0 faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
+		                                                              faxBusinessDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_MOBILEPHONE)) {
+		                                                              // Phone Mobile
+		                                                              DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
+		                                                              phoneMobileDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_EMAILADDRESS)) {
+		                                                              // Mail Business
+		                                                              DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
+		                                                              mailBusinessDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Business!emailAddress",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_EMAIL2ADDRESS)) {
+		                                                              // Mail Home
+		                                                              DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
+		                                                              mailHomeDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Contact:address!emailAddress",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_EMAIL3ADDRESS)) {
+		                                                              // Mail Other
+		                                                              DataBinding_1_0 mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
+		                                                              mailOtherDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Other!emailAddress",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_WEBPAGE)) {
+		                                                              // Web page
+		                                                              org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageBusinessDataBinding =
+		                                                                  new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500");
+		                                                              webPageBusinessDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:LegalEntity:address!webUrl",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSADDRESSLINE)) {
+		                                                              // Postal Address Business / addressLine
+		                                                              List<String> postalAddressLines = new ArrayList<String>();
+		                                                              if (valueMap.get(key).toString() != null) {
+		                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
+		                                                                  while(tokenizer.hasMoreTokens()) {
+		                                                                      postalAddressLines.add(tokenizer.nextToken());
+		                                                                  }
+		                                                                  postalBusinessDataBinding.setValue(
+		                                                                      account,
+		                                                                      "org:opencrx:kernel:account1:Account:address*Business!postalAddressLine",
+		                                                                      postalAddressLines
+		                                                                  );
+		                                                              }
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSSTREET)) {
+		                                                              // Postal Address Business / postalStreet
+		                                                              List<String> postalStreetLines = new ArrayList<String>();
+		                                                              if (valueMap.get(key).toString() != null) {
+		                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), "\r\n", false);
+		                                                                  while(tokenizer.hasMoreTokens()) {
+		                                                                      postalStreetLines.add(tokenizer.nextToken());
+		                                                                  }
+		                                                                  postalBusinessDataBinding.setValue(
+		                                                                      account,
+		                                                                      "org:opencrx:kernel:account1:Account:address*Business!postalStreet",
+		                                                                      postalStreetLines
+		                                                                  );
+		                                                              }
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSCITY)) {
+		                                                              // Postal Address Business / postalCity
+		                                                              postalBusinessDataBinding.setValue(
+		                                                                      account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalCity",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPOSTALCODE)) {
+		                                                              // Postal Address Business / postalCode
+		                                                              postalBusinessDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalCode",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSSTATE)) {
+		                                                              // Postal Address Business / postalState
+		                                                              postalBusinessDataBinding.setValue(
+		                                                                      account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalState",
+		                                                                  (String)valueMap.get(key)
+		                                                              );
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSCOUNTRY) || key.equalsIgnoreCase(ATTR_BUSINESSCOUNTRYREGION)) {
+		                                                              // Postal Address Business / postalCountry
+		                                                              short postalCountry = codes.findCodeFromValue(
+		                                                                  (String)valueMap.get(key),
+		                                                                  FEATURE_POSTALCOUNTRY_CODE
+		                                                              );
+		                                                              postalBusinessDataBinding.setValue(
+		                                                                  account,
+		                                                                  "org:opencrx:kernel:account1:Account:address*Business!postalCountry",
+		                                                                  postalCountry
+		                                                              );
+		                                                              if (postalCountry != 0) {
+		                                                                  isOk = true;
+		                                                              } else {
+		                                                                  isNok = true;
+		                                                              }
+		                                                          } else if (key.equalsIgnoreCase(ATTR_ASSISTANTSNAME)) {
+		                                                              String memberRole = null;
+		                                                              if (valueMap.containsKey(ATTR_ASSISTANTSNAMEROLE)) {
+		                                                                  memberRole = (String)valueMap.get(ATTR_ASSISTANTSNAMEROLE);
+		                                                              }
+		                                                              org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
+		                                                              org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
+		                                                                  parentAccount,
+		                                                                  account,
+		                                                                  memberRole,
+		                                                                  FEATURE_MEMBERROLE,
+		                                                                  codes,
+		                                                                  accountPkg,
+		                                                                  accountSegment,
+		                                                                  pm
+		                                                              );
+		                                                              if (member != null) {
+		                                                                  isOk = true;
+		                                                                  if (memberRole != null) {
+		                                                                      jsBuffer += "$('r" + nRow +  ATTR_ASSISTANTSNAMEROLE.toUpperCase() + "').className += ' ok';";
+		                                                                  }
+		                                                                  // add clickable links
+		                                                                  jsBuffer += "$('r" + nRow + ATTR_ASSISTANTSNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+		                                                                    + getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+		                                                                    + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
+		                                                              }
+		                                                          } else if (key.equalsIgnoreCase(ATTR_MANAGERSNAME)) {
+		                                                              String memberRole = null;
+		                                                              if (valueMap.containsKey(ATTR_MANAGERSROLE)) {
+		                                                                      memberRole = (String)valueMap.get(ATTR_MANAGERSROLE);
+		                                                              }
+		                                                              org.opencrx.kernel.account1.jmi1.Account manager = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
+		                                                              org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
+		                                                                  account,
+		                                                                  manager,
+		                                                                  memberRole,
+		                                                                  FEATURE_MEMBERROLE,
+		                                                                  codes,
+		                                                                  accountPkg,
+		                                                                  accountSegment,
+		                                                                  pm
+		                                                              );
+		                                                              if (member != null) {
+		                                                                  isOk = true;
+		                                                                  if (memberRole != null) {
+		                                                                      jsBuffer += "$('r" + nRow +  ATTR_MANAGERSROLE.toUpperCase() + "').className += ' ok';";
+		                                                                  }
+		                                                                  // add clickable links
+		                                                                  jsBuffer += "$('r" + nRow + ATTR_MANAGERSNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+		                                                                    + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+		                                                                    + getObjectHref(manager) + "\" target=\"_blank\"><b>" + (new ObjectReference(manager, app)).getTitle() + "</b></a>&gt;';";
+		                                                              }
+		                                                          } else if (key.equalsIgnoreCase(ATTR_CATEGORIES)) {
+		                                                              // semicolon-separated categories
+		                                                              if (valueMap.get(key).toString() != null) {
+		                                                                  StringTokenizer tokenizer = new StringTokenizer(valueMap.get(key).toString(), ";", false);
+		                                                                  while(tokenizer.hasMoreTokens()) {
+		                                                                      String category = (String)tokenizer.nextToken();
+		                                                                      if (!account.getCategory().contains(category)) {
+		                                                                          account.getCategory().add(category);
+		                                                                      }
+		                                                                  }
+		                                                              }
+		                                                              isOk = true;
+		                                                          } else if (key.equalsIgnoreCase(ATTR_MEMBEROF)) {
+		                                                              // businessType
+		                                                              String memberRoles = null;
+		                                                              if (valueMap.containsKey(ATTR_MEMBERROLE)) {
+		                                                                  memberRoles = (String)valueMap.get(ATTR_MEMBERROLE);
+		                                                              }
+		                                                              org.opencrx.kernel.account1.jmi1.Account parentAccount = findUniqueTargetAccount((String)valueMap.get(key), accountSegment, pm);
+		                                                              org.opencrx.kernel.account1.jmi1.Member member = createOrUpdateMember(
+		                                                                  parentAccount,
+		                                                                  account,
+		                                                                  memberRoles,
+		                                                                  FEATURE_MEMBERROLE,
+		                                                                  codes,
+		                                                                  accountPkg,
+		                                                                  accountSegment,
+		                                                                  pm
+		                                                              );
+		                                                              if (member != null) {
+		                                                                  if (valueMap.containsKey(ATTR_MEMBERROLE)) {
+		                                                                      member.setDescription((String)valueMap.get(ATTR_MEMBERROLE));
+		                                                                  }
+		                                                                  isOk = true;
+		                                                                  if (memberRoles != null) {
+		                                                                      jsBuffer += "$('r" + nRow +  ATTR_MEMBERROLE.toUpperCase() + "').className += ' ok';";
+		                                                                  }
+		                                                                  // add clickable links
+		                                                                  jsBuffer += "$('r" + nRow + ATTR_MEMBEROF.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+		                                                                    + getObjectHref(parentAccount) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentAccount, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+		                                                                    + getObjectHref(account) + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b></a>&gt;';";
+		                                                              }
+		                                                          } else if (key.equalsIgnoreCase(ATTR_NOTETITLE)) {
+		                                                              // note
+		                                                              String noteTitle = (String)valueMap.get(key);
+		                                                              String noteText = null;
+		                                                              if (valueMap.containsKey(ATTR_NOTETEXT)) {
+		                                                                  noteText = (String)valueMap.get(ATTR_NOTETEXT);
+		                                                              }
+		                                                              org.opencrx.kernel.generic.jmi1.Note note = createOrUpdateNote(
+		                                                                  account,
+		                                                                  noteTitle,
+		                                                                  noteText,
+		                                                                  genericPkg,
+		                                                                  pm
+		                                                              );
+		                                                              isOk = note != null;
+		                                                              if (isOk && noteText != null) {
+		                                                                  jsBuffer += "$('r" + nRow +  ATTR_NOTETEXT.toUpperCase() + "').className += ' ok';";
+		                                                              }
+		                                                          } else if (!(explicitlyMappedAttributes.contains(key.toUpperCase()))) {
+		                                                              // try to set attribute with reflective coding
+		                                                              try {
+		                                                                  org.openmdx.base.mof.cci.Model_1_0 model = org.openmdx.base.mof.spi.Model_1Factory.getModel();
+		                                                                  Map features = null;
+		                                                                  if (isDtypeContact) {
+		                                                                      features = (Map)model.getElement(contact.refClass().refMofId()).objGetValue("allFeature");
+		                                                                  } else if (isDtypeGroup) {
+		                                                                      features = (Map)model.getElement(group.refClass().refMofId()).objGetValue("allFeature");
+		                                                                  } else if (isDtypeLegalEntity) {
+		                                                                      features = (Map)model.getElement(legalEntity.refClass().refMofId()).objGetValue("allFeature");
+		                                                                  } else if (isDtypeUnspecifiedAccount) {
+		                                                                      features = (Map)model.getElement(unspecifiedAccount.refClass().refMofId()).objGetValue("allFeature");
+		                                                                  }
+		                                                                  org.openmdx.base.mof.cci.ModelElement_1_0 featureDef = (features == null ? null : (org.openmdx.base.mof.cci.ModelElement_1_0)features.get(key));
+		                                                                  if (featureDef != null) {
+		                                                                      if(
+		                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.STRING.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+																				  org.openmdx.base.mof.cci.ModelHelper.getMultiplicity(featureDef).isSingleValued()
+		                                                                      ) {
+		                                                                          // optional, single-valued String
+		                                                                          if (isDtypeContact) {
+		                                                                              contact.refSetValue(key, valueMap.get(key).toString());
+		                                                                          } else if (isDtypeGroup) {
+		                                                                              group.refSetValue(key, valueMap.get(key).toString());
+		                                                                          } else if (isDtypeLegalEntity) {
+		                                                                              legalEntity.refSetValue(key, valueMap.get(key).toString());
+		                                                                          } else if (isDtypeUnspecifiedAccount) {
+		                                                                              unspecifiedAccount.refSetValue(key, valueMap.get(key).toString());
+		                                                                          }
+		                                                                          isOk = true;
+		                                                                      }
+		                                                                      if(
+		                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.SHORT.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+																				  org.openmdx.base.mof.cci.ModelHelper.getMultiplicity(featureDef).isSingleValued()
+		                                                                      ) {
+		                                                                          // optional, single-valued Short
+		                                                                          if (isDtypeContact) {
+		                                                                              contact.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeGroup) {
+		                                                                              group.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeLegalEntity) {
+		                                                                              legalEntity.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeUnspecifiedAccount) {
+		                                                                              unspecifiedAccount.refSetValue(key, Short.parseShort(valueMap.get(key).toString()));
+		                                                                          }
+		                                                                          isOk = true;
+		                                                                      }
+		                                                                      if(
+		                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.BOOLEAN.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+																				  org.openmdx.base.mof.cci.ModelHelper.getMultiplicity(featureDef).isSingleValued()
+		                                                                      ) {
+		                                                                          // optional, single-valued Boolean
+		                                                                          if (isDtypeContact) {
+		                                                                              contact.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeGroup) {
+		                                                                              group.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeLegalEntity) {
+		                                                                              legalEntity.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeUnspecifiedAccount) {
+		                                                                              unspecifiedAccount.refSetValue(key, Boolean.valueOf(valueMap.get(key).toString()));
+		                                                                          }
+		                                                                          isOk = true;
+		                                                                      }
+		                                                                      if(
+		                                                                          org.openmdx.base.mof.cci.PrimitiveTypes.DECIMAL.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+																				  org.openmdx.base.mof.cci.ModelHelper.getMultiplicity(featureDef).isSingleValued()
+		                                                                      ) {
+		                                                                          // optional, single-valued BigDecimal
+		                                                                          if (isDtypeContact) {
+		                                                                              contact.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeGroup) {
+		                                                                              group.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeLegalEntity) {
+		                                                                              legalEntity.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
+		                                                                          } else if (isDtypeUnspecifiedAccount) {
+		                                                                              unspecifiedAccount.refSetValue(key, new BigDecimal(valueMap.get(key).toString()));
+		                                                                          }
+		                                                                          isOk = true;
+		                                                                      }
+		                                                                  }
+		                                                              } catch (Exception e) {
+		                                                                  new ServiceException(e).log();
+		                                                              }
+		                                                          }
+		                                                      } catch (Exception e) {
+		                                                          new ServiceException(e).log();
+		                                                          isNok = true;
+		                                                      }
+		                                                      /*--------------------------------------------------------------*\
+		                                                      | END   M a p p i n g   A c c o u n t   t o   o p e n C R X      |
+		                                                      \---------------------------------------------------------------*/
+		                                                      if (isOk) {
+		                                                          jsBuffer += "$('" + cellId + "').className += ' ok';";
+		                                                      }
+		                                                      if (isNok) {
+		                                                          jsBuffer += "$('" + cellId + "').className += ' nok';";
+		                                                      }
+		                                                  }
+		                                                  pm.currentTransaction().commit();
+		                                              } catch (Exception e) {
+		                                                  new ServiceException(e).log();
+		                                                  isOk = false;
+		                                                  isNok = true;
+		                                                  contact = null;
+		                                                  try {
+		                                                      pm.currentTransaction().rollback();
+		                                                  } catch(Exception e1) {}
+		                                              }
+		                                          }
+                                          } /* end import account mode */
 %>
                                       </tr>
 <%
@@ -2100,34 +2280,61 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 <%
                                       }
                                       valueMap = null;
-                                      if (isCreation) {
+                                      if (isImportMembershipMode) {
 %>
                                           <tr>
-                                              <td class="<%= isNok ? "err" : "match" %>" colspan="<%= maxCell+2 %>">
-                                                  CREATE <%= isNok ? "FAILED" : "OK" %> [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
-                                                  <%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
+                                              <td class="<%= isOk ? "match" : "err" %>" colspan="<%= maxCell+2 %>">
+                                                  MEMBER <%= isOk ? "OK" : "FAILED" %>:
+<%
+																									if (groupMember != null) {
+		                                                  Action action = new Action(
+		                                                	  SelectObjectAction.EVENT_ID,
+		                                                      new Action.Parameter[]{
+		                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, groupMember.refMofId())
+		                                                      },
+		                                                      "",
+		                                                      true // enabled
+		                                                  );
+		                                                  String memberHref = "../../" + action.getEncodedHRef();
+%>
+																											<a href="<%= memberHref %>" target="_blank"><b><%=  (new ObjectReference(groupMember, app)).getTitle() %></b> [<%= groupMember.refMofId() %>]</a>
+<%
+																									}
+%>
+																									<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
                                               </td>
                                           </tr>
 <%
-                                      }
-                                      if (isUpdate) {
-                                          if (multiMatchList.length() > 0) {
+                                      } else {
+		                                      if (isCreation) {
 %>
-                                              <tr>
-                                                  <td class="err" colspan="<%= maxCell+2 %>">
-                                                      NO UPDATE [<b><%= className %></b>] - Multiple Matches:<%= multiMatchList %>
-                                                  </td>
-                                              </tr>
+		                                          <tr>
+		                                              <td class="<%= isNok ? "err" : "match" %>" colspan="<%= maxCell+2 %>">
+		                                                  CREATE <%= isNok ? "FAILED" : "OK" %> [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
+		                                                  <%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
+		                                              </td>
+		                                          </tr>
 <%
-                                          } else {
+		                                      }
+		                                      if (isUpdate) {
+		                                          if (multiMatchList.length() > 0) {
 %>
-                                              <tr>
-                                                  <td class="<%= isNok ? "err" : "match" %>" colspan="<%= maxCell+2 %>">
-                                                      UPDATE <%= isNok ? "FAILED" : "OK" %> [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
-                                                      <%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
-                                                  </td>
-                                              </tr>
+		                                              <tr>
+		                                                  <td class="err" colspan="<%= maxCell+2 %>">
+		                                                      NO UPDATE [<b><%= className %></b>] - Multiple Matches:<%= multiMatchList %>
+		                                                  </td>
+		                                              </tr>
 <%
+		                                          } else {
+%>
+		                                              <tr>
+		                                                  <td class="<%= isNok ? "err" : "match" %>" colspan="<%= maxCell+2 %>">
+		                                                      UPDATE <%= isNok ? "FAILED" : "OK" %> [<b><%= className %></b>]: <a href="<%= accountHref %>" target="_blank"><b><%=  (new ObjectReference(account, app)).getTitle() %></b> [<%= account.refMofId() %>]</a>
+		                                                      <%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
+		                                                  </td>
+		                                              </tr>
+<%
+		                                          }
                                           }
                                       }
                                   } /* while */
@@ -2164,19 +2371,27 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                       <td colspan="<%= maxCell %>"><%= unspecifiedAccountsUpdated %></td>
                                   </tr>
 <%
-                                  if (linesRead != contactsCreated + contactsUpdated +
-                                     groupsCreated + groupsUpdated +
-                                     legalEntitiesCreated + legalEntitiesUpdated +
-                                     unspecifiedAccountsCreated + unspecifiedAccountsUpdated
-                                  ) {
+                                  if (isImportMembershipMode) {
 %>
                                     <tr>
-                                        <td class="err" colspan="<%= maxCell+2 %>">WARNING: some data lines were not processed due to data errors (e.g. multiple matches, missing first/last name, etc.)</td>
+                                        <td colspan="<%= maxCell+2 %>"><%= parentGroup.getFullName() %> has now <%= parentGroup.getMember().size() %> Members (before import: <%= parentGroupMemberSize %> Members)</td>
                                     </tr>
+<%                                	  
+                                  } else {
+		                                	if (linesRead != contactsCreated + contactsUpdated +
+		                                     groupsCreated + groupsUpdated +
+		                                     legalEntitiesCreated + legalEntitiesUpdated +
+		                                     unspecifiedAccountsCreated + unspecifiedAccountsUpdated
+		                                  ) {
+%>
+		                                    <tr>
+		                                        <td class="err" colspan="<%= maxCell+2 %>">WARNING: some data lines were not processed due to data errors (e.g. multiple matches, missing first/last name, etc.)</td>
+		                                    </tr>
 <%
+		                                  }
                                   }
 %>
-                                  </table>
+                                	</table>
 <%
                               } /* for */
 %>

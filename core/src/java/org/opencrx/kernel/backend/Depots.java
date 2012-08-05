@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.48 2011/12/18 22:14:17 wfro Exp $
+ * Name:        $Id: Depots.java,v 1.49 2012/01/13 17:15:42 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.48 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/18 22:14:17 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -445,7 +445,6 @@ public class Depots extends AbstractImpl {
         Date bookingDate = new Date();
         // Create compound booking        
         CompoundBooking compoundBooking = pm.newInstance(CompoundBooking.class);
-        compoundBooking.refInitialize(false, false);
         String positionName0 = creditPositions[0].getName();                    
         // depotCredit
         Depot depotCredit0 = (Depot)pm.getObjectById(
@@ -498,7 +497,6 @@ public class Depots extends AbstractImpl {
             String depotNumberDebit = depotDebit.getDepotNumber();    
             // Create credit booking
             CreditBooking bookingCredit = pm.newInstance(CreditBooking.class);
-            bookingCredit.refInitialize(false, false);
             bookingCredit.setName(
                 depotNumberCredit + " " + bookingTexts[i].getCreditBookingNameInfix() + " " + positionName
             );
@@ -519,7 +517,6 @@ public class Depots extends AbstractImpl {
             );
             // Create debit booking
             DebitBooking bookingDebit = pm.newInstance(DebitBooking.class);
-            bookingDebit.refInitialize(false, false);
             bookingDebit.setName(
                 depotNumberDebit + " " + bookingTexts[i].getDebitBookingNameInfix() + " " + positionName
             );
@@ -973,7 +970,6 @@ public class Depots extends AbstractImpl {
         }
         // Create cancel compound booking
         CompoundBooking cancelCb = pm.newInstance(CompoundBooking.class);
-        cancelCb.refInitialize(false, false);
         if(cb.getName() != null) {
             cancelCb.setName(cb.getName());
         }
@@ -997,12 +993,10 @@ public class Depots extends AbstractImpl {
         	SingleBooking cancelBooking = null;
         	if(booking instanceof CreditBooking) {
         		cancelBooking = pm.newInstance(DebitBooking.class);
-        		cancelBooking.refInitialize(false, false);
         		((DebitBooking)cancelBooking).setQuantityDebit(((CreditBooking)booking).getQuantityCredit());
         	}
         	else if(booking instanceof DebitBooking){
         		cancelBooking = pm.newInstance(CreditBooking.class);
-        		cancelBooking.refInitialize(false, false);
         		((CreditBooking)cancelBooking).setQuantityCredit(((DebitBooking)booking).getQuantityDebit());
         	}
         	cancelBooking.setName(booking.getName());
@@ -1290,7 +1284,6 @@ public class Depots extends AbstractImpl {
         }
     	PersistenceManager pm = JDOHelper.getPersistenceManager(depotHolder);        
         Depot depot = pm.newInstance(Depot.class);
-        depot.refInitialize(false, false);
         if(name != null) {
             depot.setName(name);
         }
@@ -1374,11 +1367,9 @@ public class Depots extends AbstractImpl {
             }
             depotPosition = pm.newInstance(ProductDepotPosition.class);
             ((ProductDepotPosition)depotPosition).setProduct(product);
-        	depotPosition.refInitialize(false, false);
         }
         else {
         	depotPosition = pm.newInstance(DepotPosition.class);
-        	depotPosition.refInitialize(false, false);
         }        
         // In case a depot position qualifier is specified, set name to productNumber + " #" + depotPositionQualifier.
         String name = 

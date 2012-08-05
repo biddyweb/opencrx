@@ -17,10 +17,10 @@
                     <_object>
                       <active>true</active>
                       <toolTip>
-                        <_item>Saved Searches - Adresses</_item>
+                        <_item>Saved Searches - Addresses</_item>
                       </toolTip>
                       <label>
-                        <_item>»Saved Searches - Adresses</_item>
+                        <_item>»Saved Searches - Addresses</_item>
                       </label>
                       <order>
                         <_item>0</_item>
@@ -81,10 +81,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Count Adresses</_item>
+												<_item>Count Addresses</_item>
 											</toolTip>
 											<label>
-												<_item>Count Adresses</_item>
+												<_item>Count Addresses</_item>
 											</label>
 											<iconKey>Account</iconKey>
 											<order>

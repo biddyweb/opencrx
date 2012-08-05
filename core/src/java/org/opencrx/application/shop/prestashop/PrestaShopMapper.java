@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PrestaShopMapper.java,v 1.17 2011/08/26 16:12:05 wfro Exp $
+ * Name:        $Id: PrestaShopMapper.java,v 1.18 2012/01/13 17:14:29 wfro Exp $
  * Description: PrestaShopMapper
- * Revision:    $Revision: 1.17 $
+ * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/08/26 16:12:05 $
+ * Date:        $Date: 2012/01/13 17:14:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -170,7 +170,6 @@ public class PrestaShopMapper {
 			List<UomSchedule> uomSchedules = uomSegment.getUomSchedule(uomScheduleQuery);
 			if(uomSchedules.isEmpty()) {
 				uomSchedule = this.pm.newInstance(UomSchedule.class);
-				uomSchedule.refInitialize(false, false);
 				uomSchedule.setName("Default");
 				uomSegment.addUomSchedule(
 					this.shopService.uuidAsString(),
@@ -180,7 +179,6 @@ public class PrestaShopMapper {
 				uomSchedule = uomSchedules.iterator().next();
 			}
 			uomPiece = this.pm.newInstance(Uom.class);
-			uomPiece.refInitialize(false, false);
 			uomPiece.setName(UOM_NAME_PIECE);
 			uomPiece.setUomSchedule(uomSchedule);
 			uomSegment.addUom(
@@ -279,7 +277,6 @@ public class PrestaShopMapper {
     	if(salesTaxType == null) {
     		org.opencrx.kernel.product1.jmi1.Segment productSegment = this.shopService.getProductSegment();
     		salesTaxType = this.pm.newInstance(SalesTaxType.class);
-    		salesTaxType.refInitialize(false, false);
     		salesTaxType.setName(name);
     		salesTaxType.setRate(rate);
     		this.pm.currentTransaction().begin();
@@ -694,7 +691,6 @@ public class PrestaShopMapper {
                 				Account carrier = null;
                 				if(accounts.isEmpty()) {
                 					carrier = this.pm.newInstance(LegalEntity.class);
-                					carrier.refInitialize(false, false);
                 					((LegalEntity)carrier).setName(carrierName);
                 					this.pm.currentTransaction().begin();
                 					this.shopService.getAccountSegment().addAccount(
@@ -1090,7 +1086,6 @@ public class PrestaShopMapper {
 	        		List<PriceLevel> priceLevels = this.shopService.getProductSegment().getPriceLevel(priceLevelQuery);
 	        		if(priceLevels.isEmpty()) {
 	        			priceLevel = this.pm.newInstance(PriceLevel.class);
-	        			priceLevel.refInitialize(false, false);
 	        			priceLevel.setName(priceLevelName);
 	        			priceLevel.setPriceCurrency(priceCurrency);
 	        			this.pm.currentTransaction().begin();
@@ -1109,7 +1104,6 @@ public class PrestaShopMapper {
 	        		List<ProductBasePrice> productPrices = product.getBasePrice(priceQuery);
 	        		if(productPrices.isEmpty()) {
 	        			productPrice = pm.newInstance(ProductBasePrice.class);
-	        			productPrice.refInitialize(false, false);
 	        			productPrice.setPrice(BigDecimal.ZERO);
 	        			productPrice.setPriceCurrency(priceCurrency);
 	        			productPrice.getPriceLevel().add(priceLevel);

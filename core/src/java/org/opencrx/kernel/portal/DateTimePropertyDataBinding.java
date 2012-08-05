@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DateTimePropertyDataBinding.java,v 1.7 2012/01/06 13:22:51 wfro Exp $
+ * Name:        $Id: DateTimePropertyDataBinding.java,v 1.8 2012/01/13 17:16:05 wfro Exp $
  * Description: DateTimePropertyDataBinding
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/06 13:22:51 $
+ * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -100,7 +100,6 @@ public class DateTimePropertyDataBinding extends AbstractPropertyDataBinding {
         if(p == null) {
         	PersistenceManager pm = JDOHelper.getPersistenceManager(object);
         	p = pm.newInstance(DateTimeProperty.class);
-        	p.refInitialize(false, false);
             this.createProperty(
                 object,
                 qualifiedFeatureName,

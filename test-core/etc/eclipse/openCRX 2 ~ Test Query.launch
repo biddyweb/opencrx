@@ -25,5 +25,5 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="test.org.opencrx.kernel.api.TestQuery"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="openCRX 2 ~ Test Core (jre-1.6)"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.protocol.handler.pkgs=org.openmdx.kernel.url.protocol&#13;-Dorg.openmdx.comp.env.jdbc_opencrx_CRX=${opencrx-test.core.datasource}"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djava.protocol.handler.pkgs=org.openmdx.kernel.url.protocol&#10;-Dorg.openmdx.comp.env.jdbc_opencrx_CRX=${opencrx-test.core.datasource}"/>
 </launchConfiguration>

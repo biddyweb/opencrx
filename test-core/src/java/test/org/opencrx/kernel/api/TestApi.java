@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestApi.java,v 1.2 2011/10/28 09:35:23 wfro Exp $
+ * Name:        $Id: TestApi.java,v 1.3 2012/01/13 17:18:14 wfro Exp $
  * Description: TestApi
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/28 09:35:23 $
+ * Date:        $Date: 2012/01/13 17:18:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -115,11 +115,9 @@ public class TestApi {
 	        try {
 	        	// Test 1: set array
 	        	EMailAddress emailAddress = pm.newInstance(EMailAddress.class);
-	        	emailAddress.refInitialize(false, false);
 	        	emailAddress.setUsage(new short[]{1, 2, 3});
 	        	// Test 2: set array
 	        	Member member = pm.newInstance(Member.class);
-	        	member.refInitialize(false, false);
 	        	member.setMemberRole(new short[]{1, 2, 3});
 	        } finally {
 	        }
@@ -133,5 +131,5 @@ public class TestApi {
     protected static PersistenceManagerFactory entityManagerFactory = null;
 	protected static String providerName = "CRX";
 	protected static String segmentName = "Standard";
-		    
+
 }

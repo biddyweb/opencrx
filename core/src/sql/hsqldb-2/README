@@ -37,6 +37,7 @@
    * Replace NUMERIC by NUMERIC(19,9)
    * Replace BIT by BOOLEAN
    * Replace CLOB(16M) by CLOB(10000000)
+   * Replace OBJECT_ID VARCHAR(256) by OBJECT_ID VARCHAR(250)
    * Set the type of columns 
      - OOCKE1_VOTE.description
      - OOCKE1_CALENDARFEED.description

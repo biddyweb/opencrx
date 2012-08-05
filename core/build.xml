@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.458 2011/11/09 18:28:10 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.461 2012/01/19 22:27:38 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.458 $
- * = Date:        $Date: 2011/11/09 18:28:10 $
- * = Copyright:   (c) 2003-2011 CRIXP AG
+ * = Revision:    $Revision: 1.461 $
+ * = Date:        $Date: 2012/01/19 22:27:38 $
+ * = Copyright:   (c) 2003-2012 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.9.0"/>
+	<property name="openmdx.version" value="2.9.1"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -187,6 +187,7 @@
 		<patternset refid="orion-9.edition.pattern"/>
 	</patternset>
 	<patternset id="opencrx-kernel.jar.content">
+		<include name="org/opencrx/generic/**"/>
 		<include name="org/opencrx/kernel/**"/>
 		<include name="org/opencrx/xmi/**"/>
 		<include name="org/opencrx/xmi1/**"/>

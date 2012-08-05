@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:		openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: WizardInvoker.jsp,v 1.3 2010/05/21 08:10:32 cmu Exp $
+ * Name:		$Id: WizardInvoker.jsp,v 1.4 2012/01/13 15:06:14 cmu Exp $
  * Description: WizardInvoker
- * Revision:	$Revision: 1.3 $
+ * Revision:	$Revision: 1.4 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2010/05/21 08:10:32 $
+ * Date:		$Date: 2012/01/13 15:06:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,7 +73,7 @@ java.net.URL
 	 *	- xri: target object xri
 	 *	- user: user name
 	 *	- password: password
-	 *  - para_0, para_1, ... param_n: additional parameters to be passed to the wizard (optional)
+	 *  - para_0, para_1, ... para_n: additional parameters to be passed to the wizard (optional)
 	 *	Example:
 	 *	http://localhost:8080/opencrx-core-CRX/WizardInvoker.jsp?wizard=/wizards/en_US/UploadMedia.jsp&provider=CRX&segment=Standard&xri=xri://@openmdx*org.opencrx.kernel.home1/provider/CRX/segment/Standard&user=wfro&password=.
 	 *

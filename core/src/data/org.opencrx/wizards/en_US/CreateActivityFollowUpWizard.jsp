@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityFollowUpWizard.jsp,v 1.12 2011/11/15 17:52:16 cmu Exp $
+ * Name:        $Id: CreateActivityFollowUpWizard.jsp,v 1.13 2012/01/17 20:30:07 cmu Exp $
  * Description: CreateActivityFollowUpWizard
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/15 17:52:16 $
+ * Date:        $Date: 2012/01/17 20:30:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -290,9 +290,9 @@ org.openmdx.base.naming.*
 
       				</div>
 
-      				<input type="submit" class="abutton", name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:$('Command').value=this.name;" />
-      				<input type="submit" class="abutton", name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';" />
-      				<input type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+      				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:$('Command').value=this.name;" />
+      				<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';" />
+      				<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
       			</td>
       		</tr>
       	</table>

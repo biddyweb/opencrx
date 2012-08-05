@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.61 2011/11/28 09:41:26 wfro Exp $
+ * Name:        $Id: OpenCrxSecurity_1.java,v 1.62 2012/01/12 21:16:42 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.61 $
+ * Revision:    $Revision: 1.62 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 09:41:26 $
+ * Date:        $Date: 2012/01/12 21:16:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,6 +83,7 @@ import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.cci.MessageRecord;
+import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.base.text.conversion.Base64;
@@ -136,7 +137,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
     protected String getPrincipalName(
         ServiceHeader header
     ) throws ServiceException {
-        if(header.getPrincipalChain().size() == 0) {
+        if(header.getPrincipalChain().isEmpty()) {
             return null;
         }
         return header.getPrincipalChain().get(0);
@@ -167,31 +168,26 @@ public class OpenCrxSecurity_1 extends Standard_1 {
     private void setQualifier(
     	MappedRecord obj
     ) throws ServiceException {
-    	try {
-	    	Object_2Facade objFacade = Object_2Facade.newInstance(obj);
-	        if(
-	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
-	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
-	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
-	            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
-	        ) {
-	        	objFacade.attributeValuesAsList("name").clear();            
-	        	objFacade.attributeValuesAsList("name").add(
-	        		objFacade.getPath().getBase()
-	        	);            
-	        }
-	        else if(
-	        	this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
-	        ) {
-	        	objFacade.attributeValuesAsList("id").clear();            
-	        	objFacade.attributeValuesAsList("id").add(
-	        		objFacade.getPath().getBase()
-	        	);            
-	        }
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
+    	Object_2Facade objFacade = Facades.asObject(obj);
+        if(
+            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Principal") ||
+            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Realm") ||
+            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Role") ||
+            this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Policy")
+        ) {
+        	objFacade.attributeValuesAsList("name").clear();
+        	objFacade.attributeValuesAsList("name").add(
+        		objFacade.getPath().getBase()
+        	);
+        }
+        else if(
+        	this.getModel().objectIsSubtypeOf(obj, "org:openmdx:security:realm1:Credential")
+        ) {
+        	objFacade.attributeValuesAsList("id").clear();
+        	objFacade.attributeValuesAsList("id").add(
+        		objFacade.getPath().getBase()
+        	);
+        }
     }
     
     //-------------------------------------------------------------------------
@@ -234,37 +230,32 @@ public class OpenCrxSecurity_1 extends Standard_1 {
             header,
             this.getDelegation()
         );    	    	
-    	try {
-	    	Object_2Facade changePasswordParamsFacade = Object_2Facade.newInstance(changePasswordParams);
-	    	Object_2Facade passwordCredentialFacade = Object_2Facade.newInstance(passwordCredential);
-	        String oldPassword = (changePasswordParamsFacade.getAttributeValues("oldPassword") != null) && !changePasswordParamsFacade.attributeValuesAsList("oldPassword").isEmpty() ? 
-	        	Base64.encode((byte[])changePasswordParamsFacade.attributeValue("oldPassword")) : 
-	        	null;
-	        if((oldPassword != null) && !oldPassword.equals(passwordCredentialFacade.attributeValue("password"))) {
-	            throw new ServiceException(
-	            	OpenCrxException.DOMAIN,
-	                BasicException.Code.ASSERTION_FAILURE, 
-	                "old password verification mismatch",
-	                new BasicException.Parameter("credential", passwordCredential)
-	            );
-	        }
-	        MappedRecord changedPasswordCredential = Object_2Facade.cloneObject(passwordCredential);
-            Object_2Facade changedPasswordCredentialFacade = Object_2Facade.newInstance(changedPasswordCredential);
-            changedPasswordCredentialFacade.attributeValuesAsList("password").clear();
-            changedPasswordCredentialFacade.attributeValuesAsList("password").add(
-	            Base64.encode((byte[])changePasswordParamsFacade.attributeValue("password"))
-	        );
-            changedPasswordCredentialFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();
-            changedPasswordCredentialFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());            
-	        delegation.addReplaceRequest(
-	            changedPasswordCredential
-	        );
-    	}
-    	catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
+    	Object_2Facade changePasswordParamsFacade = Facades.asObject(changePasswordParams);
+    	Object_2Facade passwordCredentialFacade = Facades.asObject(passwordCredential);
+        String oldPassword = (changePasswordParamsFacade.getAttributeValues("oldPassword") != null) && !changePasswordParamsFacade.attributeValuesAsList("oldPassword").isEmpty() ? 
+        	Base64.encode((byte[])changePasswordParamsFacade.attributeValue("oldPassword")) : 
+        	null;
+        if((oldPassword != null) && !oldPassword.equals(passwordCredentialFacade.attributeValue("password"))) {
+            throw new ServiceException(
+            	OpenCrxException.DOMAIN,
+                BasicException.Code.ASSERTION_FAILURE, 
+                "old password verification mismatch",
+                new BasicException.Parameter("credential", passwordCredential)
+            );
+        }
+        MappedRecord changedPasswordCredential = Object_2Facade.cloneObject(passwordCredential);
+        Object_2Facade changedPasswordCredentialFacade = Facades.asObject(changedPasswordCredential);
+        changedPasswordCredentialFacade.attributeValuesAsList("password").clear();
+        changedPasswordCredentialFacade.attributeValuesAsList("password").add(
+            Base64.encode((byte[])changePasswordParamsFacade.attributeValue("password"))
+        );
+        changedPasswordCredentialFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();
+        changedPasswordCredentialFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());            
+        delegation.addReplaceRequest(
+            changedPasswordCredential
+        );
     }
-    
+
     //-------------------------------------------------------------------------
     /**
      * Update the realm if any object contained in the realm was modified.
@@ -289,7 +280,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
                     new AttributeSpecifier[]{}
                 );
                 MappedRecord updatedRealm = (MappedRecord)realm.clone();
-                Object_2Facade updatedRealmFacade = Object_2Facade.newInstance(updatedRealm);
+                Object_2Facade updatedRealmFacade = Facades.asObject(updatedRealm);
                 updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();                	
                 updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());                	
                 delegation.addReplaceRequest(
@@ -659,14 +650,13 @@ public class OpenCrxSecurity_1 extends Standard_1 {
     // Variables
     //-------------------------------------------------------------------------
     protected static final Path PATH_PATTERN_PRINCIPALS = 
-        new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/principal");
+        new Path("xri://@openmdx*org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/principal");
     protected static final Path PATH_PATTERN_REALM =
-        new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*");        
+        new Path("xri://@openmdx*org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*");        
     protected static final Path PATH_PATTERN_REALM_COMPOSITE =
-        new Path("xri:@openmdx:org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/:*");        
+        new Path("xri://@openmdx*org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/:*");        
     protected static final Path PATH_PATTERN_SUBJECTS = 
-        new Path("xri:@openmdx:org.opencrx.security.identity1/provider/:*/segment/:*/subject");
-    
+        new Path("xri://@openmdx*org.opencrx.security.identity1/provider/:*/segment/:*/subject");
 }
 
 //--- End of File -----------------------------------------------------------

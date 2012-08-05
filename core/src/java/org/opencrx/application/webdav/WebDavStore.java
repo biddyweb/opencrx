@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WebDavStore.java,v 1.12 2011/07/08 22:46:27 wfro Exp $
+ * Name:        $Id: WebDavStore.java,v 1.13 2012/01/13 17:15:17 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.12 $
+ * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/08 22:46:27 $
+ * Date:        $Date: 2012/01/13 17:15:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -171,7 +171,6 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 						);
 					pm.currentTransaction().begin();
 					DocumentFolder newFolder = pm.newInstance(DocumentFolder.class);
-					newFolder.refInitialize(false, false);
 					newFolder.setName(name);
 					newFolder.setParent(parentFolder);
 					newFolder.getOwningGroup().addAll(parentFolder.getOwningGroup());
@@ -459,7 +458,6 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	    		pm.currentTransaction().begin();
 	    		if(entries.isEmpty()) {
 	    			document = pm.newInstance(Document.class);
-	    			document.refInitialize(false, false);
 	    			document.setName(name);
 	    			document.setTitle(name);
 	    			document.setContentType(contentType);
@@ -478,7 +476,6 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	    			document = (Document)entries.iterator().next().getDocument();
 	    		}
 	    		MediaContent revision = pm.newInstance(MediaContent.class);
-	    		revision.refInitialize(false, false);
 	    		revision.setName(name);
 	    		revision.setContentName(name);
 	    		revision.setContentMimeType(contentType);

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailRecipientDataBinding.java,v 1.4 2011/11/25 17:36:29 wfro Exp $
+ * Name:        $Id: EMailRecipientDataBinding.java,v 1.5 2012/01/13 17:16:05 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/25 17:36:29 $
+ * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -192,7 +192,6 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 				org.opencrx.kernel.activity1.jmi1.EMailRecipient recipient = null;
 				for(int i = recipients.size(); i < this.index + 1; i++) {
 					recipient = pm.newInstance(org.opencrx.kernel.activity1.jmi1.EMailRecipient.class);
-					recipient.refInitialize(false, false);
 					recipient.setPartyType(this.partyType);
 					eMailActivity.addEmailRecipient(
 						this.uuidAsString(), 

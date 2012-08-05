@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.120 2011/12/18 22:15:34 wfro Exp $
+ * Name:        $Id: ICalendar.java,v 1.121 2012/01/13 17:15:42 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.120 $
+ * Revision:    $Revision: 1.121 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/18 22:15:34 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1299,7 +1299,6 @@ public class ICalendar extends AbstractImpl {
             			emailRecipients.iterator().next();
             	if(emailRecipient == null) {
                 	emailRecipient = pm.newInstance(EMailRecipient.class);
-                	emailRecipient.refInitialize(false, false);
                     ((EMail)activity).addEmailRecipient(
                     	this.getUidAsString(),
                     	emailRecipient
@@ -1344,7 +1343,6 @@ public class ICalendar extends AbstractImpl {
             	IncidentParty incidentParty = incidentParties.isEmpty() ? null : incidentParties.iterator().next();
             	if(incidentParty == null) {
             		incidentParty = pm.newInstance(IncidentParty.class);
-	                incidentParty.refInitialize(false, false);
 	                ((Incident)activity).addIncidentParty(
 	                	this.getUidAsString(),
 	                	incidentParty
@@ -1378,7 +1376,6 @@ public class ICalendar extends AbstractImpl {
             	MeetingParty meetingParty = meetingParties.isEmpty() ? null : meetingParties.iterator().next();
             	if(meetingParty == null) {
             		meetingParty = pm.newInstance(MeetingParty.class);
-	                meetingParty.refInitialize(false, false);
 	                ((Meeting)activity).addMeetingParty(
 	                	this.getUidAsString(),
 	                	meetingParty
@@ -1412,7 +1409,6 @@ public class ICalendar extends AbstractImpl {
             	TaskParty taskParty = taskParties.isEmpty() ? null : taskParties.iterator().next();
             	if(taskParty == null) {
             		taskParty = pm.newInstance(TaskParty.class);
-	                taskParty.refInitialize(false, false);
 	                ((Task)activity).addTaskParty(
 	                	this.getUidAsString(),
 	                	taskParty

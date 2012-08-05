@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.10 2010/12/31 14:35:04 wfro Exp $
+ * Name:        $Id: ComponentConfigHelper.java,v 1.11 2012/01/13 17:16:22 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.10 $
+ * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/31 14:35:04 $
+ * Date:        $Date: 2012/01/13 17:16:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -88,7 +88,6 @@ public abstract class ComponentConfigHelper {
             } catch(Exception e) {}
             if(autoCreate && (componentConfiguration == null)) {
                 componentConfiguration = pm.newInstance(ComponentConfiguration.class);
-                componentConfiguration.refInitialize(false, false);
                 componentConfiguration.setName(configurationId);
                 pm.currentTransaction().begin();
                 adminSegment.addConfiguration(
@@ -99,7 +98,6 @@ public abstract class ComponentConfigHelper {
                 if(initialProperties != null) {
 	                for(String[] e: initialProperties) {
 	                    org.opencrx.kernel.base.jmi1.StringProperty sp = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
-	                    sp.refInitialize(false, false);
 	                    sp.setName(e[0]);
 	                    sp.setStringValue(e[1]);
 	                    componentConfiguration.addProperty(
@@ -133,7 +131,6 @@ public abstract class ComponentConfigHelper {
     		pm.currentTransaction().begin();
     	}
         org.opencrx.kernel.base.jmi1.StringProperty sp = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
-        sp.refInitialize(false, false);
         sp.setName(name);
         sp.setStringValue(stringValue);
         configuration.addProperty(

@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.35 2011/12/18 22:43:04 wfro Exp $
+ * Name:        $Id: Workflows.java,v 1.36 2012/01/13 17:15:41 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.35 $
+ * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/18 22:43:04 $
+ * Date:        $Date: 2012/01/13 17:15:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -176,7 +176,6 @@ public class Workflows extends AbstractImpl {
         if(topic == null) {
             pm.currentTransaction().begin();
             topic = pm.newInstance(Topic.class);
-            topic.refInitialize(false, false);
             topic.setName(name);
             topic.setDescription(description);
             topic.setTopicPathPattern(topicPathPattern);
@@ -214,7 +213,6 @@ public class Workflows extends AbstractImpl {
             // Add process
             pm.currentTransaction().begin();
             wfProcess = pm.newInstance(WfProcess.class);
-            wfProcess.refInitialize(false, false);
             wfProcess.setName(name);
             wfProcess.setDescription(description);
             wfProcess.setSynchronous(isSynchronous);
@@ -496,7 +494,6 @@ public class Workflows extends AbstractImpl {
         catch(Exception e) {}
         if(wfInstance == null) {
         	wfInstance = pm.newInstance(WfProcessInstance.class);
-        	wfInstance.refInitialize(false, false);
             wfInstance.setStepCounter(new Integer(0));
             wfInstance.setProcess(wfProcess);
             wfInstance.setTargetObject(targetObjectIdentity.toXri());            
@@ -512,7 +509,6 @@ public class Workflows extends AbstractImpl {
         // Add parameters of executeWorkflow() operation to property set of WfProcessInstance
         if(triggeredBySubscription != null) {
             UriProperty property = pm.newInstance(UriProperty.class);
-            property.refInitialize(false, false);
             property.setName("triggeredBySubscription");
             property.setUriValue(triggeredBySubscription.refGetPath().toXri());
             wfInstance.addProperty(
@@ -523,7 +519,6 @@ public class Workflows extends AbstractImpl {
         }
         if(triggeredByEventType != null) {
             IntegerProperty property = pm.newInstance(IntegerProperty.class);
-            property.refInitialize(false, false);
             property.setName("triggeredByEventType");
             property.setIntegerValue(triggeredByEventType.intValue());
             wfInstance.addProperty(
@@ -694,7 +689,6 @@ public class Workflows extends AbstractImpl {
                 );
                 // Create log entry
                 WfActionLogEntry logEntry = pm.newInstance(WfActionLogEntry.class);
-                logEntry.refInitialize(false, false);
                 logEntry.setName(e0.getMessage());
                 logEntry.setCorrelation(
                 	targetObject instanceof BasicObject ?

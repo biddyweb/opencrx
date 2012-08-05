@@ -2,11 +2,11 @@
 /**
  * ====================================================================
  * Project:				openCRX/Core, http://www.opencrx.org/
- * Name:				$Id: WorkAndExpenseReport.jsp,v 1.59 2011/12/16 09:35:26 cmu Exp $
+ * Name:				$Id: WorkAndExpenseReport.jsp,v 1.60 2012/01/11 10:53:35 cmu Exp $
  * Description:			Create Work And Expense Report
- * Revision:			$Revision: 1.59 $
+ * Revision:			$Revision: 1.60 $
  * Owner:				CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:				$Date: 2011/12/16 09:35:26 $
+ * Date:				$Date: 2012/01/11 10:53:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -2248,7 +2248,8 @@ org.apache.poi.hssf.util.*
 							sheetRecords.setColumnWidth((short)6, (short)3000); //G - name
 							sheetRecords.setColumnWidth((short)7, (short)4000); //H - description
 							sheetRecords.setColumnWidth((short)8, (short)4000); //I - resource
-							sheetRecords.setColumnWidth((short)9, (short)4000); //J
+							sheetRecords.setColumnWidth((short)9, (short)4000); //J - reportingAccount
+							sheetRecords.setColumnWidth((short)10, (short)4000); //K
 
 							nRow = REPORT_STARTING_ROW;
 							row = sheetRecords.createRow(nRow++);
@@ -2262,47 +2263,48 @@ org.apache.poi.hssf.util.*
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()));
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()));
 							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "resource", app.getCurrentLocaleAsIndex()));
+							cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(ACTIVITY_CLASS, "reportingAccount", app.getCurrentLocaleAsIndex()));
 							if (isWorkRecord) {
 									if (isWorkRecordInPercent) {
 											cell = row.createCell(nCell++);	cell.setCellValue("%"); cell.setCellStyle(quantityStyle);
 											sheetRecords.setColumnWidth((short) 3, (short)0);
-											sheetRecords.setColumnWidth((short) 9, (short)1800);
-											sheetRecords.setColumnWidth((short)10, (short)0);
+											sheetRecords.setColumnWidth((short)10, (short)1800);
 											sheetRecords.setColumnWidth((short)11, (short)0);
 											sheetRecords.setColumnWidth((short)12, (short)0);
 											sheetRecords.setColumnWidth((short)13, (short)0);
 											sheetRecords.setColumnWidth((short)14, (short)0);
 											sheetRecords.setColumnWidth((short)15, (short)0);
 											sheetRecords.setColumnWidth((short)16, (short)0);
-											sheetRecords.setColumnWidth((short)17, (short)3000);
+											sheetRecords.setColumnWidth((short)17, (short)0);
 											sheetRecords.setColumnWidth((short)18, (short)3000);
+											sheetRecords.setColumnWidth((short)19, (short)3000);
 									} else {
 											cell = row.createCell(nCell++);	cell.setCellValue("hh:mm"); cell.setCellStyle(timeStyle);
-											sheetRecords.setColumnWidth((short) 9, (short)1800);
 											sheetRecords.setColumnWidth((short)10, (short)1800);
-											sheetRecords.setColumnWidth((short)11, (short)1200);
-											sheetRecords.setColumnWidth((short)12, (short)3000);
+											sheetRecords.setColumnWidth((short)11, (short)1800);
+											sheetRecords.setColumnWidth((short)12, (short)1200);
 											sheetRecords.setColumnWidth((short)13, (short)3000);
 											sheetRecords.setColumnWidth((short)14, (short)3000);
-											sheetRecords.setColumnWidth((short)15, (short)1000);
-											sheetRecords.setColumnWidth((short)16, (short)4000);
-											sheetRecords.setColumnWidth((short)17, (short)6000);
+											sheetRecords.setColumnWidth((short)15, (short)3000);
+											sheetRecords.setColumnWidth((short)16, (short)1000);
+											sheetRecords.setColumnWidth((short)17, (short)4000);
+											sheetRecords.setColumnWidth((short)18, (short)6000);
 									}
 							} else {
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
 									cell = row.createCell(nCell++);
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()));
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()));
-									sheetRecords.setColumnWidth((short) 9, (short)2000);
-									sheetRecords.setColumnWidth((short)10, (short)1000);
-									sheetRecords.setColumnWidth((short)11, (short)3000);
+									sheetRecords.setColumnWidth((short)10, (short)2000);
+									sheetRecords.setColumnWidth((short)11, (short)1000);
 									sheetRecords.setColumnWidth((short)12, (short)3000);
-									sheetRecords.setColumnWidth((short)13, (short)1800);
-									sheetRecords.setColumnWidth((short)14, (short)1200);
-									sheetRecords.setColumnWidth((short)15, (short)3000);
+									sheetRecords.setColumnWidth((short)13, (short)3000);
+									sheetRecords.setColumnWidth((short)14, (short)1800);
+									sheetRecords.setColumnWidth((short)15, (short)1200);
 									sheetRecords.setColumnWidth((short)16, (short)3000);
 									sheetRecords.setColumnWidth((short)17, (short)3000);
-									sheetRecords.setColumnWidth((short)18, (short)6000);
+									sheetRecords.setColumnWidth((short)18, (short)3000);
+									sheetRecords.setColumnWidth((short)19, (short)6000);
 							}
 							cell = row.createCell(nCell++);
 							cell = row.createCell(nCell++);
@@ -2363,6 +2365,7 @@ org.apache.poi.hssf.util.*
 									}
 %>
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
+									<td class="smallheader"><%= userView.getFieldLabel(ACTIVITY_CLASS, "reportingAccount", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 									<td class="smallheaderR"><%= isWorkRecordInPercent ? "Day Load" : "" %></td>
 									<td class="smallheaderR"><%= isWorkRecordInPercent && !hasMultipleResources ? "&sum;" : "" %></td>
 								</tr>
@@ -2604,6 +2607,19 @@ org.apache.poi.hssf.util.*
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getName());
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "");
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getResource() != null ? (new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle() : "");
+										String reportingAccount = "";
+										try {
+												if (activity.getReportingAccount() != null) {
+														reportingAccount = activity.getReportingAccount().getFullName();
+												} else {
+														if (activity.getReportingContact() != null) {
+																reportingAccount = activity.getReportingContact().getFullName();
+														}
+												}
+										} catch (Exception e) {
+												new ServiceException(e).log();
+										}
+										cell = row.createCell(nCell++);	cell.setCellValue(reportingAccount);
 										cell = row.createCell(nCell++);
 										if (workAndExpenseRecord.getQuantity() != null) {
 											if (isWorkRecord) {
@@ -2687,6 +2703,7 @@ org.apache.poi.hssf.util.*
 											}
 %>
 											<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "" %></a></td>
+											<td class="padded"><a href='<%= activityHref %>' target='_blank'><%= reportingAccount %></a></td>
 <%
 											if (isWorkRecordInPercent) {
 %>

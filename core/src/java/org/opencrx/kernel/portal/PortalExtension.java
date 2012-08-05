@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.134 2012/01/06 15:34:42 wfro Exp $
+ * Name:        $Id: PortalExtension.java,v 1.135 2012/01/13 17:16:05 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.134 $
+ * Revision:    $Revision: 1.135 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/06 15:34:42 $
+ * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,7 +59,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;

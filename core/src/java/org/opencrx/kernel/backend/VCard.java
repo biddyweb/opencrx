@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.70 2011/12/23 09:57:53 wfro Exp $
+ * Name:        $Id: VCard.java,v 1.71 2012/01/13 17:15:42 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.70 $
+ * Revision:    $Revision: 1.71 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/23 09:57:53 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -1165,9 +1165,7 @@ public class VCard extends AbstractImpl {
         	} catch(Exception e) {}
             if(note == null) {
                 note = pm.newInstance(Note.class);
-                note.refInitialize(false, false);
                 account.addNote(
-                	false,
                 	this.getUidAsString(),
                 	note
                 );
@@ -1265,7 +1263,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty() && !s.startsWith(";;;")) {
             if(adrHome == null) {
                 adrHome = pm.newInstance(PostalAddress.class);
-                adrHome.refInitialize(false, false);
                 adrHome.getUsage().add(Addresses.USAGE_HOME);
                 adrHome.setMain(Boolean.TRUE);
                 this.updatePostalAddress(
@@ -1296,7 +1293,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty() && !s.startsWith(";;;")) {
             if(adrWork == null) {
             	adrWork = pm.newInstance(PostalAddress.class);
-            	adrWork.refInitialize(false, false);
                 adrWork.getUsage().add(Addresses.USAGE_BUSINESS);
                 adrWork.setMain(Boolean.TRUE);
                 this.updatePostalAddress(
@@ -1327,7 +1323,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {
             if(telHomeVoice == null) {
                 telHomeVoice = pm.newInstance(PhoneNumber.class);
-                telHomeVoice.refInitialize(false, false);                
                 telHomeVoice.getUsage().add(Addresses.USAGE_HOME);
                 telHomeVoice.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telHomeVoice, s);
@@ -1348,7 +1343,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {        
             if(telWorkVoice == null) {
             	telWorkVoice = pm.newInstance(PhoneNumber.class);
-            	telWorkVoice.refInitialize(false, false);            	
                 telWorkVoice.getUsage().add(Addresses.USAGE_BUSINESS);
                 telWorkVoice.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telWorkVoice, s);
@@ -1369,7 +1363,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {                
             if(telHomeFax == null) {
             	telHomeFax = pm.newInstance(PhoneNumber.class);
-            	telWorkVoice.refInitialize(false, false);            	
                 telHomeFax.getUsage().add(Addresses.USAGE_HOME_FAX);
                 telHomeFax.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telHomeFax, s);
@@ -1390,7 +1383,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {
             if(telFax == null) {
             	telFax = pm.newInstance(PhoneNumber.class);
-            	telFax.refInitialize(false, false);
                 telFax.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
                 telFax.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telFax, s);
@@ -1411,7 +1403,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {                
             if(telCellVoice == null) {
             	telCellVoice = pm.newInstance(PhoneNumber.class);
-            	telCellVoice.refInitialize(false, false);            	
                 telCellVoice.getUsage().add(Addresses.USAGE_MOBILE);
                 telCellVoice.setMain(Boolean.TRUE);
                 this.updatePhoneNumber(telCellVoice, s);
@@ -1432,7 +1423,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {                
             if(urlHome == null) {
                 urlHome = pm.newInstance(WebAddress.class);
-                urlHome.refInitialize(false, false);                
                 urlHome.getUsage().add(Addresses.USAGE_HOME);
                 urlHome.setMain(Boolean.TRUE);
                 this.updateWebAddress(urlHome, s);
@@ -1453,7 +1443,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {                
             if(urlWork == null) {
             	urlWork = pm.newInstance(WebAddress.class);
-            	urlWork.refInitialize(false, false);            	
                 urlWork.getUsage().add(Addresses.USAGE_BUSINESS);
                 urlWork.setMain(Boolean.TRUE);
                 this.updateWebAddress(urlWork, s);
@@ -1477,7 +1466,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {                
             if(emailPrefInternet == null) {
                 emailPrefInternet = pm.newInstance(EMailAddress.class);
-                emailPrefInternet.refInitialize(false, false);                
                 emailPrefInternet.getUsage().add(Addresses.USAGE_BUSINESS);
                 emailPrefInternet.setMain(Boolean.TRUE);
                 this.updateEMailAddress(emailPrefInternet, s);
@@ -1509,7 +1497,6 @@ public class VCard extends AbstractImpl {
         if((s != null) && !s.isEmpty()) {                
             if(emailInternet == null) {
                 emailInternet = pm.newInstance(EMailAddress.class);
-                emailInternet.refInitialize(false, false);                
                 emailInternet.getUsage().add(Addresses.USAGE_HOME);
                 emailInternet.setMain(Boolean.TRUE);
                 this.updateEMailAddress(emailInternet, s);
@@ -1697,7 +1684,6 @@ public class VCard extends AbstractImpl {
 	                    	}
                             if(account == null) {
                             	account = pm.newInstance(Contact.class);
-                            	account.refInitialize(false, false);
                             }
                             status =  PutVCardResult.Status.CREATED;
 	                    }

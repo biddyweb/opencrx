@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObject.java,v 1.37 2011/12/04 23:25:22 wfro Exp $
+ * Name:        $Id: SecureObject.java,v 1.39 2012/01/13 17:15:42 wfro Exp $
  * Description: SecureObject
- * Revision:    $Revision: 1.37 $
+ * Revision:    $Revision: 1.39 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/04 23:25:22 $
+ * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,9 +63,7 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
 import org.oasisopen.jmi1.RefContainer;
-import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
-import org.opencrx.security.realm1.jmi1.Realm1Package;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
@@ -344,7 +342,6 @@ public class SecureObject extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        Realm1Package realmPkg = Utils.getRealmPackage(pm);
         org.openmdx.security.realm1.jmi1.Realm realm = this.getRealm(
             pm, 
             providerName, 
@@ -355,8 +352,7 @@ public class SecureObject extends AbstractImpl {
             return principalGroup;            
         }        
         pm.currentTransaction().begin();
-        principalGroup = realmPkg.getPrincipalGroup().createPrincipalGroup();
-        principalGroup.refInitialize(false, false);
+        principalGroup = pm.newInstance(PrincipalGroup.class);
         principalGroup.setDescription(segmentName + "\\\\" + groupName);
         realm.addPrincipal(                
             false,

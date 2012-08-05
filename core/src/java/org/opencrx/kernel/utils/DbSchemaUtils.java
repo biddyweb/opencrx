@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DbSchemaUtils.java,v 1.23 2011/12/27 17:19:35 wfro Exp $
+ * Name:        $Id: DbSchemaUtils.java,v 1.24 2012/01/20 16:15:06 wfro Exp $
  * Description: DbSchemaUtils
- * Revision:    $Revision: 1.23 $
+ * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/27 17:19:35 $
+ * Date:        $Date: 2012/01/20 16:15:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,7 +81,9 @@ public class DbSchemaUtils {
 		} else if(connectionUrl.startsWith("jdbc:hsqldb:")) {
 			return "org.hsqldb.jdbc.JDBCDriver";					
 		} else if(connectionUrl.startsWith("jdbc:db2:")) {
-			return "com.ibm.db2.jcc.DB2Driver";				
+			return "com.ibm.db2.jcc.DB2Driver";
+		} else if(connectionUrl.startsWith("jdbc:as400:")) {
+			return "com.ibm.as400.access.AS400JDBCDriver";
 		} else if(connectionUrl.startsWith("jdbc:oracle:")) {
 			return "oracle.jdbc.driver.OracleDriver";			
 		} else if(connectionUrl.startsWith("jdbc:sqlserver:")) {
@@ -90,7 +92,7 @@ public class DbSchemaUtils {
 			return null;
 		}
 	}
-	
+
 	protected static Connection getSchemaConnection(
 	) throws ServiceException {
 		try {

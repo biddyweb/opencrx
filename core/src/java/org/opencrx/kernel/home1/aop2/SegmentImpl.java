@@ -1,11 +1,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.7 2010/02/18 13:01:11 wfro Exp $
+ * Name:        $Id: SegmentImpl.java,v 1.8 2012/01/20 01:37:08 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/18 13:01:11 $
+ * Date:        $Date: 2012/01/20 01:37:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,7 +61,6 @@ import java.util.List;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.backend.UserHomes;
-import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
@@ -109,8 +108,7 @@ public class SegmentImpl
 	            false,
 	            initialPassword,
 	            initialPasswordVerification,
-	            errors,
-	            this.sameManager().getPersistenceManagerFactory().getPersistenceManager(SecurityKeys.ROOT_PRINCIPAL, null)            
+	            errors
 	        );
 	        if((userHome == null) || !errors.isEmpty()) {
 	            return Utils.getHomePackage(this.sameManager()).createCreateUserResult(
