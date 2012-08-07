@@ -1,0 +1,7 @@
+core/build/
+distribution/
+jre-1.6/
+opt/openmdx-2.9.1/
+opt/update_openmdx.sh
+source-archive/
+test-core/build/
