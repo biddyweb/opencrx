@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EditDocumentRevisionWizard.jsp,v 1.2 2011/11/28 14:01:59 wfro Exp $
+ * Name:        $Id: EditDocumentRevisionWizard.jsp,v 1.3 2012/07/08 13:30:33 wfro Exp $
  * Description: EditDocumentRevisionWizard
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:01:59 $
+ * Date:        $Date: 2012/07/08 13:30:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,7 +66,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

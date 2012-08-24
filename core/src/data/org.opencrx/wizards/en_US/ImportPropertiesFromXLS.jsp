@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportPropertiesFromXLS.jsp,v 1.8 2011/07/09 18:42:32 wfro Exp $
+ * Name:        $Id: ImportPropertiesFromXLS.jsp,v 1.10 2012/07/08 13:30:30 wfro Exp $
  * Description: import properties from Excel Sheet
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/09 18:42:32 $
+ * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,7 +73,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -680,7 +679,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
     javax.jdo.PersistenceManager pm = app.getNewPmData();
     Texts_1_0 texts = app.getTexts();
     Codes codes = app.getCodes();
-    Texts_1_0[] textsAllAvailableLocales = app.getTextsFactory().getTexts();
+    Texts_1_0[] textsAllAvailableLocales = app.getTextsFactory().getTextsBundles();
     List<Short> activeLocales = new ArrayList<Short>();
     for(int t = 0; t < textsAllAvailableLocales.length; t++) {
         activeLocales.add(textsAllAvailableLocales[t].getLocaleIndex());
@@ -1523,8 +1522,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
           </tr>
           <tr id="submitButtons">
             <td class="label" colspan="3">
-                <INPUT type="Submit" name="OK.Button" tabindex="1000" value="Importieren" onclick="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';$('submitFilename').style.visibility='hidden';" />
-                  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="Abbrechen" />
+                <INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= texts.getOkTitle() %>" onclick="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';$('submitFilename').style.visibility='hidden';" />
+                  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
             </td>
             <td></td>
             <td class="addon" >&nbsp;<br>&nbsp;</td>

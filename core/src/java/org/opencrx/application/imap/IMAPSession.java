@@ -56,7 +56,8 @@ import javax.mail.search.SubjectTerm;
 
 import org.opencrx.application.adapter.AbstractServer;
 import org.opencrx.application.adapter.AbstractSession;
-import org.opencrx.kernel.backend.MimeMessageImpl;
+import org.opencrx.kernel.utils.MimeUtils;
+import org.opencrx.kernel.utils.MimeUtils.MimeMessageImpl;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.text.conversion.UUIDConversion;
@@ -65,9 +66,24 @@ import org.openmdx.kernel.log.SysLog;
 import org.openmdx.kernel.text.format.HexadecimalFormatter;
 import org.w3c.format.DateTimeFormat;
 
+/**
+ * IMAPSession
+ */
 public class IMAPSession extends AbstractSession {
-    
-    //-----------------------------------------------------------------------
+
+	/**
+	 * SessionState
+	 */
+	public enum SessionState {
+	    NOT_AUTHENTICATED,
+	    AUTHENTICATED
+	}
+	
+    /**
+     * Constructor.
+     * @param client
+     * @param server
+     */
     public IMAPSession(
         Socket client, 
         AbstractServer server
@@ -78,13 +94,20 @@ public class IMAPSession extends AbstractSession {
     	);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get server.
+     * @return
+     */
     private IMAPServer getServer(
     ) {
     	return (IMAPServer)this.server;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Read line from socket up to MAX_LINE_LENGTH.
+     * @return
+     * @throws IOException
+     */
     private String readLine(
     ) throws IOException {
         StringBuilder line = new StringBuilder();
@@ -107,7 +130,10 @@ public class IMAPSession extends AbstractSession {
         return line.toString();
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see java.lang.Runnable#run()
+     */
+    @Override
     public void run(
     ) {
         if(this.socket == null || !this.socket.isConnected()) {
@@ -162,7 +188,9 @@ public class IMAPSession extends AbstractSession {
         }
     }
 
-    //-----------------------------------------------------------------------    
+    /**
+     * SearchTermParser
+     */
     static class SearchTermParser {
     	
 	    static class Position {
@@ -529,11 +557,13 @@ public class IMAPSession extends AbstractSession {
 	    }
     }
     
-    //-----------------------------------------------------------------------
     /**
-     * process the command and send a response if appropriate...
-     * 
-     * @param line
+     * Process the command and send a response if appropriate...
+     * @param tag
+     * @param command
+     * @param params
+     * @return
+     * @throws MessagingException
      */
     public boolean handleCommand(
         String tag, 
@@ -560,232 +590,235 @@ public class IMAPSession extends AbstractSession {
 			}
 		}
 		else {
-			if(this.state == NOT_AUTHENTICATED_STATE) {
-				if("LOGIN".equals(command)) {
-					String username = "";
-					String password = "";
-					try {
-						String[] bits = params.split(" ");
-						username = bits[1].replace("\"", "");
-						password = bits[2].replace("\"", "");
+			switch(this.state) {
+
+				case NOT_AUTHENTICATED: {
+					if("LOGIN".equals(command)) {
+						String username = "";
+						String password = "";
+						try {
+							String[] bits = params.split(" ");
+							username = bits[1].replace("\"", "");
+							password = bits[2].replace("\"", "");
+						}
+						catch (Exception e) {
+							this.println(tag + " BAD parameters");
+							return true;
+						}
+						if(this.login(username, password)) {
+							this.state = SessionState.AUTHENTICATED;
+							this.println(tag + " OK User logged in");
+							// Default folder is INBOX
+							this.selectedFolder = this.getFolder("INBOX");
+						} 
+						else {
+							this.println(tag + " NO LOGIN failed.");
+						}
 					}
-					catch (Exception e) {
-						this.println(tag + " BAD parameters");
-						return true;
-					}
-					if(this.login(username, password)) {
-						this.state = AUTHENTICATED_STATE;
-						this.println(tag + " OK User logged in");
-					} 
 					else {
-						this.println(tag + " NO LOGIN failed.");
+						this.unrecognizedCommand(tag, command);
 					}
+					break;
 				}
-				else {
-					this.unrecognizedCommand(tag, command);
-				}
-			}
-			else if (this.state == AUTHENTICATED_STATE || this.state == SELECTED_STATE) {
-				if ("SELECT".equals(command)) {
-					params = params.replace("\"", "");
-					params = params.trim().toUpperCase();
-					this.selectedFolder = null;
-					IMAPFolderImpl folder = this.getFolder(params);
-					if(folder != null) {
-						this.selectedFolder = folder;
-						this.println("* " + folder.getMessageCount() + " EXISTS");
-						this.println("* 0 RECENT");
-						this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
-						this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
-						this.state = SELECTED_STATE;
+			
+				case AUTHENTICATED: {
+
+					if("SELECT".equals(command)) {
+						params = params.replace("\"", "");
+						params = params.trim().toUpperCase();
+						this.selectedFolder = null;
+						IMAPFolderImpl folder = this.getFolder(params);
+						if(folder != null) {
+							this.selectedFolder = folder;
+							this.println("* " + folder.getMessageCount() + " EXISTS");
+							this.println("* 0 RECENT");
+							this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
+							this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
+						}
+						if(this.selectedFolder == null) {
+						    this.println(tag + " NO SELECT failed, no mailbox with that name");
+						}
 					}
-					if(this.selectedFolder == null) {
-					    this.println(tag + " NO SELECT failed, no mailbox with that name");
+					else if ("STATUS".equals(command)) {
+						if(params.indexOf(" (") > 0) {
+							params = params.substring(0, params.indexOf(" ("));
+						}
+						params = params.replace("\"", "");
+						params = params.trim().toUpperCase();
+						IMAPFolderImpl folder = this.getFolder(params);
+	                    if(folder != null) {
+							this.selectedFolder = folder;
+	                        this.println("* " + folder.getMessageCount() + " EXISTS");
+							this.println("* 0 RECENT");
+							this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
+							this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
+						}
+	                    else {
+							this.println(tag + " NO STATUS failed, no mailbox with that name");
+						}
 					}
-				}
-				else if ("STATUS".equals(command)) {
-					if(params.indexOf(" (") > 0) {
-						params = params.substring(0, params.indexOf(" ("));
+					else if("EXAMINE".equals(command)) {
+						params = params.replace("\"", "");
+						params = params.trim().toUpperCase();
+	                    IMAPFolderImpl folder = this.getFolder(params);
+	                    if(folder != null) {
+							this.selectedFolder = folder;
+	                        this.println("* " + folder.getMessageCount() + " EXISTS");
+	                        this.println("* 0 RECENT");
+	                        this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
+	                        this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
+	                    }
+	                    else {
+							this.println(tag + " NO EXAMINE failed, no mailbox with that name");
+						}
 					}
-					params = params.replace("\"", "");
-					params = params.trim().toUpperCase();
-					IMAPFolderImpl folder = this.getFolder(params);
-                    if(folder != null) {
-						this.selectedFolder = folder;
-                        this.println("* " + folder.getMessageCount() + " EXISTS");
-						this.println("* 0 RECENT");
-						this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
-						this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
-						this.state = SELECTED_STATE;
+					else if("CREATE".equals(command)) {
+						this.println(tag + " NO command not supported");
 					}
-                    else {
-						this.println(tag + " NO STATUS failed, no mailbox with that name");
+					else if("DELETE".equals(command)) {
+						this.println(tag + " NO command not supported");
 					}
-				}
-				else if("EXAMINE".equals(command)) {
-					params = params.replace("\"", "");
-					params = params.trim().toUpperCase();
-                    IMAPFolderImpl folder = this.getFolder(params);
-                    if(folder != null) {
-						this.selectedFolder = folder;
-                        this.println("* " + folder.getMessageCount() + " EXISTS");
-                        this.println("* 0 RECENT");
-                        this.println("* OK [UIDVALIDITY " + folder.getUIDValidity() + "] UID validity status");
-                        this.println(tag + " OK [" + (folder.getMode() == Folder.READ_ONLY ? "READ-ONLY" : "READ-WRITE") + "] complete");
-						this.state = SELECTED_STATE;
-                    }
-                    else {
-						this.println(tag + " NO EXAMINE failed, no mailbox with that name");
+					else if("RENAME".equals(command)) {
+						this.println(tag + " NO command not supported");
 					}
-				}
-				else if("CREATE".equals(command)) {
-					this.println(tag + " NO command not supported");
-				}
-				else if("DELETE".equals(command)) {
-					this.println(tag + " NO command not supported");
-				}
-				else if("RENAME".equals(command)) {
-					this.println(tag + " NO command not supported");
-				}
-				else if("LIST".equals(command)) {
-                    Pattern pattern = Pattern.compile(" \"([a-zA-Z0-9]*)\" \"([a-zA-Z0-9*%]*)\"");
-                    Matcher matcher = pattern.matcher(params);
-                    if (matcher.find()) {
-                        String folderName = matcher.group(1);
-                        String query = matcher.group(2);
-                        if("".equals(folderName)) {
-                        	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
-                            for(String folder: availableFolders.keySet()) {
-                                if(
-                                    folder.equals(query) ||
-                                    ((query.length() == 0) || (query.endsWith("*") || query.endsWith("%")) && folder.startsWith(query.substring(0, query.length()-1)))
-                                ) {
-                                    this.println("* LIST () \"/\" \"" + folder + "\"");
-                                }
-    						}
-                        }
+					else if("LIST".equals(command)) {
+	                    Pattern pattern = Pattern.compile(" \"([a-zA-Z0-9]*)\" \"([a-zA-Z0-9*%]*)\"");
+	                    Matcher matcher = pattern.matcher(params);
+	                    if (matcher.find()) {
+	                        String folderName = matcher.group(1);
+	                        String query = matcher.group(2);
+	                        if("".equals(folderName)) {
+	                        	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
+	                            for(String folder: availableFolders.keySet()) {
+	                                if(
+	                                    folder.equals(query) ||
+	                                    ((query.length() == 0) || (query.endsWith("*") || query.endsWith("%")) && folder.startsWith(query.substring(0, query.length()-1)))
+	                                ) {
+	                                    this.println("* LIST () \"/\" \"" + folder + "\"");
+	                                }
+	    						}
+	                        }
+						}
+	                    this.println(tag + " OK LIST complete");
 					}
-                    this.println(tag + " OK LIST complete");
-				}
-				else if("LSUB".equals(command)) {
-                    for(Folder folder: this.getSubscribedFolders()) {
-                    	println("* LSUB () \"/\" \"" + folder.getFullName() + "\"");
+					else if("LSUB".equals(command)) {
+	                    for(Folder folder: this.getSubscribedFolders()) {
+	                    	println("* LSUB () \"/\" \"" + folder.getFullName() + "\"");
+						}
+						this.println(tag + " OK LSUB complete");
 					}
-					this.println(tag + " OK LSUB complete");
-				}
-				else if("SUBSCRIBE".equals(command)) {
-                    params = params.replace("\"", "");
-                    params = params.trim();
-                	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
-                    if(availableFolders.containsKey(params)) {
-                        this.subscribeFolder(
-                            params, 
-                            availableFolders
-                        );                     
-                        this.println(tag + " OK SUBSCRIBE complete");                    
-                    }
-                    else {
-                        this.println(tag + " NO SUBSCRIBE invalid folder name");                                            
-                    }
-				}
-				else if("UNSUBSCRIBE".equals(command)) {
-                    params = params.replace("\"", "");
-                    params = params.trim();
-                    List<IMAPFolderImpl> subscribedFolders = this.getSubscribedFolders();
-                    boolean found = false;
-                    for(IMAPFolderImpl folder: subscribedFolders) {
-                        if(folder.getFullName().equals(params)) {
-                            this.unsubscribeFolder(
-                                params
-                            );
-                            found = true;
-                            break;
-                        }
-                    }
-                    if(found) {
-                        this.println(tag + " OK UNSUBSCRIBE complete");
-                    }
-                    else {
-                        this.println(tag + " NO UNSUBSCRIBE invalid folder name");                        
-                    }
-				}
-				else if("APPEND".equals(command)) {
-					boolean hasDate = true;
-				    Pattern pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \"(.*)\" \\{([0-9]+)\\}");
-				    Matcher matcher = pattern.matcher(params);
-				    boolean matches = matcher.find();
-				    // Date is optional, e.g. KMail
-				    if(!matches) {
-				    	hasDate = false;
-				    	pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \\{([0-9]+)\\}");
-				    	matcher = pattern.matcher(params);
-				    	matches = matcher.find();
-				    }
-				    if(matches) {
-				        try {
-    				        int size = Integer.valueOf(matcher.group(hasDate ? 4 : 3));
-    				        IMAPFolderImpl folder = this.getFolder(matcher.group(1));
-    				        String date = hasDate ? matcher.group(3) : null;
-    				        if(folder != null) {
-        	                    this.println("+ OK");
-        	                    if(this.getServer().isDebug()) {
-        	                        System.out.println("Reading " + size + " bytes");
-        	                    }
-        	                    byte[] msg = new byte[size];
-        	                    boolean success = true;
-        	                    int i = 0;
-        	                    for(i = 0; i < size; i++) {
-        	                        if(this.getServer().isDebug() && (i > 0) && (i % 1000 == 0)) {
-        	                            System.out.println(i + " bytes");
-        	                        }
-        	                        int c = this.in.read();
-        	                        if(c < 0) {
-        	                        	success = false;
-        	                        	break;
-        	                        }
-        	                        msg[i] = (byte)c;
-        	                    }
-        	                    if(this.getServer().isDebug()) {
-        	                        System.out.println(new String(msg, "iso-8859-1"));
-        	                        System.out.println();
-        	                        System.out.println(new HexadecimalFormatter(msg, 0, size).toString());
-                                    System.out.println();        	                        
-        	                        System.out.flush();
-        	                    }
-        	                    // Import if upload is successful
-        	                    if(success) {
-                                    Message message = new MimeMessageImpl(
-                                        new ByteArrayInputStream(msg)
-                                    );
-                                    if(date != null) {
-                                    	message.setHeader("Date", date);
-                                    }
-                                    folder.appendMessages(new Message[]{message});
-                                    this.println(tag + " OK APPEND complete");        	                        
-        	                    }
-        	                    else {
-                                    this.println(tag + " NO invalid message");                                  	                        
-        	                    }
-    				        }
-    				        else {
-                                this.println(tag + " NO folder not found");                                				            
-    				        }
-				        }
-				        catch(Exception e) {
-		                    this.println(tag + " NO invalid message");				            
-				        }
-				    }
-				    else {
-				        this.println(tag + " NO invalid parameter");
-				    }
-				}
-				else if(this.state == SELECTED_STATE) {
-					if("CHECK".equals(command)) {
+					else if("SUBSCRIBE".equals(command)) {
+	                    params = params.replace("\"", "");
+	                    params = params.trim();
+	                	Map<String,String> availableFolders = this.getServer().getAvailableFolders(this.segmentName);
+	                    if(availableFolders.containsKey(params)) {
+	                        this.subscribeFolder(
+	                            params, 
+	                            availableFolders
+	                        );                     
+	                        this.println(tag + " OK SUBSCRIBE complete");                    
+	                    }
+	                    else {
+	                        this.println(tag + " NO SUBSCRIBE invalid folder name");                                            
+	                    }
+					}
+					else if("UNSUBSCRIBE".equals(command)) {
+	                    params = params.replace("\"", "");
+	                    params = params.trim();
+	                    List<IMAPFolderImpl> subscribedFolders = this.getSubscribedFolders();
+	                    boolean found = false;
+	                    for(IMAPFolderImpl folder: subscribedFolders) {
+	                        if(folder.getFullName().equals(params)) {
+	                            this.unsubscribeFolder(
+	                                params
+	                            );
+	                            found = true;
+	                            break;
+	                        }
+	                    }
+	                    if(found) {
+	                        this.println(tag + " OK UNSUBSCRIBE complete");
+	                    }
+	                    else {
+	                        this.println(tag + " NO UNSUBSCRIBE invalid folder name");                        
+	                    }
+					}
+					else if("APPEND".equals(command)) {
+						boolean hasDate = true;
+					    Pattern pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \"(.*)\" \\{([0-9]+)\\}");
+					    Matcher matcher = pattern.matcher(params);
+					    boolean matches = matcher.find();
+					    // Date is optional, e.g. KMail
+					    if(!matches) {
+					    	hasDate = false;
+					    	pattern = Pattern.compile(" \"(.*)\"(?: \\((.*)\\))? \\{([0-9]+)\\}");
+					    	matcher = pattern.matcher(params);
+					    	matches = matcher.find();
+					    }
+					    if(matches) {
+					        try {
+	    				        int size = Integer.valueOf(matcher.group(hasDate ? 4 : 3));
+	    				        IMAPFolderImpl folder = this.getFolder(matcher.group(1));
+	    				        String date = hasDate ? matcher.group(3) : null;
+	    				        if(folder != null) {
+	        	                    this.println("+ OK");
+	        	                    if(this.getServer().isDebug()) {
+	        	                        System.out.println("Reading " + size + " bytes");
+	        	                    }
+	        	                    byte[] msg = new byte[size];
+	        	                    boolean success = true;
+	        	                    int i = 0;
+	        	                    for(i = 0; i < size; i++) {
+	        	                        if(this.getServer().isDebug() && (i > 0) && (i % 1000 == 0)) {
+	        	                            System.out.println(i + " bytes");
+	        	                        }
+	        	                        int c = this.in.read();
+	        	                        if(c < 0) {
+	        	                        	success = false;
+	        	                        	break;
+	        	                        }
+	        	                        msg[i] = (byte)c;
+	        	                    }
+	        	                    if(this.getServer().isDebug()) {
+	        	                        System.out.println(new String(msg, "iso-8859-1"));
+	        	                        System.out.println();
+	        	                        System.out.println(new HexadecimalFormatter(msg, 0, size).toString());
+	                                    System.out.println();        	                        
+	        	                        System.out.flush();
+	        	                    }
+	        	                    // Import if upload is successful
+	        	                    if(success) {
+	                                    Message message = new MimeUtils.MimeMessageImpl(
+	                                        new ByteArrayInputStream(msg)
+	                                    );
+	                                    if(date != null) {
+	                                    	message.setHeader("Date", date);
+	                                    }
+	                                    folder.appendMessages(new Message[]{message});
+	                                    this.println(tag + " OK APPEND complete");        	                        
+	        	                    }
+	        	                    else {
+	                                    this.println(tag + " NO invalid message");                                  	                        
+	        	                    }
+	    				        }
+	    				        else {
+	                                this.println(tag + " NO folder not found");                                				            
+	    				        }
+					        }
+					        catch(Exception e) {
+			                    this.println(tag + " NO invalid message");				            
+					        }
+					    }
+					    else {
+					        this.println(tag + " NO invalid parameter");
+					    }
+					}
+					else if("CHECK".equals(command)) {
 						this.println(tag + " OK CHECK complete");
 					}
 					else if("CLOSE".equals(command)) {
 						this.println(tag + " OK CLOSE complete");
-						this.state = AUTHENTICATED_STATE;
+						this.state = SessionState.AUTHENTICATED;
 					}
 					else if("EXPUNGE".equals(command)) {
 						this.println(tag + " NO EXPUNGE command not supported");
@@ -1026,16 +1059,20 @@ public class IMAPSession extends AbstractSession {
 	                        this.println(tag + " NO UID" + params + " command not supported");                     
 	                    }
 					}
-				}
-				else {
-					this.unrecognizedCommand(tag, command);
+					else {
+						this.unrecognizedCommand(tag, command);
+					}
 				}
 			}
 		}
 		return true;
 	}
 
-    //-----------------------------------------------------------------------
+    /**
+     * Unrecognized command.
+     * @param tag
+     * @param command
+     */
     public void unrecognizedCommand(
         String tag, 
         String command
@@ -1044,7 +1081,11 @@ public class IMAPSession extends AbstractSession {
         this.println(tag + " BAD " + command);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Parse fetch commands.
+     * @param fetchParams
+     * @return
+     */
     public List<String> getFetchCommands(
         String fetchParams
     ) {
@@ -1065,7 +1106,12 @@ public class IMAPSession extends AbstractSession {
         return fetchCommands;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get mime body part as RFC822 stream.
+     * @param part
+     * @param ignoreHeaders
+     * @param out
+     */
     protected void getBodyAsRFC822(
         MimePart part,
         boolean ignoreHeaders,
@@ -1088,7 +1134,12 @@ public class IMAPSession extends AbstractSession {
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get body length.
+     * @param part
+     * @param ignoreHeaders
+     * @return
+     */
     protected int getBodyLength(
         MimePart part,
         boolean ignoreHeaders
@@ -1113,14 +1164,26 @@ public class IMAPSession extends AbstractSession {
         return 0;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get message flags.
+     * @param message
+     * @return
+     * @throws MessagingException
+     */
     protected String getMessageFlags(
         Message message
     ) throws MessagingException {
         return "\\Seen";
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Process fetch command.
+     * @param params
+     * @param message
+     * @param count
+     * @return
+     * @throws MessagingException
+     */
     public boolean processFetchCommand(
         String params, 
         MimeMessage message,
@@ -1147,9 +1210,9 @@ public class IMAPSession extends AbstractSession {
             return true;
         } 
         else if(command.equals("RFC822.HEADER")) {
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
-                MimeMessageImpl.STANDARD_HEADER_FIELDS
+                MimeUtils.STANDARD_HEADER_FIELDS
             );
             if(count > 0) this.print(" ");
             this.println("RFC822 {" + (temp.length() + 2) + "}");
@@ -1177,9 +1240,9 @@ public class IMAPSession extends AbstractSession {
             return true;
         } 
         else if(command.equals("BODY[HEADER]")) {
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
-                MimeMessageImpl.STANDARD_HEADER_FIELDS
+                MimeUtils.STANDARD_HEADER_FIELDS
             );
             if(count > 0) this.print(" ");
             this.println("BODY[HEADER] {" + (temp.length() + 2) + "}");
@@ -1194,7 +1257,7 @@ public class IMAPSession extends AbstractSession {
                     if(matcher.find()) {
                         int partId = Integer.valueOf(matcher.group(1)).intValue();
                         if(command.indexOf(".MIME") > 0) {
-                            String temp = MimeMessageImpl.getHeadersAsRFC822(
+                            String temp = MimeUtils.getHeadersAsRFC822(
                                 ((MimeMultipart)message.getContent()).getBodyPart(partId - 1), 
                                 new String[]{"Content-Type", "Content-Disposition", "Content-Transfer-Encoding"}
                             );                                                
@@ -1247,7 +1310,7 @@ public class IMAPSession extends AbstractSession {
                 n++;
             }
             this.print(")] ");
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
                 fields
             );
@@ -1261,7 +1324,7 @@ public class IMAPSession extends AbstractSession {
             params = params.replace(")", "");
             params = params.replace("\"", "");
             String[] fields = params.split(" ");
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
                 fields
             );
@@ -1280,9 +1343,9 @@ public class IMAPSession extends AbstractSession {
             return true;
         } 
         else if(command.equals("BODY.PEEK[HEADER]")) {
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
-                MimeMessageImpl.STANDARD_HEADER_FIELDS
+                MimeUtils.STANDARD_HEADER_FIELDS
             );
             if(count > 0) this.print(" ");
             this.println("BODY[HEADER] {" + (temp.length() + 2) + "}");
@@ -1304,7 +1367,7 @@ public class IMAPSession extends AbstractSession {
                 n++;
             }
             this.print(")] ");
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
                 fields
             );
@@ -1318,7 +1381,7 @@ public class IMAPSession extends AbstractSession {
             params = params.replace(")", "");
             params = params.replace("\"", "");
             String[] fields = params.split(" ");
-            String temp = MimeMessageImpl.getHeadersAsRFC822(
+            String temp = MimeUtils.getHeadersAsRFC822(
                 message, 
                 fields
             );
@@ -1383,8 +1446,11 @@ public class IMAPSession extends AbstractSession {
         return false;
     }
 
-    //-----------------------------------------------------------------------
-    private void updateSubscriptionFile(
+    /**
+     * Update subscriptions.
+     * @param folders
+     */
+    private void amendSubscriptions(
         List<IMAPFolderImpl> folders            
     ) {
         try {
@@ -1407,7 +1473,11 @@ public class IMAPSession extends AbstractSession {
         }       
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Unsubscribe folder.
+     * @param name
+     * @throws MessagingException
+     */
     private void unsubscribeFolder(
         String name
     ) throws MessagingException {
@@ -1420,7 +1490,7 @@ public class IMAPSession extends AbstractSession {
                     try {
                         File dest = new File(
                             folder.folderDir.getParentFile(),
-                            folder.folderDir.getName() + "-" + UUIDConversion.toUID(UUIDs.getGenerator().next()) + ".UNSUBSCRIBE"
+                            folder.folderDir.getName() + "-" + UUIDConversion.toUID(UUIDs.newUUID()) + ".UNSUBSCRIBE"
                         );
                         folder.folderDir.renameTo(dest);
                     } 
@@ -1432,10 +1502,15 @@ public class IMAPSession extends AbstractSession {
                 break;
             }
         }
-        this.updateSubscriptionFile(folders);
+        this.amendSubscriptions(folders);
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Subscribe folder.
+     * @param name
+     * @param availableFolders
+     * @throws MessagingException
+     */
     private void subscribeFolder(
         String name,
         Map<String,String> availableFolders
@@ -1455,11 +1530,15 @@ public class IMAPSession extends AbstractSession {
             this.getServer().getPersistenceManagerFactory()
         );
         folders.add(folder);
-        this.updateSubscriptionFile(folders);
+        this.amendSubscriptions(folders);
         folder.synchronizeMailDir();
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get subscribed folders.
+     * @return
+     * @throws MessagingException
+     */
     private List<IMAPFolderImpl> getSubscribedFolders(
     ) throws MessagingException {   
         List<IMAPFolderImpl> folders = new ArrayList<IMAPFolderImpl>();        
@@ -1508,7 +1587,12 @@ public class IMAPSession extends AbstractSession {
         return folders;
     }
                 
-    //-----------------------------------------------------------------------
+    /**
+     * Get folder.
+     * @param name
+     * @return
+     * @throws MessagingException
+     */
     private IMAPFolderImpl getFolder(
         String name
     ) throws MessagingException {
@@ -1541,7 +1625,10 @@ public class IMAPSession extends AbstractSession {
         return null;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Output string to response stream.
+     * @param s
+     */
     protected void println(
         String s
     ) {      
@@ -1559,7 +1646,10 @@ public class IMAPSession extends AbstractSession {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Output string to response stream.
+     * @param s
+     */
     protected void print(
         String s
     ) {
@@ -1576,7 +1666,10 @@ public class IMAPSession extends AbstractSession {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Print bytes to response stream.
+     * @param bytes
+     */
     protected void printBytes(
         QuotaByteArrayOutputStream bytes
     ) {
@@ -1593,7 +1686,11 @@ public class IMAPSession extends AbstractSession {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Print string list to response stream.
+     * @param values
+     * @param nested
+     */
     protected void printList(
         String[] values,
         boolean nested
@@ -1618,7 +1715,11 @@ public class IMAPSession extends AbstractSession {
         if(nested && values.length > 1) this.print(")");
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Print mime message to response stream.
+     * @param message
+     * @throws MessagingException
+     */
     protected void printMessageStructure(
         Message message
     ) throws MessagingException {
@@ -1665,7 +1766,11 @@ public class IMAPSession extends AbstractSession {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Print mime body part to response stream.
+     * @param part
+     * @throws MessagingException
+     */
     protected void printBodyPartStructure(
         BodyPart part
     ) throws MessagingException {
@@ -1723,7 +1828,11 @@ public class IMAPSession extends AbstractSession {
         this.print(")");
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Print addresses to response stream.
+     * @param addresses
+     * @param max
+     */
     protected void printAddresses(
         Address[] addresses,
         int max
@@ -1759,7 +1868,10 @@ public class IMAPSession extends AbstractSession {
         }
     }
     
-    //----------------------------------------------------------------------
+    /**
+     * Return true if socket is connected.
+     * @return
+     */
     public boolean isConnected(
     ) {
         return (this.socket.isConnected());
@@ -1770,15 +1882,11 @@ public class IMAPSession extends AbstractSession {
     //-----------------------------------------------------------------------
     private static final int MAX_LINE_LENGTH = 2048;
     
-    public static final int NOT_AUTHENTICATED_STATE = 0;
-    public static final int AUTHENTICATED_STATE = 1;
-    public static final int SELECTED_STATE = 2;
-    public static final int LOGOUT_STATE = 3;
     public static final long MAX_ACTIVITY_NUMBER = 9999999999L;
     
     protected OutputStream out = null;
     protected InputStream in = null;
-    protected int state = 0;
+    protected SessionState state = SessionState.NOT_AUTHENTICATED;
     protected IMAPFolderImpl selectedFolder = null;
 
     private static ThreadLocal<QuotaByteArrayOutputStream> byteOutputStreams = new ThreadLocal<QuotaByteArrayOutputStream>() {

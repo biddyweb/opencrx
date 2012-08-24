@@ -512,7 +512,7 @@
 										</_object>
 										<_content/>
 									</org.opencrx.kernel.uom1.Uom>
-									<org.opencrx.kernel.uom1.Uom id="Ω" _operation="create">
+									<org.opencrx.kernel.uom1.Uom id="Ohm" _operation="create">
 										<_object>
 											<description>Ohm (electric resistance) = V/A</description>
 											<name>Ω</name>

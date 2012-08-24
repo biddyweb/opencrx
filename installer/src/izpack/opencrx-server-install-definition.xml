@@ -62,13 +62,12 @@
 			<fileset dir="image/opencrx-server" targetdir="$INSTALL_PATH" />
 			<!-- Additional files -->
 			<file src="../@{build.target.platform}/core/deployment-unit/opencrx-core-CRX.ear" targetdir="$INSTALL_PATH/installer/files"/>
-			<file src="../../openmdx/@{build.target.platform}/core/lib/openmdx-base.jar" targetdir="$INSTALL_PATH/installer/files"/>
 			<file src="../../openmdx/@{build.target.platform}/core/lib/openmdx-system.jar" targetdir="$INSTALL_PATH/installer/files"/>
 			<file src="../../openmdx/@{build.target.platform}/tomcat/lib/catalina-openmdx.jar" targetdir="$INSTALL_PATH/installer/files"/>
 			<!-- Generic -->
 			<parsable targetfile="$INSTALL_PATH/installer/bin/postinstaller.xml" type="xml" encoding="UTF-8" />
 			<parsable targetfile="$INSTALL_PATH/data/crx/sqltool.rc" encoding="UTF-8" />
-			<parsable targetfile="$INSTALL_PATH/installer/files/openejb.xml" type="xml" encoding="UTF-8" />
+			<parsable targetfile="$INSTALL_PATH/installer/files/tomee.xml" type="xml" encoding="UTF-8" />
 			<!-- Unix -->
 			<parsable targetfile="$INSTALL_PATH/installer/bin/postinstallation.sh" encoding="UTF-8" />  
 			<executable targetfile="$INSTALL_PATH/installer/bin/postinstallation.sh" type="bin" stage="postinstall" keep="true" os="unix" />

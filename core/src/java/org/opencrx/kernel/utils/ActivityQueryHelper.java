@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ActivityQueryHelper.java,v 1.4 2011/07/24 22:44:16 wfro Exp $
  * Description: ActivitiesQueryHelper
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/24 22:44:16 $
  * ====================================================================
  *
  * This software is published under the BSD license

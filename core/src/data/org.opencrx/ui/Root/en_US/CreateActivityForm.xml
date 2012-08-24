@@ -29,7 +29,7 @@
 											</label>
 											<order>10</order>
 											<columnBreakAtElement>
-												<_item>4</_item>
+												<_item>5</_item>
 											</columnBreakAtElement>
 										</_object>
 										<_content>
@@ -62,6 +62,14 @@
 													<_object>
 														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
 														<featureName>reportingContact</featureName>
+														<order>400</order>	
+													</_object>
+													<_content />
+												</org.openmdx.ui1.FormFieldDefinition>												
+												<org.openmdx.ui1.FormFieldDefinition id="assignedTo">
+													<_object>
+														<forClass>org:opencrx:kernel:activity1:Activity</forClass>
+														<featureName>assignedTo</featureName>
 														<order>400</order>	
 													</_object>
 													<_content />

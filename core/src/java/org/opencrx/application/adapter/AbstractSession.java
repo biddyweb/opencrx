@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractSession.java,v 1.3 2010/09/22 10:32:31 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/22 10:32:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,12 +61,14 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.security.authentication1.jmi1.Password;
 
+/**
+ * AbstractSession
+ *
+ */
 public abstract class AbstractSession implements Runnable {
 
-    //-----------------------------------------------------------------------
     public AbstractSession(
         Socket client, 
         AbstractServer server
@@ -78,7 +77,9 @@ public abstract class AbstractSession implements Runnable {
         this.server = server;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Stop session.
+     */
     public void stop(
     ) {
     	if(this.socket != null) {
@@ -90,7 +91,12 @@ public abstract class AbstractSession implements Runnable {
     	}
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get persistence manager for user.
+     * @param pmf
+     * @param username
+     * @return
+     */
     public static PersistenceManager newPersistenceManager(
     	PersistenceManagerFactory pmf,
     	String username
@@ -98,11 +104,16 @@ public abstract class AbstractSession implements Runnable {
         String principalName = username.substring(0, username.indexOf("@"));            
         return pmf.getPersistenceManager(
             principalName, 
-            UUIDs.getGenerator().next().toString()
+            null
         );                                	
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Validate user and password.
+     * @param username
+     * @param password
+     * @return
+     */
     protected boolean login(
         String username,
         String password
@@ -114,11 +125,11 @@ public abstract class AbstractSession implements Runnable {
                 String principalName = username.substring(0, username.indexOf("@"));            
                 PersistenceManager rootPm = this.server.getPersistenceManagerFactory().getPersistenceManager(
                     SecurityKeys.ROOT_PRINCIPAL,
-                    UUIDs.getGenerator().next().toString()
+                    null
                 );                
                 org.opencrx.security.realm1.jmi1.Principal principal = 
                     (org.opencrx.security.realm1.jmi1.Principal)rootPm.getObjectById(
-                        new Path("xri://@openmdx*org.openmdx.security.realm1/provider/" + this.server.getProviderName() + "/segment/Root/realm/Default/principal/" + principalName)
+                        new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", this.server.getProviderName(), "segment", "Root", "realm", "Default", "principal", principalName)
                     );
                 if(principal != null) {
                     org.openmdx.security.realm1.jmi1.Credential credential = principal.getCredential();                
@@ -138,7 +149,9 @@ public abstract class AbstractSession implements Runnable {
         return false;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Session logout.
+     */
     protected void logout(
     ) {
     }

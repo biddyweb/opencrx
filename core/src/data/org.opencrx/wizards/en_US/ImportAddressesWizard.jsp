@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImportAddressesWizard.jsp,v 1.7 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: ImportAddressesWizard.jsp,v 1.8 2012/07/08 13:30:30 wfro Exp $
  * Description: ImportAddressGroupMemberWizard
- * Revision:    $Revision: 1.7 $
+ * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,7 +66,6 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

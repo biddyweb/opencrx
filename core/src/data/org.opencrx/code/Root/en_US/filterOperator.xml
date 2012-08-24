@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="filterOperator" _operation="set">
 										<_object>
 											<name>
+												<_item>filterOperator</_item>
 												<_item>org:opencrx:kernel:base:AttributeFilterProperty:filterOperator</_item>
 											</name>
 										</_object>

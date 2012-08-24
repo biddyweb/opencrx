@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="processingMode" _operation="set">
 										<_object>
 											<name>
+												<_item>processingMode</_item>
 												<_item>org:opencrx:kernel:product1:CreateInitialPricesParams:processingMode</_item>
 											</name>
 										</_object>

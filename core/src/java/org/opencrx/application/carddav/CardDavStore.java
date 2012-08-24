@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CardDavStore.java,v 1.7 2011/10/07 14:59:19 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/07 14:59:19 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +55,8 @@ package org.opencrx.application.carddav;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -194,6 +193,22 @@ public class CardDavStore implements WebDavStore {
 			path = path.substring(1);
 		}
 		String[] components = path.split("/");
+		// Strip extra components (sent by iOS)
+		{
+			int posStripped = -1;
+			int pos = 0;
+			for(String component: components) {
+				if(component.startsWith(":") || ".well-known".equals(component)) {
+					posStripped = pos;
+					break;
+				}
+				pos++;
+			}
+			if(posStripped >= 0) {
+				List<String> strippedComponents = new ArrayList<String>(Arrays.asList(components));
+				components = strippedComponents.subList(0, posStripped).toArray(new String[posStripped]);
+			}
+		}
 		// Format 1
 		if(components.length == 6 && "user".equals(components[2]) && "profile".equals(components[4])) {
     		UserHome userHome = (UserHome)pm.getObjectById(
@@ -360,49 +375,59 @@ public class CardDavStore implements WebDavStore {
 			requestContext, 
 			parentPath
 		);
-		if(parent instanceof AccountCollectionResource) {
+		if(parent instanceof AccountCollectionResource) {			
 	    	try {
 		    	BufferedReader reader = new BufferedReader(
 		    		new InputStreamReader(content, "UTF-8")
 		    	);
 		    	// Create/Update account
-		    	AbstractGroup group = ((AccountCollectionResource)parent).getObject().getAccountGroup();
-		    	PersistenceManager pm = JDOHelper.getPersistenceManager(group);
-		    	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
-		    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-		    			group.refGetPath().getParent().getParent()
-		    		);
-	        	VCard.PutVCardResult result = VCard.getInstance().putVCard(
-	        		reader, 
-	        		accountSegment
-	        	);
-	        	// Create membership
-	        	if(result.getAccount() != null) {
-	        		MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
-	        		query.thereExistsAccount().equalTo(result.getAccount());
-	        		List<Member> members = group.getMember(query);
-	        		if(members.isEmpty()) {
-	        			pm.currentTransaction().begin();
-	        			Member member = pm.newInstance(Member.class);
-						member.setName(result.getAccount().getFullName());
-						member.setAccount(result.getAccount());
-						member.setQuality(Accounts.MEMBER_QUALITY_NORMAL);
-						group.addMember(
-							Base.getInstance().getUidAsString(), 
-							member
-						);
-						pm.currentTransaction().commit();
-	        		}
- 	        	}
-	            if(result.getOldUID() != null && result.getAccount() != null) {
-	            	this.uidMapping.put(
-	            		result.getOldUID(), 
-	            		result.getAccount().refGetPath().getBase()
-	            	);
-	            }
-	        	return result.getStatus() == VCard.PutVCardResult.Status.CREATED ? 
-	        		PutResourceStatus.CREATED : 
-	        			PutResourceStatus.UPDATED;
+		    	ContactsFeed feed = ((AccountCollectionResource)parent).getObject();
+		    	if(feed.isAllowChange()) {
+			    	AbstractGroup group = feed.getAccountGroup();		    	
+			    	PersistenceManager pm = JDOHelper.getPersistenceManager(group);
+			    	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
+			    		(org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+			    			group.refGetPath().getParent().getParent()
+			    		);
+		        	VCard.PutVCardResult result = VCard.getInstance().putVCard(
+		        		reader, 
+		        		accountSegment
+		        	);
+		        	// Create membership
+		        	if(result.getAccount() != null) {
+		        		MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
+		        		query.thereExistsAccount().equalTo(result.getAccount());
+		        		List<Member> members = group.getMember(query);
+		        		if(members.isEmpty()) {
+		        			boolean isTxLocal = !pm.currentTransaction().isActive();
+		        			if(isTxLocal) {
+		        				pm.currentTransaction().begin();
+		        			}
+		        			Member member = pm.newInstance(Member.class);
+							member.setName(result.getAccount().getFullName());
+							member.setAccount(result.getAccount());
+							member.setQuality(Accounts.MEMBER_QUALITY_NORMAL);
+							group.addMember(
+								Base.getInstance().getUidAsString(), 
+								member
+							);
+							if(isTxLocal) {
+								pm.currentTransaction().commit();
+							}
+		        		}
+	 	        	}
+		            if(result.getOldUID() != null && result.getAccount() != null) {
+		            	this.uidMapping.put(
+		            		result.getOldUID(), 
+		            		result.getAccount().refGetPath().getBase()
+		            	);
+		            }
+		        	return result.getStatus() == VCard.PutVCardResult.Status.CREATED ? 
+		        		PutResourceStatus.CREATED : 
+		        			PutResourceStatus.UPDATED;
+		    	} else {
+		    		return PutResourceStatus.FORBIDDEN;
+		    	}
 	    	}
 	    	catch(Exception e) {
 	    		new ServiceException(e).log();

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ConfigurationKeys.java,v 1.1 2005/02/23 13:01:27 wfro Exp $
  * Description: ConfigurationKeys class
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2005/02/23 13:01:27 $
  * ====================================================================
  *
  * This software is published under the BSD license

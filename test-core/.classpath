@@ -8,5 +8,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openMDX 2 ~ Security (jre-1.6)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openMDX Thirdparty ~ OSGi Enterprise (jre-1.6)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openMDX Thirdparty ~ OSGi Extension (jre-1.6)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Jivesoftware Smack (jre-1.6)"/>
 	<classpathentry kind="output" path="build/jre-1.6/eclipse"/>
 </classpath>

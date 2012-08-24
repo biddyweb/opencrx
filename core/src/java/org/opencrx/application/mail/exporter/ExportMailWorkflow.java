@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExportMailWorkflow.java,v 1.10 2009/11/19 17:57:00 wfro Exp $
  * Description: ExportMailWorkflow
- * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/19 17:57:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -55,12 +52,9 @@
  */
 package org.opencrx.application.mail.exporter;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.jdo.PersistenceManager;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -73,7 +67,6 @@ import javax.mail.internet.MimeMultipart;
 
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Notifications;
-import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
@@ -132,14 +125,10 @@ public class ExportMailWorkflow
                 nestedMessage.setSubject(
                     emailActivity.getMessageSubject()
                 );
-                // nested message body
-                Multipart nestedMultipart = new MimeMultipart();
-                BodyPart nestedBodyPart = new MimeBodyPart();
-                nestedBodyPart.setText(
-                    emailActivity.getMessageBody()
-                );
-                nestedMultipart.addBodyPart(nestedBodyPart);
-                // nested message sent date
+                Activities.getInstance().mapMessageContent(
+                    emailActivity,
+                    nestedMessage
+                );                
                 nestedMessage.setSentDate(
                     new Date()
                 );
@@ -147,26 +136,6 @@ public class ExportMailWorkflow
                     emailActivity, 
                     nestedMessage
                 );
-                // nested message media attachments
-                Collection<Media> medias = emailActivity.getMedia();
-                for(Media media: medias) {
-                    nestedBodyPart = new MimeBodyPart();
-                    nestedBodyPart.setFileName(
-                        media.getContentName()
-                    );
-                    nestedBodyPart.setDisposition(
-                        Part.ATTACHMENT
-                    );
-                    DataSource dataSource = new ByteArrayDataSource(
-                        media.getContent().getContent(),
-                        media.getContentMimeType()
-                    );
-                    nestedBodyPart.setDataHandler(
-                        new DataHandler(dataSource)
-                    );
-                    nestedMultipart.addBodyPart(nestedBodyPart);
-                }
-                nestedMessage.setContent(nestedMultipart);
                 bodyPart.setDisposition(
                     Part.ATTACHMENT
                 );
@@ -177,8 +146,7 @@ public class ExportMailWorkflow
                 multipart.addBodyPart(bodyPart);
             }
             message.setContent(multipart);
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             throw new ServiceException(e);
         }
         return text;

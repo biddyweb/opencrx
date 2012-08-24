@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AttendeeStatus.java,v 1.3 2011/11/30 11:21:14 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/30 11:21:14 $
  * ====================================================================
  *
  * This software is published under the BSD license

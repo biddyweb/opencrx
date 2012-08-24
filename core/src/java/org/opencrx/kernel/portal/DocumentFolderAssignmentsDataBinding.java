@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentFolderAssignmentsDataBinding.java,v 1.1 2009/08/07 13:23:35 wfro Exp $
  * Description: AssignedActivityGroupsDataBinding
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/07 13:23:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,11 +58,14 @@ import java.util.List;
 
 import javax.jmi.reflect.RefObject;
 
-import org.openmdx.portal.servlet.DataBinding_1_0;
+import org.openmdx.portal.servlet.ApplicationContext;
+import org.openmdx.portal.servlet.DataBinding;
 
-public class DocumentFolderAssignmentsDataBinding implements DataBinding_1_0 {
+public class DocumentFolderAssignmentsDataBinding extends DataBinding {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * @param parameterString
+	 */
 	public DocumentFolderAssignmentsDataBinding(
 		String parameterString
 	) {
@@ -77,10 +77,13 @@ public class DocumentFolderAssignmentsDataBinding implements DataBinding_1_0 {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         if(object instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
         	org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)object;
@@ -108,10 +111,14 @@ public class DocumentFolderAssignmentsDataBinding implements DataBinding_1_0 {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#setValue(javax.jmi.reflect.RefObject, java.lang.String, java.lang.Object, org.openmdx.portal.servlet.ApplicationContext)
+     */
     public void setValue(
         RefObject object, 
         String qualifiedFeatureName, 
-        Object newValue
+        Object newValue,
+        ApplicationContext app
     ) {
     }
         

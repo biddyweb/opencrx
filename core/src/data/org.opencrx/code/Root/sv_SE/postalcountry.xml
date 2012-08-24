@@ -700,10 +700,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="626" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>TP</_item>
+                              <_item>TL</_item>
                             </shortText>
                             <longText>
-                              <_item>Östtimor [TP]</_item>
+                              <_item>Östtimor [TL]</_item>
                             </longText>
                           </_object>
                           <_content/>

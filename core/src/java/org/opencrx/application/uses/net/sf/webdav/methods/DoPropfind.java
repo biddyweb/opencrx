@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoPropfind.java,v 1.20 2010/12/21 13:58:17 wfro Exp $
  * Description: DoPropfind
- * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/21 13:58:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -327,8 +324,8 @@ public class DoPropfind extends WebDavMethod {
     	HttpServletRequest req = requestContext.getHttpServletRequest();
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
         boolean isCollection = res.isCollection();
-        String creationdate = CREATION_DATE_FORMAT.format(res.getCreationDate());
-        String lastModified = LAST_MODIFIED_DATE_FORMAT.format(res.getLastModified());        
+        String creationdate = CREATION_DATE_FORMAT.get().format(res.getCreationDate());
+        String lastModified = LAST_MODIFIED_DATE_FORMAT.get().format(res.getLastModified());        
         Long resourceLength = null;
         // ResourceInfo resourceInfo = new ResourceInfo(path, resources);
         writer.writeElement("DAV::response", XMLWriter.OPENING);
@@ -412,19 +409,19 @@ public class DoPropfind extends WebDavMethod {
 	            Iterator<String> properties = propertiesVector.iterator();
 	            while (properties.hasNext()) {
 	                String property = properties.next();
-	                if (property.equals("DAV::creationdate")) {
+	                if(property.indexOf("creationdate") > 0) {
 	                    writer.writeProperty("DAV::creationdate", creationdate);
-	                } else if (property.equals("DAV::displayname")) {
+	                } else if(property.indexOf("displayname") > 0) {
 	                    writer.writeElement("DAV::displayname", XMLWriter.OPENING);
 	                    writer.writeData(displayName);
 	                    writer.writeElement("DAV::displayname", XMLWriter.CLOSING);
-	                } else if (property.equals("DAV::getcontentlanguage")) {
+	                } else if(property.indexOf("getcontentlanguage") > 0) {
 	                    if (isCollection) {
 	                        propertiesNotFound.add(property);
 	                    } else {
 	                        writer.writeElement("DAV::getcontentlanguage", XMLWriter.NO_CONTENT);
 	                    }
-	                } else if (property.equals("DAV::getcontentlength")) {
+	                } else if(property.indexOf("getcontentlength") > 0) {
 	                    if (isCollection) {
 	                        propertiesNotFound.add(property);
 	                    } else {
@@ -437,9 +434,9 @@ public class DoPropfind extends WebDavMethod {
 	                    	}
 	                        writer.writeProperty("DAV::getcontentlength", Long.toString(resourceLength));
 	                    }
-	                } else if (property.equals("DAV::getcontenttype")) {
+	                } else if(property.indexOf("getcontenttype") > 0) {
                         writer.writeProperty("DAV::getcontenttype", _store.getMimeType(res));
-	                } else if (property.equals("DAV::getetag")) {
+	                } else if(property.indexOf("getetag") > 0) {
 	                    if (isCollection) {
 	                        propertiesNotFound.add(property);
 	                    } else {
@@ -451,7 +448,7 @@ public class DoPropfind extends WebDavMethod {
 	                    } else {
 	                        writer.writeProperty("DAV::getlastmodified", lastModified);
 	                    }
-	                } else if (property.equals("DAV::resourcetype")) {
+	                } else if(property.indexOf("resourcetype") > 0) {
 	                    if (isCollection) {
 	                        writer.writeElement("DAV::resourcetype", XMLWriter.OPENING);
 	                        writer.writeElement("DAV::collection", XMLWriter.NO_CONTENT);
@@ -460,11 +457,11 @@ public class DoPropfind extends WebDavMethod {
 	                    } else {
 	                        writer.writeElement("DAV::resourcetype", XMLWriter.NO_CONTENT);
 	                    }
-	                } else if (property.equals("DAV::source")) {
+	                } else if (property.indexOf("source") > 0) {
 	                    writer.writeProperty("DAV::source", "");
-	                } else if (property.equals("DAV::supportedlock")) {
+	                } else if(property.indexOf("supportedlock") > 0) {
 	                    writeSupportedLockElements(requestContext, writer, path);
-	                } else if (property.equals("DAV::lockdiscovery")) {
+	                } else if(property.indexOf("lockdiscovery") > 0) {
 	                    writeLockDiscoveryElements(requestContext, writer, path, depth);
 	                } else if(!handleExtension(requestContext, writer, req.getContextPath(), res, property)) {
 	                    propertiesNotFound.add(property);    		                		

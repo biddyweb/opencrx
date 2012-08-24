@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Indexed_1.java,v 1.55 2012/01/06 12:15:52 wfro Exp $
  * Description: openCRX indexing plugin
- * Revision:    $Revision: 1.55 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/06 12:15:52 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -105,6 +102,7 @@ import org.openmdx.base.query.SortOrder;
 import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
+import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
 
@@ -183,7 +181,7 @@ public class Indexed_1 extends Database_1 {
     	try {
 	    	MappedRecord result = Object_2Facade.newInstance(
 		        request.path().getDescendant(
-		          new String[]{ "reply", super.uidAsString()}
+		          new String[]{ "reply", UUIDs.newUUID().toString()}
 		        ),
 		        structName
 	    	).getDelegate();
@@ -236,7 +234,7 @@ public class Indexed_1 extends Database_1 {
                                 contentName.endsWith(".rtf")
                             ) {
                                  try {
-                                     text = new RTFToText().parse(
+                                     text = RTFToText.toTextAsReader(
                                          (InputStream)value
                                      );
                                  }
@@ -424,7 +422,7 @@ public class Indexed_1 extends Database_1 {
 		    	Path indexedPath = Object_2Facade.getPath(indexed);
 		    	Object_2Facade indexedFacade = Object_2Facade.newInstance(indexed);
 		    	MappedRecord indexEntry = Object_2Facade.newInstance(
-		            Object_2Facade.getPath(indexed).getPrefix(5).getDescendant(new String[]{"indexEntry", super.uidAsString()}),
+		            Object_2Facade.getPath(indexed).getPrefix(5).getDescendant(new String[]{"indexEntry", UUIDs.newUUID().toString()}),
 		            "org:opencrx:kernel:base:IndexEntry"
 		        ).getDelegate();
 		    	Object_2Facade indexEntryFacade = Object_2Facade.newInstance(indexEntry);
@@ -746,7 +744,7 @@ public class Indexed_1 extends Database_1 {
 		                            	concreteType = concreteType.getChild(type.get(i));
 		                            }
 		                        }
-		                        String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + this.uidAsString() + ":";
+		                        String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + UUIDs.newUUID().toString() + ":";
 		                        DataproviderRequest findRequest = new DataproviderRequest(
 		                            Query_2Facade.newInstance(indexedIdentity.getChild("extent")).getDelegate(),
 		                            DataproviderOperations.ITERATION_START,

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractPropertyDataBinding.java,v 1.11 2012/01/13 17:16:05 wfro Exp $
  * Description: AbstractPropertyDataBinding
- * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,9 +66,9 @@ import org.opencrx.kernel.product1.jmi1.ProductConfigurationSet;
 import org.opencrx.kernel.product1.jmi1.ProductConfigurationType;
 import org.opencrx.kernel.product1.jmi1.ProductConfigurationTypeSet;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.portal.servlet.DataBinding_1_0;
+import org.openmdx.portal.servlet.DataBinding;
 
-public abstract class AbstractPropertyDataBinding implements DataBinding_1_0 {
+public abstract class AbstractPropertyDataBinding extends DataBinding {
 
     //-----------------------------------------------------------------------
     public enum PropertySetHolderType {

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: GridExportAsXlsAction.java,v 1.3 2011/07/15 08:48:05 wfro Exp $
  * Description: GridExportAsXlsAction
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/15 08:48:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,13 +63,15 @@ public class GridExportAsXlsAction extends GridExportObjectsAction {
 	@Override
     protected GridExporter getGridExporter(
     	Grid grid, 
-    	List<Path> selectedObjectIdentities
+    	List<Path> selectedObjectIdentities,
+    	int maxItems
     ) {
 		return new DefaultGridExporter(
 			grid,
 			selectedObjectIdentities,
 			Exporter.MIME_TYPE_EXCEL,
-			grid.getGridControl().getObjectContainer().getReferenceName()
+			grid.getGridControl().getObjectContainer().getReferenceName(),
+			maxItems
 		);
     }
 

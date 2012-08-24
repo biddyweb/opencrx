@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="filterQuantor" _operation="set">
 										<_object>
 											<name>
+												<_item>filterQuantor</_item>
 												<_item>org:opencrx:kernel:base:AttributeFilterProperty:filterQuantor</_item>
 											</name>
 										</_object>

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="partystatusMeeting" _operation="set">
 										<_object>
 											<name>
+												<_item>partystatusMeeting</_item>
 												<_item>org:opencrx:kernel:activity1:MeetingParty:partyStatus</_item>
 											</name>
 										</_object>

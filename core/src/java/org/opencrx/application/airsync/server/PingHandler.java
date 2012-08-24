@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: PingHandler.java,v 1.19 2011/11/11 14:01:12 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/11 14:01:12 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: NoteTXmlFormat.java,v 1.1 2010/11/16 14:01:31 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/16 14:01:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,6 +55,7 @@ package org.opencrx.application.airsync.datatypes;
 import java.util.Date;
 
 import org.opencrx.application.airsync.utils.DOMUtils;
+import org.opencrx.kernel.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.format.DateTimeFormat;
 
@@ -75,7 +73,10 @@ public class NoteTXmlFormat extends AbstractXmlFormat {
 		DateTimeFormat eutcf = DateTimeFormat.EXTENDED_UTC_FORMAT;
 		NoteT noteT = (NoteT) data;
 		createElement(eData, "Note:", "Subject", noteT.getSubject());
-		createElement(eData, "Note:", "Body", noteT.getBody());
+		String body = noteT.getBody();
+		if(body != null) {
+			createElement(eData, "Note:", "Body", Utils.normalizeNewLines(body).replace("\n", "\r\n"));
+		}
 		createElement(eData, "Note:", "LastModifiedDate", eutcf.format(noteT.getLastModifiedDate() != null ? noteT.getLastModifiedDate() : new Date()));
 		if(noteT.getCategories() != null && !noteT.getCategories().isEmpty()) {
 			Element eCategories = DOMUtils.createElement(eData, "Note:", "Categories");

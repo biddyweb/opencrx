@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PhoneNumberImpl.java,v 1.2 2011/06/15 15:28:53 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/15 15:28:53 $
  * ====================================================================
  *
  * This software is published under the BSD license

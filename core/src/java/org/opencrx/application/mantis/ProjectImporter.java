@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ProjectImporter.java,v 1.22 2011/06/13 17:46:25 wfro Exp $
  * Description: openCRX Mantis Importer
- * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/13 17:46:25 $
  * ====================================================================
  *
  * This software is published under the BSD license

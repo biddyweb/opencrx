@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.32 2012/01/20 12:32:58 cmu Exp $
+ * Name:        $Id: ImportAccountsFromXLS.jsp,v 1.36 2012/07/08 13:30:30 wfro Exp $
  * Description: import accounts from Excel Sheet (xls or xslx format)
- * Revision:    $Revision: 1.32 $
+ * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 12:32:58 $
+ * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,7 +72,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -107,7 +106,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                 hasQueryProperty = true;
                 contactFilter.thereExistsExtString0().equalTo(extString0); // exact match required
             } else {
-                contactFilter.forAllDisabled().isFalse();
+                contactFilter.forAllDisabled().isFalse(); // ignore disabled contacts
                 if(firstName != null) {
                     hasQueryProperty = true;
                     //contactFilter.thereExistsFirstName().like("(?i).*" + firstName + ".*");
@@ -127,7 +126,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                     hasQueryProperty = true;
 							    	org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
 							    	query.thereExistsEmailAddress().equalTo(emailAddress);
-										contactFilter.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));						    	
+							    	query.forAllDisabled().isFalse(); // ignore disabled e-mail addresses
+									contactFilter.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));						    	
                 }
             }
             if (hasQueryProperty) {
@@ -181,6 +181,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                     hasQueryProperty = true;
 							    	org.opencrx.kernel.account1.cci2.EMailAddressQuery query = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
 							    	query.thereExistsEmailAddress().equalTo(emailAddress);
+							    	query.forAllDisabled().isFalse(); // ignore disabled e-mail addresses
 							    	abstractGroupFilter.thereExistsAddress().elementOf(org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(query));						    	
                 }
             }
@@ -399,89 +400,6 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 %>
 
 <%
-    final String ATTR_EXTSTRING0 = "extString0"; // index attribute
-    final String ATTR_FIRSTNAME = "FirstName";   // index attribute
-    final String ATTR_LASTNAME = "LastName";     // index attribute
-    final String ATTR_ALIASNAME = "AliasName";   // index attribute
-    final String ATTR_COMPANY = "Company";       // index attribute
-    final String ATTR_DTYPE = "Dtype";           // index attribute
-    final String ATTR_XRI = "xri";               // index attribute
-
-    final String ATTR_MEMBEROF = "MemberOf";
-    final String ATTR_MEMBERROLE = "MemberRole";
-    final String ATTR_NOTETITLE = "NoteTitle";
-    final String ATTR_NOTETEXT = "NoteText";
-
-    final String ATTR_TITLE = "title";
-    final String ATTR_ACADEMICTITLE = "academicTitle";
-    final String ATTR_MIDDLENAME = "middleName";
-    final String ATTR_SUFFIX = "suffix";
-    final String ATTR_NICKNAME = "nickName";
-    final String ATTR_COMPANYROLE = "companyRole";
-    final String ATTR_JOBTITLE = "jobTitle";
-    final String ATTR_DEPARTMENT = "DEPARTMENT";
-    final String ATTR_BIRTHDAY = "BIRTHDAY";
-    final String ATTR_HOMEPHONE = "HOMEPHONE";
-    final String ATTR_HOMEPHONE2 = "HOMEPHONE2";
-    final String ATTR_HOMEFAX = "HOMEFAX";
-    final String ATTR_HOMEADDRESSLINE = "HOMEADDRESSLINE";
-    final String ATTR_HOMESTREET = "HOMESTREET";
-    final String ATTR_HOMECITY = "HOMECITY";
-    final String ATTR_HOMEPOSTALCODE = "HOMEPOSTALCODE";
-    final String ATTR_HOMESTATE = "HOMESTATE";
-    final String ATTR_HOMECOUNTRY = "HOMECOUNTRY";
-    final String ATTR_HOMECOUNTRYREGION = "HOMECOUNTRYREGION";
-    final String ATTR_NOTES = "NOTES";
-
-    final String ATTR_BUSINESSPHONE = "BUSINESSPHONE";
-    final String ATTR_BUSINESSPHONE2 = "BUSINESSPHONE2";
-    final String ATTR_BUSINESSFAX = "BUSINESSFAX";
-    final String ATTR_MOBILEPHONE = "MOBILEPHONE";
-    final String ATTR_EMAILADDRESS = "EMAILADDRESS";   // index attribute
-    final String ATTR_EMAIL2ADDRESS = "EMAIL2ADDRESS";
-    final String ATTR_EMAIL3ADDRESS = "EMAIL3ADDRESS";
-    final String ATTR_WEBPAGE = "WEBPAGE";
-    final String ATTR_BUSINESSADDRESSLINE = "BUSINESSADDRESSLINE";
-    final String ATTR_BUSINESSSTREET = "BUSINESSSTREET";
-    final String ATTR_BUSINESSCITY = "BUSINESSCITY";
-    final String ATTR_BUSINESSPOSTALCODE = "BUSINESSPOSTALCODE";
-    final String ATTR_BUSINESSSTATE = "BUSINESSSTATE";
-    final String ATTR_BUSINESSCOUNTRY = "BUSINESSCOUNTRY";
-    final String ATTR_BUSINESSCOUNTRYREGION = "BUSINESSCOUNTRYREGION";
-    final String ATTR_ASSISTANTSNAME = "ASSISTANTSNAME";
-    final String ATTR_ASSISTANTSNAMEROLE = "ASSISTANTSNAMEROLE";
-    final String ATTR_MANAGERSNAME = "MANAGERSNAME";
-    final String ATTR_MANAGERSROLE = "MANAGERSROLE";
-    final String ATTR_CATEGORIES = "CATEGORIES";
-    final String ATTR_BUSINESSTYPE = "BUSINESSTYPE";
-
-/*  not yet implemented
-    final String ATTR_ALTADDR_PHONE = "ALTADDR_PHONE";
-    final String ATTR_ALTADDR_PHONEUSAGE = "ALTADDR_PHONE_USAGE";
-    final String ATTR_ALTADDR_EMAILADDRESS = "ALTADDR_EMAILADDRESS";
-    final String ATTR_ALTADDR_EMAILADDRESSUSAGE = "ALTADDR_EMAILADDRESS_USAGE";
-    final String ATTR_ALTADDR_ADDRESSLINE = "ALTADDR_ADDRESSLINE";
-    final String ATTR_ALTADDR_STREET = "ALTADDR_STREET";
-    final String ATTR_ALTADDR_CITY = "ALTADDR_CITY";
-    final String ATTR_ALTADDR_POSTALCODE = "ALTADDR_POSTALCODE";
-    final String ATTR_ALTADDR_STATE = "ALTADDR_STATE";
-    final String ATTR_ALTADDR_COUNTRY = "ALTADDR_COUNTRY";
-    final String ATTR_ALTADDR_COUNTRYREGION = "ALTADDR_COUNTRYREGION";
-    final String ATTR_ALTADDR_USAGE = "ALTADDR_USAGE";
-*/
-
-    final String DTYPE_CONTACT = "Contact";
-    final String DTYPE_GROUP = "Group";
-    final String DTYPE_LEGALENTITY = "LegalEntity";
-    final String DTYPE_UNSPECIFIEDACCOUNT = "UnspecifiedAccount";
-    final String FEATURE_POSTALCOUNTRY_CODE = "org:opencrx:kernel:address1:PostalAddressable:postalCountry";
-    final String FEATURE_SALUTATION_CODE = "org:opencrx:kernel:account1:Contact:salutationCode";
-    final String FEATURE_ACADEMICTITLE = "org:opencrx:kernel:account1:Contact:userCode1";
-    final String FEATURE_MEMBERROLE = "org:opencrx:kernel:account1:Member:memberRole";
-
-    final String EXTSTRING0PREFIX = "@#";
-    final String EOL_HTML = "<br>";
-
     request.setCharacterEncoding("UTF-8");
     ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
     Map parameterMap = request.getParameterMap();
@@ -558,6 +476,13 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
     String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
     String[] objectXris = (String[])parameterMap.get("xri");
     String objectXri = (objectXris == null) || (objectXris.length == 0) ? null : objectXris[0];
+    String[] locales = (String[])parameterMap.get("locale");
+    String localeStr = (locales == null) || (locales.length == 0) ? "0" : locales[0];
+    short locale = 0;
+    try {
+    	locale = Short.parseShort(localeStr);
+    } catch (Exception e) {};
+                                                                 	                                                                                         	                     
     ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
     if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
         response.sendRedirect(
@@ -636,7 +561,147 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
         <div id="content" style="padding:10px 0.5em 0px 0.5em;">
 
 <%
-    NumberFormat formatter = new DecimalFormat("0000");
+	String ATTR_EXTSTRING0 = "extString0"; // index attribute
+	String ATTR_FIRSTNAME = "FirstName";   // index attribute
+	String ATTR_LASTNAME = "LastName";     // index attribute
+	String ATTR_ALIASNAME = "AliasName";   // index attribute
+	String ATTR_COMPANY = "Company";       // index attribute
+	String ATTR_DTYPE = "Dtype";           // index attribute
+	String ATTR_XRI = "xri";               // index attribute
+	
+	String ATTR_MEMBEROF = "MemberOf";
+	String ATTR_MEMBERROLE = "MemberRole";
+	String ATTR_NOTETITLE = "NoteTitle";
+	String ATTR_NOTETEXT = "NoteText";
+	
+	String ATTR_TITLE = "title";
+	String ATTR_ACADEMICTITLE = "academicTitle";
+	String ATTR_MIDDLENAME = "middleName";
+	String ATTR_SUFFIX = "suffix";
+	String ATTR_NICKNAME = "nickName";
+	String ATTR_COMPANYROLE = "companyRole";
+	String ATTR_JOBTITLE = "jobTitle";
+	String ATTR_DEPARTMENT = "DEPARTMENT";
+	String ATTR_BIRTHDAY = "BIRTHDAY";
+	String ATTR_HOMEPHONE = "HOMEPHONE";
+	String ATTR_HOMEPHONE2 = "HOMEPHONE2";
+	String ATTR_HOMEFAX = "HOMEFAX";
+	String ATTR_HOMEADDRESSLINE = "HOMEADDRESSLINE";
+	String ATTR_HOMESTREET = "HOMESTREET";
+	String ATTR_HOMECITY = "HOMECITY";
+	String ATTR_HOMEPOSTALCODE = "HOMEPOSTALCODE";
+	String ATTR_HOMESTATE = "HOMESTATE";
+	String ATTR_HOMECOUNTRY = "HOMECOUNTRY";
+	String ATTR_HOMECOUNTRYREGION = "HOMECOUNTRYREGION";
+	String ATTR_NOTES = "NOTES";
+	
+	String ATTR_BUSINESSPHONE = "BUSINESSPHONE";
+	String ATTR_BUSINESSPHONE2 = "BUSINESSPHONE2";
+	String ATTR_BUSINESSFAX = "BUSINESSFAX";
+	String ATTR_MOBILEPHONE = "MOBILEPHONE";
+	String ATTR_EMAILADDRESS = "EMAILADDRESS";   // index attribute
+	String ATTR_EMAIL2ADDRESS = "EMAIL2ADDRESS";
+	String ATTR_EMAIL3ADDRESS = "EMAIL3ADDRESS";
+	String ATTR_WEBPAGE = "WEBPAGE";
+	String ATTR_BUSINESSADDRESSLINE = "BUSINESSADDRESSLINE";
+	String ATTR_BUSINESSSTREET = "BUSINESSSTREET";
+	String ATTR_BUSINESSCITY = "BUSINESSCITY";
+	String ATTR_BUSINESSPOSTALCODE = "BUSINESSPOSTALCODE";
+	String ATTR_BUSINESSSTATE = "BUSINESSSTATE";
+	String ATTR_BUSINESSCOUNTRY = "BUSINESSCOUNTRY";
+	String ATTR_BUSINESSCOUNTRYREGION = "BUSINESSCOUNTRYREGION";
+	String ATTR_ASSISTANTSNAME = "ASSISTANTSNAME";
+	String ATTR_ASSISTANTSNAMEROLE = "ASSISTANTSNAMEROLE";
+	String ATTR_MANAGERSNAME = "MANAGERSNAME";
+	String ATTR_MANAGERSROLE = "MANAGERSROLE";
+	String ATTR_CATEGORIES = "CATEGORIES";
+	String ATTR_BUSINESSTYPE = "BUSINESSTYPE";
+	
+	/*  not yet implemented
+	String ATTR_ALTADDR_PHONE = "ALTADDR_PHONE";
+	String ATTR_ALTADDR_PHONEUSAGE = "ALTADDR_PHONE_USAGE";
+	String ATTR_ALTADDR_EMAILADDRESS = "ALTADDR_EMAILADDRESS";
+	String ATTR_ALTADDR_EMAILADDRESSUSAGE = "ALTADDR_EMAILADDRESS_USAGE";
+	String ATTR_ALTADDR_ADDRESSLINE = "ALTADDR_ADDRESSLINE";
+	String ATTR_ALTADDR_STREET = "ALTADDR_STREET";
+	String ATTR_ALTADDR_CITY = "ALTADDR_CITY";
+	String ATTR_ALTADDR_POSTALCODE = "ALTADDR_POSTALCODE";
+	String ATTR_ALTADDR_STATE = "ALTADDR_STATE";
+	String ATTR_ALTADDR_COUNTRY = "ALTADDR_COUNTRY";
+	String ATTR_ALTADDR_COUNTRYREGION = "ALTADDR_COUNTRYREGION";
+	String ATTR_ALTADDR_USAGE = "ALTADDR_USAGE";
+	*/
+	
+	if (locale == 1) {
+		ATTR_EXTSTRING0 = "extString0"; // index attribute
+		ATTR_FIRSTNAME = "Vorname";     // index attribute
+		ATTR_LASTNAME = "Nachname";     // index attribute
+		ATTR_ALIASNAME = "AliasName";   // index attribute
+		ATTR_COMPANY = "Firma";         // index attribute
+		
+		ATTR_MEMBEROF = "MemberOf";
+		ATTR_MEMBERROLE = "MemberRole";
+		ATTR_NOTETITLE = "NoteTitle";
+		ATTR_NOTETEXT = "NoteText";
+		
+		//ATTR_TITLE = "title";
+		//ATTR_ACADEMICTITLE = "academicTitle";
+		ATTR_MIDDLENAME = "WeitereVornamen";
+		ATTR_SUFFIX = "Suffix";
+		ATTR_NICKNAME = "Spitzname";
+		//ATTR_COMPANYROLE = "companyRole";
+		ATTR_JOBTITLE = "Position";
+		ATTR_DEPARTMENT = "Abteilung";
+		ATTR_BIRTHDAY = "Geburtstag";
+		ATTR_HOMEPHONE = "Telefonprivat";
+		ATTR_HOMEPHONE2 = "Telefonprivat2";
+		ATTR_HOMEFAX = "Faxprivat";
+		//ATTR_HOMEADDRESSLINE = "HOMEADDRESSLINE";
+		ATTR_HOMESTREET = "Straßeprivat";
+		ATTR_HOMECITY = "Ortprivat";
+		ATTR_HOMEPOSTALCODE = "Postleitzahlprivat";
+		ATTR_HOMESTATE = "BundeslandKantonprivat";
+		ATTR_HOMECOUNTRY = "Landprivat";
+		ATTR_HOMECOUNTRYREGION = "LandRegionprivat";
+		ATTR_NOTES = "Notizen";
+		
+		ATTR_BUSINESSPHONE = "Telefongeschäftlich";
+		ATTR_BUSINESSPHONE2 = "Telefongeschäftlich2";
+		ATTR_BUSINESSFAX = "Faxgeschäftlich";
+		ATTR_MOBILEPHONE = "Mobiltelefon";
+		ATTR_EMAILADDRESS = "EMailAdresse";   // index attribute
+		ATTR_EMAIL2ADDRESS = "EMail2Adresse";
+		ATTR_EMAIL3ADDRESS = "EMail3Adresse";
+		ATTR_WEBPAGE = "Webseite";
+		//ATTR_BUSINESSADDRESSLINE = "BUSINESSADDRESSLINE";
+		ATTR_BUSINESSSTREET = "Straßegeschäftlich";
+		ATTR_BUSINESSCITY = "Ortgeschäftlich";
+		ATTR_BUSINESSPOSTALCODE = "Postleitzahlgeschäftlich";
+		ATTR_BUSINESSSTATE = "BundeslandKantongeschäftlich";
+		ATTR_BUSINESSCOUNTRY = "Landgeschäftlich";
+		ATTR_BUSINESSCOUNTRYREGION = "LandRegiongeschäftlich";
+		ATTR_ASSISTANTSNAME = "NameAssistent";
+		//ATTR_ASSISTANTSNAMEROLE = "ASSISTANTSNAMEROLE";
+		ATTR_MANAGERSNAME = "NamedesrVorgesetzten";
+		//ATTR_MANAGERSROLE = "MANAGERSROLE";
+		ATTR_CATEGORIES = "Kategorien";
+		//ATTR_BUSINESSTYPE = "BUSINESSTYPE";
+	}
+	
+	final String DTYPE_CONTACT = "Contact";
+	final String DTYPE_GROUP = "Group";
+	final String DTYPE_LEGALENTITY = "LegalEntity";
+	final String DTYPE_UNSPECIFIEDACCOUNT = "UnspecifiedAccount";
+	final String FEATURE_POSTALCOUNTRY_CODE = "org:opencrx:kernel:address1:PostalAddressable:postalCountry";
+	final String FEATURE_SALUTATION_CODE = "org:opencrx:kernel:account1:Contact:salutationCode";
+	final String FEATURE_ACADEMICTITLE = "org:opencrx:kernel:account1:Contact:userCode1";
+	final String FEATURE_MEMBERROLE = "org:opencrx:kernel:account1:Member:memberRole";
+	
+	final String EXTSTRING0PREFIX = "@#";
+	final String EOL_HTML = "<br>";
+
+
+	NumberFormat formatter = new DecimalFormat("0000");
     final String UPLOAD_FILE_FIELD_NAME = "uploadFile";
     try {
       boolean actionOk = parameterMap.get("OK.Button") != null;
@@ -654,13 +719,13 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 
       RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
       boolean isImportMembershipMode = obj instanceof org.opencrx.kernel.account1.jmi1.Group; 
-		  org.opencrx.kernel.account1.jmi1.Group parentGroup = null;
-		  org.opencrx.kernel.account1.jmi1.Member groupMember = null;
-		  int parentGroupMemberSize = 0;
-		  if (isImportMembershipMode) {
-			  	parentGroup = (org.opencrx.kernel.account1.jmi1.Group)obj;
-			  	parentGroupMemberSize = parentGroup.getMember().size();
-		  }
+	  org.opencrx.kernel.account1.jmi1.Group parentGroup = null;
+	  org.opencrx.kernel.account1.jmi1.Member groupMember = null;
+	  int parentGroupMemberSize = 0;
+	  if (isImportMembershipMode) {
+		  	parentGroup = (org.opencrx.kernel.account1.jmi1.Group)obj;
+		  	parentGroupMemberSize = parentGroup.getMember().size();
+	  }
 
       Path objectPath = new Path(objectXri);
       String providerName = objectPath.get(2);
@@ -1070,7 +1135,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 /*--------------------------------------------------------------------------------------------------------------------------------------------\
 |  IMPORT MEMBERSHIP MODE
 \---------------------------------------------------------------------------------------------------------------------------------------------*/
-		                                          List<org.opencrx.kernel.account1.jmi1.Account> matchingAccounts = null;
+		                                        groupMember = null;
+												List<org.opencrx.kernel.account1.jmi1.Account> matchingAccounts = null;
                                         	  	// try to locate contacts with firstName and lastName only
                                         	  	List<org.opencrx.kernel.account1.jmi1.Contact> matchingContacts = findContact(
 	                                                  firstName,
@@ -1114,41 +1180,41 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                          if (matchingAccounts != null) {
                                         	  			for (Iterator a = matchingAccounts.iterator(); a.hasNext();) {
                                         	  					try {
-                                        	  							pm.currentTransaction().begin();
-		                                    	  							org.opencrx.kernel.account1.jmi1.Account acct = (org.opencrx.kernel.account1.jmi1.Account)a.next();
-																													// create or update membership
-																													groupMember = createOrUpdateMember(
-																															parentGroup,
-																															acct,
-																															null, /* no particular membership role */
-																															FEATURE_MEMBERROLE,
-																															codes,
-																															accountPkg,
-																															accountSegment,
-																															pm
-																														);
-				                                                  if (groupMember != null) {
-				                                                      isOk = true;
-				                                                      if (idxEMailAddress >= 0) {
-						                                                      // add clickable links to emailaddress
-						                                                      jsBuffer += "$('r" + nRow + ATTR_EMAILADDRESS.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-						                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-						                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
-				                                                      }
-				                                                      if (idxLastName >= 0) {
-						                                                      // add clickable links to emailaddress
-						                                                      jsBuffer += "$('r" + nRow + ATTR_LASTNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-						                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-						                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
-				                                                      }
-				                                                      if (idxCompany >= 0) {
-						                                                      // add clickable links to emailaddress
-						                                                      jsBuffer += "$('r" + nRow + ATTR_COMPANY.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
-						                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
-						                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
-				                                                      }
-				                                                  }
-																													pm.currentTransaction().commit();
+                                       	  							pm.currentTransaction().begin();
+	                                    	  							org.opencrx.kernel.account1.jmi1.Account acct = (org.opencrx.kernel.account1.jmi1.Account)a.next();
+																	// create or update membership
+																	groupMember = createOrUpdateMember(
+																			parentGroup,
+																			acct,
+																			null, /* no particular membership role */
+																			FEATURE_MEMBERROLE,
+																			codes,
+																			accountPkg,
+																			accountSegment,
+																			pm
+																		);
+					                                                  if (groupMember != null) {
+					                                                      isOk = true;
+					                                                      if (idxEMailAddress >= 0) {
+							                                                      // add clickable links to emailaddress
+							                                                      jsBuffer += "$('r" + nRow + ATTR_EMAILADDRESS.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+							                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+							                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
+					                                                      }
+					                                                      if (idxLastName >= 0) {
+							                                                      // add clickable links to emailaddress
+							                                                      jsBuffer += "$('r" + nRow + ATTR_LASTNAME.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+							                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+							                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
+					                                                      }
+					                                                      if (idxCompany >= 0) {
+							                                                      // add clickable links to emailaddress
+							                                                      jsBuffer += "$('r" + nRow + ATTR_COMPANY.toUpperCase() + "').innerHTML += '<br>&lt;Parent: <a href=\""
+							                                                        + getObjectHref(parentGroup) + "\" target=\"_blank\"><b>" + (new ObjectReference(parentGroup, app)).getTitle() + "</b></a>&gt;<br>&lt;Member: <a href=\""
+							                                                        + getObjectHref(acct) + "\" target=\"_blank\"><b>" + (new ObjectReference(acct, app)).getTitle() + "</b></a>&gt;';";
+					                                                      }
+					                                                  }
+																	pm.currentTransaction().commit();
                                         	  					} catch (Exception e) {
                                                           new ServiceException(e).log();
                                                           contact = null;
@@ -1410,7 +1476,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                          \---------------------------------------------------------------*/
 		
 		                                                          try {
-		                                                              DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
+		                                                              DataBinding postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
 		
 		                                                              if (key.equalsIgnoreCase(ATTR_TITLE)) {
 		                                                                  // salutationCode
@@ -1519,7 +1585,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                                  }
 		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPHONE)) {
 		                                                                  // Phone Home
-		                                                                  DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
+		                                                                  DataBinding phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
 		                                                                  phoneHomeDataBinding.setValue(
 		                                                                      contact,
 		                                                                      "org:opencrx:kernel:account1:Contact:address!phoneNumberFull",
@@ -1528,7 +1594,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                                  isOk = true;
 		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEPHONE2)) {
 		                                                                  // Phone other
-		                                                                  DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
+		                                                                  DataBinding phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
 		                                                                  phoneOtherDataBinding.setValue(
 		                                                                      contact,
 		                                                                      "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
@@ -1537,7 +1603,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                                  isOk = true;
 		                                                              } else if (key.equalsIgnoreCase(ATTR_HOMEFAX)) {
 		                                                                  // Fax Home
-		                                                                  DataBinding_1_0 faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
+		                                                                  DataBinding faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
 		                                                                  faxHomeDataBinding.setValue(
 		                                                                      contact,
 		                                                                      "org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull",
@@ -1882,7 +1948,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                      isOk = false;
 		                                                      isNok = false;
 		                                                      try {
-		                                                          DataBinding_1_0 postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
+		                                                          DataBinding postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
 		
 		                                                          if (key.equalsIgnoreCase(ATTR_XRI)) {
 		                                                              // set isOk to true
@@ -1907,7 +1973,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE)) {
 		                                                              // Phone Business
-		                                                              DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
+		                                                              DataBinding phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
 		                                                              phoneBusinessDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull",
@@ -1916,7 +1982,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSPHONE2)) {
 		                                                              // Phone other
-		                                                              DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
+		                                                              DataBinding phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
 		                                                              phoneOtherDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
@@ -1925,7 +1991,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_BUSINESSFAX)) {
 		                                                              // Fax Business
-		                                                              DataBinding_1_0 faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
+		                                                              DataBinding faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
 		                                                              faxBusinessDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull",
@@ -1934,7 +2000,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_MOBILEPHONE)) {
 		                                                              // Phone Mobile
-		                                                              DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
+		                                                              DataBinding phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
 		                                                              phoneMobileDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull",
@@ -1943,7 +2009,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_EMAILADDRESS)) {
 		                                                              // Mail Business
-		                                                              DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
+		                                                              DataBinding mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
 		                                                              mailBusinessDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Account:address*Business!emailAddress",
@@ -1952,7 +2018,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_EMAIL2ADDRESS)) {
 		                                                              // Mail Home
-		                                                              DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
+		                                                              DataBinding mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
 		                                                              mailHomeDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Contact:address!emailAddress",
@@ -1961,7 +2027,7 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
 		                                                              isOk = true;
 		                                                          } else if (key.equalsIgnoreCase(ATTR_EMAIL3ADDRESS)) {
 		                                                              // Mail Other
-		                                                              DataBinding_1_0 mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
+		                                                              DataBinding mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
 		                                                              mailOtherDataBinding.setValue(
 		                                                                  account,
 		                                                                  "org:opencrx:kernel:account1:Account:address*Other!emailAddress",
@@ -2286,22 +2352,26 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
                                               <td class="<%= isOk ? "match" : "err" %>" colspan="<%= maxCell+2 %>">
                                                   MEMBER <%= isOk ? "OK" : "FAILED" %>:
 <%
-																									if (groupMember != null) {
-		                                                  Action action = new Action(
-		                                                	  SelectObjectAction.EVENT_ID,
-		                                                      new Action.Parameter[]{
-		                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, groupMember.refMofId())
-		                                                      },
-		                                                      "",
-		                                                      true // enabled
-		                                                  );
-		                                                  String memberHref = "../../" + action.getEncodedHRef();
+													if (groupMember != null) {
+	                                                  Action action = new Action(
+	                                                	  SelectObjectAction.EVENT_ID,
+	                                                      new Action.Parameter[]{
+	                                                          new Action.Parameter(Action.PARAMETER_OBJECTXRI, groupMember.refMofId())
+	                                                      },
+	                                                      "",
+	                                                      true // enabled
+	                                                  );
+	                                                  String memberHref = "../../" + action.getEncodedHRef();
 %>
-																											<a href="<%= memberHref %>" target="_blank"><b><%=  (new ObjectReference(groupMember, app)).getTitle() %></b> [<%= groupMember.refMofId() %>]</a>
+													  <a href="<%= memberHref %>" target="_blank"><b><%=  (new ObjectReference(groupMember, app)).getTitle() %></b> [<%= groupMember.refMofId() %>]</a>
 <%
-																									}
+													} else {
 %>
-																									<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
+														<%= ATTR_FIRSTNAME + "=" + firstName + "/" + ATTR_LASTNAME + "=" + lastName + "/" + ATTR_ALIASNAME + "=" + aliasName + "/" + ATTR_EMAILADDRESS + "=" + emailAddress + "/" + ATTR_COMPANY + "=" + company %>														
+<%
+													}
+%>
+													<%= jsBuffer.length() > 0 ? "<script language='javascript' type='text/javascript'>" + jsBuffer + "</script>" : "" %>
                                               </td>
                                           </tr>
 <%
@@ -2475,6 +2545,16 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
               </table>
             </td>
           </tr>
+          <tr id="localeSelector">
+            <td class="label"><span class="nw">Language of field names:</span></td>
+            <td >
+				<select class="valueL" id="locale" name="locale" tabindex="400">
+					<option <%= locale == 0 ? "selected" : "" %> value="0">en (English [FirstName, LastName, ...]</option>
+					<option <%= locale == 1 ? "selected" : "" %> value="1">de (Deutsch) [Vorname, Nachname, ...]</option>
+				</select>
+            </td>
+            <td class="addon" >&nbsp;<br>&nbsp;</td>
+          </tr>
           <tr id="submitFilename">
             <td class="label"><span class="nw">File:</span></td>
             <td >
@@ -2484,8 +2564,8 @@ org.apache.poi.poifs.filesystem.POIFSFileSystem
           </tr>
           <tr id="submitButtons">
             <td class="label" colspan="3">
-                <INPUT type="Submit" name="OK.Button" tabindex="1000" value="Importieren" onclick="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';$('submitFilename').style.visibility='hidden';" />
-                  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="Abbrechen" />
+                <INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= texts.getOkTitle() %>" onclick="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';$('submitFilename').style.visibility='hidden';" />
+                  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
             </td>
             <td></td>
             <td class="addon" >&nbsp;<br>&nbsp;</td>

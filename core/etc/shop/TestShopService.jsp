@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestShopService.jsp,v 1.6 2009/12/23 13:02:00 wfro Exp $
+ * Name:        $Id: TestShopService.jsp,v 1.7 2012/05/23 16:34:07 wfro Exp $
  * Description: TestShopService
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/23 13:02:00 $
+ * Date:        $Date: 2012/05/23 16:34:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -659,7 +659,7 @@ org.openmdx.base.exception.*
 	</div>
 	<form method="post" action="<%= WIZARD_NAME %>">
 		<div class="buttons">
-			<input type="button" value="Exit" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + Action.PARAMETER_REQUEST_ID + "=" + requestId + "&" + Action.PARAMETER_OBJECTXRI + "=" + objectXri + "&command=Cancel" %>';" class="button" />
+			<input type="button" value="Exit" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + Action.PARAMETER_REQUEST_ID + "=" + requestId + "&" + Action.PARAMETER_OBJECTXRI + "=" + URLEncoder.encode(objectXri) + "&command=Cancel" %>';" class="button" />
 		</div>
 	</form>
 </body>

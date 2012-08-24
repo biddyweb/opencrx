@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EmailAddressFieldMapper.java,v 1.3 2010/01/30 18:36:31 wfro Exp $
  * Description: EmailAddressFieldMapper
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/30 18:36:31 $
  * ====================================================================
  *
  * This software is published under the BSD license

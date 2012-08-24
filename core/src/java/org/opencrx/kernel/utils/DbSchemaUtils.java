@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DbSchemaUtils.java,v 1.24 2012/01/20 16:15:06 wfro Exp $
  * Description: DbSchemaUtils
- * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 16:15:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,6 +66,9 @@ import java.util.TreeSet;
 import org.opencrx.kernel.tools.FastResultSet;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * DbSchemaUtils
+ */
 public class DbSchemaUtils {
 
 	public static String getJdbcDriverName(
@@ -93,6 +93,12 @@ public class DbSchemaUtils {
 		}
 	}
 
+	/**
+	 * Get connection to embedded database holding the reference schema.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	protected static Connection getSchemaConnection(
 	) throws ServiceException {
 		try {
@@ -107,6 +113,12 @@ public class DbSchemaUtils {
 		}
 	}
 	
+	/**
+	 * Get reference schema.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	protected static List<String> getSchema(
 	) throws ServiceException {
 		Connection connS = null;
@@ -136,6 +148,16 @@ public class DbSchemaUtils {
 		return schema;
 	}
 	
+	/**
+	 * Get definition for given db object from reference schema.
+	 * 
+	 * @param type
+	 * @param object
+	 * @param schema
+	 * @param targetDatabaseName
+	 * @param replaceObject
+	 * @return
+	 */
 	protected static String getObjectDefinition(
 		String type,
 		String object,
@@ -208,7 +230,10 @@ public class DbSchemaUtils {
 				// DB2
 				else if(targetDatabaseName.indexOf("DB2") >=0) {
 					if(replaceObject) {
-						command = command.replace("CREATE VIEW ", "CREATE OR REPLACE VIEW ");
+						// REPLACE not supported for UDB versions
+						if(targetDatabaseName.indexOf("UDB") < 0) {
+							command = command.replace("CREATE VIEW ", "CREATE OR REPLACE VIEW ");
+						}
 					}
 					command = command.replace(" BOOLEAN,", " SMALLINT,");
 					command = command.replace(" VARBINARY,", " BLOB,");
@@ -263,6 +288,12 @@ public class DbSchemaUtils {
 		return null;
 	}
 	
+	/**
+	 * Get all table names from reference schema.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> getTableNames(
 	) throws ServiceException {
 		Set<String> tableNames = new TreeSet<String>();
@@ -280,6 +311,12 @@ public class DbSchemaUtils {
 		return new ArrayList<String>(tableNames);
 	}
 	
+	/**
+	 * Get all view names from reference schema.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> getViewNames(
 	) throws ServiceException {
 		Set<String> viewNames = new TreeSet<String>();
@@ -297,6 +334,12 @@ public class DbSchemaUtils {
 		return new ArrayList<String>(viewNames);
 	}
 	
+	/**
+	 * Get all index names from reference schema.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> getIndexNames(
 	) throws ServiceException {
 		Set<String> indexNames = new TreeSet<String>();
@@ -314,6 +357,12 @@ public class DbSchemaUtils {
 		return new ArrayList<String>(indexNames);
 	}
 	
+	/**
+	 * Get all sequence names from reference schema.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> getSequenceNames(
 	) throws ServiceException {
 		Set<String> sequenceNames = new TreeSet<String>();
@@ -331,6 +380,14 @@ public class DbSchemaUtils {
 		return new ArrayList<String>(sequenceNames);
 	}
 	
+	/**
+	 * Compare tables of given database with reference schema.
+	 * 
+	 * @param connT
+	 * @param fix
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> validateTables(
 		Connection connT,
 		boolean fix
@@ -396,6 +453,13 @@ public class DbSchemaUtils {
 		return report;
 	}
 	
+	/**
+	 * Compare columns of all tables with reference schema.
+	 * @param connT
+	 * @param fix
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> validateTableColumns(
 		Connection connT,
 		boolean fix
@@ -520,6 +584,13 @@ public class DbSchemaUtils {
 		return report;
 	}
 
+	/**
+	 * Validate existence of views with reference schema.
+	 * @param connT
+	 * @param fix
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> validateViews(
 		Connection connT,
 		boolean fix
@@ -585,6 +656,14 @@ public class DbSchemaUtils {
 		return report;
 	}
 	
+	/**
+	 * Migrate data from an older schema version to latest version.
+	 * 
+	 * @param connT
+	 * @param fix
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> migrateData(
 		Connection connT,
 		boolean fix
@@ -625,6 +704,11 @@ public class DbSchemaUtils {
 			"UPDATE OOCKE1_ACTIVITYCREATOR SET ICAL_TYPE = 2 WHERE ICAL_TYPE = 0 AND EXISTS (SELECT 0 FROM OOCKE1_ACTIVITYTYPE T WHERE OOCKE1_ACTIVITYCREATOR.ACTIVITY_TYPE = T.OBJECT_ID AND ACTIVITY_CLASS = 8)",
 			"UPDATE OOCKE1_ACTIVITY SET ICAL_TYPE = 1 WHERE ICAL_TYPE = 0 AND DTYPE <> 'org:opencrx:kernel:activity1:Task'",
 			"UPDATE OOCKE1_ACTIVITY SET ICAL_TYPE = 2 WHERE ICAL_TYPE = 0 AND DTYPE = 'org:opencrx:kernel:activity1:Task'"		
+		};
+		final String[] MIGRATE_FROM_2_9_TO_2_10 = {
+			"UPDATE OOCKE1_ACCOUNT SET CLOSING_CODE = 0 WHERE CLOSING_CODE IS NULL",
+			"DELETE FROM OOCKE1_ALERT WHERE REFERENCE LIKE 'reminder/%'",
+			"DELETE FROM OOCKE1_ALERT_ WHERE NOT EXISTS (SELECT 0 FROM OOCKE1_ALERT a WHERE a.OBJECT_ID = OOCKE1_ALERT_.OBJECT_ID)",			
 		};
 		String targetDatabaseName = "";
 		try {
@@ -801,7 +885,7 @@ public class DbSchemaUtils {
 			try {
 				psT.close();
 			} catch(Exception e0) {}
-			// Column e_mail_address does not exist --> db version is > 2.7			
+			// Column e_mail_address does not exist --> db version is < 2.8			
 		}
 		// 2.8 -> 2.9
 		try {
@@ -833,7 +917,42 @@ public class DbSchemaUtils {
 				}
 			}
 		} catch(Exception e) {
-			// Column reference_filter does not exist --> db version is > 2.8			
+			// Column reference_filter does not exist --> db version is < 2.9			
+			try {
+				psT.close();
+			} catch(Exception e0) {}
+		}
+		// 2.9 -> 2.10
+		try {
+			psT = connT.prepareStatement("SELECT closing_code FROM OOCKE1_ACCOUNT WHERE 1=0");
+			psT.executeQuery();
+			ResultSet rsT = psT.executeQuery();
+			rsT.next();
+			rsT.close();			
+			psT.close();
+			for(String statement: MIGRATE_FROM_2_9_TO_2_10) {
+				if(targetDatabaseName.indexOf("DB2") >=0 || targetDatabaseName.indexOf("Oracle") >=0) {
+					statement = statement.replace("true", "1");
+					statement = statement.replace("false", "0");
+				}
+				if(fix) {
+					try {					
+						report.add("SQL (2.9 -> 2.10): " + statement);
+						psT = connT.prepareStatement(statement);
+						psT.executeUpdate();
+					} catch(Exception e) {
+						report.add("ERROR: Migration failed (message=" + e + ")");									
+					} finally {
+						try {
+							psT.close();
+						} catch(Exception e0) {}
+					}
+				} else {								
+					report.add("FIX (2.9 -> 2.10): " + statement);								
+				}
+			}
+		} catch(Exception e) {
+			// Column closing_code does not exist --> db version is < 2.10			
 			try {
 				psT.close();
 			} catch(Exception e0) {}
@@ -841,6 +960,14 @@ public class DbSchemaUtils {
 		return report;
 	}
 
+	/**
+	 * Validate existence of indexes with reference schema.
+	 * 
+	 * @param connT
+	 * @param fix
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> validateIndexes(
 		Connection connT,
 		boolean fix
@@ -895,6 +1022,14 @@ public class DbSchemaUtils {
 		return report;		
 	}
 
+	/**
+	 * Validate existence of sequences with reference schema.
+	 * 
+	 * @param connT
+	 * @param fix
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<String> validateSequences(
 		Connection connT,
 		boolean fix
@@ -978,6 +1113,9 @@ public class DbSchemaUtils {
 		return report;		
 	}
 
+	//-----------------------------------------------------------------------
+	// Members
+	//-----------------------------------------------------------------------
 	public static final String CREATE_TABLE_PREFIX = "CREATE MEMORY TABLE PUBLIC.";
 	public static final String CREATE_VIEW_PREFIX = "CREATE VIEW PUBLIC.";
 	public static final String CREATE_SEQUENCE_PREFIX = "CREATE SEQUENCE PUBLIC.";

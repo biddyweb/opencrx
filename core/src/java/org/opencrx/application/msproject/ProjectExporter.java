@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: ProjectExporter.java,v 1.21 2011/07/07 22:37:26 wfro Exp $
  * Description: Export activities and resources to MSProject 2003 xml format
- * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/07 22:37:26 $
  * ====================================================================
  *
  * This software is published under the BSD license

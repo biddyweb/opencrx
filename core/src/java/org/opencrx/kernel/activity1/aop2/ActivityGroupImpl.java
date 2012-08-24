@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityGroupImpl.java,v 1.15 2009/04/28 22:32:01 wfro Exp $
  * Description: ActivityGroupImpl
- * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/28 22:32:01 $
  * ====================================================================
  *
  * This software is published under the BSD license

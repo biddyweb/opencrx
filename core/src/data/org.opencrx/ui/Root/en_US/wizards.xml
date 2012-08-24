@@ -29,6 +29,21 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 
+                <!-- Wizard CreateLegalEntityWizard.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:createLegalEntity">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:createLegalEntity">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+
                 <!-- Wizard CreateActivityWizard.jsp -->
 								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createActivity">
 								    <_object>
@@ -37,6 +52,18 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityCreator:createActivity">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityTracker:createActivity">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:createActivity">
 								    <_object>
 								      <isQuery>true</isQuery>
 								    </_object>
@@ -295,6 +322,15 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 
+<!-- Security -->
+                <!-- Wizard ChangePasswordManaged.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:changePasswordManaged">
+								    <_object>
+								      <isQuery>true</isQuery>
+								    </_object>
+								    <_content/>
+								  </org.openmdx.ui1.OperationDefinition>
+
 <!-- View -->
 
 <!-- Tools -->
@@ -404,8 +440,8 @@
 								    <_content/>
 								  </org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SetReminderOnCrxObject.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:setReminder">
+                <!-- Wizard SetTimerOnCrxObject.jsp -->
+								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:setTimer">
 								    <_object>
 								      <isQuery>true</isQuery>
 								    </_object>
@@ -439,6 +475,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 
                 <!-- Wizard CreateContactWizard.jsp -->
+                  <!--
 								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact">
 										<_object>
 											<active>true</active>
@@ -452,6 +489,62 @@
 												<_item>100</_item>
 												<_item>0</_item>
 												<_item>1000</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition> -->
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Edit (enhanced)</_item>
+											</toolTip>
+											<label>
+												<_item>Edit (enhanced)</_item>
+											</label>
+											<order>
+												<_item>200</_item> <!-- edit menu -->
+												<_item>0</_item>
+												<_item>101</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+
+                <!-- Wizard CreateLegalEntityWizard.jsp -->
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createLegalEntity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>New Legal Entity</_item>
+											</toolTip>
+											<label>
+												<_item>New Legal Entity</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>105</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard CreateLegalEntityWizard.jsp -->
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:createLegalEntity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Edit (enhanced)</_item>
+											</toolTip>
+											<label>
+												<_item>Edit (enhanced)</_item>
+											</label>
+											<order>
+												<_item>200</_item>
+												<_item>0</_item>
+												<_item>101</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -475,7 +568,41 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:createActivity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>New Activity</_item>
+											</toolTip>
+											<label>
+												<_item>New Activity</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:createActivity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>New Activity</_item>
+											</toolTip>
+											<label>
+												<_item>New Activity</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1376,20 +1503,40 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SetReminderOnCrxObject.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setReminder">
+                <!-- Wizard SetTimerOnCrxObject.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setTimer">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Set Reminder</_item>
+												<_item>Set Timer</_item>
 											</toolTip>
 											<label>
-												<_item>Set Reminder</_item>
+												<_item>Set Timer</_item>
 											</label>
 											<order>
 												<_item>500</_item>
 												<_item>0</_item>
 												<_item>690</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+<!-- Security -->
+                <!-- Wizard ChangePasswordManaged.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePasswordManaged">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Change Password (Managed)</_item>
+											</toolTip>
+											<label>
+												<_item>Change Password (Managed)</_item>
+											</label>
+											<order>
+												<_item>600</_item>
+												<_item>0</_item>
+												<_item>101</_item>
 											</order>
 										</_object>
 										<_content/>

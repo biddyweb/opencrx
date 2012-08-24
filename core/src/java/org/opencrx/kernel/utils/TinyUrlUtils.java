@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TinyUrlUtils.java,v 1.2 2010/11/30 18:31:47 wfro Exp $
  * Description: TinyUrlUtils
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/30 18:31:47 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Admin.java,v 1.36 2012/01/20 01:36:07 wfro Exp $
  * Description: Admin
- * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 01:36:07 $
  * ====================================================================
  *
  * This software is published under the BSD license

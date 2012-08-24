@@ -556,7 +556,7 @@
                         <_item>Födelsedag</_item>
                       </label>
                       <toolTip>
-                        <_item>Personens födelsedag</_item>
+                        <_item>Personens födelsedag (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Bröllopsdag</_item>
                       </label>
                       <toolTip>
-                        <_item>Personens bröllopsdag</_item>
+                        <_item>Personens bröllopsdag (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Exporter.java,v 1.60 2011/09/23 08:05:22 wfro Exp $
  * Description: Exporter
- * Revision:    $Revision: 1.60 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/23 08:05:22 $
  * ====================================================================
  *
  * This software is published under the BSD license

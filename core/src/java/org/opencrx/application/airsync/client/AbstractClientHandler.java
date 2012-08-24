@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractClientHandler.java,v 1.12 2010/06/19 14:55:47 wfro Exp $
  * Description: AirSync Client AbstractClientHandler
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/19 14:55:47 $
  * ====================================================================
  *
  * This software is published under the BSD license

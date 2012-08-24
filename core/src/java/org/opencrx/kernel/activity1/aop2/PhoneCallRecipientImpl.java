@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PhoneCallRecipientImpl.java,v 1.1 2010/02/01 00:29:29 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/01 00:29:29 $
  * ====================================================================
  *
  * This software is published under the BSD license

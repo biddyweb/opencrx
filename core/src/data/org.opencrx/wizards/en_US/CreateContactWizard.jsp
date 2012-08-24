@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: CreateContactWizard.jsp,v 1.34 2012/01/20 09:13:18 cmu Exp $
+ * Name:        $Id: CreateContactWizard.jsp,v 1.49 2012/07/08 13:30:31 wfro Exp $
  * Description: CreateContact wizard
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 09:13:18 $
+ * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@
 java.util.*,
 java.io.*,
 java.text.*,
-org.opencrx.kernel.backend.Accounts,
+org.opencrx.kernel.backend.*,
 org.opencrx.kernel.portal.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
@@ -68,7 +68,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.databinding.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -92,9 +91,13 @@ org.openmdx.base.naming.*
 	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
-	String formName = "ContactForm";
-	String membershipFormName = "MembershipForm";
-	String wizardName = "CreateContactWizard";
+	final String formName = "ContactForm";
+	final String membershipFormName = "MembershipForm";
+	final String wizardName = "CreateContactWizard";
+    org.opencrx.kernel.portal.wizard.CreateContactWizardExtension wizardExtension = 
+    	(org.opencrx.kernel.portal.wizard.CreateContactWizardExtension)app.getPortalExtension().getExtension(
+    		org.opencrx.kernel.portal.wizard.CreateContactWizardExtension.class.getName()
+    	);
 
 	// Get Parameters
 	String command = request.getParameter("Command");
@@ -103,11 +106,10 @@ org.openmdx.base.naming.*
 	boolean actionCancel = "Cancel".equals(command);
 	boolean actionSearch = "Search".equals(command);
 	boolean actionCreate = "Create".equals(command);
-	String ACCOUNTMEMBERSHIP_XRI = request.getParameter("ACCOUNTMEMBERSHIP_XRI") == null ? "" : request.getParameter("ACCOUNTMEMBERSHIP_XRI");
-
+	String accountMembershipXri = request.getParameter("ACCOUNTMEMBERSHIP_XRI") == null ? "" : request.getParameter("ACCOUNTMEMBERSHIP_XRI");
 	boolean isAddMembershipMode = request.getParameter("isAddMembershipMode") != null;
 
-	if ("ACTION.deleteMember".equals(command)) {
+	if ("DeleteMember".equals(command)) {
 			//System.out.println("delete member: " + request.getParameter("Para0"));
 			try {
 					pm.currentTransaction().begin();
@@ -141,6 +143,9 @@ org.openmdx.base.naming.*
 	<meta name="order" content="org:opencrx:kernel:account1:Contact:createContact">
 -->
 <%
+	String errorMsg = "";
+	String errorTitle = "";
+	
 	org.opencrx.kernel.account1.jmi1.Account account = null;
 	org.opencrx.kernel.account1.jmi1.Segment accountSegment = null;
 	if(obj instanceof org.opencrx.kernel.account1.jmi1.Account) {
@@ -150,6 +155,9 @@ org.openmdx.base.naming.*
 	else if(obj instanceof org.opencrx.kernel.account1.jmi1.Segment) {
 	    accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)obj;
 	}
+	String providerName = obj.refGetPath().get(2);
+	String segmentName = obj.refGetPath().get(4);
+	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
 	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
 	org.openmdx.portal.servlet.control.FormControl form = new org.openmdx.portal.servlet.control.FormControl(
 		formDefinition.refGetPath().getBase(),
@@ -205,6 +213,7 @@ org.openmdx.base.naming.*
 		    formValues.put("org:opencrx:kernel:account1:Contact:address!postalAddressLine", new ArrayList(((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_HOME]).getPostalAddressLine()));
 		    formValues.put("org:opencrx:kernel:account1:Contact:address!postalStreet", new ArrayList(((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_HOME]).getPostalStreet()));
 		    formValues.put("org:opencrx:kernel:account1:Contact:address!postalCity", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_HOME]).getPostalCity());
+		    formValues.put("org:opencrx:kernel:account1:Contact:address!postalState", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_HOME]).getPostalState());
 		    formValues.put("org:opencrx:kernel:account1:Contact:address!postalCode", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_HOME]).getPostalCode());
 		    formValues.put("org:opencrx:kernel:account1:Contact:address!postalCountry", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_HOME]).getPostalCountry());
 	    }
@@ -212,10 +221,16 @@ org.openmdx.base.naming.*
 		    formValues.put("org:opencrx:kernel:account1:Account:address*Business!postalAddressLine", new ArrayList(((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_BUSINESS]).getPostalAddressLine()));
 		    formValues.put("org:opencrx:kernel:account1:Account:address*Business!postalStreet", new ArrayList(((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_BUSINESS]).getPostalStreet()));
 		    formValues.put("org:opencrx:kernel:account1:Account:address*Business!postalCity", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_BUSINESS]).getPostalCity());
+		    formValues.put("org:opencrx:kernel:account1:Account:address*Business!postalState", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_BUSINESS]).getPostalState());
 		    formValues.put("org:opencrx:kernel:account1:Account:address*Business!postalCode", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_BUSINESS]).getPostalCode());
 		    formValues.put("org:opencrx:kernel:account1:Account:address*Business!postalCountry", ((org.opencrx.kernel.account1.jmi1.PostalAddress)addresses[Accounts.POSTAL_BUSINESS]).getPostalCountry());
 	    }
 	}
+	// Allows rendering to determine the object type (e.g. required for code fields)
+	formValues.put(
+		org.openmdx.base.accessor.cci.SystemAttributes.OBJECT_CLASS, 
+		"org:opencrx:kernel:account1:Contact"
+	);
 	form.updateObject(
 		request.getParameterMap(),
 		formValues,
@@ -223,33 +238,32 @@ org.openmdx.base.naming.*
 		pm
 	);
 	membershipForm.updateObject(
-			request.getParameterMap(),
-			formValues,
-			app,
-			pm
-		);
-
+		request.getParameterMap(),
+		formValues,
+		app,
+		pm
+	);
 	// Initialize formValues with member values
-	if (ACCOUNTMEMBERSHIP_XRI != null && ACCOUNTMEMBERSHIP_XRI.length() > 0) {
-			// an existing membership is being edited
-			try {
-					org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
-						(org.opencrx.kernel.account1.jmi1.AccountMembership)pm.getObjectById(new Path(ACCOUNTMEMBERSHIP_XRI));
-					formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", accountMembership.getAccountFrom().refGetPath()); // must not change parent account!
-					if ("editMembership".equals(command)) {
-							formValues.put("org:opencrx:kernel:account1:Member:memberRole", accountMembership.getMember().getMemberRole());
-					}
-			} catch (Exception e) {
-					ACCOUNTMEMBERSHIP_XRI = "";
+	if(!accountMembershipXri.isEmpty()) {
+		// an existing membership is being edited
+		try {
+			org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
+				(org.opencrx.kernel.account1.jmi1.AccountMembership)pm.getObjectById(new Path(accountMembershipXri));
+			formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", accountMembership.getAccountFrom().refGetPath()); // must not change parent account!
+			if ("editMembership".equals(command)) {
+				formValues.put("org:opencrx:kernel:account1:Member:memberRole", new ArrayList<Short>(accountMembership.getMember().getMemberRole()));
 			}
+		} catch (Exception e) {
+			accountMembershipXri = "";
+		}
 	}
-  if ("AddMembership".equals(command)) {
-	  	//System.out.println("entering mode to add new membership");
-	  	ACCOUNTMEMBERSHIP_XRI = "";
-			formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", null);
-			formValues.put("org:opencrx:kernel:account1:Member:memberRole", null);
-			// default: set role for employee
-			formValues.put("org:opencrx:kernel:account1:Member:memberRole", Arrays.asList(new Short[]{(short)11}));
+	if ("AddMembership".equals(command)) {
+		//System.out.println("entering mode to add new membership");
+		accountMembershipXri = "";
+		formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", null);
+		formValues.put("org:opencrx:kernel:account1:Member:memberRole", null);
+		// default: set role for employee
+		formValues.put("org:opencrx:kernel:account1:Member:memberRole", Arrays.asList(new Short[]{(short)11}));
 	}
 
 	// Search
@@ -271,7 +285,7 @@ org.openmdx.base.naming.*
 	    List postalStreetBusiness = (List)formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalStreet");
 	    String emailHome = (String)formValues.get("org:opencrx:kernel:account1:Contact:address!emailAddress");
 	    String emailBusiness = (String)formValues.get("org:opencrx:kernel:account1:Account:address*Business!emailAddress");
-      final String wildcard = ".*";
+      	final String wildcard = ".*";
 	    if(firstName != null) {
 	        hasQueryProperty = true;
 	        contactQuery.thereExistsFirstName().like("(?i)" + wildcard + firstName + wildcard);
@@ -279,6 +293,10 @@ org.openmdx.base.naming.*
 	    if(lastName != null) {
 	        hasQueryProperty = true;
 	        contactQuery.thereExistsLastName().like("(?i)" + wildcard + lastName + wildcard);
+	    } else {
+	    	// is required field, so use wildcard if no search string is provided
+	        hasQueryProperty = true;
+	        contactQuery.thereExistsLastName().like(wildcard);
 	    }
 	    if(aliasName != null) {
 	        hasQueryProperty = true;
@@ -350,222 +368,268 @@ org.openmdx.base.naming.*
 	else if(actionCreate || actionSave) {
 	    // Contact
 	    org.opencrx.kernel.account1.jmi1.Contact contact = null;
-	    if(actionCreate) {
-		    contact = pm.newInstance(org.opencrx.kernel.account1.jmi1.Contact.class);
-	    	contact.refInitialize(false, false);
-	    }
-	    else {
-	        contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
-	    }
-	    String aliasName = (String)formValues.get("org:opencrx:kernel:account1:Account:aliasName");
-	    if(aliasName == null) {
-	        org.opencrx.kernel.account1.cci2.AccountQuery accountQuery =
-	            (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
-	        accountQuery.thereExistsAliasName().greaterThanOrEqualTo("A00000000");
-	        accountQuery.thereExistsAliasName().lessThanOrEqualTo("A99999999");
-	        accountQuery.orderByAliasName().descending();
-	        List accounts = accountSegment.getAccount(accountQuery);
-	        if(accounts.isEmpty()) {
-	            aliasName = "A00000000";
-	        }
-	        else {
-	            String lastAliasName = ((org.opencrx.kernel.account1.jmi1.Account)accounts.iterator().next()).getAliasName();
-	            String nextAccountNumber = "00000000" + (Integer.valueOf(lastAliasName.substring(1)).intValue() + 1);
-	            aliasName = "A" + nextAccountNumber.substring(nextAccountNumber.length() - 8);
-	        }
-	        formValues.put(
-                "org:opencrx:kernel:account1:Account:aliasName",
-                aliasName
-	        );
-	    }
-	    pm.currentTransaction().begin();
-	    contact.setSalutationCode(((Number)formValues.get("org:opencrx:kernel:account1:Contact:salutationCode")).shortValue());
-	    contact.setSalutation((String)formValues.get("org:opencrx:kernel:account1:Contact:salutation"));
-	    contact.setFirstName((String)formValues.get("org:opencrx:kernel:account1:Contact:firstName"));
-	    contact.setMiddleName((String)formValues.get("org:opencrx:kernel:account1:Contact:middleName"));
-	    contact.setLastName((String)formValues.get("org:opencrx:kernel:account1:Contact:lastName"));
-	    contact.setAliasName(aliasName);
-	    contact.setJobTitle((String)formValues.get("org:opencrx:kernel:account1:Contact:jobTitle"));
-	    contact.setJobRole((String)formValues.get("org:opencrx:kernel:account1:Contact:jobRole"));
-	    contact.setOrganization((String)formValues.get("org:opencrx:kernel:account1:Contact:organization"));
-	    contact.setDepartment((String)formValues.get("org:opencrx:kernel:account1:Contact:department"));
-	    contact.setDoNotPhone((Boolean)formValues.get("org:opencrx:kernel:account1:Contact:doNotPhone"));
-	    contact.setBirthdate((Date)formValues.get("org:opencrx:kernel:account1:Contact:birthdate"));
-	    contact.setDescription((String)formValues.get("org:opencrx:kernel:account1:Account:description"));
-	    if(actionCreate) {
-		    accountSegment.addAccount(
-		        false,
-		        org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
-		        contact
-		    );
-	    }
-	    pm.currentTransaction().commit();
-        objectXri = contact.refMofId();
-
-      	account = contact;
+		try {
+		    if(actionCreate) {
+			    contact = pm.newInstance(org.opencrx.kernel.account1.jmi1.Contact.class);
+		    	contact.refInitialize(false, false);
+		    }
+		    else {
+		        contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
+		    }
+		    String aliasName = (String)formValues.get("org:opencrx:kernel:account1:Account:aliasName");
+		    if(aliasName == null) {
+		        org.opencrx.kernel.account1.cci2.AccountQuery accountQuery =
+		            (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
+		        accountQuery.thereExistsAliasName().greaterThanOrEqualTo("A00000000");
+		        accountQuery.thereExistsAliasName().lessThanOrEqualTo("A99999999");
+		        accountQuery.orderByAliasName().descending();
+		        List accounts = accountSegment.getAccount(accountQuery);
+		        if(accounts.isEmpty()) {
+		            aliasName = "A00000000";
+		        }
+		        else {
+		            String lastAliasName = ((org.opencrx.kernel.account1.jmi1.Account)accounts.iterator().next()).getAliasName();
+		            String nextAccountNumber = "00000000" + (Integer.valueOf(lastAliasName.substring(1)).intValue() + 1);
+		            aliasName = "A" + nextAccountNumber.substring(nextAccountNumber.length() - 8);
+		        }
+		        formValues.put(
+	                "org:opencrx:kernel:account1:Account:aliasName",
+	                aliasName
+		        );
+		    }
+		    pm.currentTransaction().begin();
+		    contact.setSalutationCode(((Number)formValues.get("org:opencrx:kernel:account1:Contact:salutationCode")).shortValue());
+		    contact.setSalutation((String)formValues.get("org:opencrx:kernel:account1:Contact:salutation"));
+		    contact.setFirstName((String)formValues.get("org:opencrx:kernel:account1:Contact:firstName"));
+		    contact.setMiddleName((String)formValues.get("org:opencrx:kernel:account1:Contact:middleName"));
+		    contact.setLastName((String)formValues.get("org:opencrx:kernel:account1:Contact:lastName"));
+		    contact.setAliasName(aliasName);
+		    contact.setJobTitle((String)formValues.get("org:opencrx:kernel:account1:Contact:jobTitle"));
+		    contact.setJobRole((String)formValues.get("org:opencrx:kernel:account1:Contact:jobRole"));
+		    contact.setOrganization((String)formValues.get("org:opencrx:kernel:account1:Contact:organization"));
+		    contact.setDepartment((String)formValues.get("org:opencrx:kernel:account1:Contact:department"));
+		    contact.setDoNotPhone((Boolean)formValues.get("org:opencrx:kernel:account1:Contact:doNotPhone"));
+		    contact.setBirthdate((Date)formValues.get("org:opencrx:kernel:account1:Contact:birthdate"));
+		    contact.setDescription((String)formValues.get("org:opencrx:kernel:account1:Account:description"));
+		    if(actionCreate) {
+			    accountSegment.addAccount(
+			        false,
+			        org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
+			        contact
+			    );
+		    }
+		    pm.currentTransaction().commit();
+		} catch (Exception e) {
+			new ServiceException(e).log();
+			errorMsg = "ERROR - cannot create/save contact";
+			Throwable err = e;
+			while (err.getCause() != null) {
+				err = err.getCause();
+			}
+			errorTitle += "<pre>" + err + "</pre>";
+			try {
+				pm.currentTransaction().rollback();
+			} catch (Exception er) {}
+		}
+		objectXri = contact.refMofId();
+		account = contact;
 	    // Update Addresses
-	    pm.currentTransaction().begin();
-	    // Phone Business
-	    DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
-	    phoneBusinessDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull")
-	    );
-	    // Phone Mobile
-	    DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
-	    phoneMobileDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull")
-	    );
-	    // Phone Home
-	    DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
-	    phoneHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!phoneNumberFull",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!phoneNumberFull")
-	    );
-	    // Mail Business
-	    DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
-	    mailBusinessDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!emailAddress",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!emailAddress")
-	    );
-	    // Mail Home
-	    DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
-	    mailHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!emailAddress",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!emailAddress")
-	    );
-	    // Postal Home
-	    DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
-	    postalHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!postalAddressLine",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!postalAddressLine")
-	    );
-	    postalHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!postalStreet",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!postalStreet")
-	    );
-	    postalHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!postalCity",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!postalCity")
-	    );
-	    postalHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!postalCode",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!postalCode")
-	    );
-	    postalHomeDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Contact:address!postalCountry",
-	        formValues.get("org:opencrx:kernel:account1:Contact:address!postalCountry")
-	    );
-	    // Postal Business
-	    DataBinding_1_0 postalBusinesDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
-	    postalBusinesDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!postalAddressLine",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalAddressLine")
-	    );
-	    postalBusinesDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!postalStreet",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalStreet")
-	    );
-	    postalBusinesDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!postalCity",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCity")
-	    );
-	    postalBusinesDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!postalCode",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCode")
-	    );
-	    postalBusinesDataBinding.setValue(
-	        contact,
-	        "org:opencrx:kernel:account1:Account:address*Business!postalCountry",
-	        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCountry")
-	    );
-	    pm.currentTransaction().commit();
-	    
-	    if (isAddMembershipMode || ACCOUNTMEMBERSHIP_XRI.length() > 0) {
-	    		// create/update data for membership
-	    		try {
-	            org.opencrx.kernel.account1.jmi1.Account parentAccount = null;
-	            org.opencrx.kernel.account1.jmi1.Member member = null;
-	            if (ACCOUNTMEMBERSHIP_XRI.length() > 0) {
-	            		// update existing membership
-			            // get parent account
-									org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
-										(org.opencrx.kernel.account1.jmi1.AccountMembership)pm.getObjectById(new Path(ACCOUNTMEMBERSHIP_XRI));
-			            parentAccount = accountMembership.getAccountFrom();
-			            member = accountMembership.getMember();
-	            } else {
-	            		// create new membership
-			            // get parent account
-						 	    try {
-						 	    	parentAccount = formValues.get("org:opencrx:kernel:account1:AccountAssignment:account") != null ?
-							 	    	(org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
-							 	    		formValues.get("org:opencrx:kernel:account1:AccountAssignment:account")
-							 	    	) : null;
-						 	    } catch (Exception e) {}
-						 	    if (parentAccount != null) {
-			            		// create new member
-			            		try {
-					            		pm.currentTransaction().begin();
-							            member = pm.newInstance(org.opencrx.kernel.account1.jmi1.Member.class);
-							            member.refInitialize(false, false);
-							            member.setValidFrom(new java.util.Date());
-							            member.setQuality((short)5);
-							            member.setName(account.getFullName());
-							            member.setAccount(account);
-							            parentAccount.addMember(
-						  	              false,
-						  	              org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-						  	              member
-						  	            );
-					  	            pm.currentTransaction().commit();
-					  	        } catch (Exception e) {
-					  	        		member = null;
-					  	            new ServiceException(e).log();
-					  	            try {
-					  	                pm.currentTransaction().rollback();
-					  	            } catch (Exception er) {}
-					  	        }
-					            
-						 	    }
-	            }
-	            if (member != null && formValues.get("org:opencrx:kernel:account1:Member:memberRole") != null) {
-	            		// update member roles
-	            		try {
-	            				List<Short> memberRole = (List<Short>)formValues.get("org:opencrx:kernel:account1:Member:memberRole");
-					            pm.currentTransaction().begin();
-					            member.setMemberRole(memberRole);
-					            pm.currentTransaction().commit();
-					        } catch (Exception e) {
-					            new ServiceException(e).log();
-					            try {
-					                pm.currentTransaction().rollback();
-					            } catch (Exception er) {}
-					        }
-	            }
-	    		} catch (Exception e) {
-	    				new ServiceException(e).log();
-	    		}
-	    }
-
-	    ACCOUNTMEMBERSHIP_XRI = "";
+	    try {
+		    pm.currentTransaction().begin();
+		    // Phone Business
+		    DataBinding phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
+		    phoneBusinessDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull")
+		    );
+		    // Phone Mobile
+		    DataBinding phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
+		    phoneMobileDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull")
+		    );
+		    // Phone Home
+		    DataBinding phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
+		    phoneHomeDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Contact:address!phoneNumberFull",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!phoneNumberFull")
+		    );
+		    // Mail Business
+		    DataBinding mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
+		    mailBusinessDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!emailAddress",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!emailAddress")
+		    );
+		    // Mail Home
+		    DataBinding mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
+		    mailHomeDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Contact:address!emailAddress",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!emailAddress")
+		    );
+		    // Postal Home
+		    DataBinding postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
+		    postalHomeDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Contact:address!postalAddressLine",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!postalAddressLine")
+		    );
+		    postalHomeDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Contact:address!postalStreet",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!postalStreet")
+		    );
+		    postalHomeDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Contact:address!postalCity",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!postalCity")
+		    );
+		    postalHomeDataBinding.setValue(
+		        contact,
+			        "org:opencrx:kernel:account1:Contact:address!postalState",
+			        formValues.get("org:opencrx:kernel:account1:Contact:address!postalState")
+		    );
+		    postalHomeDataBinding.setValue(
+		    		contact,
+		        "org:opencrx:kernel:account1:Contact:address!postalCode",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!postalCode")
+		    );
+		    postalHomeDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Contact:address!postalCountry",
+		        formValues.get("org:opencrx:kernel:account1:Contact:address!postalCountry")
+		    );
+		    // Postal Business
+		    DataBinding postalBusinesDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
+		    postalBusinesDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!postalAddressLine",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalAddressLine")
+		    );
+		    postalBusinesDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!postalStreet",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalStreet")
+		    );
+		    postalBusinesDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!postalCity",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCity")
+		    );
+		    postalBusinesDataBinding.setValue(
+		    		contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!postalState",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalState")
+		    );
+		    postalBusinesDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!postalCode",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCode")
+		    );
+		    postalBusinesDataBinding.setValue(
+		        contact,
+		        "org:opencrx:kernel:account1:Account:address*Business!postalCountry",
+		        formValues.get("org:opencrx:kernel:account1:Account:address*Business!postalCountry")
+		    );
+		    pm.currentTransaction().commit();
+		} catch (Exception e) {
+			new ServiceException(e).log();
+			errorMsg = "ERROR - cannot create/save contact";
+			Throwable err = e;
+			while (err.getCause() != null) {
+				err = err.getCause();
+			}
+			errorTitle += "<pre>" + err + "</pre>";
+			try {
+				pm.currentTransaction().rollback();
+			} catch (Exception er) {}
+		}
+	   	if(wizardExtension != null) {
+	   		wizardExtension.setSecurityForNewContact(contact);		   		
+	   	}
+	    if(isAddMembershipMode || !accountMembershipXri.isEmpty()) {
+			// create/update data for membership
+			try {
+				org.opencrx.kernel.account1.jmi1.Account parentAccount = null;
+				org.opencrx.kernel.account1.jmi1.Member member = null;
+				if(!accountMembershipXri.isEmpty()) {
+					// update existing membership
+					// get parent account
+					org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
+						(org.opencrx.kernel.account1.jmi1.AccountMembership)pm.getObjectById(new Path(accountMembershipXri));
+					parentAccount = accountMembership.getAccountFrom();
+					member = accountMembership.getMember();
+				} else {
+					// create new membership
+					// get parent account
+					try {
+						parentAccount = formValues.get("org:opencrx:kernel:account1:AccountAssignment:account") != null ?
+							(org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(
+								formValues.get("org:opencrx:kernel:account1:AccountAssignment:account")
+							) : null;
+					} catch (Exception e) {}
+					if (parentAccount != null) {
+						// create new member
+						try {
+							pm.currentTransaction().begin();
+							member = pm.newInstance(org.opencrx.kernel.account1.jmi1.Member.class);
+							member.setValidFrom(new java.util.Date());
+							member.setQuality((short)5);
+							member.setName(account.getFullName());
+							member.setAccount(account);
+							parentAccount.addMember(
+								org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+								member
+							);
+							pm.currentTransaction().commit();
+						} catch (Exception e) {
+							member = null;
+							new ServiceException(e).log();
+							errorMsg = "ERROR - cannot create/save member";
+							Throwable err = e;
+							while (err.getCause() != null) {
+								err = err.getCause();
+							}
+							errorTitle += "<pre>" + err + "</pre>";
+							try {
+								pm.currentTransaction().rollback();
+							} catch (Exception er) {}
+						}
+					}
+				}
+				if (member != null && formValues.get("org:opencrx:kernel:account1:Member:memberRole") != null) {
+					// update member roles
+					try {
+						List<Short> memberRole = (List<Short>)formValues.get("org:opencrx:kernel:account1:Member:memberRole");
+						pm.currentTransaction().begin();
+						member.setMemberRole(memberRole);
+						pm.currentTransaction().commit();
+					} catch (Exception e) {
+						member = null;
+						new ServiceException(e).log();
+						errorMsg = "ERROR - cannot create/save member";
+						Throwable err = e;
+						while (err.getCause() != null) {
+							err = err.getCause();
+						}
+						errorTitle += "<pre>" + err + "</pre>";
+						try {
+							pm.currentTransaction().rollback();
+						} catch (Exception er) {}
+					}
+				}
+			} catch (Exception e) {
+				new ServiceException(e).log();
+			}
+		}
+	    accountMembershipXri = "";
 	    isAddMembershipMode = false;
-			formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", null);
-			formValues.put("org:opencrx:kernel:account1:Member:memberRole", null);
+	    formValues.put("org:opencrx:kernel:account1:AccountAssignment:account", null);
+	    formValues.put("org:opencrx:kernel:account1:Member:memberRole", null);
 	}
 	
 	TransientObjectView view = new TransientObjectView(
@@ -581,13 +645,12 @@ org.openmdx.base.naming.*
 	);
 	int tabIndex = 100;
 %>
-<br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" action="<%= servletPath %>">
+<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" action="<%= servletPath %>" style="padding-top:8px;">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 	<input type="Hidden" id="Command" name="Command" value="" />
 	<input type="Hidden" id="Para0" name="Para0" value="" />
-	<input type="hidden" name="ACCOUNTMEMBERSHIP_XRI" id="ACCOUNTMEMBERSHIP_XRI" value="<%= ACCOUNTMEMBERSHIP_XRI %>" />
+	<input type="hidden" name="ACCOUNTMEMBERSHIP_XRI" id="ACCOUNTMEMBERSHIP_XRI" value="<%= accountMembershipXri %>" />
 	<input type="checkbox" style="display:none;" name="isAddMembershipMode" id="isAddMembershipMode" <%= isAddMembershipMode ? "checked" : "" %>/>
 	
 	<table cellspacing="8" class="tableLayout">
@@ -628,6 +691,7 @@ org.openmdx.base.naming.*
 												accountMembershipFilter.distance().equalTo(
 														new Short((short)-1) // only direct/immediate memberships are of interest
 													);
+												accountMembershipFilter.orderByCreatedAt().ascending();
 												accountMembershipFilter.forAllDisabled().isFalse();
 												for(
 														Iterator am = account.getAccountMembership(accountMembershipFilter).iterator();
@@ -650,11 +714,11 @@ org.openmdx.base.naming.*
 																		if (rolesText.length() > 0) {
 																				rolesText += ";";
 																		}
-																		rolesText += (String)codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short(((Short)roles.next()).shortValue()));
+																		rolesText += codes.getLongTextByCode("memberRole", app.getCurrentLocaleAsIndex(), true).get(new Short(((Short)roles.next()).shortValue()));
 																}
 																//memberRoleList.add(rolesText);
 %>
-																<tr class="gridTableRow" <%= ACCOUNTMEMBERSHIP_XRI.compareTo(accountMembership.refMofId()) == 0 ? "style='background-color:#E4FF79;'" : "" %>>
+																<tr class="gridTableRow" <%= accountMembershipXri.compareTo(accountMembership.refMofId()) == 0 ? "style='background-color:#E4FF79;'" : "" %>>
 																	<td class="addon">
 																		<button type="submit" name="editMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getEditTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('ACCOUNTMEMBERSHIP_XRI').value='<%=accountMembership.refMofId() %>';" ><img src="images/edit.gif" /></button>
 																	</td>
@@ -662,16 +726,15 @@ org.openmdx.base.naming.*
 																	<td><%= app.getHtmlEncoder().encode(new ObjectReference(accountMembership.getAccountTo(), app).getTitle(), false) %></td>
 																	<td style="overflow:hidden;text-overflow:ellipsis;"><%= rolesText %></td>
 																	<td class="addon">
-																		<button type="submit" name="deleteMember" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('ACCOUNTMEMBERSHIP_XRI').value='';$('Command').value='ACTION.'+this.name;$('Para0').value='<%= member.refMofId() %>';" ><img src="images/deletesmall.gif" /></button>
+																		<button type="submit" name="DeleteMember" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('ACCOUNTMEMBERSHIP_XRI').value='';$('Command').value=this.name;$('Para0').value='<%= member.refMofId() %>';" ><img src="images/deletesmall.gif" /></button>
 																	</td>
 																</tr>
 <%
-																
 														}	catch(Exception em) {
 																new ServiceException(em).log();
 														}
 												}
-										}	catch(Exception e) {
+										} catch(Exception e) {
 												new ServiceException(e).log();
 										}
 %>
@@ -680,8 +743,8 @@ org.openmdx.base.naming.*
 								<td class="addon"/>
 							</tr>
 						</table>
-<%						
-						if (isAddMembershipMode || ACCOUNTMEMBERSHIP_XRI.length() > 0) {
+<%
+						if (isAddMembershipMode || !accountMembershipXri.isEmpty()) {
 								membershipForm.paint(
 									p,
 									null, // frame
@@ -691,30 +754,79 @@ org.openmdx.base.naming.*
 						}
 					}
 %>
-					<div class="fieldGroupName">&nbsp;</div>
-					
+					<div class="fieldGroupName">&nbsp;</div>				
 				</div>
-				<input type="submit" name="Search" id="Search.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('Command').value=this.name;" />
-				<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
+				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+<%
+				if (errorMsg.length() > 0) {
+%>
+					<div title="<%= errorTitle.replace("\"", "'") %>"  style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+						<%= errorMsg %>
+					</div>
+<%
+				}
+%>
+				<div id="SubmitArea" style="float:left;display:none;">
+				<input type="submit" name="Search" id="Search.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+				<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= servletPath + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
 <%
 				if(account != null) {
 %>
-					<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
-					<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
-					<input type="button" onclick="javascript:new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %>: <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
-					<input type="submit" name="OK" id="OK.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
+					<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
+					<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
+					<input style='display:none;' type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId + "&reportingAccount=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
+<%
+					// prepare href to open new tab with activity segment and then call inline wizard to create new activity
+					String createActivityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + servletPathPrefix + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId + "&reportingAccount=" + java.net.URLEncoder.encode(account.refMofId(), "UTF-8") + "', {evalScripts: true});";
+					
+					QuickAccessor createActivityAccessor = new QuickAccessor(
+					    activitySegment.refGetPath(), // target
+					    "New Activity", // name
+					    "New Activity", // description
+					    "Task.gif", // iconKey
+					    Action.MACRO_TYPE_JAVASCRIPT, // actionType
+					    createActivityScript,
+					    Collections.<String>emptyList() // actionParams
+						);
+					Action newActivityAction =	createActivityAccessor.getAction(
+					    accountSegment.refGetPath()
+					  );
+					String newActivityHref = newActivityAction.getEncodedHRef(requestId);
+%>
+					<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
+<%					
+					
+					// prepare href to open new tab with account segment and then call inline wizard to create new legal entity
+					String createLegalEntityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + servletPathPrefix + "CreateLegalEntityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + requestId + "', {evalScripts: true});";
+					
+					QuickAccessor createLegalEntityAccessor = new QuickAccessor(
+					    accountSegment.refGetPath(), // target
+					    "New LegalEntity", // name
+					    "New LegalEntity", // description
+					    "LegalEntity.gif", // iconKey
+					    Action.MACRO_TYPE_JAVASCRIPT, // actionType
+					    createLegalEntityScript,
+					    Collections.<String>emptyList() // actionParams
+						);
+					Action newLegalEntityAction =	createLegalEntityAccessor.getAction(
+					    accountSegment.refGetPath()
+					  );
+					String newLegalEntityHref = newLegalEntityAction.getEncodedHRef(requestId);
+%>
+					<a href="<%= newLegalEntityHref %>" target="_blank"><button type="button" name="newLegalEntity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %>"><%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %></button></a>
+					<input type="submit" name="OK" id="OK.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 <%
 				}
 				else {
 				    if(matchingContacts != null) {
 %>
-						<input type="submit" name="Create" id="Create.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('Command').value=this.name;"/>
+						<input type="submit" name="Create" id="Create.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= view.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 <%
-
 				    }
 				}
 %>
-				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
+				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
+				</div>
 <%
 				if(matchingContacts != null) {
 %>
@@ -771,6 +883,8 @@ org.openmdx.base.naming.*
 		});
 		Event.stop(event);
 	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';
 </script>
 <%
 p.close(false);

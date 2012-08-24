@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: WebDavMethod.java,v 1.14 2011/03/09 10:27:11 wfro Exp $
  * Description: AbstractMethod
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/03/09 10:27:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,7 +71,6 @@ package org.opencrx.application.uses.net.sf.webdav.methods;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -111,20 +107,27 @@ public abstract class WebDavMethod {
      * Simple date format for the creation date ISO 8601 representation
      * (partial).
      */
-    protected static final SimpleDateFormat CREATION_DATE_FORMAT = new SimpleDateFormat(
-            "yyyy-MM-dd'T'HH:mm:ss'Z'");
+    protected static final ThreadLocal<SimpleDateFormat> CREATION_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>(){
+		@Override
+        protected SimpleDateFormat initialValue() {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+			format.setTimeZone(TimeZone.getTimeZone("GMT"));
+			return format;
+        }
+    };
 
     /**
      * Simple date format for the last modified date. (RFC 822 updated by RFC
      * 1123)
      */
-    protected static final SimpleDateFormat LAST_MODIFIED_DATE_FORMAT = new SimpleDateFormat(
-            "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-
-    static {
-        CREATION_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-        LAST_MODIFIED_DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
-    }
+    protected static final ThreadLocal<SimpleDateFormat> LAST_MODIFIED_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>(){
+		@Override
+        protected SimpleDateFormat initialValue() {
+			SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+			format.setTimeZone(TimeZone.getTimeZone("GMT"));
+			return format;
+        }    	    	
+    };
 
     /**
      * size of the io-buffer

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Groupware, http://www.opencrx.org/
- * Name:        $Id: VCardServlet.java,v 1.24 2010/11/24 13:05:35 wfro Exp $
  * Description: VCardServlet
- * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/24 13:05:35 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,6 +70,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Account1Package;
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.VCard;
@@ -121,7 +119,7 @@ public class VCardServlet extends HttpServlet {
             null :
             this.persistenceManagerFactory.getPersistenceManager(
                 req.getUserPrincipal().getName(),
-                UUIDs.getGenerator().next().toString()
+                null
             );
     }
 
@@ -130,7 +128,7 @@ public class VCardServlet extends HttpServlet {
     ) {
         return this.persistenceManagerFactory.getPersistenceManager(
             SecurityKeys.ROOT_PRINCIPAL,
-            UUIDs.getGenerator().next().toString()
+            null
         );    	
     }
     
@@ -241,7 +239,13 @@ public class VCardServlet extends HttpServlet {
 	                        if(vcard.indexOf("URL:") < 0) {
 	                        	String url = Base.getInstance().getAccessUrl(req, "-vcard-", account);
 	                            p.write("URL:" + url + "\n");
-	                        }                        
+	                        }
+	                        else if(vcard.indexOf("PHOTO:") < 0 && account instanceof Contact) {
+	                        	VCard.getInstance().writePhotoTag(
+	                        		p, 
+	                        		(Contact)account
+	                        	);
+	                        }
 	                        p.write("END:VCARD\n");
 	                    }
 	                    n++;

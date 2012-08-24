@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DoPropfind.java,v 1.12 2010/12/05 14:13:33 wfro Exp $
  * Description: DoPropfind
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/05 14:13:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,6 +60,7 @@ import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.application.caldav.ActivityCollectionResource.Type;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
@@ -86,9 +84,9 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 		Map<String,String> namespaces = super.getNamespaces();
 		namespaces.put("urn:ietf:params:xml:ns:caldav", "C");
 		namespaces.put("http://calendarserver.org/ns/", "CS");
+		namespaces.put("http://apple.com/ns/ical/", "A");		
 		return namespaces;
     }
-
 	
 	@Override
     protected void writeCollectionType(
@@ -163,6 +161,14 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 	            writer.writeElement("urn:ietf:params:xml:ns:caldav:calendar-home-set", XMLWriter.CLOSING);
 	            return true;
 			}
+			else if(property.indexOf("principal-URL") > 0) {
+	            writer.writeElement("DAV::principal-URL", XMLWriter.OPENING);
+	            writer.writeElement("DAV::href", XMLWriter.OPENING);
+	            writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + providerName + "/" + segmentName + "/user/" + userHome.refGetPath().getBase() + "/profile/" + syncProfile.getName(), true)));
+	            writer.writeElement("DAV::href", XMLWriter.CLOSING);
+	            writer.writeElement("DAV::principal-URL", XMLWriter.CLOSING);
+	            return true;				
+			}
 			else {
 				return false;
 			}
@@ -174,6 +180,19 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 	            writer.writeData(res.getDisplayName());				
 				writer.writeElement("urn:ietf:params:xml:ns:caldav:calendar-description", XMLWriter.CLOSING);
 				return true;
+			}
+			else if(property.indexOf("calendar-color") > 0) {
+				if(activityCollectionResource.getBackColor() != null) {
+					String[] backColors = activityCollectionResource.getBackColor().split(",");
+					String backColor = backColors[0];
+					if(activityCollectionResource.getType() == Type.VTODO) {
+						backColor = backColors.length > 1 ? backColors[1] : backColors[0];
+					}
+					writer.writeElement("http://apple.com/ns/ical/:calendar-color", XMLWriter.OPENING);
+					writer.writeData(backColor);
+					writer.writeElement("http://apple.com/ns/ical/:calendar-color", XMLWriter.CLOSING);
+					return true;
+				}
 			}
 			else if(property.indexOf("supported-calendar-component-set") > 0) {
 				writer.writeElement("urn:ietf:params:xml:ns:caldav:supported-calendar-component-set", XMLWriter.OPENING);
@@ -198,7 +217,7 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 	            writer.writeText(this.getETag(res));				
 				writer.writeElement("http://calendarserver.org/ns/:getctag", XMLWriter.CLOSING);				
 				return true;
-			}	
+			}
 			else if(property.indexOf("owner") > 0) {
 				return true;
 			}

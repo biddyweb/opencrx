@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DecimalPropertyDataBinding.java,v 1.7 2012/01/13 17:16:05 wfro Exp $
  * Description: DecimalPropertyDataBinding
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,23 +60,40 @@ import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.DecimalProperty;
 import org.opencrx.kernel.base.jmi1.Property;
+import org.openmdx.portal.servlet.ApplicationContext;
 
+/**
+ * DecimalPropertyDataBinding
+ *
+ */
 public class DecimalPropertyDataBinding extends AbstractPropertyDataBinding {
 
+    /**
+     * Constructor
+     */
     public DecimalPropertyDataBinding(
     ) {
         super(PropertySetHolderType.CrxObject);
     }
     
+    /**
+     * Constructor.
+     * @param type
+     */
     public DecimalPropertyDataBinding(
         PropertySetHolderType type
     ) {
         super(type);
     }
     
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p instanceof DecimalProperty) {
@@ -90,10 +104,15 @@ public class DecimalPropertyDataBinding extends AbstractPropertyDataBinding {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#setValue(javax.jmi.reflect.RefObject, java.lang.String, java.lang.Object, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
     public void setValue(
         RefObject object, 
         String qualifiedFeatureName, 
-        Object newValue
+        Object newValue,
+        ApplicationContext app
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p == null) {

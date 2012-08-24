@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Buildings.java,v 1.1 2011/07/12 15:27:49 wfro Exp $
  * Description: Buildings
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/12 15:27:49 $
  * ====================================================================
  *
  * This software is published under the BSD license

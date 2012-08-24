@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImporterImpl.java,v 1.12 2011/08/22 12:25:00 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/08/22 12:25:00 $
  * ====================================================================
  *
  * This software is published under the BSD license

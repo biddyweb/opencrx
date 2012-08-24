@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="parameterDirection" _operation="set">
 										<_object>
 											<name>
+												<_item>parameterDirection</_item>
 												<_item>org:opencrx:kernel:model1:Parameter:direction</_item>
 												<_item>org:opencrx:kernel:model1:EditableParameter:direction</_item>
 											</name>

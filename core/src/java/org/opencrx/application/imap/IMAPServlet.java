@@ -5,16 +5,23 @@ import javax.jdo.PersistenceManagerFactory;
 import org.opencrx.application.adapter.AbstractServer;
 import org.opencrx.application.adapter.AbstractServlet;
 
+/**
+ * IMAPServlet
+ */
 public class IMAPServlet extends AbstractServlet {
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServlet#getConfigurationId()
+	 */
 	@Override
     public String getConfigurationId(
     ) {
 		return "IMAPServlet";
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServlet#getPortNumber(java.lang.String)
+	 */
 	@Override
     public int getPortNumber(
     	String configuredPortNumber
@@ -26,7 +33,9 @@ public class IMAPServlet extends AbstractServlet {
 						Integer.valueOf(configuredPortNumber));		
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServlet#newServer(javax.jdo.PersistenceManagerFactory, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean, int)
+	 */
 	@Override
     public AbstractServer newServer(
     	PersistenceManagerFactory pmf, 
@@ -37,7 +46,11 @@ public class IMAPServlet extends AbstractServlet {
 	    String sslKeystoreType,
 	    String sslKeystorePass,
 	    String sslKeyPass,
-    	boolean isDebug, 
+	    String sslTruststoreFile,
+	    String sslTruststorePass,
+	    String sslTruststoreType,
+	    Boolean sslNeedClientAuth,
+    	boolean isDebug,
     	int delayOnStartup
     ) {
 		return new IMAPServer(
@@ -49,11 +62,15 @@ public class IMAPServlet extends AbstractServlet {
 		    sslKeystoreType,
 		    sslKeystorePass,
 		    sslKeyPass,
+		    sslTruststoreFile,
+		    sslTruststorePass,
+		    sslTruststoreType,
+		    sslNeedClientAuth,
 			isDebug,
 			delayOnStartup
 		);
     }
-        
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

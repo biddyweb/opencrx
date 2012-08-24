@@ -31,10 +31,36 @@
 								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact">
 										<_object>
 											<toolTip>
-												<_item>Neue Kontaktperson</_item>
+												<_item>Bearbeiten (erweitert)</_item>
 											</toolTip>
 											<label>
-												<_item>Neue Kontaktperson</_item>
+												<_item>Bearbeiten (erweitert)</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard CreateLegalEntityWizard.jsp -->
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createLegalEntity">
+										<_object>
+											<toolTip>
+												<_item>Neue Juristische Person</_item>
+											</toolTip>
+											<label>
+												<_item>Neue Juristische Person</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+                <!-- Wizard CreateLegalEntityWizard.jsp -->
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:createLegalEntity">
+										<_object>
+											<toolTip>
+												<_item>Bearbeiten (erweitert)</_item>
+											</toolTip>
+											<label>
+												<_item>Bearbeiten (erweitert)</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -52,7 +78,29 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:createActivity">
+										<_object>
+											<toolTip>
+												<_item>Neue Aktivität</_item>
+											</toolTip>
+											<label>
+												<_item>Neue Aktivität</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:createActivity">
+										<_object>
+											<toolTip>
+												<_item>Neue Aktivität</_item>
+											</toolTip>
+											<label>
+												<_item>Neue Aktivität</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivity">
 										<_object>
 											<toolTip>
 												<_item>Neue Aktivität</_item>
@@ -609,13 +657,13 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setReminder">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setTimer">
 										<_object>
 											<toolTip>
-												<_item>Erinnerung eingeben</_item>
+												<_item>Timer setzen</_item>
 											</toolTip>
 											<label>
-												<_item>Erinnerung eingeben</_item>
+												<_item>Timer setzen</_item>
 											</label>
 										</_object>
 										<_content/>

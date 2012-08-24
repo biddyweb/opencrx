@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: XmlUtils.java,v 1.1 2011/06/30 16:37:28 wfro Exp $
  * Description: XmlUtils
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/30 16:37:28 $
  * ====================================================================
  *
  * This software is published under the BSD license

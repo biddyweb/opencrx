@@ -413,7 +413,7 @@
                         <_item>Cumpleaños</_item>
                       </label>
                       <toolTip>
-                        <_item>Cumpleaños de la persona</_item>
+                        <_item>Cumpleaños de la persona (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -424,7 +424,7 @@
                         <_item>Fecha de aniversario</_item>
                       </label>
                       <toolTip>
-                        <_item>Fecha de aniversario de la persona</_item>
+                        <_item>Fecha de aniversario de la persona (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

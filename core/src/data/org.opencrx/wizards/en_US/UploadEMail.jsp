@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadEMail.jsp,v 1.2 2011/11/24 13:38:07 cmu Exp $
+ * Name:        $Id: UploadEMail.jsp,v 1.5 2012/07/08 13:30:32 wfro Exp $
  * Description: UploadEMail
- * Revision:    $Revision: 1.2 $
- * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/24 13:38:07 $
+ * Revision:    $Revision: 1.5 $
+ * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
+ * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP AG, Switzerland
+ * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -27,9 +27,10 @@
  * the documentation and/or other materials provided with the
  * distribution.
  *
- * * Neither the name of the openMDX team nor the names of its
- * contributors may be used to endorse or promote products derived
- * from this software without specific prior written permission.
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ *
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
  * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
@@ -50,9 +51,8 @@
  * This product includes software developed by the Apache Software
  * Foundation (http://www.apache.org/).
  *
- * This product includes software developed by Mihai Bazon
- * (http://dynarch.com/mishoo/calendar.epl) published with an LGPL
- * license.
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
  */
 %><%@ page session="true" import="
 java.util.*,
@@ -65,7 +65,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -93,6 +92,7 @@ org.opencrx.kernel.backend.*
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
+	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
 	<style type="text/css" media="all">
     .col1 {float: left; width: 99%;}
@@ -123,6 +123,7 @@ org.opencrx.kernel.backend.*
 			<div id="econtent">
 <%
 				final String UPLOAD_FILE_FIELD_NAME = "uploadFile";
+				List filecb = new ArrayList();
 				try {
 					Map parameterMap = request.getParameterMap();
 			    	if(FileUpload.isMultipartContent(request)) {
@@ -136,6 +137,7 @@ org.opencrx.kernel.backend.*
 								50000000, // max request size [overall limit]
 							  app.getTempDirectory().getPath()
 							);
+							int fileCounter = 0;
 							for(Iterator i = items.iterator(); i.hasNext(); ) {
 							  FileItem item = (FileItem)i.next();
 							  if(item.isFormField()) {
@@ -154,11 +156,12 @@ org.opencrx.kernel.backend.*
 								}
 								// add to parameter map if file received
 								else if(item.getSize() > 0) {
+								  fileCounter++;
 								  parameterMap.put(
 									item.getFieldName(),
 									new String[]{item.getName()}
 								  );
-								  String location = app.getTempFileName(item.getFieldName(), "");
+							  	  String location = app.getTempFileName(fileCounter + "." + item.getFieldName(), "");
 		
 								  // bytes
 								  File outFile = new File(location);
@@ -174,13 +177,20 @@ org.opencrx.kernel.backend.*
 									sep = item.getName().lastIndexOf("\\");
 								  }
 								  pw.println(item.getName().substring(sep + 1));
+								  //System.out.println("location = " + location + " / name = " + item.getName().substring(sep + 1));
 								  pw.close();
 								}
 							  }
 							}
+							int recount = 1;
+							while (recount <= fileCounter) {
+								boolean isChecked = parameterMap.get("filecb" + recount) != null;
+								filecb.add(new Boolean(isChecked));
+								recount++;
+							}
 						}
 						catch(FileUploadException e) {
-							SysLog.warning("Can not upload file", e.getMessage());
+							SysLog.warning("can not upload file", e.getMessage());
 						}
 					}
 					ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
@@ -188,19 +198,63 @@ org.opencrx.kernel.backend.*
 					String requestId = (requestIds == null) || (requestIds.length == 0) ? "" : requestIds[0];
 					javax.jdo.PersistenceManager pm = app.getNewPmData();
 		
-					boolean actionOk = parameterMap.get("OK.Button") != null;
-					boolean actionCancel = parameterMap.get("Cancel.Button") != null;
-		
+					// Get object
 					String[] objectXris = (String[])parameterMap.get("xri");
 					String objectXri = (objectXris == null) || (objectXris.length == 0) ? "" : objectXris[0];
-					String location = app.getTempFileName(UPLOAD_FILE_FIELD_NAME, "");
-		
 					if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 						response.sendRedirect(
 							request.getContextPath() + "/" + WebKeys.SERVLET_NAME
 						);
 						return;
 					}
+					RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+					String providerName = obj.refGetPath().get(2);
+					String segmentName = obj.refGetPath().get(4);
+					org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
+						Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
+
+					boolean actionOk = parameterMap.get("OK.Button") != null;
+					boolean actionCancel = parameterMap.get("Cancel.Button") != null;
+		
+					boolean replaceExisting = parameterMap.get("ReplaceExisting.CheckBox") != null;
+					//System.out.println("replaceExisting=" + replaceExisting);
+
+					
+					// get file paths/names of files that had errors
+					List<String> roundtripFilesPath = new ArrayList<String>();
+					List<String> roundtripFilesName = new ArrayList<String>();
+					int fileIdx = 0;
+					while ((String[])parameterMap.get("filepath-" + fileIdx) != null) {
+						try {
+							String[] paths = (String[])parameterMap.get("filepath-" + fileIdx);
+							roundtripFilesPath.add(paths[0]);
+							String[] names = (String[])parameterMap.get("filename-" + fileIdx);
+							roundtripFilesName.add(names[0]);
+						} catch (Exception e) {}
+						fileIdx++;
+					}
+
+					// get unmatched/provided e-mail addresses and buld address map
+					Map<String,String> addressMap = new TreeMap<String,String>(); // Mapping X.500 --> SMTP
+					int emailIdx = 0;
+					while ((String[])parameterMap.get("email-" + emailIdx) != null) {
+						try {
+							String[] provided = (String[])parameterMap.get("email-" + emailIdx);
+							String[] unmatched = (String[])parameterMap.get("unmatched-" + emailIdx);
+							if (!unmatched[0].isEmpty() && !provided[0].isEmpty()) {
+								addressMap.put(unmatched[0], provided[0]);
+							}
+						} catch (Exception e) {}
+						emailIdx++;
+					}
+
+					boolean hasErrors = false;
+					List<String> errors = new ArrayList<String>();
+					List<String> existingFilesPath = new ArrayList<String>();
+					List<String> existingFilesName = new ArrayList<String>();
+
+					String location = app.getTempFileName("1." + UPLOAD_FILE_FIELD_NAME, "");
+		
 					if(actionCancel) {
 						Action nextAction = new ObjectReference(
 							(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
@@ -211,19 +265,52 @@ org.opencrx.kernel.backend.*
 						);
 					}
 					else if(actionOk) {
-						if(
-							new File(location + ".INFO").exists() &&
-							new File(location).exists() &&
-							(new File(location).length() > 0)
+						RefObject_1_0 navigateTo = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+						int fileCounter = 1;
+						int roundtripFilesCounter = 0;
+						location = app.getTempFileName(fileCounter + "." + UPLOAD_FILE_FIELD_NAME, "");
+						while(
+							(
+								new File(location + ".INFO").exists() &&
+								new File(location).exists() &&
+								(new File(location).length() > 0)
+							)
+							||
+							(
+								roundtripFilesPath.size() > roundtripFilesCounter &&
+								roundtripFilesName.size() > roundtripFilesCounter
+							)
 						) {
-							// mimeType and name
-							BufferedReader r = new BufferedReader(
-								new FileReader(location + ".INFO")
+							int preErrorCount = errors.size();
+
+							String contentName = null;
+							String contentMimeType = null;
+							String providedEMailAddress = null;
+							
+							boolean processNewlyAddedTempFile = (
+								new File(location + ".INFO").exists() &&
+								new File(location).exists() &&
+								(new File(location).length() > 0)
 							);
-							String contentMimeType = r.readLine();
-							String contentName = r.readLine();
-							r.close();
-							new File(location + ".INFO").delete();
+							boolean processRoundtripFile = false;
+
+							if (processNewlyAddedTempFile) {
+								// mimeType and name
+								BufferedReader r = new BufferedReader(
+									new FileReader(location + ".INFO")
+								);
+								contentMimeType = r.readLine();
+								contentName = r.readLine();
+								r.close();
+								new File(location + ".INFO").delete();
+							} else {
+								// fetch next roundtripFile
+								location = roundtripFilesPath.get(roundtripFilesCounter);
+								contentMimeType = "dummy";
+								contentName = roundtripFilesName.get(roundtripFilesCounter);
+								roundtripFilesCounter++;
+								processRoundtripFile = true;
+							}
 							if(
 								(contentName != null) &&
 								(contentName.length() > 0) &&
@@ -231,24 +318,56 @@ org.opencrx.kernel.backend.*
 								(contentMimeType.length() > 0)
 							) {
 								try {
-									RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-									String providerName = obj.refGetPath().get(2);
-									String segmentName = obj.refGetPath().get(4);
-									List<org.opencrx.kernel.activity1.jmi1.EMail> emails = Activities.getInstance().importMimeMessage(
-										pm,
-										providerName,
-										segmentName,
-										new MimeMessageImpl(new FileInputStream(location)),
-										obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCreator ? (org.opencrx.kernel.activity1.jmi1.ActivityCreator)obj : null
-									);
-									new File(location).delete();
-									Action nextAction = new ObjectReference(
-										emails != null && !emails.isEmpty() ? emails.iterator().next() : obj,
-										app
-									).getSelectObjectAction();
-									response.sendRedirect(
-										request.getContextPath() + "/" + nextAction.getEncodedHRef()
-									);
+									boolean isChecked = false;
+									if (processNewlyAddedTempFile) {
+										try {
+											isChecked = filecb.get(fileCounter-1) != null && ((Boolean)filecb.get(fileCounter-1)).booleanValue();
+										} catch (Exception e) {}
+									} else {
+										isChecked = true;
+									}
+									if (isChecked) {
+										javax.mail.internet.MimeMessage msg = null;
+										//System.out.println("addressMap = " + addressMap);
+										
+										// MSG
+										if(contentName != null && contentName.toUpperCase().endsWith(".MSG")) {
+											List<String> newErrors = new ArrayList<String>();
+											msg = org.opencrx.kernel.utils.MimeUtils.mapMsgToMime(
+												new FileInputStream(location),
+												accountSegment,
+												addressMap, //Collections.<String,String>emptyMap(),
+												true, // validateMappedAddresses
+												newErrors
+											);
+											if (!newErrors.isEmpty()) {
+												errors.addAll(newErrors);
+											}
+										}
+										// MIME/EML
+										else {
+											msg = new org.opencrx.kernel.utils.MimeUtils.MimeMessageImpl(
+												new FileInputStream(location)
+											);																							
+										}
+
+										if(preErrorCount == errors.size() && msg != null) {
+											List<org.opencrx.kernel.activity1.jmi1.EMail> emails = Activities.getInstance().importMimeMessage(
+												pm,
+												providerName,
+												segmentName,
+												msg,
+												obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCreator ? (org.opencrx.kernel.activity1.jmi1.ActivityCreator)obj : null
+											);
+											new File(location).delete();
+											navigateTo = (RefObject_1_0 )(emails != null && !emails.isEmpty() ? emails.iterator().next() : obj);
+										} else {
+											hasErrors = true;
+											// preserve file path/name for roundtrip
+											existingFilesPath.add(location);
+											existingFilesName.add(contentName);
+										}
+									}
 								}
 								catch(Exception e) {
 									ServiceException ex = new ServiceException(e);
@@ -262,6 +381,18 @@ org.opencrx.kernel.backend.*
 									} catch(Exception e0) {}
 								}
 							}
+							fileCounter++;
+							location = app.getTempFileName(fileCounter + "." + UPLOAD_FILE_FIELD_NAME, "");
+						}
+						if (!hasErrors) {
+							// no errors - leave wizard
+							Action nextAction = new ObjectReference(
+									navigateTo,
+									app
+								).getSelectObjectAction();
+								response.sendRedirect(
+									request.getContextPath() + "/" + nextAction.getEncodedHRef()
+								);
 						}
 					}
 					else {
@@ -291,13 +422,60 @@ org.opencrx.kernel.backend.*
 									</div>
 									<div class="col1"><fieldset>
 										<table class="fieldGroup">
-											<tr>
-												<td class="label"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:document1:Media", "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
-												<td>
-													<input type="file" name="<%= UPLOAD_FILE_FIELD_NAME %>" tabindex="200" />
+								 			<tr>
+								 				<td class="label"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:document1:Media", "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
+								 				<td >
+								 					<input name="<%= UPLOAD_FILE_FIELD_NAME %>" id="<%= UPLOAD_FILE_FIELD_NAME %>" style="border:1px solid #ddd;" title="drop files here" type="file" multiple="multiple" tabindex="200" onChange="javascript:makeFileList();" />
+														<div id="fileList"></div>
+														<script type="text/javascript">
+															$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='75px';
+					
+															function makeFileList() {
+																$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='';
+																var input = $("<%= UPLOAD_FILE_FIELD_NAME %>");
+																var outerdiv = $("fileList");
+																while (outerdiv.hasChildNodes()) {
+																	outerdiv.removeChild(outerdiv.firstChild);
+																}
+																for (var i = 0; i < input.files.length; i++) {
+																	var div = document.createElement("div");
+																	var cb = document.createElement("input");
+																	cb.type = "checkbox";
+																	cb.name = "filecb"+(i+1);
+																	cb.id = "filecb"+(i+1);
+																	cb.value = input.files[i].name;
+																	cb.checked = true;
+																	var text = document.createTextNode(input.files[i].name);
+																	div.appendChild(cb);
+																	div.appendChild(text);
+																	outerdiv.appendChild(div);
+																}
+																if(!outerdiv.hasChildNodes()) {
+																	outerdiv.innerHTML = '--';
+																	$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='75px';
+																}
+															}
+														</script>
 												</td>
-												<td class="addon" >
+												<td class="addon" ></td>
 											</tr>
+<%
+											if (hasErrors) {
+												for (int idx = 0; idx < errors.size(); idx++) {
+%>
+													<tr>
+										 				<td class="label"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:activity1:EMailRecipient", "party", app.getCurrentLocaleAsIndex()) %>:</span></td>
+														<td nowrap>
+															<input type="text" name="email-<%= idx %>" size="20" value="" />
+															<input type="hidden" name="unmatched-<%= idx %>" value="<%= errors.get(idx) %>" /> 
+											 				<span style="white-space:nowrap;overflow:hidden;" title="<%= errors.get(idx) %>"><%= errors.get(idx) %></span>
+														</td>
+														<td class="addon" ></td>
+													</tr>
+<%
+												}													
+											}
+%>
 											<tr>
 												<td colspan="3">
 													<br>
@@ -310,6 +488,17 @@ org.opencrx.kernel.backend.*
 								</td>
 							</tr>
 						</table>
+<%
+						if (hasErrors) { 
+							// preserve paths and names of existing files for roundtrip
+							for (int idx = 0; idx < existingFilesPath.size(); idx++) {
+%>
+								<input type="hidden" name="filepath-<%= idx %>" value="<%= existingFilesPath.get(idx) %>" />
+								<input type="hidden" name="filename-<%= idx %>" value="<%= existingFilesName.get(idx) %>" />
+<%
+							}
+						}
+%>
 					</form>
 <%
 			    }

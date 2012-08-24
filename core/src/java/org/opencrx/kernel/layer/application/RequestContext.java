@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RequestContext.java,v 1.9 2009/12/17 14:42:44 wfro Exp $
  * Description: RequestContext
- * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/17 14:42:44 $
  * ====================================================================
  *
  * This software is published under the BSD license

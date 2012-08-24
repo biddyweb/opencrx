@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: VCard.java,v 1.71 2012/01/13 17:15:42 wfro Exp $
  * Description: VCard
- * Revision:    $Revision: 1.71 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -57,6 +54,7 @@ package org.opencrx.kernel.backend;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -93,17 +91,20 @@ import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.base.jmi1.ImportParams;
+import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.jmi1.Note;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Codes;
+import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
 
 public class VCard extends AbstractImpl {
@@ -231,7 +232,33 @@ public class VCard extends AbstractImpl {
 		private final Map<String,List<String>> parameters;
 	}
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Escape new lines
+	 * @param from
+	 * @return
+	 */
+	protected String escapeNewlines(
+        String from
+    ) {
+        String to = "";
+        for(int i = 0; i < from.length(); i++) {
+            if(from.charAt(i) == '\n') {
+                to += "\\n";
+            }
+            else {
+                to += from.charAt(i);
+            }
+        }
+        return to;
+    }
+    
+    /**
+     * Get UTC formatted dateTime.
+     * @param dateTime
+     * @param dateTimeFormatter
+     * @return
+     * @throws ParseException
+     */
     protected String getUtcDateTime(
         String dateTime,
         SimpleDateFormat dateTimeFormatter
@@ -254,7 +281,13 @@ public class VCard extends AbstractImpl {
         return DateTimeFormat.BASIC_UTC_FORMAT.format(date);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get UTC formatted date.
+     * @param dateTime
+     * @param dateTimeFormatter
+     * @return
+     * @throws ParseException
+     */
     protected Date getUtcDate(
         String dateTime,
         SimpleDateFormat dateTimeFormatter
@@ -403,6 +436,17 @@ public class VCard extends AbstractImpl {
                 bday = DateTimeFormat.BASIC_UTC_FORMAT.format(contact.getBirthdate());
             }
         }
+        // NOTE
+        String note = "";
+        try {
+        	Note aNote = (Note)pm.getObjectById(
+        		account.refGetPath().getDescendant("note", "VCARD")
+        	);
+        	if(aNote != null) {
+        		note = aNote.getText();
+        	}
+        } catch(Exception e) {}
+        // ADR, TEL
         AccountAddress[] addresses = new AccountAddress[11];
         try {
             addresses = Accounts.getInstance().getMainAddresses(
@@ -543,15 +587,14 @@ public class VCard extends AbstractImpl {
         // return if data is missing
         if(!statusMessage.isEmpty()) {
             return null;
-        }        
-        if((sourceVcard == null) || (sourceVcard.length() == 0)) {
+        }
+        if((sourceVcard == null) || sourceVcard.isEmpty()) {
             // Empty template
             UUID uid = null;
             try {
                 uid = UUIDConversion.fromString(account.refGetPath().getBase());
-            }
-            catch(Exception e) {
-                uid = UUIDs.getGenerator().next();
+            } catch(Exception e) {
+                uid = UUIDs.newUUID();
             }
             sourceVcard = 
                 "BEGIN:VCARD\n" +
@@ -575,6 +618,7 @@ public class VCard extends AbstractImpl {
                 "URL;WORK:\n" +
                 "EMAIL;PREF;INTERNET:\n" +
                 "EMAIL;INTERNET:\n" +
+                "NOTE:\n" +
                 "END:VCARD";
         }
         try {
@@ -603,71 +647,75 @@ public class VCard extends AbstractImpl {
                         targetVcard.println("REV:" + rev.substring(0, 15) + "Z");
                     }
                     // N
-                    if((n != null) && (n.length() > 0)) {
+                    if((n != null) && !n.isEmpty()) {
                         targetVcard.println("N:" + n);
                     }
                     // FN
-                    if((fn != null) && (fn.length() > 0)) {
+                    if((fn != null) && !fn.isEmpty()) {
                         targetVcard.println("FN:" + fn);
                     }
                     // NICKNAME
-                    if((nickName != null) && (nickName.length() > 0)) {
+                    if((nickName != null) && !nickName.isEmpty()) {
                         targetVcard.println("NICKNAME:" + nickName);
                     }
                     // ORG
-                    if((org != null) && (org.length() > 0)) {
+                    if((org != null) && !org.isEmpty()) {
                         targetVcard.println("ORG:" + org);
                     }
                     // TITLE
-                    if((title != null) && (title.length() > 0)) {
+                    if((title != null) && !title.isEmpty()) {
                         targetVcard.println("TITLE:" + title);
                     }
                     // BDAY
-                    if((bday != null) && (bday.length() > 0)) {
+                    if((bday != null) && !bday.isEmpty()) {
                         targetVcard.println("BDAY:" + bday.substring(0, 15) + "Z");
                     }
+                    // NOTE
+                    if((note != null) && !note.isEmpty()) {
+                    	targetVcard.println("NOTE:" + this.escapeNewlines(note));
+                    }
                     // TEL;WORK;VOICE
-                    if((telWorkVoice != null) && (telWorkVoice.length() > 0)) {
+                    if((telWorkVoice != null) && !telWorkVoice.isEmpty()) {
                         targetVcard.println("TEL;WORK;VOICE:" + telWorkVoice);
                     }
                     // TEL;HOME;VOICE
-                    if((telHomeVoice != null) && (telHomeVoice.length() > 0)) {
+                    if((telHomeVoice != null) && !telHomeVoice.isEmpty()) {
                         targetVcard.println("TEL;HOME;VOICE:" + telHomeVoice);
                     }
                     // TEL;CELL;VOICE
-                    if((telCellVoice != null) && (telCellVoice.length() > 0)) {
+                    if((telCellVoice != null) && !telCellVoice.isEmpty()) {
                         targetVcard.println("TEL;CELL;VOICE:" + telCellVoice);
                     }
                     // TEL;FAX
-                    if((telWorkFax != null) && (telWorkFax.length() > 0)) {
-                        targetVcard.println("TEL;FAX:" + telWorkFax);
+                    if((telWorkFax != null) && !telWorkFax.isEmpty()) {
+                        targetVcard.println("TEL;FAX;WORK:" + telWorkFax);
                     }
                     // TEL;HOME;FAX
-                    if((telHomeFax != null) && (telHomeFax.length() > 0)) {
+                    if((telHomeFax != null) && !telHomeFax.isEmpty()) {
                         targetVcard.println("TEL;HOME;FAX:" + telHomeFax);
                     }
                     // ADR;WORK
-                    if((adrWork != null) && (adrWork.length() > 0)) {
+                    if((adrWork != null) && !adrWork.isEmpty()) {
                         targetVcard.println("ADR;WORK:;;" + adrWork);
                     }
                     // ADR;HOME
-                    if((adrHome != null) && (adrHome.length() > 0)) {
+                    if((adrHome != null) && !adrHome.isEmpty()) {
                         targetVcard.println("ADR;HOME:;;" + adrHome);
                     }
                     // URL;HOME
-                    if((urlHome != null) && (urlHome.length() > 0)) {
+                    if((urlHome != null) && !urlHome.isEmpty()) {
                         targetVcard.println("URL;HOME:" + urlHome);
                     }
                     // URL;WORK
-                    if((urlWork != null) && (urlWork.length() > 0)) {
+                    if((urlWork != null) && !urlWork.isEmpty()) {
                         targetVcard.println("URL;WORK:" + urlWork);
                     }
                     // EMAIL;PREF;INTERNET
-                    if((emailWork != null) && (emailWork.length() > 0)) {
+                    if((emailWork != null) && !emailWork.isEmpty()) {
                         targetVcard.println("EMAIL;PREF;INTERNET:" + emailWork);
                     }
                     // EMAIL;INTERNET
-                    if((emailHome != null) && (emailHome.length() > 0)) {
+                    if((emailHome != null) && !emailHome.isEmpty()) {
                         targetVcard.println("EMAIL;INTERNET:" + emailHome);
                     }
                     targetVcard.println("END:VCARD");                                            
@@ -689,27 +737,17 @@ public class VCard extends AbstractImpl {
                     isUpdatableTag |= 
                         tagStart.toUpperCase().startsWith("BDAY");
                     isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("TEL;WORK;VOICE");
+                        tagStart.toUpperCase().startsWith("TEL");
                     isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("TEL;HOME;VOICE");
+                        tagStart.toUpperCase().startsWith("ADR");
                     isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("TEL;CELL;VOICE");
+                        tagStart.toUpperCase().startsWith("URL");
                     isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("TEL;FAX");
+                        tagStart.toUpperCase().startsWith("EMAIL");
                     isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("TEL;HOME;FAX");
+                        tagStart.toUpperCase().startsWith("PHOTO");
                     isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("ADR;WORK");
-                    isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("ADR;HOME");
-                    isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("URL;HOME");
-                    isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("URL;WORK");
-                    isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("EMAIL;INTERNET");
-                    isUpdatableTag |=
-                        tagStart.toUpperCase().startsWith("EMAIL;PREF;INTERNET");
+                        tagStart.toUpperCase().startsWith("NOTE");
                     if(!isUpdatableTag) {
                         targetVcard.println(line);
                     }
@@ -894,6 +932,35 @@ public class VCard extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
+    public void writePhotoTag(
+    	PrintWriter p,
+    	Contact contact
+    ) throws ServiceException {
+    	if(contact.getPicture() != null) {
+    		Media picture = contact.getPicture();
+    		String mimeType = picture.getContentMimeType();
+    		if(mimeType != null && mimeType.indexOf("/") > 0) {
+    			try {
+        			ByteArrayOutputStream photo = new ByteArrayOutputStream();
+    				BinaryLargeObjects.streamCopy(picture.getContent().getContent(), 0L, photo);
+        			String encodedPhoto = Base64.encode(photo.toByteArray());
+        			String prefix = "PHOTO;ENCODING=b;TYPE=" + mimeType.substring(mimeType.indexOf("/") + 1) + ":";
+        			int len = 44;
+        			int pos = 0;
+        			while(pos < encodedPhoto.length()) {
+        				p.write(prefix);
+        				p.write(encodedPhoto.substring(pos, Math.min(encodedPhoto.length(), pos + len)));
+        				p.write("\n");
+        				pos += len;
+        				len = 68;
+        				prefix = " ";
+        			}
+    			} catch(Exception e) {}
+    		}
+    	}
+    }
+
+    //-------------------------------------------------------------------------
     public Map<String,VCardField> parseVCard(
         BufferedReader reader,
         StringBuilder vcardAsString
@@ -1046,22 +1113,22 @@ public class VCard extends AbstractImpl {
                     }
                 }
                 // lastName
-                if(nameTokens[0].length() > 0) {
+                if(!nameTokens[0].isEmpty()) {
                     contact.setLastName(nameTokens[0]);        
                 }
                 else if(contact.getLastName() == null) {
                     contact.setLastName("N/A");
                 }
                 // firstName
-                if(nameTokens[1].length() > 0) {
+                if(!nameTokens[1].isEmpty()) {
                     contact.setFirstName(nameTokens[1]);
                 }
                 // middleName
-                if(nameTokens[2].length() > 0) {
+                if(!nameTokens[2].isEmpty()) {
                     contact.setMiddleName(nameTokens[2]);
                 }
                 // salutation
-                if(nameTokens[3].length() > 0) {
+                if(!nameTokens[3].isEmpty()) {
                     String salutation = nameTokens[3];
                     short salutationCode = this.mapToSalutationCode(
                     	salutation, 
@@ -1073,37 +1140,71 @@ public class VCard extends AbstractImpl {
                 	contact.setSalutation(null);
                 }
                 // suffix
-                if(nameTokens[4].length() > 0) {
+                if(!nameTokens[4].isEmpty()) {
                     contact.setSuffix(nameTokens[4]);
                 }
             }
             // nickName
             String nickName = VCardField.getFieldValue("NICKNAME", vcard);
-            if((nickName != null) && (nickName.length() > 0)) {
+            if((nickName != null) && !nickName.isEmpty()) {
                 contact.setNickName(nickName);
             }
             // jobTitle
             String jobTitle = VCardField.getFieldValue("TITLE", vcard);
-            if((jobTitle != null) && (jobTitle.length() > 0)) {
+            if((jobTitle != null) && !jobTitle.isEmpty()) {
                 contact.setJobTitle(jobTitle);
             }
             // organization
             String organization = VCardField.getFieldValue("ORG", vcard);
-            if((organization != null) && (organization.length() > 0)) {
-                contact.setOrganization(organization);
+            if((organization != null) && !organization.isEmpty()) {
+                contact.setOrganization(organization.split(";")[0]);
+            }
+            // photo
+            String photo = VCardField.getFieldValue("PHOTO", vcard);
+            if(photo != null && !photo.isEmpty()) {
+            	org.opencrx.kernel.generic.jmi1.Media picture = null;
+            	try {
+            		picture = (org.opencrx.kernel.generic.jmi1.Media)pm.getObjectById(contact.refGetPath().getDescendant("media", "VCARD"));            			
+            	} catch(Exception e) {}
+            	if(picture == null) {
+            		picture = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
+                	contact.addMedia(
+                		"VCARD",
+                		picture
+                	);
+            	}
+            	List<String> mimeTypes = VCardField.getField("PHOTO", null, null, vcard).getParameters().get("TYPE");
+            	String mimeType = mimeTypes.isEmpty() ? "image/jpeg" : mimeTypes.get(0).toLowerCase();
+            	if(mimeType.indexOf("/") < 0) {
+            		mimeType = "image/" + mimeType;
+            	}
+            	picture.setContentMimeType(mimeType);
+            	picture.setContentName("VCARD~PHOTO");
+            	picture.setContent(BinaryLargeObjects.valueOf(Base64.decode(photo)));
+            	contact.setPicture(picture);
             }
             // bday
             String bday = VCardField.getFieldValue("BDAY", vcard);
-            if((bday != null) && (bday.length() > 0)) {
+            if((bday != null) && !bday.isEmpty()) {
+            	bday = bday.replace("-", "");
                 try {
+                	if(bday.length() == 8) {
+                		bday = bday + "T000000.000Z";
+                	}
+                	if((bday.endsWith("T000000Z") || bday.endsWith("T000000.000Z")) && contact.getBirthdate() != null) {
+                		// In case time is T000000.000Z assume time is unknown. In 
+                		// this case do not override time set on contact's birthday
+                		bday =
+                			bday.substring(0, 9) + 
+                			DateTimeFormat.BASIC_UTC_FORMAT.format(contact.getBirthdate()).substring(9);
+                	}
                     contact.setBirthdate(
                     	this.getUtcDate(
                             bday, 
                             dateTimeFormatter
                         )
                     );
-                } 
-                catch(Exception e) {}
+                } catch(Exception e) {}
             }
             report.add("Update account");
         }
@@ -1166,7 +1267,7 @@ public class VCard extends AbstractImpl {
             if(note == null) {
                 note = pm.newInstance(Note.class);
                 account.addNote(
-                	this.getUidAsString(),
+                	"VCARD",
                 	note
                 );
                 report.add("Create note");
@@ -1174,7 +1275,7 @@ public class VCard extends AbstractImpl {
             else {
                 report.add("Update note");
             }
-            note.setTitle("VCard note");
+            note.setTitle("VCARD~NOTE");
             String text = "";
             int pos = 0;
             if(s.indexOf("=0D=0A") >= 0) {
@@ -1186,12 +1287,14 @@ public class VCard extends AbstractImpl {
 	            while((pos = s.indexOf("\\n")) >= 0) {
 	                text += s.substring(0, pos) + "\n";
 	                s = s.substring(pos + 2);
-	            }            	
+	            }     	
+            } else {
+            	text = s;
             }
             note.setText(text);
         }
         // vcard
-        account.setVcard(vcardAsString);        
+        account.setVcard(vcardAsString);
         // Addresses
         Collection<AccountAddress> addresses = account.getAddress();
         PostalAddress adrHome = null;
@@ -1199,7 +1302,7 @@ public class VCard extends AbstractImpl {
         PhoneNumber telHomeVoice = null;
         PhoneNumber telWorkVoice = null;
         PhoneNumber telHomeFax = null;
-        PhoneNumber telFax = null;
+        PhoneNumber telWorkFax = null;
         WebAddress urlHome = null;
         WebAddress urlWork = null;
         PhoneNumber telCellVoice = null;
@@ -1241,7 +1344,7 @@ public class VCard extends AbstractImpl {
                 }
                 // work fax
                 else if(usage.contains(Addresses.USAGE_BUSINESS_FAX)) {
-                    telFax = (PhoneNumber)address;
+                    telWorkFax = (PhoneNumber)address;
                 }              
                 // cell voice
                 else if(usage.contains(Addresses.USAGE_MOBILE)) {
@@ -1281,7 +1384,7 @@ public class VCard extends AbstractImpl {
             else {
             	this.updatePostalAddress(
             		adrHome, 
-            		s, 
+            		s,
             		locale,
             		codeSegment
             	);
@@ -1381,20 +1484,20 @@ public class VCard extends AbstractImpl {
         // update telFax
         s = VCardField.getFieldValue("TEL", "TYPE", Arrays.asList("WORK", "FAX"), vcard);
         if((s != null) && !s.isEmpty()) {
-            if(telFax == null) {
-            	telFax = pm.newInstance(PhoneNumber.class);
-                telFax.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
-                telFax.setMain(Boolean.TRUE);
-                this.updatePhoneNumber(telFax, s);
+            if(telWorkFax == null) {
+            	telWorkFax = pm.newInstance(PhoneNumber.class);
+                telWorkFax.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
+                telWorkFax.setMain(Boolean.TRUE);
+                this.updatePhoneNumber(telWorkFax, s);
                 account.addAddress(
                 	false,
                 	this.getUidAsString(),
-                	telFax
+                	telWorkFax
                 );
                 report.add("Create phone number");
             }
             else {
-            	this.updatePhoneNumber(telFax, s);
+            	this.updatePhoneNumber(telWorkFax, s);
                 report.add("Update phone number");
             }
         }
@@ -1616,11 +1719,19 @@ public class VCard extends AbstractImpl {
     	private final Account account;    	
     }
     
+    /**
+     * Updates existing or creates new account according to given VCARD.
+     * @param reader
+     * @param accountSegment
+     * @return
+     * @throws ServiceException
+     */
     public PutVCardResult putVCard(
     	BufferedReader reader,
     	org.opencrx.kernel.account1.jmi1.Segment accountSegment
     ) throws ServiceException {    
     	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+    	boolean isTxLocal = !pm.currentTransaction().isActive();
     	PutVCardResult.Status status = PutVCardResult.Status.UPDATED;
     	Account account = null;
     	String cardUID = null;
@@ -1633,6 +1744,13 @@ public class VCard extends AbstractImpl {
                     vcard += "BEGIN:VCARD\n";
                     String cardREV = null;
                     while((l = reader.readLine()) != null) {
+                    	// iOS uses for some fields "ITEM<n>." as field prefix
+                    	if(l.startsWith("item") || l.startsWith("ITEM")) {
+                    		int posEndItemPrefix = l.indexOf(".");
+                    		if(posEndItemPrefix > 0) {
+                    			l = l.substring(posEndItemPrefix + 1);
+                    		}
+                    	}
                         vcard += l;
                         vcard += "\n";
                         if(l.startsWith("UID:")) {
@@ -1666,6 +1784,8 @@ public class VCard extends AbstractImpl {
 	                    newCard.remove("DTSTAMP");                               
 	                    newCard.remove("CREATED"); 
 	                    newCard.remove("REV");
+	                    newCard.remove("PRODID");
+	                    newCard.remove("VERSION");
 	                    dummy.setLength(0);
 	                    Map<String,VCardField> oldCard = null;
 	                    if(account == null) {
@@ -1683,9 +1803,16 @@ public class VCard extends AbstractImpl {
 	                    		}
 	                    	}
                             if(account == null) {
+                            	if(!pm.currentTransaction().isActive()) {
+                            		pm.currentTransaction().begin();
+                            	}
                             	account = pm.newInstance(Contact.class);
+                            	accountSegment.addAccount(
+                            		Base.getInstance().getUidAsString(),
+                            		account
+                            	);
                             }
-                            status =  PutVCardResult.Status.CREATED;
+                            status = PutVCardResult.Status.CREATED;
 	                    }
 	                    else {
 	                    	try {
@@ -1699,11 +1826,15 @@ public class VCard extends AbstractImpl {
 	                        oldCard.remove("DTSTAMP");                                   
 	                        oldCard.remove("CREATED");          
 	                        oldCard.remove("REV");
+	                        oldCard.remove("PRODID");
+	                        oldCard.remove("VERSION");
 	                        oldCard.keySet().retainAll(newCard.keySet());
 	                    }
                     	if(!newCard.equals(oldCard)) {
 	                        try {
-                                pm.currentTransaction().begin();
+                            	if(!pm.currentTransaction().isActive()) {
+                            		pm.currentTransaction().begin();
+                            	}
                                 ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
                                     vcard.toString().getBytes("UTF-8"), 
                                     VCard.MIME_TYPE, 
@@ -1711,8 +1842,10 @@ public class VCard extends AbstractImpl {
                                     (short)0
                                 );
                                 account.importItem(importItemParams);
-                                pm.currentTransaction().commit();
-	                            pm.refresh(account);
+                                if(isTxLocal) {
+	                                pm.currentTransaction().commit();
+		                            pm.refresh(account);
+                                }
                         	}
 	                        catch(Exception e) {
 	                        	new ServiceException(e).log();
@@ -1723,7 +1856,7 @@ public class VCard extends AbstractImpl {
 	                        }
                     	}
 	                }
-	            }    	
+	            }
 	        }
         }
         catch (IOException e) {
@@ -1758,7 +1891,7 @@ public class VCard extends AbstractImpl {
     public static final String DATETIME_FORMAT =  "yyyyMMdd'T'HHmmss";
     public static final String MIME_TYPE = "text/x-vcard";
     public static final String FILE_EXTENSION = ".vcf";
-    public static final String PROD_ID = "//OPENCRX//Core Version 2//EN";
+    public static final String PROD_ID = "//OPENCRX//V2//EN";
     
     public static final int MIME_TYPE_CODE = 3;
     public static final short DEFAULT_LOCALE = 0;

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DeliveryInformationFieldMapper.java,v 1.3 2010/05/04 15:13:36 wfro Exp $
  * Description: DeliveryInformationFieldMapper
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/04 15:13:36 $
  * ====================================================================
  *
  * This software is published under the BSD license

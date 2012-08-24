@@ -3,8 +3,8 @@
 <openmdxjdo>
   <package name="org.opencrx.kernel.generic.jpa3">
     <class name="CrxObject">
-		<field name="assignedReminder" visibility="cci">
-			<join table="OOCKE1_JOIN_OBJHASASSREMINDER"/>
+		<field name="assignedTimer" visibility="cci">
+			<join table="OOCKE1_JOIN_OBJHASASSTIMER"/>
 		</field>       
     </class>
   </package>

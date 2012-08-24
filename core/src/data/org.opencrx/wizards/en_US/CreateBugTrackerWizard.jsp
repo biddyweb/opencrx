@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateBugTrackerWizard.jsp,v 1.21 2011/09/03 13:31:59 wfro Exp $
+ * Name:        $Id: CreateBugTrackerWizard.jsp,v 1.22 2012/07/08 13:30:31 wfro Exp $
  * Description: CreateBugTrackerWizard
- * Revision:    $Revision: 1.21 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/03 13:31:59 $
+ * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,7 +66,6 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

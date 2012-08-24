@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="informationSource" _operation="set">
 										<_object>
 											<name>
+												<_item>informationSource</_item>
 												<_item>org:opencrx:kernel:contract1:Lead:leadSource</_item>
 												<_item>org:opencrx:kernel:account1:CreateLeadParams:source</_item>
 												<_item>org:opencrx:kernel:contract1:Opportunity:opportunitySource</_item>

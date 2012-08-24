@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreditBookingImpl.java,v 1.1 2009/04/09 13:06:59 wfro Exp $
  * Description: DepotImpl
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/09 13:06:59 $
  * ====================================================================
  *
  * This software is published under the BSD license

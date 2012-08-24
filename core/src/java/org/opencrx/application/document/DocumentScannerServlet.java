@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentScannerServlet.java,v 1.22 2012/01/13 17:14:09 wfro Exp $
  * Description: DocumentScannerServlet
- * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:14:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -91,7 +88,6 @@ import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.kernel.id.UUIDs;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
 
@@ -462,12 +458,12 @@ public class DocumentScannerServlet
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
-                "admin-" + segmentName,
-                UUIDs.getGenerator().next().toString()
-            );    
+                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+                null
+            );
             PersistenceManager rootPm = Utils.getPersistenceManagerFactory().getPersistenceManager(
                 SecurityKeys.ROOT_PRINCIPAL,
-                UUIDs.getGenerator().next().toString()
+                null
             );
             Workflows.getInstance().initWorkflows(
                 pm, 

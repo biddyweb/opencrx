@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: UnauthenticatedException.java,v 1.3 2010/11/17 19:03:42 wfro Exp $
  * Description: UnauthenticatedException
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/17 19:03:42 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RtfUtil.java,v 1.4 2010/04/11 21:57:31 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/11 21:57:31 $
  * ====================================================================
  *
  * This software is published under the BSD license

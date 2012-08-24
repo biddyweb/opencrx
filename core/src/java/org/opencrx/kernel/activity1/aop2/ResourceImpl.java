@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ResourceImpl.java,v 1.17 2009/09/01 14:21:52 wfro Exp $
  * Description: CompoundBookingImpl
- * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/01 14:21:52 $
  * ====================================================================
  *
  * This software is published under the BSD license

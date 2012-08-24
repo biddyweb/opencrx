@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PrestaShopMapper.java,v 1.18 2012/01/13 17:14:29 wfro Exp $
  * Description: PrestaShopMapper
- * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:14:29 $
  * ====================================================================
  *
  * This software is published under the BSD license

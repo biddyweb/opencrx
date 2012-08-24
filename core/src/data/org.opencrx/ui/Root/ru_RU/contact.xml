@@ -556,7 +556,7 @@
                         <_item>Дата рождения</_item>
                       </label>
                       <toolTip>
-                        <_item>Дата рождения контактного лица</_item>
+                        <_item>Дата рождения контактного лица (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Дата годовщины</_item>
                       </label>
                       <toolTip>
-                        <_item>Дата годовщины контактного лица</_item>
+                        <_item>Дата годовщины контактного лица (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -10,6 +10,17 @@
 						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
 							<_object/>
 							<_content>
+								<featureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:contract1:AbstractContract:account">
+										<_object>
+											<type>org:opencrx:kernel:account1:Account</type>
+											<multiplicity>list</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+								</featureDefinition>
+
 								<elementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:contract">
 										<_object>
@@ -25,7 +36,8 @@
 												<_item>0</_item>
 												<_item>70</_item>
 											</order>
-											<maxMember>9</maxMember>
+											<showMaxMember>10</showMaxMember>
+											<maxMember>20</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -136,6 +148,88 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:account">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.AccountAssignmentDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<spanRow>3</spanRow>
+											<toolTip>
+												<_item>Assigned Accounts</_item>
+											</toolTip>
+											<label>
+												<_item>Assigned Accounts</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>5</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Lead:account">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:account">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Quote:account">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrder:account">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Invoice:account">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesVolumeContract:account">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.AccountAssignmentDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>true</filterable>
+											<spanRow>3</spanRow>
+											<toolTip>
+												<_item>Assigned Accounts</_item>
+											</toolTip>
+											<label>
+												<_item>Assigned Accounts</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>5</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+	  
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesVolumeContract:contractNumber">
 										<_object>
 											<columnBreak>true</columnBreak>

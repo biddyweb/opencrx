@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: FastResultSet.java,v 1.4 2010/07/01 15:06:54 wfro Exp $
  * Description: FastResultSet
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/07/01 15:06:54 $
  * ====================================================================
  *
  * This software is published under the BSD license

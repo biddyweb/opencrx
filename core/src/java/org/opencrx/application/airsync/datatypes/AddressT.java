@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AddressT.java,v 1.2 2010/02/23 19:24:26 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/23 19:24:26 $
  * ====================================================================
  *
  * This software is published under the BSD license

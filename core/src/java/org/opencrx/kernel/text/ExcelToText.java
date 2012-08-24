@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExcelToText.java,v 1.5 2011/08/26 12:29:36 wfro Exp $
  * Description: ExcelToText
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/08/26 12:29:36 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="partystatusIncident" _operation="set">
 										<_object>
 											<name>
+												<_item>partystatusIncident</_item>
 												<_item>org:opencrx:kernel:activity1:IncidentParty:partyStatus</_item>
 											</name>
 										</_object>

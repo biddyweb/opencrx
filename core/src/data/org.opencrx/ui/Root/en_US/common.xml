@@ -573,7 +573,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Element definitions for User defined fields tab-->
+									<!--Element definitions for User defined fields tab are configured on common_userdefined.xml -->
 									<!--boolean fields-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:userBoolean0">
 										<_object>
@@ -1147,6 +1147,25 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedFieldContainer:localizedField">
+										<_object>
+											<active>true</active>
+											<inPlace>true</inPlace>
+											<toolTip>
+												<_item>Localized Fields</_item>
+											</toolTip>
+											<label>
+												<_item>»Localized Fields</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>1005</_item>
+											</order>
+											<maxMember>5</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment">
 										<_object>
 											<active>true</active>
@@ -1202,19 +1221,20 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:assignedReminder">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:assignedTimer">
 										<_object>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
-												<_item>Reminders</_item>
+												<_item>Timers</_item>
 											</toolTip>
 											<label>
-												<_item>Reminders</_item>
+												<_item>Timers</_item>
 											</label>
 											<order>
 												<_item>80</_item>
 												<_item>0</_item>
-												<_item>6</_item>
+												<_item>9</_item>
 											</order>
 											<showMaxMember>7</showMaxMember>
 											<maxMember>11</maxMember>
@@ -1301,7 +1321,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1314,7 +1334,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:title">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note:title">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1360,7 +1380,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:text">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note:text">
 										<_object>
 											<active>true</active>
 											<sortable>false</sortable>
@@ -1375,6 +1395,112 @@
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- LocalizedField -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Localized Field</_item>
+											</toolTip>
+											<label>
+												<_item>Localized Field</_item>
+											</label>
+											<iconKey>LocalizedField</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:description">
+										<_object>
+											<active>true</active>
+											<spanRow>2</spanRow>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:locale">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Locale</_item>
+											</toolTip>
+											<label>
+												<_item>Locale</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:usage">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Usage</_item>
+											</toolTip>
+											<label>
+												<_item>Usage</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:localizedValue">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Localized value</_item>
+											</toolTip>
+											<label>
+												<_item>Localized value</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>

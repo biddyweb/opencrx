@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DebitBookingImpl.java,v 1.2 2009/04/09 13:08:58 wfro Exp $
  * Description: DebitBookingImpl
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/09 13:08:58 $
  * ====================================================================
  *
  * This software is published under the BSD license

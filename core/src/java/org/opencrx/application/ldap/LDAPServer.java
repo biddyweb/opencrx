@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LDAPServer.java,v 1.2 2010/02/10 16:36:34 wfro Exp $
  * Description: LDAPServer
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/10 16:36:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,7 +64,23 @@ import org.opencrx.application.adapter.AbstractSession;
  */
 public class LDAPServer extends AbstractServer {
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * @param pmf
+	 * @param providerName
+	 * @param bindAddress
+	 * @param portNumber
+	 * @param sslKeystoreFile
+	 * @param sslKeystoreType
+	 * @param sslKeystorePass
+	 * @param sslKeyPass
+	 * @param sslTruststoreFile
+	 * @param sslTruststorePass
+	 * @param sslTruststoreType
+	 * @param sslNeedClientAuth
+	 * @param isDebug
+	 * @param delayOnStartup
+	 */
 	protected LDAPServer(
 	    PersistenceManagerFactory pmf,
 	    String providerName,
@@ -77,6 +90,10 @@ public class LDAPServer extends AbstractServer {
 	    String sslKeystoreType,
 	    String sslKeystorePass,
 	    String sslKeyPass,
+	    String sslTruststoreFile,
+	    String sslTruststorePass,
+	    String sslTruststoreType,
+	    Boolean sslNeedClientAuth,
 	    boolean isDebug,
 	    int delayOnStartup
 	) {
@@ -90,11 +107,18 @@ public class LDAPServer extends AbstractServer {
 		    sslKeystoreType,
 		    sslKeystorePass,
 		    sslKeyPass,
+		    sslTruststoreFile,
+		    sslTruststorePass,
+		    sslTruststoreType,
+		    sslNeedClientAuth,
 			isDebug,
 			delayOnStartup
 		);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServer#newSession(java.net.Socket, org.opencrx.application.adapter.AbstractServer)
+	 */
 	@Override
     public AbstractSession newSession(
     	Socket socket, 
@@ -105,5 +129,5 @@ public class LDAPServer extends AbstractServer {
 			server
 		);
     }
-		
+
 }

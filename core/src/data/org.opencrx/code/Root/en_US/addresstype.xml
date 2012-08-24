@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="addresstype" _operation="set">
 										<_object>
 											<name>
+												<_item>addresstype</_item>
 												<_item>org:opencrx:kernel:account1:AddressTypeFilterProperty:addressType</_item>
 											</name>
 										</_object>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendDirectMessageWorkflow.java,v 1.16 2011/10/05 16:34:43 wfro Exp $
  * Description: SendDirectMessageWorkflow
- * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/05 16:34:43 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -63,7 +60,7 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.opencrx.kernel.backend.Notifications;
-import org.opencrx.kernel.backend.SynchWorkflow_2_0;
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.TwitterAccountQuery;
@@ -81,21 +78,22 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
-public class SendDirectMessageWorkflow 
-    implements SynchWorkflow_2_0 {
+public class SendDirectMessageWorkflow extends Workflows.SynchronousWorkflow {
 
-   //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.Workflows.SynchronousWorkflow#execute(org.opencrx.kernel.base.jmi1.WorkflowTarget, org.openmdx.base.jmi1.ContextCapable, org.openmdx.base.jmi1.ContextCapable, org.opencrx.kernel.home1.jmi1.WfProcessInstance)
+	 */
+	@Override
     public void execute(
         WorkflowTarget wfTarget,
         ContextCapable targetObject,
-        Map<String,Object> params,
         WfProcessInstance wfProcessInstance
     ) throws ServiceException {        
     	PersistenceManager pm = JDOHelper.getPersistenceManager(wfProcessInstance);
     	PersistenceManager rootPm = pm.getPersistenceManagerFactory().getPersistenceManager(
             SecurityKeys.ROOT_PRINCIPAL,
             null
-        );    		
+        );
         try {             
             UserHome userHome = (UserHome)pm.getObjectById(wfProcessInstance.refGetPath().getParent().getParent());
             String providerName = userHome.refGetPath().get(2);
@@ -105,6 +103,7 @@ public class SendDirectMessageWorkflow
             	segmentName, 
             	rootPm
             );
+            Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance);
             // Find default twitter account
             TwitterAccountQuery twitterAccountQuery = (TwitterAccountQuery)pm.newQuery(TwitterAccount.class);
             twitterAccountQuery.thereExistsIsDefault().isTrue();

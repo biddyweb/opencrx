@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActionFactory.java,v 1.4 2011/07/12 13:30:16 wfro Exp $
  * Description: ActionFactory
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/12 13:30:16 $
  * ====================================================================
  *
  * This software is published under the BSD license

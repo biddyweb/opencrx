@@ -556,7 +556,7 @@
                         <_item>生年月日</_item>
                       </label>
                       <toolTip>
-                        <_item>生年月日</_item>
+                        <_item>生年月日 (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>記念日</_item>
                       </label>
                       <toolTip>
-                        <_item>記念日</_item>
+                        <_item>記念日 (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

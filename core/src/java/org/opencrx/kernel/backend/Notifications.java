@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Notifications.java,v 1.24 2011/11/30 11:25:42 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/30 11:25:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -87,25 +84,39 @@ import org.openmdx.portal.servlet.action.SelectObjectAction;
 
 public class Notifications extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register Notifications with backend.
+	 */
 	public static void register(
 	) {
 		registerImpl(new Notifications());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Retrieve registered Notifications.
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Notifications getInstance(
 	) throws ServiceException {
 		return getInstance(Notifications.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Notifications backend.
+	 */
 	protected Notifications(
 	) {
 		
 	}
 	
-    //-----------------------------------------------------------------------
+	/**
+	 * Get access URL.
+	 * @param targetIdentity
+	 * @param userHome
+	 * @return
+	 * @throws ServiceException
+	 */
 	public String getAccessUrl(
 		Path targetIdentity,
 		UserHome userHome
@@ -127,7 +138,16 @@ public class Notifications extends AbstractImpl {
 	        "&parameter=" + selectTargetAction.getParameter();		
 	}
 	
-    //-----------------------------------------------------------------------
+    /**
+     * Get notification text.
+     * @param pm
+     * @param target
+     * @param wfProcessInstanceIdentity
+     * @param userHome
+     * @param params
+     * @return
+     * @throws ServiceException
+     */
     public String getNotificationText(
         PersistenceManager pm,
         ContextCapable target,
@@ -150,8 +170,12 @@ public class Notifications extends AbstractImpl {
                 "",
                 true
             );
-        String subscriptionId = 
-            (params.get("triggeredBySubscription") == null ? "N/A" : ((Path)params.get("triggeredBySubscription")).getBase());            
+        Path triggeredBy = params.get("triggeredBy") instanceof String ? 
+        	new Path((String)params.get("triggeredBy")) :
+        		params.get("triggeredBy") instanceof Path ?
+        			(Path)params.get("triggeredBy") :
+        				null;
+        String triggeredById = triggeredBy == null ? "N/A" : triggeredBy.getBase(); 
         Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null ? 
         	null : 
         	new Action(
@@ -162,16 +186,16 @@ public class Notifications extends AbstractImpl {
                 "",
                 true
             );
-        Action selectTriggeredBySubscriptionAction =  params.get("triggeredBySubscription") == null ? 
+        Action selectTriggeredByAction =  triggeredBy == null ? 
         	null : 
-        	new Action(
-                SelectObjectAction.EVENT_ID,
-                new Action.Parameter[]{
-                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, ((Path)params.get("triggeredBySubscription")).toXri())
-                },
-                "",
-                true
-            );
+	        	new Action(
+	                SelectObjectAction.EVENT_ID,
+	                new Action.Parameter[]{
+	                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, triggeredBy.toXri())
+	                },
+	                "",
+	                true
+	            );
         // Alert specific text
         if(target instanceof org.opencrx.kernel.home1.jmi1.Alert) {
             org.opencrx.kernel.home1.jmi1.Alert alert = (org.opencrx.kernel.home1.jmi1.Alert)target;
@@ -330,18 +354,27 @@ public class Notifications extends AbstractImpl {
             text = 
                 text += "=======================================================================\n";
                 text += "Event:           " + (params.get("triggeredByEventType") == null ? "N/A" : DataproviderOperations.toString(((Number)params.get("triggeredByEventType")).intValue())) + "\n";
-                text += "Subscription Id: " + subscriptionId + "\n";
+                text += "Trigger Id:      " + triggeredById + "\n";
                 if(selectTargetAction != null) {
                     text += "Object Invoked:  " + ("\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\"\n");
                 }
                 text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectWfProcessInstanceAction.getParameter()) + "\"\n";
-                text += "Subscription:    " + (selectTriggeredBySubscriptionAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectTriggeredBySubscriptionAction.getParameter()) + "\"\n";
+                text += "Trigger URL:     " + (selectTriggeredByAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectTriggeredByAction.getParameter()) + "\"\n";
                 text += "=======================================================================\n";
         }
         return text;
     }
             
-    //-----------------------------------------------------------------------
+    /**
+     * Get notification subject.
+     * @param pm
+     * @param target
+     * @param userHome
+     * @param params
+     * @param useSendMailSubjectPrefix
+     * @return
+     * @throws ServiceException
+     */
     public String getNotificationSubject(
         PersistenceManager pm,
         ContextCapable target,
@@ -351,11 +384,12 @@ public class Notifications extends AbstractImpl {
     ) throws ServiceException {
         Path userHomeIdentity = userHome.refGetPath();
         String title = null;
-        String subscriptionId = params.get("triggeredBySubscription") instanceof RefObject_1_0 ?
-        	((RefObject_1_0)params.get("triggeredBySubscription")).refGetPath().getBase() :
-        		params.get("triggeredBySubscription") instanceof Path ?
-        			((Path)params.get("triggeredBySubscription")).getBase() :
-        				"N/A"; 
+        Path triggeredBy = params.get("triggeredBy") instanceof String ? 
+        	new Path((String)params.get("triggeredBy")) :
+        		params.get("triggeredBy") instanceof Path ?
+        			(Path)params.get("triggeredBy") :
+        				null;
+        String triggeredById = triggeredBy == null ? "N/A" : triggeredBy.getBase();
         String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null ? 
             "[" + userHome.refGetPath().get(2) + ":" + userHome.refGetPath().get(4) + "]" : 
             	userHome.getSendMailSubjectPrefix();
@@ -422,12 +456,12 @@ public class Notifications extends AbstractImpl {
             title = 
                 sendMailSubjectPrefix + ": " + 
                 "from=" + userHomeIdentity.get(2) + "/" + userHomeIdentity.get(4)+ "/" + userHomeIdentity.get(6) + "; " + 
-                "trigger=" + subscriptionId + "; " +
+                "trigger=" + triggeredById + "; " +
                 "access=" + webAccessUrl;                
         }   
         return title;
     }
-        
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

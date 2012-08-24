@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncResponse.java,v 1.6 2010/02/28 01:43:54 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/28 01:43:54 $
  * ====================================================================
  *
  * This software is published under the BSD license

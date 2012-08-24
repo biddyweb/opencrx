@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: GridExportIncludingCompositesAsXmlAction.java,v 1.3 2011/07/15 08:48:05 wfro Exp $
  * Description: GridExportIncludingCompositesAsXmlAction
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/15 08:48:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,13 +69,15 @@ public class GridExportIncludingCompositesAsXmlAction extends GridExportObjectsA
 	@Override
     protected GridExporter getGridExporter(
     	Grid grid, 
-    	List<Path> selectedObjectIdentities
+    	List<Path> selectedObjectIdentities,
+    	int maxItems
     ) throws ServiceException {
 		return new DefaultGridExporter(
 			grid,
 			selectedObjectIdentities,
 			Exporter.MIME_TYPE_XML,
-			this.getReferenceFilter(grid)
+			this.getReferenceFilter(grid),
+			maxItems
 		);
     }
 

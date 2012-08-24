@@ -155,6 +155,36 @@
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.account1.uml#_JxKi4IbgEdqvTf7Mxl28lg"/>
     <layoutConstraint xmi:type="notation:Bounds" xmi:id="_To5BotUrEd-tQtZMkkCCmQ" x="220" y="618" width="451"/>
   </children>
+  <children xmi:type="notation:Shape" xmi:id="_GPtv8GB_EeGv4JgTBvupNw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
+    <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_GQPUYGB_EeGv4JgTBvupNw" source="Shortcut">
+      <details xmi:type="ecore:EStringToStringMapEntry" xmi:id="_GQP7cGB_EeGv4JgTBvupNw" key="modelID" value="UMLClass"/>
+    </eAnnotations>
+    <children xmi:type="notation:DecorationNode" xmi:id="_GPuXAGB_EeGv4JgTBvupNw" type="5003">
+      <styles xmi:type="notation:FontStyle" xmi:id="_GPxaUGB_EeGv4JgTBvupNw" bold="true" italic="true"/>
+    </children>
+    <children xmi:type="notation:DecorationNode" xmi:id="_GPuXAWB_EeGv4JgTBvupNw" type="5019"/>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_GPuXAmB_EeGv4JgTBvupNw" visible="false" type="7001">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_GPuXA2B_EeGv4JgTBvupNw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_GPuXBGB_EeGv4JgTBvupNw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_GPuXBWB_EeGv4JgTBvupNw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_GPu-EGB_EeGv4JgTBvupNw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_GPu-EWB_EeGv4JgTBvupNw" visible="false" type="7002">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_GPu-EmB_EeGv4JgTBvupNw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_GPu-E2B_EeGv4JgTBvupNw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_GPu-FGB_EeGv4JgTBvupNw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_GPu-FWB_EeGv4JgTBvupNw"/>
+    </children>
+    <children xmi:type="notation:BasicCompartment" xmi:id="_GPu-FmB_EeGv4JgTBvupNw" visible="false" type="7003">
+      <styles xmi:type="notation:TitleStyle" xmi:id="_GPu-F2B_EeGv4JgTBvupNw" showTitle="true"/>
+      <styles xmi:type="notation:SortingStyle" xmi:id="_GPu-GGB_EeGv4JgTBvupNw"/>
+      <styles xmi:type="notation:FilteringStyle" xmi:id="_GPu-GWB_EeGv4JgTBvupNw"/>
+      <styles xmi:type="notation:CanonicalStyle" xmi:id="_GPu-GmB_EeGv4JgTBvupNw"/>
+    </children>
+    <styles xmi:type="notation:CanonicalStyle" xmi:id="_GPtv8WB_EeGv4JgTBvupNw"/>
+    <element xmi:type="uml:Class" href="../../org.opencrx.kernel.generic.uml#_7j70oGB8EeGv4JgTBvupNw"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_GPtv8mB_EeGv4JgTBvupNw" x="1088" y="745"/>
+  </children>
   <styles xmi:type="notation:DiagramStyle" xmi:id="_27fcoUiOEd-iy9UYIz4FDQ"/>
   <styles xmi:type="uml2tools.notation:U2TDiagramCanonicalStyle" xmi:id="_27fcokiOEd-iy9UYIz4FDQ"/>
   <styles xmi:type="notation:FilteringStyle" xmi:id="_27fco0iOEd-iy9UYIz4FDQ"/>
@@ -466,5 +496,15 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_TwcbIdUrEd-tQtZMkkCCmQ" fontName="Arial" fontHeight="11"/>
     <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.account1.uml#_MK44oIe3EdqXjMqq7BJHEg"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_TwcbItUrEd-tQtZMkkCCmQ" points="[-47, -51, 210, 233]$[-257, -284, 0, 0]"/>
+  </edges>
+  <edges xmi:type="notation:Connector" xmi:id="_NstF8GB_EeGv4JgTBvupNw" type="4001" source="_URLkQEiPEd-iy9UYIz4FDQ" target="_GPtv8GB_EeGv4JgTBvupNw" routing="Rectilinear" lineColor="2763429">
+    <children xmi:type="notation:DecorationNode" xmi:id="_NstF82B_EeGv4JgTBvupNw" type="6018">
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_NstF9GB_EeGv4JgTBvupNw" y="40"/>
+    </children>
+    <styles xmi:type="notation:FontStyle" xmi:id="_NstF8WB_EeGv4JgTBvupNw" fontName="Arial" fontHeight="11"/>
+    <element xmi:type="uml:Generalization" href="../../org.opencrx.kernel.account1.uml#_NsqpsGB_EeGv4JgTBvupNw"/>
+    <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_NstF8mB_EeGv4JgTBvupNw" points="[-4, 18, 0, -28]$[-4, 42, 0, -4]"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_NsviMGB_EeGv4JgTBvupNw" id="(0.0696798493408663,0.9256965944272446)"/>
+    <targetAnchor xmi:type="notation:IdentityAnchor" xmi:id="_NsviMWB_EeGv4JgTBvupNw" id="(0.4594594594594595,0.08333333333333333)"/>
   </edges>
 </notation:Diagram>

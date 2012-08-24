@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentResource.java,v 1.3 2010/12/08 13:32:41 wfro Exp $
  * Description: AccountResource
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/08 13:32:41 $
  * ====================================================================
  *
  * This software is published under the BSD license

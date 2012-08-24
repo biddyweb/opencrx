@@ -16,11 +16,31 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
-import org.openmdx.kernel.id.UUIDs;
 
+/**
+ * AbstractServlet
+ *
+ */
 public abstract class AbstractServlet extends HttpServlet {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Create new server instance.
+	 * @param pmf
+	 * @param providerName
+	 * @param bindAddress
+	 * @param portNumber
+	 * @param sslKeystoreFile
+	 * @param sslKeystoreType
+	 * @param sslKeystorePass
+	 * @param sslKeyPass
+	 * @param sslTruststoreFile
+	 * @param sslTruststorePass
+	 * @param sslTruststoreType
+	 * @param sslNeedClientAuth
+	 * @param isDebug
+	 * @param delayOnStartup
+	 * @return
+	 */
 	public abstract AbstractServer newServer(
         PersistenceManagerFactory pmf,
         String providerName,
@@ -30,19 +50,32 @@ public abstract class AbstractServlet extends HttpServlet {
 	    String sslKeystoreType,
 	    String sslKeystorePass,
 	    String sslKeyPass,
+	    String sslTruststoreFile,
+	    String sslTruststorePass,
+	    String sslTruststoreType,
+	    Boolean sslNeedClientAuth,	    
         boolean isDebug,
         int delayOnStartup
 	);
 	
-    //-----------------------------------------------------------------------
+	/**
+	 * Get configuration id for this server.
+	 * @return
+	 */
 	public abstract String getConfigurationId();
 
-    //-----------------------------------------------------------------------
+	/**
+	 * Get port number for this server.
+	 * @param configuredPortNumber
+	 * @return
+	 */
 	public abstract int getPortNumber(
 		String configuredPortNumber
 	);
 	
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     @Override
     public void init(
         ServletConfig config            
@@ -62,15 +95,19 @@ public abstract class AbstractServlet extends HttpServlet {
             String sslKeystoreType = config.getInitParameter("sslKeystoreType");
             String sslKeystorePass = config.getInitParameter("sslKeystorePass");
             String sslKeyPass = config.getInitParameter("sslKeyPass");
+            String sslTruststoreFile = config.getInitParameter("sslTruststoreFile");
+            String sslTruststorePass = config.getInitParameter("sslTruststorePass");
+            String sslTruststoreType = config.getInitParameter("sslTruststoreType");
+            Boolean sslNeedClientAuth = Boolean.valueOf(config.getInitParameter("sslNeedClientAuth"));
             String isDebug = config.getInitParameter("debug");
             String delayOnStartup = config.getInitParameter("delayOnStartup");
             // Validate connection. This also initializes the factory
             PersistenceManager pm = pmf.getPersistenceManager(
                 SecurityKeys.ROOT_PRINCIPAL,
-                UUIDs.getGenerator().next().toString()
+                null
             );
             pm.getObjectById(
-                new Path("xri://@openmdx*org.opencrx.kernel.admin1/provider/" + this.providerName + "/segment/Root")
+                new Path("xri://@openmdx*org.opencrx.kernel.admin1").getDescendant("provider", this.providerName, "segment", "Root")
             );
     		String autostartConnectors = System.getProperty("org.openmdx.catalina.core.ExtendedService.autostartConnectors");
     		this.isStopped = (autostartConnectors != null) && !Boolean.valueOf(autostartConnectors).booleanValue();   
@@ -83,6 +120,10 @@ public abstract class AbstractServlet extends HttpServlet {
         	    sslKeystoreType,
         	    sslKeystorePass,
         	    sslKeyPass,
+        	    sslTruststoreFile,
+        	    sslTruststorePass,
+        	    sslTruststoreType,
+        	    sslNeedClientAuth,
                 isDebug == null ? false : Boolean.valueOf(isDebug),
                 delayOnStartup == null ? 0 : Integer.valueOf(delayOnStartup)
             );
@@ -103,7 +144,13 @@ public abstract class AbstractServlet extends HttpServlet {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Handle commands PAUSE and RESUME and show status.
+     * @param req
+     * @param res
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void handleRequest(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -135,7 +182,10 @@ public abstract class AbstractServlet extends HttpServlet {
         out.println("</html>");
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
     protected void doGet(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -145,8 +195,11 @@ public abstract class AbstractServlet extends HttpServlet {
             res
         );
     }
-        
-    //-----------------------------------------------------------------------
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    @Override
     protected void doPost(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -163,7 +216,7 @@ public abstract class AbstractServlet extends HttpServlet {
     private static final long serialVersionUID = -781335769801341481L;
 
     private static final String DEFAULT_PROVIDER_NAME = "CRX";
-    
+
     private static final String COMMAND_PAUSE = "/pause";
     private static final String COMMAND_RESUME = "/resume";
 

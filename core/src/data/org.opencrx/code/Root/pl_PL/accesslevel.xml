@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[0] Niewiadomo</_item>
+                              <_item>0 - Niewiadomo</_item>
                             </shortText>
                             <longText>
-                              <_item>[0] Niewiadomo</_item>
+                              <_item>0 - Niewiadomo</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[1] uprawnienia prywatne</_item>
+                              <_item>1 - uprawnienia prywatne</_item>
                             </shortText>
                             <longText>
-                              <_item>[1] uprawnienia prywatne(dla użytkowników)</_item>
+                              <_item>1 - uprawnienia prywatne(dla użytkowników)</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[2] Podstawowe</_item>
+                              <_item>2 - Podstawowe</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] Podstawowe(uczestnik grup)</_item>
+                              <_item>2 - Podstawowe(uczestnik grup)</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[3] pełne</_item>
+                              <_item>3 - pełne</_item>
                             </shortText>
                             <longText>
-                              <_item>[3] pełne (wyłacznie dla uczestników grup)</_item>
+                              <_item>3 - pełne (wyłacznie dla uczestników grup)</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[4] globalne</_item>
+                              <_item>4 - globalne</_item>
                             </shortText>
                             <longText>
-                              <_item>[4] globalne (dla wszystkich uczestników)</_item>
+                              <_item>4 - globalne (dla wszystkich uczestników)</_item>
                             </longText>
                           </_object>
                           <_content/>

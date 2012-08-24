@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestQuery.java,v 1.24 2012/01/13 10:22:15 wfro Exp $
  * Description: TestQuery
- * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 10:22:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -229,6 +226,17 @@ public class TestQuery {
 			    		System.out.println("Group " + group.getName() + " has addresses " + !addresses.isEmpty());
 			    	}
 		    	}
+		    	// Test 1: Account groups with new members
+		    	{
+		    		Date since = new Date(System.currentTimeMillis() - 86400000L);
+		    		GroupQuery groupQuery = (GroupQuery)this.pm.newQuery(Group.class);
+		    		groupQuery.thereExistsMember().createdAt().greaterThan(since);
+		    		groupQuery.orderByCreatedAt().ascending();
+			    	List<Group> groups = accountSegment.getAccount(groupQuery);
+			    	for(Group group: groups) {
+			    		System.out.println("Group " + group.getName() + " has new members");
+			    	}
+		    	}
 		    	// Test 2: Accounts with assigned activities matching name .*Test.*
 		    	{
 		    		AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
@@ -328,6 +336,30 @@ public class TestQuery {
 		    		int n = 0;
 		    		for(Contact contact: accountSegment.<Contact>getAccount(contactQuery)) {
 		        		System.out.println("Contact " + contact.getFullName() + " (" + contact.refMofId() + ")" + " has member having memberRole 13");
+		        		n++;
+		        		if(n > 100) break;
+		    		}
+		    	}
+		    	// Test 10: Accounts having addresses
+		    	{
+		    		AccountQuery query = (AccountQuery)pm.newQuery(Account.class);		    		
+		    		query.thereExistsAddress().modifiedAt().greaterThanOrEqualTo(new Date(0));
+		    		int n = 0;
+		    		for(Account account: accountSegment.<Account>getAccount(query)) {
+		    			assertTrue("Account must have at least one address", !account.getAddress().isEmpty());
+		        		System.out.println("Account " + account.getFullName() + " (" + account.refMofId() + ")" + " has " + account.getAddress().size() + " addresses");
+		        		n++;
+		        		if(n > 100) break;
+		    		}
+		    	}
+		    	// Test 11: Accounts having no addresses
+		    	{
+		    		AccountQuery query = (AccountQuery)pm.newQuery(Account.class);		    		
+		    		query.forAllAddress().modifiedAt().lessThan(new Date(0));
+		    		int n = 0;
+		    		for(Account account: accountSegment.<Account>getAccount(query)) {
+		    			//assertTrue("Account must have no address", account.getAddress().isEmpty());
+		        		System.out.println("Account " + account.getFullName() + " (" + account.refMofId() + ")" + " has " + account.getAddress().size() + " addresses");
 		        		n++;
 		        		if(n > 100) break;
 		    		}

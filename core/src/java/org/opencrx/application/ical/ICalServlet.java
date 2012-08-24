@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/CalDAV, http://www.opencrx.org/
- * Name:        $Id: ICalServlet.java,v 1.59 2011/12/16 16:30:22 wfro Exp $
  * Description: ICalServlet
- * Revision:    $Revision: 1.59 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/16 16:30:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -81,8 +78,7 @@ import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.backend.ICalendar.AlarmAction;
-import org.opencrx.kernel.home1.jmi1.Reminder;
+import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.utils.AccountQueryHelper;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
@@ -132,7 +128,7 @@ public class ICalServlet extends FreeBusyServlet {
             null :
             this.pmf.getPersistenceManager(
                 req.getUserPrincipal().getName(),
-                UUIDs.getGenerator().next().toString()
+                null
             );
     }
     
@@ -181,33 +177,24 @@ public class ICalServlet extends FreeBusyServlet {
 		Activity event
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
-        Collection<Reminder> reminders = event.getAssignedReminder();
+        Collection<Timer> timers = event.getAssignedTimer();
         List<String> principalChain = UserObjects.getPrincipalChain(pm);
-        for(Reminder reminder: reminders) {
-        	if(reminder.refGetPath().get(6).equals(principalChain.get(0))) {
+        for(Timer timer: timers) {
+        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
         		p.println("BEGIN:VALARM");
-        		AlarmAction action = AlarmAction.valueOf(reminder.getTriggerAction());
-        		p.println("ACTION:" + action.toString());
-        		long triggerMinutes = (reminder.getTriggerAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
+        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
         		p.println("TRIGGER:" + (triggerMinutes < 0 ? "-" : "+") + "PT" + Math.abs(triggerMinutes) + "M");
-        		p.println("REPEAT:" + (reminder.getAlarmRepeat() == null ? 1 :reminder.getAlarmRepeat()));
-        		p.println("DURATION:PT" + (reminder.getAlarmIntervalMinutes() == null ? 15 :reminder.getAlarmIntervalMinutes()) + "M");
-        		p.println("SUMMARY:" + reminder.getName());
-        		if(reminder.getDescription() != null) {
-        			p.println("DESCRIPTION:" + reminder.getDescription());
-        		}
-        		if(reminder.getAttachUrl() != null) {
-        			if(action == AlarmAction.AUDIO) {
-        				p.println("ATTACH;FMTTYPE=audio/basic:" + reminder.getAttachUrl());
-        			} else {        			
-        				p.println("ATTACH:" + reminder.getAttachUrl());
-        			}
+        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
+        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
+        		p.println("SUMMARY:" + timer.getName());
+        		if(timer.getDescription() != null) {
+        			p.println("DESCRIPTION:" + timer.getDescription());
         		}
         		p.println("END:VALARM");
         	}
         }
 	}
-    
+
     //-----------------------------------------------------------------------
     protected void printICal(
     	Activity activity,
@@ -438,7 +425,7 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.write("<head>\n");
 	                p.write("       <style>\n");
 	                p.write("           .timeline-band {\n");
-	                p.write("               font-family: Trebuchet MS, Helvetica, Arial, sans serif;\n");
+	                p.write("               font-family: \"Open Sans\", \"DejaVu Sans Condensed\", \"lucida sans\", tahoma, verdana, arial, sans-serif;\n");
 	                p.write("               font-size: 9pt;\n");
 	                p.write("               border: 1px solid #aaa;\n");
 	                p.write("           }\n");
@@ -626,9 +613,8 @@ public class ICalServlet extends FreeBusyServlet {
 								    UUID uid = null;
 								    try {
 								        uid = UUIDConversion.fromString(contact.refGetPath().getBase());
-								    }
-								    catch(Exception e) {
-								        uid = UUIDs.getGenerator().next();
+								    } catch(Exception e) {
+								        uid = UUIDs.newUUID();
 								    }
 								    String lastModified = dateTimeFormatter.format(new Date());
 								    String dtStart = null;

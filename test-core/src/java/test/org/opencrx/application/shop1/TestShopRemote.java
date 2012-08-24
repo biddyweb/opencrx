@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestShopRemote.java,v 1.5 2011/02/02 16:30:56 wfro Exp $
  * Description: TestShop
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/02 16:30:56 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -2,17 +2,17 @@
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ManageMembers.jsp,v 1.38 2012/01/20 09:38:19 cmu Exp $
+ * Name:		$Id: ManageMembers.jsp,v 1.42 2012/07/13 10:06:48 wfro Exp $
  * Description:	Manage members
- * Revision:	$Revision: 1.38 $
+ * Revision:	$Revision: 1.42 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/01/20 09:38:19 $
+ * Date:		$Date: 2012/07/13 10:06:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,12 +72,12 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
+org.openmdx.base.text.conversion.*,
 org.openmdx.kernel.log.*,
 org.apache.poi.hssf.usermodel.*,
 org.apache.poi.hssf.util.*
@@ -204,19 +204,19 @@ org.apache.poi.hssf.util.*
         group = (org.opencrx.kernel.account1.jmi1.Group)account;
     }
 
-    DataBinding_1_0 postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
-    DataBinding_1_0 faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
-    DataBinding_1_0 phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
-    DataBinding_1_0 phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
-    DataBinding_1_0 phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
-    DataBinding_1_0 mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
-    DataBinding_1_0 mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
-    DataBinding_1_0 mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
+    DataBinding postalHomeDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)400?zeroAsNull=true");
+    DataBinding faxHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true");
+    DataBinding phoneHomeDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true");
+    DataBinding phoneOtherDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)1800;automaticParsing=(boolean)true");
+    DataBinding phoneMobileDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)200;automaticParsing=(boolean)true");
+    DataBinding mailBusinessDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)500;[emailType=(short)1]");
+    DataBinding mailHomeDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]");
+    DataBinding mailOtherDataBinding = new EmailAddressDataBinding("[isMain=(boolean)true];usage=(short)1800;[emailType=(short)1]");
     org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding webPageBusinessDataBinding =
         new org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding("type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)500");
-    DataBinding_1_0 postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
-    DataBinding_1_0 faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
-    DataBinding_1_0 phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
+    DataBinding postalBusinessDataBinding = new PostalAddressDataBinding("[isMain=(boolean)true];usage=(short)500?zeroAsNull=true");
+    DataBinding faxBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)530;automaticParsing=(boolean)true");
+    DataBinding phoneBusinessDataBinding = new PhoneNumberDataBinding("[isMain=(boolean)true];usage=(short)500;automaticParsing=(boolean)true");
 
     HSSFRow row = null;
     HSSFCell cell = null;
@@ -330,7 +330,7 @@ org.apache.poi.hssf.util.*
         cell.setCellStyle(topAlignedStyle);
         Short svalue = (Short)postalHomeDataBinding.getValue(contact, "org:opencrx:kernel:account1:Contact:address!postalCountry");
         if (svalue != null && ((short)svalue) != 0) {
-            value = (String)(codes.getLongText("country", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
+            value = (codes.getLongTextByCode("country", app.getCurrentLocaleAsIndex(), true).get((short)svalue));
             if (value != null && (value.split("\\[").length>0)) {
                 cell.setCellValue((value.split("\\[")[0]).trim());
             }
@@ -491,7 +491,7 @@ org.apache.poi.hssf.util.*
     cell.setCellStyle(topAlignedStyle);
     Short svalue = (Short)postalBusinessDataBinding.getValue(account, "org:opencrx:kernel:account1:Account:address*Business!postalCountry");
     if (svalue != null && ((short)svalue) != 0) {
-        value = (String)(codes.getLongText("country", app.getCurrentLocaleAsIndex(), true, true).get((short)svalue));
+        value = (codes.getLongTextByCode("country", app.getCurrentLocaleAsIndex(), true).get((short)svalue));
         if (value != null && (value.split("\\[").length>0)) {
             cell.setCellValue((value.split("\\[")[0]).trim());
         }
@@ -553,7 +553,7 @@ org.apache.poi.hssf.util.*
                 if (rolesText.length() > 0) {
                     rolesText += ";";
                 }
-                rolesText += (String)codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short(((Short)roles.next()).shortValue()));
+                rolesText += codes.getLongTextByCode("memberRole", app.getCurrentLocaleAsIndex(), true).get(new Short(((Short)roles.next()).shortValue()));
     	      }
     	      memberRoleList.add(rolesText);
         }
@@ -786,7 +786,7 @@ org.apache.poi.hssf.util.*
 </style>
 
 <%
-final String location = UUIDs.getGenerator().next().toString();
+final String location = UUIDConversion.toUID(UUIDs.newUUID());
 String mode = (request.getParameter("mode") == null ? "0" : request.getParameter("mode")); // default is [Manage Members]
 %>
 
@@ -1000,8 +1000,11 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						}
 						boolean duplicatesOnly = ((request.getParameter("duplicatesOnly") != null) && (request.getParameter("duplicatesOnly").length() > 0));
 						if (duplicatesOnly) {accountSelectorType = 1;}
-						boolean membersOnly = accountSelectorType == 1;
 						boolean detectDuplicates = ((request.getParameter("detectDuplicates") != null) && (request.getParameter("detectDuplicates").length() > 0));
+						boolean disabledAccountsOnly = ((request.getParameter("disabledAccountsOnly") != null) && (request.getParameter("disabledAccountsOnly").length() > 0));
+						if (disabledAccountsOnly) {accountSelectorType = 1;}
+						boolean detectDisabledAccounts = ((request.getParameter("detectDisabledAccounts") != null) && (request.getParameter("detectDisabledAccounts").length() > 0));
+						boolean membersOnly = accountSelectorType == 1;
 						boolean selectAccount = false;
 						boolean selectContact = false;
 						boolean selectLegalEntity = false;
@@ -1278,87 +1281,101 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 				      <tr>
 				        <td id="submitButtons" style="font-weight:bold;background-color:#E4E4E4;padding-bottom:3px;">
 				          <div style="padding:8px 3px;">
-				            <%= app.getTexts().getSelectAllText() %> <select <%= mode.compareTo("0")==0 ? "disabled" : "" %> style="width:150px;" id="accountSelectorType" name="accountSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+				            <%= app.getTexts().getSelectAllText() %> <select <%= mode.compareTo("0")==0 ? "disabled" : "" %> id="accountSelectorType" name="accountSelectorType" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
 <%
-		                if (mode.compareTo("0") == 0) {
+							if (mode.compareTo("0") == 0) {
 %>
-		                  <option <%= accountSelectorType == 1 ? "selected" : "" %> value="1"><%= app.getLabel(MEMBER_CLASS)  %>&nbsp;</option>
+								<option <%= accountSelectorType == 1 ? "selected" : "" %> value="1"><%= app.getLabel(MEMBER_CLASS)  %>&nbsp;</option>
 <%
-		                } else {
+							} else {
 %>
-				              <option <%= accountSelectorType == 100 ? "selected" : "" %> value="100">? <%= app.getTexts().getSearchText() %> <%= userView.getFieldLabel("org:opencrx:kernel:account1:LegalEntity", "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
-				              <option <%= accountSelectorType == 110 ? "selected" : "" %> value="110">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(EMAILADDRESS_CLASS) %>&nbsp;</option>
-				              <option <%= accountSelectorType == 111 ? "selected" : "" %> value="111">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCity", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
-				              <option <%= accountSelectorType == 112 ? "selected" : "" %> value="112">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCode", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
-				              <option <%= accountSelectorType ==   0 ? "selected" : "" %> value="0"  >* <%= app.getLabel(ACCOUNTSEGMENT_CLASS) %>&nbsp;</option>
+								<option <%= accountSelectorType == 100 ? "selected" : "" %> value="100">? <%= app.getTexts().getSearchText() %> <%= userView.getFieldLabel("org:opencrx:kernel:account1:LegalEntity", "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+								<option <%= accountSelectorType == 110 ? "selected" : "" %> value="110">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(EMAILADDRESS_CLASS) %>&nbsp;</option>
+								<option <%= accountSelectorType == 111 ? "selected" : "" %> value="111">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCity", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+								<option <%= accountSelectorType == 112 ? "selected" : "" %> value="112">? <%= app.getTexts().getSearchText() %> <%= app.getLabel(POSTALADDRESS_CLASS) %> <%= userView.getFieldLabel("org:opencrx:kernel:address1:PostalAddressable", "postalCode", app.getCurrentLocaleAsIndex()) %>&nbsp;</option>
+								<option <%= accountSelectorType ==   0 ? "selected" : "" %> value="0"  >* <%= app.getLabel(ACCOUNTSEGMENT_CLASS) %>&nbsp;</option>
 <%
-											org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountFilterGlobalQuery = (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
-											accountFilterGlobalQuery.forAllDisabled().isFalse();
-											accountFilterGlobalQuery.orderByName().ascending();
-											for(Iterator i = accountSegment.getAccountFilter(accountFilterGlobalQuery).iterator(); i.hasNext(); ) {
-													org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)i.next();
+								org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountFilterGlobalQuery = (org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
+								accountFilterGlobalQuery.forAllDisabled().isFalse();
+								accountFilterGlobalQuery.orderByName().ascending();
+								for(Iterator i = accountSegment.getAccountFilter(accountFilterGlobalQuery).iterator(); i.hasNext(); ) {
+									org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)i.next();
 %>
-		                      <option <%= (accountSelectorType == 2) && (accountFilterXri != null && accountFilterXri.compareTo(accountFilterGlobal.refMofId()) == 0) ? "selected" : "" %> value="<%= ACCOUNT_FILTER_XRI_PREFIX %><%= accountFilterGlobal.refMofId() %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS) %>: <%= accountFilterGlobal.getName() != null ? accountFilterGlobal.getName() : "?" %> &nbsp;</option>
+									<option <%= (accountSelectorType == 2) && (accountFilterXri != null && accountFilterXri.compareTo(accountFilterGlobal.refMofId()) == 0) ? "selected" : "" %> value="<%= ACCOUNT_FILTER_XRI_PREFIX %><%= accountFilterGlobal.refMofId() %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS) %>: <%= accountFilterGlobal.getName() != null ? accountFilterGlobal.getName() : "?" %> &nbsp;</option>
 <%
-											}
-										}
+								}
+							}
 %>
-		                </select>&nbsp;
+		                	</select>&nbsp;
 <%
-		                if (accountSelectorType >= 100) {
+			                if (accountSelectorType >= 100) {
 %>
 				              <INPUT type="text" name="searchString" id="searchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
 				              <INPUT type="hidden" name="previousSearchString" id="previousSearchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
 											<INPUT type="submit" name="go" id="go" title="<%= app.getTexts().getSearchText() %>" tabindex="<%= tabIndex++ %>" value=">>" onclick="setTimeout('disableSubmit()', 10);$('Reload.Button').click();" />
 <%
 				            } else {
-				              if (!membersOnly) {
+								if (!membersOnly) {
 %>
-				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectAccount            ? "checked" : "" %> value="selectAccount"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> *
-				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectContact            ? "checked" : "" %> value="selectContact"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(CONTACT_CLASS) %>
-				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectLegalEntity        ? "checked" : "" %> value="selectLegalEntity"        onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(LEGALENTITY_CLASS) %>
-				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectGroup              ? "checked" : "" %> value="selectGroup"              onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(GROUP_CLASS) %>
-				                &nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectUnspecifiedAccount ? "checked" : "" %> value="selectUnspecifiedAccount" onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(UNSPECIFIEDACCOUNT_CLASS) %>
+									&nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectAccount            ? "checked" : "" %> value="selectAccount"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> *
+									&nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectContact            ? "checked" : "" %> value="selectContact"            onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(CONTACT_CLASS) %>
+									&nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectLegalEntity        ? "checked" : "" %> value="selectLegalEntity"        onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(LEGALENTITY_CLASS) %>
+									&nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectGroup              ? "checked" : "" %> value="selectGroup"              onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(GROUP_CLASS) %>
+									&nbsp;&nbsp;<input type="radio" name="accountSelector" <%= selectUnspecifiedAccount ? "checked" : "" %> value="selectUnspecifiedAccount" onchange="javascript:setTimeout('disableSubmit()', 10);$('isSelectionChange').checked=true;$('Reload.Button').click();" /> <%= app.getLabel(UNSPECIFIEDACCOUNT_CLASS) %>
 <%
-		                  }
-		                }
+								}
+							}
 %>
 				          </div>
-				          <br>
-				          <a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif" style="padding-top:5px;"></a>
-				          <a href="#" onclick="javascript:try{($('displayStart').value)--;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
-				          <span id="displayStartSelector">...</span>
-				          <a href="#" onclick="javascript:try{($('displayStart').value)++;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
-				          <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif" style="padding-top:5px;"></a>
-				          &nbsp;&nbsp;&nbsp;
-				          <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
-				            <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
-				            <option <%= pageSize ==  20 ? "selected" : "" %> value="20">20&nbsp;</option>
-				            <option <%= pageSize ==  50 ? "selected" : "" %> value="50">50&nbsp;</option>
-				            <option <%= pageSize == 100 ? "selected" : "" %> value="100">100&nbsp;</option>
-				            <option <%= pageSize == 500 ? "selected" : "" %> value="500">500&nbsp;</option>
-				          </select>
-				          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-				          <input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
-				          &nbsp;&nbsp;
-				          <input type="checkbox" name="duplicatesOnly" id="duplicatesOnly" <%= duplicatesOnly ? "checked" : "" %> /> Duplicates Only
-				          &nbsp;&nbsp;
-				          <INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
-				          <!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
-				          <INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-				          <INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
-
+							<table style="display:inline;">
+								<tr>
+									<td>
+										<INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+										<!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
+										<INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+										<INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
 <%
-		        if (downloadAction != null) {
+										if (downloadAction != null) {
 %>
-						  <span>
-						    <a href="<%= request.getContextPath() %>/<%= downloadAction.getEncodedHRef(requestId) %>"><%= SPREADSHEET %></a>&nbsp;
-						  </span>
+											<span>
+												<a href="<%= request.getContextPath() %>/<%= downloadAction.getEncodedHRef(requestId) %>"><%= SPREADSHEET %></a>&nbsp;
+											</span>
 <%
-		        }
+										}
 %>
-				          <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
-				          <br>
+										<INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
+									</td>
+									<td>
+										<input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
+									</td>
+									<td>
+										<input type="checkbox" name="duplicatesOnly" id="duplicatesOnly" <%= duplicatesOnly ? "checked" : "" %> /> Duplicates Only
+									</td>
+								</tr>
+								<tr>
+									<td>
+							          <a href="#" onclick="javascript:try{$('paging').value='--';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous_fast.gif" style="padding-top:5px;"></a>
+							          <a href="#" onclick="javascript:try{($('displayStart').value)--;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/previous.gif" style="padding-top:5px;"></a>
+							          <span id="displayStartSelector">...</span>
+							          <a href="#" onclick="javascript:try{($('displayStart').value)++;}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next.gif" style="padding-top:5px;"></a>
+							          <a href="#" onclick="javascript:try{$('paging').value='++';}catch(e){};$('Reload.Button').click();" onmouseup="javascript:setTimeout('disableSubmit()', 10);" ><img border="0" align="top" alt="&lt;" src="../../images/next_fast.gif" style="padding-top:5px;"></a>
+							          &nbsp;&nbsp;&nbsp;
+							          <select id="pageSize" name="pageSize" style="text-align:right;" onchange="javascript:$('waitMsg').style.visibility='visible';$('submitButtons').style.visibility='hidden';$('isSelectionChange').checked=true;$('Reload.Button').click();" >
+							            <option <%= pageSize ==  10 ? "selected" : "" %> value="10">10&nbsp;</option>
+							            <option <%= pageSize ==  20 ? "selected" : "" %> value="20">20&nbsp;</option>
+							            <option <%= pageSize ==  50 ? "selected" : "" %> value="50">50&nbsp;</option>
+							            <option <%= pageSize == 100 ? "selected" : "" %> value="100">100&nbsp;</option>
+							            <option <%= pageSize == 500 ? "selected" : "" %> value="500">500&nbsp;</option>
+							          </select>
+									</td>
+									<td>
+										<input type="checkbox" name="detectDisabledAccounts" id="detectDisabledAccounts" <%= detectDisabledAccounts ? "checked" : "" %> /> Detect active Members with disabled Accounts
+									</td>
+									<td>
+										<input type="checkbox" name="disabledAccountsOnly" id="disabledAccountsOnly" <%= disabledAccountsOnly ? "checked" : "" %> /> Only active Members with disabled Accounts
+									</td>
+								</tr>
+							</table>
 				        </td>
 				        <td id="waitMsg" style="display:none;">
 				          <div style="padding-left:5px; padding: 11px 0px 50px 0px;">
@@ -1380,7 +1397,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
       </div> <!-- header -->
 
 	    <div id="content-wrap">
-	    	<div id="content" style="padding:20.5em 0.5em 0px 0.5em;">
+	    	<div id="content" style="padding:21.5em 0.5em 0px 0.5em;">
 
         <table style="background:white;"><tr><td>
         <table id="resultTable" class="gridTableFull">
@@ -1635,13 +1652,18 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 
                   boolean isMember = member != null;
                   boolean isDisabled = member != null && member.isDisabled() != null && member.isDisabled().booleanValue();
-                  String memberRoles = "";
+
+				  if (disabledAccountsOnly && !((isMember && !isDisabled && account.isDisabled() != null && account.isDisabled().booleanValue()))) {
+                      continue;
+                  }
+
+				  String memberRoles = "";
                   if (member != null) {
                       for(
                           Iterator r = member.getMemberRole().iterator();
                           r.hasNext();
                       ) {
-                          memberRoles += (String)(codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short((Short)r.next()))) + "<br />";
+                          memberRoles += (codes.getLongTextByCode("memberRole", app.getCurrentLocaleAsIndex(), true).get(new Short((Short)r.next()))) + "<br />";
                       }
                       if ((member.getName() == null || member.getName().length() == 0) && member.getAccount() != null) {
                           // set member.name (a mandatory attribute)
@@ -1658,10 +1680,20 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                       }
 
                   }
+                  boolean markAsMemberWithDisabledAccount = isMember && !isDisabled && detectDisabledAccounts && account.isDisabled() != null && account.isDisabled().booleanValue();
 %>
-                  <tr class="gridTableRowFull" style="<%= isMember ? "background-color:" + (isDisabled ? colorMemberDisabled + ";font-style:italic" : colorMember + ";font-weight:bold") : "" %>;"><!-- 8 columns -->
+                  <tr class="gridTableRowFull" style="<%= isMember ? "background-color:" + (isDisabled ? colorMemberDisabled + ";font-style:italic" : (markAsMemberWithDisabledAccount ? "color:white;background-color:" + colorDuplicate + ";" : colorMember + ";font-weight:bold")) : "" %>;"><!-- 8 columns -->
                     <td align="right"><%= isMember ? "<a href='" + memberHref + "' target='_blank'>" : "" %><%= formatter.format(counter) %><%= isMember ? "</a>" : "" %></td>
-                    <td align="left" title="<%= label %>"><a href="<%= accountHref %>" target="_blank"><img src="../../images/<%= image %>" border="0" align="top" alt="o" />&nbsp;<%= (new ObjectReference(account, app)).getTitle() %></a></td>
+                    <td align="left" title="<%= label %>">
+<%
+						if (markAsMemberWithDisabledAccount) {
+%>
+						  <img title="account is disabled" src="../../images/filter_disabled.gif" />
+<%							
+						}
+%>
+                    	<a href="<%= accountHref %>" target="_blank"><img src="../../images/<%= image %>" border="0" align="top" alt="o" />&nbsp;<%= (new ObjectReference(account, app)).getTitle() %></a>
+                    </td>
                     <td align="left" title="<%= label %>">
                       <a href="<%= accountHref %>" target="_blank">
 <%
@@ -1738,7 +1770,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                                 Iterator r = currentMember.getMemberRole().iterator();
                                 r.hasNext();
                             ) {
-                                currentMemberRoles += (String)(codes.getLongText("memberRole", app.getCurrentLocaleAsIndex(), true, true).get(new Short((Short)r.next()))) + "<br />";
+                                currentMemberRoles += (codes.getLongTextByCode("memberRole", app.getCurrentLocaleAsIndex(), true).get(new Short((Short)r.next()))) + "<br />";
                             }
 %>
                             <tr class="gridTableRowFull" style="<%= isEnabled ? "color:white;background-color:" + colorDuplicate + ";" : "font-style:italic;" %>"><!-- 6 columns -->

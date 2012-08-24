@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ContactTXmlFormat.java,v 1.21 2011/02/11 09:57:48 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/11 09:57:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,6 +53,7 @@
 package org.opencrx.application.airsync.datatypes;
 
 import org.opencrx.application.airsync.utils.DOMUtils;
+import org.opencrx.kernel.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.format.DateTimeFormat;
 
@@ -138,7 +136,10 @@ public class ContactTXmlFormat extends AbstractXmlFormat {
 				this.createElement(eChildren, "Contacts:", "Child", child);
 			}
 		}
-		this.createElement(eParent, "Contacts:", "Body", contactT.getBody());
+		String body = contactT.getBody();
+		if(body != null) {
+			this.createElement(eParent, "Contacts:", "Body", Utils.normalizeNewLines(body).replace("\n", "\r\n"));
+		}
 		// Contacts2
 		this.createElement(eParent, "Contacts2:", "CustomerId", contactT.getCustomerId());
 		this.createElement(eParent, "Contacts2:", "IMAddress", contactT.getIMAddress());

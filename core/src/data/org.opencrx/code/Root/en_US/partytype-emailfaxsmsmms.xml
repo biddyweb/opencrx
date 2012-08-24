@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="partytypeEMailFaxSmsMms" _operation="set">
 										<_object>
 											<name>
+												<_item>partytypeEMailFaxSmsMms</_item>
 												<_item>org:opencrx:kernel:activity1:AbstractEMailRecipient:partyType</_item>
 												<_item>org:opencrx:kernel:activity1:EMailRecipient:partyType</_item>
 												<_item>org:opencrx:kernel:activity1:EMailRecipientGroup:partyType</_item>

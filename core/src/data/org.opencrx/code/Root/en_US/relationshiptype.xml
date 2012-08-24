@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="relationshipType" _operation="set">
 										<_object>
 											<name>
+												<_item>relationshipType</_item>
 												<_item>org:opencrx:kernel:account1:OrganizationalUnitRelationship:relationshipType</_item>
 											</name>
 										</_object>

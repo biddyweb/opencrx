@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.20 2011/09/23 09:46:22 wfro Exp $
+ * Name:        $Id: AccountRelationships.jsp,v 1.22 2012/07/08 13:29:33 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.20 $
+ * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/23 09:46:22 $
+ * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -96,8 +95,8 @@ org.openmdx.base.naming.*
 	Texts_1_0 texts = app.getTexts();
 	Codes codes = app.getCodes();
 
-  Map allQualityCodes = codes.getLongText("memberQuality", app.getCurrentLocaleAsIndex(), true, true);
-  Map qualityCodes = codes.getLongText("memberQuality", app.getCurrentLocaleAsIndex(), true, false);
+  Map<Short,String> allQualityCodes = codes.getLongTextByCode("memberQuality", app.getCurrentLocaleAsIndex(), true);
+  Map<Short,String> qualityCodes = codes.getLongTextByCode("memberQuality", app.getCurrentLocaleAsIndex(), false);
 
 	final String ACCOUNT_MEMBERSHIP_CLASS = "org:opencrx:kernel:account1:AccountMembership";
 	final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccessControl_1.java,v 1.163 2011/12/21 14:48:49 wfro Exp $
  * Description: openCRX access control plugin
- * Revision:    $Revision: 1.163 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/21 14:48:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -116,6 +113,7 @@ import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.kernel.exception.BasicException;
+import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.security.realm1.jmi1.Group;
 import org.openmdx.security.realm1.jmi1.Permission;
@@ -308,9 +306,16 @@ public class AccessControl_1 extends Standard_1 {
 		private Path primaryGroup;
 	}
 
-    //-------------------------------------------------------------------------
+    /**
+     * Default realm implementation. Overload for custom-specific policies.
+     */
     public class DefaultRealm {
         
+        /**
+         * Constructor
+         * @param realmIdentity
+         * @throws ServiceException
+         */
         public DefaultRealm(
             Path realmIdentity
         ) throws ServiceException {
@@ -327,6 +332,12 @@ public class AccessControl_1 extends Standard_1 {
             }
         }
         
+        /**
+         * Retrieve principal for given principal name.
+         * @param principalName
+         * @return
+         * @throws ServiceException
+         */
         protected CachedPrincipal getPrincipal(
             String principalName
         ) throws ServiceException {
@@ -397,7 +408,14 @@ public class AccessControl_1 extends Standard_1 {
     	    return cachedPrincipal;
         }
 
-        //-----------------------------------------------------------------------
+	    /**
+	     * Get runAs principal according to service header and available runAs permissions.
+	     * @param header
+	     * @param request
+	     * @param interaction
+	     * @return
+	     * @throws ServiceException
+	     */
 	    public GetRunAsPrincipalResult getRunAsPrincipal(
 	    	ServiceHeader header,
 	    	DataproviderRequest request,
@@ -450,6 +468,12 @@ public class AccessControl_1 extends Standard_1 {
 	        };
 	    }
         
+        /**
+         * Get primary group for given principal.
+         * @param principal
+         * @return
+         * @throws ServiceException
+         */
         protected Path getPrimaryGroup(
         	CachedPrincipal principal
         ) throws ServiceException {
@@ -480,7 +504,15 @@ public class AccessControl_1 extends Standard_1 {
             }
         }
         
-        //-----------------------------------------------------------------------
+        /**
+         * Get permissions for given principal and access level.
+         * @param request
+         * @param principal
+         * @param userIdentity
+         * @param accessLevel
+         * @param action
+         * @return
+         */
         protected Set<String> getPermissions(
         	DataproviderRequest request,
         	CachedPrincipal principal,
@@ -582,13 +614,28 @@ public class AccessControl_1 extends Standard_1 {
             	permissions;
         }
 
-        //-----------------------------------------------------------------------
+        /**
+         * Get identity of realm.
+         * @return
+         */
         public Path getRealmIdentity(
         ) {
         	return this.realmIdentity;
         }
         
-        //-----------------------------------------------------------------------
+        /**
+         * Return true if principal has permission to perform the request.
+         * @param request
+         * @param secureObject
+         * @param parent
+         * @param principal
+         * @param userIdentity
+         * @param action
+         * @param grantedPermissions
+         * @param interaction
+         * @return
+         * @throws ServiceException
+         */
         public boolean hasPermission(
         	DataproviderRequest request,
         	Object_2Facade secureObject,
@@ -599,7 +646,7 @@ public class AccessControl_1 extends Standard_1 {
         	Set<String> grantedPermissions,
         	LayerInteraction interaction
         ) throws ServiceException {
-			if(secureObject == null && Object_2Facade.isDelegate(request.object())) {
+        	if(secureObject == null && Object_2Facade.isDelegate(request.object())) {
 				secureObject = Facades.asObject(request.object());
 			}
         	// DELETE
@@ -801,7 +848,14 @@ public class AccessControl_1 extends Standard_1 {
         	}
         }
 
-        //-------------------------------------------------------------------------
+        /**
+         * Restrict query according to permissions of given principal.
+         * @param request
+         * @param object
+         * @param principal
+         * @param userIdentity
+         * @throws ServiceException
+         */
         public void restrictQuery(
         	DataproviderRequest request,
         	Object_2Facade object,
@@ -1209,7 +1263,7 @@ public class AccessControl_1 extends Standard_1 {
 		                    "No permission to create object.",
                             new BasicException.Parameter("object", request.path()),
                             new BasicException.Parameter("param0", request.path()),
-                            new BasicException.Parameter("param1", principal.getIdentity())                                
+                            new BasicException.Parameter("param1", principal.getIdentity().get(6) + ":" +  principal.getIdentity().getBase())                                
 		                );
 		            }
 		        }
@@ -1435,7 +1489,7 @@ public class AccessControl_1 extends Standard_1 {
                             "No permission to access requested object.",
                             new BasicException.Parameter("path", request.path()),
                             new BasicException.Parameter("param0", request.path().toXRI()),                                
-                            new BasicException.Parameter("param1", principal.getIdentity().toXRI()), 
+                            new BasicException.Parameter("param1", principal.getIdentity().get(6) + ":" +  principal.getIdentity().getBase()), 
                             new BasicException.Parameter("param2", userIdentity.toXRI()) 
                         );
 		            }
@@ -1500,7 +1554,7 @@ public class AccessControl_1 extends Standard_1 {
 	                    "No permission to delete requested object.",
                         new BasicException.Parameter("object", request.path()),
                         new BasicException.Parameter("param0", request.path().toXRI()),
-                        new BasicException.Parameter("param1", principal.getIdentity().toXRI()),                            
+                        new BasicException.Parameter("param1", principal.getIdentity().get(6) + ":" +  principal.getIdentity().getBase()),                            
                         new BasicException.Parameter("param2", userIdentity.toXRI())                            
 	                );
 	            }
@@ -1570,7 +1624,7 @@ public class AccessControl_1 extends Standard_1 {
 	                    "No permission to update requested object.",
                         new BasicException.Parameter("object", request.path()),
                         new BasicException.Parameter("param0", request.path()),
-                        new BasicException.Parameter("param1", principal.getIdentity().toXRI()), 
+                        new BasicException.Parameter("param1", principal.getIdentity().get(6) + ":" +  principal.getIdentity().getBase()), 
                         new BasicException.Parameter("param2", userIdentity.toXRI()) 
 	                );
 	            }
@@ -2004,7 +2058,7 @@ public class AccessControl_1 extends Standard_1 {
     	try {
 	    	MappedRecord result = Object_2Facade.newInstance(
 	            request.path().getDescendant(
-	                new String[]{ "reply", super.uidAsString()}
+	                new String[]{ "reply", UUIDs.newUUID().toString()}
 	            ),
 	            structName
 	        ).getDelegate();

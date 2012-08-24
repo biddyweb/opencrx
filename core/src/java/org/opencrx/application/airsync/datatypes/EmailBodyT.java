@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EmailBodyT.java,v 1.3 2010/03/01 16:40:46 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/01 16:40:46 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExternalActivityImpl.java,v 1.3 2010/02/01 00:29:29 wfro Exp $
  * Description: ActivityImpl
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/01 00:29:29 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.7 2012/01/20 01:35:04 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 01:35:04 $
  * ====================================================================
  *
  * This software is published under the BSD license

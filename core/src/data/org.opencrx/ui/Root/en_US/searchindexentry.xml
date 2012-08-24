@@ -46,11 +46,36 @@
 												<_item>0</_item>
 												<_item>60</_item>
 											</order>
-											<maxMember>19</maxMember>
+											<maxMember>20</maxMember>
 											<showMaxMember>10</showMaxMember>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    </_object>
+                    <_content>
+
+                      <additionalElementDefinition>
+
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Addresses (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>»Addresses (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>610</_item>
+														</order>
+														<maxMember>20</maxMember>
+														<showMaxMember>10</showMaxMember>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
 									<!--Inspector Definitions-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry">
 										<_object>

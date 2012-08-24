@@ -785,6 +785,13 @@
               </eAnnotations>
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_qGsloGhnEeGeXMwL52ae1A" name="closingCode" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_rXCMIGhnEeGeXMwL52ae1A" name="closing" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_xDVAkGhnEeGeXMwL52ae1A"/>
+            </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D3F3EBE40031F" name="LegalEntity">
             <generalization xmi:id="_3C7B8A60016D3F5102A10243" general="_3C7B8A60016D3FD3DBDF036C"/>
@@ -1478,6 +1485,9 @@
             </generalization>
             <generalization xmi:id="_hOouQDqrEduYj4pCK1hEMw">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4155CD91035D"/>
+            </generalization>
+            <generalization xmi:id="_NsqpsGB_EeGv4JgTBvupNw">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_7j70oGB8EeGv4JgTBvupNw"/>
             </generalization>
             <ownedAttribute xmi:id="_xxZA0TqpEduYj4pCK1hEMw" name="member" type="_3C7B8A60016D409FEA6102F9" isReadOnly="true" association="_xxZA0DqpEduYj4pCK1hEMw">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_xxZA1DqpEduYj4pCK1hEMw" value="1"/>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CalculationRuleImpl.java,v 1.5 2011/05/18 15:13:49 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/05/18 15:13:49 $
  * ====================================================================
  *
  * This software is published under the BSD license

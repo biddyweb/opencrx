@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseTypeWorkOnly" _operation="set">
 										<_object>
 											<name>
+												<_item>workAndExpenseTypeWorkOnly</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityAddWorkRecordParams:recordType</_item>
 												<_item>org:opencrx:kernel:activity1:ResourceAddWorkRecordParams:recordType</_item>
 											</name>

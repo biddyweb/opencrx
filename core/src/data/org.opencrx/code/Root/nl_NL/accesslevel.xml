@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[0] NVT</_item>
+                              <_item>0 - NVT</_item>
                             </shortText>
                             <longText>
-                              <_item>[0] NVT</_item>
+                              <_item>0 - NVT</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[1] Privé</_item>
+                              <_item>1 - Privé</_item>
                             </shortText>
                             <longText>
-                              <_item>[1] Privé</_item>
+                              <_item>1 - Privé</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[2] Normaal</_item>
+                              <_item>2 - Normaal</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] Normaal (groepsleden)</_item>
+                              <_item>2 - Normaal (groepsleden)</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[3] Diep</_item>
+                              <_item>3 - Diep</_item>
                             </shortText>
                             <longText>
-                              <_item>[3] Diep (groepsleden recursief)</_item>
+                              <_item>3 - Diep (groepsleden recursief)</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[4] Overal</_item>
+                              <_item>4 - Overal</_item>
                             </shortText>
                             <longText>
-                              <_item>[4] Overal (alle gebruikers)</_item>
+                              <_item>4 - Overal (alle gebruikers)</_item>
                             </longText>
                           </_object>
                           <_content/>

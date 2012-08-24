@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.18 2011/11/23 13:44:30 wfro Exp $
+ * Name:        $Id: AccountAssignments.jsp,v 1.21 2012/07/08 13:29:33 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.18 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/23 13:44:30 $
+ * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.reports.*,
@@ -143,7 +142,7 @@ org.openmdx.base.query.*
 			Properties userSettings =  new Properties();
 			userSettings = app.getSettings();
       //final TimeZone utc = TimeZone.getTimeZone("Europe/Zurich");
-      final TimeZone tz = TimeZone.getTimeZone(userSettings.getProperty("TimeZone.Name"));
+      final TimeZone tz = TimeZone.getTimeZone(userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName()));
       // DateFormat is not multi-thread-safe!
       DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
       dateFormat.setLenient(false); // if the timestamp string is always complete
@@ -335,7 +334,7 @@ org.openmdx.base.query.*
                 }
 %>
               </td>
-              <td><%= (String)(codes.getLongText("accountRoleInventoryItem", currentLocale, true, true).get(new Short((short)accountAssignmentInventoryItem.getAccountRole()))) %></td>
+              <td><%= codes.getLongTextByCode("accountRoleInventoryItem", currentLocale, true).get(accountAssignmentInventoryItem.getAccountRole()) %></td>
       		    <td><%= accountAssignmentInventoryItem.getValidFrom() != null ? dateFormat.format(accountAssignmentInventoryItem.getValidFrom()) : "" %></td>
       		    <td><%= accountAssignmentInventoryItem.getValidTo()   != null ? dateFormat.format(accountAssignmentInventoryItem.getValidTo())   : "" %></td>
       		    <td><img src='../../images/<%= (accountAssignmentInventoryItem.isDisabled() != null) && (accountAssignmentInventoryItem.isDisabled().booleanValue()) ? "" : "not" %>checked_r.gif' alt='' /></td>

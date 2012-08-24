@@ -358,9 +358,10 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IJbctN7NEdmKapscEl8OLg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IJbcs97NEdmKapscEl8OLg"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_3C7B8A60016D420BB69F01E5" name="triggeredBySubscription" type="_3C7B8A60016D420BB6720349">
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IJbct97NEdmKapscEl8OLg" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IJbctt7NEdmKapscEl8OLg"/>
+            <ownedAttribute xmi:id="_3C7B8A60016D420BB69F01E5" name="triggeredBy">
+              <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_U4b3AJXsEeGHsa8ljYUNgw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_U4ceEJXsEeGHsa8ljYUNgw"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_oRmJEGTjEdqog4up7NOrtQ" name="triggeredByEventId">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>

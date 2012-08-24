@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentImpl.java,v 1.5 2009/04/09 13:02:01 wfro Exp $
  * Description: DepotPositionImpl
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/09 13:02:01 $
  * ====================================================================
  *
  * This software is published under the BSD license

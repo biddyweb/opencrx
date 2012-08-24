@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.69 2011/12/16 09:35:26 cmu Exp $
+ * Name:        $Id: UserSettings.jsp,v 1.74 2012/07/08 13:30:29 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.69 $
+ * Revision:    $Revision: 1.74 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/16 09:35:26 $
+ * Date:        $Date: 2012/07/08 13:30:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -95,8 +94,6 @@ org.openmdx.base.exception.*
 		return;
 	}
 	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
-	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
 	Texts_1_0 texts = app.getTexts();
 	org.openmdx.portal.servlet.Codes codes = app.getCodes();
 
@@ -132,7 +129,9 @@ org.openmdx.base.exception.*
 <html dir="<%= texts.getDir() %>">
 <head>
 	<style type="text/css" media="all">
-		body{font-family: Arial, Helvetica, sans-serif; padding: 0; margin:0;}
+		body{
+		  font-family: "Open Sans", "DejaVu Sans Condensed", "lucida sans", tahoma, verdana, arial, sans-serif;
+			padding: 0; margin:0;}
 		h1{  margin: 0; padding: 0 1em; font-size: 150%;}
 		h2{ font-size: 130%; margin: 0; text-align: center;}
 
@@ -156,7 +155,7 @@ org.openmdx.base.exception.*
     	margin: 0; border: 1px solid silver;
     	padding: 0;
     	font-size: 100%;
-    	font-family: Arial, Helvetica, sans-serif;
+		  font-family: "Open Sans", "DejaVu Sans Condensed", "lucida sans", tahoma, verdana, arial, sans-serif;
     }
     input.button{
     	-moz-border-radius: 4px;
@@ -292,17 +291,23 @@ org.openmdx.base.exception.*
 			String fShowTopNavigationSublevel = request.getParameter("showTopNavigationSublevel");
 			String fGridDefaultAlignmentIsWide = request.getParameter("gridDefaultAlignmentIsWide");
 			String fHideWorkspaceDashboard = request.getParameter("hideWorkspaceDashboard");
+			String fScrollHeader = request.getParameter("scrollHeader");
 			
-			List<String> fRootObjects = new ArrayList<String>();
-			fRootObjects.add("1");
-			for(int i = 1; i < 20; i++) {
-				String state = request.getParameter("rootObject" + i);
-				if(i < app.getRootObject().length && app.getRootObject()[i] instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-					state = "1";
-				}
-				fRootObjects.add(
-					state == null ? "0" : "1"
-				);
+			Action[] selectPerspectiveActions = ((ShowObjectView)(viewsCache.getView(requestId))).getSelectPerspectiveAction();
+			List<List> perspectiveRootObjects = new ArrayList<List>();
+			for(int p = 0; p < selectPerspectiveActions.length; p++) {
+					List<String> fRootObjects = new ArrayList<String>();
+					fRootObjects.add("1");
+					for(int i = 1; i < 20; i++) {
+						String state = request.getParameter("rootObject" + p + "_" + i);
+						if(i < app.getRootObject().length && app.getRootObject()[i] instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
+							state = "1";
+						}
+						fRootObjects.add(
+							state == null ? "0" : "1"
+						);
+					}
+					perspectiveRootObjects.add(fRootObjects);
 			}
 			Map<String,String> fSubscriptions = new HashMap<String,String>();
 			Enumeration<String> parameterNames = request.getParameterNames();
@@ -322,34 +327,37 @@ org.openmdx.base.exception.*
 			}
 			// Apply
 			if("apply".equalsIgnoreCase(command)) {
-				try {
-					pm.currentTransaction().begin();
-					org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
-						userHome,
-						app.getCurrentPerspective(),
-						userSettings,
-						!currentUserOwnsHome, // noInitUserHome
-						!currentUserOwnsHome, // Store settings if applied on 'foreign' user's home
-						userHome.getPrimaryGroup(),
-						fTimezone,
-						fStoreSettingsOnLogoff,
-						fEmailAccount,
-						fSendmailSubjectPrefix,
-						fWebAccessUrl,
-						fTopNavigationShowMax,
-						"on".equals(fShowTopNavigationSublevel),
-						"on".equals(fGridDefaultAlignmentIsWide),
-						"on".equals(fHideWorkspaceDashboard),
-						fRootObjects,
-						fSubscriptions
-					);
-					pm.currentTransaction().commit();
-				}
-				catch(Exception e) {
-					new ServiceException(e).log();
-					try {
-						pm.currentTransaction().rollback();
-					} catch(Exception e0) {}
+				for(int p = 0; p < selectPerspectiveActions.length; p++) {
+						try {
+							pm.currentTransaction().begin();
+							org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
+								userHome,
+								p,
+								userSettings,
+								!currentUserOwnsHome, // noInitUserHome
+								!currentUserOwnsHome, // Store settings if applied on 'foreign' user's home
+								userHome.getPrimaryGroup(),
+								fTimezone,
+								fStoreSettingsOnLogoff,
+								fEmailAccount,
+								fSendmailSubjectPrefix,
+								fWebAccessUrl,
+								fTopNavigationShowMax,
+								"on".equals(fShowTopNavigationSublevel),
+								"on".equals(fGridDefaultAlignmentIsWide),
+								"on".equals(fHideWorkspaceDashboard),
+								"on".equals(fScrollHeader),
+								perspectiveRootObjects.get(p),
+								fSubscriptions
+							);
+							pm.currentTransaction().commit();
+						}
+						catch(Exception e) {
+							new ServiceException(e).log();
+							try {
+								pm.currentTransaction().rollback();
+							} catch(Exception e0) {}
+						}
 				}
 			}
 %>
@@ -370,12 +378,12 @@ org.openmdx.base.exception.*
 									document.getElementById('timezone_sortAlpha').value=this.value;" 
 							>
 <%
-    						String initiallySelectedTZ = userSettings.getProperty(UserSettings.TIMEZONE_NAME); //TimeZone.getTimeZone(app.getCurrentTimeZone()).getDisplayName();
+    						String initiallySelectedTZ = userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName()); //TimeZone.getTimeZone(app.getCurrentTimeZone()).getDisplayName();
 								String[] timezones = java.util.TimeZone.getAvailableIDs();
                   for(int i = 0; i < timezones.length; i++) {
                     String timezoneID = timezones[i].trim();
                     String selectedModifier = "";
-                    if (timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))) {
+                    if (timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName()))) {
                     		selectedModifier = "selected";
                     		initiallySelectedTZ = timezoneID;
                     }
@@ -398,7 +406,7 @@ org.openmdx.base.exception.*
 
                   for(int i = 0; i < timezonesAlpha.length; i++) {
                     String timezoneID = timezonesAlpha[i].trim();
-                    String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME))
+                    String selectedModifier = timezoneID.equals(userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName()))
                       ? "selected"
                       : "";
 %>
@@ -409,7 +417,7 @@ org.openmdx.base.exception.*
 							</select>
 							<input type="text" id="timezone" name="timezone"  value="<%= initiallySelectedTZ %>" style="width:0;visibility:hidden;" />
 						</td></tr>
-						<tr><td><label for="storeSettingsOnLogoff">Store settings on logoff:</label></td>
+						<tr><td nowrap><label for="storeSettingsOnLogoff">Store settings on logoff:</label></td>
 						<td><input type="checkbox" <%= userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "checked" : "" %> id="storeSettingsOnLogoff" name="storeSettingsOnLogoff"/></td></tr>
 <%
 						org.opencrx.kernel.home1.cci2.EMailAccountQuery emailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
@@ -428,10 +436,24 @@ org.openmdx.base.exception.*
 						<td><input type="text" id="webAccessUrl" name="webAccessUrl"  value="<%= userHome.getWebAccessUrl() == null ? request.getRequestURL().substring(0, request.getRequestURL().indexOf("/wizards")) :  userHome.getWebAccessUrl()  %>"/>
 					</table>
 				</fieldset>
+
 				<fieldset>
 					<legend>Root Menu</legend>
 					<table>
-						<tr><td></td><td>Is&nbsp;Active:</td></tr>
+						<tr>
+							<td></td>
+<%
+						    for(int p = 0; p < selectPerspectiveActions.length; p++) {
+						        Action action = selectPerspectiveActions[p];
+						        if(action.isEnabled()) {
+						        	boolean isCurrent = (p == app.getCurrentPerspective());
+%>
+											<td style='text-align:center;<%= isCurrent ? "font-weight:bold;text-decoration:underline;' title='current perspective" : "" %>'><%= action.getTitle() %></td>
+<%
+										}
+						    }
+%>							
+						</tr>
 <%
 						Action[] rootObjectActions = app.getRootObjectActions();
 						// Always show root object 0
@@ -440,24 +462,37 @@ org.openmdx.base.exception.*
 							Action action = rootObjectActions[i];
 							if(action.getParameter(Action.PARAMETER_REFERENCE).length() == 0) {
 %>
-								<tr><td><label for="rootObject<%= n %>"><%= action.getTitle() %>:</label></td><td>
-								<input type="checkbox" <%= userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE + (app.getCurrentPerspective() == 0 ? "" : "[" + Integer.toString(app.getCurrentPerspective()) + "]") + "." + n + ".State", "1").equals("1") ? "checked" : "" %> id="rootObject<%= n %>" name="rootObject<%= n %>"/></td></tr>
+								<tr>
+									<td><label for="rootObject<%= n %>"><%= action.getTitle() %>:</label></td>
+<%		
+										for(int p = 0; p < selectPerspectiveActions.length; p++) {
+%>
+											<td style="text-align:center;">
+												<input type="checkbox" <%= userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE.getName() + (p == 0 ? "" : "[" + Integer.toString(p) + "]") + "." + n + ".State", "1").equals("1") ? "checked" : "" %> id="rootObject<%= p %>_<%= n %>" name="rootObject<%= p %>_<%= n %>"/>
+											</td>
+<%
+										}
+%>
+								</tr>
 <%
 								n++;
 							}
 						}
 %>
-						<tr><td><label for="topNavigationShowMax">Show max items in top navigation:</label></td><td>
-						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX, "6") %>"/></td></tr>
+						<tr><td nowrap><label for="topNavigationShowMax">Show max items in top navigation:</label></td><td colspan="<%= selectPerspectiveActions.length %>">
+						<input type="text" id="topNavigationShowMax" name="topNavigationShowMax" value="<%= userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX.getName(), "6") %>"/></td></tr>
 
-						<tr><td><label for="showTopNavigationSublevel">Show top navigation sub-levels:</label></td>
-						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL)) ? "checked" : "" %> id="showTopNavigationSublevel" name="showTopNavigationSublevel"/></td></tr>
+						<tr><td nowrap><label for="showTopNavigationSublevel">Show top navigation sub-levels:</label></td colspan="<%= selectPerspectiveActions.length %>">
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL.getName())) ? "checked" : "" %> id="showTopNavigationSublevel" name="showTopNavigationSublevel"/></td></tr>
 
-						<tr><td><label for="gridDefaultAlignmentIsWide">Grid default alignment is wide:</label></td>
-						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE)) ? "checked" : "" %> id="gridDefaultAlignmentIsWide" name="gridDefaultAlignmentIsWide"/></td></tr>
+						<tr><td nowrap><label for="gridDefaultAlignmentIsWide">Grid default alignment is wide:</label></td colspan="<%= selectPerspectiveActions.length %>">
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE.getName())) ? "checked" : "" %> id="gridDefaultAlignmentIsWide" name="gridDefaultAlignmentIsWide"/></td></tr>
 
-						<tr><td><label for="hideWorkspaceDashboard">Hide workspace dashboard:</label></td>
-						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD)) ? "checked" : "" %> id="hideWorkspaceDashboard" name="hideWorkspaceDashboard"/></td></tr>
+						<tr><td nowrap><label for="hideWorkspaceDashboard">Hide workspace dashboard:</label></td colspan="<%= selectPerspectiveActions.length %>">
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD.getName())) ? "checked" : "" %> id="hideWorkspaceDashboard" name="hideWorkspaceDashboard"/></td></tr>
+
+						<tr><td nowrap><label for="scrollHeader">Scroll header:</label></td colspan="<%= selectPerspectiveActions.length %>">
+						<td><input type="checkbox" <%= "true".equals(userSettings.getProperty(UserSettings.SCROLL_HEADER.getName())) ? "checked" : "" %> id="scrollHeader" name="scrollHeader"/></td></tr>
 
 					</table>
 				</fieldset>
@@ -493,7 +528,7 @@ org.openmdx.base.exception.*
 							}
 							String topicId = topic.refGetPath().getBase();
 %>
-							<tr><td><label><%= objRefTopic.getTitle() %>:</label></td><td style="text-align:center;">
+							<tr><td nowrap title="<%= topic.getDescription() != null ? topic.getDescription() : "" %>"><label><%= objRefTopic.getTitle() %>:</label></td><td style="text-align:center;">
 							<input type="checkbox" <%= subscription == null || !subscription.isActive() ? "" : "checked" %> id="topicIsActive-<%= topicId %>" name="topicIsActive-<%= topicId %>" /></td><td style="text-align:center;">
 							<input type="checkbox" <%= eventTypes.contains(Integer.valueOf(1)) ? "checked" : "" %> id="topicCreation-<%= topicId %>" name="topicCreation-<%= topicId %>" /></td><td style="text-align:center;">
 							<input type="checkbox" <%= eventTypes.contains(Integer.valueOf(3)) ? "checked" : "" %> id="topicReplacement-<%= topicId %>" name="topicReplacement-<%= topicId %>" /></td><td style="text-align:center;">
@@ -511,7 +546,7 @@ org.openmdx.base.exception.*
 				boolean allowApply = currentUserIsAdmin || currentUserOwnsHome;
 %>
 				<input <%= allowApply ? "" : "disabled" %> type="submit" value="<%= app.getTexts().getSaveTitle() %>"  />
-				<input type="button" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=exit" %>';" />
+				<input type="button" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + Action.PARAMETER_REQUEST_ID + "=" + requestId + "&" + Action.PARAMETER_OBJECTXRI + "=" + URLEncoder.encode(objectXri) + "&command=exit" %>';" />
 				<%= allowApply ? "" : "<h2>Apply not allowed! Non-ownership of user home and first time usage of wizard requires admin permissions.</h2>" %>
 			</div>
 		</form>

@@ -1134,20 +1134,20 @@
           <packagedElement xmi:type="uml:Class" xmi:id="_rJSWAPb6Ed-gLrNTltqgwQ" name="DocumentProfile">
             <generalization xmi:id="_sp9ekPb6Ed-gLrNTltqgwQ" general="_p5gUgG_SEd2k1trwDO0y0g"/>
           </packagedElement>
-          <packagedElement xmi:type="uml:Association" xmi:id="_Pz8jECWWEeG5FbAdNYK62g" name="UserHomeContainsReminder" memberEnd="_Pz9xMCWWEeG5FbAdNYK62g _Pz-YQiWWEeG5FbAdNYK62g" navigableOwnedEnd="_Pz-YQiWWEeG5FbAdNYK62g">
+          <packagedElement xmi:type="uml:Association" xmi:id="_Pz8jECWWEeG5FbAdNYK62g" name="UserHomeContainsTimer" memberEnd="_Pz9xMCWWEeG5FbAdNYK62g _Pz-YQiWWEeG5FbAdNYK62g" navigableOwnedEnd="_Pz-YQiWWEeG5FbAdNYK62g">
             <ownedEnd xmi:id="_Pz9xMCWWEeG5FbAdNYK62g" name="userHome" type="_3C7B8A60016D40E97F3403D4" association="_Pz8jECWWEeG5FbAdNYK62g">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Pz-YQSWWEeG5FbAdNYK62g" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Pz-YQCWWEeG5FbAdNYK62g" value="1"/>
             </ownedEnd>
-            <ownedEnd xmi:id="_Pz-YQiWWEeG5FbAdNYK62g" name="reminder" type="_JnBt0CWWEeG5FbAdNYK62g" aggregation="composite" association="_Pz8jECWWEeG5FbAdNYK62g">
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Pz-YRCWWEeG5FbAdNYK62g" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Pz-YQyWWEeG5FbAdNYK62g"/>
+            <ownedEnd xmi:id="_Pz-YQiWWEeG5FbAdNYK62g" name="timer" type="_JnBt0CWWEeG5FbAdNYK62g" aggregation="composite" association="_Pz8jECWWEeG5FbAdNYK62g">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QcN4QJXJEeGQZfpt2-al3Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QcN4QZXJEeGQZfpt2-al3Q"/>
               <qualifier xmi:id="_jBvQ0CWaEeG5FbAdNYK62g" name="id">
                 <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedEnd>
           </packagedElement>
-          <packagedElement xmi:type="uml:Class" xmi:id="_JnBt0CWWEeG5FbAdNYK62g" name="Reminder">
+          <packagedElement xmi:type="uml:Class" xmi:id="_JnBt0CWWEeG5FbAdNYK62g" name="Timer">
             <generalization xmi:id="_p3DqMCWXEeG5FbAdNYK62g">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D4205ED760135"/>
             </generalization>
@@ -1157,6 +1157,9 @@
             <generalization xmi:id="_NLS-cCWZEeG5FbAdNYK62g">
               <general xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3FB3D6450214"/>
             </generalization>
+            <generalization xmi:id="_6XlMgJYBEeGHsa8ljYUNgw">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3C7B8A60016D42040D6700C9"/>
+            </generalization>
             <ownedAttribute xmi:id="_VvxoUCWWEeG5FbAdNYK62g" name="name" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>
@@ -1164,56 +1167,80 @@
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dtcCcCWWEeG5FbAdNYK62g"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_tu8XMCWWEeG5FbAdNYK62g" name="triggerAt" aggregation="composite">
-              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_oTUKECWYEeG5FbAdNYK62g"/>
-            </ownedAttribute>
-            <ownedAttribute xmi:id="_FwLioCWXEeG5FbAdNYK62g" name="triggerAction" aggregation="composite">
-              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_z3L14CWYEeG5FbAdNYK62g" value="1"/>
-            </ownedAttribute>
-            <ownedAttribute xmi:id="_KND9oCWXEeG5FbAdNYK62g" name="alarmRepeat" aggregation="composite">
+            <ownedAttribute xmi:id="_KND9oCWXEeG5FbAdNYK62g" name="triggerRepeat" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0kMF0CWYEeG5FbAdNYK62g"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_dAHoQJXKEeGQZfpt2-al3Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_dAHoQZXKEeGQZfpt2-al3Q"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_MDxnoCWXEeG5FbAdNYK62g" name="alarmIntervalMinutes" aggregation="composite">
+            <ownedAttribute xmi:id="_MDxnoCWXEeG5FbAdNYK62g" name="triggerIntervalMinutes" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_pFV6kCWxEeG5FbAdNYK62g"/>
-            </ownedAttribute>
-            <ownedAttribute xmi:id="_OB46ICWXEeG5FbAdNYK62g" name="attachUrl" aggregation="composite">
-              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1VPvUCWYEeG5FbAdNYK62g"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_b_pCsJXKEeGQZfpt2-al3Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_b_pCsZXKEeGQZfpt2-al3Q"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_lYlW8CWbEeG5FbAdNYK62g" name="disabled" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_x73s0CWlEeG5FbAdNYK62g" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_x73s0SWlEeG5FbAdNYK62g"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_qZw-kyWrEeG5FbAdNYK62g" name="reference" association="_qZvJYCWrEeG5FbAdNYK62g">
+            <ownedAttribute xmi:id="_qZw-kyWrEeG5FbAdNYK62g" name="target" association="_qZvJYCWrEeG5FbAdNYK62g">
               <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_qZxloSWrEeG5FbAdNYK62g" value="1"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qZxloCWrEeG5FbAdNYK62g"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_8UyK8JX_EeGHsa8ljYUNgw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_8UyyAJX_EeGHsa8ljYUNgw"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_P58l8CWtEeG5FbAdNYK62g" name="reminderState" aggregation="composite">
+            <ownedAttribute xmi:id="_P58l8CWtEeG5FbAdNYK62g" name="timerState" aggregation="composite">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_9KtRgCfOEeG6T9LQqmskFw" name="autocalcTriggerAt" aggregation="composite">
-              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_AwAkQCfPEeG6T9LQqmskFw"/>
-            </ownedAttribute>
-            <ownedAttribute xmi:id="_QS6I8CllEeGVEsoWSyMC4A" name="lastAlarmAt" aggregation="composite">
+            <ownedAttribute xmi:id="_QS6I8CllEeGVEsoWSyMC4A" name="lastTriggerAt" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_TENy8CllEeGVEsoWSyMC4A"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_RFDkcJXKEeGQZfpt2-al3Q" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_RFDkcZXKEeGQZfpt2-al3Q"/>
             </ownedAttribute>
-            <ownedAttribute xmi:id="_1gfX4Cl7EeG-5dvZ7NTkRw" name="triggerEndAt" aggregation="composite">
+            <ownedAttribute xmi:id="_MwZRUJXKEeGQZfpt2-al3Q" name="timerStartAt" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3vqlMCl7EeG-5dvZ7NTkRw"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XtBW8JXKEeGQZfpt2-al3Q"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_OhxIUJXKEeGQZfpt2-al3Q" name="timerEndAt" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_XG6ZMJXKEeGQZfpt2-al3Q"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_nXn2gJXpEeGHsa8ljYUNgw" name="action" association="_nXmoYJXpEeGHsa8ljYUNgw">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.workflow1.uml#_3C7B8A60016D3F3EC01F0129"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i3p10JXqEeGHsa8ljYUNgw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i3qc4JXqEeGHsa8ljYUNgw"/>
+              <qualifier xmi:id="_5HtM8JXpEeGHsa8ljYUNgw" name="index">
+                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+              </qualifier>
             </ownedAttribute>
           </packagedElement>
-          <packagedElement xmi:type="uml:Association" xmi:id="_qZvJYCWrEeG5FbAdNYK62g" name="ReminderReferencesObject" memberEnd="_qZw-kCWrEeG5FbAdNYK62g _qZw-kyWrEeG5FbAdNYK62g">
-            <ownedEnd xmi:id="_qZw-kCWrEeG5FbAdNYK62g" name="reminder" type="_JnBt0CWWEeG5FbAdNYK62g" association="_qZvJYCWrEeG5FbAdNYK62g">
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_qZw-kiWrEeG5FbAdNYK62g" value="*"/>
-              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_qZw-kSWrEeG5FbAdNYK62g"/>
+          <packagedElement xmi:type="uml:Association" xmi:id="_qZvJYCWrEeG5FbAdNYK62g" name="TimerHasTargetObject" memberEnd="_qZw-kCWrEeG5FbAdNYK62g _qZw-kyWrEeG5FbAdNYK62g">
+            <ownedEnd xmi:id="_qZw-kCWrEeG5FbAdNYK62g" name="timer" type="_JnBt0CWWEeG5FbAdNYK62g" association="_qZvJYCWrEeG5FbAdNYK62g">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_v-xOIJXLEeGQZfpt2-al3Q" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_v-xOIZXLEeGQZfpt2-al3Q"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_M8QXgGniEeGvkMtcXF9Tbw" name="JabberAccount">
+            <generalization xmi:id="_kDfY0GniEeGvkMtcXF9Tbw" general="_bQiXsMyUEd-42pJgiwQJZQ"/>
+            <ownedAttribute xmi:id="_PM_rEGniEeGvkMtcXF9Tbw" name="username" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_f5bMIGniEeGvkMtcXF9Tbw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_RNKzEGniEeGvkMtcXF9Tbw" name="password" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_gZhBcGniEeGvkMtcXF9Tbw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_R4u4kGniEeGvkMtcXF9Tbw" name="hostname" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_g3Mb8GniEeGvkMtcXF9Tbw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_SjwykGniEeGvkMtcXF9Tbw" name="servicename" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hXrS0GniEeGvkMtcXF9Tbw"/>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_nXmoYJXpEeGHsa8ljYUNgw" name="TimerHasWfProcess" memberEnd="_nXnPcJXpEeGHsa8ljYUNgw _nXn2gJXpEeGHsa8ljYUNgw">
+            <ownedEnd xmi:id="_nXnPcJXpEeGHsa8ljYUNgw" name="timer" type="_JnBt0CWWEeG5FbAdNYK62g" association="_nXmoYJXpEeGHsa8ljYUNgw">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_nXnPcpXpEeGHsa8ljYUNgw" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_nXnPcZXpEeGHsa8ljYUNgw" value="1"/>
             </ownedEnd>
           </packagedElement>
         </packagedElement>

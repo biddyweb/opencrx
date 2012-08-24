@@ -230,7 +230,7 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Person's salutation</_item>
+												<_item>Person's salutation (use this field if none of the salutation codes are appropriate)</_item>
 											</toolTip>
 											<label>
 												<_item>Salutation</_item>
@@ -649,14 +649,14 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closingCode">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Person's do not send E-Mail indicator</_item>
+												<_item>Person's closing code</_item>
 											</toolTip>
 											<label>
-												<_item>No E-Mail</_item>
+												<_item>Closing code</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -666,9 +666,43 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closing">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Person's closing (use this field if none of the closing codes are appropriate)</_item>
+											</toolTip>
+											<label>
+												<_item>Closing</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>50</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Person's do not send E-Mail indicator</_item>
+											</toolTip>
+											<label>
+												<_item>No E-Mail</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPostalMail">
 										<_object>
-											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Person's do not send postal mail indicator</_item>
@@ -679,7 +713,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>20</_item>
-												<_item>80</_item>
+												<_item>90</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -696,7 +730,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>20</_item>
-												<_item>90</_item>
+												<_item>100</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -713,7 +747,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>20</_item>
-												<_item>100</_item>
+												<_item>110</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -730,7 +764,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>20</_item>
-												<_item>110</_item>
+												<_item>120</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -1024,7 +1058,7 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Person's birth date</_item>
+												<_item>Person's birth date/time (local time place of birth!)</_item>
 											</toolTip>
 											<label>
 												<_item>Birth Date</_item>
@@ -1041,7 +1075,7 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Person's anniversary date</_item>
+												<_item>Person's anniversary date (local time place of event!)</_item>
 											</toolTip>
 											<label>
 												<_item>Anniversary date</_item>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ComponentConfigHelper.java,v 1.11 2012/01/13 17:16:22 wfro Exp $
  * Description: ComponentConfigHelper
- * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,7 +61,6 @@ import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
 
 public abstract class ComponentConfigHelper {
@@ -101,8 +97,7 @@ public abstract class ComponentConfigHelper {
 	                    sp.setName(e[0]);
 	                    sp.setStringValue(e[1]);
 	                    componentConfiguration.addProperty(
-	                        false,
-	                        UUIDConversion.toUID(uuids.next()),
+	                        UUIDConversion.toUID(UUIDs.newUUID()),
 	                        sp
 	                    );
 	                }
@@ -134,7 +129,7 @@ public abstract class ComponentConfigHelper {
         sp.setName(name);
         sp.setStringValue(stringValue);
         configuration.addProperty(
-            UUIDConversion.toUID(uuids.next()),
+            UUIDConversion.toUID(UUIDs.newUUID()),
             sp
         );
         if(isTxLocal) {
@@ -160,6 +155,5 @@ public abstract class ComponentConfigHelper {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    private static final UUIDGenerator uuids = UUIDs.getGenerator();
     
 }

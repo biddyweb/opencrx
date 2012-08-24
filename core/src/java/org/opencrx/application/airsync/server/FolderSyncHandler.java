@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: FolderSyncHandler.java,v 1.10 2010/08/11 13:57:11 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/11 13:57:11 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowTargetImpl.java,v 1.8 2010/03/18 18:23:37 wfro Exp $
  * Description: WorkflowTargetImpl
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/18 18:23:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,8 +80,8 @@ public class WorkflowTargetImpl
                  this.sameObject(),
                  (org.opencrx.kernel.workflow1.jmi1.WfProcess)params.getWorkflow(),
                  params.getTargetObject(),
+                 params.getTriggeredBy(),
                  params.getTriggeredByEventId(),
-                 params.getTriggeredBySubscription(),
                  params.getTriggeredByEventType()
             );
             return Utils.getBasePackage(this.sameManager()).createExecuteWorkflowResult(

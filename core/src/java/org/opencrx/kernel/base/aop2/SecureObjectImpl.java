@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SecureObjectImpl.java,v 1.10 2010/03/17 17:10:08 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/17 17:10:08 $
  * ====================================================================
  *
  * This software is published under the BSD license

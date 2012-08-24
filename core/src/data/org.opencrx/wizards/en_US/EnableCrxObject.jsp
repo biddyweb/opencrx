@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: EnableCrxObject.jsp,v 1.2 2010/04/27 12:16:10 wfro Exp $
+ * Name:        $Id: EnableCrxObject.jsp,v 1.3 2012/07/08 13:30:30 wfro Exp $
  * Description: disable account, composites like addresses, and members referencing account
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:10 $
+ * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,7 +65,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

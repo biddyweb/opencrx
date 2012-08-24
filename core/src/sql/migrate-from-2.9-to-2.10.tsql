@@ -1,0 +1,4 @@
+#include "sql-definitions.tsql"
+
+UPDATE OOCKE1_ACCOUNT SET closing_code = 0 WHERE closing_code IS NULL COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

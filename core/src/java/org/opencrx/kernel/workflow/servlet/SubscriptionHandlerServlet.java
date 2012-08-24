@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SubscriptionHandlerServlet.java,v 1.71 2012/01/21 17:08:18 wfro Exp $
  * Description: SubscriptionHandlerServlet
- * Revision:    $Revision: 1.71 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/21 17:08:18 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -69,6 +66,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -82,7 +80,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
-import org.opencrx.kernel.backend.Activities.ActivityState;
 import org.opencrx.kernel.backend.Buildings;
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.backend.Depots;
@@ -91,6 +88,7 @@ import org.opencrx.kernel.backend.Forecasts;
 import org.opencrx.kernel.backend.Models;
 import org.opencrx.kernel.backend.Products;
 import org.opencrx.kernel.backend.UserHomes;
+import org.opencrx.kernel.backend.UserHomes.TimerState;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.cci2.AuditEntryQuery;
 import org.opencrx.kernel.base.jmi1.AuditEntry;
@@ -102,15 +100,14 @@ import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByParams;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByResult;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.home1.cci2.ReminderQuery;
 import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
-import org.opencrx.kernel.home1.jmi1.Reminder;
+import org.opencrx.kernel.home1.cci2.TimerQuery;
 import org.opencrx.kernel.home1.jmi1.Subscription;
+import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
-import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
@@ -126,13 +123,15 @@ import org.openmdx.kernel.log.SysLog;
  * <ul>
  *   <li>It monitors object modifications by scanning the audit entries. If the modified object has a 
  *   matching topic, all subscriptions for this topic are handled by executing the configured workflow. 
- *   <li>It monitors upcoming reminders and performs a sendAlert().
+ *   <li>It monitors timers and executes the assigned workflows.
  * </ul>
  */  
 public class SubscriptionHandlerServlet 
     extends HttpServlet {
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     public void init(
         ServletConfig config
     ) throws ServletException {
@@ -147,22 +146,27 @@ public class SubscriptionHandlerServlet
         }
     }
 
-    //-----------------------------------------------------------------------
-    private Short getEventType(
+    /**
+     * @param auditEntry
+     * @return
+     */
+    private Workflows.EventType getEventType(
         AuditEntry auditEntry
     ) {
-        return new Short( 
-            auditEntry instanceof ObjectRemovalAuditEntry
-                ? DataproviderOperations.OBJECT_REMOVAL
-                : auditEntry instanceof ObjectCreationAuditEntry
-                    ? DataproviderOperations.OBJECT_CREATION
-                    : auditEntry instanceof ObjectModificationAuditEntry
-                        ? DataproviderOperations.OBJECT_REPLACEMENT
-                        : 0
-        );                    
+      return auditEntry instanceof ObjectRemovalAuditEntry ? 
+        	Workflows.EventType.OBJECT_REMOVAL : 
+        		auditEntry instanceof ObjectCreationAuditEntry ? 
+        			Workflows.EventType.OBJECT_CREATION : 
+        				auditEntry instanceof ObjectModificationAuditEntry ? 
+        					Workflows.EventType.OBJECT_REPLACEMENT : 
+        						Workflows.EventType.NONE;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * @param subscription
+     * @param eventType
+     * @return
+     */
     private boolean subscriptionAcceptsEventType(
         Subscription subscription,
         Short eventType
@@ -185,7 +189,12 @@ public class SubscriptionHandlerServlet
         return false;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * @param filterName
+     * @param filterValue
+     * @param message
+     * @return
+     */
     @SuppressWarnings("unchecked")
     protected boolean testFilterValue(
         String filterName,
@@ -250,14 +259,18 @@ public class SubscriptionHandlerServlet
         return true;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * @param subscription
+     * @param auditEntry
+     * @return
+     */
     public boolean subscriptionAcceptsMessage(
         Subscription subscription,
         AuditEntry auditEntry
     ) {
         // Verify active flag and event type
-        Short eventType = this.getEventType(auditEntry); 
-        if(!this.subscriptionAcceptsEventType(subscription, eventType)) {
+        Workflows.EventType eventType = this.getEventType(auditEntry); 
+        if(!this.subscriptionAcceptsEventType(subscription, eventType.getValue())) {
             return false;
         }
         /**
@@ -267,7 +280,7 @@ public class SubscriptionHandlerServlet
          *       the subscription and the auditee are identical.
          *   <li>If the owner of the subscription has read-permission for auditee.
          * </ul>
-         */        
+         */
         Object auditee = null; 
         if(auditEntry.getAuditee() != null) {
             Path auditeeIdentity = new Path(auditEntry.getAuditee());        
@@ -286,7 +299,7 @@ public class SubscriptionHandlerServlet
             String principalName = userHomeIdentity.getBase();
             PersistenceManager pm = this.pmf.getPersistenceManager(
                 principalName,
-                UUIDs.getGenerator().next().toString()
+                null
             );
             if(auditEntry instanceof ObjectModificationAuditEntry) {
                 try {
@@ -354,7 +367,13 @@ public class SubscriptionHandlerServlet
         return acceptsMessage;
     }
         
-    //-----------------------------------------------------------------------
+    /**
+     * @param providerName
+     * @param segmentName
+     * @param topic
+     * @param objectXri
+     * @return
+     */
     public boolean topicAcceptsObject(
         String providerName,
         String segmentName,
@@ -380,7 +399,15 @@ public class SubscriptionHandlerServlet
         }
     }        
     
-    //-----------------------------------------------------------------------
+    /**
+     * @param providerName
+     * @param segmentName
+     * @param workflowSegment
+     * @param userHomeSegment
+     * @param auditEntry
+     * @return
+     * @throws ServiceException
+     */
     private List<Subscription> findSubscriptions(
         String providerName,
         String segmentName,
@@ -417,7 +444,102 @@ public class SubscriptionHandlerServlet
         return matchingSubscriptions;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Execute workflows. A workflow instance is created for each
+     * executed workflow. Synchronous workflows are executed immediately 
+     * if startedOn and lastActivityOn are set. Pending workflow instances,
+     * i.e. asynchronous and non-successful synchronous workflows are handled 
+     * by the WorkflowControllerServlet.
+     * 
+     * @param pmUser
+     * @param triggeredBy
+     * @param targetObject
+     * @param wfProcesses
+     * @throws ServiceException
+     */
+    protected void executeWorkflows(
+    	UserHome userHome,
+    	Path targetObjectIdentity,
+    	Path triggeredByIdentity,
+    	Workflows.EventType triggeredByEventType,
+    	Collection<WfProcess> wfProcesses
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
+    	PersistenceManager pmUser = null;
+    	try {
+	        pmUser = pm.getPersistenceManagerFactory().getPersistenceManager(
+	        	userHome.refGetPath().getBase(), 
+	        	null
+	        );
+            ContextCapable targetObject = null;
+            try {
+            	targetObject = (ContextCapable)pmUser.getObjectById(targetObjectIdentity);
+            } catch(Exception e) {}
+            ContextCapable triggeredBy = null;
+            try {
+            	triggeredBy = (ContextCapable)pmUser.getObjectById(triggeredByIdentity);
+            } catch(Exception e) {}
+            // In case user has no access to target object (NO_PERMISSION, ...) ignore subscription
+            if(targetObject instanceof BasicObject && triggeredBy instanceof BasicObject) {
+		        for(WfProcess wfProcess: wfProcesses) {
+		            try {
+		                MessageDigest md = MessageDigest.getInstance("MD5");
+		                md.update(targetObjectIdentity.toXRI().getBytes("UTF-8"));
+		                md.update(wfProcess.refMofId().getBytes("UTF-8"));                                        
+		                ExecuteWorkflowParams params = Utils.getBasePackage(pmUser).createExecuteWorkflowParams(
+		                    null, // startedAt
+		                    (BasicObject)targetObject, // targetObject
+		                    (BasicObject)pmUser.getObjectById(triggeredBy.refGetPath()), // triggeredBy
+		                    Base64.encode(md.digest()).replace('/', '-'), // triggeredByEventId
+		                    new Integer(triggeredByEventType.getValue()), // triggeredByEventType
+		                    (WfProcess)pmUser.getObjectById(wfProcess.refGetPath())
+		                );
+		                try {
+		                    pmUser.currentTransaction().begin();
+		                    ((UserHome)pmUser.getObjectById(
+		                    	userHome.refGetPath())
+		                    ).executeWorkflow(params);
+		                    // executeWorkflow touches userHome in separate uow. Prevent concurrent modification exception                                            
+		                    pmUser.refresh(userHome);
+		                    pmUser.currentTransaction().commit();
+		                }
+		                catch(Exception e) {
+		                	ServiceException e0 = new ServiceException(e);
+		                	SysLog.warning("Execution of workflow FAILED", "action=" + (wfProcess == null ? null : wfProcess.getName()) + "; home=" + (userHome == null ? null : userHome.refMofId()) + "; cause=" + (e0.getCause() == null ? null : e0.getCause().getMessage()));
+		                	if(e0.getExceptionCode() == BasicException.Code.NOT_FOUND) {
+		                		e0.log(); // log at WARNING level
+		                	} else {
+		                		SysLog.detail(e.getMessage(), e.getCause());
+		                	}
+		                    try {
+		                        pmUser.currentTransaction().rollback();
+		                    } catch(Exception e1) {}
+		                }
+		            }
+		            catch(NoSuchAlgorithmException e) {
+		                new ServiceException(e).log();
+		            }
+		            catch (UnsupportedEncodingException e) {
+		                new ServiceException(e).log();
+		            }
+		        }
+	        }
+    	} finally {
+    		if(pmUser != null) {
+    			pmUser.close();
+    		}
+    	}
+    }
+
+    /**
+     * @param providerName
+     * @param segmentName
+     * @param pm
+     * @param workflowSegment
+     * @param userHomeSegment
+     * @param auditEntries
+     * @throws ServiceException
+     */
     private void handleSubscriptions(
         String providerName,
         String segmentName,
@@ -470,86 +592,36 @@ public class SubscriptionHandlerServlet
                         	Path userHomeIdentity = subscription.refGetPath().getParent().getParent();
                             UserHome userHome = (UserHome)pm.getObjectById(userHomeIdentity);
                             org.opencrx.security.realm1.jmi1.User user = userHome.getOwningUser();
-                        	// User-specific persistence manager
-                            PersistenceManager pmUser = pm.getPersistenceManagerFactory().getPersistenceManager(
-                            	userHomeIdentity.getBase(), 
-                            	null
-                            );
-                            ContextCapable targetObject = null;
+                            boolean userIsDisabled = false;
+                            // Invalid NULLs on the DB may throw a NullPointer. Ignore.
                             try {
-                            	targetObject = (ContextCapable)pmUser.getObjectById(
-                            		new Path(auditEntry.getAuditee())
-                            	);
+                                userIsDisabled = user.isDisabled();
                             } catch(Exception e) {}
-                            // In case user has no access to target object (NO_PERMISSION, ...) ignore subscription
-                            if(targetObject instanceof BasicObject) {
-	                            boolean userIsDisabled = false;
-	                            // Invalid NULLs on the DB may throw a NullPointer. Ignore.
-	                            try {
-	                                userIsDisabled = user.isDisabled();
-	                            } 
-	                            catch(Exception e) {}
-	                            // Execute all actions attached to the topic if owning user of user home is not disabled
-	                            if(!userIsDisabled) {
-	                                Collection<WfProcess> actions = subscription.getTopic().getPerformAction();
-	                                for(WfProcess action: actions) {
-	                                    // Execute workflow. A workflow instance is created for each
-	                                    // executed workflow. Synchronous workflows are executed immediately 
-	                                    // if startedOn and lastActivityOn are set. Pending workflow instances,
-	                                    // i.e. asynchronous and non-successful synchronous workflows are handled 
-	                                    // by the WorkflowControllerServlet.
-	                                    try {
-	                                        MessageDigest md = MessageDigest.getInstance("MD5");
-	                                        md.update(auditEntry.refMofId().getBytes("UTF-8"));
-	                                        md.update(action.refMofId().getBytes("UTF-8"));                                        
-	                                        ExecuteWorkflowParams params = Utils.getBasePackage(pmUser).createExecuteWorkflowParams(
-	                                            null, // startedAt
-	                                            (BasicObject)targetObject, // targetObject
-	                                            Base64.encode(md.digest()).replace('/', '-'),
-	                                            new Integer(this.getEventType(auditEntry).intValue()),
-	                                            (Subscription)pmUser.getObjectById(subscription.refGetPath()),
-	                                            (WfProcess)pmUser.getObjectById(action.refGetPath())
-	                                        );
-	                                        try {
-	                                            pmUser.currentTransaction().begin();
-	                                            ((UserHome)pmUser.getObjectById(
-	                                            	userHome.refGetPath())
-	                                            ).executeWorkflow(params);
-	                                            // executeWorkflow touches userHome in separate uow. Prevent concurrent modification exception                                            
-	                                            pmUser.refresh(userHome);
-	                                            pmUser.currentTransaction().commit();
-	                                        }
-	                                        catch(Exception e) {
-	                                        	ServiceException e0 = new ServiceException(e);
-	                                        	SysLog.warning("Execution of workflow FAILED", "action=" + (action == null ? null : action.getName()) + "; home=" + (userHome == null ? null : userHome.refMofId()) + "; cause=" + (e0.getCause() == null ? null : e0.getCause().getMessage()));
-	                                        	if(e0.getExceptionCode() == BasicException.Code.NOT_FOUND) {
-	                                        		e0.log(); // log at WARNING level
-	                                        	} else {
-	                                        		SysLog.detail(e.getMessage(), e.getCause());
-	                                        	}
-	                                            try {
-	                                                pmUser.currentTransaction().rollback();
-	                                            } catch(Exception e1) {}
-	                                        }
-	                                    }
-	                                    catch(NoSuchAlgorithmException e) {
-	                                        new ServiceException(e).log();
-	                                    }
-	                                    catch (UnsupportedEncodingException e) {
-	                                        new ServiceException(e).log();
-	                                    }
-	                                }
-	                            }
+                            if(!userIsDisabled) {
+                                Collection<WfProcess> actions = subscription.getTopic().getPerformAction();
+                                this.executeWorkflows(
+                                	userHome, 
+                                	new Path(auditEntry.getAuditee()),
+                                	subscription.refGetPath(), 
+                                	this.getEventType(auditEntry),
+                                	actions
+                                );
                             }
-                            pmUser.close();
                         }
                     }
                 }
             }
-        }        
+        }
     }
-    
-    //-----------------------------------------------------------------------    
+
+    /**
+     * @param id
+     * @param providerName
+     * @param segmentName
+     * @param req
+     * @param res
+     * @throws IOException
+     */
     public void handleSubscriptions(
         String id,
         String providerName,
@@ -557,20 +629,17 @@ public class SubscriptionHandlerServlet
         HttpServletRequest req, 
         HttpServletResponse res        
     ) throws IOException {
-        
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Subscriptions] " + providerName + "/" + segmentName);
-
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
-                "admin-" + segmentName,
-                UUIDs.getGenerator().next().toString()
+                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+                null
             );
             Workflows.getInstance().initWorkflows(
                 pm,
                 providerName,
                 segmentName                
-            );
-            
+            );            
             // Get auditees
             List<Auditee> auditSegments = new ArrayList<Auditee>();
             auditSegments.add(Accounts.getInstance().getAccountSegment(pm, providerName, segmentName));
@@ -596,6 +665,7 @@ public class SubscriptionHandlerServlet
                 query.thereExistsVisitedBy().equalTo(
                     VISITOR_ID + ":-"
                 );
+                query.orderByCreatedAt().ascending();
                 try {
                     List<AuditEntry> auditEntries = auditee.getAudit(query);
                     this.handleSubscriptions(   
@@ -623,8 +693,15 @@ public class SubscriptionHandlerServlet
         }        
     }
     
-    //-----------------------------------------------------------------------    
-    public void handleReminders(
+    /**
+     * @param id
+     * @param providerName
+     * @param segmentName
+     * @param req
+     * @param res
+     * @throws IOException
+     */
+    public void handleTimers(
         String id,
         String providerName,
         String segmentName,
@@ -632,7 +709,7 @@ public class SubscriptionHandlerServlet
         HttpServletResponse res        
     ) throws IOException {
         
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Reminders] " + providerName + "/" + segmentName);
+        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Timers] " + providerName + "/" + segmentName);
 
         PersistenceManager pmAdmin = null;
         try {
@@ -640,56 +717,98 @@ public class SubscriptionHandlerServlet
                 SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
                 null
             );
-            ReminderQuery reminderQuery = (ReminderQuery)PersistenceHelper.newQuery(
-            	pmAdmin.getExtent(Reminder.class), 
-            	new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", ":*", "reminder", ":*")
-            );
-            reminderQuery.forAllDisabled().isFalse();
-            reminderQuery.reminderState().equalTo(ActivityState.OPEN.getValue());
-            org.openmdx.base.query.Extension reminderQueryExtension = PersistenceHelper.newQueryExtension(reminderQuery);
-            // All reminders with no alarm since alarm_interval_minutes until trigger_end_at
-            reminderQueryExtension.setClause(
-            	"(current_timestamp BETWEEN " +  
-            	"last_alarm_at + CAST(CAST(alarm_interval_minutes * 60 as VARCHAR(10)) AS INTERVAL DAY TO SECOND) AND " + 
-            	"trigger_end_at)"
-            );
-            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pmAdmin, providerName, segmentName);
-            Collection<Reminder> reminders = userHomeSegment.getExtent(reminderQuery);
-            List<Path> matchingReminderIdentities = new ArrayList<Path>();
-            try {
-	            int count = 0;
-	            for(Reminder reminder: reminders) {
-	            	matchingReminderIdentities.add(reminder.refGetPath());
-	            	count++;
-	            	if(count > BATCH_SIZE) break;
+            // Get all timers with no trigger since trigger_interval_minutes until min(trigger_end_at, trigger_start_at + trigger_repeat * trigger_interval_minutes)
+            final String[] TIMER_CLAUSES = {
+
+            	// Use fn timestampadd (JDBC, SQL-92)
+            	"(current_timestamp BETWEEN " +
+            	"{fn timestampadd(SQL_TSI_MINUTE, trigger_interval_minutes, last_trigger_at)} AND " + 
+            	"LEAST(timer_end_at, {fn timestampadd(SQL_TSI_MINUTE, trigger_repeat * trigger_interval_minutes, timer_start_at)}))",
+
+            	// Use fn timestampadd, use CASE instead of LEAST (SQL Server, ...)
+            	"(current_timestamp BETWEEN " +
+            	"{fn timestampadd(SQL_TSI_MINUTE, trigger_interval_minutes, last_trigger_at)} AND " + 
+            	"CASE WHEN timer_end_at < {fn timestampadd(SQL_TSI_MINUTE, trigger_repeat * trigger_interval_minutes, timer_start_at)} THEN timer_end_at ELSE {fn timestampadd(SQL_TSI_MINUTE, trigger_repeat * trigger_interval_minutes, timer_start_at)} END)",
+
+            	// Use + ... MINUTES instead of fn timestampadd  (DB2, ...)
+            	"(current_timestamp BETWEEN " +
+            	"last_trigger_at + trigger_interval_minutes MINUTES AND " + 
+            	"LEAST(timer_end_at, timer_start_at + (trigger_repeat * trigger_interval_minutes) MINUTES))",
+
+            	// Use numtodsinterval instead of fn timestampadd (Oracle, ...)
+            	"(current_timestamp BETWEEN " +
+            	"last_trigger_at + numtodsinterval(trigger_interval_minutes, 'minute') AND " + 
+            	"LEAST(timer_end_at, timer_start_at + numtodsinterval(trigger_repeat * trigger_interval_minutes, 'minute')))",
+
+            };
+            List<Path> matchingTimerIdentities = new ArrayList<Path>();
+            Exception queryError = null;
+            timerClause: for(String clause: TIMER_CLAUSES) {
+	    		// Timers have path pattern xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/timer/:*
+	            TimerQuery timerQuery = (TimerQuery)PersistenceHelper.newQuery(
+	            	pmAdmin.getExtent(Timer.class), 
+	            	new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", ":*", "timer", ":*")
+	            );
+	            timerQuery.forAllDisabled().isFalse();
+	            timerQuery.timerState().equalTo(TimerState.OPEN.getValue());
+	            org.openmdx.base.query.Extension timerQueryExtension = PersistenceHelper.newQueryExtension(timerQuery);
+	            timerQueryExtension.setClause(clause);
+	            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pmAdmin, providerName, segmentName);
+	            Collection<Timer> timers = userHomeSegment.getExtent(timerQuery);
+	            try {
+		            int count = 0;
+		            for(Timer timer: timers) {
+		            	matchingTimerIdentities.add(timer.refGetPath());
+		            	count++;
+		            	if(count > BATCH_SIZE) break;
+		            }
+		            queryError = null;
+		            break;
+	            } catch(Exception e) {
+	            	ServiceException e0 = new ServiceException(e);
+	            	SysLog.detail(e0.getMessage(), e0.getCause());            	
+	            	queryError = e;
+	            	continue timerClause;
 	            }
-            } catch(Exception e) {
-            	SysLog.warning("Unable to determine pending reminders. For more info see log at level detail", e.getMessage());
-            	ServiceException e0 = new ServiceException(e);
-            	SysLog.detail(e0.getMessage(), e0.getCause());
             }
-            for(Path reminderIdentity: matchingReminderIdentities) {
-            	PersistenceManager pm = null;
-            	try {
-            		// Reminders have path pattern xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/reminder/:*
-            		pm = this.pmf.getPersistenceManager(
-                        reminderIdentity.get(6), // userId
-                        null
-                    );
-            		Reminder reminder = (Reminder)pm.getObjectById(reminderIdentity);
-            		pm.currentTransaction().begin();
-            		reminder.setLastAlarmAt(new Date());
-            		pm.currentTransaction().commit();
-            	} catch(Exception e) {
-            		new ServiceException(e).log();
-            		try {
-            			pm.currentTransaction().rollback();
-            		} catch(Exception e0) {}
-            	} finally {
-            		try {
-            			pm.close();
-            		} catch(Exception e) {}
-            	}
+            if(queryError != null)  {
+            	SysLog.log(Level.WARNING, "Unable to retrieve pending timers. For more info see log at level " + Level.FINE);
+            } else {
+	            for(Path timerIdentity: matchingTimerIdentities) {
+	            	PersistenceManager pm = null;
+	            	try {
+	            		pm = this.pmf.getPersistenceManager(
+	                        timerIdentity.get(6), // userId
+	                        null
+	                    );
+	            		Timer timer = (Timer)pm.getObjectById(timerIdentity);
+	            		pm.currentTransaction().begin();
+	            		timer.setLastTriggerAt(new Date());
+	            		// In case the timer triggers exactly one time it can be closed now.
+	            		if(timer.getTriggerRepeat() != null &&  timer.getTriggerRepeat() == 1) {
+	            			timer.setTimerState((short)UserHomes.TimerState.CLOSED.getValue());
+	            		}
+	            		pm.currentTransaction().commit();
+	                	Path userHomeIdentity = timer.refGetPath().getParent().getParent();
+	                    UserHome userHome = (UserHome)pm.getObjectById(userHomeIdentity);            		
+	            		this.executeWorkflows(
+	            			userHome, 
+	            			timer.getTarget() == null ? null : timer.getTarget().refGetPath(), // targetObject
+	            			timerIdentity, // triggerBy
+	            			Workflows.EventType.TIMER, // triggerByEvent
+	            			timer.<WfProcess>getAction() // actions
+	            		);
+	            	} catch(Exception e) {
+	            		new ServiceException(e).log();
+	            		try {
+	            			pm.currentTransaction().rollback();
+	            		} catch(Exception e0) {}
+	            	} finally {
+	            		try {
+	            			pm.close();
+	            		} catch(Exception e) {}
+	            	}
+	            }
             }
         } catch(Exception e) {
             new ServiceException(e).log();
@@ -704,7 +823,12 @@ public class SubscriptionHandlerServlet
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * @param req
+     * @param res
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void handleRequest(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -721,7 +845,7 @@ public class SubscriptionHandlerServlet
 	                    	id,
 	                    	Thread.currentThread()
 	                    );
-	                    this.handleReminders(
+	                    this.handleTimers(
 	                    	id,
 	                    	providerName,
 	                    	segmentName,
@@ -754,7 +878,9 @@ public class SubscriptionHandlerServlet
         }
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     protected void doGet(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -767,7 +893,9 @@ public class SubscriptionHandlerServlet
         );
     }
         
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     protected void doPost(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -787,13 +915,14 @@ public class SubscriptionHandlerServlet
     private static final int BATCH_SIZE = 50;
     
     private static final String WORKFLOW_NAME = "SubscriptionHandler";    
-    private static final Path PATH_PATTERN_USER_HOME = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*");
+    private static final Path PATH_PATTERN_USER_HOME = new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", ":*", "segment", ":*", "userHome", ":*");
     private static final String COMMAND_EXECUTE = "/execute";
     private static final String VISITOR_ID = "SubscriptionHandler";
     private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
 
     private PersistenceManagerFactory pmf = null;
     private long startedAt = System.currentTimeMillis();
+    
 }
 
 //--- End of File -----------------------------------------------------------

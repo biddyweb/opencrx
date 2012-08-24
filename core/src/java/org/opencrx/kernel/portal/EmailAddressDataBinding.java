@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EmailAddressDataBinding.java,v 1.2 2009/02/03 23:45:24 wfro Exp $
  * Description: EmailAddressDataBinding
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/02/03 23:45:24 $
  * ====================================================================
  *
  * This software is published under the BSD license

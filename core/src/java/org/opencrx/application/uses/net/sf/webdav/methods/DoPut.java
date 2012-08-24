@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoPut.java,v 1.12 2010/12/08 18:57:07 wfro Exp $
  * Description: DoPut
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/08 18:57:07 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -146,13 +143,17 @@ public class DoPut extends WebDavMethod {
                 	req.getInputStream(), 
                 	req.getContentType() 
                 );
-                resp.setCharacterEncoding("UTF-8");
-	            resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));            
-	            resp.setStatus(
-	            	putResult == WebDavStore.PutResourceStatus.CREATED ? 
-	            		HttpServletResponse.SC_CREATED : 
-	            			HttpServletResponse.SC_OK
-	            );
+                if(putResult == WebDavStore.PutResourceStatus.FORBIDDEN) {
+                	resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+                } else {
+	                resp.setCharacterEncoding("UTF-8");
+		            resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));            
+		            resp.setStatus(
+		            	putResult == WebDavStore.PutResourceStatus.CREATED ? 
+		            		HttpServletResponse.SC_CREATED : 
+		            			HttpServletResponse.SC_OK
+		            );
+                }
             } catch (AccessDeniedException e) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
             } catch (WebdavException e) {

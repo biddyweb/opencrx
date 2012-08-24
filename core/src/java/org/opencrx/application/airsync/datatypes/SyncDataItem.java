@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SyncDataItem.java,v 1.1 2010/05/31 10:40:51 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/31 10:40:51 $
  * ====================================================================
  *
  * This software is published under the BSD license

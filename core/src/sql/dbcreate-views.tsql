@@ -38,7 +38,7 @@ DROP VIEW OOCKE1_JOIN_HOMEHASASSACT COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_NSCONTAINSELT COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_JOIN_OBJHASASSREMINDER COMMAND_TERMINATOR 
+DROP VIEW OOCKE1_JOIN_OBJHASASSTIMER COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -445,12 +445,12 @@ ON
     (e.container = n.object_id) COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCKE1_JOIN_OBJHASASSREMINDER AS
+CREATE VIEW OOCKE1_JOIN_OBJHASASSTIMER AS
 SELECT
-    r.reference AS crx_object,
-    r.object_id AS assigned_reminder
+    t.target AS crx_object,
+    t.object_id AS assigned_timer
 FROM
-    OOCKE1_REMINDER r COMMAND_TERMINATOR 
+    OOCKE1_TIMER t COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_JOIN_RESHASASSIGNEDACT AS
@@ -1270,6 +1270,36 @@ SELECT DISTINCT
     ass0.member_role_2,
     ass0.member_role_3,
     ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,   
     1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1278,7 +1308,7 @@ INNER JOIN
 ON
     ass0.account = acct.object_id
 WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member')
+    ass0.object_id LIKE 'accountMember%'
 
 UNION ALL
 
@@ -1322,6 +1352,36 @@ SELECT DISTINCT
     ass0.member_role_2,
     ass0.member_role_3,
     ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,     
     -1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1330,7 +1390,7 @@ INNER JOIN
 ON
    ass0.account = acct.object_id
 WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member') COMMAND_TERMINATOR 
+    ass0.object_id LIKE 'accountMember%' COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
@@ -1374,11 +1434,41 @@ SELECT DISTINCT
     ass0.member_role_2,
     ass0.member_role_3,
     ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,    
     1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 WHERE
-    ass0.dtype = 'org:opencrx:kernel:account1:Member'
+    ass0.object_id LIKE 'accountMember%'
 
 UNION ALL
 
@@ -1422,11 +1512,41 @@ SELECT DISTINCT
     ass0.member_role_2,
     ass0.member_role_3,
     ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,    
     -1 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member')
+    ass0.object_id LIKE 'accountMember%'
     
 UNION ALL
 
@@ -1470,6 +1590,36 @@ SELECT DISTINCT
     ass0.member_role_2,
     ass0.member_role_3,
     ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,    
     2 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1479,7 +1629,7 @@ ON
     (ass0.P_PARENT = ass.P_PARENT) OR
     (ass0.account = ass.P_PARENT)
 WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member')
+    ass0.object_id LIKE 'accountMember%'
 
 UNION ALL
 
@@ -1523,6 +1673,36 @@ SELECT DISTINCT
     ass0.member_role_2,
     ass0.member_role_3,
     ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,    
     -2 AS distance
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
@@ -1532,7 +1712,7 @@ ON
     (ass0.P_PARENT = ass.account) OR
     (ass0.account = ass.account)
 WHERE
-    (ass0.dtype = 'org:opencrx:kernel:account1:Member')
+    ass0.object_id LIKE 'accountMember%'
 
 COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -1546,7 +1726,13 @@ SELECT
     ass_.modified_by,
     ass_.owner,
     ass_.dtype,
-    ass_.for_use_by
+    ass_.for_use_by,
+    ass_.user_boolean4, 
+    ass_.user_code4,
+    ass_.user_date4,
+    ass_.user_date_time4,
+    ass_.user_number4,
+    ass_.user_string4
 FROM
     OOCKE1_ACCOUNTASSIGNMENT_ ass_
 INNER JOIN

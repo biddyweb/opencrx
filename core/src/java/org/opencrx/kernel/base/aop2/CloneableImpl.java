@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CloneableImpl.java,v 1.6 2009/09/22 13:51:11 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/09/22 13:51:11 $
  * ====================================================================
  *
  * This software is published under the BSD license

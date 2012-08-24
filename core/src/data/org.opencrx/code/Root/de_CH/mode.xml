@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[0] lokal</_item>
+                              <_item>0 - lokal</_item>
                             </shortText>
                             <longText>
-                              <_item>[0] lokal</_item>
+                              <_item>0 - lokal</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[1] rekursiv</_item>
+                              <_item>1 - rekursiv</_item>
                             </shortText>
                             <longText>
-                              <_item>[1] rekursiv</_item>
+                              <_item>1 - rekursiv</_item>
                             </longText>
                           </_object>
                           <_content/>

@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountResource.java,v 1.2 2010/11/24 13:05:17 wfro Exp $
  * Description: AccountResource
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/24 13:05:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,17 +53,23 @@
 package org.opencrx.application.carddav;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.kernel.account1.jmi1.Account;
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.VCard;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
+/**
+ * CardDAV resource of type Account.
+ *
+ */
 class AccountResource extends CardDavResource {
 
 	public AccountResource(
@@ -78,30 +81,46 @@ class AccountResource extends CardDavResource {
 		this.parent = parent;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.carddav.CardDavResource#getObject()
+	 */
 	@Override
     public Account getObject(
     ) {
         return (Account)super.getObject();
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#isCollection()
+	 */
 	@Override
     public boolean isCollection(
     ) {
 		return false;
     }
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.carddav.CardDavResource#getMimeType()
+	 */
 	@Override 
 	public String getMimeType(
 	) {
 		return VCard.MIME_TYPE;			
 	}
 	
+    /* (non-Javadoc)
+     * @see org.opencrx.application.carddav.CardDavResource#getName()
+     */
     @Override
     public String getName(
     ) {
         return super.getName() + ".vcf";
     }
 
+    /* (non-Javadoc)
+     * @see org.opencrx.application.uses.net.sf.webdav.Resource#getDisplayName()
+     */
+    @Override
     public String getDisplayName(
     ) {
     	return this.getObject().getFullName();
@@ -112,25 +131,56 @@ class AccountResource extends CardDavResource {
     	return this.parent;
     }
     
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.carddav.CardDavResource#getContent()
+	 */
 	@Override
     public BinaryLargeObject getContent(
     ) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		PrintWriter p = new PrintWriter(out);
+		PrintWriter p = null;
+		try {
+			p = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
+		} catch(Exception e) {
+			p = new PrintWriter(out);
+		}
 		Account account = this.getObject();
 		HttpServletRequest req = this.getRequestContext().getHttpServletRequest();
         String vcard = account.getVcard();
         if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
+       		vcard = vcard.replace("\nN:", "\nN;CHARSET=UTF-8:");
+       		vcard = vcard.replace("\nFN:", "\nFN;CHARSET=UTF-8:");
+       		vcard = vcard.replace("\nADR;", "\nADR;CHARSET=UTF-8;");
+       		vcard = vcard.replace("\nTITLE:", "\nTITLE;CHARSET=UTF-8:");
+       		// BDAY as date only. Most CardDAV clients are unable to handle time properly
+       		if(vcard.indexOf("BDAY:") > 0) {
+       			int pos1 = vcard.indexOf("BDAY:");
+       			int pos2 = vcard.indexOf("\n", pos1);
+       			if(pos2 > pos1) {
+       				vcard =
+       					vcard.substring(0, pos1) +
+       					"BDAY;VALUE=DATE:" + vcard.substring(pos1 + 5, pos1 + 13) +
+       					vcard.substring(pos2);
+       			}
+       		}
             int start = vcard.indexOf("BEGIN:VCARD");
             int end = vcard.indexOf("END:VCARD");
             p.write(vcard.substring(start, end));
             if(vcard.indexOf("URL:") < 0) {            	
             	String url = null;
             	try {
-            		url = Base.getInstance().getAccessUrl(req, "-vcard-", account);
+            		url = Base.getInstance().getAccessUrl(req, "-carddav-", account);
                     p.write("URL:" + url + "\n");
             	} catch(Exception e) {}
-            }                        
+            }
+            if(vcard.indexOf("PHOTO:") < 0 && account instanceof Contact) {
+            	try {
+	            	VCard.getInstance().writePhotoTag(
+	            		p, 
+	            		(Contact)account
+	            	);
+            	} catch(Exception e) {} // don't care if PHOTO tag can not be written
+            }
             p.write("END:VCARD\n");
         }
 		p.close();

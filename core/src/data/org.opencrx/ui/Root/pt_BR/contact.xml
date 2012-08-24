@@ -556,7 +556,7 @@
                         <_item>Aniversário</_item>
                       </label>
                       <toolTip>
-                        <_item>Aniversário</_item>
+                        <_item>Aniversário (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Data de Aniversário</_item>
                       </label>
                       <toolTip>
-                        <_item>Data de Aniversário</_item>
+                        <_item>Data de Aniversário (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

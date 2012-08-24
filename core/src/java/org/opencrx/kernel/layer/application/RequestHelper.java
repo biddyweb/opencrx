@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RequestHelper.java,v 1.13 2010/05/26 15:20:39 wfro Exp $
  * Description: RequestHelper
- * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/26 15:20:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -77,7 +74,6 @@ import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 
 public class RequestHelper {
 
@@ -85,7 +81,6 @@ public class RequestHelper {
     public RequestHelper(
     	RequestContext context
     ) {
-        this.uuids = UUIDs.getGenerator();
         this.context = context;
         this.derivedReferences = null;                
     }
@@ -122,7 +117,7 @@ public class RequestHelper {
     //-------------------------------------------------------------------------
     public String getUidAsString(
     ) {
-        return UUIDConversion.toUID(this.uuids.next());        
+        return UUIDConversion.toUID(UUIDs.newUUID());        
     }
     
     //-------------------------------------------------------------------------
@@ -192,8 +187,6 @@ public class RequestHelper {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------    
-    private final UUIDGenerator uuids;
-   
     public final RequestContext context;
     protected DerivedReferences derivedReferences = null;
     

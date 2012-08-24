@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMapper.java,v 1.46 2012/01/13 17:13:48 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.46 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:13:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -127,13 +124,12 @@ import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Activities.PartyStatus;
 import org.opencrx.kernel.backend.Activities.PartyType;
 import org.opencrx.kernel.backend.Activities.Priority;
-import org.opencrx.kernel.backend.UserHomes.AlertState;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.backend.MimeMessageImpl;
 import org.opencrx.kernel.backend.Notifications;
 import org.opencrx.kernel.backend.UserHomes;
+import org.opencrx.kernel.backend.UserHomes.AlertState;
 import org.opencrx.kernel.backend.VCard;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
@@ -145,6 +141,7 @@ import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.SyncFeed;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.MimeUtils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -779,7 +776,7 @@ public class DatatypeMapper {
         String segmentName = email.refGetPath().get(4);
         if(emailT.getMimeData() != null) {
         	try {
-	            MimeMessage mimeMessage = new MimeMessageImpl(
+	            MimeMessage mimeMessage = new MimeUtils.MimeMessageImpl(
 	                new ByteArrayInputStream(emailT.getMimeData().getBytes("US-ASCII"))
 	            );
 	            pm.currentTransaction().begin();
@@ -1157,6 +1154,12 @@ public class DatatypeMapper {
 		}
 	}
 	
+	/**
+	 * Find member of a group account.
+	 * @param parent
+	 * @param memberRole
+	 * @return
+	 */
 	public Account findAccountMember(
 		Account parent,
 		short memberRole
@@ -1169,6 +1172,12 @@ public class DatatypeMapper {
 		return !members.isEmpty() ? members.iterator().next().getAccount() : null;
 	}
 	
+	/**
+	 * Map activity attendees to AttendeeTs.
+	 * @param activity
+	 * @return
+	 * @throws ServiceException
+	 */
 	private List<AttendeeT> getAttendeesT(
 		Activity activity
 	) throws ServiceException {
@@ -1250,6 +1259,11 @@ public class DatatypeMapper {
         return attendeesT;
 	}
 	
+	/**
+	 * Get MeetingStatus of activity.
+	 * @param activity
+	 * @return
+	 */
 	private MeetingStatus getCalendarMeetingStatus(
 		Activity activity
 	) {
@@ -1267,6 +1281,11 @@ public class DatatypeMapper {
         }
 	}
 
+	/**
+	 * Map MeetingStatus to status.
+	 * @param status
+	 * @return
+	 */
 	private String getICalStatus(
 		MeetingStatus status
 	) {
@@ -1286,6 +1305,11 @@ public class DatatypeMapper {
 		}		
 	}
 	
+	/**
+	 * Map activity to RecurrenceT.
+	 * @param activity
+	 * @return
+	 */
 	public RecurrenceT getRecurrence(
 		Activity activity
 	) {
@@ -1372,6 +1396,11 @@ public class DatatypeMapper {
 		return null;
 	}
 
+	/**
+	 * Parse RRULE
+	 * @param recurrenceT
+	 * @return
+	 */
 	public String getICalRRule(
 		RecurrenceT recurrenceT
 	) {
@@ -1396,6 +1425,12 @@ public class DatatypeMapper {
 			(recurrenceT.getWeekOfMonth() == null ? "" : ";BYWEEK=" + recurrenceT.getWeekOfMonth());
 	}
 	
+	/**
+	 * Parse EXDATE
+	 * @param activity
+	 * @return
+	 * @throws ServiceException
+	 */
 	private List<EventT> getExceptions(
 		Activity activity
 	) throws ServiceException {
@@ -1408,9 +1443,12 @@ public class DatatypeMapper {
 			if(end > start) {
 				String[] exdates = ical.substring(start+7, end).split(",");
 				for(String exdate: exdates) {
-					EventT exception = new EventT();
-					exception.setExceptionStartTime(Datatypes.create(Date.class, exdate));
-					exception.setCategories(new ArrayList<String>(activity.getCategory()));
+					try {
+						EventT exceptionT = new EventT();
+						exceptionT.setExceptionStartTime(Datatypes.create(Date.class, exdate));
+						exceptionT.setCategories(new ArrayList<String>(activity.getCategory()));
+						exceptionsT.add(exceptionT);
+					} catch(Exception e) {} // Ignore unparseable exceptions
 				}
 			}
 			pos = end;
@@ -1418,6 +1456,11 @@ public class DatatypeMapper {
 		return exceptionsT;
 	}
 
+	/**
+	 * Get EXDATE
+	 * @param exceptionsT
+	 * @return
+	 */
 	private String getICalExdates(
 		List<EventT> exceptionsT
 	) {
@@ -1426,11 +1469,19 @@ public class DatatypeMapper {
 		String exdates = "";
 		for(EventT exceptionT: exceptionsT) {
 			exdates += sep;
-			exdates += utcf.format(exceptionT.getStartTime()).substring(0,15) + "Z";
+			try {				
+				exdates += utcf.format(exceptionT.getStartTime()).substring(0,15) + "Z";
+				sep = ",";
+			} catch(Exception e) {} // don't care if format fails
 		}
 		return exdates;
 	}
-	
+
+	/**
+	 * Map importance.
+	 * @param activity
+	 * @return
+	 */
 	private Importance getImportance(
 		Activity activity
 	) {
@@ -1451,6 +1502,11 @@ public class DatatypeMapper {
 		return Importance.NORMAL;
     }
 
+	/**
+	 * Map importance.
+	 * @param alert
+	 * @return
+	 */
 	private Importance getImportance(
 		Alert alert
 	) {
@@ -1471,6 +1527,11 @@ public class DatatypeMapper {
 		return Importance.NORMAL;
     }
 
+	/**
+	 * Map priority.
+	 * @param importance
+	 * @return
+	 */
 	private String getICalPriority(
 		Importance importance
 	) {
@@ -1485,6 +1546,11 @@ public class DatatypeMapper {
 		}
 	}
 	
+	/**
+	 * Map sender.
+	 * @param alert
+	 * @return
+	 */
 	private AddressT getSender(
 		Alert alert
 	) {
@@ -1499,6 +1565,11 @@ public class DatatypeMapper {
 				new AddressT(eMailAccounts.iterator().next().getName());
 	}
 	
+	/**
+	 * Map sender.
+	 * @param email
+	 * @return
+	 */
 	private AddressT getSender(
 		EMail email
 	) {
@@ -1514,6 +1585,12 @@ public class DatatypeMapper {
 		return null;
 	}
 	
+	/**
+	 * Get attachments.
+	 * @param activity
+	 * @return
+	 * @throws ServiceException
+	 */
 	private List<AttachmentT> getAttachments(
 		Activity activity
 	) throws ServiceException {
@@ -1541,6 +1618,12 @@ public class DatatypeMapper {
         return attachmentsT;
 	}
 	
+	/**
+	 * Get email body.
+	 * @param email
+	 * @return
+	 * @throws ServiceException
+	 */
 	private EmailBodyT getEMailBody(
 		EMail email
 	) throws ServiceException {
@@ -1553,6 +1636,12 @@ public class DatatypeMapper {
 		return bodyT;
 	}
 	
+	/**
+	 * Get email body.
+	 * @param alert
+	 * @return
+	 * @throws ServiceException
+	 */
 	private EmailBodyT getEMailBody(
 		Alert alert
 	) throws ServiceException {
@@ -1573,6 +1662,12 @@ public class DatatypeMapper {
 		return bodyT;
 	}
 	
+	/**
+	 * Get email subject.
+	 * @param alert
+	 * @return
+	 * @throws ServiceException
+	 */
 	private String getEMailSubject(
 		Alert alert
 	) throws ServiceException {
@@ -1587,6 +1682,15 @@ public class DatatypeMapper {
 		);
 	}
 	
+	/**
+	 * Map activity to EventT.
+	 * @param event
+	 * @param noData
+	 * @param user
+	 * @param requestContext
+	 * @return
+	 * @throws ServiceException
+	 */
 	public SyncDataItem toEventT(
 		Activity event,
 		boolean noData,
@@ -1672,6 +1776,15 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 	
+	/**
+	 * Map email to EMailT.
+	 * @param email
+	 * @param noData
+	 * @param user
+	 * @param requestContext
+	 * @return
+	 * @throws ServiceException
+	 */
 	public SyncDataItem toEMailT(
 		EMail email,
 		boolean noData,
@@ -1720,6 +1833,15 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 	
+	/**
+	 * Map alert to EMailT.
+	 * @param alert
+	 * @param noData
+	 * @param user
+	 * @param requestContext
+	 * @return
+	 * @throws ServiceException
+	 */
 	public SyncDataItem toEMailT(
 		Alert alert,
 		boolean noData,
@@ -1753,6 +1875,15 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 	
+	/**
+	 * Map task to TaskT.
+	 * @param task
+	 * @param noData
+	 * @param user
+	 * @param requestContext
+	 * @return
+	 * @throws ServiceException
+	 */
 	public SyncDataItem toTaskT(
 		Activity task,
 		boolean noData,
@@ -1812,12 +1943,21 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 	
+	/**
+	 * Map account to ContactT.
+	 * @param account
+	 * @param noData
+	 * @param user
+	 * @param requestContext
+	 * @return
+	 * @throws ServiceException
+	 */
 	public SyncDataItem toContactT(
 		Account account,
 		boolean noData,
 		UserHome user,
 		RequestContext requestContext		
-	) throws ServiceException {		
+	) throws ServiceException {
 		// data
 		ContactT contactT = new ContactT();
 		if(!noData) {
@@ -1844,8 +1984,7 @@ public class DatatypeMapper {
 				) {
 					contactT.setPicture(Base64.encode(contact.getPictureContent()));
 				}
-			}
-			else if(account instanceof AbstractGroup) {
+			} else if(account instanceof AbstractGroup) {
 				// Last name must have a value. Otherwise targets
 				// such as Outlook / Exchange are in trouble
 				contactT.setLastName(account.getFullName());
@@ -1915,7 +2054,7 @@ public class DatatypeMapper {
 					homeStreet = homeStreet.trim();
 					while(!sep.isEmpty() && homeStreet.endsWith(sep)) {
 						homeStreet = homeStreet.substring(0, homeStreet.length() - sep.length());
-					}					
+					}
 				}
 				contactT.setHomeAddressStreet(homeStreet);
 				contactT.setHomeAddressCountry(Addresses.POSTAL_COUNTRIES_BY_CODE.get(postalHome.getPostalCountry()));
@@ -1965,6 +2104,15 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 
+	/**
+	 * Map document to NoteT.
+	 * @param document
+	 * @param noData
+	 * @param user
+	 * @param requestContext
+	 * @return
+	 * @throws ServiceException
+	 */
 	public SyncDataItem toNoteT(
 		Document document,
 		boolean noData,
@@ -2001,6 +2149,12 @@ public class DatatypeMapper {
 		return dataItem;
 	}
 
+	/**
+	 * Map media to AttachmentDataT.
+	 * @param object
+	 * @return
+	 * @throws ServiceException
+	 */
 	public AttachmentDataT toAttachmentData(
 		RefObject_1_0 object
 	) throws ServiceException {
@@ -2020,13 +2174,19 @@ public class DatatypeMapper {
 		}
 	}
 
+	/**
+	 * Create new account which represents a ContactT.
+	 * @param pm
+	 * @param contactT
+	 * @return
+	 */
 	public Account newAccount(
 		PersistenceManager pm,
 		ContactT contactT
 	) {
 		return pm.newInstance(Contact.class);
 	}
-	
+
 	//-----------------------------------------------------------------------
 	// Members
 	//-----------------------------------------------------------------------	

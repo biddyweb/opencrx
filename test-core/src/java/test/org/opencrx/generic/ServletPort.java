@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Test Core, http://www.opencrx.org/
- * Name:        $Id: ServletPort.java,v 1.11 2010/11/22 17:08:06 wfro Exp $
  * Description: ServletPort
- * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/22 17:08:06 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,6 +64,7 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.security.Principal;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -76,17 +74,22 @@ import java.util.Map;
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.Interaction;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -866,6 +869,71 @@ public class ServletPort
                 ) throws UnsupportedEncodingException {
                     throw new UnsupportedOperationException();
                 }
+
+				@Override
+				public AsyncContext getAsyncContext() {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public DispatcherType getDispatcherType() {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public ServletContext getServletContext() {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public boolean isAsyncStarted() {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public boolean isAsyncSupported() {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public AsyncContext startAsync() throws IllegalStateException {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public AsyncContext startAsync(ServletRequest arg0,
+						ServletResponse arg1) throws IllegalStateException {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public boolean authenticate(HttpServletResponse arg0)
+						throws IOException, ServletException {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public Part getPart(String arg0) throws IOException,
+						ServletException {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public Collection<Part> getParts() throws IOException,
+						ServletException {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public void login(String arg0, String arg1)
+						throws ServletException {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public void logout() throws ServletException {
+					throw new UnsupportedOperationException();				
+				}
                 
             }
             
@@ -1096,6 +1164,26 @@ public class ServletPort
                 public void setLocale(Locale loc) {
                     this.locale = loc;
                 }
+
+				@Override
+				public String getHeader(String arg0) {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public Collection<String> getHeaderNames() {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public Collection<String> getHeaders(String arg0) {
+					throw new UnsupportedOperationException();				
+				}
+
+				@Override
+				public int getStatus() {
+					throw new UnsupportedOperationException();				
+				}
                                 
             }
             

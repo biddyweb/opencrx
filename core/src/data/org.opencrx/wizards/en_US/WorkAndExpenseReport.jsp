@@ -2,17 +2,17 @@
 /**
  * ====================================================================
  * Project:				openCRX/Core, http://www.opencrx.org/
- * Name:				$Id: WorkAndExpenseReport.jsp,v 1.60 2012/01/11 10:53:35 cmu Exp $
+ * Name:				$Id: WorkAndExpenseReport.jsp,v 1.66 2012/07/13 10:08:08 wfro Exp $
  * Description:			Create Work And Expense Report
- * Revision:			$Revision: 1.60 $
+ * Revision:			$Revision: 1.66 $
  * Owner:				CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:				$Date: 2012/01/11 10:53:35 $
+ * Date:				$Date: 2012/07/13 10:08:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,13 +60,13 @@ java.io.*,
 java.math.*,
 java.net.*,
 java.text.*,
+javax.xml.datatype.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -414,7 +414,7 @@ org.apache.poi.hssf.util.*
 			}
 	}
 	String sheetName = (isWorkRecord ? "Work_" : "Expense_") + "Report";
-	String location = UUIDs.getGenerator().next().toString();
+	final String location = UUIDConversion.toUID(UUIDs.newUUID());
 	File f = new File(
 		app.getTempFileName(location, "")
 	);
@@ -667,6 +667,8 @@ org.apache.poi.hssf.util.*
 	String recordType	= request.getParameter("recordType")	== null ? "0" : request.getParameter("recordType");	// Parameter recordType [default "0 - N/A"]
 	String isBillable	= isFirstCall ? "" : request.getParameter("isBillable");
 	String isReimbursable = isFirstCall ? "" : request.getParameter("isReimbursable");
+	String usePageBreak = isFirstCall ? "" : request.getParameter("usePageBreak");
+	
 	short priority = isFirstCall || request.getParameter("priority") == null ?
 		//Activities.PRIORITY_NORMAL :
 		0 : // capture ALL Activities
@@ -1581,10 +1583,10 @@ org.apache.poi.hssf.util.*
 										<td>
 											<select id="selector" name="priority" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('isSelectorChange').value='true';$('reload.button').click();">
 <%
-												Map<Object,Object> priorityMap = codes.getLongText(FEATURE_PRIORITY, app.getCurrentLocaleAsIndex(), true, true);
-												for(Map.Entry<Object,Object> entry: priorityMap.entrySet()) {
-													Short key = (Short)entry.getKey();
-													String label = (String)entry.getValue();
+												Map<Short,String> priorityMap = codes.getLongTextByCode(FEATURE_PRIORITY, app.getCurrentLocaleAsIndex(), true);
+												for(Map.Entry<Short,String> entry: priorityMap.entrySet()) {
+													Short key = entry.getKey();
+													String label = entry.getValue();
 %>
 													<option <%= priority == key ? "selected" : ""	%> value="<%= key %>"><%= label %></option>
 <%
@@ -2506,7 +2508,14 @@ org.apache.poi.hssf.util.*
 															}
 															// try to get CalendarDay
 															org.opencrx.kernel.activity1.cci2.CalendarDayQuery calendarDayQuery = (org.opencrx.kernel.activity1.cci2.CalendarDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
-															calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(calDayName, app).getTime());
+															//calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(calDayName, app).getTime());
+															calendarDayQuery.dateOfDay().equalTo(
+																	org.w3c.spi2.Datatypes.create(
+																			XMLGregorianCalendar.class,
+																			calDayName
+																	)
+																);
+															calendarDayQuery.orderByCreatedAt().ascending();
 															Collection calendarDays = cal.getCalendarDay(calendarDayQuery);
 															if(!calendarDays.isEmpty()) {
 																calDay = (org.opencrx.kernel.activity1.jmi1.CalendarDay)calendarDays.iterator().next();
@@ -2635,7 +2644,7 @@ org.apache.poi.hssf.util.*
 										}
 										if (!isWorkRecord) {
 												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
-												cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
+												cell = row.createCell(nCell++);	cell.setCellValue((codes.getLongTextByCode(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))));
 												cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? workAndExpenseRecord.getQuantityUom().getName() : "?");
 										}
 										cell = row.createCell(nCell++);
@@ -2659,7 +2668,7 @@ org.apache.poi.hssf.util.*
 														cell = row.createCell(nCell++);
 												} else {
 														cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getRecordType());
-														cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))));
+														cell = row.createCell(nCell++);	cell.setCellValue((codes.getLongTextByCode(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))));
 												}
 												if (isWorkRecordInPercent) {
 														cell = row.createCell(nCell++);
@@ -2687,7 +2696,7 @@ org.apache.poi.hssf.util.*
 <%
 											if (!isWorkRecord) {
 %>
-												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (codes.getLongTextByCode(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
 												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getQuantityUom().getName(), false) : "?" %>&nbsp;</a></td>
 <%
 											}
@@ -2698,7 +2707,7 @@ org.apache.poi.hssf.util.*
 												<td class="padded_r" <%= quantityError ? ERROR_STYLE : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
 												<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
 												<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+												<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= (codes.getLongTextByCode(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
 <%
 											}
 %>
@@ -2768,8 +2777,19 @@ org.apache.poi.hssf.util.*
 %>
 							</table>
 							</td></tr></table>
-
 							<br>
+							<input type="checkbox" name="usePageBreak" title="page break before" <%= (usePageBreak != null && !usePageBreak.isEmpty()) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="usePageBreak" onchange="javascript:$('reload.button').click();" />							
+<%
+							if(usePageBreak != null && !usePageBreak.isEmpty()) {
+%>							
+								<p style="page-break-before: always;">
+<%
+							} else {
+%>
+								<p>
+<%								
+							}
+%>
 							<table><tr><td style="padding-left:5px;">
 							<table class="gridTable">
 <%
@@ -3606,9 +3626,9 @@ org.apache.poi.hssf.util.*
 													}
 													if (!isWorkRecord) {
 														cell = row.createCell(nCell++);	cell.setCellValue(rlRecordType);
-														cell = row.createCell(nCell++);	cell.setCellValue((String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(rlRecordType))));
+														cell = row.createCell(nCell++);	cell.setCellValue((codes.getLongTextByCode(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true).get(new Short(rlRecordType))));
 %>
-														<td class="padded"><%= (String)(codes.getLongText(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true, true).get(new Short(rlRecordType))) %></td>
+														<td class="padded"><%= (codes.getLongTextByCode(FEATURE_RECORD_TYPE, app.getCurrentLocaleAsIndex(), true).get(new Short(rlRecordType))) %></td>
 <%
 													} else {
 														cell = row.createCell(nCell++);	cell.setCellValue(rlRate); cell.setCellStyle(amountStyle);

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractServer.java,v 1.5 2010/04/22 09:38:09 wfro Exp $
  * Description: AbstractServer
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/22 09:38:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -71,12 +68,34 @@ import javax.jdo.PersistenceManagerFactory;
 import javax.net.ServerSocketFactory;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.TrustManagerFactory;
 
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * AbstractServer
+ */
 public abstract class AbstractServer implements Runnable {
     
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * @param serverName
+	 * @param pmf
+	 * @param providerName
+	 * @param bindAddress
+	 * @param portNumber
+	 * @param sslKeystoreFile
+	 * @param sslKeystoreType
+	 * @param sslKeystorePass
+	 * @param sslKeyPass
+	 * @param sslTruststoreFile
+	 * @param sslTruststorePass
+	 * @param sslTruststoreType
+	 * @param sslNeedClientAuth
+	 * @param isDebug
+	 * @param delayOnStartup
+	 */
 	protected AbstractServer(
 		String serverName,
 	    PersistenceManagerFactory pmf,
@@ -87,6 +106,10 @@ public abstract class AbstractServer implements Runnable {
 	    String sslKeystoreType,
 	    String sslKeystorePass,
 	    String sslKeyPass,
+	    String sslTruststoreFile,
+	    String sslTruststorePass,
+	    String sslTruststoreType,
+	    Boolean sslNeedClientAuth,
 	    boolean isDebug,
 	    int delayOnStartup
 	) {
@@ -98,28 +121,41 @@ public abstract class AbstractServer implements Runnable {
 		this.sslKeystoreType = sslKeystoreType;
 		this.sslKeystorePass = sslKeystorePass;
 		this.sslKeyPass = sslKeyPass;
+		this.sslTruststoreFile = sslTruststoreFile;
+		this.sslTruststorePass = sslTruststorePass;
+		this.sslTruststoreType = sslTruststoreType;
+		this.sslNeedClientAuth = sslNeedClientAuth;
 		this.providerName = providerName;
 		this.isDebug = isDebug;
 		this.delayOnStartup = delayOnStartup;
 	}
-
-    //-----------------------------------------------------------------------
+	
+	/**
+	 * Create new session for socket for given server.
+	 * @param socket
+	 * @param server
+	 * @return
+	 */
 	public abstract AbstractSession newSession(
 		Socket socket,
 		AbstractServer server
 	);
 	
-    //-----------------------------------------------------------------------
+    /**
+     * Bind socket.
+     * @return
+     * @throws ServiceException
+     */
     public boolean bind(
     ) throws ServiceException {
     	boolean isSsl = false;
         ServerSocketFactory serverSocketFactory;
-        if (this.sslKeystoreFile == null || this.sslKeystoreFile.length() == 0) {
+        if(this.sslKeystoreFile == null || this.sslKeystoreFile.isEmpty()) {
             serverSocketFactory = ServerSocketFactory.getDefault();
-        } 
-        else {
+        } else {
         	isSsl = true;
             FileInputStream keyStoreInputStream = null;
+            FileInputStream trustStoreInputStream = null;
             try {
                 keyStoreInputStream = new FileInputStream(this.sslKeystoreFile);
                 KeyStore keystore = KeyStore.getInstance(this.sslKeystoreType);
@@ -135,20 +171,30 @@ public abstract class AbstractServer implements Runnable {
                 	this.sslKeyPass.toCharArray()
                 );
                 SSLContext sslContext = SSLContext.getInstance("SSLv3");
+                TrustManagerFactory tmf = null;
+                if(this.sslTruststoreFile != null && !this.sslTruststoreFile.isEmpty()) {
+                    trustStoreInputStream = new FileInputStream(this.sslTruststoreFile);
+                    KeyStore truststore = KeyStore.getInstance(this.sslTruststoreType);
+                    truststore.load(
+                    	trustStoreInputStream,
+                        this.sslTruststorePass.toCharArray()
+                    );
+                    tmf = TrustManagerFactory.getInstance(
+                    	TrustManagerFactory.getDefaultAlgorithm()
+                    );
+                    tmf.init(truststore);
+                }                
                 sslContext.init(
                 	kmf.getKeyManagers(), 
-                	null, 
+                	tmf == null ? null : tmf.getTrustManagers(), 
                 	null
                 );
                 serverSocketFactory = sslContext.getServerSocketFactory();
-            } 
-            catch (IOException e) {
+            } catch (IOException e) {
                 throw new ServiceException(e);
-            } 
-            catch (GeneralSecurityException e) {
+            } catch (GeneralSecurityException e) {
             	throw new ServiceException(e);
-            } 
-            finally {
+            } finally {
                 if (keyStoreInputStream != null) {
                     try {
                         keyStoreInputStream.close();
@@ -158,25 +204,29 @@ public abstract class AbstractServer implements Runnable {
             }
         }
         try {
-            // create the server socket
-            if(this.bindAddress == null || this.bindAddress.length() == 0) {
+            if(this.bindAddress == null || this.bindAddress.isEmpty()) {
                 this.serverSocket = serverSocketFactory.createServerSocket(this.portNumber);
-            } 
-            else {
+            } else {
                 this.serverSocket = serverSocketFactory.createServerSocket(
                 	this.portNumber, 
                 	0, 
                 	Inet4Address.getByName(this.bindAddress)
                 );
             }
-        } 
+            if(Boolean.TRUE.equals(this.sslNeedClientAuth)) {
+                ((SSLServerSocket)this.serverSocket).setNeedClientAuth(true);
+            }
+        }
         catch (IOException e) {
         	throw new ServiceException(e);
         }
         return isSsl;
     }
-	
-    //-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
+    @Override
 	public void run(
 	) {
 		try {
@@ -215,7 +265,9 @@ public abstract class AbstractServer implements Runnable {
         }
 	}
 
-    //-----------------------------------------------------------------------
+	/**
+	 * Pause session.
+	 */
 	public void pause(
 	) {
 		// Close server socket
@@ -235,7 +287,9 @@ public abstract class AbstractServer implements Runnable {
 		this.sessions.clear();
 	}
 	
-    //-----------------------------------------------------------------------
+	/**
+	 * Resume session.
+	 */
 	public void resume(
 	) {
 		boolean isSsl = false;
@@ -253,19 +307,28 @@ public abstract class AbstractServer implements Runnable {
 		}
 	}
 	
-    //-----------------------------------------------------------------------
+	/**
+	 * Get configured provider name.
+	 * @return
+	 */
 	public String getProviderName(
 	) {
 	    return this.providerName;
 	}
 	
-    //-----------------------------------------------------------------------
+    /**
+     * Return true if debug mode.
+     * @return
+     */
     public boolean isDebug(
     ) {
         return this.isDebug;
     }
     
-    //-----------------------------------------------------------------------
+	/**
+	 * Get persistence manager factory.
+	 * @return
+	 */
 	public PersistenceManagerFactory getPersistenceManagerFactory(
 	) {
 	    return this.pmf;
@@ -280,6 +343,10 @@ public abstract class AbstractServer implements Runnable {
 	protected final String sslKeystoreType;
 	protected final String sslKeystorePass;	
 	protected final String sslKeyPass;
+	protected final String sslTruststoreFile;
+	protected final String sslTruststoreType;
+	protected final String sslTruststorePass;
+	protected final Boolean sslNeedClientAuth;
     protected final int portNumber;
     protected final String providerName;
     protected final boolean isDebug;

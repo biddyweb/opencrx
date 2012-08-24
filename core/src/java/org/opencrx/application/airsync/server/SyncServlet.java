@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncServlet.java,v 1.12 2011/11/16 12:31:53 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/16 12:31:53 $
  * ====================================================================
  *
  * This software is published under the BSD license

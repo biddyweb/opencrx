@@ -14,6 +14,7 @@
                   <org.opencrx.kernel.code1.CodeValueContainer name="relatedProductType" _operation="set">
                     <_object>
                       <name>
+												<_item>relatedProductType</_item>
                         <_item>org:opencrx:kernel:product1:ProductClassificationRelationship:relationshipType</_item>
 												<_item>org:opencrx:kernel:product1:RelatedProduct:relationshipType</_item>
                       </name>

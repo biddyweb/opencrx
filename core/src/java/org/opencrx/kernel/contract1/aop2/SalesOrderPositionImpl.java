@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SalesOrderPositionImpl.java,v 1.3 2011/05/11 18:02:22 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/05/11 18:02:22 $
  * ====================================================================
  *
  * This software is published under the BSD license

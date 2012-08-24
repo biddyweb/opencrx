@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DoOptions.java,v 1.2 2010/11/24 13:05:17 wfro Exp $
  * Description: DoOptions
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/24 13:05:17 $
  * ====================================================================
  *
  * This software is published under the BSD license

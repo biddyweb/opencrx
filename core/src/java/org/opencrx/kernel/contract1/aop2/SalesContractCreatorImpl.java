@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SalesContractCreatorImpl.java,v 1.1 2011/05/23 11:50:19 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/05/23 11:50:19 $
  * ====================================================================
  *
  * This software is published under the BSD license

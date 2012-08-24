@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PortalExtension.java,v 1.135 2012/01/13 17:16:05 wfro Exp $
  * Description: PortalExtension
- * Revision:    $Revision: 1.135 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,6 +62,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -94,6 +92,10 @@ import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderTy
 import org.opencrx.kernel.portal.action.GridExportAsXlsAction;
 import org.opencrx.kernel.portal.action.GridExportAsXmlAction;
 import org.opencrx.kernel.portal.action.GridExportIncludingCompositesAsXmlAction;
+import org.opencrx.kernel.portal.wizard.BulkCreateActivityWizardExtension;
+import org.opencrx.kernel.portal.wizard.ChangePasswordWizardExtension;
+import org.opencrx.kernel.portal.wizard.CreateContactWizardExtension;
+import org.opencrx.kernel.portal.wizard.FileBrowserWizardExtension;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
@@ -113,7 +115,6 @@ import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ActionFactory_1_0;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.Autocompleter_1_0;
-import org.openmdx.portal.servlet.Codes;
 import org.openmdx.portal.servlet.DataBinding;
 import org.openmdx.portal.servlet.DefaultPortalExtension;
 import org.openmdx.portal.servlet.ObjectReference;
@@ -195,7 +196,9 @@ public class PortalExtension
 		
 	}
 	
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getFindObjectsBaseFilter(org.openmdx.portal.servlet.ApplicationContext, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, java.lang.String)
+     */
     @Override
     public List<Condition> getFindObjectsBaseFilter(
         ApplicationContext application,
@@ -233,7 +236,9 @@ public class PortalExtension
         return baseFilter;
     }
 
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getTitle(org.openmdx.base.accessor.jmi.cci.RefObject_1_0, short, java.lang.String, boolean, org.openmdx.portal.servlet.ApplicationContext)
+     */
     @Override
     public String getTitle(
         RefObject_1_0 refObj,
@@ -249,14 +254,13 @@ public class PortalExtension
             return "Untitled";
         }        
         try {
-        	Codes codes = app.getCodes();
         	if(refObj instanceof org.openmdx.base.jmi1.Segment) {
         		return app.getLabel(refObj.refClass().refMofId());
         	}
         	else {
         		String title = Base.getInstance().getTitle(
         			refObj, 
-        			codes, 
+        			app.getCodes(),
         			locale, 
         			asShortTitle
         		);
@@ -264,8 +268,7 @@ public class PortalExtension
         			super.getTitle(refObj, locale, localeAsString, asShortTitle, app) :
         				title;
         	}
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             SysLog.info(e0.getMessage(), e0.getCause());
             SysLog.info("can not evaluate. object", refObj.refMofId());
@@ -273,7 +276,14 @@ public class PortalExtension
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Returns true if principal has permission for the given permission / action.
+     * @param principal
+     * @param permission
+     * @param specificPermission
+     * @param action
+     * @return
+     */
     protected boolean hasPermission(
     	org.openmdx.security.realm1.jmi1.Principal principal,
     	String permission,
@@ -340,7 +350,9 @@ public class PortalExtension
     					!allow;    
     }
 
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#hasPermission(java.lang.String, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, org.openmdx.portal.servlet.ApplicationContext, java.lang.String)
+     */
     @Override
     public boolean hasPermission(
         String elementName, 
@@ -396,7 +408,9 @@ public class PortalExtension
         );
     }
     
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#hasPermission(org.openmdx.portal.servlet.control.Control, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, org.openmdx.portal.servlet.ApplicationContext, java.lang.String)
+     */
     @Override
     public boolean hasPermission(
         Control control, 
@@ -427,7 +441,13 @@ public class PortalExtension
         );
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Return a filter with the given clause and parameters as query condition.
+     * @param clause
+     * @param stringParams
+     * @param app
+     * @return
+     */
     protected org.openmdx.base.query.Filter getQueryConditions(
     	String clause,
     	List<String> stringParams,
@@ -441,7 +461,9 @@ public class PortalExtension
     	return filter;
     }
     
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getQuery(org.openmdx.ui1.jmi1.ValuedField, java.lang.String, int, org.openmdx.portal.servlet.ApplicationContext)
+     */
     @Override
     public org.openmdx.base.query.Filter getQuery(
     	org.openmdx.ui1.jmi1.ValuedField field,
@@ -528,6 +550,11 @@ public class PortalExtension
             stringParams.add(stringParam0);
             stringParams.add(stringParam1);            	
         }
+	    else if("org:opencrx:kernel:contract1:AbstractContract:account".equals(qualifiedReferenceName)) {
+	    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNTASSIGNMENT aa INNER JOIN OOCKE1_ACCOUNT a ON aa.account = a.object_id WHERE v.object_id = aa.p$$parent AND (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";
+            stringParams.add(stringParam0);
+            stringParams.add(stringParam1);            	
+	    }
 	    else if(field instanceof org.openmdx.ui1.jmi1.ObjectReferenceField) {
             clause = "(" + qualifiedReferenceName.substring(qualifiedReferenceName.lastIndexOf(":") + 1) + " LIKE " + s0 + ")";
             stringParams.add(stringParam0);
@@ -563,7 +590,9 @@ public class PortalExtension
         );
     }
 
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getGridPageSize(java.lang.String)
+     */
     @Override
     public int getGridPageSize(
         String referencedTypeName
@@ -588,7 +617,9 @@ public class PortalExtension
         }
     }
     
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#isLookupType(org.openmdx.base.mof.cci.ModelElement_1_0)
+     */
     @Override
     public boolean isLookupType(
         ModelElement_1_0 classDef
@@ -599,7 +630,9 @@ public class PortalExtension
             super.isLookupType(classDef);
     }
         
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getAutocompleter(org.openmdx.portal.servlet.ApplicationContext, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, java.lang.String)
+     */
     @Override
     public Autocompleter_1_0 getAutocompleter(
         ApplicationContext app,
@@ -857,7 +890,9 @@ public class PortalExtension
         }
     }
 
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getLookupView(java.lang.String, org.openmdx.base.mof.cci.ModelElement_1_0, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
     @Override
     public ObjectView getLookupView(
         String id, 
@@ -903,7 +938,9 @@ public class PortalExtension
         }
     }
 
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#hasUserDefineableQualifier(org.openmdx.ui1.jmi1.Inspector, org.openmdx.portal.servlet.ApplicationContext)
+     */
     @Override
     public boolean hasUserDefineableQualifier(
         org.openmdx.ui1.jmi1.Inspector inspector,
@@ -914,12 +951,8 @@ public class PortalExtension
             CLASSES_WITH_USER_DEFINABLE_QUALIFER.contains(inspector.getForClass());
     }
         
-    //-------------------------------------------------------------------------
-    /**
-     * The default implementation handles the following tags:
-     * <ul>
-     *   <li>activity:&lt;activity number&gt;
-     * </ul>
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#renderTextValue(org.openmdx.portal.servlet.ViewPort, java.lang.String, boolean)
      */
     @Override
     public void renderTextValue(
@@ -1012,7 +1045,9 @@ public class PortalExtension
         }
     }
     
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getDataBinding(java.lang.String)
+     */
     @Override
     public DataBinding getDataBinding(
         String dataBindingName
@@ -1077,6 +1112,16 @@ public class PortalExtension
                 dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)            	
             );
         }
+        else if((dataBindingName != null) && dataBindingName.startsWith(AccountIsMemberOfDataBinding.class.getName())) {
+            return new AccountIsMemberOfDataBinding(
+                dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)            	
+            );
+        }
+        else if((dataBindingName != null) && dataBindingName.startsWith(AccountAssignmentDataBinding.class.getName())) {
+            return new AccountAssignmentDataBinding(
+                dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)            	
+            );
+        }
         else if((dataBindingName != null) && dataBindingName.startsWith(DocumentFolderAssignmentsDataBinding.class.getName())) {
             return new DocumentFolderAssignmentsDataBinding(
                 dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)            	
@@ -1106,7 +1151,9 @@ public class PortalExtension
         }
     }
     
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#handleOperationResult(org.openmdx.base.accessor.jmi.cci.RefObject_1_0, java.lang.String, javax.jmi.reflect.RefStruct, javax.jmi.reflect.RefStruct)
+     */
     @Override
     public RefObject_1_0 handleOperationResult(
         RefObject_1_0 target,
@@ -1132,7 +1179,9 @@ public class PortalExtension
         );
     }
     
-	//-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getNewUserRole(org.openmdx.portal.servlet.ApplicationContext, org.openmdx.base.naming.Path)
+     */
     @Override
     public String getNewUserRole(
     	ApplicationContext app, 
@@ -1146,12 +1195,15 @@ public class PortalExtension
     	}
     }
     
-	//-------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getGridActions(org.openmdx.portal.servlet.view.ObjectView, org.openmdx.portal.servlet.view.Grid)
+	 */
 	@Override
     public List<Action> getGridActions(
     	ObjectView view,
     	Grid grid
     ) throws ServiceException {
+		final int MAX_SIZE = 500;
 		ApplicationContext app = view.getApplicationContext();
 	    List<Action> actions = new ArrayList<Action>(super.getGridActions(view, grid));
 	    org.openmdx.ui1.jmi1.Element uiExport = app.getUiElement("org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem");
@@ -1161,41 +1213,52 @@ public class PortalExtension
 	    Action exportAsXmlAction = new Action(
             GridExportAsXmlAction.EVENT_ID, 
             new Action.Parameter[]{
-                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                               
+                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
             },
             lExport + " --> XML", 
             true
-          );
+	    );
 	    actions.add(exportAsXmlAction);
 	    Action exportAsXlsAction = new Action(
             GridExportAsXlsAction.EVENT_ID, 
             new Action.Parameter[]{
                 new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
             },
             lExport + " --> XLS", 
             true
-          );
+        );
 	    actions.add(exportAsXlsAction);
 	    Action exportIncludingCompositesAsXmlAction = new Action(
             GridExportIncludingCompositesAsXmlAction.EVENT_ID, 
             new Action.Parameter[]{
                 new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
             },
             lExport + "+ --> XML", 
             true
-          );
+        );
 	    actions.add(exportIncludingCompositesAsXmlAction);
 	    return actions;
     }
 	
-	//-------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getActionFactory()
+	 */
 	@Override
     public ActionFactory_1_0 getActionFactory(
     ) {
 		return this.actionFactory;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Returns group memberships of given principal.
+     * @param loginPrincipal
+     * @param realmName
+     * @param pm
+     * @return
+     */
     protected List<org.openmdx.security.realm1.jmi1.Group> getGroupMembership(
         org.openmdx.security.realm1.jmi1.Principal loginPrincipal,
         String realmName,
@@ -1221,7 +1284,9 @@ public class PortalExtension
         }
     }
     
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#checkPrincipal(org.openmdx.base.naming.Path, java.lang.String, javax.jdo.PersistenceManager)
+     */
     @Override
     public boolean checkPrincipal(
         Path realmIdentity,
@@ -1236,10 +1301,8 @@ public class PortalExtension
         return !Boolean.TRUE.equals(principal.isDisabled());
     }
     
-    //-------------------------------------------------------------------------
-    /**
-     * Return set of roles for specified principal in given realm.
-     * This role mapper is based on the openMDX/Security model. 
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getUserRoles(org.openmdx.base.naming.Path, java.lang.String, javax.jdo.PersistenceManager)
      */
     @Override
     public List<String> getUserRoles(
@@ -1337,7 +1400,9 @@ public class PortalExtension
         return roleNames;
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#getAdminPrincipal(java.lang.String)
+     */
     @Override
     public String getAdminPrincipal(
         String realmName
@@ -1345,7 +1410,9 @@ public class PortalExtension
         return ADMIN_PRINCIPAL_PREFIX + realmName;
     }
   
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#isRootPrincipal(java.lang.String)
+     */
     @Override
     public boolean isRootPrincipal(
         String principalName
@@ -1353,7 +1420,9 @@ public class PortalExtension
         return principalName.startsWith(ROOT_PRINCIPAL_NAME);
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultPortalExtension#setLastLoginAt(org.openmdx.base.naming.Path, java.lang.String, java.lang.String, javax.jdo.PersistenceManager)
+     */
     @Override
     public void setLastLoginAt(
     	Path realmIdentity,
@@ -1382,6 +1451,44 @@ public class PortalExtension
         }
     }
     
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getTimeZone(java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+	 */
+	@Override
+    public TimeZone getTimeZone(
+    	String qualifiedFeatureName, 
+    	ApplicationContext app
+    ) {
+		if(
+			"org:opencrx:kernel:account1:Contact:birthdate".equals(qualifiedFeatureName) ||
+			"org:opencrx:kernel:account1:Contact:anniversary".equals(qualifiedFeatureName)
+		) {
+			return TimeZone.getTimeZone("UTC");
+		} else {
+			return super.getTimeZone(qualifiedFeatureName, app);
+		}
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getExtension(java.lang.String)
+	 */
+	@Override
+    public Object getExtension(
+    	String name
+    ) {
+        if((name != null) && name.startsWith(CreateContactWizardExtension.class.getName())) {
+        	return new CreateContactWizardExtension();
+        } else if((name != null) && name.startsWith(ChangePasswordWizardExtension.class.getName())) {
+        	return new ChangePasswordWizardExtension();
+        } else if((name != null) && name.startsWith(FileBrowserWizardExtension.class.getName())) {
+        	return new FileBrowserWizardExtension();
+        } else if((name != null) && name.startsWith(BulkCreateActivityWizardExtension.class.getName())) {
+        	return new BulkCreateActivityWizardExtension();
+        } else {
+        	return super.getExtension(name);
+        }
+    }
+
 	//-------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------
@@ -1401,7 +1508,7 @@ public class PortalExtension
                 "org:opencrx:kernel:uom1:Uom"
             }
         ));
-    
+
 }
 
 //--- End of File -----------------------------------------------------------

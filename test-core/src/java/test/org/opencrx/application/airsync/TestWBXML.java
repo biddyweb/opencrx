@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestWBXML.java,v 1.10 2010/09/09 10:35:07 wfro Exp $
  * Description: TestWBXML
- * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/09 10:35:07 $
  * ====================================================================
  *
  * This software is published under the BSD license

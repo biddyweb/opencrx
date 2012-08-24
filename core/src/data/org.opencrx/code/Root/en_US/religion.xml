@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="religion" _operation="set">
 										<_object>
 											<name>
+												<_item>religion</_item>
 												<_item>org:opencrx:kernel:account1:Contact:religion</_item>
 											</name>
 										</_object>

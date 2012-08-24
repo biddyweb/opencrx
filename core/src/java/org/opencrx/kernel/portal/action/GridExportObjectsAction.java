@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: GridExportObjectsAction.java,v 1.4 2011/07/15 08:48:05 wfro Exp $
  * Description: GridExportObjectsAction
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/15 08:48:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -104,12 +101,14 @@ public abstract class GridExportObjectsAction extends BoundAction {
 			Grid grid,
 			List<Path> selectedObjectIdentities,
 			String mimeType,
-			String referenceFilter
+			String referenceFilter,
+			int maxItems
 		) {
 	        this.grid = grid;
 	        this.selectedObjectIdentities = selectedObjectIdentities;
 	        this.mimeType = mimeType;
 	        this.referenceFilter = referenceFilter;
+	        this.maxItems = maxItems;
         }
 		
 		@Override
@@ -131,7 +130,11 @@ public abstract class GridExportObjectsAction extends BoundAction {
         ) {	
 			PersistenceManager pm = JDOHelper.getPersistenceManager(startingFrom.getObject());
 			List<Object> content = new ArrayList<Object>();
-			if(this.grid.getGridControl().getObjectContainer().getReferenceName().equals(referenceName)) {
+			// Export selected / displayed grid objects.
+			if(
+				this.grid.getGridControl().getObjectContainer().getReferenceName().equals(referenceName) &&
+				this.maxItems < Integer.MAX_VALUE
+			) {
 				// Export selected objects only
 				if(this.selectedObjectIdentities != null && !this.selectedObjectIdentities.isEmpty()) {
 					for(Path identity: this.selectedObjectIdentities) {
@@ -163,8 +166,8 @@ public abstract class GridExportObjectsAction extends BoundAction {
 				for(Object obj: objs) {
 					content.add(obj);
 					n++;
-					// Do not export more than 500 objects
-					if(n > 500) break;
+					// Do not export more than maxItems objects
+					if(n > this.maxItems) break;
 				}
 			}
 			return content;
@@ -174,12 +177,14 @@ public abstract class GridExportObjectsAction extends BoundAction {
 		private final List<Path> selectedObjectIdentities;
 		private final String mimeType;
 		private final String referenceFilter;
+		private final int maxItems;
 	}
 	
 	//-----------------------------------------------------------------------
 	protected abstract GridExporter getGridExporter(
 		Grid grid,
-		List<Path> selectedObjectIdentities		
+		List<Path> selectedObjectIdentities,
+		int maxItems
 	) throws ServiceException;
 	
 	//-----------------------------------------------------------------------
@@ -222,9 +227,14 @@ public abstract class GridExportObjectsAction extends BoundAction {
 		                        );
 	                    	} catch(Exception e) {}
 	                    }
+	                    int maxItems = 500; // default maxItems
+	                    try {
+	                    	maxItems = Integer.parseInt(requestParameters.get(Action.PARAMETER_SIZE)[0]);
+	                    } catch(Exception e) {}
 			    		GridExporter exporter = this.getGridExporter(
 			    			grid,
-			    			selectedObjectIdentities
+			    			selectedObjectIdentities,
+			    			maxItems
 			    		);
 			    		String referenceName = grid.getGridControl().getObjectContainer().getReferenceName();
 			    		Object[] item = exporter.exportItem(

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="industry" _operation="set">
 										<_object>
 											<name>
+												<_item>industry</_item>
 												<_item>org:opencrx:kernel:account1:LegalEntity:industry</_item>
 											</name>
 										</_object>

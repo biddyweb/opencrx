@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterUtils.java,v 1.4 2010/10/15 09:39:04 wfro Exp $
  * Description: TwitterUtils
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/15 09:39:04 $
  * ====================================================================
  *
  * This software is published under the BSD license

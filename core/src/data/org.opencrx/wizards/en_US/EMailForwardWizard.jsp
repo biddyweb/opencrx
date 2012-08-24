@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailForwardWizard.jsp,v 1.9 2011/11/28 14:04:37 wfro Exp $
+ * Name:        $Id: EMailForwardWizard.jsp,v 1.10 2012/07/08 13:30:31 wfro Exp $
  * Description: EMailForwardToWizard
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:04:37 $
+ * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,7 +67,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

@@ -1,4 +1,4 @@
-#Tue Dec 13 16:39:26 CET 2011
+#Fri May 04 11:08:50 CEST 2012
 eclipse.preferences.version=1
 encoding//diagrams/account1/Account.umlclass=UTF-8
 encoding//diagrams/account1/AccountAssignment.umlclass=UTF-8
@@ -114,8 +114,8 @@ encoding//diagrams/forecast1/Main.umlclass=UTF-8
 encoding//diagrams/forecast1/SalesVolumeBudget.umlclass=UTF-8
 encoding//diagrams/forecast1/Segment.umlclass=UTF-8
 encoding//diagrams/generic/CrxObject.umlclass=UTF-8
-encoding//diagrams/generic/Description.umlclass=UTF-8
 encoding//diagrams/generic/Extented.umlclass=UTF-8
+encoding//diagrams/generic/LocalizedField.umlclass=UTF-8
 encoding//diagrams/generic/Main.umlclass=UTF-8
 encoding//diagrams/generic/Pictured.umlclass=UTF-8
 encoding//diagrams/generic/Properties.umlclass=UTF-8
@@ -127,6 +127,7 @@ encoding//diagrams/home1/ObjectFinder.umlclass=UTF-8
 encoding//diagrams/home1/Segment.umlclass=UTF-8
 encoding//diagrams/home1/ServiceAccount.umlclass=UTF-8
 encoding//diagrams/home1/SyncProfile.umlclass=UTF-8
+encoding//diagrams/home1/Timer.umlclass=UTF-8
 encoding//diagrams/home1/UserHome.umlclass=UTF-8
 encoding//diagrams/home1/Workflow.umlclass=UTF-8
 encoding//diagrams/identity1/Main.umlclass=UTF-8

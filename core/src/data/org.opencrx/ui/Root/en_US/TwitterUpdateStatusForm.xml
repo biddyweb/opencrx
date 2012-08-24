@@ -37,7 +37,7 @@
 											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="text">
 													<_object>
-														<forClass>org:opencrx:kernel:generic:Note</forClass>
+														<forClass>org:opencrx:kernel:base:Note</forClass>
 														<featureName>text</featureName>
 														<spanRow>6</spanRow>
 														<order>200</order>														

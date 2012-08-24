@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AssignedActivityGroupsDataBinding.java,v 1.5 2009/08/07 12:40:24 wfro Exp $
  * Description: AssignedActivityGroupsDataBinding
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/08/07 12:40:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,18 +65,20 @@ import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
-import org.openmdx.portal.servlet.DataBinding_1_0;
+import org.openmdx.portal.servlet.ApplicationContext;
+import org.openmdx.portal.servlet.DataBinding;
 
-public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
+public class AssignedActivityGroupsDataBinding extends DataBinding {
 
-	//-----------------------------------------------------------------------
 	enum ActivityGroupType {
 		TRACKER,
 		MILESTONE,
 		CATEGORY
 	}
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * @param parameterString
+	 */
 	public AssignedActivityGroupsDataBinding(
 		String parameterString
 	) {
@@ -109,10 +108,14 @@ public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+	 */
+	@Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         if(object instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
             org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)object;
@@ -135,13 +138,17 @@ public class AssignedActivityGroupsDataBinding implements DataBinding_1_0 {
         return null;
     }
 
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#setValue(javax.jmi.reflect.RefObject, java.lang.String, java.lang.Object, org.openmdx.portal.servlet.ApplicationContext)
+     */
     public void setValue(
         RefObject object, 
         String qualifiedFeatureName, 
-        Object newValue
+        Object newValue,
+        ApplicationContext app
     ) {
     }
-        
+
     private final Set<ActivityGroupType> activityGroupTypesFilter;
     
 }

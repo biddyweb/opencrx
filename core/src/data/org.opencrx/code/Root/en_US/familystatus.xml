@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="familyStatus" _operation="set">
 										<_object>
 											<name>
+												<_item>familyStatus</_item>
 												<_item>org:opencrx:kernel:account1:Contact:familyStatus</_item>
 											</name>
 										</_object>

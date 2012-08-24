@@ -416,6 +416,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedFieldContainer:localizedField" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Lokalisierte Felder</_item>
+											</toolTip>
+											<label>
+												<_item>»Lokalisierte Felder</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
 										<_object>
 											<toolTip>
@@ -449,13 +460,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:assignedReminder" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:assignedTimer" _operation="create">
                     <_object>
                       <label>
-                        <_item>Wiedervorlagen</_item>
+                        <_item>Timer</_item>
                       </label>
                       <toolTip>
-                        <_item>Wiedervorlagen</_item>
+                        <_item>Timer</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -504,7 +515,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note" _operation="create">
                     <_object>
                       <label>
                         <_item>Notiz</_item>
@@ -515,7 +526,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:title" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note:title" _operation="create">
                     <_object>
                       <label>
                         <_item>Titel</_item>
@@ -537,7 +548,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:text" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note:text" _operation="create">
                     <_object>
                       <label>
                         <_item>Text</_item>
@@ -548,6 +559,74 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Localized Field</_item>
+											</toolTip>
+											<label>
+												<_item>Localized Field</_item>
+											</label>
+											<iconKey>LocalizedField</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:name">
+										<_object>
+											<toolTip>
+												<_item>Feldname (Attribut, das zu lokalisieren ist)</_item>
+											</toolTip>
+											<label>
+												<_item>Feldname</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:description">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:locale">
+										<_object>
+											<toolTip>
+												<_item>Sprache</_item>
+											</toolTip>
+											<label>
+												<_item>Sprache</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:usage">
+										<_object>
+											<toolTip>
+												<_item>Verwendung</_item>
+											</toolTip>
+											<label>
+												<_item>Verwendung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:localizedValue">
+										<_object>
+											<toolTip>
+												<_item>Lokalisierter Wert</_item>
+											</toolTip>
+											<label>
+												<_item>Lokalisierter Wert</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment" _operation="create">
                     <_object>
                       <label>

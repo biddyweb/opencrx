@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowHandlerServlet.java,v 1.45 2011/11/23 10:09:03 wfro Exp $
  * Description: WorkflowHandlerServlet
- * Revision:    $Revision: 1.45 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/23 10:09:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -75,11 +72,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams;
+import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
-import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
@@ -139,10 +136,10 @@ public class WorkflowHandlerServlet
 	                ExecuteWorkflowParams params = basePackage.createExecuteWorkflowParams(
 	                    null,
 	                    targetObject,
+	                    null, // triggeredBy
 	                    // execute workflow with same eventId. This way the workflow
 	                    // is executed in the same context, i.e. no new workflow instance is created
 	                    wfInstance.refGetPath().getBase(),
-	                    null,
 	                    null,
 	                    wfInstance.getProcess()
 	                );
@@ -171,7 +168,7 @@ public class WorkflowHandlerServlet
             }            
             // Asynchronous workflow
             else {
-                ASynchWorkflow_1_0 workflow = null;            
+                Workflows.AsynchronousWorkflow workflow = null;            
                 Class<?> workflowClass = null;
                 try {
                     workflowClass = Classes.getApplicationClass(
@@ -192,7 +189,7 @@ public class WorkflowHandlerServlet
                 }
                 // Instantiate workflow
                 try {
-                    workflow = (ASynchWorkflow_1_0)workflowConstructor.newInstance(new Object[]{});
+                    workflow = (Workflows.AsynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
                 }
                 catch(InstantiationException e) {
                 	SysLog.error("Can not create workflow (can not instantiate)", workflowName);
@@ -231,19 +228,18 @@ public class WorkflowHandlerServlet
         HttpServletRequest req, 
         HttpServletResponse res
     ) throws IOException {
-            
         System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
         SysLog.detail(WORKFLOW_NAME + " " + providerName + "/" + segmentName);        
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
-                "admin-" + segmentName,
-                UUIDs.getGenerator().next().toString()
+                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+                null
             );
             Workflows.getInstance().initWorkflows(
                 pm,
                 providerName,
                 segmentName                
-            );                        
+            );
             // Get user homes segment
             org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
             WfProcessInstanceQuery query = (WfProcessInstanceQuery)PersistenceHelper.newQuery(

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailRecipientDataBinding.java,v 1.5 2012/01/13 17:16:05 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,11 +71,14 @@ import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
-import org.openmdx.portal.servlet.DataBinding_1_0;
+import org.openmdx.portal.servlet.ApplicationContext;
+import org.openmdx.portal.servlet.DataBinding;
 
-public class EMailRecipientDataBinding implements DataBinding_1_0 {
+public class EMailRecipientDataBinding extends DataBinding {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * @param parameterString
+	 */
 	public EMailRecipientDataBinding(
 		String parameterString
 	) {
@@ -100,7 +100,11 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 		}		
 	}
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Get email recipients.
+	 * @param eMailActivity
+	 * @return
+	 */
 	protected List<org.opencrx.kernel.activity1.jmi1.EMailRecipient> getEMailRecipients(
 		org.opencrx.kernel.activity1.jmi1.EMail eMailActivity
 	) {
@@ -140,16 +144,22 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 		return new ArrayList<org.opencrx.kernel.activity1.jmi1.EMailRecipient>(allRecipients.values());
 	}
 	
-    //-----------------------------------------------------------------------
+    /**
+     * @return
+     */
     protected String uuidAsString(
     ) {
-        return UUIDConversion.toUID(uuidGenerator.next());
+        return UUIDConversion.toUID(UUIDs.newUUID());
     }
     
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
 	public Object getValue(
 		RefObject object, 
-		String qualifiedFeatureName
+		String qualifiedFeatureName,
+		ApplicationContext app
 	) {
 		if(object instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
 			org.opencrx.kernel.activity1.jmi1.EMail eMailActivity = (org.opencrx.kernel.activity1.jmi1.EMail)object;
@@ -163,11 +173,15 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 		}
     }
 
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#setValue(javax.jmi.reflect.RefObject, java.lang.String, java.lang.Object, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
 	public void setValue(
 		RefObject object, 
 		String qualifiedFeatureName, 
-		Object newValue
+		Object newValue,
+		ApplicationContext app
 	) {
 		if(
 			(object instanceof org.opencrx.kernel.activity1.jmi1.EMail) &&
@@ -203,9 +217,9 @@ public class EMailRecipientDataBinding implements DataBinding_1_0 {
 		}
     }
 
-	//-----------------------------------------------------------------------
-	protected static final UUIDGenerator uuidGenerator = UUIDs.getGenerator();
-	
+    //-----------------------------------------------------------------------
+    // Members
+    //-----------------------------------------------------------------------
 	private int index;
 	private short partyType;
 	

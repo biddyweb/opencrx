@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountAddressImpl.java,v 1.4 2011/12/02 13:07:44 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/02 13:07:44 $
  * ====================================================================
  *
  * This software is published under the BSD license

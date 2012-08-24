@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WordToText.java,v 1.7 2011/08/26 12:29:36 wfro Exp $
  * Description: WordToText
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/08/26 12:29:36 $
  * ====================================================================
  *
  * This software is published under the BSD license

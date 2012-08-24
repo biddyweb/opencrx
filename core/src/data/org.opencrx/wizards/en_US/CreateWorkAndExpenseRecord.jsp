@@ -2,17 +2,17 @@
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: CreateWorkAndExpenseRecord.jsp,v 1.70 2011/12/16 09:35:26 cmu Exp $
+ * Name:		$Id: CreateWorkAndExpenseRecord.jsp,v 1.74 2012/07/08 13:30:30 wfro Exp $
  * Description:	Create Work Record
- * Revision:	$Revision: 1.70 $
+ * Revision:	$Revision: 1.74 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2011/12/16 09:35:26 $
+ * Date:		$Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -1926,7 +1925,7 @@ org.openmdx.base.text.conversion.*
 										<td>
 											<select class="valueL" name="recordType" id="recordType" tabindex="<%= tabIndex++ %>" <%= isWorkRecord ? "onchange='javascript:$(\"reload.button\").click();'" : "" %> onfocus="<%= ONFOCUS_HANDLER %>">
 <%
-												SortedMap recordType_longTextsC = codes.getLongText(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true, false);
+												Map<Short,String> recordType_longTextsC = codes.getLongTextByCode(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), false);
 
 												if (recordType_longTextsC == null) {
 %>
@@ -1941,7 +1940,7 @@ org.openmdx.base.text.conversion.*
 														String selectedModifier = Short.parseShort(recordType) == value ? "selected" : "";
 														if (!isWorkRecordInPercent || value == Activities.WorkRecordType.STANDARD.getValue()) {
 %>
-																<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
+																<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
 <%
 														}
 													}
@@ -2018,7 +2017,7 @@ org.openmdx.base.text.conversion.*
 											<input type="text" <%= isWorkRecord ? "" : "class='mandatory'" %> style="font-weight:bold;width:47%;float:right;padding-top:2px;padding-right:2px;text-align:right;<%= !isWorkRecord && paraRate==null ? errorStyleInline: "" %>" name="rate" id="rate" tabindex="<%= tabIndex+5 %>" value="<%= rate %>"	onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
 											<select class="valueL" style="width:49%;float:left;" id="billingCurrency" name="billingCurrency" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
 <%
-												SortedMap billingCurrency_longTextsC = codes.getLongText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, false);
+												Map<Short,String> billingCurrency_longTextsC = codes.getLongTextByCode(featureBillingCurrency, app.getCurrentLocaleAsIndex(), false);
 
 												if (billingCurrency_longTextsC == null) {
 %>
@@ -2030,7 +2029,7 @@ org.openmdx.base.text.conversion.*
 														short value = Short.parseShort((option.getKey()).toString());
 														String selectedModifier = Short.parseShort(billingCurrency) == value ? "selected" : "";
 %>
-														<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
+														<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
 <%
 													}
 												}
@@ -2137,10 +2136,12 @@ org.openmdx.base.text.conversion.*
 																		calDay = (org.opencrx.kernel.activity1.jmi1.CalendarDay)calendarDays.iterator().next();
 																		calDayName = calDay.getName();
 																		try {
-																				String[] calDayNameSplit = calDayName.split("@");
-																				if (calDayNameSplit.length>=2) {
-																						calDayName = calDayNameSplit[0];
-																						calDayLoad = calDayNameSplit[1];
+																				if (calDayName != null) {
+																						String[] calDayNameSplit = calDayName.split("@");
+																						if (calDayNameSplit.length>=2) {
+																								calDayName = calDayNameSplit[0];
+																								calDayLoad = calDayNameSplit[1];
+																						}
 																				}
 																		} catch (Exception e) {}
 																	}
@@ -2339,7 +2340,7 @@ org.openmdx.base.text.conversion.*
 													<td colspan="2">
 														<select class="valueL" id="paymentType" name="paymentType" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
 			<%
-															SortedMap paymentType_longTextsC = codes.getLongText(featurePaymentType, app.getCurrentLocaleAsIndex(), true, false);
+															Map<Short,String> paymentType_longTextsC = codes.getLongTextByCode(featurePaymentType, app.getCurrentLocaleAsIndex(), false);
 
 															if (paymentType_longTextsC == null) {
 			%>
@@ -2351,7 +2352,7 @@ org.openmdx.base.text.conversion.*
 																	short value = Short.parseShort((option.getKey()).toString());
 																	String selectedModifier = Short.parseShort(paymentType) == value ? "selected" : "";
 			%>
-																	<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(featurePaymentType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
+																	<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(featurePaymentType, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
 			<%
 																}
 															}
@@ -2745,7 +2746,7 @@ org.openmdx.base.text.conversion.*
 %>
 													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= app.getHtmlEncoder().encode(workAndExpenseRecord.getName(), false) %></a></td>
 													<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %>&nbsp;</a></td>
-													<td class="padded" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><a href='<%= recordHref %>' target='_blank'><%= (String)(codes.getLongText(featureRecordType, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+													<td class="padded" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><a href='<%= recordHref %>' target='_blank'><%= (codes.getLongTextByCode(featureRecordType, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
 													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getDescription(), false) : "" %></a></td>
 													<td class="padded">
 														<img src="../../images/deletesmall.gif" style="cursor:pointer;" onclick="javascript:$('deleteWorkRecordXri').value='<%= app.getHtmlEncoder().encode(workAndExpenseRecord.refMofId(), false) %>'; $('reload.button').click();" />

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="aggregation" _operation="set">
 										<_object>
 											<name>
+												<_item>aggregation</_item>
 												<_item>org:opencrx:kernel:model1:AssociationEnd:aggregation</_item>
 											</name>
 										</_object>

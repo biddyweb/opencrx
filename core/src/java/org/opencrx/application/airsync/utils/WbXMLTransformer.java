@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: WbXMLTransformer.java,v 1.6 2010/05/18 13:48:13 wfro Exp $
  * Description: ActiveSync
- * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/05/18 13:48:13 $
  * ====================================================================
  *
  * This software is published under the BSD license

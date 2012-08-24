@@ -413,7 +413,7 @@
                         <_item>Datum narození</_item>
                       </label>
                       <toolTip>
-                        <_item>Datum narození osoby</_item>
+                        <_item>Datum narození osoby (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -424,7 +424,7 @@
                         <_item>Narozeniny</_item>
                       </label>
                       <toolTip>
-                        <_item>Narozeniny osoby</_item>
+                        <_item>Narozeniny osoby (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

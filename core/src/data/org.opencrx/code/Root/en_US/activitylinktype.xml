@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="activitylinktype" _operation="set">
 										<_object>
 											<name>
+												<_item>activitylinktype</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityLinkTo:activityLinkType</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityLinkFrom:activityLinkType</_item>
 												<_item>org:opencrx:kernel:activity1:LinkedActivityFollowUpAction:activityLinkType</_item>

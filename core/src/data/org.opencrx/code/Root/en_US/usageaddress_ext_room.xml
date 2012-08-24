@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="usageaddressroom" _operation="set">
 										<_object>
 											<name>
+												<_item>usageaddressroom</_item>
 												<_item>org:opencrx:kernel:account1:Room:usage</_item>
 												<!--
 												<_item>org:opencrx:kernel:account1:PostalAddress:usage</_item>

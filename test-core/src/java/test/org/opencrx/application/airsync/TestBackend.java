@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestBackend.java,v 1.14 2010/06/18 18:02:10 wfro Exp $
  * Description: TestBackend
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/18 18:02:10 $
  * ====================================================================
  *
  * This software is published under the BSD license

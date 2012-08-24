@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoGet.java,v 1.16 2010/12/15 16:52:11 wfro Exp $
  * Description: DoGet
- * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 16:52:11 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -222,7 +219,7 @@ public class DoGet extends DoHead {
     {
         // The default styles to use
        String retVal= "body {\n"+
-                "	font-family: Arial, Helvetica, sans-serif;\n"+
+                "	font-family: 'Open Sans', 'DejaVu Sans Condensed', 'lucida sans', tahoma, verdana, arial, sans-serif;\n"+
                 "}\n"+
                 "h1 {\n"+
                 "	font-size: 1.5em;\n"+

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="usageaddresspostal" _operation="set">
 										<_object>
 											<name>
+												<_item>usageaddresspostal</_item>
 												<_item>org:opencrx:kernel:account1:PostalAddress:usage</_item>
 												<_item>org:opencrx:kernel:contract1:PostalAddress:usage</_item>
 												<_item>org:opencrx:kernel:product1:PostalAddress:usage</_item>
@@ -258,6 +259,17 @@
 														</shortText>
 														<longText>
 															<_item>Provenience</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="10500" _operation="set">
+													<_object>
+														<shortText>
+															<_item>Visitor</_item>
+														</shortText>
+														<longText>
+															<_item>Visitor</_item>
 														</longText>
 													</_object>
 													<_content/>

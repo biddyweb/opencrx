@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceRequestProcessor.java,v 1.8 2010/03/30 22:21:20 wfro Exp $
  * Description: ShopServiceRequestProcessor
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/30 22:21:20 $
  * ====================================================================
  *
  * This software is published under the BSD license

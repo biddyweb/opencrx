@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="bookingType" _operation="set">
 										<_object>
 											<name>
+												<_item>bookingType</_item>
 												<_item>org:opencrx:kernel:depot1:Booking:bookingType</_item>
 												<_item>org:opencrx:kernel:depot1:CompoundBooking:bookingType</_item>
 												<_item>org:opencrx:kernel:depot1:CreateBookingByPositionParams:bookingType</_item>

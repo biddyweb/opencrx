@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Products.java,v 1.95 2012/01/13 17:15:41 wfro Exp $
  * Description: Products
- * Revision:    $Revision: 1.95 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,10 +67,6 @@ import java.util.Set;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
-import org.codehaus.janino.ClassBodyEvaluator;
-import org.codehaus.janino.CompileException;
-import org.codehaus.janino.Parser;
-import org.codehaus.janino.Scanner;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
@@ -110,6 +103,7 @@ import org.opencrx.kernel.product1.jmi1.ProductFilterProperty;
 import org.opencrx.kernel.product1.jmi1.ProductPhasePriceLevel;
 import org.opencrx.kernel.product1.jmi1.ProductQueryFilterProperty;
 import org.opencrx.kernel.uom1.jmi1.Uom;
+import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
@@ -122,7 +116,6 @@ import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 
 public class Products extends AbstractImpl {
 
@@ -312,7 +305,6 @@ public class Products extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         Product1Package productPkg = Utils.getProductPackage(pm);
         org.opencrx.kernel.product1.jmi1.Segment productSegment = this.getProductSegment(
             pm, 
@@ -334,7 +326,7 @@ public class Products extends AbstractImpl {
         );
         productSegment.addPricingRule(
             false,
-            UUIDConversion.toUID(uuids.next()),
+            UUIDConversion.toUID(UUIDs.newUUID()),
             pricingRule
         );                        
         pm.currentTransaction().commit();        
@@ -1363,15 +1355,8 @@ public class Products extends AbstractImpl {
         	pricingRule.getGetPriceLevelScript().intern();
         org.opencrx.kernel.product1.jmi1.Product1Package productPkg = Utils.getProductPackage(pm); 
         try {
-            Map<String,Class<?>> pricingRules = threadLocalPricingRules.get();
-            Class<?> c = pricingRules.get(script);
-            if(c == null) {
-                pricingRules.put(
-                   script, 
-                   c = new ClassBodyEvaluator(script).getClazz()
-                );
-            }
-            Method m = c.getMethod(
+            Class<?> clazz = ScriptUtils.getClass(script);
+            Method m = clazz.getMethod(
                 "getPriceLevel", 
                 new Class[] {
                     RefPackage_1_0.class,
@@ -1398,30 +1383,6 @@ public class Products extends AbstractImpl {
                 );
             return result;
         }
-        catch(CompileException e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not compile getPriceLevelScript:\n" +
-                e.getMessage()
-            );
-        }
-        catch(Parser.ParseException e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not parse getPriceLevelScript:\n" +
-                e.getMessage()
-            );
-        }
-        catch(Scanner.ScanException e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not scan getPriceLevelScript:\n" +
-                e.getMessage()
-            );
-        }
         catch(NoSuchMethodException e) {
             return productPkg.createGetPriceLevelResult(
                 null, null, null, null,
@@ -1443,6 +1404,14 @@ public class Products extends AbstractImpl {
                 null, null, null, null,
                 STATUS_CODE_ERROR,
                 "Illegal access when invoking getPriceLevel():\n" +
+                e.getMessage()
+            );
+        }
+        catch(Exception e) {
+            return productPkg.createGetPriceLevelResult(
+                null, null, null, null,
+                STATUS_CODE_ERROR,
+                "Can not compile getPriceLevelScript:\n" +
                 e.getMessage()
             );
         }
@@ -1733,12 +1702,6 @@ public class Products extends AbstractImpl {
     "        pricingDate\n" +
     "    );\n" +
     "}//</pre>";        
-    
-    protected static final ThreadLocal<Map<String,Class<?>>> threadLocalPricingRules = new ThreadLocal<Map<String,Class<?>>>() {
-        protected synchronized Map<String,Class<?>> initialValue() {
-            return new java.util.IdentityHashMap<String,Class<?>>();
-        }         
-    };
     
 }
 

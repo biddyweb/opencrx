@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AirSyncSyncWizard.jsp,v 1.22 2010/09/16 16:27:24 wfro Exp $
+ * Name:        $Id: AirSyncSyncWizard.jsp,v 1.23 2012/07/08 13:30:03 wfro Exp $
  * Description: AirSyncSyncWizard
- * Revision:    $Revision: 1.22 $
+ * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/16 16:27:24 $
+ * Date:        $Date: 2012/07/08 13:30:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,7 +72,6 @@ org.openmdx.kernel.id.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

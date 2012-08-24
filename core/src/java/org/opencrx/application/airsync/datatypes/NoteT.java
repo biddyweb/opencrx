@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: NoteT.java,v 1.1 2010/11/16 14:01:31 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/16 14:01:31 $
  * ====================================================================
  *
  * This software is published under the BSD license

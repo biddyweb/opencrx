@@ -1,5 +1,5 @@
-Release Name: openCRX/Core 2.9.1
-Release Date: 2012-01-21
+Release Name: openCRX/Core 2.10.0
+Release Date: 2012-08-24
 
 ---------------------------------------------------------------------
 Notes:
@@ -51,457 +51,254 @@ openMDX (http://www.openmdx.org/)
 ---------------------------------------------------------------------
 
 0.    SUMMARY
-      * Support for TomEE
-      * Indexer supports XML documents
-      * Improvements LDAP
-      * Wizards:
-        - Customer care
-        - Bulk activity follow up
-        - Bulk activity creation
-        - Schema creation and validation
-        - Database copy
-      * Improvements model / backend:
-        - Addresses support timezone
-        - Support for sub-processes and sub-activities
-        - Contract creators, contract groups
-        - Reminders
-      * RunAs permissions
-      * GUI element-level security
-      * Many Bug-fixes and enhancements
+      * Many new features (see detailed list below)
+      * Many bug fixes
 
-      For more information see below and http://www.opencrx.org/opencrx/2.9/new.htm
+      For more information see below and http://www.opencrx.org/opencrx/2.10/new.htm
 
 ==============================================================================
-Version 2.9.1                                                       2012-01-21
-==============================================================================
-
-1.    NEW FEATURES
-      none
-      
-2.    CHANGES
-
-2.0.  CHANGED FEATURES
-      
-      CR10010458
-      User-specific pm for triggering reminders. 
-      
-      CR10010477
-      refInitialize() to backend. Move refInitialize() to 
-      BasicObjectImpl.openmdxjdoPostConstruct(). It is now optional for client 
-      code to call refInitialize() after newInstance().
-
-2.1.  FIXED BUGS
-      
-      CR10010473
-      Fix Outermost RefPackage mismatch in UserHome.createUserHome()      
- 
-2.2   REMOVED FEATURES
-      none
-
-==============================================================================
-Version 2.9.0                                                       2011-12-28
+Version 2.10.0                                                      2012-08-24
 ==============================================================================
 
 1.    NEW FEATURES
       
-      CR10010411
-      Alerts/Reminders. User-specific reminders which trigger alerts.
+      CR10010952
+      DbSearchReplace. The method DbSearchReplace.dbSearchReplace() takes 
+      the following parameters:
+      * Connection conn
+      * String columnNameIncludes
+      * String columnNameExcludes
+      * String searchPattern
+      * String replacement
+      * boolean validateOnly
+      * PrintStream out
+      The operation is performed on all tables. Only columns matching the columnNameIncludes / 
+      columnNameExcludes patterns are processed. In case of validateOnly = true the UPDATE 
+      statements are printed to out only (no DB executes). The utility can be used
+      in custom wizards and extensions.
       
-      CR10010308
-      Support for TomEE. openCRX works on Apache TomEE from version 1.0.0 beta 2 on.
+      Example:
+      DbSearchReplace.dbSearchReplace(
+	    conn, 
+	    "(.*)", // includes
+	    "(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // excludes 
+	    "(guest)",
+	    "newguest", 
+	    true, // validateOnly 
+	    System.out
+      );      
+      Replaces all occurences of 'guest' by 'newguest' (e.g. useful for principal migration).
       
-      Steps for manual installation:
-       
-	  Prepare dirs
-	  ------------
-		mkdir $CATALINA_BASE/apps
-		mkdir $CATALINA-BASE/maildir
-		mkdir $CATALINA-BASE/airsyncdir
-		
-      Update EAR
-      ----------
-		cp opencrx-core-EAR $CATALINA_BASE/apps
-			
-      Update bin
-      ----------
-		cp openmdx-system.jar $CATALINA_BASE/bin
-		cp setenv.sh $CATALINA_BASE/bin
-		
-      Update lib
-      ----------
-		cp hsqldb.jar $CATALINA_BASE/lib
-		cp catalina-openmdx.jar $CATALINA_BASE/lib
-		cp openmdx-base.jar $CATALINA_BASE/lib
-		
-      Update conf
-      -----------
-		Add resources to openejb.xml
-		Add properties to logging.properties
-		Add users to tomcat-users.xml
-		
-      Start Tomcat
-      ------------
-		cd $CATALINA_BASE/bin
-		./catalina.sh run
+      DbSearchReplace.dbSearchReplace(
+	    conn, 
+	    "(.*)", // includes
+	    "(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // excludes 
+	    "(/CRX/)",
+	    "/MYCOMPANY/", 
+	    true, // validateOnly 
+	    System.out
+      );       
+      Replaces all occurences of '/CRX/' by '/MYCOMPANY/' (e.g. useful for provider migration).
+      
+      CR10010925
+      AbstractServer: support for trust store and client cert auth. The IMAP and
+      LDAP servlet accept the following new init-parameters when configured for
+      SSL support:
+      * sslTruststoreFile
+      * sslTruststorePass
+      * sslTruststoreType
+      * sslNeedClientAuth      
 
-      openejb.xml
-      -----------
-		<Resource id="jdbc_opencrx_CRX" type="DataSource">
-		 JdbcDriver org.hsqldb.jdbcDriver
-		 JdbcUrl jdbc:hsqldb:hsql://127.0.0.1:9001/CRX
-		 UserName sa
-		 Password manager99
-		 JtaManaged true
-		</Resource>
+      CR10010707
+      JSP tag library. Portal offers the following tags:
+      * portal:showobject
+      * portal:query
+      The tags can be used in wizards and allow easy rendering of objects and grids. 
+      Example:
+      
+        <%@ taglib uri="http://www.openmdx.org/tags/openmdx-portal" prefix="portal" %>
+         ...
+         <div id="content-wrap">
+      	   <div id="content" style="padding:10px 0.5em 0px 0.5em;">
+	         <portal:showobject id="AAA" object="<%= userHome %>" showAttributes="true" grids="alert,assignedActivity" navigationTarget="_none">
+	           <portal:query name="assignedActivity" query="<%= activityQuery %>" />
+	         </portal:showobject>
+	         <portal:showobject id="BBB" object="<%= userHome.getContact() %>" showAttributes="true" grids="address" navigationTarget="_none" />
+           </div> <!-- content -->
+        </div>
 
-		<Resource id="mail/provider/CRX" type="javax.mail.Session">
-		 mail.debug true
-		 mail.transport.protocol smtp
-		 mail.smtp.user myusername
-		 mail.smtp.password mypassword
-		 mail.smtp.starttls.enable true
-		 mail.smtp.auth true
-		 mail.smtp.host myhost
-		 mail.smtp.port 25
-		 mail.smtp.user myuseruname
-		 mail.from mymailfrom
-		 mail.store.protocol pop3s
-		 mail.pop3s.host myhost
-		 mail.pop3s.port 995
-		 mail.pop3s.auth true
-		 mail.pop3s.user myusername
-		 mail.pop3s.password mypassword
-		</Resource>
-		
-      logging-properties.xml
-      ----------------------
+      CR10010757
+      Timers allow to schedule workflows. Timers replace the now deprecated
+      Reminders.      
       
-		.level = WARNING
-		
-		############################################################
-		# openMDX Logging Configuration
-		# Add to logging.properties to configure openMDX logger
-		############################################################
-		org.openmdx.kernel.log.LoggerFactory.level = WARNING
-		org.openmdx.kernel.log.LoggerFactory.handler = 1localhost.org.apache.juli.FileHandler
-		
-      tomcat-users.xml
-      ----------------
-      
-		  <user username="admin-Root" password="admin-Root" roles="OpenCrxRoot,manager"/>
-		  <user username="admin-Standard" password="admin-Standard" roles="OpenCrxAdministrator"/>
-		  <user username="guest" password="guest" roles="OpenCrxUser,Guest"/>
-		  
-      setenv.sh
-      ---------
-      
-		#!/bin/sh
-		
-		# [openCRX]
-		export JAVA_OPTS="$JAVA_OPTS -Xmx800M"
-		export JAVA_OPTS="$JAVA_OPTS -XX:MaxPermSize=256m"
-		export JAVA_OPTS="$JAVA_OPTS -Dtomcat.server.port=8005"
-		export JAVA_OPTS="$JAVA_OPTS -Djava.protocol.handler.pkgs=org.openmdx.kernel.url.protocol"
-		export JAVA_OPTS="$JAVA_OPTS -Dorg.opencrx.maildir=$CATALINA_BASE/maildir"
-		export JAVA_OPTS="$JAVA_OPTS -Dorg.opencrx.airsyncdir=$CATALINA_BASE/airsyncdir"
-		# export JAVA_OPTS="$JAVA_OPTS -Dorg.openmdx.persistence.jdbc.useLikeForOidMatching=false"
-		# export LOGGING_MANAGER="-Djava.util.logging.manager=java.util.logging.LogManager"
-		export CLASSPATH=$CLASSPATH:$CATALINA_BASE/bin/openmdx-system.jar
-		# [openCRX]
-		
-		# [openCRX:CRX]
-		export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.driverName=org.hsqldb.jdbcDriver"
-		export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.url=jdbc:hsqldb:hsql://127.0.0.1:9001/CRX"
-		export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.userName=sa"
-		export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.password=manager99"
-		# [openCRX:CRX]
-		
-		echo "Using JAVA_OPTS:       $JAVA_OPTS"
+      CR10010648
+      FileBrowserWizard. Wizard which allows to view and download files (e.g.
+      log files) from AppServer. Access is restricted to admin-Root. 
+      Extending org.opencrx.kernel.portal.wizard.FileBrowserWizardExtension
+      allows to customize the behaviour of the wizard. 
 
-
-      CR10010390
-      Addressable has timezone. Allow to set timezone for an Adressable.      
+      CR10010644
+      AccountAssignmentDataBinding. Data binding returning a list of accounts 
+      assigned to contracts, products or inventory items. The data binding is 
+      configured in the UI configuration as follows:
       
-      CR10010243
-      Indexer supports XML documents. The indexer supports
-      * mimeTypes application/vnd.openxmlformats*
-      * extensions .docx, .xlsx
-
-      CR10010296
-      LDAP support for AbstractGroup. The LDAP server supports the following
-      BaseDN formats:
-      * Get contacts by account filter, e.g. "All Accounts":
-        ldapsearch -D "guest@Standard" -w guest -h localhost -p 1389 -b "ou=filter/All Accounts,ou=Persons" -l 100 -z 100 -P 3 ""
-        
-      * Get contacts by account group members, e.g. "MyGroup":
-        ldapsearch -D "guest@Standard" -w guest -h localhost -p 1389 -b "ou=group/MyGroup,ou=Persons" -l 100 -z 100 -P 3 ""
-
-      CR10010293
-      CustomerCare Wizard. Wizard which supports the most important use cases 
-      for customer care:
-      * Search account
-      * Show activities overview
-      * Create new activity
-      * Perform activity follow up
-      Permissions must be granted by the segment admin for the users to show
-      activities and activity creators:
-      * Grant permission for creator on form 'Search Contact'
-        name=CustomerCareWizard:SEARCH_CONTACT:activityCreator/id
-        action=+show
-      * Grant permission for creator on form 'Contact'
-        name=CustomerCareWizard:CONTACT:activityCreator/id
-        action=+show
-      * Grant permission for process state:
-        name=CustomerCareWizard:activityProcess/id/processState/[:* | id]
-        action=+show
-      The wizard can be launched on:
-      * Activity group: in this case 'Contact.Search' searches within the
-        reporting contacts of the activities of the activity group.
-      * Account: in this case 'Contact.Search' searches within the account
-        members.
-      * User home: in this case 'Contact.Search' searches within all contacts.
+      * featureDefinition
+		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:contract1:AbstractContract:account">
+		  <_object>
+		    <type>org:opencrx:kernel:account1:Account</type>
+		    <multiplicity>list</multiplicity>
+		    <changeable>false</changeable>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.StructuralFeatureDefinition>
       
-      CR10010286
-      BulkActivityFollowUp wizard. Wizard to perform bulk follow ups on 
-      a set of activities. The wizard is launched on an existing activity
-      which serves as template for selecting the activities to process by
-      - assigned activity groups
-      - process state
+      * elementDefinition
+		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:account">
+		  <_object>
+		    <dataBindingName>org.opencrx.kernel.portal.AccountAssignmentDataBinding</dataBindingName>
+		    <active>true</active>
+		    <filterable>true</filterable>
+		    <spanRow>6</spanRow>
+		    <toolTip>
+		      <_item>Assigned Accounts</_item>
+		    </toolTip>
+		    <label>
+		      <_item>Assigned Accounts</_item>
+		    </label>
+		    <shortLabel>
+		      <_item>Assigned Accounts</_item>
+		    </shortLabel>
+		    <order>
+		      <_item>0</_item>
+		      <_item>0</_item>
+		      <_item>5</_item>
+		    </order>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.ElementDefinition>
       
-      CR10010285
-      BulkCreateActivity wizard. Wizard for bulk activity creation based on a 
-      "Saved search - Account". A typical use-case for this wizard is to create
-      an activity for each account which is member of a campaign (defined by
-      the "Saved search - Account").
+      CR10010636
+      Jabber IM. The workflow org.opencrx.application.jabber.SendMessageWorkflow
+      allows to send messages to a Jabber account (default and active Jabber
+      service account defined on a user's home). The fields of the service
+      account must be set as follows (e.g. for service jabber.org):
+      * name: Jabber-ID, e.g. joe_doe@jabber.org
+      * username: account user name, e.g. joe_doe
+      * password: account password
+      * hostname: jabber.org
+      * service: jabber.org
+      The workflow is using the library smack library for sending XMPP messages.
+      For more information about the library on how to connect to service providers
+      see http://www.igniterealtime.org/projects/smack/.
       
-      CR10010023
-      Search criteria for group membership. Search criteria for account group 
-      membership:
-      * AddressAccountMembershipFilterProperty
-      * AccountMembershipFilterProperty
-
-      CR10010245
-      Accounts: add preDelete and preStore call-backs for accounts and addresses:
-      Accounts.removeAccount(), Accounts.updateAccount(), Accounts.removeAddress(), 
-      Accounts.updateAddress().
+      CR10010620
+      Localized fields. A LocalizedFieldContainer holds LocalizedFields. 
+      This allows to localize the values of any attribute of a CrxObject.
       
-      CR10010021
-      Reference AccountAddress::authority allows to specify the authority of account 
-      addresses. E.g. The authority of an employee's business address is a company. 
-      
-      CR10010136
-      The following classes extend from CrxObject:
-      * ActivityEffortEstimate
-      * ActivityGroupAssignment
-      * ActivityParty
-      * CalendarDay
-      * PriceModifier
-      * ProductConfiguration
-      * ProductConfigurationTypeSet
-      * ProductReference
-      * ResourceAssignment
-      * Vote      
-      
-      CR10010113:
-      AccessControl: RunAs-Permissions. The AccessControl plug-in supports
-      runAs permissions. runAs permissions allow to run object access operations
-      (read, update, delete) under a different principal than the 
-      requesting principal. Two different formats are supported:
-      
-      * 'object:authority/object path@runAsPrincipal', e.g.
-        'object:org.opencrx.kernel.activity1/activityTracker/{id}@user1'. The
-        meaning of this permission is: "run the object access operation for the
-        specified object as user1'.
-        - An object permission defined for an activity creator implies runAs
-          permissions for all activities created with this creator.
-      * 'groupMembership:authority/group path@runAsPrincipal', e.g.
-        'groupMembership:org.opencrx.kernel.activity1/activityTracker/{id}@user1'.
-        The meaning of this permission is: "In case the object is member of
-        the specified group, run the object access operation as user1".
-
-      Permissions are created as follows:
-      * Login as segment admin
-      * Navigate to Security Policy > Privileges
-      * Create a new privilege and set name to the permission name,
-        e.g. 'object:org.opencrx.kernel.activity1/activityTracker/{id}@user1'
-      * Create a new role or select an existing one
-      * Create a new permission and set the name to the permission name,
-        e.g. 'object:org.opencrx.kernel.activity1/activityTracker/{id}@user1'. Set
-        action to 'runAs'.
-      * Assign to role to a principal
-      
-      The AccessControl plug-in handles runAs permissions as follows:
-      * object: In case the XRI of the accessed object matches the permission's
-        path pattern, the object access operation is run as the principal 
-        specified by the permission.
-      * groupMembership: In case the accessed object is member of a group where
-        the XRI of the group matches the permission's path pattern, the object 
-        access operation is run as the principal specified by the permission. 
-        groupMembership currently only works for activities / activity groups.
-
-
-      CR10010141
-      Portal: GridMoveUpObjectAction, GridMoveDownObjectAction. Add grid actions which 
-      allow to move position of values for multi-valued, ordered reference features.
-      
-      CR10010109
-      GUI: element-level security. Element-level security allows to set show and
-      edit permissions for the following GUI elements:
-      * Fields
-      * Field groups
-      * Menu items / operations
-      * Grids
-      Permissions are defined per role. One or more role can be assigned to
-      a user's principal. The wizard ManageGUIPermissions allows to view and
-      manage (segment administrator only) permissions. Roles are created
-      by the segment administrator in Security policies > Roles.      
-
-      CR10010092
-      ICAL mapping of attendees. Attribute emailHint added to AbstractActivity party. 
-      The hint allows to have multiple activity parties pointing to the same account. 
-      The hint serves as e-mail address selector in case the account has multiple 
-      e-mail addresses. The ICAL import sets the hint field for each imported ATTENDEE, 
-      whereas the ICAL exporter/mapper uses the hint to generate the ATTENDEEs. When 
-      importing an ICAL and the e-mail address of an ATTENDEE is unknown, an e-mail 
-      address is created and assigned to the segment admin's contact.
-      
-      CR10010069
-      DbCopy Wizard. The wizard can be invoked as root admin. It allows to
-      copy data from a source database instance to a target instance. It
-      provides the same functionality as the command-line version. 
-      
-      CR10010063
-      DbSchemaWizard. The wizard can be invoked as root admin. It allows to
-      create, validate, upgrade and migrate an openCRX database. The database
-      can either be specified by its JNDI name or by a JDBC connection URL.
-      Validation performs the following checks:
-      * Test existence of tables
-      * Test columns of all tables (missing / extra columns)
-      * Test existence of views
-      * Test existence of indexes
-      * Test existence of sequences
-      * Test existence of preference entries (missing / extra entries)
-      Fix allows to fix the reported issues:
-      * Creation of tables
-      * Creation of missing columns
-      * Creation/replacement of views
-      * Creation of indexes
-      * Creation of sequences
-      * Creation/replacement of preference entries
-      Fix never never drops or removes any database objects or rows. So you
-      never loose data. However, because fix may modify your schema it
-      is recommended to backup before upgrading / fixing a database. It is 
-      possible to run fix on an empty database schema. In this case all 
-      tables, views, indexes and sequences are created.
-      
-      Known issues:
-      * In some cases the CREATE OR REPLACE VIEW statements may fail for
-        several reasons (table with the same name exists, non-compatible
-        column types, etc.). In this case it is recommended to remove all
-        views and run fix. It recreates all views.      
-      
-      CR10010042
-      PortalExtension: grid actions. Allow to add custom-specific actions 
-      to grid menu 'Actions'. Default actions added for openCRX are:
-      * Export --> XML
-      * Export --> XLS 
-      which export either the current grid page or the selected objects.            
+      CR10010549
+      Support for Outlook e-mail message format (msg). BusinessProcessManager.jsp and
+      UploadEMail.jsp wizards now support the Outlook MSG format for e-mail import.
+      In addition, the method org.opencrx.kerne.utils.MimeUtils.mapMsgToMime() provides 
+      a utility method for the conversion MSG --> MimeMessage.
             
-      CR10010022
-      Address::moveAddress. Allow to move address to a target account and 
-      update address references:
-      - E-Mail sender and recipients      
-      - Address group members
-      The operation performs the following steps:
-      - clone source address to target account if it does not already exist
-      - update references
-      - disable source address
+      CR10010614
+      The dashlet allows to configure a static menu. The menu shortcuts are configured 
+      in a properties file with name ./wizards/StaticQuickAccessDashlet/<dashlet label>.properties. 
+
+		# SampleMenu.properties
+		e0000=<div style="font-size:120%;font-weight:bold;">Customers</div>
+		e0001=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Customers"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0002=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Customers"); > Reference.filteredActivity
+		e0003=<div style="font-size:120%;font-weight:bold;">Compliance</div>
+		e0004=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Compliance"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0005=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Compliance"); > Reference.filteredActivity
+		e0006=<div style="font-size:120%;font-weight:bold;">Generic</div>
+		e0007=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Generic"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0008=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Generic"); > Reference.filteredActivity
+		e0009=<div style="font-size:120%;font-weight:bold;">Communications</div>
+		e0010=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Communications"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0011=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Communications"); > Reference.filteredActivity
+		e0012=<div style="font-size:120%;font-weight:bold;">Analysis</div>
+		e0013=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Analysis"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0014=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Analysis"); > Reference.filteredActivity
+		e0021=<div style="font-size:120%;font-weight:bold;">Underwriting</div>
+		e0022=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Underwriting"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0023=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Underwriting"); > Reference.filteredActivity	
+
+      CR10010522
+      AccountIsMemberOfDataBinding. Data binding returning a list of accounts 
+      which have the current account as member. The data binding is configured
+      in the UI configuration as follows:
       
-      CR10010001
-      activity1: sub-activities. SubActivityTransition allows to create sub
-      activities when performing a transition. The sub activity is created 
-      using the configured activityCreator. In case useCreatorAsTemplate 
-      is set to true, the created activity is assigned to activity groups which 
-      are clones of the activity creator's activity groups. The names of the 
-      cloned groups are specified by templateNamePattern. The groups are only 
-      cloned if they do not already exist (matching creation context and  name).
-      Sub activities are linked to their parent activities with:
-      - Activity::creationContext
-      - Activity::LinkTo[linkType=IS_CHILD_OF]
+      * featureDefinition
+		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Account:memberOf">
+		  <_object>
+		    <type>org:opencrx:kernel:account1:Account</type>
+		    <multiplicity>list</multiplicity>
+		    <changeable>false</changeable>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.StructuralFeatureDefinition>
       
-      CR10008383
-      contract1: Contract creators / groups. The contract1 model is extended
-      as follows:
-      
-      * Refactoring
-        - SalesContract
-        - GenericContract
-        - Rename AbstractContractPosition to SalesContractPosition
-        *IMPORTANT:*
-        All source code (plugin extensions, wizards, calculation rules, etc.) MUST 
-        be migrated as follows:
-        - Replace class AbstractContract by SalesContract
-        - Replace class AbstractContractPosition by SalesContractPosition        
-      * SalesContract 
-        - Add reference <<0..n>> SalesContract.salesVolumeContract
-        - Remove operations SalesContract.assignSalesVolumeBudgets(),
-          findSalesVolumeBudgets()
-        - Remove operation SalesContractPosition.assignSalesVolumeBudgets()
-      * ContractGroup
-        - Add class ContractGroup
-        - Add class ContractFilterGroup
-        - Add class ContractGroupAssignment
-      * ContractCreator
-        - Add class ContractCreator
-        - Add class SalesContractCreator
-        - Add class ContractType
-      * SalesVolumeContract
-        - Add class SalesVolumeContract
-        - Add class SalesVolumeTarget
-      * SalesVolumeBudget
-        - Remove classes CustomerAssignment, BrokerAssignment,
-          SalesRepAssignment
-      
+      * elementDefinition
+		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:memberOf">
+		  <_object>
+		    <dataBindingName>org.opencrx.kernel.portal.AccountIsMemberOfDataBinding</dataBindingName>
+		    <active>true</active>
+		    <filterable>true</filterable>
+		    <spanRow>6</spanRow>
+		    <toolTip>
+		      <_item>Is member of</_item>
+		    </toolTip>
+		    <label>
+		      <_item>Is member of</_item>
+		    </label>
+		    <shortLabel>
+		      <_item>Member of</_item>
+		    </shortLabel>
+		    <order>
+		      <_item>0</_item>
+		      <_item>0</_item>
+		      <_item>5</_item>
+		    </order>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.ElementDefinition>
+
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
-      CR10010358
-      Reload codes. Reloaded codes are propagated to GUI and backend without the 
-      need to restart the web app.
-      
-      CR10010295
-      ContactsFeed references AbstractGroup. ContactsFeed references AbstractGroup 
-      instead of Group.
-      
-      CR10010160
-      Enhance VCARD importer. Enhance VCARD (and other importers) so that 
-      it accepts mime types and file extensions. Also enhance so that 
-      minimalistic VCARDs can also be imported.
-      
-      CR10010131
-      Deprecate prefs_preference. Move persistence config to 
-      * src/jar/opencrx-resources.jar/META-INF/Kernel.properties
-      * src/jar/opencrx-resources.jar/Security.properties
-      The table prefs_preferences is not required anymore.
-      
-      CR10010091
-      Mapping of e-mail recipients. Unknown E-Mail recipients are currently mapped 
-      to the generic e-mail address "UNKNOWN". Instead an e-mail address should 
-      be created and assigned to segment admin. The address can be moved with 
-      moveAddress() to the proper contact at a later time.
-      
-      CR10009825
-      SegmentSetup: Security of default activity processes and default activity 
-      types. In addition to 'Administrator' the PrincipalGroup 'Users' should also 
-      be added to the list of OwningGroups of the Default Activity Processes and 
-      Default Activity Types (including all their composites). Furthermore, the 
-      access levels of all of the above objects should be set 
-      to 3-1-1 (browse, update, delete).
 
+      CR10010951
+      touchRealm ignores concurrent modification exceptions. This solves the problem
+      that the concurrent creation of users fails.
+
+      CR10010942
+      openMDX/Portal: Refactoring data bindings. Replace DataBinding_1_0 and 
+      DataBinding_2_0 interfaces by DataBinding interface.
+
+      CR10010930
+      openMDX/Portal: Unify Texts and Codes. The class Texts now delegates to Codes, 
+      i.e. texts are now stored as codes in the CodeValueContainer with name 
+      'TextsBundle'. In case Codes are not defined, Texts falls back to resource bundles. 
+
+      CR10010561
+      DataSourceRealm. Migrate from JDBCRealm to DataSourceRealm. All META-INF/context.xml
+      are now using the DataSourceRealm. The -D configuration options 
+      - opencrx.CRX.jdbc.driverName
+      - opencrx.CRX.jdbc.url
+      - opencrx.CRX.jdbc.userName
+      - opencrx.CRX.jdbc.password=manager99
+
+      CR20020010
+      Portal: Improve grid search for code columns. Use short and long texts 
+      for filter value to code mapping.
+      
 2.1.  FIXED BUGS
-      none
- 
+      
+      CR10010783
+      Outlook 2010. IMAP adapter tested with Outlook 2010.
+
 2.2   REMOVED FEATURES
       none
 

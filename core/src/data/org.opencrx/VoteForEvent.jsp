@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.19 2011/11/28 14:18:32 wfro Exp $
+ * Name:		$Id: VoteForEvent.jsp,v 1.20 2012/07/13 10:08:40 wfro Exp $
  * Description: VoteForEvent
- * Revision:	$Revision: 1.19 $
+ * Revision:	$Revision: 1.20 $
  * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2011/11/28 14:18:32 $
+ * Date:		$Date: 2012/07/13 10:08:40 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -288,7 +288,6 @@ java.text.*"
 		new SimpleDateFormat("HH:mm") :
 		new SimpleDateFormat("HH:mm", locale);
 	timeFormat.setTimeZone(timezone);
-	UUIDGenerator uuids = UUIDs.getGenerator();
 
 	// Get parameters
 	boolean actionVote = request.getParameter("Vote") != null;
@@ -489,8 +488,7 @@ java.text.*"
 					vote = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityVote.class);
 					vote.refInitialize(false, false);
 					email.addVote(
-						false,
-						UUIDConversion.toUID(uuids.next()),
+						UUIDConversion.toUID(UUIDs.newUUID()),
 						vote
 					);
 					vote.getOwningGroup().addAll(

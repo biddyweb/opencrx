@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractBudgetImpl.java,v 1.1 2010/11/03 16:22:02 wfro Exp $
  * Description: AccountImpl
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/03 16:22:02 $
  * ====================================================================
  *
  * This software is published under the BSD license

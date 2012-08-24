@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestServerHandlers.java,v 1.20 2011/02/11 12:34:49 wfro Exp $
  * Description: TestHandlers
- * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/11 12:34:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -114,6 +111,7 @@ import org.opencrx.application.airsync.server.SyncRequest;
 import org.opencrx.application.airsync.utils.DOMUtils;
 import org.opencrx.application.airsync.utils.WbXMLTransformer;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 import org.openmdx.kernel.loading.Classes;
@@ -141,7 +139,7 @@ public class TestServerHandlers {
 			IData data
 		) throws ServiceException {
 			if(itemId == null) {
-				return UUIDs.getGenerator().next().toString();
+				return UUIDConversion.toUID(UUIDs.newUUID());
 			} else {
 				return itemId;
 			}

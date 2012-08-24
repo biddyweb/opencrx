@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: PrintConsole.java,v 1.17 2009/04/22 14:54:00 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/22 14:54:00 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -57,24 +54,28 @@ package org.opencrx.kernel.workflow;
 
 import java.util.Map;
 
-import org.opencrx.kernel.backend.SynchWorkflow_2_0;
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.utils.WorkflowHelper;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 
-public class PrintConsole 
-    implements SynchWorkflow_2_0 {
+public class PrintConsole extends Workflows.SynchronousWorkflow {
 
-	 public void execute(
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.Workflows.SynchronousWorkflow#execute(org.opencrx.kernel.base.jmi1.WorkflowTarget, org.openmdx.base.jmi1.ContextCapable, org.openmdx.base.jmi1.ContextCapable, org.opencrx.kernel.home1.jmi1.WfProcessInstance)
+	 */
+	@Override
+	public void execute(
         WorkflowTarget wfTarget,
         ContextCapable targetObject,
-        Map<String,Object> params,
         WfProcessInstance wfProcessInstance
     ) throws ServiceException {
         System.out.println("executing workflow " + this.getClass().getName());
         System.out.println("target=" + targetObject);
         System.out.println("wfProcessInstance=" + wfProcessInstance);
+        Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance);
         System.out.println("params=" + params);
     }
 

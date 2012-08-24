@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoCopy.java,v 1.13 2010/12/08 18:57:07 wfro Exp $
  * Description: DoCopy
- * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/08 18:57:07 $
  * ====================================================================
  *
  * This software is published under the BSD license

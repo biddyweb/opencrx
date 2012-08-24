@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserHomeImpl.java,v 1.21 2009/12/14 16:25:48 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/14 16:25:48 $
  * ====================================================================
  *
  * This software is published under the BSD license

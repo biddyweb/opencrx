@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailStore.java,v 1.4 2010/01/22 13:47:30 wfro Exp $
  * Description: MailStore
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/01/22 13:47:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -67,16 +64,26 @@ import javax.naming.InitialContext;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.log.SysLog;
 
+/**
+ * MailStore
+ *
+ */
 public class MailStore {
 
-    //-------------------------------------------------------------------------
+    /**
+     * Utility class for mail store management.
+     */
     public MailStore(
         MailImporterConfig config 
     ) {
         this.config = config;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Open mail store.
+     * 
+     * @throws ServiceException
+     */
     public void openStore (
     ) throws ServiceException {
     	SysLog.info("Fetching emails with configuration", this.config);
@@ -95,8 +102,7 @@ public class MailStore {
                 session.getProperty("mail." + protocol + ".user"), 
                 session.getProperty("mail." + protocol + ".password")
             );
-        } 
-        catch (Exception e) {
+        }  catch (Exception e) {
         	SysLog.error("Could not get mail session", this.config.getMailServiceName());
             ServiceException e0 = new ServiceException(e);
             SysLog.error(e0.getMessage(), e0.getCause());
@@ -104,13 +110,23 @@ public class MailStore {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get messages from mail store.
+     * 
+     * @return
+     * @throws MessagingException
+     */
     public Message[] getMessages(
     ) throws MessagingException {
         return this.folder.getMessages();
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Open mail folder with given name and set as current folder.
+     * 
+     * @param name
+     * @throws ServiceException
+     */
     public void openFolder(
         String name
     ) throws ServiceException {
@@ -136,30 +152,27 @@ public class MailStore {
       }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Close current folder.
+     */
     public void closeFolder(
     ) {
       if(this.folder != null) {
           try {
               this.folder.close(true);              
-          } 
-          catch(Exception e) {}
+          } catch(Exception uncaught) {}
       }
     }
   
-    //-------------------------------------------------------------------------
     /**
-     * Finally close the store currently in use.
-     * 
+     *  Close current store.
      */
     public void closeStore (
     ) {
       try {
         store.close();
-      } 
-      catch (MessagingException e) {
+      }  catch (MessagingException e) {
     	  SysLog.warning("Could not clean up resources");
-          System.err.println("Could not clean up after importing");
       }
     }
 

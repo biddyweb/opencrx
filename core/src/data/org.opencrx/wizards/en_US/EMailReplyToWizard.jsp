@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: EMailReplyToWizard.jsp,v 1.8 2011/11/28 14:02:52 wfro Exp $
+ * Name:        $Id: EMailReplyToWizard.jsp,v 1.9 2012/07/08 13:30:32 wfro Exp $
  * Description: EMailReplyToWizard
- * Revision:    $Revision: 1.8 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:02:52 $
+ * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,7 +67,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

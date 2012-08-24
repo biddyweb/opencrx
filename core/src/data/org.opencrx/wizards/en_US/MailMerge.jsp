@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MailMerge.jsp,v 1.34 2011/09/23 09:46:22 wfro Exp $
+ * Name:        $Id: MailMerge.jsp,v 1.36 2012/07/13 10:05:57 wfro Exp $
  * Description: mail merge addresses of group's members --> RTF document
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/23 09:46:22 $
+ * Date:        $Date: 2012/07/13 10:05:57 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,12 +68,12 @@ org.openmdx.kernel.id.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
+org.openmdx.base.text.conversion.*,
 org.openmdx.kernel.log.*
 " %>
 
@@ -338,7 +338,7 @@ org.openmdx.kernel.log.*
 
     // Prepare
     org.opencrx.kernel.account1.jmi1.Account account = null;
-    String location = UUIDs.getGenerator().next().toString();
+    String location = UUIDConversion.toUID(UUIDs.newUUID());
     String filename = null;
 
     ArrayList postalAddressesXri = new ArrayList();

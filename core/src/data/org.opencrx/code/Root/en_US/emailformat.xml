@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="emailFormat" _operation="set">
 										<_object>
 											<name>
+												<_item>emailFormat</_item>
 												<_item>org:opencrx:kernel:address1:EMailAddressable:emailFormat</_item>
 											</name>
 										</_object>

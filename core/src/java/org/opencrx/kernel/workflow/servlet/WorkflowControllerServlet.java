@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WorkflowControllerServlet.java,v 1.61 2010/12/31 14:35:37 wfro Exp $
  * Description: WorkflowControllerServlet
- * Revision:    $Revision: 1.61 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/31 14:35:37 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -89,6 +86,7 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
@@ -273,13 +271,12 @@ public class WorkflowControllerServlet
         try {
             pm = Utils.getPersistenceManagerFactory().getPersistenceManager(
                 SecurityKeys.ROOT_PRINCIPAL,
-                UUIDs.getGenerator().next().toString()
+                null
             );
         }
         catch(Exception e) {
             throw new ServletException("Can not get connection to provider", e);
         }
-
         // Get component configuration
         try {
             Admin1Package adminPackage = Utils.getAdminPackage(pm);            
@@ -311,8 +308,7 @@ public class WorkflowControllerServlet
                 sp.setDescription("Server URL");
                 sp.setStringValue("http://127.0.0.1:8080/opencrx-core-" + providerName);
                 componentConfiguration.addProperty(
-                    false,                         
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp
                 );
                 // SubscriptionHandler.<provider>.Standard.autostart
@@ -321,8 +317,7 @@ public class WorkflowControllerServlet
                 sp.setDescription(MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER + " autostart");
                 sp.setStringValue("false");
                 componentConfiguration.addProperty(
-                    false,                         
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp
                 );
                 // SubscriptionHandler.<provider>.Standard.pingrate
@@ -331,8 +326,7 @@ public class WorkflowControllerServlet
                 sp.setDescription(MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER + " pingrate");
                 sp.setStringValue("2");
                 componentConfiguration.addProperty(
-                    false,                         
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp
                 );
                 // IndexerServlet.<provider>.Standard.autostart
@@ -341,8 +335,7 @@ public class WorkflowControllerServlet
                 sp.setDescription(MONITORED_WORKFLOW_INDEXER + " autostart");
                 sp.setStringValue("false");
                 componentConfiguration.addProperty(
-                    false, 
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp
                 );
                 // IndexerServlet.<provider>.Standard.pingrate
@@ -351,8 +344,7 @@ public class WorkflowControllerServlet
                 sp.setDescription(MONITORED_WORKFLOW_INDEXER + " pingrate");
                 sp.setStringValue("2");
                 componentConfiguration.addProperty(
-                    false, 
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp                   
                 );
                 // WorkflowHandler.<provider>.Standard.autostart
@@ -361,8 +353,7 @@ public class WorkflowControllerServlet
                 sp.setDescription(MONITORED_WORKFLOW_WORKFLOWHANDLER + " autostart");
                 sp.setStringValue("false");
                 componentConfiguration.addProperty(
-                    false, 
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp
                 );
                 // WorkflowHandler.<provider>.Standard.pingrate
@@ -371,8 +362,7 @@ public class WorkflowControllerServlet
                 sp.setDescription(MONITORED_WORKFLOW_WORKFLOWHANDLER + " pingrate");
                 sp.setStringValue("2");
                 componentConfiguration.addProperty(
-                    false, 
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(uuids.next()),
                     sp
                 );
                 pm.currentTransaction().commit();

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExportMailWorkflow.java,v 1.17 2008/08/28 15:13:02 wfro Exp $
  * Description: ExportMailWorkflow
- * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:13:02 $
  * ====================================================================
  *
  * This software is published under the BSD license

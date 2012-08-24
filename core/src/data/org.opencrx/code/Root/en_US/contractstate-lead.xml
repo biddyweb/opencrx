@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="leadState" _operation="set">
 										<_object>
 											<name>
+												<_item>leadState</_item>
 												<_item>org:opencrx:kernel:contract1:Lead:contractState</_item>
 												<_item>org:opencrx:kernel:account1:CreateLeadParams:state</_item>
 												<_item>org:opencrx:kernel:contract1:LeadMarkAsClosedParams:leadState</_item>

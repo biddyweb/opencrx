@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="ratingType" _operation="set">
 										<_object>
 											<name>
+												<_item>ratingType</_item>
 												<_item>org:opencrx:kernel:generic:Rating:ratingType</_item>
 											</name>
 										</_object>

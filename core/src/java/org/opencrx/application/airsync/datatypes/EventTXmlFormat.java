@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: EventTXmlFormat.java,v 1.32 2011/11/30 11:23:46 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/30 11:23:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -60,6 +57,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.opencrx.application.airsync.utils.DOMUtils;
+import org.opencrx.kernel.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.format.DateTimeFormat;
@@ -87,7 +85,10 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 		} else {
 			createElement(eData, "Calendar:", "AllDayEvent", "0");
 		}
-		createElement(eData, "Calendar:", "Body", eventT.getBody());
+		String body = eventT.getBody();
+		if(body != null) {
+			createElement(eData, "Calendar:", "Body", Utils.normalizeNewLines(body).replace("\n", "\r\n"));
+		}
 		createElement(eData, "Calendar:", "BusyStatus", Integer.toString(eventT.getBusyStatus().getValue()));
 		createElement(eData, "Calendar:", "Organizer_Name", eventT.getOrganizerName());
 		createElement(eData, "Calendar:", "Organizer_Email", eventT.getOrganizerEmail());
@@ -168,13 +169,19 @@ public class EventTXmlFormat extends AbstractXmlFormat {
 						this.createElement(eCategories, "Calendar:", "Category", category);
 					}
 				}
-				createElement(eException, "Calendar:", "Sensitivity", Integer.toString(exceptionT.getSensitivity().getValue()));
-				createElement(eException, "Calendar:", "BusyStatus", Integer.toString(exceptionT.getBusyStatus().getValue()));
-				createElement(eException, "Calendar:", "AllDayEvent", (exceptionT.getAllDayEvent() ? "1" : "0"));
+				if(exceptionT.getSensitivity() != null) {
+					createElement(eException, "Calendar:", "Sensitivity", Integer.toString(exceptionT.getSensitivity().getValue()));
+				}
+				if(exceptionT.getBusyStatus() != null) {
+					createElement(eException, "Calendar:", "BusyStatus", Integer.toString(exceptionT.getBusyStatus().getValue()));
+				}
+				createElement(eException, "Calendar:", "AllDayEvent", (Boolean.TRUE.equals(exceptionT.getAllDayEvent()) ? "1" : "0"));
 				if(exceptionT.getReminder() != null) {
 					createElement(eException, "Calendar:", "Reminder", Integer.toString(exceptionT.getReminder()));
 				}
-				createElement(eException, "Calendar:", "MeetingStatus", Integer.toString(exceptionT.getMeetingStatus().getValue()));
+				if(exceptionT.getMeetingStatus() != null) {
+					createElement(eException, "Calendar:", "MeetingStatus", Integer.toString(exceptionT.getMeetingStatus().getValue()));
+				}
 			}
 			if(exceptionT.getDtStamp() != null) {
 				DOMUtils.createElementAndText(eException, "Calendar:", "DtStamp", utcf.format(exceptionT.getDtStamp()));

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="activityiCalType" _operation="set">
 										<_object>
 											<name>
+												<_item>activityiCalType</_item>
 												<_item>org:opencrx:kernel:activity1:Activity:icalType</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityCreator:icalType</_item>
 												<_item>org:opencrx:kernel:activity1:NewActivityParams:icalType</_item>

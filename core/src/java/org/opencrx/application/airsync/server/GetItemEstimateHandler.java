@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: GetItemEstimateHandler.java,v 1.14 2011/02/06 15:09:41 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/06 15:09:41 $
  * ====================================================================
  *
  * This software is published under the BSD license

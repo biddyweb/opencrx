@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IndexerServlet.java,v 1.30 2011/01/23 22:16:15 wfro Exp $
  * Description: IndexerServlet
- * Revision:    $Revision: 1.30 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/23 22:16:15 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -70,11 +67,21 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.backend.Accounts;
+import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Buildings;
+import org.opencrx.kernel.backend.Contracts;
+import org.opencrx.kernel.backend.Depots;
+import org.opencrx.kernel.backend.Documents;
+import org.opencrx.kernel.backend.Forecasts;
+import org.opencrx.kernel.backend.Models;
+import org.opencrx.kernel.backend.Products;
+import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.UpdateIndexResult;
+import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -82,10 +89,11 @@ import org.openmdx.kernel.id.UUIDs;
  * The IndexerServlet 'listens' for object modifications on incoming
  * audit entries. Modified objects are indexed.
  */  
-public class IndexerServlet 
-    extends HttpServlet {
+public class IndexerServlet extends HttpServlet {
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     public void init(
         ServletConfig config
     ) throws ServletException {
@@ -101,7 +109,15 @@ public class IndexerServlet
 
     }
 
-    //-----------------------------------------------------------------------    
+    /**
+     * Update index. Iterate all segments and invoke operation updateIndex().
+     * @param id
+     * @param providerName
+     * @param segmentName
+     * @param req
+     * @param res
+     * @throws IOException
+     */
     public void updateIndex(
         String id,
         String providerName,
@@ -114,8 +130,8 @@ public class IndexerServlet
 
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
-                "admin-" + segmentName,
-                UUIDs.getGenerator().next().toString()
+                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+                null
             );        
             Workflows.getInstance().initWorkflows(
                 pm, 
@@ -123,36 +139,16 @@ public class IndexerServlet
                 segmentName
             );
             List<org.opencrx.kernel.base.jmi1.Indexed> indexedSegments = new ArrayList<org.opencrx.kernel.base.jmi1.Indexed>();
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.building1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.contract1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.depot1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.document1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.forecast1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.model1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.product1/provider/" + providerName + "/segment/" + segmentName))
-            );
-            indexedSegments.add(
-                (org.opencrx.kernel.base.jmi1.Indexed)pm.getObjectById(new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName))
-            );
+            indexedSegments.add(Accounts.getInstance().getAccountSegment(pm, providerName, segmentName));
+            indexedSegments.add(Activities.getInstance().getActivitySegment(pm, providerName, segmentName));
+            indexedSegments.add(Buildings.getInstance().getBuildingSegment(pm, providerName, segmentName));
+            indexedSegments.add(Contracts.getInstance().getContractSegment(pm, providerName, segmentName));
+            indexedSegments.add(Depots.getInstance().getDepotSegment(pm, providerName, segmentName));
+            indexedSegments.add(Documents.getInstance().getDocumentSegment(pm, providerName, segmentName));
+            indexedSegments.add(Forecasts.getInstance().getForecastSegment(pm, providerName, segmentName));
+            indexedSegments.add(Models.getInstance().getModelSegment(pm, providerName, segmentName));
+            indexedSegments.add(Products.getInstance().getProductSegment(pm, providerName, segmentName));
+            indexedSegments.add(UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName));
             for(org.opencrx.kernel.base.jmi1.Indexed indexedSegment: indexedSegments) {
                 long startedAt = System.currentTimeMillis();
                 try {
@@ -185,7 +181,13 @@ public class IndexerServlet
         }        
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Handle servlet request.
+     * @param req
+     * @param res
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void handleRequest(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -227,7 +229,9 @@ public class IndexerServlet
         }
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     protected void doGet(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -240,7 +244,9 @@ public class IndexerServlet
         );
     }
         
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     protected void doPost(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -252,7 +258,7 @@ public class IndexerServlet
             res
         );
     }
-        
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
@@ -265,7 +271,7 @@ public class IndexerServlet
     
     private PersistenceManagerFactory pmf = null;
     private long startedAt = System.currentTimeMillis();
-        
+
 }
 
 //--- End of File -----------------------------------------------------------

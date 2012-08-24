@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="status" _operation="set">
 										<_object>
 											<name>
+												<_item>status</_item>
 												<_item>org:opencrx:kernel:base:ImportResult:status</_item>
 												<_item>org:opencrx:kernel:base:ExportResult:status</_item>
 												<_item>org:opencrx:kernel:base:ModifySecureObjectResult:status</_item>

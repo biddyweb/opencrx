@@ -14,10 +14,12 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="locale" _operation="set">
 										<_object>
 											<name>
+												<_item>locale</_item>
 												<_item>org:opencrx:kernel:base:ImportParams:locale</_item>
 												<_item>org:opencrx:kernel:base:ExportProfile:locale</_item>
 												<_item>org:opencrx:kernel:account1:ExportVCardParams:locale</_item>
 												<_item>org:opencrx:kernel:activity1:ExportICalendarParams:locale</_item>
+												<_item>org:opencrx:kernel:generic:LocalizedField:locale</_item>
 											</name>
 										</_object>
 										<_content>

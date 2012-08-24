@@ -28,6 +28,23 @@
 	<listener>
 		<listener-class>org.openmdx.portal.servlet.PortalSessionCloser</listener-class>
 	</listener>
+	<jsp-config> 
+	  <taglib>
+	      <taglib-uri>http://www.openmdx.org/tags/openmdx-portal</taglib-uri>
+	      <taglib-location>/WEB-INF/openmdx-portal.tld</taglib-location>
+	    </taglib>  
+	</jsp-config>	
+	<!-- Activate to enable development mode for Tomcat -->
+	<!--
+	<servlet>
+		<servlet-name>jsp</servlet-name>
+		<servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
+		<init-param>
+		      <param-name>development</param-name>
+		      <param-value>true</param-value>
+		</init-param>
+	</servlet>
+	-->
 	<!-- WorkflowController -->
 	<servlet id="WorkflowController">
 		<servlet-name>WorkflowController</servlet-name>
@@ -61,29 +78,38 @@
 			<param-name>path[3]</param-name>
 			<param-value>/DocumentScannerServlet</param-value>
 		</init-param>
+		<init-param>
+			<param-name>path[4]</param-name>
+			<param-value>/MailImporterServlet</param-value>
+		</init-param>
 		<!-- activate if WorkflowController should be initialized at startup
 		<load-on-startup>10</load-on-startup>
--->
+		-->
 	</servlet>
 	<!-- WorkflowHandler-->
 	<servlet id="WorkflowHandler">
 		<servlet-name>WorkflowHandler</servlet-name>
 		<servlet-class>org.opencrx.kernel.workflow.servlet.WorkflowHandlerServlet</servlet-class>
 	</servlet>
-	<!-- SubscriptionHandlerServlet-->
+	<!-- SubscriptionHandler-->
 	<servlet id="SubscriptionHandler">
 		<servlet-name>SubscriptionHandler</servlet-name>
 		<servlet-class>org.opencrx.kernel.workflow.servlet.SubscriptionHandlerServlet</servlet-class>
 	</servlet>
-	<!-- IndexerServlet -->
+	<!-- Indexer -->
 	<servlet id="IndexerServlet">
 		<servlet-name>IndexerServlet</servlet-name>
 		<servlet-class>org.opencrx.kernel.workflow.servlet.IndexerServlet</servlet-class>
 	</servlet>
-	<!-- DocumentScannerServlet -->
+	<!-- DocumentScanner -->
 	<servlet id="DocumentScannerServlet">
 		<servlet-name>DocumentScannerServlet</servlet-name>
 		<servlet-class>org.opencrx.application.document.DocumentScannerServlet</servlet-class>
+	</servlet>
+	<!-- MailImporterServlet -->
+	<servlet id="MailImporterServlet">
+		<servlet-name>MailImporterServlet</servlet-name>
+		<servlet-class>org.opencrx.application.mail.importer.MailImporterServlet</servlet-class>
 	</servlet>
 	<servlet id="ObjectInspectorServlet">
 		<servlet-name>ObjectInspectorServlet</servlet-name>
@@ -376,6 +402,10 @@
 	<servlet-mapping>
 		<servlet-name>DocumentScannerServlet</servlet-name>
 		<url-pattern>/DocumentScannerServlet/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>MailImporterServlet</servlet-name>
+		<url-pattern>/MailImporterServlet/*</url-pattern>
 	</servlet-mapping>
 	<session-config>
 		<session-timeout>30</session-timeout>

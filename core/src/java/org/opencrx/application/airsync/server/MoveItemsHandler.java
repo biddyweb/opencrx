@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: MoveItemsHandler.java,v 1.6 2010/08/10 16:21:00 wfro Exp $
  * Description: AirSync for openCRX
- * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/10 16:21:00 $
  * ====================================================================
  *
  * This software is published under the BSD license

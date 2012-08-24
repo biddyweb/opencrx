@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="severity" _operation="set">
 										<_object>
 											<name>
+												<_item>severity</_item>
 												<_item>org:opencrx:kernel:activity1:Incident:severity</_item>
 											</name>
 										</_object>

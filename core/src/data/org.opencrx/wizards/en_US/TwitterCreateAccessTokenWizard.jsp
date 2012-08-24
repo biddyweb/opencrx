@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterCreateAccessTokenWizard.jsp,v 1.4 2011/12/12 10:31:18 cmu Exp $
+ * Name:        $Id: TwitterCreateAccessTokenWizard.jsp,v 1.5 2012/07/08 13:30:31 wfro Exp $
  * Description: TwitterCreateAccessTokenWizard
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/12 10:31:18 $
+ * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,7 +67,6 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

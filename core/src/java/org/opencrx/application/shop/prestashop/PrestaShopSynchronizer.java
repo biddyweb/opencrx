@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core
- * Name:        $Id: PrestaShopSynchronizer.java,v 1.12 2011/01/12 15:10:10 wfro Exp $
  * Description: PrestaShopSynchronizer
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/12 15:10:10 $
  * ====================================================================
  *
  * This software is published under the BSD license

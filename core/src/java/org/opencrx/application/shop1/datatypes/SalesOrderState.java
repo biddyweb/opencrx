@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SalesOrderState.java,v 1.3 2009/12/04 16:21:31 wfro Exp $
  * Description: SalesOrderState
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/12/04 16:21:31 $
  * ====================================================================
  *
  * This software is published under the BSD license

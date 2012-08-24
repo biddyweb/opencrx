@@ -117,7 +117,7 @@
                         <_item>Anrede</_item>
                       </label>
                       <toolTip>
-                        <_item>Anrede</_item>
+                        <_item>Anrede (hier eine Andrede eingeben, wenn kein passender Anredecode existiert)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -324,6 +324,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closingCode">
+										<_object>
+											<toolTip>
+												<_item>Grussformelcode</_item>
+											</toolTip>
+											<label>
+												<_item>Grussformelcode</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closing">
+										<_object>
+											<toolTip>
+												<_item>Grussformel (hier eine Grussformel eingeben, wenn kein passender Grussformelcode existiert)</_item>
+											</toolTip>
+											<label>
+												<_item>Grussformel</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail" _operation="create">
                     <_object>
                       <label>
@@ -550,7 +572,7 @@
                         <_item>Geburtsdatum</_item>
                       </label>
                       <toolTip>
-                        <_item>Geburtsdatum</_item>
+                        <_item>Geburtsdatum (Lokalzeit Geburtsort!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -558,10 +580,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
                     <_object>
                       <label>
-                        <_item>Jubiläumsdatum</_item>
+                        <_item>Datum eines Jubiläums</_item>
                       </label>
                       <toolTip>
-                        <_item>Datum eines Jubiläums</_item>
+                        <_item>Jubiläumsdatum (Lokalzeit Ort des Jubiläums!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

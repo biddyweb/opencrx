@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SyncFeedBasedActivityCollectionResource.java,v 1.2 2010/12/04 00:35:48 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/04 00:35:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -129,8 +126,10 @@ class SyncFeedBasedActivityCollectionResource extends ActivityCollectionResource
 			syncFeed,
 			getQueryHelper(syncFeed),
 			type,
+			Boolean.TRUE.equals(syncFeed.isAllowChange()),
+			syncFeed.getBackColor(),
 			runAs
 		);
 	}
-	
+
 }

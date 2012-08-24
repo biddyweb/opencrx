@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ShopServiceImpl.java,v 1.64 2012/01/13 17:14:46 wfro Exp $
  * Description: ShopServiceImpl
- * Revision:    $Revision: 1.64 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:14:46 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -178,7 +175,6 @@ import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
@@ -348,7 +344,7 @@ public class ShopServiceImpl
     //-----------------------------------------------------------------------
     public String uuidAsString(
     ) {
-        return UUIDConversion.toUID(this.uuids.next());
+        return UUIDConversion.toUID(UUIDs.newUUID());
     }
     
     //-----------------------------------------------------------------------
@@ -2575,7 +2571,7 @@ public class ShopServiceImpl
                 this.pm.currentTransaction().begin();
                 SalesOrderCreateInvoiceResult createInvoiceResult = salesOrder.createInvoice();
                 this.pm.flush();
-                Invoice invoice = createInvoiceResult.getInvoice();
+                Invoice invoice = (Invoice)this.pm.getObjectById(createInvoiceResult.getInvoice().refGetPath());
                 this.datatypeMappers.mapInvoice(
                     invoice,
                     salesOrder,
@@ -6298,7 +6294,6 @@ public class ShopServiceImpl
     protected final boolean noCopyOfProductConfiguration;
     protected final String shopName;
     protected final DatatypeMappers datatypeMappers;
-    protected final UUIDGenerator uuids = UUIDs.getGenerator();
     
 }
 

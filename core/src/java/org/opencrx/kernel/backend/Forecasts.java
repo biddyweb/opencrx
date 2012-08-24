@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Forecasts.java,v 1.8 2012/01/13 17:15:42 wfro Exp $
  * Description: Forecasts
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license

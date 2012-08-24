@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoLock.java,v 1.12 2010/12/09 11:34:22 wfro Exp $
  * Description: DoLock
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/09 11:34:22 $
  * ====================================================================
  *
  * This software is published under the BSD license

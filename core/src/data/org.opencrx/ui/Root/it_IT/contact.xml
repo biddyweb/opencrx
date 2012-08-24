@@ -556,7 +556,7 @@
                         <_item>Data di Nascita</_item>
                       </label>
                       <toolTip>
-                        <_item>Data di Nascita</_item>
+                        <_item>Data di Nascita (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Onomastico</_item>
                       </label>
                       <toolTip>
-                        <_item>Onomastico della Persona</_item>
+                        <_item>Onomastico della Persona (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

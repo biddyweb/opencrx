@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FreeBusyServlet.java,v 1.29 2011/09/13 23:40:16 wfro Exp $
  * Description: FreeBusyServlet
- * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/13 23:40:16 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -204,7 +201,7 @@ public class FreeBusyServlet extends HttpServlet {
     ) {
         return this.pmf.getPersistenceManager(
             SecurityKeys.ROOT_PRINCIPAL,
-            UUIDs.getGenerator().next().toString()
+            null
         );    	
     }
     

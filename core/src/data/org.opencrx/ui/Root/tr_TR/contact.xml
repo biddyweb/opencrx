@@ -413,7 +413,7 @@
                         <_item>Doğum Tarihi</_item>
                       </label>
                       <toolTip>
-                        <_item>Kişinin doğum tarihi</_item>
+                        <_item>Kişinin doğum tarihi (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -424,7 +424,7 @@
                         <_item>Yıldönümü tarihi</_item>
                       </label>
                       <toolTip>
-                        <_item>Kişinin yıldönümü tarihi</_item>
+                        <_item>Kişinin yıldönümü tarihi (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TestApi.java,v 1.3 2012/01/13 17:18:14 wfro Exp $
  * Description: TestApi
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:18:14 $
  * ====================================================================
  *
  * This software is published under the BSD license

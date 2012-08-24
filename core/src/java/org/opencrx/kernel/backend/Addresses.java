@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Addresses.java,v 1.46 2011/09/23 14:49:49 wfro Exp $
  * Description: Addresses
- * Revision:    $Revision: 1.46 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/23 14:49:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -59,8 +56,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.Map.Entry;
+import java.util.StringTokenizer;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.openmdx.base.exception.ServiceException;
@@ -123,13 +120,13 @@ public class Addresses extends AbstractImpl {
     ) throws ServiceException {    	
     	{
 	    	country = country.toUpperCase();
-	    	String lastMatch = null;
+	    	Integer lastMatchLength = null;
 	    	Short countryCode = null;
 	    	for(Entry<String,Short> entry: POSTAL_COUNTRIES_BY_TEXT.entrySet()) {
 	    		if(entry.getKey().toUpperCase().indexOf(country) >= 0) {
-	    			if(lastMatch == null || entry.getKey().length() < lastMatch.length()) {
+	    			if(lastMatchLength == null || entry.getKey().length() < lastMatchLength) {
 	    				countryCode = entry.getValue();
-	    				lastMatch = entry.getKey();
+	    				lastMatchLength = entry.getKey().length();
 	    			}
 	    		}
 	    	}
@@ -285,6 +282,30 @@ public class Addresses extends AbstractImpl {
         }
     }
     
+	/**
+	 * EMail types.
+	 */
+	public enum EMailType {
+		
+		NA((short)0),
+		SMTP((short)1),
+		X500((short)2);
+		
+		private short value;
+		
+		private EMailType(
+			short value
+		) {
+			this.value = value;
+		}
+		
+		public short getValue(
+		) {
+			return this.value;
+		}
+		
+	}
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -296,7 +317,7 @@ public class Addresses extends AbstractImpl {
             "org:opencrx:kernel:address1:WebAddressable",
             "org:opencrx:kernel:address1:RoomAddressable"
         };
-
+    
     public static final Map<Short,String> POSTAL_COUNTRIES_BY_CODE = new ConcurrentHashMap<Short,String>();
     private static final Map<String,Short> POSTAL_COUNTRIES_BY_TEXT = new ConcurrentHashMap<String,Short>(); 
     public static final Map<Short,Integer> PHONE_COUNTRIES = new HashMap<Short,Integer>();
@@ -502,9 +523,10 @@ public class Addresses extends AbstractImpl {
 		POSTAL_COUNTRIES_BY_CODE.put((short)706, "Somalia [SO]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)710, "South Africa [ZA]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)239, "South Georgia and South Sandwich Islands [GS]");
+		POSTAL_COUNTRIES_BY_CODE.put((short)728, "South Sudan [SS]");
+		POSTAL_COUNTRIES_BY_CODE.put((short)729, "Sudan [SS]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)724, "Spain [ES]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)144, "Sri Lanka [LK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)736, "Sudan [SD]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)740, "Suriname [SR]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)744, "Svalbard and Jan Mayen [SJ]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)748, "Swaziland [SZ]");
@@ -534,7 +556,7 @@ public class Addresses extends AbstractImpl {
 		POSTAL_COUNTRIES_BY_CODE.put((short)860, "Uzbekistan [UZ]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)548, "Vanatu [VU]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)862, "Venezuela [VE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)70, "Viet Nam [VN]");
+		POSTAL_COUNTRIES_BY_CODE.put((short)704, "Viet Nam [VN]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)850, "Virgin Islands, U.S. [VI]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)92, "Virgin Islands. British [VG]");
 		POSTAL_COUNTRIES_BY_CODE.put((short)876, "Wallis and Futuna [WF]");

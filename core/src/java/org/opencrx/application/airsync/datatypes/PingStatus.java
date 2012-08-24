@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: PingStatus.java,v 1.1 2010/03/01 17:04:35 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/03/01 17:04:35 $
  * ====================================================================
  *
  * This software is published under the BSD license

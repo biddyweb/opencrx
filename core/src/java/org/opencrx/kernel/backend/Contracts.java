@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Contracts.java,v 1.130 2012/01/13 17:15:42 wfro Exp $
  * Description: Contracts
- * Revision:    $Revision: 1.130 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,10 +70,6 @@ import java.util.Set;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
-import org.codehaus.janino.ClassBodyEvaluator;
-import org.codehaus.janino.CompileException;
-import org.codehaus.janino.Parser;
-import org.codehaus.janino.Scanner;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.contract1.cci2.AbstractContractQuery;
 import org.opencrx.kernel.contract1.cci2.AbstractInvoicePositionQuery;
@@ -139,6 +132,7 @@ import org.opencrx.kernel.product1.jmi1.PricingRule;
 import org.opencrx.kernel.product1.jmi1.Product;
 import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
 import org.opencrx.kernel.uom1.jmi1.Uom;
+import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
@@ -212,7 +206,6 @@ public class Contracts extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        UUIDGenerator uuids = UUIDs.getGenerator();
         org.opencrx.kernel.contract1.jmi1.Segment contractSegment = this.getContractSegment(
             pm, 
             providerName, 
@@ -233,8 +226,7 @@ public class Contracts extends AbstractImpl {
             contractSegment.getOwningGroup()
         );
         contractSegment.addCalculationRule(
-            false,
-            UUIDConversion.toUID(uuids.next()),
+            UUIDConversion.toUID(UUIDs.newUUID()),
             calculationRule
         );                        
         pm.currentTransaction().commit();        
@@ -560,21 +552,18 @@ public class Contracts extends AbstractImpl {
             calculationRule.getGetPositionAmountsScript();
         org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm); 
         try {
-            Method getPositionAmountMethod = getPositionAmountMethods.get(script);
-            if(getPositionAmountMethod == null) {
-                Class<?> c = new ClassBodyEvaluator(script).getClazz();
-                getPositionAmountMethod = c.getMethod(
-                    "getPositionAmounts", 
-                    new Class[] {
-                        org.openmdx.base.accessor.jmi.cci.RefPackage_1_0.class,
-                        CalculationRule.class, 
-                        SalesContractPosition.class,
-                        BigDecimal.class, // minMaxAdjustedQuantity
-                        BigDecimal.class, // uomScaleFactor
-                        BigDecimal.class // salesTaxRate
-                    }
-                );
-            }
+        	Class<?> clazz = ScriptUtils.getClass(script);
+            Method getPositionAmountMethod = clazz.getMethod(
+                "getPositionAmounts", 
+                new Class[] {
+                    org.openmdx.base.accessor.jmi.cci.RefPackage_1_0.class,
+                    CalculationRule.class, 
+                    SalesContractPosition.class,
+                    BigDecimal.class, // minMaxAdjustedQuantity
+                    BigDecimal.class, // uomScaleFactor
+                    BigDecimal.class // salesTaxRate
+                }
+            );
             org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult result = 
                 (org.opencrx.kernel.contract1.jmi1.GetPositionAmountsResult)getPositionAmountMethod.invoke(
                     null, 
@@ -589,33 +578,6 @@ public class Contracts extends AbstractImpl {
                 );
             return result;
         }
-        catch(CompileException e) {
-            return contractPkg.createGetPositionAmountsResult(
-                null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not compile getPositionAmountsScript:\n" +
-                e.getMessage(),
-                null
-            );
-        }
-        catch(Parser.ParseException e) {
-            return contractPkg.createGetPositionAmountsResult(
-                null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not parse getPositionAmounts:\n" +
-                e.getMessage(),
-                null
-            );
-        }
-        catch(Scanner.ScanException e) {
-            return contractPkg.createGetPositionAmountsResult(
-                null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not scan getPositionAmounts:\n" +
-                e.getMessage(),
-                null
-            );
-        }
         catch(NoSuchMethodException e) {
             return contractPkg.createGetPositionAmountsResult(
                 null, null, null,
@@ -629,8 +591,7 @@ public class Contracts extends AbstractImpl {
             return contractPkg.createGetPositionAmountsResult(
                 null, null, null,
                 STATUS_CODE_ERROR,
-                "Can not invoke getPositionAmounts:\n" +
-                e.getTargetException().getMessage(),
+                "Can not invoke getPositionAmounts:\n" + e.getTargetException().getMessage(),
                 null
             );
         }
@@ -638,8 +599,15 @@ public class Contracts extends AbstractImpl {
             return contractPkg.createGetPositionAmountsResult(
                 null, null, null,
                 STATUS_CODE_ERROR,
-                "Illegal access when invoking getPositionAmounts:\n" +
-                e.getMessage(),
+                "Illegal access when invoking getPositionAmounts:\n" + e.getMessage(),
+                null
+            );
+        }
+        catch(Exception e) {
+            return contractPkg.createGetPositionAmountsResult(
+                null, null, null,
+                STATUS_CODE_ERROR,
+                "Error parsing getPositionAmountsScript:\n" + e.getMessage(),
                 null
             );
         }
@@ -663,29 +631,22 @@ public class Contracts extends AbstractImpl {
             calculationRule.getGetContractAmountsScript();
         org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm); 
         try {
-            Method getContractAmountMethod = getContractAmountMethods.get(script);
-            if(getContractAmountMethod == null) {
-                Class<?> c = new ClassBodyEvaluator(script).getClazz();
-                getContractAmountMethod = c.getMethod(
-                    "getContractAmounts", 
-                    new Class[] {
-                        org.openmdx.base.accessor.jmi.cci.RefPackage_1_0.class,
-                        CalculationRule.class, 
-                        SalesContract.class,
-                        Integer[].class,
-                        BigDecimal[].class,
-                        BigDecimal[].class,
-                        BigDecimal[].class,
-                        BigDecimal[].class,
-                        BigDecimal[].class,
-                        Boolean[].class
-                    }
-                );
-                getContractAmountMethods.put(
-                    script,
-                    getContractAmountMethod                        
-                );
-            }
+        	Class<?> clazz = ScriptUtils.getClass(script);
+            Method getContractAmountMethod = clazz.getMethod(
+                "getContractAmounts", 
+                new Class[] {
+                    org.openmdx.base.accessor.jmi.cci.RefPackage_1_0.class,
+                    CalculationRule.class, 
+                    SalesContract.class,
+                    Integer[].class,
+                    BigDecimal[].class,
+                    BigDecimal[].class,
+                    BigDecimal[].class,
+                    BigDecimal[].class,
+                    BigDecimal[].class,
+                    Boolean[].class
+                }
+            );
             org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult result = 
                 (org.opencrx.kernel.contract1.jmi1.GetContractAmountsResult)getContractAmountMethod.invoke(
                     null, 
@@ -704,30 +665,6 @@ public class Contracts extends AbstractImpl {
                 );
             return result;
         }
-        catch(CompileException e) {
-            return contractPkg.createGetContractAmountsResult(
-                STATUS_CODE_ERROR,
-                "Can not compile getContractAmountsScript:\n" +
-                e.getMessage(),
-                null, null, null, null, null, null
-            );
-        }
-        catch(Parser.ParseException e) {
-            return contractPkg.createGetContractAmountsResult(
-                STATUS_CODE_ERROR,
-                "Can not parse getContractAmounts:\n" +
-                e.getMessage(),
-                null, null, null, null, null, null
-            );
-        }
-        catch(Scanner.ScanException e) {
-            return contractPkg.createGetContractAmountsResult(
-                STATUS_CODE_ERROR,
-                "Can not scan getContractAmounts:\n" +
-                e.getMessage(),
-                null, null, null, null, null, null
-            );
-        }
         catch(NoSuchMethodException e) {
             return contractPkg.createGetContractAmountsResult(
                 STATUS_CODE_ERROR,
@@ -739,16 +676,21 @@ public class Contracts extends AbstractImpl {
         catch(InvocationTargetException e) {
             return contractPkg.createGetContractAmountsResult(
                 STATUS_CODE_ERROR,
-                "Can not invoke getContractAmounts:\n" +
-                e.getTargetException().getMessage(),
+                "Can not invoke getContractAmounts:\n" + e.getTargetException().getMessage(),
                 null, null, null, null, null, null
             );
         }
         catch(IllegalAccessException e) {
             return contractPkg.createGetContractAmountsResult(
                 STATUS_CODE_ERROR,
-                "Illegal access when invoking getContractAmounts:\n" +
-                e.getMessage(),
+                "Illegal access when invoking getContractAmounts:\n" + e.getMessage(),
+                null, null, null, null, null, null
+            );
+        }
+        catch(Exception e) {
+            return contractPkg.createGetContractAmountsResult(
+                STATUS_CODE_ERROR,
+                "Error parsing getContractAmountsScript:\n" + e.getMessage(),
                 null, null, null, null, null, null
             );
         }
@@ -2981,8 +2923,6 @@ public class Contracts extends AbstractImpl {
         "        salesCommissionIsPercentages\n" +
         "    );\n" +
         "}//</pre>";
-    protected static final Map<String,Method> getContractAmountMethods = new HashMap<String,Method>();
-    protected static final Map<String,Method> getPositionAmountMethods = new HashMap<String,Method>();
         
 }
 

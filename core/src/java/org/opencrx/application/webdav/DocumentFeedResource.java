@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DocumentFeedResource.java,v 1.1 2010/12/06 14:08:51 wfro Exp $
  * Description: AccountCollectionResource
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/06 14:08:51 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityWizard.jsp,v 1.25 2012/01/18 09:20:43 cmu Exp $
+ * Name:        $Id: CreateActivityWizard.jsp,v 1.29 2012/07/08 13:30:33 wfro Exp $
  * Description: CreateActivityWizard
- * Revision:    $Revision: 1.25 $
+ * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/18 09:20:43 $
+ * Date:        $Date: 2012/07/08 13:30:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,7 +66,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -123,9 +122,11 @@ org.openmdx.kernel.exception.*
 	final String formName = "CreateActivityForm";
 	final String wizardName = "CreateActivityWizard.jsp";
 	final String ACTIVITY_CLASS = "org:opencrx:kernel:activity1:Activity";
+	final String ACTIVITYLINKTO_CLASS = "org:opencrx:kernel:activity1:ActivityLinkTo";
 	final String ACTIVITYCREATOR_CLASS = "org:opencrx:kernel:activity1:ActivityCreator";
 	final String ACTIVITYTYPE_CLASS = "org:opencrx:kernel:activity1:ActivityType";
 	final String MEMBER_CLASS = "org:opencrx:kernel:account1:Member";
+	final short CODE_ACTIVITYLINKTYPE_RELATESTO = (short)6;
 	
 	// Get Parameters
 	String command = request.getParameter("Command");
@@ -148,9 +149,13 @@ org.openmdx.kernel.exception.*
 	<meta name="UNUSEDtoolTip" content="Create Activity">
 	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:Segment">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCreator">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:Activity">
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:createActivity">
+	<meta name="order" content="org:opencrx:kernel:activity1:ActivityTracker:createActivity">
 	<meta name="order" content="org:opencrx:kernel:activity1:ActivityCreator:createActivity">
+	<meta name="order" content="org:opencrx:kernel:activity1:Activity:createActivity">
 -->
 <%
 	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
@@ -169,6 +174,9 @@ org.openmdx.kernel.exception.*
 		pm
 	);
 	
+	// get additional parameters
+	String linkToActivity	= isFirstCall ? "linkToActivity" : request.getParameter("linkToActivity");
+
 	/* if started from an activity creator - preselect this activity creator */
 	if (
 			 formValues.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") == null &&
@@ -199,16 +207,16 @@ org.openmdx.kernel.exception.*
 
 	boolean allMandatoryFieldsSet = true;
 	
+	UserDefinedView userView = new UserDefinedView(
+		pm.getObjectById(new Path(objectXri)),
+		app,
+		viewsCache.getView(requestId)
+	);
+
 	if (!isFirstCall) {
 
 			org.openmdx.ui1.jmi1.ElementDefinition elDef = null;
 
-			UserDefinedView userView = new UserDefinedView(
-				pm.getObjectById(new Path(objectXri)),
-				app,
-				viewsCache.getView(requestId)
-			);
-		
 			// check name
 			try {
 				if ((String)formValues.get("org:opencrx:kernel:activity1:Activity:name") == null) {
@@ -245,9 +253,14 @@ org.openmdx.kernel.exception.*
 			
 	}
 	
+	String providerName = obj.refGetPath().get(2);
+	String segmentName = obj.refGetPath().get(4);
+	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+			new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+		);
 	if(actionCreate && allMandatoryFieldsSet) {
 		try{
-	    String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
+			String name = (String)formValues.get("org:opencrx:kernel:activity1:Activity:name");
 
 			org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = null;
 			try {
@@ -260,67 +273,102 @@ org.openmdx.kernel.exception.*
 				new ServiceException(e).log();
 			}
 	    
-	    org.opencrx.kernel.account1.jmi1.Contact reportingContact = formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact") != null ?
+			org.opencrx.kernel.account1.jmi1.Contact reportingContact = formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact") != null ?
 	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
 	    		formValues.get("org:opencrx:kernel:activity1:Activity:reportingContact")
 	    	) : null;
-	    Short priority = (Short)formValues.get("org:opencrx:kernel:activity1:Activity:priority");
-	    Date dueBy = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:dueBy");
-	    Date scheduledStart = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:scheduledStart");
-	    Date scheduledEnd = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:scheduledEnd");
-	    String misc1 = (String)formValues.get("org:opencrx:kernel:activity1:Activity:misc1");
-	    String misc2 = (String)formValues.get("org:opencrx:kernel:activity1:Activity:misc2");
-	    String misc3 = (String)formValues.get("org:opencrx:kernel:activity1:Activity:misc3");
-	    String description = (String)formValues.get("org:opencrx:kernel:activity1:Activity:description");
-	    String detailedDescription = (String)formValues.get("org:opencrx:kernel:activity1:Activity:detailedDescription");
-	    if(
-	        (name != null) &&
-	        (name.trim().length() > 0) &&
-	        (activityCreator != null)
-	    ) {
-			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
-				null, // creationContext
-		 	    description,
-		 	    detailedDescription,
-		 	    dueBy,
-		 	    (short)0,
-		 	    name,
-		 	    priority,
-		 	    reportingContact,
-		 	    scheduledEnd,
-		 	    scheduledStart
-			);
-			pm.currentTransaction().begin();
-			org.opencrx.kernel.activity1.jmi1.NewActivityResult result = activityCreator.newActivity(params);
-			pm.currentTransaction().commit();
-			org.opencrx.kernel.activity1.jmi1.Activity newActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(result.getActivity().refGetPath());
-			pm.currentTransaction().begin();
-			newActivity.setMisc1(misc1);
-			newActivity.setMisc2(misc2);
-			newActivity.setMisc3(misc3);
-			newActivity.setReportingAccount(reportingAccount);
-			pm.currentTransaction().commit();
-			session.setAttribute(wizardName, null);
-			Action nextAction = new ObjectReference(
-		    	result.getActivity(),
-		    	app
-		   	).getSelectObjectAction();
-			response.sendRedirect(
-				request.getContextPath() + "/" + nextAction.getEncodedHRef()
-			);
-			return;
-	    }
-	  } catch (Exception e) {
-	      new ServiceException(e).log();
-	      try {
-					Throwable root = e;  
-			    while (root.getCause() != null) {  
-			        root = root.getCause();  
-			    }
-					errorMsg = (root.toString()).replaceAll("(\\r|\\n)","<br>");
-				} catch (Exception e0) {}
-	      //System.out.println("error: " + errorMsg);
-	  }
+			org.opencrx.kernel.account1.jmi1.Contact assignedTo = null;
+			try {
+				assignedTo = (org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
+						(Path)formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo")
+					);
+			} catch (Exception e) {}
+			Short priority = (Short)formValues.get("org:opencrx:kernel:activity1:Activity:priority");
+			Date dueBy = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:dueBy");
+			Date scheduledStart = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:scheduledStart");
+			Date scheduledEnd = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:scheduledEnd");
+			String misc1 = (String)formValues.get("org:opencrx:kernel:activity1:Activity:misc1");
+			String misc2 = (String)formValues.get("org:opencrx:kernel:activity1:Activity:misc2");
+			String misc3 = (String)formValues.get("org:opencrx:kernel:activity1:Activity:misc3");
+			String description = (String)formValues.get("org:opencrx:kernel:activity1:Activity:description");
+			String detailedDescription = (String)formValues.get("org:opencrx:kernel:activity1:Activity:detailedDescription");
+			if(
+				(name != null) &&
+				(name.trim().length() > 0) &&
+				(activityCreator != null)
+			) {
+				org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
+					null, // creationContext
+					description,
+					detailedDescription,
+					dueBy,
+					(short)0,
+					name,
+					priority,
+					reportingContact,
+					scheduledEnd,
+					scheduledStart
+				);
+				pm.currentTransaction().begin();
+				org.opencrx.kernel.activity1.jmi1.NewActivityResult result = activityCreator.newActivity(params);
+				pm.currentTransaction().commit();
+				org.opencrx.kernel.activity1.jmi1.Activity newActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(result.getActivity().refGetPath());
+				pm.currentTransaction().begin();
+				newActivity.setMisc1(misc1);
+				newActivity.setMisc2(misc2);
+				newActivity.setMisc3(misc3);
+				newActivity.setReportingAccount(reportingAccount);
+				if (assignedTo != null) {
+						newActivity.setAssignedTo(assignedTo);
+				}
+				pm.currentTransaction().commit();
+				
+                if (obj instanceof org.opencrx.kernel.activity1.jmi1.Activity && linkToActivity != null && linkToActivity.length() > 0) {
+					// create new ActivityLinkTo
+                	try {
+						pm.currentTransaction().begin();
+						org.opencrx.kernel.activity1.jmi1.ActivityLinkTo activityLinkTo = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).getActivityLinkTo().createActivityLinkTo();
+						activityLinkTo.refInitialize(false, false);
+						activityLinkTo.setLinkTo(newActivity);
+						activityLinkTo.setName(name);
+						activityLinkTo.setActivityLinkType(CODE_ACTIVITYLINKTYPE_RELATESTO); // relates to
+						((org.opencrx.kernel.activity1.jmi1.Activity)obj).addActivityLinkTo(
+							false,
+							org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
+							activityLinkTo
+						);
+						pm.currentTransaction().commit();
+					} catch (Exception e) {
+						try {
+							pm.currentTransaction().rollback();
+						} catch (Exception er) {}
+					}
+                }
+				
+				session.setAttribute(wizardName, null);
+				Action nextAction = new ObjectReference(
+				   	result.getActivity(),
+				   	app
+				  	).getSelectObjectAction();
+				response.sendRedirect(
+					request.getContextPath() + "/" + nextAction.getEncodedHRef()
+				);
+				return;
+			}
+		} catch (Exception e) {
+			new ServiceException(e).log();
+			try {
+				Throwable root = e;  
+				while (root.getCause() != null) {  
+				    root = root.getCause();  
+				}
+				errorMsg = (root.toString()).replaceAll("(\\r|\\n)","<br>");
+			} catch (Exception e0) {}
+			try {
+				pm.currentTransaction().rollback();
+			} catch (Exception er) {}
+			//System.out.println("error: " + errorMsg);
+		}
 	}
 	if(obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
 	    formValues.put(
@@ -374,15 +422,16 @@ org.openmdx.kernel.exception.*
 %>					
 					<script language="javascript" type="text/javascript">
 						try {
-				      var els = document.getElementsByTagName('INPUT');
-				      for (i=0; i<els.length; i++) {
-				        if (els[i].id && (els[i].id.indexOf('org:opencrx:kernel:activity1:Activity:reportingAccount') >= 0)) {
-				          var INPUT = els[i];
-				          <!-- workaround because onChange does not fire with {IE, Chrome, ...} -->
-				          INPUT.setAttribute('onFocus', 'this.previousValue = this.value;');
-				          INPUT.setAttribute('onBlur','if (this.previousValue != this.value) {this.previousValue=this.value;setTimeout("$(\'Refresh.Button\').click()", 500);}');
-				        }
-				      }
+					      var els = document.getElementsByTagName('INPUT');
+					      for (i=0; i<els.length; i++) {
+						        if (els[i].id && (els[i].id.indexOf('org:opencrx:kernel:activity1:Activity:reportingAccount') >= 0) && (els[i].id.indexOf('.Title') >= 0)) {
+						          var eltINPUT = els[i];
+						        }
+						    }
+						    if (eltINPUT) {
+						    	eltINPUT.setAttribute('onFocus', 'this.previousValue = this.value;');
+						    	eltINPUT.setAttribute('onBlur','if (this.previousValue != this.value) {this.previousValue=this.value;setTimeout("$(\'Refresh.Button\').click()", 500);}');
+						    }
 						} catch(e){}
 					</script>
 <%
@@ -400,45 +449,40 @@ org.openmdx.kernel.exception.*
 									<td>
 										<input type="hidden" id="fetchMemberContact" name="fetchMemberContact" value="" /> 
 										<select id="memberContact" name="memberContact" class="valueL" onchange="javascript:$('fetchMemberContact').value='override';$('Refresh.Button').click();" >
-		                  <option value="NA">^</option>
+											<option value="NA">^</option>
 <%
-			                // get Members sorted by name(asc)
-											String providerName = obj.refGetPath().get(2);
-											String segmentName = obj.refGetPath().get(4);
-											org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-													new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-												);
+											// get Members sorted by name(asc)
 											org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
-			                org.opencrx.kernel.account1.cci2.MemberQuery memberQuery = accountPkg.createMemberQuery();
-			                memberQuery.orderByName().ascending();
-			                memberQuery.forAllDisabled().isFalse();
+								            org.opencrx.kernel.account1.cci2.MemberQuery memberQuery = accountPkg.createMemberQuery();
+								            memberQuery.orderByName().ascending();
+								            memberQuery.forAllDisabled().isFalse();
 											int maxMemberToShow = 200;
-			                for (
-			                  Iterator k = reportingAccount.getMember(memberQuery).iterator();
-			                  k.hasNext() && maxMemberToShow > 0;
-			                  maxMemberToShow--
-			                ) {
-			                	try {
-				                  // get member
-				            	    org.opencrx.kernel.account1.jmi1.Member member =
-				                    (org.opencrx.kernel.account1.jmi1.Member)k.next();
-				            	    org.opencrx.kernel.account1.jmi1.Account account = member.getAccount();
-				            	    org.opencrx.kernel.account1.jmi1.Contact contact = null;
-				            	    if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-				            	    		contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
-				            	    }
-				            	    if (contact != null) {
-				            	    	hasContacts = true;
-					                  String selectedModifier = ""; //((contact != null ) && (assignedTo != null) && (assignedTo.refMofId().compareTo(contact.refMofId()) == 0)) ? "selected" : "";
+								            for (
+								              Iterator k = reportingAccount.getMember(memberQuery).iterator();
+								              k.hasNext() && maxMemberToShow > 0;
+								              maxMemberToShow--
+								            ) {
+								            	try {
+													// get member
+									         	    org.opencrx.kernel.account1.jmi1.Member member =
+									                 (org.opencrx.kernel.account1.jmi1.Member)k.next();
+									         	    org.opencrx.kernel.account1.jmi1.Account account = member.getAccount();
+									         	    org.opencrx.kernel.account1.jmi1.Contact contact = null;
+									         	    if (account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+									         	    		contact = (org.opencrx.kernel.account1.jmi1.Contact)account;
+									         	    }
+									         	    if (contact != null) {
+									         	    	hasContacts = true;
+									                	String selectedModifier = ""; //((contact != null ) && (assignedTo != null) && (assignedTo.refMofId().compareTo(contact.refMofId()) == 0)) ? "selected" : "";
+	%>
+														<option <%= selectedModifier %> value="<%= contact.refMofId() %>"><%= member.getName() + (contact != null ? " (" + contact.getFirstName() + " " + contact.getLastName() + ")": "") %></option>
+	<%
+													}
+												} catch (Exception e) {}
+											}
 %>
-					                  <option <%= selectedModifier %> value="<%= contact.refMofId() %>"><%= member.getName() + (contact != null ? " (" + contact.getFirstName() + " " + contact.getLastName() + ")": "") %></option>
-<%
-				            	    }
-			                	} catch (Exception e) {}
-			                }
-%>
-			              </select>
-				          </td>
+										</select>
+									</td>
 									<td class="addon"/>
 								</tr>
 							</table>
@@ -469,11 +513,35 @@ org.openmdx.kernel.exception.*
 							</script>					
 <%
 					}
+					if (obj instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
+						// offer to create link from calling activity to new activity
+						String desc = app.getLabel(ACTIVITY_CLASS);
+						try {
+							desc = (new ObjectReference(obj, app)).getTitle();
+						} catch (Exception e) {}
+%>
+						<table>
+							<tr><td/><td/><td/></tr>
+							<tr id="activityLink">
+								<td class="label">
+									<span class="nw"><%= userView.getFieldLabel(ACTIVITYLINKTO_CLASS, "linkTo", app.getCurrentLocaleAsIndex()) %>:</span>
+								</td>
+								<td>
+									<input type="checkbox" id="linkToActivity" name="linkToActivity" <%= (linkToActivity != null) && (linkToActivity.length() > 0) ? "checked" : "" %> tabindex="8000" value="linkToActivity" /> <%= desc %>
+								</td>
+								<td class="addon"></td>
+							</tr>
+						</table>
+<%
+					}
 %>
 				</div>
- 				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:$('Command').value=this.name;" />
-				<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getNewText() %>" onclick="javascript:$('Command').value=this.name;this.name='---';" />
-				<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+				<div id="SubmitArea" style="float:left;display:none;">
+	 				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" style="display:none;" "onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+					<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getNewText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;this.name='---';" />
+					<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+				</div>
 			</td>
 		</tr>
 	</table>
@@ -488,6 +556,8 @@ org.openmdx.kernel.exception.*
 		});
 		Event.stop(event);
 	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';
 </script>
 <%
 p.close(false);

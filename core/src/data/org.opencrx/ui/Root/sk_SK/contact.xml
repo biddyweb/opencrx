@@ -556,7 +556,7 @@
                         <_item>Dátum narodenia</_item>
                       </label>
                       <toolTip>
-                        <_item>Dátum narodenia osoby</_item>
+                        <_item>Dátum narodenia osoby (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Narodeniny</_item>
                       </label>
                       <toolTip>
-                        <_item>Narodeniny osoby</_item>
+                        <_item>Narodeniny osoby (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: WebDavStore.java,v 1.13 2012/01/13 17:15:17 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.13 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -175,7 +172,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 					newFolder.setParent(parentFolder);
 					newFolder.getOwningGroup().addAll(parentFolder.getOwningGroup());
 					documentSegment.addFolder(
-						UUIDConversion.toUID(uuidGenerator.next()),					
+						UUIDConversion.toUID(UUIDs.newUUID()),					
 						newFolder
 					);
 					pm.currentTransaction().commit();
@@ -465,7 +462,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	    				documentFolder.getOwningGroup()
 	    			);
 	    			documentSegment.addDocument(
-	    				UUIDConversion.toUID(uuidGenerator.next()),
+	    				UUIDConversion.toUID(UUIDs.newUUID()),
 	    				document
 	    			);
 	    			document.getFolder().add(
@@ -499,7 +496,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	    		}
     			revision.setVersion(Integer.toString(version));
 	    		document.addRevision(
-	    			UUIDConversion.toUID(uuidGenerator.next()),
+	    			UUIDConversion.toUID(UUIDs.newUUID()),
 	    			revision
 	    		);
 	    		document.setHeadRevision(revision);
@@ -533,7 +530,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	    	int depth, 
 	    	int timeout
 		) {
-			this.id = path + UUIDs.getGenerator().next().toString();
+			this.id = path + UUIDConversion.toUID(UUIDs.newUUID());
 			this.path = path;
 			this.owner = owner;
 			this.scope = scope;
@@ -628,9 +625,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 
 	//-----------------------------------------------------------------------
     // Members
-    //-----------------------------------------------------------------------
-	private static final UUIDGenerator uuidGenerator = UUIDs.getGenerator();
-	
+    //-----------------------------------------------------------------------	
 	protected PersistenceManagerFactory pmf = null;
 	
 }

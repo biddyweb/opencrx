@@ -181,8 +181,8 @@
 														</label>
 														<order>20</order>
 														<columnBreakAtElement>
-															<_item>5</_item>
-															<_item>10</_item>
+															<_item>6</_item>
+															<_item>12</_item>
 														</columnBreakAtElement>
 													</_object>
 													<_content>
@@ -212,11 +212,19 @@
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="businessPostalState">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
+																	<featureName>address*Business!postalState</featureName>
+																	<order>400</order>														
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
 															<org.openmdx.ui1.FormFieldDefinition id="businessPostalCode">
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalCode</featureName>
-																	<order>400</order>														
+																	<order>500</order>														
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -224,7 +232,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalCountry</featureName>
-																	<order>500</order>														
+																	<order>600</order>														
 																	<skipRow>0</skipRow>
 																</_object>
 																<_content />
@@ -234,7 +242,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalAddressLine</featureName>
-																	<order>600</order>														
+																	<order>700</order>														
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -242,7 +250,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalStreet</featureName>
-																	<order>700</order>														
+																	<order>800</order>														
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -250,7 +258,15 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalCity</featureName>
-																	<order>800</order>														
+																	<order>900</order>														
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="homePostalState">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
+																	<featureName>address!postalState</featureName>
+																	<order>1000</order>														
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -258,7 +274,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalCode</featureName>
-																	<order>900</order>														
+																	<order>1100</order>														
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -266,7 +282,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalCountry</featureName>
-																	<order>1000</order>
+																	<order>1200</order>
 																	<skipRow>0</skipRow>														
 																</_object>
 																<_content />

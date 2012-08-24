@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Accounts.java,v 1.100 2012/01/13 17:15:42 wfro Exp $
  * Description: Accounts
- * Revision:    $Revision: 1.100 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -554,18 +551,27 @@ public class Accounts extends AbstractImpl {
         		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", (SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName))
         	);
         	if(segmentAdmin != null) {
-        		pmAdmin.currentTransaction().begin();
-        		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
-        		emailAddress.setEmailAddress(email);
-        		emailAddress.setEmailType((short)1);
-        		segmentAdmin.addAddress(
-        			this.getUidAsString(),
-        			emailAddress
-        		);
-        		pmAdmin.currentTransaction().commit();
-        		emailAddresses = Collections.singletonList(
-        			(EMailAddress)pm.getObjectById(emailAddress.refGetPath())
-        		);
+            	EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+            	query.thereExistsEmailAddress().equalTo(email);
+            	List<EMailAddress> existingAddresses = segmentAdmin.getAddress(query);
+            	if(existingAddresses.isEmpty()) {
+	        		pmAdmin.currentTransaction().begin();
+	        		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
+	        		emailAddress.setEmailAddress(email);
+	        		emailAddress.setEmailType((short)1);
+	        		segmentAdmin.addAddress(
+	        			this.getUidAsString(),
+	        			emailAddress
+	        		);
+	        		pmAdmin.currentTransaction().commit();
+	        		emailAddresses = Collections.singletonList(
+	        			(EMailAddress)pm.getObjectById(emailAddress.refGetPath())
+	        		);
+            	} else {
+            		emailAddresses = Collections.singletonList(
+	        			(EMailAddress)pm.getObjectById(existingAddresses.iterator().next().refGetPath())
+	        		);
+            	}
         	}
         	pmAdmin.close();
     	}
@@ -573,18 +579,19 @@ public class Accounts extends AbstractImpl {
     }
 
     //-------------------------------------------------------------------------
-    private static List<org.opencrx.kernel.account1.jmi1.AccountAddress> getAccountAddresses(
-    	PersistenceManager pm,
-        org.opencrx.kernel.account1.jmi1.Account account,
+    public List<org.opencrx.kernel.account1.jmi1.AccountAddress> getAccountAddresses(
+        Account account,
         short usage
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
         org.opencrx.kernel.account1.cci2.AccountAddressQuery query = 
-        	(org.opencrx.kernel.account1.cci2.AccountAddressQuery)pm.newQuery( org.opencrx.kernel.account1.jmi1.AccountAddress.class); 
+        	(org.opencrx.kernel.account1.cci2.AccountAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountAddress.class); 
         query.thereExistsUsage().equalTo(usage);
         query.forAllDisabled().isFalse();
+        query.orderByCreatedAt().ascending();
         return account.getAddress(query); 
     }
-    
+
     //-------------------------------------------------------------------------
     public String getPrimaryBusinessEMail(
         Account account,
@@ -632,233 +639,239 @@ public class Accounts extends AbstractImpl {
         return phoneNumber;
     }
 
-    //-------------------------------------------------------------------------
     /**
-     * Return main home and business addresses of given account.
-     * @return array with elements {web home, web business, phone home, phone business, 
-     *         fax home, fax, business, postal home, postal business,
-     *         mail home, mail business, mobile, phone other} 
+     * Same as getMainAddresses(account, false);
+     * @param account
+     * @return main addresses of account
      */
     public org.opencrx.kernel.account1.jmi1.AccountAddress[] getMainAddresses(
         Account account
     ) {
-        int currentOrderBusinessMail = 0;
-        int currentOrderHomeMail = 0;
-        int currentOrderBusinessPhone = 0;
-        int currentOrderHomePhone = 0;
-        int currentOrderBusinessFax = 0;
-        int currentOrderHomeFax = 0;
-        int currentOrderBusinessPostal = 0;
-        int currentOrderBusinessWeb = 0;
-        int currentOrderHomePostal = 0;
-        int currentOrderHomeWeb = 0;
-        int currentOrderMobile = 0;
-        int currentOrderOtherPhone = 0;
-        
-        PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.account1.jmi1.AccountAddress[] mainAddresses = 
-            new org.opencrx.kernel.account1.jmi1.AccountAddress[12];
+    	return this.getMainAddresses(account, false);
+    }
+    
+    /**
+     * Return main home and business addresses of given account. If strict is
+     * true then address.isMain() is true for all returned addresses. If strict
+     * is false then non-main addresses are returned in case a main address with
+     * the same type and usage does exist.
+     * @param account
+     * @param strict
+     * @return array with elements {web home, web business, phone home, phone business, 
+     *         fax home, fax, business, postal home, postal business,
+     *         mail home, mail business, mobile, phone other, mail other} 
+     */
+    public org.opencrx.kernel.account1.jmi1.AccountAddress[] getMainAddresses(
+        Account account,
+        boolean strict
+    ) {
+    	return this.getAccountAddresses(
+    		account, 
+    		new AddressFilter(){
+    			@Override
+    			public boolean matches(
+    				AccountAddress address
+    			) {
+    				boolean isMain = false;
+    				try {
+    					isMain = address.isMain();
+    				} catch(Exception e) {}
+    				return isMain;
+    			}
+			},
+			strict
+    	);
+    }
+
+    public interface AddressFilter {
+    	
+    	boolean matches(AccountAddress address);
+    	
+    }
+    
+    /**
+     * Return home and business addresses of given account matching the specified address filter.
+     * If strict is true then address.isMain() is true for all returned addresses. If strict
+     * is false then non-main addresses are returned in case a main address with
+     * the same type and usage does exist.
+     * @param account
+     * @param addressFilter
+     * @param strict
+     * @return array with elements {web home, web business, phone home, phone business, 
+     *         fax home, fax, business, postal home, postal business,
+     *         mail home, mail business, mobile, phone other, mail other} 
+     */
+    public AccountAddress[] getAccountAddresses(
+        Account account,
+        AddressFilter addressFilter,
+        boolean strict
+    ) {
+        boolean hasBusinessMail = false;
+        boolean hasHomeMail = false;
+        boolean hasBusinessPhone = false;
+        boolean hasHomePhone = false;
+        boolean hasBusinessFax = false;
+        boolean hasOrderHomeFax = false;
+        boolean hasBusinessPostal = false;
+        boolean hasBusinessWeb = false;
+        boolean hasHomePostal = false;
+        boolean hasHomeWeb = false;
+        boolean hasMobile = false;
+        boolean hasOtherPhone = false;
+        boolean hasOtherMail = false;
+
+        AccountAddress[] accountAddresses = new AccountAddress[13];
         // Performance: retrieve and cache addresses
         account.getAddress().isEmpty(); 
         // HOME
-        List<org.opencrx.kernel.account1.jmi1.AccountAddress> addresses = Accounts.getAccountAddresses(
-        	pm,
+        List<AccountAddress> addresses = this.getAccountAddresses(
             account,
             Addresses.USAGE_HOME
         );
-        for(org.opencrx.kernel.account1.jmi1.AccountAddress address: addresses) {
+        for(AccountAddress address: addresses) {
             if(address instanceof WebAddress) {
                 WebAddress webAddress = (WebAddress)address;
-                boolean isMain = false;
-                try {
-                    isMain = webAddress.isMain();
-                } catch(Exception e) {}
-                int orderHomeWeb = isMain ? 3 : 1;
-                if(orderHomeWeb > currentOrderHomeWeb) {
-                    mainAddresses[WEB_HOME] = webAddress;
-                    currentOrderHomeWeb = orderHomeWeb;
+                boolean matchesFilter = addressFilter.matches(webAddress);
+                if((!strict && !hasHomeWeb) || matchesFilter) {
+                    accountAddresses[WEB_HOME] = webAddress;
+                    hasHomeWeb = true;
                 }
             }
             else if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;
-                boolean isMain = false;
-                try {
-                    isMain = phoneNumber.isMain();
-                } catch(Exception e) {}
-                int orderHomePhone = isMain ? 3 : 1;
-                if(orderHomePhone > currentOrderHomePhone) {
-                    mainAddresses[PHONE_HOME] = phoneNumber;
-                    currentOrderHomePhone = orderHomePhone;
+                boolean matchesFilter = addressFilter.matches(phoneNumber);
+                if((!strict && !hasHomePhone) || matchesFilter) {
+                    accountAddresses[PHONE_HOME] = phoneNumber;
+                    hasHomePhone = true;
                 }
             }
             else if (address instanceof PostalAddress) {
                 PostalAddress postalAddress = (PostalAddress)address;
-                boolean isMain = false;
-                try {
-                    isMain = postalAddress.isMain();
-                } catch(Exception e) {}
-                int orderHomePostal = isMain ? 3 : 1;
-                if(orderHomePostal > currentOrderHomePostal) {       
-                    mainAddresses[POSTAL_HOME] = postalAddress;
-                    currentOrderHomePostal = orderHomePostal;
+                boolean matchesFilter = addressFilter.matches(postalAddress);
+                if((!strict && !hasHomePostal) || matchesFilter) {       
+                    accountAddresses[POSTAL_HOME] = postalAddress;
+                    hasHomePostal = true;
                 }
             }
             else if(address instanceof EMailAddress) {
                 EMailAddress mailAddress = (EMailAddress)address;
-                boolean isMain = false;
-                try {
-                    isMain = mailAddress.isMain();
-                } catch(Exception e) {}
-                int orderHomeMail = isMain ? 3 : 1;
-                if(orderHomeMail > currentOrderHomeMail) {
-                    mainAddresses[MAIL_HOME] = mailAddress;
-                    currentOrderHomeMail = orderHomeMail;
+                boolean matchesFilter = addressFilter.matches(mailAddress);
+                if((!strict && !hasHomeMail) || matchesFilter) {
+                    accountAddresses[MAIL_HOME] = mailAddress;
+                    hasHomeMail = true;
                 }
             }
         }    
         // BUSINESS
-        addresses = Accounts.getAccountAddresses(
-        	pm,
+        addresses = this.getAccountAddresses(
             account,
             Addresses.USAGE_BUSINESS
         );
         for(AccountAddress address: addresses) {
             if(address instanceof WebAddress) {
                 WebAddress webAddress = (WebAddress)address;
-                boolean isMain = false;
-                try {
-                    isMain = webAddress.isMain();
-                } 
-                catch(Exception e) {}
-                int orderBusinessWeb = isMain ? 3 : 1;
-                if(orderBusinessWeb > currentOrderBusinessWeb) {
-                    mainAddresses[WEB_BUSINESS] = webAddress;
-                    currentOrderBusinessWeb = orderBusinessWeb;
+                boolean matchesFilter = addressFilter.matches(webAddress);
+                if((!strict && !hasBusinessWeb) || matchesFilter) {
+                    accountAddresses[WEB_BUSINESS] = webAddress;
+                    hasBusinessWeb = true;
                 }
             }
             else if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;
-                boolean isMain = false;
-                try {
-                    isMain = phoneNumber.isMain();
-                } 
-                catch(Exception e) {}
-                int orderBusinessPhone = isMain ? 3 : 1;
-                if(orderBusinessPhone > currentOrderBusinessPhone) {
-                    mainAddresses[PHONE_BUSINESS] = phoneNumber;
-                    currentOrderBusinessPhone = orderBusinessPhone;
+                boolean matchesFilter = addressFilter.matches(phoneNumber);
+                if((!strict && !hasBusinessPhone) || matchesFilter) {
+                    accountAddresses[PHONE_BUSINESS] = phoneNumber;
+                    hasBusinessPhone = true;
                 }
             }
             else if (address instanceof PostalAddress) {
                 PostalAddress postalAddress = (PostalAddress)address;
-                boolean isMain = false;
-                try {
-                    isMain = postalAddress.isMain();
-                } 
-                catch(Exception e) {}
-                int orderBusinessPostal = isMain ? 3 : 1;
-                if(orderBusinessPostal > currentOrderBusinessPostal) {
-                    mainAddresses[POSTAL_BUSINESS] = postalAddress;
-                    currentOrderBusinessPostal = orderBusinessPostal;
+                boolean matchesFilter = addressFilter.matches(postalAddress);
+                if((!strict && !hasBusinessPostal) || matchesFilter) {
+                    accountAddresses[POSTAL_BUSINESS] = postalAddress;
+                    hasBusinessPostal = true;
                 }
             }
             else if(address instanceof EMailAddress) {
                 EMailAddress mailAddress = (EMailAddress)address;
-                boolean isMain = false;
-                try {
-                    isMain = mailAddress.isMain();
-                } 
-                catch(Exception e) {}
-                int orderBusinessMail = isMain ? 3 : 1;
-                if(orderBusinessMail > currentOrderBusinessMail) {
-                    mainAddresses[MAIL_BUSINESS] = mailAddress;
-                    currentOrderBusinessMail = orderBusinessMail;
+                boolean matchesFilter = addressFilter.matches(mailAddress);
+                if((!strict && !hasBusinessMail) || matchesFilter) {
+                    accountAddresses[MAIL_BUSINESS] = mailAddress;
+                    hasBusinessMail = true;
                 }
             }
         }    
         // OTHER
-        addresses = Accounts.getAccountAddresses(
-        	pm,
+        addresses = this.getAccountAddresses(
             account,
             Addresses.USAGE_OTHER
         );
         for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                
-                boolean isMain = false;
-                try {
-                    isMain = phoneNumber.isMain();
-                } catch(Exception e) {}
-                int orderOtherPhone = isMain ? 3 : 1;
-                if(orderOtherPhone > currentOrderOtherPhone) {
-                    mainAddresses[PHONE_OTHER] = phoneNumber;
-                    currentOrderOtherPhone = orderOtherPhone;
+                boolean matchesFilter = addressFilter.matches(phoneNumber);
+                if((!strict && !hasOtherPhone) || matchesFilter) {
+                    accountAddresses[PHONE_OTHER] = phoneNumber;
+                    hasOtherPhone = true;
+                }
+            }
+            else if(address instanceof EMailAddress) {
+            	EMailAddress mailAddress = (EMailAddress)address;                
+            	boolean matchesFilter = addressFilter.matches(mailAddress);
+                if((!strict && !hasOtherMail) || matchesFilter) {
+                    accountAddresses[MAIL_OTHER] = mailAddress;
+                    hasOtherMail = true;
                 }
             }
         }    
         // HOME_FAX
-        addresses = Accounts.getAccountAddresses(
-        	pm,
+        addresses = this.getAccountAddresses(
             account,
             Addresses.USAGE_HOME_FAX
         );
         for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                
-                boolean isMain = false;
-                try {
-                    isMain = phoneNumber.isMain();
-                } catch(Exception e) {}
-                int orderHomeFax = isMain ? 3 : 1;
-                if(orderHomeFax > currentOrderHomeFax) {           
-                    mainAddresses[FAX_HOME] = phoneNumber;
-                    currentOrderHomeFax = orderHomeFax;
+                boolean matchesFilter = addressFilter.matches(phoneNumber);
+                if((!strict && !hasOrderHomeFax) || matchesFilter) {           
+                    accountAddresses[FAX_HOME] = phoneNumber;
+                    hasOrderHomeFax = true;
                 }
             }
         }    
         // BUSINESS_FAX
-        addresses = Accounts.getAccountAddresses(
-        	pm,
+        addresses = this.getAccountAddresses(
             account,
             Addresses.USAGE_BUSINESS_FAX
         );
         for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;                                
-                boolean isMain = false;
-                try {
-                    isMain = phoneNumber.isMain();
-                } catch(Exception e) {}
-                int orderBusinessFax = isMain ? 3 : 1;
-                if(orderBusinessFax > currentOrderBusinessFax) {
-                    mainAddresses[FAX_BUSINESS] = phoneNumber;
-                    currentOrderBusinessFax = orderBusinessFax;
+                boolean matchesFilter = addressFilter.matches(phoneNumber);
+                if((!strict && !hasBusinessFax) || matchesFilter) {
+                    accountAddresses[FAX_BUSINESS] = phoneNumber;
+                    hasBusinessFax = true;
                 }
             }
         }    
         // MOBILE
-        addresses = Accounts.getAccountAddresses(
-        	pm,
+        addresses = this.getAccountAddresses(
             account,
             Addresses.USAGE_MOBILE
         );
         for(AccountAddress address: addresses) {
             if(address instanceof PhoneNumber) {
                 PhoneNumber phoneNumber = (PhoneNumber)address;     
-                boolean isMain = false;
-                try {
-                    isMain = phoneNumber.isMain();
-                } catch(Exception e) {}                
-                int orderMobile = isMain ? 3 : 1;
-                if(orderMobile > currentOrderMobile) { 
-                    mainAddresses[MOBILE] = phoneNumber;
-                    currentOrderMobile = orderMobile;
+                boolean matchesFilter = addressFilter.matches(phoneNumber);
+                if((!strict && !hasMobile) || matchesFilter) { 
+                    accountAddresses[MOBILE] = phoneNumber;
+                    hasMobile = true;
                 }
             }
-        }    
-        return mainAddresses;
+        }
+        return accountAddresses;
     }
-    
+
     //-------------------------------------------------------------------------
     public void updateVcard(
         Account account
@@ -1411,6 +1424,7 @@ public class Accounts extends AbstractImpl {
     public static final int WEB_HOME = 9;
     public static final int MOBILE = 10;
     public static final int PHONE_OTHER = 11;
+    public static final int MAIL_OTHER = 12;
 
     public static final short MEMBER_ROLE_EMPLOYEE = 11;
     public static final short MEMBER_ROLE_ASSISTANT = 17;

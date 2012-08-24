@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendMailNotificationWorkflow.java,v 1.4 2008/08/28 15:13:02 wfro Exp $
  * Description: SendMailNotificationWorkflow
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/08/28 15:13:02 $
  * ====================================================================
  *
  * This software is published under the BSD license

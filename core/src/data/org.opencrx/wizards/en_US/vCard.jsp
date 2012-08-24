@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: vCard.jsp,v 1.9 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: vCard.jsp,v 1.12 2012/07/13 10:08:08 wfro Exp $
  * Description: create vCard(s)
- * Revision:    $Revision: 1.9 $
+ * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2012/07/13 10:08:08 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,12 +68,12 @@ org.openmdx.kernel.id.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
+org.openmdx.base.text.conversion.*,
 org.openmdx.kernel.log.*
 " %>
 <%!
@@ -204,7 +204,7 @@ org.openmdx.kernel.log.*
 <%
    // Prepare
     org.opencrx.kernel.account1.jmi1.Account account = null;
-    String location = UUIDs.getGenerator().next().toString();
+    String location = UUIDConversion.toUID(UUIDs.newUUID());
     String filename = "---";
     String downloadFileName = "---";
     FileOutputStream fileos = null;
@@ -282,13 +282,26 @@ org.openmdx.kernel.log.*
           if (zipos == null) {
             zipos = new ZipOutputStream(fileos);
           }
-          // add new vCard to ZIP file
+          // Add vCard to ZIP file
           try {
-            zipos.putNextEntry(new ZipEntry(filename));
-            if (account.getVcard() != null) {
-              //zipos.write(account.getVcard().getBytes("UTF-8"));
-              zipos.write(account.getVcard().getBytes(defaultFileEncoding));
-            }
+			String vcard = account.getVcard();
+			if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
+               	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+               	PrintWriter p = new PrintWriter(new OutputStreamWriter(bos, "UTF-8"));
+				int start = vcard.indexOf("BEGIN:VCARD");
+				int end = vcard.indexOf("END:VCARD");
+				p.write(vcard.substring(start, end));
+				if(vcard.indexOf("PHOTO:") < 0 && account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
+                   	org.opencrx.kernel.backend.VCard.getInstance().writePhotoTag(
+                   		p, 
+                   		(org.opencrx.kernel.account1.jmi1.Contact)account
+                   	);
+				}
+				p.write("END:VCARD\n");
+				p.close();
+				zipos.putNextEntry(new ZipEntry(filename));
+				zipos.write(bos.toByteArray());
+			}
             zipos.closeEntry();
           }
           catch (Exception e) {

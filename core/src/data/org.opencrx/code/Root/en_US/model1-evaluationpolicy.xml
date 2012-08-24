@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="evaluationPolicy" _operation="set">
 										<_object>
 											<name>
+												<_item>evaluationPolicy</_item>
 												<_item>org:opencrx:kernel:model1:Constraint:evaluationPolicy</_item>
 											</name>
 										</_object>

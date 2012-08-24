@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MarkAsAllDayEventWizard.jsp,v 1.3 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: MarkAsAllDayEventWizard.jsp,v 1.4 2012/07/08 13:30:32 wfro Exp $
  * Description: mark an activity as an all day event
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,7 +68,6 @@ org.openmdx.kernel.id.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

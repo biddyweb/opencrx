@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 2.3//EN" "http://www.jboss.org/j2ee/dtds/jboss-web_3_2.dtd">
-<jboss-web>
-	<ejb-local-ref>
-		<ejb-ref-name>ejb/data</ejb-ref-name>
-		<jndi-name>org.opencrx.core.CRX.noOrNew.gateway</jndi-name>
-		<local-jndi-name>org.opencrx.core.CRX.local.noOrNew.gateway</local-jndi-name>
-	</ejb-local-ref>
-</jboss-web>

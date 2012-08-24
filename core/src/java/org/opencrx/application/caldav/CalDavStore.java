@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CalDavStore.java,v 1.24 2010/12/07 16:27:48 wfro Exp $
  * Description: CalDavStore
- * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/07 16:27:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -488,28 +485,33 @@ public class CalDavStore implements WebDavStore {
 			false // allowRunAs
 		);
 		if(parent instanceof ActivityCollectionResource) {
-	    	try {
-		    	BufferedReader reader = new BufferedReader(
-		    		new InputStreamReader(content, "UTF-8")
-		    	);
-	        	ICalendar.PutICalResult result = ICalendar.getInstance().putICal(
-	        		reader, 
-	        		((ActivityCollectionResource)parent).getQueryHelper(),
-	        		true
-	        	);
-	            if(result.getOldUID() != null && result.getActivity() != null) {
-	            	this.uidMapping.put(
-	            		result.getOldUID(), 
-	            		result.getActivity().refGetPath().getBase()
-	            	);
-	            }
-	        	return result.getStatus() == ICalendar.PutICalResult.Status.CREATED ? 
-	        		PutResourceStatus.CREATED : 
-	        			PutResourceStatus.UPDATED;
-	    	}
-	    	catch(Exception e) {
-	    		new ServiceException(e).log();
-	    	}
+			ActivityCollectionResource activityCollection = (ActivityCollectionResource)parent;
+			if(activityCollection.allowChange()) {
+		    	try {
+			    	BufferedReader reader = new BufferedReader(
+			    		new InputStreamReader(content, "UTF-8")
+			    	);
+		        	ICalendar.PutICalResult result = ICalendar.getInstance().putICal(
+		        		reader, 
+		        		activityCollection.getQueryHelper(),
+		        		true
+		        	);
+		            if(result.getOldUID() != null && result.getActivity() != null) {
+		            	this.uidMapping.put(
+		            		result.getOldUID(), 
+		            		result.getActivity().refGetPath().getBase()
+		            	);
+		            }
+		        	return result.getStatus() == ICalendar.PutICalResult.Status.CREATED ? 
+		        		PutResourceStatus.CREATED : 
+		        			PutResourceStatus.UPDATED;
+		    	}
+		    	catch(Exception e) {
+		    		new ServiceException(e).log();
+		    	}
+			} else {
+				return PutResourceStatus.FORBIDDEN;
+			}
 		}
 	    return null;
     }

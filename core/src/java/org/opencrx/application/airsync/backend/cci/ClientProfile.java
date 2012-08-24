@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ClientProfile.java,v 1.7 2010/08/05 14:51:37 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/05 14:51:37 $
  * ====================================================================
  *
  * This software is published under the BSD license

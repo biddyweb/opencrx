@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailImporterConfig.java,v 1.8 2010/09/16 11:55:48 wfro Exp $
  * Description: MailImporterConfig
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/16 11:55:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,20 +56,25 @@ import java.util.Collection;
 
 import javax.jdo.PersistenceManager;
 
-import org.opencrx.kernel.admin1.jmi1.Admin1Package;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
 
+/**
+ * MailImporterConfig
+ *
+ */
 public class MailImporterConfig {
 
-    //-----------------------------------------------------------------------
     /**
      * Get the MailImporter config from component configuration. Create default
      * properties on-the-fly
+
+     * @param pm
+     * @param providerName
+     * @param segmentName
      */
     public MailImporterConfig(
         PersistenceManager pm,
@@ -83,11 +85,9 @@ public class MailImporterConfig {
         String mailbox = null;
         Boolean deleteImportedMessages = null;     
         try {
-            Admin1Package adminPkg = Utils.getAdminPackage(pm);
-            org.opencrx.kernel.base.jmi1.BasePackage basePkg = Utils.getBasePackage(pm);
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
-                    new Path("xri://@openmdx*org.opencrx.kernel.admin1/provider/" + providerName + "/segment/Root")
+                    new Path("xri://@openmdx*org.opencrx.kernel.admin1").getDescendant("provider", providerName, "segment", "Root")
                 );
             org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = null;
             // Get component configuration
@@ -95,67 +95,41 @@ public class MailImporterConfig {
                 componentConfiguration = adminSegment.getConfiguration(
                     COMPONENT_CONFIGURATION_ID
                 );
-            }
-            catch(Exception e) {}
+            } catch(Exception uncaught) {}
             String optionPrefix = providerName + "." + segmentName + ".";
             if(componentConfiguration == null) {
-                componentConfiguration = adminPkg.getComponentConfiguration().createComponentConfiguration();
+                componentConfiguration = pm.newInstance(org.opencrx.kernel.admin1.jmi1.ComponentConfiguration.class);
                 componentConfiguration.setName(COMPONENT_CONFIGURATION_ID);
                 pm.currentTransaction().begin();
                 adminSegment.addConfiguration(
-                    false,                     
                     COMPONENT_CONFIGURATION_ID,
                     componentConfiguration
                 );
-                UUIDGenerator uuids = UUIDs.getGenerator();
                 // Default for mail service name
-                org.opencrx.kernel.base.jmi1.StringProperty sp = basePkg.getStringProperty().createStringProperty();
+                org.opencrx.kernel.base.jmi1.StringProperty sp = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(optionPrefix + MailImporterConfig.OPTION_MAIL_SERVICE_NAME + ".Default");
                 sp.setDescription("Mail service name");
                 sp.setStringValue("/mail/provider/" + providerName);
                 componentConfiguration.addProperty(
-                    false,
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(UUIDs.newUUID()),
                     sp
                 );
                 // Default for mailbox
-                sp = basePkg.getStringProperty().createStringProperty();
+                sp = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(optionPrefix + MailImporterConfig.OPTION_MAIL_BOX + ".Default");
                 sp.setDescription("Mailbox name");
                 sp.setStringValue("INBOX");
                 componentConfiguration.addProperty(
-                    false,
-                    uuids.next().toString(),
+                    UUIDConversion.toUID(UUIDs.newUUID()),
                     sp
                 );
                 // Default for deleteImportedMessages
-                org.opencrx.kernel.base.jmi1.BooleanProperty bp = basePkg.getBooleanProperty().createBooleanProperty();
+                org.opencrx.kernel.base.jmi1.BooleanProperty bp = pm.newInstance(org.opencrx.kernel.base.jmi1.BooleanProperty.class);
                 bp.setName(optionPrefix + MailImporterConfig.OPTION_MAIL_DELETE_IMPORTED_MESSAGES + ".Default");
                 bp.setDescription("Delete imported messages");
                 bp.setBooleanValue(false);
                 componentConfiguration.addProperty(
-                    false,
-                    uuids.next().toString(),
-                    bp
-                );
-                // Default for isEMailAddressLookupCaseInsensitive
-                bp = basePkg.getBooleanProperty().createBooleanProperty();
-                bp.setName(optionPrefix + MailImporterConfig.OPTION_EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE + ".Default");
-                bp.setDescription("Case insensitive address lookup");
-                bp.setBooleanValue(true);
-                componentConfiguration.addProperty(
-                    false,
-                    uuids.next().toString(),
-                    bp
-                );
-                // Default for isEMailAddressLookupIgnoreDisabled
-                bp = basePkg.getBooleanProperty().createBooleanProperty();
-                bp.setName(optionPrefix + MailImporterConfig.OPTION_EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED + ".Default");
-                bp.setDescription("Ignore disabled email addresses on lookup");
-                bp.setBooleanValue(true);
-                componentConfiguration.addProperty(
-                    false,
-                    uuids.next().toString(),
+                	UUIDConversion.toUID(UUIDs.newUUID()),
                     bp
                 );
                 pm.currentTransaction().commit();
@@ -164,11 +138,7 @@ public class MailImporterConfig {
                 );
             }
             // Get configuration
-            for(
-                int i = 0; 
-                i < 2;
-                i++
-            ) {
+            for(int i = 0; i < 2; i++) {
                 String suffix = new String[]{".Default", ""}[i];
                 Collection<org.opencrx.kernel.base.jmi1.Property> properties = componentConfiguration.getProperty();
                 for(org.opencrx.kernel.base.jmi1.Property property: properties) {
@@ -206,9 +176,8 @@ public class MailImporterConfig {
         this.deleteImportedMessages = deleteImportedMessages == null ? 
         	false : 
         	deleteImportedMessages.booleanValue();
-      }
+    }
     
-    //-----------------------------------------------------------------------
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
@@ -222,32 +191,44 @@ public class MailImporterConfig {
         return tmp.toString();
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get configured mail service name.
+     * 
+     * @return
+     */
     public String getMailServiceName(
     ) {
         return this.mailServiceName;
     }
   
-    //-------------------------------------------------------------------------
+    /**
+     * Get configured mailbox name.
+     * 
+     * @return
+     */
     public String getMailbox(
     ) {
         return this.mailbox;
     }
   
-    //-------------------------------------------------------------------------
+    /**
+     * If configured as true, delete imported messages.
+     * 
+     * @return
+     */
     public boolean deleteImportedMessages(
     ) {
         return this.deleteImportedMessages;
     }
   
     //-------------------------------------------------------------------------
+    // Members
+    //-------------------------------------------------------------------------
     private static final String COMPONENT_CONFIGURATION_ID = "MailImporterServlet";
         
     private static final String OPTION_MAIL_BOX = "mailbox";
     private static final String OPTION_MAIL_SERVICE_NAME = "mailServiceName";
     private static final String OPTION_MAIL_DELETE_IMPORTED_MESSAGES = "deleteImportedMessages";
-    private static final String OPTION_EMAIL_ADDRESS_LOOKUP_CASE_INSENSITIVE = "eMailAddressLookupCaseInsensitive";
-    private static final String OPTION_EMAIL_ADDRESS_LOOKUP_IGNORE_DISABLED = "eMailAddressLookupIgnoreDisabled";
     
     protected final String mailServiceName;
     protected final String mailbox;

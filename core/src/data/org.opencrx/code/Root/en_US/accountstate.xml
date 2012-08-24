@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="accountState" _operation="set">
 										<_object>
 											<name>
+												<_item>accountState</_item>
 												<_item>org:opencrx:kernel:account1:Account:accountState</_item>
 												<_item>org:opencrx:kernel:account1:SearchIndexEntry:accountState</_item>
 											</name>

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="paymenttype" _operation="set">
 										<_object>
 											<name>
+												<_item>paymenttype</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityAddExpenseRecordParams:paymentType</_item>
 												<_item>org:opencrx:kernel:activity1:ResourceAddExpenseRecordParams:paymentType</_item>
 												<_item>org:opencrx:kernel:activity1:WorkAndExpenseRecord:paymentType</_item>

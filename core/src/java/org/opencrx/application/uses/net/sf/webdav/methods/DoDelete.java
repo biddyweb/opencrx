@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoDelete.java,v 1.11 2010/12/08 18:57:07 wfro Exp $
  * Description: DoDelete
- * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/08 18:57:07 $
  * ====================================================================
  *
  * This software is published under the BSD license

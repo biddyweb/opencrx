@@ -3,15 +3,13 @@
 	docBase="${catalina.home}/apps/opencrx-core-CRX/opencrx-webdav-CRX.war"
 >	
 	<Realm className="org.apache.catalina.realm.CombinedRealm">
-		<Realm className="org.openmdx.catalina.realm.ExtendedJDBCRealm" 
+		<Realm className="org.openmdx.catalina.realm.ExtendedDataSourceRealm" 
 			debug="0"
 			digest="MD5"
 			digestEncoding="UTF-8"
 			digestFormat="base64"
-			driverName="${opencrx.CRX.jdbc.driverName}"
-			connectionURL="${opencrx.CRX.jdbc.url}"
-			connectionName="${opencrx.CRX.jdbc.userName}" 
-			connectionPassword="${opencrx.CRX.jdbc.password}"
+			dataSourceName="jdbc_opencrx_CRX"
+			localDataSource="true"
 			userTable="OOMSE2_TOBJ_USERS" 
 			userNameCol="principal_name" 
 			userCredCol="passwd"

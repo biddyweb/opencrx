@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityCollectionResource.java,v 1.2 2010/12/04 00:35:48 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/04 00:35:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,7 +63,6 @@ import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.collection.MarshallingCollection;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
@@ -131,6 +127,8 @@ abstract class ActivityCollectionResource extends CalDavResource {
 		BasicObject object,
 		ActivityQueryHelper queryHelper,
 		ActivityCollectionResource.Type type,
+		boolean allowChange,
+		String backColor,
 		String runAs
 	) {
 		super(
@@ -138,6 +136,8 @@ abstract class ActivityCollectionResource extends CalDavResource {
 			object
 		);
 		this.type = type;
+		this.allowChange = allowChange;
+		this.backColor = backColor;
         if(runAs != null) {
         	PersistenceManager pm = this.getRequestContext().newPersistenceManager(runAs);
         	queryHelper = CalDavStore.getActivityQueryHelper(
@@ -172,14 +172,14 @@ abstract class ActivityCollectionResource extends CalDavResource {
     	}
     	return name;
     }
-    		
+
 	//-----------------------------------------------------------------------
 	@Override
     public boolean isCollection(
     ) {
 		return true;
     }
-	
+
 	//-----------------------------------------------------------------------
     @Override
     public String getName(
@@ -191,6 +191,18 @@ abstract class ActivityCollectionResource extends CalDavResource {
     public ActivityCollectionResource.Type getType(
     ) {
     	return this.type;
+    }
+    
+	//-----------------------------------------------------------------------
+    public boolean allowChange(
+    ) {
+    	return this.allowChange;
+    }
+    
+	//-----------------------------------------------------------------------
+    public String getBackColor(
+    ) {
+    	return this.backColor;
     }
     
 	//-----------------------------------------------------------------------
@@ -211,14 +223,14 @@ abstract class ActivityCollectionResource extends CalDavResource {
     ) {
     	return this.queryHelper;
     }
-    
+
 	//-----------------------------------------------------------------------
     @Override
     @SuppressWarnings("unchecked")
 	public Collection<Resource> getChildren(
 	) {
 		PersistenceManager pm = this.queryHelper.getPersistenceManager();
-        ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
+        ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
         if(this.queryHelper.isDisabledFilter()) {
             activityQuery.thereExistsDisabled().isTrue();                    
         }
@@ -245,6 +257,8 @@ abstract class ActivityCollectionResource extends CalDavResource {
     // Members
 	//-----------------------------------------------------------------------
 	private final ActivityCollectionResource.Type type;
+	private final boolean allowChange;
+	private final String backColor;
 	private final String runAs;
 	private final ActivityQueryHelper queryHelper;
 	

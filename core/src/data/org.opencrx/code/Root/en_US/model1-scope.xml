@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="scope" _operation="set">
 										<_object>
 											<name>
+												<_item>scope</_item>
 												<_item>org:opencrx:kernel:model1:Feature:scope</_item>
 											</name>
 										</_object>

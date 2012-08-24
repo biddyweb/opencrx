@@ -556,7 +556,7 @@
                         <_item>Data de naştere</_item>
                       </label>
                       <toolTip>
-                        <_item>Persoană&apos;s data de naştere</_item>
+                        <_item>Persoană&apos;s data de naştere (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -567,7 +567,7 @@
                         <_item>Data aniversării</_item>
                       </label>
                       <toolTip>
-                        <_item>Persoană&apos;s data aniversării</_item>
+                        <_item>Persoană&apos;s data aniversării (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

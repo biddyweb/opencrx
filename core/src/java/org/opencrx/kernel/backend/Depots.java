@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Depots.java,v 1.49 2012/01/13 17:15:42 wfro Exp $
  * Description: Depots
- * Revision:    $Revision: 1.49 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: FetchEMail.jsp,v 1.2 2012/01/20 12:50:55 cmu Exp $
+ * Name:        $Id: FetchEMail.jsp,v 1.6 2012/07/29 09:51:39 cmu Exp $
  * Description: UploadEMail
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 12:50:55 $
+ * Date:        $Date: 2012/07/29 09:51:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,7 +65,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -223,13 +222,14 @@ javax.mail.search.*
 												if(this.value=='imap')  {document.getElementById('port').value='143';}
 												if(this.value=='imaps') {document.getElementById('port').value='993';}
 												if(this.value=='pop3')  {document.getElementById('port').value='110';}
-												if(this.value=='pop3s') {document.getElementById('port').value='993';}
+												if(this.value=='pop3s') {document.getElementById('port').value='995';}
 												document.getElementById('reload.button').click();
 											  ">
-	                      <option value="imap"  <%= protocol != null &&  "imap".compareTo(protocol) == 0 ? "selected" : "" %>>imap</option>
-	                      <option value="imaps" <%= protocol != null && "imaps".compareTo(protocol) == 0 ? "selected" : "" %>>imaps</option>
-	                      <option value="pop3"  <%= protocol != null &&  "pop3".compareTo(protocol) == 0 ? "selected" : "" %>>pop3</option>
-	                      <option value="pop3s" <%= protocol != null && "pop3s".compareTo(protocol) == 0 ? "selected" : "" %>>pop3s</option>
+												<option value="imap"  <%= protocol != null &&  "imap".compareTo(protocol) == 0 ? "selected" : "" %>>imap</option>
+												<option value="imaps" <%= protocol != null && "imaps".compareTo(protocol) == 0 ? "selected" : "" %>>imaps</option>
+												<option value="pop3"  <%= protocol != null &&  "pop3".compareTo(protocol) == 0 ? "selected" : "" %>>pop3</option>
+												<option value="pop3s" <%= protocol != null && "pop3s".compareTo(protocol) == 0 ? "selected" : "" %>>pop3s</option>
+											</select>
 										</td>
 										<td class="addon" />
 									</tr>
@@ -248,7 +248,7 @@ javax.mail.search.*
 
 									<tr>
 										<td class="label"><span class="nw">Password</span></td>
-										<td nowrap><input type="text" class="valueL" name="password" tabindex="<%= tabIndex++ %>" value="<%= password %>" /></td>
+										<td nowrap><input type="password" class="valueL" name="password" tabindex="<%= tabIndex++ %>" value="<%= password %>" /></td>
 										<td class="addon" />
 									</tr>
 

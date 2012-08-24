@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Base.java,v 1.54 2012/01/13 17:15:42 wfro Exp $
  * Description: Base
- * Revision:    $Revision: 1.54 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -123,6 +120,7 @@ import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.cci2.AlertQuery;
 import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.product1.jmi1.AbstractPriceLevel;
 import org.opencrx.kernel.product1.jmi1.AbstractProduct;
 import org.opencrx.kernel.product1.jmi1.PriceListEntry;
@@ -420,25 +418,43 @@ public class Base extends AbstractImpl {
         );
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Return toString() of given object. If object is a collection return toString
+     * of first object in collection.
+     * @param obj
+     * @return
+     */
     public static String toS(
         Object obj
     ) {
-        return obj == null
-          ? ""
-          : (obj instanceof Collection) && ((Collection)obj).size() > 0
-            ? ((Collection)obj).iterator().next().toString()
-            : obj.toString();
+        return obj == null ? 
+        	"" : 
+        		(obj instanceof Collection) && !((Collection<?>)obj).isEmpty() ? 
+        			((Collection<?>)obj).iterator().next().toString() : 
+        				obj.toString();
     }
-    
-    //-------------------------------------------------------------------------
+
+    /**
+     * Replace blanks by &nbsp;
+     * @param obj
+     * @return
+     */
     public String toNbspS(
         Object obj
     ) {
         return toS(obj).replace(" ", "&nbsp;");
     }
-    
-    //-------------------------------------------------------------------------
+
+    /**
+     * Return display title of given object.
+     * @param refObj
+     * @param codes
+     * @param texts
+     * @param locale
+     * @param asShortTitle
+     * @return
+     * @throws ServiceException
+     */
     public String getTitle(
     	RefObject_1_0 refObj,
     	Codes codes,
@@ -469,7 +485,8 @@ public class Base extends AbstractImpl {
     			return toNbspS(obj.getFullName());
     		} else if(refObj instanceof ProductBasePrice) {
     			ProductBasePrice obj = (ProductBasePrice)refObj;
-    			Map<Object,Object> currencyTexts = codes.getLongText("currency", locale, true, true);
+    			@SuppressWarnings("unchecked")
+                Map<Object,Object> currencyTexts = codes.getLongText("currency", locale, true, true);
     			try {
     				return toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
     			}
@@ -567,7 +584,7 @@ public class Base extends AbstractImpl {
     					return address  == null ? 
     						"Untitled" : 
     							getTitle(address, codes, locale, asShortTitle);                
-    				}                  
+    				}
     			}
     			else if(refObj instanceof EMailRecipientGroup) {
     				party = ((EMailRecipientGroup)refObj).getParty();
@@ -675,8 +692,11 @@ public class Base extends AbstractImpl {
     			return getTitle(userHome.getContact(), codes, locale, asShortTitle);
     		} else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
     			return (refObj.refGetValue("reference") == null ? "Untitled" : getTitle((RefObject_1_0)refObj.refGetValue("reference"), codes, locale, asShortTitle));
-    		} else if(refObj instanceof org.opencrx.kernel.home1.jmi1.WfProcessInstance) {
-    			return (refObj.refGetValue("process") == null ? "Untitled" : getTitle((RefObject_1_0)refObj.refGetValue("process"), codes, locale, asShortTitle) + " " + toS(refObj.refGetValue("startedOn")));
+    		} else if(refObj instanceof WfProcessInstance) {
+    			WfProcessInstance wfProcessInstance = (WfProcessInstance)refObj;
+    			return wfProcessInstance.getProcess() == null ? "Untitled" : getTitle(wfProcessInstance.getProcess(), codes, locale, asShortTitle) + " " + toS(refObj.refGetValue("startedOn"));
+    		} else if(refObj instanceof org.opencrx.kernel.workflow1.jmi1.WfProcess) {
+    			return toS(((org.opencrx.kernel.workflow1.jmi1.WfProcess)refObj).getName());
     		} else if(refObj instanceof org.opencrx.kernel.base.jmi1.AuditEntry) {
     			Object createdAt = refObj.refGetValue(SystemAttributes.CREATED_AT);
     			return (refObj.refGetValue(SystemAttributes.CREATED_AT) == null) ? "Untitled" : dateFormat.format(createdAt) + " " + timeFormat.format(createdAt);

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.47 2011/11/23 06:41:06 cmu Exp $
+ * Name:        $Id: UploadMedia.jsp,v 1.48 2012/07/08 13:30:32 wfro Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.47 $
+ * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/23 06:41:06 $
+ * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -65,7 +65,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

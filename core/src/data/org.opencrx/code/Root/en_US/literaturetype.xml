@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="literatureType" _operation="set">
 										<_object>
 											<name>
+												<_item>literatureType</_item>
 												<_item>org:opencrx:kernel:document1:Document:literatureType</_item>
 											</name>
 										</_object>

@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterSendMessageWizard.jsp,v 1.6 2011/10/05 16:35:58 wfro Exp $
+ * Name:        $Id: TwitterSendMessageWizard.jsp,v 1.7 2012/07/08 13:30:33 wfro Exp $
  * Description: TwitterSendMessageWizard
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/05 16:35:58 $
+ * Date:        $Date: 2012/07/08 13:30:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -67,7 +67,6 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

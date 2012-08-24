@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityResource.java,v 1.10 2011/12/16 16:30:22 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.10 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/16 16:30:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -72,8 +69,7 @@ import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.backend.ICalendar.AlarmAction;
-import org.opencrx.kernel.home1.jmi1.Reminder;
+import org.opencrx.kernel.home1.jmi1.Timer;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.exception.BasicException;
@@ -81,6 +77,10 @@ import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
+/**
+ * WebDAV resource of type Activity.
+ *
+ */
 class ActivityResource extends CalDavResource {
 
 	public ActivityResource(
@@ -92,40 +92,65 @@ class ActivityResource extends CalDavResource {
 		this.parent = parent;
 	}
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.caldav.CalDavResource#getObject()
+	 */
 	@Override
     public Activity getObject(
     ) {
         return (Activity)super.getObject();
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#isCollection()
+	 */
 	@Override
     public boolean isCollection(
     ) {
 		return false;
     }
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.caldav.CalDavResource#getMimeType()
+	 */
 	@Override 
 	public String getMimeType(
 	) {
 		return "text/calendar; component=" + (this.parent.getType() == ActivityCollectionResource.Type.VTODO ? "vtodo" : "vevent");			
 	}
 	
+    /* (non-Javadoc)
+     * @see org.opencrx.application.caldav.CalDavResource#getName()
+     */
     @Override
     public String getName(
     ) {
         return super.getName() + ".ics";
     }
 
+    /* (non-Javadoc)
+     * @see org.opencrx.application.uses.net.sf.webdav.Resource#getDisplayName()
+     */
+    @Override
     public String getDisplayName(
     ) {
     	return this.getObject().getName();
     }
     
+    /**
+     * Get parent collection of this activity resource.
+     * @return
+     */
     public ActivityCollectionResource getSyncFeedResource(
     ) {
     	return this.parent;
     }
     
+	/**
+	 * Get UID of this activity resource.
+	 * @param event
+	 * @return
+	 */
 	private String getUid(
     	String event
     ) {
@@ -140,40 +165,39 @@ class ActivityResource extends CalDavResource {
     	return uid;
     }
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Print alarm tags for the given event.
+	 * 
+	 * @param p
+	 * @param event
+	 */
 	protected void printAlarms(
 		PrintWriter p,
 		Activity event
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
-        Collection<Reminder> reminders = event.getAssignedReminder();
+        Collection<Timer> timers = event.getAssignedTimer();
         List<String> principalChain = UserObjects.getPrincipalChain(pm);
-        for(Reminder reminder: reminders) {
-        	if(reminder.refGetPath().get(6).equals(principalChain.get(0))) {
+        for(Timer timer: timers) {
+        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
         		p.println("BEGIN:VALARM");
-        		AlarmAction action = AlarmAction.valueOf(reminder.getTriggerAction());
-        		p.println("ACTION:" + action.toString());
-        		long triggerMinutes = (reminder.getTriggerAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
-        		p.println("TRIGGER:" + (triggerMinutes < 0 ? "-" : "+") + "PT" + Math.abs(triggerMinutes) + "M");
-        		p.println("REPEAT:" + (reminder.getAlarmRepeat() == null ? 1 :reminder.getAlarmRepeat()));
-        		p.println("DURATION:PT" + (reminder.getAlarmIntervalMinutes() == null ? 15 :reminder.getAlarmIntervalMinutes()) + "M");
-        		p.println("SUMMARY:" + reminder.getName());
-        		if(reminder.getDescription() != null) {
-        			p.println("DESCRIPTION:" + reminder.getDescription());
-        		}
-        		if(reminder.getAttachUrl() != null) {
-        			if(action == AlarmAction.AUDIO) {
-        				p.println("ATTACH;FMTTYPE=audio/basic:" + reminder.getAttachUrl());
-        			} else {        			
-        				p.println("ATTACH:" + reminder.getAttachUrl());
-        			}
+        		p.println("ACTION:DISPLAY");
+        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
+        		p.println("TRIGGER;VALUE=DURATION:" + (triggerMinutes < 0 ? "-" : "") + "PT" + Math.abs(triggerMinutes) + "M");
+        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
+        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
+        		p.println("SUMMARY:" + timer.getName());
+        		if(timer.getDescription() != null) {
+        			p.println("DESCRIPTION:" + timer.getDescription());
         		}
         		p.println("END:VALARM");
         	}
         }
 	}
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.caldav.CalDavResource#getContent()
+	 */
 	@Override
     public BinaryLargeObject getContent(
     ) {

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: TaskTXmlFormat.java,v 1.19 2010/06/18 12:32:02 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/18 12:32:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,6 +53,7 @@
 package org.opencrx.application.airsync.datatypes;
 
 import org.opencrx.application.airsync.utils.DOMUtils;
+import org.opencrx.kernel.utils.Utils;
 import org.w3c.dom.Element;
 import org.w3c.format.DateTimeFormat;
 
@@ -70,7 +68,10 @@ public class TaskTXmlFormat extends AbstractXmlFormat {
 		DateTimeFormat eutcf = this.getUtcFormat(true);
 		TaskT taskT = (TaskT) data;
 		
-		createElement(eData, "Tasks:", "Body", taskT.getBody());
+		String body = taskT.getBody();
+		if(body != null) {
+			createElement(eData, "Tasks:", "Body", Utils.normalizeNewLines(body).replace("\n", "\r\n"));
+		}
 		createElement(eData, "Tasks:", "Subject", taskT.getSubject());
 		createElement(eData, "Tasks:", "Importance", Integer.toString(taskT.getImportance().getValue()));
 		if(taskT.getUtcstartdate() != null) {

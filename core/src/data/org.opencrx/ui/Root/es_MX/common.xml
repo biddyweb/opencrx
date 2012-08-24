@@ -790,7 +790,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note" _operation="create">
                     <_object>
                       <label>
                         <_item>Nota</_item>
@@ -801,7 +801,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:title" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note:title" _operation="create">
                     <_object>
                       <label>
                         <_item>Titulo</_item>
@@ -823,7 +823,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:text" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:Note:text" _operation="create">
                     <_object>
                       <label>
                         <_item>Texto</_item>

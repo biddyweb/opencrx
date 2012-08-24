@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="accountRoleInventoryItem" _operation="set">
 										<_object>
 											<name>
+												<_item>accountRoleInventoryItem</_item>
 												<_item>org:opencrx:kernel:building1:AccountAssignmentInventoryItem:accountRole</_item>
 											</name>
 										</_object>

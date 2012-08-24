@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SalesOrderImpl.java,v 1.8 2011/05/11 18:02:22 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/05/11 18:02:22 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -57,13 +54,14 @@ package org.opencrx.kernel.contract1.aop2;
 
 import java.util.List;
 
+import javax.jdo.JDOHelper;
 import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.contract1.cci2.InvoiceQuery;
+import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
 
@@ -116,13 +114,13 @@ public class SalesOrderImpl
             Invoice invoice = Contracts.getInstance().createInvoice(
                 this.sameObject()
             );
-            return Utils.getContractPackage(this.sameManager()).createSalesOrderCreateInvoiceResult(
+            return this.<Contract1Package>samePackage().createSalesOrderCreateInvoiceResult(
                 invoice
             );        
         }
         catch(ServiceException e) {
             throw new JmiServiceException(e);
-        }            
+        }
     }
 
     //-----------------------------------------------------------------------

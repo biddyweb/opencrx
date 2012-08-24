@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="accountType" _operation="set">
 										<_object>
 											<name>
+												<_item>accountType</_item>
 												<_item>org:opencrx:kernel:account1:Account:accountType</_item>
 												<_item>org:opencrx:kernel:account1:SearchIndexEntry:accountType</_item>
 												<_item>org:opencrx:kernel:account1:AccountTypeFilterProperty:accountType</_item>

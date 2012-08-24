@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Utils.java,v 1.57 2011/12/21 13:46:50 wfro Exp $
  * Description: Utils
- * Revision:    $Revision: 1.57 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/21 13:46:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,6 +70,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jdo.Constants;
 import javax.jdo.JDOHelper;
@@ -114,7 +113,6 @@ import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.transaction.TransactionAttributeType;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.attribute.DateValue;
@@ -461,7 +459,7 @@ public abstract class Utils {
             (v2 instanceof Comparable) &&
             (v1.getClass().equals(v2.getClass()))
         ) {
-            return ((Comparable)v1).compareTo(v2) == 0;
+            return ((Comparable<Object>)v1).compareTo(v2) == 0;
         }
         return v1.equals(v2);
     }
@@ -525,8 +523,8 @@ public abstract class Utils {
 		catch(Exception e) {}
 		// Locale
 		Locale userLocale = Locale.getDefault();
-		if(userSettings.getProperty(UserSettings.LOCALE_NAME) != null) {
-			String localeAsString = userSettings.getProperty(UserSettings.LOCALE_NAME); 
+		if(userSettings.getProperty(UserSettings.LOCALE_NAME.getName()) != null) {
+			String localeAsString = userSettings.getProperty(UserSettings.LOCALE_NAME.getName()); 
 	        userLocale = new Locale(
 	        	localeAsString.substring(0, 2), 
 	        	localeAsString.substring(localeAsString.indexOf("_") + 1)
@@ -539,11 +537,11 @@ public abstract class Utils {
         );
         DateValue.assert4DigitYear(dateTimeFormat);
         // TimeZone
-		if(userSettings.getProperty(UserSettings.TIMEZONE_NAME) != null) {
+		if(userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName()) != null) {
 			try {
 	    		dateTimeFormat.setTimeZone(
 	    			TimeZone.getTimeZone(
-	    				userSettings.getProperty(UserSettings.TIMEZONE_NAME)
+	    				userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName())
 	    			)
 	            );
     		}
@@ -565,9 +563,9 @@ public abstract class Utils {
     //-------------------------------------------------------------------------
     public static String getUidAsString(
     ) {
-        return UUIDConversion.toUID(uuidGenerator.next());        
+        return UUIDConversion.toUID(UUIDs.newUUID());        
     }
-    
+
     //-------------------------------------------------------------------------
     @SuppressWarnings("unchecked")
     public static Object traverseObjectTree(
@@ -581,6 +579,7 @@ public abstract class Utils {
     		context
     	);
         Model_1_0 model = Model_1Factory.getModel();
+        @SuppressWarnings("rawtypes")
         Map<String,ModelElement_1_0> references = (Map)model.getElement(
         	object.refClass().refMofId()
         ).objGetValue("reference");
@@ -608,7 +607,8 @@ public abstract class Utils {
                         referenceFilter.contains(qualifiedReferenceName);
                 }
                 if(matches) {   
-                	List<?> content = ((RefContainer)object.refGetValue(referenceName)).refGetAll(null);
+                	@SuppressWarnings("rawtypes")
+                    List<?> content = ((RefContainer)object.refGetValue(referenceName)).refGetAll(null);
                     for(Object contained: content) {
                         traverseObjectTree(
                             (RefObject_1_0)contained,
@@ -672,10 +672,12 @@ public abstract class Utils {
 		return permissions;
     }
     
-    //-------------------------------------------------------------------------
     /**
      *  Checks whether there exists a permission matching the pattern
      *  'object:authority/object path@runAsPrincipal'
+     * @param objectIdentity
+     * @param runAsPermissions
+     * @return
      */
     public static boolean hasObjectRunAsPermission(
     	Path objectIdentity,
@@ -698,7 +700,11 @@ public abstract class Utils {
     	return false;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Return a localized dateTime formatter.
+     * @param language
+     * @return
+     */
     public static DateFormat getTimeFormat(
         String language
     ) {
@@ -714,7 +720,11 @@ public abstract class Utils {
         return timeFormat; 
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Return a localized decimal formatter.
+     * @param language
+     * @return
+     */
     public static DecimalFormat getDecimalFormat(
         String language
     ) {
@@ -730,7 +740,11 @@ public abstract class Utils {
         return decimalFormat; 
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Return a localized date formatter.
+     * @param language
+     * @return
+     */
     public static DateFormat getDateFormat(
         String language
     ) {
@@ -746,11 +760,28 @@ public abstract class Utils {
         return dateFormat;
     }
         
+    /**
+     * Normalize new lines in given string. Patterns of the form (\r\n|\r|\n)
+     * are replaced by \n
+     * @param s
+     * @return
+     */
+    public static String normalizeNewLines(
+    	String s
+    ) {
+    	Matcher m = CRLF.matcher(s);
+    	if(m.find()) {
+    		return m.replaceAll("\\\n");
+    	} else {
+    		return s;
+    	}
+    }
+
     //-------------------------------------------------------------------------
     // Members
 	//-------------------------------------------------------------------------
-    private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
-    
+    private static Pattern CRLF = Pattern.compile("(\r\n|\r|\n)");
+
     private static ThreadLocal<Map<String,DateFormat>> cachedDateFormat = new ThreadLocal<Map<String,DateFormat>>() {
         protected synchronized Map<String,DateFormat> initialValue() {
             return new HashMap<String,DateFormat>();

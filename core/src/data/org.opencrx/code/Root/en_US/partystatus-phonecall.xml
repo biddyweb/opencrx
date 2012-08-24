@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="partystatusPhoneCall" _operation="set">
 										<_object>
 											<name>
+												<_item>partystatusPhoneCall</_item>
 												<_item>org:opencrx:kernel:activity1:AbstractPhoneCallRecipient:partyStatus</_item>
 												<_item>org:opencrx:kernel:activity1:PhoneCallRecipient:partyStatus</_item>
 												<_item>org:opencrx:kernel:activity1:PhoneCallRecipientGroup:partyStatus</_item>

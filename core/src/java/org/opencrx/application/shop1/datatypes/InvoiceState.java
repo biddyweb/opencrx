@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: InvoiceState.java,v 1.2 2009/11/26 14:29:07 wfro Exp $
  * Description: InvoiceState
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/11/26 14:29:07 $
  * ====================================================================
  *
  * This software is published under the BSD license

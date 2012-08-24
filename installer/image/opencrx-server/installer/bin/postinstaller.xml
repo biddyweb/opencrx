@@ -14,15 +14,14 @@
 		<mkdir dir="${install.path}/$TOMEE_BASEDIR/maildir" />
 		<mkdir dir="${install.path}/$TOMEE_BASEDIR/airsyncdir" />
 		<!-- Update conf -->
-		<move file="${install.path}/$TOMEE_BASEDIR/conf/openejb.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/openejb.orig"/>
-		<copy file="${install.path}/installer/files/openejb.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
+		<move file="${install.path}/$TOMEE_BASEDIR/conf/tomee.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/tomee.orig"/>
+		<copy file="${install.path}/installer/files/tomee.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
 		<move file="${install.path}/$TOMEE_BASEDIR/conf/tomcat-users.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/tomcat-users.orig"/>
 		<copy file="${install.path}/installer/files/tomcat-users.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
 		<move file="${install.path}/$TOMEE_BASEDIR/conf/server.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/server.orig"/>
 		<copy file="${install.path}/installer/files/server.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
 		<!-- Update lib -->
 		<copy file="${install.path}/installer/files/hsqldb.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
-		<copy file="${install.path}/installer/files/openmdx-base.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
 		<copy file="${install.path}/installer/files/catalina-openmdx.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
 		<!-- Update bin -->
 		<copy file="${install.path}/installer/files/openmdx-system.jar" todir="${install.path}/$TOMEE_BASEDIR/bin"/>

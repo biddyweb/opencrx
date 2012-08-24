@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.19 2011/09/23 09:46:22 wfro Exp $
+ * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.21 2012/07/08 13:29:33 wfro Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.19 $
+ * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/23 09:46:22 $
+ * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +68,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -475,10 +474,9 @@ org.openmdx.base.query.*
 			"",
 			//Math.min(M.size(), 4),
 			Math.min(Math.max(1, M.size()), 4),
-			app.getCodes().getLongText(
+			app.getCodes().getLongTextByCode(
 				"memberRole",
 				app.getCurrentLocaleAsIndex(),
-				true,
 				true
 			),
 			response,

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxException.java,v 1.29 2007/08/06 11:00:24 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.29 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/08/06 11:00:24 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoProppatch.java,v 1.16 2010/12/09 11:35:51 wfro Exp $
  * Description: DoProppatch
- * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/09 11:35:51 $
  * ====================================================================
  *
  * This software is published under the BSD license

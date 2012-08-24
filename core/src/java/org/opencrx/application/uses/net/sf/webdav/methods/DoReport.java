@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoReport.java,v 1.7 2010/11/23 10:22:07 wfro Exp $
  * Description: DoReport
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/23 10:22:07 $
  * ====================================================================
  *
  * This software is published under the BSD license

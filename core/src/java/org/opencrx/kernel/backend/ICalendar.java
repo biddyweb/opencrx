@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ICalendar.java,v 1.121 2012/01/13 17:15:42 wfro Exp $
  * Description: ICalendar
- * Revision:    $Revision: 1.121 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -70,6 +67,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -78,6 +76,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.UUID;
+import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -281,23 +280,36 @@ public class ICalendar extends AbstractImpl {
 		private final Map<String,List<String>> parameters;
 	}
 	
-    //-------------------------------------------------------------------------
+    /**
+     * Escape newlines by '\n'
+     * @param from
+     * @return
+     */
     private String escapeNewlines(
         String from
     ) {
-        String to = "";
-        for(int i = 0; i < from.length(); i++) {
-            if(from.charAt(i) == '\n') {
-                to += "\\n";
-            }
-            else {
-                to += from.charAt(i);
-            }
-        }
-        return to;
+    	return from.replace("\n", "\\n");
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Escape commas by '\,'. The input is unescaped.
+     * @param from
+     * @return
+     */
+    private String escapeCommas(
+        String from
+    ) {
+    	return from.replace("\\,", ",").replace(",", "\\,");
+    }
+
+    /**
+     * Merge fields of activity's ical with supplied ical.
+     * @param activity
+     * @param sourceIcal
+     * @param statusMessage
+     * @return
+     * @throws ServiceException
+     */
     public String mergeIcal(
         Activity activity,
         String sourceIcal,
@@ -555,9 +567,8 @@ public class ICalendar extends AbstractImpl {
             UUID uid = null;
             try {
                 uid = UUIDConversion.fromString(activity.refGetPath().getBase());
-            }
-            catch(Exception e) {
-                uid = UUIDs.getGenerator().next();
+            } catch(Exception e) {
+                uid = UUIDs.newUUID();
             }
             sourceIcal =
                 "BEGIN:VCALENDAR\n" +
@@ -682,17 +693,17 @@ public class ICalendar extends AbstractImpl {
                         targetIcal.println("LAST-MODIFIED:" + lastModified.substring(0, 15) + "Z");
                     }
                     // LOCATION
-                    if((location != null) && (location.length() > 0)) {
-                        targetIcal.println("LOCATION:" + location);
+                    if((location != null) && !location.isEmpty()) {
+                        targetIcal.println("LOCATION:" + this.escapeNewlines(this.escapeCommas(location)));
                     }
                     // DTSTAMP
                     targetIcal.println("DTSTAMP:" + DateTimeFormat.BASIC_UTC_FORMAT.format(new Date()).substring(0, 15) + "Z");
                     // DESCRIPTION
-                    if((description != null) && (description.length() > 0)) {
+                    if((description != null) && !description.isEmpty()) {
                         targetIcal.println("DESCRIPTION:" + this.escapeNewlines(description));
                     }
                     // SUMMARY
-                    if((summary != null) && (summary.length() > 0)) {
+                    if((summary != null) && !summary.isEmpty()) {
                         targetIcal.println("SUMMARY:" + summary);
                     }
                     // PRIORITY
@@ -786,7 +797,10 @@ public class ICalendar extends AbstractImpl {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Remove proprietary attributes from ical, i.e. attributes having prefix X-
+     * @param ical
+     */
     public void removeProprietaryProperties(
         Map<String,ICalField> ical
     ) {
@@ -798,7 +812,13 @@ public class ICalendar extends AbstractImpl {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Parse ical. 
+     * @param reader ical is read from reader.
+     * @param icalAsString parsed ical is returned in StringBuilder in stringified form.
+     * @return parsed ical.
+     * @throws ServiceException
+     */
     public Map<String,ICalField> parseICal(
         BufferedReader reader,
         StringBuilder icalAsString
@@ -826,7 +846,7 @@ public class ICalendar extends AbstractImpl {
         		}
 	            // Skip URLs AND ATTACHs if they reference an internal object.
 	            if(
-	                (line.startsWith("URL:") || line.startsWith("url:") || line.startsWith("ATTACH:") || line.startsWith("attach:")) &&
+	                (line.startsWith("URL:") || line.startsWith("url:") || line.startsWith("URL;VALUE=URI:") || line.startsWith("ATTACH:") || line.startsWith("attach:")) &&
 	                Base.getInstance().isAccessUrl(line.substring(line.indexOf(":") + 1))
 	            ) {
 	            	continue parse;
@@ -880,16 +900,45 @@ public class ICalendar extends AbstractImpl {
                         		);
                         	}
                         }
-                        ical.put(
-                            qualifiedFieldName,
-                            new ICalField(
-                            	fieldNameParts[0],
-                            	line.substring(pos + 1, line.length()).replace("\\n", "\n").replace("\\", ""),
-                            	parameters
-                            )
-                        );
+                        String attributeValue = line.substring(pos + 1, line.length()).replace("\\n", "\n").replace("\\", "");
+                        String attributeName = fieldNameParts[0];
+                        {
+	                        // Add parameter CN if missing for attribute ATTENDEE 
+	                        if(
+	                        	attributeName.equalsIgnoreCase("ATTENDEE") && 
+	                        	parameters.get("CN") == null &&
+	                        	attributeValue.startsWith("mailto:") || attributeValue.startsWith("MAILTO:")
+	                        ) {
+	                        	String cn = attributeValue.substring(7);
+	                        	qualifiedFieldName += ";CN=" + cn;
+	                        	parameters.put(
+	                        		"CN",
+	                        		Collections.singletonList(cn)
+	                        	);
+	                        }
+                        }
+                        // Check for duplicate attributes
+                        {
+	                        ICalField existingField = ical.get(
+	                        	qualifiedFieldName
+	                        );
+	                        ICalField newField = new ICalField(
+	                        	attributeName,
+	                        	attributeValue,
+	                        	parameters
+	                        );
+	                        if(ical.get(qualifiedFieldName) != null) {
+	                        	SysLog.log(Level.WARNING, "ICAL has duplicate fields. Existing=>{0}<, Ignored=>{1}<", existingField, newField);
+	                        } 
+	                        else {                        
+		                        ical.put(
+		                            qualifiedFieldName,
+		                            newField
+		                        );
+	                        }
+                        }
                 	}
-	            }                 
+	            }
 	        }
         } catch(Exception e) {
         	throw new ServiceException(e);
@@ -898,7 +947,16 @@ public class ICalendar extends AbstractImpl {
         return ical;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Import ical item and map to activity.
+     * @param item
+     * @param activity
+     * @param locale
+     * @param errors
+     * @param report
+     * @return
+     * @throws ServiceException
+     */
     public BasicObject importItem(
         byte[] item,
         Activity activity,
@@ -930,7 +988,16 @@ public class ICalendar extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Map attendee to contact.
+     * @param attendeeAsString
+     * @param accountSegment
+     * @param existingContact
+     * @param locale
+     * @param report
+     * @return
+     * @throws ServiceException
+     */
     protected Account getAttendeeAsContact(
         String attendeeAsString,
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
@@ -967,7 +1034,13 @@ public class ICalendar extends AbstractImpl {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get dateTime as UTC timestamp.
+     * @param dateTime
+     * @param tz
+     * @return
+     * @throws ParseException
+     */
     protected Date getUtcDate(
         String dateTime,
         TimeZone tz
@@ -993,8 +1066,12 @@ public class ICalendar extends AbstractImpl {
         return date;
     }
 
-    //-------------------------------------------------------------------------
-    protected String fromICalString(
+    /**
+     * Unescape ical field.
+     * @param s
+     * @return
+     */
+    protected String unescapeField(
         String s
     ) {
         String t = s.replace("\\\\", "\\");
@@ -1003,8 +1080,62 @@ public class ICalendar extends AbstractImpl {
         t = t.replace("\\\"", "\"");
         return t;
     }
+
+    /**
+     * Update activity party type. Only modify if mapping is deterministic.
+     * @param party
+     * @param newPartyType
+     */
+    protected void updateActivityPartyType(
+    	AbstractActivityParty party,
+    	PartyType newPartyType
+    ) {
+    	switch(newPartyType) {
+    		case REQUIRED: 
+    		case OPTIONAL:
+    		case ORGANIZER:
+    			party.setPartyType(newPartyType.getValue());
+    			break;
+    		case NA:
+    			if(
+    				party.getPartyType() == PartyType.REQUIRED.getValue() ||
+    				party.getPartyType() == PartyType.OPTIONAL.getValue() ||
+    				party.getPartyType() == PartyType.ORGANIZER.getValue()
+    			) {
+    				party.setPartyType(PartyType.NA.getValue());
+    			} {
+    				// Do not change if existing party is an unknown PartyType 
+    			}
+    			break;
+    	}
+    }
+
+    /**
+     * Update activity party status. Only update if new status is not NA.
+     * @param party
+     * @param newPartyStatus
+     */
+    protected void updateActivityPartyStatus(
+    	AbstractActivityParty party,
+    	PartyStatus newPartyStatus
+    ) {
+    	if(newPartyStatus != PartyStatus.NA) {
+    		party.setPartyStatus(newPartyStatus.getValue());
+    	}
+    }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Map fields of ical to activity.
+     * @param icalAsString
+     * @param ical
+     * @param activity
+     * @param accountSegment
+     * @param locale
+     * @param errors
+     * @param report
+     * @return
+     * @throws ServiceException
+     */
     public Activity importItem(
         String icalAsString,
         Map<String,ICalField> ical,
@@ -1044,12 +1175,12 @@ public class ICalendar extends AbstractImpl {
 	            			emailAddresses.iterator().next()
 	            		);
 	            		if(attendee.getParameters().get("ROLE") != null && !attendee.getParameters().get("ROLE").isEmpty()) {
-	            			if("NON-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
-	            				partyTypes.add(PartyType.NA);
+	            			if("REQ-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
+	            				partyTypes.add(PartyType.REQUIRED);
 	            			} else if("OPT-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
 	            				partyTypes.add(PartyType.OPTIONAL);	            				
 	            			} else {
-		            			partyTypes.add(PartyType.REQUIRED);	            				
+		            			partyTypes.add(PartyType.NA);	            				
 	            			}
 	            		} else {
 	            			partyTypes.add(PartyType.REQUIRED);
@@ -1243,7 +1374,7 @@ public class ICalendar extends AbstractImpl {
             String name =  posComment >= 0 ? 
                 s.substring(0, posComment) : 
                 s;
-            name = this.fromICalString(name);
+            name = this.unescapeField(name);
             // Limit name to 1000 chars
             if(name.length() > 1000) {
                 name = name.substring(0, 1000);
@@ -1267,7 +1398,7 @@ public class ICalendar extends AbstractImpl {
             temp += temp.length() == 0 ? "" : "\n";
             temp += s;
             // Limit description to 1000 chars
-            String description = this.fromICalString(temp);
+            String description = this.unescapeField(temp);
             if(description.length() > 1000) {
                 description = description.substring(0, 1000);
             }
@@ -1277,7 +1408,7 @@ public class ICalendar extends AbstractImpl {
         s = ICalField.getFieldValue("LOCATION", ical);
         if((s != null) && !s.isEmpty()) {
             activity.setLocation(
-            	this.fromICalString(s)
+            	this.unescapeField(s)
             );
         }
         // ical
@@ -1319,10 +1450,10 @@ public class ICalendar extends AbstractImpl {
                     	emailRecipient.setPartyType(partyTypes.get(i).getValue());
                     	break;
             	}
-            	// Do not overwrite party status in case the supplied party status is NA
-            	if(partyStatuses.get(i) != PartyStatus.NA) {
-            		emailRecipient.setPartyStatus(partyStatuses.get(i).getValue());
-            	}
+            	this.updateActivityPartyStatus(
+            		emailRecipient, 
+            		partyStatuses.get(i)
+            	);
             	emailRecipient.setEmailHint(partyEmail.getEmailAddress());
             }
             else if(activity instanceof Incident) {
@@ -1349,11 +1480,14 @@ public class ICalendar extends AbstractImpl {
 	                );            		
             	}
             	incidentParty.setParty(partyHolder);
-            	incidentParty.setPartyType(partyTypes.get(i).getValue());
-            	// Do not overwrite party status in case the supplied party status is NA            	
-            	if(partyStatuses.get(i) != PartyStatus.NA) {
-            		incidentParty.setPartyStatus(partyStatuses.get(i).getValue());
-            	}
+            	this.updateActivityPartyType(
+            		incidentParty, 
+            		partyTypes.get(i)
+            	);
+            	this.updateActivityPartyStatus(
+            		incidentParty, 
+            		partyStatuses.get(i)
+            	);
                 incidentParty.setEmailHint(partyEmail.getEmailAddress());
             }
             else if(activity instanceof Mailing) {
@@ -1382,11 +1516,14 @@ public class ICalendar extends AbstractImpl {
 	                );            		
             	}
             	meetingParty.setParty(partyHolder);
-            	meetingParty.setPartyType(partyTypes.get(i).getValue());
-            	// Do not overwrite party status in case the supplied party status is NA            	
-            	if(partyStatuses.get(i) != PartyStatus.NA) {
-            		meetingParty.setPartyStatus(partyStatuses.get(i).getValue());
-            	}
+            	this.updateActivityPartyType(
+            		meetingParty, 
+            		partyTypes.get(i)
+            	);
+            	this.updateActivityPartyStatus(
+            		meetingParty, 
+            		partyStatuses.get(i)
+            	);
                 meetingParty.setEmailHint(partyEmail.getEmailAddress());
             }
             else if(activity instanceof PhoneCall) {
@@ -1415,11 +1552,14 @@ public class ICalendar extends AbstractImpl {
 	                );
             	}
             	taskParty.setParty(partyHolder);
-            	taskParty.setPartyType(partyTypes.get(i).getValue());
-            	// Do not overwrite party status in case the supplied party status is NA            	
-            	if(partyStatuses.get(i) != PartyStatus.NA) {
-            		taskParty.setPartyStatus(partyStatuses.get(i).getValue());
-            	}
+            	this.updateActivityPartyType(
+            		taskParty, 
+            		partyTypes.get(i)
+            	);
+            	this.updateActivityPartyStatus(
+            		taskParty, 
+            		partyStatuses.get(i)
+            	);
                 taskParty.setEmailHint(partyEmail.getEmailAddress());
             }
         }
@@ -1645,7 +1785,10 @@ public class ICalendar extends AbstractImpl {
 		                    	if(!newICal.equals(oldICal) || disabledIsModified) {
 			                        try {
 			                        	if(!newICal.equals(oldICal)) {
-				                            pm.currentTransaction().begin();
+			                        		boolean isTxLocal = !pm.currentTransaction().isActive();
+			                        		if(isTxLocal) {
+			                        			pm.currentTransaction().begin();
+			                        		}
 				                            ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
 				                                calendar.toString().getBytes("UTF-8"), 
 				                                ICalendar.MIME_TYPE, 
@@ -1653,8 +1796,10 @@ public class ICalendar extends AbstractImpl {
 				                                (short)0
 				                            );
 				                            activity.importItem(importItemParams);
-				                            pm.currentTransaction().commit();
-				                            pm.refresh(activity);
+				                            if(isTxLocal) {
+					                            pm.currentTransaction().commit();
+					                            pm.refresh(activity);
+				                            }
 			                        	}
 			                        	if(disabledIsModified) {
 				                            pm.currentTransaction().begin();
@@ -1853,7 +1998,7 @@ public class ICalendar extends AbstractImpl {
     //-------------------------------------------------------------------------
     public static final String DATETIME_FORMAT =  "yyyyMMdd'T'HHmmss";
     public static final String DATE_FORMAT =  "yyyyMMdd";
-    public static final String PROD_ID = "//OPENCRX//NONSGML Version 1//EN";
+    public static final String PROD_ID = "//OPENCRX//V2//EN";
     public static final String MIME_TYPE = "text/calendar";
     public static final String FILE_EXTENSION = ".ics";
     public static final int MIME_TYPE_CODE = 4;

@@ -413,7 +413,7 @@
                         <_item>Geboortedatum</_item>
                       </label>
                       <toolTip>
-                        <_item>Geboorte datum</_item>
+                        <_item>Geboorte datum (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -424,7 +424,7 @@
                         <_item>Jubileum datum</_item>
                       </label>
                       <toolTip>
-                        <_item>Datum van jubileum</_item>
+                        <_item>Datum van jubileum (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

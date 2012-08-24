@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="contractTypeSVB" _operation="set">
 										<_object>
 											<name>
+												<_item>contractTypeSVB</_item>
 												<_item>org:opencrx:kernel:forecast1:SalesVolumeBudget:contractType</_item>
 												<!-- NOTE: see also contractClassC.xml !!! -->
 											</name>

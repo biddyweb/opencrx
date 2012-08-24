@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: DisableCrxObject.jsp,v 1.4 2010/04/27 12:16:11 wfro Exp $
+ * Name:        $Id: DisableCrxObject.jsp,v 1.9 2012/07/08 13:30:32 wfro Exp $
  * Description: disable account, composites like addresses, and members referencing account
- * Revision:    $Revision: 1.4 $
+ * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
+ * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -72,8 +71,34 @@ org.openmdx.base.naming.*,
 org.openmdx.kernel.log.*,
 org.openmdx.kernel.exception.BasicException,
 org.openmdx.kernel.id.*
-" %><%
-  request.setCharacterEncoding("UTF-8");
+" %>
+<%!
+
+	public static class Counter {
+
+		public Counter(
+			int initialValue
+		) {
+			this.counter = initialValue;
+		}
+		
+		public void increment(
+		) {
+			this.counter++;
+		}
+		
+		public int getValue(
+		) {
+			return this.counter;
+		}
+		
+		private int counter;
+
+	}
+
+%>
+<%
+	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
@@ -129,28 +154,22 @@ org.openmdx.kernel.id.*
     	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
 <%
 	try {
-    // openCRX object requests
-
+		final String WIZARD_NAME = "DisableCrxObject.jsp";
 		boolean actionOk = request.getParameter("OK.Button") != null;
 		boolean actionCancel = request.getParameter("Cancel.Button") != null;
 		boolean actionContinue = request.getParameter("Continue.Button") != null;
-
-    final boolean disable = !((request.getParameter("disable") != null) && (request.getParameter("disable").length() > 0));
-
-    Path objectPath = new Path(objectXri);
-    RefObject_1_0 refObj = (RefObject_1_0)pm.getObjectById(objectPath);
-    final String providerName = objectPath.get(2);
-    final String segmentName = objectPath.get(4);
-    final long compositeCounter = 0;
-
-  	boolean currentUserIsAdmin =
-  		app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
-
-    final String currentUserRole = app.getCurrentUserRole();
-
-    boolean permissionOk = true; //currentUserIsAdmin;
+		final boolean disable = !((request.getParameter("disable") != null) && (request.getParameter("disable").length() > 0));
+		Path objectPath = new Path(objectXri);
+		RefObject_1_0 refObj = (RefObject_1_0)pm.getObjectById(objectPath);
+		final String providerName = objectPath.get(2);
+		final String segmentName = objectPath.get(4);
+		final long compositeCounter = 0;
+		boolean currentUserIsAdmin =
+			app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
+		final String currentUserRole = app.getCurrentUserRole();
+		boolean permissionOk = true; //currentUserIsAdmin;
 %>
-    <form name="disabler" accept-charset="utf-8" method="post" action="DisableCrxObject.jsp">
+    <form name="disabler" accept-charset="utf-8" method="post" action="<%= WIZARD_NAME %>">
       <input type="hidden" class="valueL" name="xri" value="<%= objectXri %>" />
       <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
       <input type="Checkbox" name="disable" <%= disable ? "" : "checked" %> value="disable" style="display:none;" />
@@ -160,42 +179,52 @@ org.openmdx.kernel.id.*
         <%= (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %><br />
         Qualifier = <%= objectXri %><br /><br /><br />
 <%
-        try {
-          RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-          String parentXri = new Path(objectXri).getParent().getParent().toXri();
-          org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)obj;
-          pm.currentTransaction().begin();
-          crxObject.setDisabled(new Boolean(disable));
-          crxObject.setDisabledReason(currentUserRole);
-          System.out.println((disable ? "Disabling: " : "Enabling: ") + crxObject.refGetPath());
+		try {
+			RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
+			String parentXri = new Path(objectXri).getParent().getParent().toXri();
+			org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)obj;
+			pm.currentTransaction().begin();
+			crxObject.setDisabled(new Boolean(disable));
+			crxObject.setDisabledReason(currentUserRole);
+			System.out.println(new Date() + "  " + WIZARD_NAME + ": " + (disable ? "Disabling: " : "Enabling: ") + crxObject.refGetPath());
+			// Disable/enable composites			
+			try {
+				Utils.traverseObjectTree(
+					crxObject,
+					null, // referenceFilter
+					new Utils.TraverseObjectTreeCallback() {
 
-          // disable/enable composites
-          try {
-              Utils.traverseObjectTree(
-                crxObject,
-                null, // referenceFilter
-                new Utils.TraverseObjectTreeCallback() {
-
-                    // @Override
-                    public Object visit(
-                      RefObject_1_0 object,
-                      Object context
-                    ) throws ServiceException {
-                      if (object instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
-                          ((org.opencrx.kernel.generic.jmi1.CrxObject)object).setDisabled(new Boolean(disable));
-                          ((org.opencrx.kernel.generic.jmi1.CrxObject)object).setDisabledReason(currentUserRole);
-                          System.out.println((disable ? "Disabling: " : "Enabling: ") + object.refGetPath());
-                      }
-                      return null;
-                    }
-                  },
-                null
-              );
-          }
-          catch(Exception e) {
-              new ServiceException(e).log();
-          }
-          pm.currentTransaction().commit();
+						// @Override
+						public Object visit(
+							RefObject_1_0 object,
+							Object context
+						) throws ServiceException {
+							if(context instanceof Counter) {
+								Counter counter = (Counter)context;
+								counter.increment();
+								// Avoid transaction timeout. Commit every 100 modified objects
+								if(counter.getValue() % 100 == 0) {
+									javax.jdo.PersistenceManager pm = javax.jdo.JDOHelper.getPersistenceManager(object);
+									System.out.println(new Date() + "  " + WIZARD_NAME + ": commit after " + counter.getValue() + " modified objects");
+									pm.currentTransaction().commit();
+									pm.currentTransaction().begin();
+								}
+							}
+							if (object instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
+								((org.opencrx.kernel.generic.jmi1.CrxObject)object).setDisabled(new Boolean(disable));
+								((org.opencrx.kernel.generic.jmi1.CrxObject)object).setDisabledReason(currentUserRole);
+								System.out.println(new Date() + "  " + WIZARD_NAME + ": " + (disable ? "Disabling: " : "Enabling: ") + object.refGetPath());
+							}
+							return context;
+						}
+					},
+					new Counter(0) // context
+				);
+			}
+			catch(Exception e) {
+				new ServiceException(e).log();
+			}
+			pm.currentTransaction().commit();
 %>
           ...<%= disable ? "Disabled" : "Enabled" %>
 <%
@@ -233,35 +262,6 @@ org.openmdx.kernel.id.*
               <div title="XRI=<%= objectXri %>">
                 <%= disable ? "Disable" : "Enable" %> <b><%= (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %></b> and composites<br>
                 XRI=<%= objectXri %>
-              </div>
-              <div>
-<%
-                  try {
-                      RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-                      org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)obj;
-
-                      Utils.traverseObjectTree(
-                        crxObject,
-                        null, // referenceFilter
-                        new Utils.TraverseObjectTreeCallback() {
-
-                            // @Override
-                            public Object visit(
-                              RefObject_1_0 object,
-                              Object context
-                            ) throws ServiceException {
-                              //System.out.println("Visit=" + object.refGetPath());
-                              //compositeCounter++;
-                              return null;
-                            }
-                          },
-                        null
-                      );
-                  }
-                  catch(Exception e) {
-                      new ServiceException(e).log();
-                  }
-%>
               </div>
             </div>
             <INPUT type="Submit" name="OK.Button" tabindex="2000" value="<%= app.getTexts().getOkTitle() %>" />

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CalDavRequestContext.java,v 1.1 2010/11/22 11:48:54 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/22 11:48:54 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityWorkRecordImpl.java,v 1.11 2009/05/06 15:42:56 wfro Exp $
  * Description: WorkAndExpenseRecordImpl
- * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/05/06 15:42:56 $
  * ====================================================================
  *
  * This software is published under the BSD license

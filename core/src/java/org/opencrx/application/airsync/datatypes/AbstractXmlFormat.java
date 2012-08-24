@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AbstractXmlFormat.java,v 1.14 2010/06/22 17:08:24 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/22 17:08:24 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: RTFToText.java,v 1.2 2007/10/25 12:00:51 wfro Exp $
  * Description: RTFToText
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2007/10/25 12:00:51 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,10 +61,21 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.rtf.RTFEditorKit;
 
+/**
+ * RTFToText
+ *
+ */
 public class RTFToText {
 
-    //-----------------------------------------------------------------------
-    public Reader parse(
+    /**
+     * Parse document as RTF and return as Reader.
+     * 
+     * @param document
+     * @return
+     * @throws IOException
+     * @throws BadLocationException
+     */
+    public static Reader toTextAsReader(
         InputStream document
     ) throws IOException, BadLocationException {
         DefaultStyledDocument styledDoc = new DefaultStyledDocument();
@@ -82,6 +90,29 @@ public class RTFToText {
                 styledDoc.getLength()
             )
         );    
+    }
+
+    /**
+     * Parse document as RTF and return as String.
+     * 
+     * @param document
+     * @return
+     * @throws IOException
+     * @throws BadLocationException
+     */
+    public static String toTextAsString(
+        InputStream document
+    ) throws IOException, BadLocationException {
+        DefaultStyledDocument styledDoc = new DefaultStyledDocument();
+        new RTFEditorKit().read(
+            document, 
+            styledDoc, 
+            0
+        );
+        return styledDoc.getText(
+            0, 
+            styledDoc.getLength()
+        );
     }
 
     //-----------------------------------------------------------------------

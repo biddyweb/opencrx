@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="visibility" _operation="set">
 										<_object>
 											<name>
+												<_item>visibility</_item>
 												<_item>org:opencrx:kernel:model1:Import:visibility</_item>
 												<_item>org:opencrx:kernel:model1:Feature:visibility</_item>
 												<_item>org:opencrx:kernel:model1:GeneralizableElement:visibility</_item>

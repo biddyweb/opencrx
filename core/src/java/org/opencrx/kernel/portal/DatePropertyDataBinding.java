@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DatePropertyDataBinding.java,v 1.7 2012/01/13 17:16:05 wfro Exp $
  * Description: DatePropertyDataBinding
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,23 +59,35 @@ import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.opencrx.kernel.base.jmi1.DateProperty;
 import org.opencrx.kernel.base.jmi1.Property;
+import org.openmdx.portal.servlet.ApplicationContext;
 
 public class DatePropertyDataBinding extends AbstractPropertyDataBinding {
 
+    /**
+     * Constructor
+     */
     public DatePropertyDataBinding(
     ) {
         super(PropertySetHolderType.CrxObject);
     }
     
+    /**
+     * @param type
+     */
     public DatePropertyDataBinding(
         PropertySetHolderType type
     ) {
         super(type);
     }
         
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p instanceof DateProperty) {
@@ -89,10 +98,15 @@ public class DatePropertyDataBinding extends AbstractPropertyDataBinding {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#setValue(javax.jmi.reflect.RefObject, java.lang.String, java.lang.Object, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
     public void setValue(
         RefObject object, 
         String qualifiedFeatureName, 
-        Object newValue
+        Object newValue,
+        ApplicationContext app
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p == null) {

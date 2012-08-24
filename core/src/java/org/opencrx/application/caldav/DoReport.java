@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoReport.java,v 1.14 2010/12/05 14:13:33 wfro Exp $
  * Description: DoReport
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/05 14:13:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,7 +53,6 @@
 
 package org.opencrx.application.caldav;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -64,17 +60,25 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.application.uses.net.sf.webdav.exceptions.LockFailedException;
+import org.opencrx.application.uses.net.sf.webdav.fromcatalina.XMLHelper;
+import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
 
 public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods.DoReport {
 
@@ -86,42 +90,55 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
         );
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.methods.DoHead#folderBody(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
     public void folderBody(
     	RequestContext requestContext, 
         Resource so
     ) throws IOException, LockFailedException {
 		HttpServletRequest req = requestContext.getHttpServletRequest();
-        BufferedReader reader = new BufferedReader(req.getReader());		
-        StringBuilder request = new StringBuilder();
-        String l = null;
-        while((l = reader.readLine()) != null) {
-        	request.append(l).append("\n");
-        }		
+    	HttpServletResponse resp = requestContext.getHttpServletResponse();
+    	Document document = null;
+		try {
+	    	DocumentBuilder documentBuilder = getDocumentBuilder();
+	        document = documentBuilder.parse(new InputSource(req.getInputStream()));
+	    } catch (Exception e) {
+	    	new ServiceException(e).log();                	
+	        resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+	        return;
+	    }
+        Element rootElement = document.getDocumentElement();
+        // href
     	Collection<Resource> resources = Collections.emptyList();
-    	// Multi-Get
-    	if(request.indexOf("<D:href>") > 0) {
-    		resources = new ArrayList<Resource>();
-    		int pos = request.indexOf("<D:href>");
-    		while(pos > 0) {
-    			int pos1 = request.indexOf("</D:href>", pos);
-    			String href = request.substring(pos + 8, pos1);
-    			if(href.startsWith(req.getContextPath())) {
-    				href = href.substring(req.getContextPath().length());
+        List<Node> hrefNodes = XMLHelper.findSubElements(rootElement, "href");
+        if(hrefNodes != null) {
+        	resources = new ArrayList<Resource>();
+    		for(Node hrefNode: hrefNodes) {
+    			String href = hrefNode.getTextContent();
+    			if(href != null) {
+	    			if(href.startsWith(req.getContextPath())) {
+	    				href = href.substring(req.getContextPath().length());
+	    			}
+	    			Resource res = _store.getResourceByPath(requestContext, href);
+	    			if(res == null) {
+	    				res =  _store.getResourceByPath(requestContext, URLDecoder.decode(href, "UTF-8"));
+	    			}	    			
+	    			if(res != null) {
+	    				resources.add(res);
+	    			}
     			}
-    			href = URLDecoder.decode(href, "UTF-8");
-    			Resource res = _store.getResourceByPath(requestContext, href);
-    			if(res != null) {
-    				resources.add(res);
-    			}
-        		pos = request.indexOf("<D:href>", pos1);
     		}
     	}
     	// Query
     	else if(so instanceof ActivityCollectionResource) {
     		resources = _store.getChildren(requestContext, so);
        	}
-    	HttpServletResponse resp = requestContext.getHttpServletResponse();
+        // Properties
+        Node propNode = XMLHelper.findSubElement(rootElement, "prop");
+        List<String> properties = XMLHelper.getPropertiesFromXML(propNode);
+        // Response
         resp.setStatus(SC_MULTI_STATUS);
         resp.setCharacterEncoding("UTF-8");
         resp.setContentType("application/xml");
@@ -131,26 +148,33 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
     	SysLog.detail("<D:multistatus>");
     	p.println("<D:multistatus xmlns:D=\"DAV:\" xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
         for(Resource resource: resources) {
-        	ActivityResource activityResource = (ActivityResource)resource;
+        	ActivityResource res = (ActivityResource)resource;
         	if(
-        		(activityResource.getSyncFeedResource().getRunAs() == null) || 
-        		activityResource.getObject().getIcal().indexOf("CLASS:PRIVATE") < 0
+        		(res.getSyncFeedResource().getRunAs() == null) || 
+        		res.getObject().getIcal().indexOf("CLASS:PRIVATE") < 0
         	) {
             	String name = resource.getName();
 	        	p.println("  <D:response>");
 	        	p.println("    <D:href>" + this.encodeURL(resp, this.getHRef(req, req.getServletPath() + name, false)) + "</D:href>");
 	        	p.println("    <D:propstat>");
 	        	p.println("      <D:prop>");
-	        	p.println("        <D:getetag>" + this.getETag(activityResource) + "</D:getetag>");
-	        	p.print  ("        <C:calendar-data xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
-	        	p.print("<![CDATA[");
-	        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource);
-	        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-	        	BinaryLargeObjects.streamCopy(content.getContent(), 0L, bos);
-	        	bos.close();
-	        	p.print(bos.toString("UTF-8"));
-	        	p.print("]]>");
-                p.println("</C:calendar-data>");
+	        	for(String property: properties) {
+	        		if(property.indexOf("getetag") > 0) {
+	        			p.println("        <D:getetag>" + this.getETag(res) + "</D:getetag>");
+	        		} else if(property.indexOf("calendar-data") > 0) {
+			        	p.print  ("        <C:calendar-data xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
+			        	p.print("<![CDATA[");
+			        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource);
+			        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			        	BinaryLargeObjects.streamCopy(content.getContent(), 0L, bos);
+			        	bos.close();
+			        	p.print(bos.toString("UTF-8"));
+			        	p.print("]]>");
+		                p.println("</C:calendar-data>");
+	        		} else if(property.indexOf("getcontenttype") > 0) {
+	        			p.println("        <D:getcontenttype>" + _store.getMimeType(res) + "</D:getcontenttype>");
+	        		}
+	        	}
 	        	p.println("      </D:prop>");
 	        	p.println("      <D:status>HTTP/1.1 200 OK</D:status>");
 	        	p.println("    </D:propstat>");
@@ -163,5 +187,5 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
     }
 
     protected static final int SC_MULTI_STATUS = 207;
-	
+
 }

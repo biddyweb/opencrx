@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: LDAPServlet.java,v 1.2 2010/02/10 16:36:34 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/02/10 16:36:34 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -62,12 +59,18 @@ import org.opencrx.application.adapter.AbstractServlet;
 
 public class LDAPServlet extends AbstractServlet {
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServlet#getConfigurationId()
+	 */
 	@Override
     public String getConfigurationId(
     ) {
 		return "LDAPServer";
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServlet#getPortNumber(java.lang.String)
+	 */
 	@Override
     public int getPortNumber(
     	String configuredPortNumber
@@ -79,6 +82,9 @@ public class LDAPServlet extends AbstractServlet {
 						Integer.valueOf(configuredPortNumber));		
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServlet#newServer(javax.jdo.PersistenceManagerFactory, java.lang.String, java.lang.String, int, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.Boolean, boolean, int)
+	 */
 	@Override
     public AbstractServer newServer(
         PersistenceManagerFactory pmf,
@@ -89,6 +95,10 @@ public class LDAPServlet extends AbstractServlet {
         String sslKeystoreType,
         String sslKeystorePass,
         String sslKeyPass,
+	    String sslTruststoreFile,
+	    String sslTruststorePass,
+	    String sslTruststoreType,
+	    Boolean sslNeedClientAuth,        
         boolean isDebug,
         int delayOnStartup
     ) {
@@ -101,6 +111,10 @@ public class LDAPServlet extends AbstractServlet {
 		    sslKeystoreType,
 		    sslKeystorePass,
 		    sslKeyPass,
+		    sslTruststoreFile,
+		    sslTruststorePass,
+		    sslTruststoreType,
+		    sslNeedClientAuth,
 			isDebug,
 			delayOnStartup
 		);

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DepotImpl.java,v 1.11 2009/04/20 17:56:45 wfro Exp $
  * Description: DepotImpl
- * Revision:    $Revision: 1.11 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:45 $
  * ====================================================================
  *
  * This software is published under the BSD license

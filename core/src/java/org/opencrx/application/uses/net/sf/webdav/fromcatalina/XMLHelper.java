@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: XMLHelper.java,v 1.4 2010/11/22 00:59:36 wfro Exp $
  * Description: XMLHelper
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/22 00:59:36 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -80,14 +77,22 @@ import org.w3c.dom.NodeList;
 
 public class XMLHelper {
 
-    public static Node findSubElement(Node parent, String localName) {
+    /**
+     * Find first sub element with given local name.
+     * @param parent
+     * @param localName
+     * @return
+     */
+    public static Node findSubElement(
+    	Node parent, 
+    	String localName
+    ) {
         if (parent == null) {
             return null;
         }
         Node child = parent.getFirstChild();
         while (child != null) {
-            if ((child.getNodeType() == Node.ELEMENT_NODE)
-                    && (child.getLocalName().equals(localName))) {
+            if ((child.getNodeType() == Node.ELEMENT_NODE) && (child.getLocalName().equals(localName))) {
                 return child;
             }
             child = child.getNextSibling();
@@ -95,11 +100,42 @@ public class XMLHelper {
         return null;
     }
 
-    public static List<String> getPropertiesFromXML(Node propNode) {
+    /**
+     * Find first sub element with given local name.
+     * @param parent
+     * @param localName
+     * @return
+     */
+    public static List<Node> findSubElements(
+    	Node parent, 
+    	String localName
+    ) {
+        if(parent == null) return null;
+        Node child = parent.getFirstChild();
+    	List<Node> elements = null;
+        while(child != null) {
+            if ((child.getNodeType() == Node.ELEMENT_NODE) && (child.getLocalName().equals(localName))) {
+            	if(elements == null) {
+            		elements = new ArrayList<Node>();
+            	}
+            	elements.add(child);
+            }
+            child = child.getNextSibling();
+        }
+        return elements;
+    }
+
+    /**
+     * Extract properties from property node.
+     * @param propNode
+     * @return
+     */
+    public static List<String> getPropertiesFromXML(
+    	Node propNode
+    ) {
         ArrayList<String> properties;
         properties = new ArrayList<String>();
         NodeList childList = propNode.getChildNodes();
-
         for (int i = 0; i < childList.getLength(); i++) {
             Node currentNode = childList.item(i);
             if (currentNode.getNodeType() == Node.ELEMENT_NODE) {

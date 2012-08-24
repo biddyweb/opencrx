@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="partystatusMailing" _operation="set">
 										<_object>
 											<name>
+												<_item>partystatusMailing</_item>
 												<_item>org:opencrx:kernel:activity1:AbstractMailingRecipient:partyStatus</_item>
 												<_item>org:opencrx:kernel:activity1:MailingRecipient:partyStatus</_item>
 												<_item>org:opencrx:kernel:activity1:MailingRecipientGroup:partyStatus</_item>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: Lock.java,v 1.1 2010/11/19 01:17:17 wfro Exp $
  * Description: LockedObject
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/19 01:17:17 $
  * ====================================================================
  *
  * This software is published under the BSD license

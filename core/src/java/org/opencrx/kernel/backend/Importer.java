@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Importer.java,v 1.25 2011/12/13 10:20:53 wfro Exp $
  * Description: Importer
- * Revision:    $Revision: 1.25 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/13 10:20:53 $
  * ====================================================================
  *
  * This software is published under the BSD license

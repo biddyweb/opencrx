@@ -1,18 +1,18 @@
 ﻿<%@	page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %><%
 /*
  * ====================================================================
- * Project:			openCRX/Core, http://www.opencrx.org/
- * Name:				$Id: ManageUsers.jsp,v 1.5 2010/12/21 12:13:25 cmu Exp $
+ * Project:		openCRX/Core, http://www.opencrx.org/
+ * Name:		$Id: ManageUsers.jsp,v 1.5 2010/12/21 12:13:25 cmu Exp $
  * Description: Manage openCRX Users (membership of PrincipalGroups, etc.)
- * Revision:		$Revision: 1.5 $
- * Owner:				CRIXP AG, Switzerland, http://www.crixp.com
- * Date:				$Date: 2010/12/21 12:13:25 $
+ * Revision:	$Revision: 1.5 $
+ * Owner:		CRIXP AG, Switzerland, http://www.crixp.com
+ * Date:		$Date: 2010/12/21 12:13:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -72,11 +72,11 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
+org.openmdx.base.text.conversion.*,
 org.openmdx.base.query.*,
 org.openmdx.kernel.log.*,
 org.apache.poi.hssf.usermodel.*,
@@ -260,7 +260,7 @@ org.apache.poi.hssf.util.*
 </style>
 
 <%
-final String location = UUIDs.getGenerator().next().toString();
+final String location = UUIDConversion.toUID(UUIDs.newUUID());
 String mode = (request.getParameter("mode") == null ? "0" : request.getParameter("mode")); // default is [Manage Members]
 %>
 
@@ -685,7 +685,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 													);
 												}
 
-												String settingTimezone = userSettings.getProperty(UserSettings.TIMEZONE_NAME);
+												String settingTimezone = userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName());
 												String settingStoreSettingsOnLogoff = userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "true" : "false";
 
 												org.opencrx.kernel.home1.cci2.EMailAccountQuery emailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pmUser.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
@@ -696,10 +696,10 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 												String settingEmailAccount = (defaultEmailAccount == null || defaultEmailAccount.getName() == null ? "" : defaultEmailAccount.getName());
 												String settingSendmailSubjectPrefix = (userHome.getSendMailSubjectPrefix() == null ? "[" + providerName + ":" + segmentName + "]" : userHome.getSendMailSubjectPrefix());
 												String settingWebAccessUrl = (userHome.getWebAccessUrl() == null ? request.getRequestURL().substring(0, request.getRequestURL().indexOf("/wizards")) :	userHome.getWebAccessUrl());
-												String settingTopNavigationShowMax = userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX, "6");
-												Boolean settingShowTopNavigationSublevel = "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL));
-												Boolean settingGridDefaultAlignmentIsWide = "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE));
-												Boolean settingHideWorkspaceDashboard = "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD));
+												String settingTopNavigationShowMax = userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX.getName(), "6");
+												Boolean settingShowTopNavigationSublevel = "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL.getName()));
+												Boolean settingGridDefaultAlignmentIsWide = "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE.getName()));
+												Boolean settingHideWorkspaceDashboard = "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD.getName()));
 												
 												Action[] rootObjectActions = app.getRootObjectActions();
 												List<String> settingRootObjects = new ArrayList<String>();
@@ -710,7 +710,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 												for(int i = 1; i < rootObjectActions.length; i++) {
 													Action action = rootObjectActions[i];
 													if(action.getParameter(Action.PARAMETER_REFERENCE).length() == 0) {
-															String state = (userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE + (app.getCurrentPerspective() == 0 ? "" : "[" + Integer.toString(app.getCurrentPerspective()) + "]") + "." + n + ".State", "1").equals("1") ? "1" : "0");
+															String state = (userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE.getName() + (app.getCurrentPerspective() == 0 ? "" : "[" + Integer.toString(app.getCurrentPerspective()) + "]") + "." + n + ".State", "1").equals("1") ? "1" : "0");
 															if(i < app.getRootObject().length && app.getRootObject()[i] instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
 																state = "1";
 															}

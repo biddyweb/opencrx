@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="currency" _operation="set">
 										<_object>
 											<name>
+												<_item>currency</_item>
 												<_item>org:opencrx:kernel:account1:Contact:annualIncomeCurrency</_item>
 												<_item>org:opencrx:kernel:account1:RevenueReport:reportingCurrency</_item>
 												<_item>org:opencrx:kernel:account1:CreditLimit:creditCurrency</_item>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Models.java,v 1.19 2011/12/18 22:16:17 wfro Exp $
  * Description: Models
- * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/18 22:16:17 $
  * ====================================================================
  *
  * This software is published under the BSD license

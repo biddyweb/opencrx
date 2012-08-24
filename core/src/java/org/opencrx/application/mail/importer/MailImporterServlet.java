@@ -1,17 +1,14 @@
   /*
    * ====================================================================
    * Project:     openCRX/Core, http://www.opencrx.org/
-   * Name:        $Id: MailImporterServlet.java,v 1.23 2011/09/03 13:31:10 wfro Exp $
    * Description: MailImporterServlet
-   * Revision:    $Revision: 1.23 $
    * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
-   * Date:        $Date: 2011/09/03 13:31:10 $
    * ====================================================================
    *
    * This software is published under the BSD license
    * as listed below.
    * 
-   * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+   * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
    * All rights reserved.
    * 
    * Redistribution and use in source and binary forms, with or without 
@@ -87,7 +84,6 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 
 /**
@@ -104,33 +100,39 @@ import org.openmdx.kernel.log.SysLog;
 public class MailImporterServlet 
     extends HttpServlet {
 
-    //-----------------------------------------------------------------------
     /* (non-Javadoc)
      * @see javax.servlet.Servlet#init(javax.servlet.ServletConfig)
      */
     public void init(
         ServletConfig config
     ) throws ServletException {
-
         super.init(config);        
         // initialize model repository
         try {
             Model_1Factory.getModel();
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
         	SysLog.warning("Can not initialize model repository", e);
         }
         // data connection
         try {
-            this.persistenceManagerFactory = Utils.getPersistenceManagerFactory();
-        }
-        catch(Exception e) {
+            this.pmf = Utils.getPersistenceManagerFactory();
+        } catch(Exception e) {
             throw new ServletException("can not get connection to data provider", e);
         }
     }
 
-    //-----------------------------------------------------------------------
-    private void notifyAdmin(
+    /**
+     * Send notification to segment admin.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @param importance
+     * @param subject
+     * @param message
+     * @param params
+     */
+    protected void notifyAdmin(
         PersistenceManager pm,
         String providerName,
         String segmentName,
@@ -141,7 +143,7 @@ public class MailImporterServlet
     ) {
         try {
             Path adminHomeIdentity = new Path(
-                "xri://@openmdx*org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName + "/userHome/" + SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
+                "xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
             );
             UserHome userHome = (UserHome)pm.getObjectById(adminHomeIdentity);
             try {
@@ -157,21 +159,26 @@ public class MailImporterServlet
                 );
                 userHome.sendAlert(sendAlertParams);
                 pm.currentTransaction().commit();
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 try {
                     pm.currentTransaction().rollback();                    
-                } 
-                catch(Exception e0) {}
+                } catch(Exception uncaught) {}
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             new ServiceException(e).log();
         }        
     }
     
-    //-----------------------------------------------------------------------
-    private void importMessages(
+    /**
+     * Import new messages from message store.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @param message
+     * @param config
+     */
+    protected void importMessages(
         PersistenceManager pm,
         String providerName,
         String segmentName,
@@ -182,13 +189,10 @@ public class MailImporterServlet
         String messageId = "NA";
         try {
             messageId = message.getMessageID();
-        } 
-        catch(Exception e) {}
+        } catch(Exception uncaught) {}
         boolean success = true;
         try {
-    		if(!message.getSubject().startsWith("> ")) {
-    			message.setSubject("> " + message.getSubject());
-    		}
+    		// If message subject starts with "> " importMimeMessage() handles 'link to and followUp'
     		Activities.getInstance().importMimeMessage(
     			pm,
 	     		providerName, 
@@ -196,8 +200,7 @@ public class MailImporterServlet
 	     		message, 
 	     		null // derive E-Mail creator from subject line 
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
         	SysLog.info(e.getMessage(), e.getCause());                        
             this.notifyAdmin(
                 pm,
@@ -216,21 +219,26 @@ public class MailImporterServlet
 	            	Flags.Flag.DELETED,
 	            	true
 	            );
-            }
-            catch (MessagingException e) {}
+            } catch (MessagingException uncaught) {}
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Import messages to segment.
+     * 
+     * @param providerName
+     * @param segmentName
+     * @throws IOException
+     */
     protected void importMessages(
         String providerName,
         String segmentName        
     ) throws IOException {
         PersistenceManager pm = null;
         try {
-            pm = this.persistenceManagerFactory.getPersistenceManager(
+            pm = this.pmf.getPersistenceManager(
                 SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
-                UUIDs.getGenerator().next().toString()
+                null
             );
             System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
             Workflows.getInstance().initWorkflows(
@@ -290,8 +298,7 @@ public class MailImporterServlet
                             mimeMessage,
                             mailImporterConfig
                         );
-                    }
-                    catch(Exception e) {
+                    } catch(Exception e) {
                     	SysLog.info(e.getMessage(), e.getCause());
                         this.notifyAdmin(
                             pm,
@@ -307,8 +314,7 @@ public class MailImporterServlet
             }
             mailStore.closeFolder();
             mailStore.closeStore();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             if(pm != null) {
                 this.notifyAdmin(
                     pm,
@@ -329,7 +335,6 @@ public class MailImporterServlet
     	}
     }
 
-    //-----------------------------------------------------------------------
     /**
      * Process an email import request.
      * 
@@ -377,7 +382,6 @@ public class MailImporterServlet
         }
     }
 
-    //-----------------------------------------------------------------------
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -393,7 +397,6 @@ public class MailImporterServlet
         );
     }
         
-    //-----------------------------------------------------------------------
     /* (non-Javadoc)
      * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
@@ -417,7 +420,7 @@ public class MailImporterServlet
     private static final String WORKFLOW_NAME = "MailImporter";
     private static final String COMMAND_EXECUTE = "/execute";
     
-    private PersistenceManagerFactory persistenceManagerFactory = null;
+    private PersistenceManagerFactory pmf = null;
     private final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
 
 }

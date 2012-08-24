@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.34 2011/11/28 14:36:26 wfro Exp $
+ * Name:        $Id: UploadDocument.jsp,v 1.37 2012/07/08 13:30:30 wfro Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.34 $
+ * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:36:26 $
+ * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2007-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -254,7 +253,7 @@ org.openmdx.kernel.id.*
 				try {
 					Codes codes = app.getCodes();
 					String featureDocumentTypeCode = "documentType";
-					SortedMap documentTypeCode_longTextsT = codes.getLongText(featureDocumentTypeCode, app.getCurrentLocaleAsIndex(), false, true);
+					Map<String,Short> documentTypeCode_longTextsT = codes.getLongTextByText(featureDocumentTypeCode, app.getCurrentLocaleAsIndex(), true);
 					boolean actionOk = parameterMap.get("OK.Button") != null;
 					boolean actionCancel = parameterMap.get("Cancel.Button") != null;
 					boolean successfullyCreated = false;
@@ -542,7 +541,7 @@ org.openmdx.kernel.id.*
 										short value = Short.parseShort((option.getValue()).toString());
 										String selectedModifier = Short.parseShort(documentType) == value ? "selected" : "";
 %>
-										<option <%= selectedModifier %> value="<%= value %>"><%= (String)(codes.getLongText(featureDocumentTypeCode, app.getCurrentLocaleAsIndex(), true, true).get(new Short(value))) %>
+										<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(featureDocumentTypeCode, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
 <%
 									}
 								}

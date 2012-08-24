@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Workflows.java,v 1.36 2012/01/13 17:15:41 wfro Exp $
  * Description: Workflows
- * Revision:    $Revision: 1.36 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:41 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -58,11 +55,8 @@ package org.opencrx.kernel.backend;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -70,12 +64,7 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.application.mail.exporter.ExportMailWorkflow;
 import org.opencrx.application.mail.exporter.SendMailNotificationWorkflow;
 import org.opencrx.application.mail.exporter.SendMailWorkflow;
-import org.opencrx.application.twitter.SendDirectMessageWorkflow;
-import org.opencrx.kernel.base.jmi1.BooleanProperty;
-import org.opencrx.kernel.base.jmi1.DecimalProperty;
 import org.opencrx.kernel.base.jmi1.IntegerProperty;
-import org.opencrx.kernel.base.jmi1.Property;
-import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.base.jmi1.UriProperty;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.generic.OpenCrxException;
@@ -92,33 +81,86 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
 
 public class Workflows extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register backend class
+	 */
 	public static void register(
 	) {
 		registerImpl(new Workflows());
 	}
-	
-    //-------------------------------------------------------------------------
+
+	/**
+	 * Get instance of registered backend class
+	 */
 	public static Workflows getInstance(
 	) throws ServiceException {
 		return getInstance(Workflows.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor
+	 */
 	protected Workflows(
 	) {
 		
 	}
+
+	/**
+	 * Abstract class for synchronous workflows.
+	 */
+	public static abstract class SynchronousWorkflow {
+	    
+	    /**
+	     * Executes the workflow for the specified target object. The list of processed 
+	     * (modified, created, removed) objects must be updated if the objects are subject 
+	     * to topics, subscriptions and workflows. 
+	     * 
+	     * @param userHome the user's home for which the workflow is executed.
+	     * @param targetObject workflow target object.
+	     * @param triggeredBy object which triggered workflow.
+	     * @param wfProcessInstance workflow process instance.
+	     * @param pm persistence manager
+	     * @throws ServiceException
+	     */
+	    public abstract void execute(
+	        WorkflowTarget wfTarget,
+	        ContextCapable targetObject,
+	        WfProcessInstance wfProcessInstance
+	    ) throws ServiceException;
+
+	}
+
+	/**
+	 * Abstract class for asynchronous workflows
+	 */
+	public static abstract class AsynchronousWorkflow {
+	    
+	    /**
+	     * Execute the workflow specified by wfProcessInstance. wfProcessInstance may be
+	     * modified by execute.
+	     * @throws ServiceException
+	     */
+	    public abstract void execute(
+	        WfProcessInstance wfProcessInstance
+	    ) throws ServiceException;
+
+	}
 	
-    //-----------------------------------------------------------------------
+    /**
+     * Get workflow segment
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public org.opencrx.kernel.workflow1.jmi1.Segment getWorkflowSegment(
         PersistenceManager pm,
         String providerName,
@@ -229,11 +271,9 @@ public class Workflows extends AbstractImpl {
             // Add properties
             if(properties != null) {
                 pm.currentTransaction().begin();
-                UUIDGenerator uuids = UUIDs.getGenerator();
                 for(int i = 0; i < properties.length; i++) {
                     wfProcess.addProperty(
-                        false,                             
-                        uuids.next().toString(),
+                        UUIDConversion.toUID(UUIDs.newUUID()),
                         properties[i]
                     );
                 }
@@ -299,13 +339,37 @@ public class Workflows extends AbstractImpl {
             Boolean.TRUE,
             null
         );
-        // SendDirectMessage
-        WfProcess sendDirectMessageWorkflow = this.initWorkflow(
+        // SendDirectMessage (Twitter)
+        WfProcess sendMessageToTwitterWorkflow = this.initWorkflow(
             workflowSegment,
             WORKFLOW_SEND_DIRECT_MESSAGE_TWITTER,
             org.opencrx.application.twitter.SendDirectMessageWorkflow.class.getName(),
             "Send direct message to Twitter",
             Boolean.TRUE,
+            null
+        );
+        // SendMessage (Jabber)
+        WfProcess sendMessageToJabberWorkflow = this.initWorkflow(
+            workflowSegment,
+            WORKFLOW_SEND_MESSAGE_JABBER,
+            org.opencrx.application.jabber.SendMessageWorkflow.class.getName(),
+            "Send message to Jabber / XMPP service",
+            Boolean.TRUE,
+            null
+        );
+        // BulkActivityFollowUp
+        @SuppressWarnings("unused")
+        WfProcess bulkActivityFollowUpWorkflow = this.initWorkflow(
+            workflowSegment,
+            WORKFLOW_BULK_ACTIVITY_FOLLOWUP,
+            org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow.class.getName(),
+            "Perform bulk activity follow up. Parameters are:\n" +
+            "* activity: template activity\n" +
+            "* transition: process transition\n" + 
+            "* followUpTitle: follow up title\n" +
+            "* followUpText: follow up text\n" +
+            "* assignTo: assign activity to contact",
+            Boolean.FALSE,
             null
         );
         WfProcess[] sendAlertActions = new WfProcess[]{
@@ -314,8 +378,11 @@ public class Workflows extends AbstractImpl {
         WfProcess[] sendMailNotificationsActions = new WfProcess[]{
             sendMailNotificationWorkflow
         };
-        WfProcess[] sendDirectMessageToTwitterActions = new WfProcess[]{
-            sendDirectMessageWorkflow
+        WfProcess[] sendMessageTwitterActions = new WfProcess[]{
+            sendMessageToTwitterWorkflow
+        };
+        WfProcess[] sendMessageToJabberActions = new WfProcess[]{
+            sendMessageToJabberWorkflow
         };
         this.initTopic(
             workflowSegment,
@@ -433,16 +500,24 @@ public class Workflows extends AbstractImpl {
             workflowSegment,
             "AlertModificationsTwitter",            
             TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER,
-            "Send direct message for new alerts to Twitter",
+            "Send message for new alerts to Twitter",
             "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/alert/:*",
-            sendDirectMessageToTwitterActions
+            sendMessageTwitterActions
         );
         this.initTopic(
             workflowSegment,
-            "ReminderModifications",            
-            TOPIC_NAME_REMINDER_MODIFICATIONS,
-            "Send alert for reminders with new alarm",
-            "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/reminder/:*",
+            "AlertModificationsJabber",            
+            TOPIC_NAME_ALERT_MODIFICATIONS_JABBER,
+            "Send message for new alerts to Jabber / XMPP service",
+            "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/alert/:*",
+            sendMessageToJabberActions
+        );
+        this.initTopic(
+            workflowSegment,
+            "TimerModifications",            
+            TOPIC_NAME_TIMER_MODIFICATIONS,
+            "Send alert when timer is triggered",
+            "xri:@openmdx:org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/timer/:*",
             sendAlertActions
         );
     }
@@ -452,8 +527,8 @@ public class Workflows extends AbstractImpl {
         WorkflowTarget wfTarget,
         WfProcess wfProcess,
         ContextCapable targetObject,
+        ContextCapable triggeredBy,
         String triggeredByEventId,
-        org.opencrx.kernel.base.jmi1.Subscription triggeredBySubscription,
         Integer triggeredByEventType
     ) throws ServiceException {
         if(wfProcess == null) {
@@ -466,7 +541,7 @@ public class Workflows extends AbstractImpl {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(wfTarget);        
         boolean isSynchronous = wfProcess.isSynchronous() == null ?
         	false :
-        	wfProcess.isSynchronous().booleanValue();
+        		wfProcess.isSynchronous().booleanValue();
         // Target
         if(targetObject == null) {
             throw new ServiceException(
@@ -490,29 +565,26 @@ public class Workflows extends AbstractImpl {
         // Try to execute workflow in context of existing workflow instance
         try {
         	wfInstance = (WfProcessInstance)pm.getObjectById(wfInstanceIdentity);
-        }
-        catch(Exception e) {}
+        } catch(Exception e) {}
         if(wfInstance == null) {
         	wfInstance = pm.newInstance(WfProcessInstance.class);
             wfInstance.setStepCounter(new Integer(0));
             wfInstance.setProcess(wfProcess);
-            wfInstance.setTargetObject(targetObjectIdentity.toXri());            
+            wfInstance.setTargetObject(targetObjectIdentity.toXRI());            
             wfInstance.setFailed(Boolean.FALSE);
             if(wfTarget instanceof UserHome) {
 	            ((UserHome)wfTarget).addWfProcessInstance(
-	            	false, 
 	            	this.getUidAsString(),
 	            	wfInstance
 	            );
             }
         }
         // Add parameters of executeWorkflow() operation to property set of WfProcessInstance
-        if(triggeredBySubscription != null) {
+        if(triggeredBy != null) {
             UriProperty property = pm.newInstance(UriProperty.class);
-            property.setName("triggeredBySubscription");
-            property.setUriValue(triggeredBySubscription.refGetPath().toXri());
+            property.setName("triggeredBy");
+            property.setUriValue(triggeredBy.refGetPath().toXRI());
             wfInstance.addProperty(
-            	false,
             	this.getUidAsString(),
             	property
             );
@@ -522,14 +594,13 @@ public class Workflows extends AbstractImpl {
             property.setName("triggeredByEventType");
             property.setIntegerValue(triggeredByEventType.intValue());
             wfInstance.addProperty(
-            	false,
             	this.getUidAsString(),
             	property
             );
-        }                
+        }
         // Execute workflow if synchronous  
         if(isSynchronous) {
-            SynchWorkflow_2_0 workflow = null;            
+            SynchronousWorkflow workflow = null;            
             Class<?> workflowClass = null;
             try {
                 workflowClass = Classes.getApplicationClass(
@@ -563,7 +634,7 @@ public class Workflows extends AbstractImpl {
             }
             // Instantiate workflow
             try {
-                workflow = (SynchWorkflow_2_0)workflowConstructor.newInstance(new Object[]{});
+                workflow = (SynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
             }
             catch(InstantiationException e) {
                 new ServiceException(e).log();
@@ -604,51 +675,13 @@ public class Workflows extends AbstractImpl {
                     new BasicException.Parameter("param1", e.getTargetException().getMessage())
                 );                                                                                        
             }
-            // Get workflow parameters
-            Collection<Property> parameters = wfProcess.getProperty();
-            Map<String,Object> params = new HashMap<String,Object>();
-            // Add parameters of executeWorkflow operation to params
-            if(triggeredBySubscription != null) {
-                params.put("triggeredBySubscription", triggeredBySubscription);
-            }
-            if(triggeredByEventType != null) {
-                params.put("triggeredByEventType", triggeredByEventType);            
-            }
-            for(Property parameter: parameters) {
-                Object val = null;
-                if(parameter instanceof BooleanProperty) {
-                    val = ((BooleanProperty)parameter).isBooleanValue();
-                }
-                else if(parameter instanceof IntegerProperty) {
-                    val = ((IntegerProperty)parameter).getIntegerValue();
-                }
-                else if(parameter instanceof DecimalProperty) {
-                    val = ((DecimalProperty)parameter).getDecimalValue();
-                }
-                else if(parameter instanceof UriProperty) {
-                    val = ((UriProperty)parameter).getUriValue();                
-                }
-                else if(parameter instanceof StringProperty) {
-                    val = ((StringProperty)parameter).getStringValue();
-                }
-                params.put(
-                    parameter.getName(),
-                    val
-                );
-            }
             // Execute workflow
             try {
-            	if(targetObject != null) {
-	                workflow.execute(
-	                    wfTarget,
-	                    targetObject,
-	                    params,
-	                    wfInstance
-	                );
-            	}
-            	else {
-            		SysLog.detail("Workflow not executed on null target. Workflow instance is", wfInstance == null ? null : wfInstance.refGetPath());
-            	}
+                workflow.execute(
+                    wfTarget,
+                    targetObject,
+                    wfInstance
+                );
                 // Update workflow instance after successful execution
                 wfInstance.setStartedOn(new Date());
                 wfInstance.setLastActivityOn(new Date());
@@ -705,6 +738,29 @@ public class Workflows extends AbstractImpl {
         return wfInstance;
     }
 
+    public enum EventType {
+    	
+    	NONE((short)0),
+    	OBJECT_CREATION((short)1),
+    	OBJECT_REPLACEMENT((short)3),
+    	OBJECT_REMOVAL((short)4),
+    	TIMER((short)5);
+    	
+		private short value;
+    	
+		private EventType(
+			short value
+		) {
+			this.value = value;
+			
+		}
+    	
+		public short getValue(
+		) {
+			return this.value;
+		}
+    }
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -717,12 +773,15 @@ public class Workflows extends AbstractImpl {
     public static final String WORKFLOW_SEND_ALERT = "SendAlert";
     public static final String WORKFLOW_PRINT_CONSOLE = "PrintConsole";
     public static final String WORKFLOW_SEND_DIRECT_MESSAGE_TWITTER = "SendDirectMessage";
+    public static final String WORKFLOW_SEND_MESSAGE_JABBER = "SendMessageJabber";
+    public static final String WORKFLOW_BULK_ACTIVITY_FOLLOWUP = "BulkActivityFollowUp";
 
     public static final String TOPIC_NAME_ACCOUNT_MODIFICATIONS = "Account Modifications";
     public static final String TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS = "Activity Follow Up Modifications";
     public static final String TOPIC_NAME_ACTIVITY_MODIFICATIONS = "Activity Modifications";
     public static final String TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL = "Alert Modifications";
     public static final String TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER = "Alert Modifications (Twitter)";
+    public static final String TOPIC_NAME_ALERT_MODIFICATIONS_JABBER = "Alert Modifications (Jabber)";
     public static final String TOPIC_NAME_BOOKING_MODIFICATIONS = "Booking Modifications";
     public static final String TOPIC_NAME_COMPETITOR_MODIFICATIONS = "Competitor Modifications";
     public static final String TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS = "Compound Booking Modifications";
@@ -733,15 +792,17 @@ public class Workflows extends AbstractImpl {
     public static final String TOPIC_NAME_PRODUCT_MODIFICATIONS = "Product Modifications";
     public static final String TOPIC_NAME_QUOTE_MODIFICATIONS = "Quote Modifications";
     public static final String TOPIC_NAME_SALES_ORDER_MODIFICATIONS = "SalesOrder Modifications";
-    public static final String TOPIC_NAME_REMINDER_MODIFICATIONS = "Reminder Modifications (Alert)";
+    public static final String TOPIC_NAME_TIMER_MODIFICATIONS = "Timer Modifications (Alert)";
     
     public static final String WORKFLOW_NAME_PRINT_CONSOLE = PrintConsole.class.getName();
     public static final String WORKFLOW_NAME_SEND_ALERT = SendAlert.class.getName();
     public static final String WORKFLOW_NAME_EXPORT_MAIL = ExportMailWorkflow.class.getName();
     public static final String WORKFLOW_NAME_SEND_MAIL_NOTIFICATION = SendMailNotificationWorkflow.class.getName();
     public static final String WORKFLOW_NAME_SEND_MAIL = SendMailWorkflow.class.getName();
-    public static final String WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER = SendDirectMessageWorkflow.class.getName();
-        
+    public static final String WORKFLOW_NAME_SEND_MESSAGE_TWITTER = org.opencrx.application.twitter.SendDirectMessageWorkflow.class.getName();
+    public static final String WORKFLOW_NAME_SEND_MESSAGE_JABBER = org.opencrx.application.jabber.SendMessageWorkflow.class.getName();
+    public static final String WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP = org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow.class.getName();
+
 }
 
 //--- End of File -----------------------------------------------------------

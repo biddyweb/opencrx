@@ -2,7 +2,7 @@
 <java version="1.3.1_11" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="4">	
+			<array class="java.lang.String" length="5">	
 				<void index="0">			
 					<string>org:opencrx:kernel:account1:Contact:address</string>
 				</void>
@@ -14,6 +14,9 @@
 				</void>
 				<void index="3">			
 					<string>org:opencrx:kernel:account1:Group:address</string>
+				</void>
+				<void index="4">			
+					<string>org:opencrx:kernel:account1:Segment:address</string>
 				</void>
 			</array>
 		</void>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: XMLWriter.java,v 1.4 2010/11/19 23:35:39 wfro Exp $
  * Description: XMLWriter
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/19 23:35:39 $
  * ====================================================================
  *
  * This software is published under the BSD license

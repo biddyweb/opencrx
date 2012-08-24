@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoMove.java,v 1.12 2010/12/15 11:54:58 wfro Exp $
  * Description: DoMove
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/15 11:54:58 $
  * ====================================================================
  *
  * This software is published under the BSD license

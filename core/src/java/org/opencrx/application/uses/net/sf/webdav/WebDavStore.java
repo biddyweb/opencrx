@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: WebDavStore.java,v 1.7 2010/12/07 16:27:49 wfro Exp $
  * Description: WebDavStore
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/07 16:27:49 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -201,7 +198,7 @@ public interface WebDavStore {
      */
     public enum PutResourceStatus {
 
-    	CREATED, UPDATED
+    	CREATED, UPDATED, FORBIDDEN
     }
     
     PutResourceStatus putResource(

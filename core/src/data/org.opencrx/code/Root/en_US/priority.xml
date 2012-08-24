@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="priority" _operation="set">
 										<_object>
 											<name>
+												<_item>priority</_item>
 												<_item>org:opencrx:kernel:account1:ActivityOverview:priority</_item>
 												<_item>org:opencrx:kernel:account1:ContractOverview:priority</_item>
 												<_item>org:opencrx:kernel:activity1:Activity:priority</_item>

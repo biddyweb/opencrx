@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: OpenCrxSecurity_1.java,v 1.62 2012/01/12 21:16:42 wfro Exp $
  * Description: OpenCrxSecurity_1
- * Revision:    $Revision: 1.62 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/12 21:16:42 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -87,6 +84,7 @@ import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.openmdx.base.text.conversion.Base64;
+import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
 
@@ -108,19 +106,27 @@ import org.openmdx.kernel.id.UUIDs;
  */
 public class OpenCrxSecurity_1 extends Standard_1 {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 */
 	public OpenCrxSecurity_1(
 	) {
 	}
 	
-    //--------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.application.dataprovider.layer.application.Standard_1#getInteraction(javax.resource.cci.Connection)
+     */
+	@Override
     public Interaction getInteraction(
         Connection connection
     ) throws ResourceException {
         return new LayerInteraction(connection);
     }
- 
-    //-------------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.openmdx.application.dataprovider.spi.Layer_1#activate(short, org.openmdx.application.configuration.Configuration, org.openmdx.application.dataprovider.spi.Layer_1)
+	 */
+	@Override
     public void activate(
       short id, 
       Configuration configuration,
@@ -133,7 +139,12 @@ public class OpenCrxSecurity_1 extends Standard_1 {
       );      
     } 
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get request principal.
+     * @param header
+     * @return
+     * @throws ServiceException
+     */
     protected String getPrincipalName(
         ServiceHeader header
     ) throws ServiceException {
@@ -143,29 +154,12 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         return header.getPrincipalChain().get(0);
     }
     
-    //-------------------------------------------------------------------------
-    protected void completeObject(
-      ServiceHeader header,
-      MappedRecord object
-    ) throws ServiceException {
-    }
-    
-    //-------------------------------------------------------------------------
-    protected DataproviderReply completeReply(
-      ServiceHeader header,
-      DataproviderReply reply
-    ) throws ServiceException {
-      for(int i = 0; i < reply.getObjects().length; i++) {
-          this.completeObject(
-              header,
-              reply.getObjects()[i]
-          );
-      }
-      return reply;
-    }
-    
-    //-------------------------------------------------------------------------
-    private void setQualifier(
+    /**
+     * Set derived attributes.
+     * @param obj
+     * @throws ServiceException
+     */
+    public void setDerivedAttributes(
     	MappedRecord obj
     ) throws ServiceException {
     	Object_2Facade objFacade = Facades.asObject(obj);
@@ -190,7 +184,13 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         }
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create response struct.
+     * @param request
+     * @param structName
+     * @return
+     * @throws ServiceException
+     */
     protected Object_2Facade createResult(
       DataproviderRequest request,
       String structName
@@ -198,29 +198,23 @@ public class OpenCrxSecurity_1 extends Standard_1 {
     	try {
     		Object_2Facade result = Object_2Facade.newInstance(
 		        request.path().getDescendant(
-		          new String[]{ "reply", UUIDs.getGenerator().next().toString()}
+		          new String[]{ "reply", UUIDConversion.toUID(UUIDs.newUUID())}
 		        ),
 		        structName
 	      );
 	      return result;
-    	}
-    	catch(ResourceException e) {
+    	} catch(ResourceException e) {
     		throw new ServiceException(e);
     	}
     }
 
-    //-------------------------------------------------------------------------
-    protected void setAttributes(
-      ServiceHeader header,
-      MappedRecord obj,
-      MappedRecord oldValues
-    ) throws ServiceException {
-      this.setQualifier(
-        obj 
-      );
-    }
-
-    //-------------------------------------------------------------------------
+    /**
+     * Change password credential.
+     * @param header
+     * @param passwordCredential
+     * @param changePasswordParams
+     * @throws ServiceException
+     */
     protected void changePassword(
     	ServiceHeader header,
     	MappedRecord passwordCredential,
@@ -256,17 +250,20 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         );
     }
 
-    //-------------------------------------------------------------------------
     /**
-     * Update the realm if any object contained in the realm was modified.
+     * Touch the realm if any object contained in the realm was modified.
+     * 
+     * @param header
+     * @param request
+     * @throws ServiceException
      */
-    protected void updateRealm(
+    protected void touchRealm(
         ServiceHeader header,
         DataproviderRequest request
     ) throws ServiceException {
         if(
-            (request.path().size() >= PATH_PATTERN_REALM_COMPOSITE.size()) &&
-            request.path().getPrefix(PATH_PATTERN_REALM_COMPOSITE.size()).isLike(PATH_PATTERN_REALM_COMPOSITE)
+            (request.path().size() >= PATH_PATTERN_REALM_COMPOSITES.size()) &&
+            request.path().getPrefix(PATH_PATTERN_REALM_COMPOSITES.size()).isLike(PATH_PATTERN_REALM_COMPOSITES)
         ) {
             try {
                 Path realmIdentity = request.path().getPrefix(7);
@@ -282,34 +279,47 @@ public class OpenCrxSecurity_1 extends Standard_1 {
                 MappedRecord updatedRealm = (MappedRecord)realm.clone();
                 Object_2Facade updatedRealmFacade = Facades.asObject(updatedRealm);
                 updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).clear();                	
-                updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());                	
+                updatedRealmFacade.attributeValuesAsList(SystemAttributes.MODIFIED_AT).add(new Date());              	
                 delegation.addReplaceRequest(
                     updatedRealmFacade.getDelegate()
                 );
-            }
-            catch(ServiceException e) {
-                // Ignore if realm does not exist
-                if(BasicException.Code.NOT_FOUND != e.getExceptionCode()) {
-                    throw e;
+            } catch(Exception e) {
+            	ServiceException e0 = new ServiceException(e);
+                // Ignore if realm does not exist or in case of concurrent modifications
+                if(
+                	BasicException.Code.NOT_FOUND != e0.getExceptionCode() &&
+                	BasicException.Code.CONCURRENT_ACCESS_FAILURE != e0.getExceptionCode()
+                ) {
+                    throw e0;
                 }
-            }
-            catch (Exception e) {
-            	throw new ServiceException(e);
             }
         }
     }
-    
-    // --------------------------------------------------------------------------
+
+    /**
+     * LayerInteraction
+     */
     public class LayerInteraction extends Standard_1.LayerInteraction {
         
-        //---------------------------------------------------------------------------
+        /**
+         * Constructor.
+         * @param connection
+         * @throws ResourceException
+         */
         public LayerInteraction(
             javax.resource.cci.Connection connection
         ) throws ResourceException {
             super(connection);
         }
                 
-        //-------------------------------------------------------------------------
+        /**
+         * Retrieve object.
+         * 
+         * @param header
+         * @param identity
+         * @return
+         * @throws ServiceException
+         */
         public MappedRecord retrieveObject(
         	ServiceHeader header,
             Path identity
@@ -333,7 +343,13 @@ public class OpenCrxSecurity_1 extends Standard_1 {
         	}
         }
 
-        //-------------------------------------------------------------------------
+        /**
+         * Check permissions.
+         * 
+         * @param header
+         * @param request
+         * @throws ServiceException
+         */
         protected void checkPermission(
             ServiceHeader header,
             DataproviderRequest request
@@ -365,7 +381,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
             }        
         }
                 
-	    //-------------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#delete(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @Override
 	    public boolean delete(
 	        RestInteractionSpec ispec,
@@ -378,7 +396,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            header,
 	            request
 	        );
-	        OpenCrxSecurity_1.this.updateRealm(
+	        OpenCrxSecurity_1.this.touchRealm(
 	            header,
 	            request
 	        );
@@ -389,7 +407,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        );
 	    }
 	    
-	    //-------------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#create(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @Override
 	    public boolean create(
 	        RestInteractionSpec ispec,
@@ -402,12 +422,10 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            header,
 	            request
 	        );
-            OpenCrxSecurity_1.this.setAttributes(
-	            header,
-	            request.object(),
-	            null
+            OpenCrxSecurity_1.this.setDerivedAttributes(
+	            request.object()
 	        );
-            OpenCrxSecurity_1.this.updateRealm(
+            OpenCrxSecurity_1.this.touchRealm(
 	            header,
 	            request
 	        );
@@ -418,7 +436,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        );
 	    }
 	    
-	    //-------------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#put(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @SuppressWarnings("unchecked")
 	    @Override
 	    public boolean put(
@@ -433,25 +453,19 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            header,
 	            request
 	        );
-	        OpenCrxSecurity_1.this.setAttributes(
-	            header,
-	            request.object(),
-	            this.retrieveObject(
-	            	header,
-	            	request.path()
-	            )
+	        OpenCrxSecurity_1.this.setDerivedAttributes(
+	            request.object()
 	        );
 	        // Only mark realm as dirty if group memberships are modified
 	        // E.g. modifying lastLoginAt does not require to refresh the realm
 	        try {
 		        if(Object_2Facade.newInstance(request.object()).getValue().keySet().contains("isMemberOf")) {
-		        	OpenCrxSecurity_1.this.updateRealm(
+		        	OpenCrxSecurity_1.this.touchRealm(
 		                header,
 		                request
 		            );
 		        }
-	        }
-	        catch (ResourceException e) {
+	        } catch (ResourceException e) {
 	        	throw new ServiceException(e);
 	        }
 	        try {
@@ -480,7 +494,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        }
 	    }
 	    
-	    //-------------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#get(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Query_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @Override
 	    public boolean get(
 	        RestInteractionSpec ispec,
@@ -489,7 +505,6 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	    ) throws ServiceException {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
-            DataproviderReply reply = this.newDataproviderReply(output);
             this.checkPermission(
 	            header,
 	            request
@@ -499,14 +514,12 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            input,
 	            output
             );
-            OpenCrxSecurity_1.this.completeReply(
-	            header,
-            	reply
-	        );
 	        return true;
 	    }
 	
-	    //-------------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#invoke(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.cci.MessageRecord, org.openmdx.base.rest.cci.MessageRecord)
+	     */
 	    @Override
 	    public boolean invoke(
             RestInteractionSpec ispec, 
@@ -560,7 +573,9 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        }
 	    }
 	
-	    //-------------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#find(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Query_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @Override
 	    public boolean find(
 	        RestInteractionSpec ispec,
@@ -575,7 +590,7 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            request
 	        );
 	        String principalName = OpenCrxSecurity_1.this.getPrincipalName(header);
-	        String realmName = principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) ? 
+	        String requestingUserRealmName = principalName.startsWith("admin" + SecurityKeys.ID_SEPARATOR) ? 
 	        	principalName.substring(principalName.indexOf("-") + 1) : 
 	        		"";
 	        // Restrict browsing on principals
@@ -590,8 +605,8 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	            // Return users and groups only if requesting principal is not admin-Root or segment admin
 	            if(
 	                !containsSubjectFilter &&
-	                !"Root".equals(realmName) &&
-	                !realmName.equals(request.path().get(request.path().size()-2))
+	                !"Root".equals(requestingUserRealmName) &&
+	                !requestingUserRealmName.equals(request.path().get(request.path().size()-2))
 	            ) {
 	                request.addAttributeFilterProperty(
 	                    new FilterProperty(
@@ -607,7 +622,20 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        // Restrict browsing on subjects
 	        else if(request.path().isLike(PATH_PATTERN_SUBJECTS)) {
 	            // Do not restrict Root            
-	            if(!"Root".equals(realmName)) {
+	            if(!"Root".equals(requestingUserRealmName)) {
+	                request.addAttributeFilterProperty(
+	                    new FilterProperty(
+	                        Quantifier.FOR_ALL.code(),
+	                        SystemAttributes.OBJECT_CLASS,
+	                        ConditionType.IS_IN.code()
+	                    )
+	                );
+	            }
+	        }
+	        // Restrict browsing on policies
+	        else if(request.path().isLike(PATH_PATTERN_POLICIES)) {
+	            // Do not restrict Root            
+	            if(!"Root".equals(requestingUserRealmName)) {
 	                request.addAttributeFilterProperty(
 	                    new FilterProperty(
 	                        Quantifier.FOR_ALL.code(),
@@ -637,26 +665,24 @@ public class OpenCrxSecurity_1 extends Standard_1 {
             catch (ResourceException e) {
             	throw new ServiceException(e);
             }
-	        OpenCrxSecurity_1.this.completeReply(
-	            header,
-	            reply
-	        );
 	        return true;
 	    }
-	    
+
     }
     
     //-------------------------------------------------------------------------
-    // Variables
+    // Members
     //-------------------------------------------------------------------------
     protected static final Path PATH_PATTERN_PRINCIPALS = 
         new Path("xri://@openmdx*org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/principal");
     protected static final Path PATH_PATTERN_REALM =
         new Path("xri://@openmdx*org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*");        
-    protected static final Path PATH_PATTERN_REALM_COMPOSITE =
+    protected static final Path PATH_PATTERN_REALM_COMPOSITES =
         new Path("xri://@openmdx*org.openmdx.security.realm1/provider/:*/segment/:*/realm/:*/:*");        
     protected static final Path PATH_PATTERN_SUBJECTS = 
         new Path("xri://@openmdx*org.opencrx.security.identity1/provider/:*/segment/:*/subject");
+    protected static final Path PATH_PATTERN_POLICIES = 
+        new Path("xri://@openmdx*org.openmdx.security.authorization1/provider/:*/segment/:*/policy");
 }
 
 //--- End of File -----------------------------------------------------------

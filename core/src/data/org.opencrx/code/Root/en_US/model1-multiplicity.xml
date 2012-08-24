@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="multiplicity" _operation="set">
 										<_object>
 											<name>
+												<_item>multiplicity</_item>
 												<_item>org:opencrx:kernel:model1:NamespaceContent:multiplicity</_item>
 												<_item>org:opencrx:kernel:model1:StructuralFeature:multiplicity</_item>
 												<_item>org:opencrx:kernel:model1:AssociationEnd:multiplicity</_item>

@@ -1,0 +1,7 @@
+#include "sql-definitions.tsql"
+
+DROP TABLE OOCKE1_REMINDER COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+DROP TABLE OOCKE1_REMINDER_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

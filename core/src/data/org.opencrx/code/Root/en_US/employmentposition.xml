@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="employmentPosition" _operation="set">
 										<_object>
 											<name>
+												<_item>employmentPosition</_item>
 												<_item>org:opencrx:kernel:account1:EmploymentContract:employmentPosition</_item>
 											</name>
 										</_object>

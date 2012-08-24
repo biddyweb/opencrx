@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: MailWorkflow.java,v 1.19 2010/10/02 09:25:30 wfro Exp $
  * Description: Mail workflow
- * Revision:    $Revision: 1.19 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/02 09:25:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -56,9 +53,7 @@
 package org.opencrx.application.mail.exporter;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,26 +73,31 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.opencrx.kernel.backend.Notifications;
-import org.opencrx.kernel.base.jmi1.BooleanProperty;
-import org.opencrx.kernel.base.jmi1.IntegerProperty;
-import org.opencrx.kernel.base.jmi1.Property;
-import org.opencrx.kernel.base.jmi1.StringProperty;
-import org.opencrx.kernel.base.jmi1.UriProperty;
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.home1.cci2.EMailAccountQuery;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.WorkflowHelper;
-import org.opencrx.kernel.workflow.ASynchWorkflow_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.log.SysLog;
 
-public abstract class MailWorkflow 
-    implements ASynchWorkflow_1_0 {
+public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
     
-    //-----------------------------------------------------------------------
+    /**
+     * Set message content.
+     * @param message
+     * @param session
+     * @param pm
+     * @param targetIdentity
+     * @param wfProcessInstanceIdentity
+     * @param userHome
+     * @param params
+     * @return
+     * @throws ServiceException
+     */
     protected String setContent(
         Message message,
         Session session,
@@ -174,8 +174,11 @@ public abstract class MailWorkflow
     //-----------------------------------------------------------------------
     abstract boolean useSendMailSubjectPrefix(
     );
-    
-    //-----------------------------------------------------------------------
+
+    /* (non-Javadoc)
+     * @see org.opencrx.kernel.backend.Workflows.AsynchronousWorkflow#execute(org.opencrx.kernel.home1.jmi1.WfProcessInstance)
+     */
+    @Override
     public void execute(
         WfProcessInstance wfProcessInstance
     ) throws ServiceException {        
@@ -183,48 +186,15 @@ public abstract class MailWorkflow
         Address[] recipients = null;
         Transport transport = null;
         try {             
-            Path wfProcessInstanceIdentity = new Path(wfProcessInstance.refMofId());
-            
-            // Parameters
-            Map<String,Object> params = new HashMap<String,Object>();
-            Collection<Property> properties = wfProcessInstance.getProperty();
-            for(Property p: properties) {
-                if(p instanceof StringProperty) {
-                    params.put(
-                        p.getName(),
-                        ((StringProperty)p).getStringValue()
-                    );                    
-                }
-                else if(p instanceof IntegerProperty) {
-                    params.put(
-                        p.getName(),
-                        new Integer(((IntegerProperty)p).getIntegerValue())
-                    );                    
-                }
-                else if(p instanceof UriProperty) {
-                    params.put(
-                        p.getName(),
-                        new Path(((UriProperty)p).getUriValue())
-                    );                                        
-                }                    
-                else if(p instanceof BooleanProperty) {
-                    params.put(
-                        p.getName(),
-                        new Boolean(((BooleanProperty)p).isBooleanValue())
-                    );                                        
-                }                    
-            }
-            
-            // User homes
-            UserHome userHome = (UserHome)pm.getObjectById(new Path(wfProcessInstance.refMofId()).getParent().getParent());
-            
+            Path wfProcessInstanceIdentity = new Path(wfProcessInstance.refMofId());            
+            Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance); 
+            UserHome userHome = (UserHome)pm.getObjectById(new Path(wfProcessInstance.refMofId()).getParent().getParent());            
             // Target object
             Path targetIdentity = new Path(wfProcessInstance.getTargetObject());            
             ContextCapable target = null;
             try {
                 target = (ContextCapable)pm.getObjectById(targetIdentity);
-            } catch(Exception e) {}
-            
+            } catch(Exception e) {}            
             // Find default email account
             EMailAccountQuery emailAccountQuery = (EMailAccountQuery)pm.newQuery(EMailAccount.class);
             emailAccountQuery.thereExistsIsDefault().isTrue();
@@ -234,9 +204,8 @@ public abstract class MailWorkflow
             	null :
             		eMailAccounts.iterator().next();
             String subject = null;
-            String text = null;
-            
-            // can not send
+            String text = null;            
+            // Can not send if no email account is configured
             if(eMailAccountUser == null) {
                 subject = "ERROR: " + Notifications.getInstance().getNotificationSubject(
                     pm,
@@ -253,16 +222,10 @@ public abstract class MailWorkflow
                 String mailServiceName = eMailAccountUser.getOutgoingMailServiceName();                
                 // Try to get mail service name from workflow configuration
                 if(
-                    ((mailServiceName == null) || (mailServiceName.length() == 0)) &&
+                    ((mailServiceName == null) || mailServiceName.isEmpty()) &&
                     wfProcessInstance.getProcess() != null
                 ) {
-                	properties = wfProcessInstance.getProcess().getProperty();
-                    for(Property property: properties) {
-                        if((MailWorkflow.OPTION_MAIL_SERVICE_NAME).equals(property.getName())) {
-                            mailServiceName = ((org.opencrx.kernel.base.jmi1.StringProperty)property).getStringValue();
-                            break;
-                        }
-                    }
+                	mailServiceName = (String)params.get(MailWorkflow.OPTION_MAIL_SERVICE_NAME);
                 }
                 // If not configured take mail/provider/<provider>/segment/<segment> as default
                 if(mailServiceName == null) {
@@ -358,7 +321,7 @@ public abstract class MailWorkflow
                 subject,
                 text
             );
-        }        
+        }
         catch(AuthenticationFailedException e) {
         	SysLog.warning("Can not send message to recipients (reason=AuthenticationFailedException)", recipients == null ? null : Arrays.asList(recipients));
             ServiceException e0 = new ServiceException(e);

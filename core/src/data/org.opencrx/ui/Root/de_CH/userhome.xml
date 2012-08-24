@@ -44,13 +44,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:reminder" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:timer" _operation="create">
                     <_object>
                       <label>
-                        <_item>Wiedervorlagen</_item>
+                        <_item>Timers</_item>
                       </label>
                       <toolTip>
-                        <_item>Wiedervorlagen</_item>
+                        <_item>Timers</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -559,18 +559,18 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
 
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Wiedervorlage</_item>
+												<_item>Timer</_item>
 											</toolTip>
 											<label>
-												<_item>Wiedervorlage</_item>
+												<_item>Timer</_item>
 											</label>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:name" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:name" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Name</_item>
@@ -581,7 +581,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:triggerAction" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:action" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Aktion beim Auslösen</_item>
@@ -592,7 +592,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:triggerAt" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerStartAt" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Erste Auslösung am ... um</_item>
@@ -603,18 +603,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:autocalcTriggerAt" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Auslösezeitpunkt automatisch nachführen</_item>
-											</toolTip>
-											<label>
-												<_item>Automatisch nachführen</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:triggerEndAt" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerEndAt" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Keine Auslösung nach</_item>
@@ -625,7 +614,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:description" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:description" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Beschreibung</_item>
@@ -636,7 +625,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:reference" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:target" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Referenz</_item>
@@ -647,7 +636,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:reminderState" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerState" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Status</_item>
@@ -658,7 +647,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:disabled" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:disabled" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Deaktiviert</_item>
@@ -670,7 +659,7 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid enhancement -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:createdAt" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:createdAt" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Erstellt am</_item>
@@ -681,7 +670,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:alarmRepeat" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerRepeat" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Anzahl Wiederholungen</_item>
@@ -692,7 +681,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:alarmIntervalMinutes" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerIntervalMinutes" _operation="create">
 										<_object>
 											<toolTip>
 												<_item>Wiederholung alle X Minuten</_item>
@@ -703,24 +692,13 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:lastAlarmAt" _operation="create">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:lastTriggerAt" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Alarm letztmals ausgelöst am ... um</_item>
+												<_item>Timer letztmals ausgelöst am ... um</_item>
 											</toolTip>
 											<label>
-												<_item>Alarm letztmals ausgelöst am ... um</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Reminder:attachUrl" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>URL</_item>
-											</toolTip>
-											<label>
-												<_item>URL</_item>
+												<_item>Timer letztmals ausgelöst am ... um</_item>
 											</label>
 										</_object>
 										<_content/>

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AbstractTestShopService.java,v 1.21 2011/01/04 23:50:44 wfro Exp $
  * Description: AbstractTestShopService
- * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/01/04 23:50:44 $
  * ====================================================================
  *
  * This software is published under the BSD license

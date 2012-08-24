@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BulkEmail.jsp,v 1.14 2011/11/28 14:36:26 wfro Exp $
+ * Name:        $Id: BulkEmail.jsp,v 1.17 2012/07/08 13:30:03 wfro Exp $
  * Description: create Bulk E-mail (e.g. for campaign)
- * Revision:    $Revision: 1.14 $
+ * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:36:26 $
+ * Date:        $Date: 2012/07/08 13:30:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2012 CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,7 +64,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.reports.*,
@@ -285,7 +284,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
       	try {
           Codes codes = app.getCodes();
-          SortedMap featurePartyTypeEMailRecipient_longTextsT = codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), false, true);
+          Map<String,Short> featurePartyTypeEMailRecipient_longTextsT = codes.getLongTextByText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true);
 
           // Timezone is reusable
           final TimeZone utc = TimeZone.getTimeZone(app.getCurrentTimeZone());
@@ -692,7 +691,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                     <td></td>
                   </tr>
                   <tr>
-                    <td class="label"><span class="nw"><%= (String)(codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true, true).get(CODE_FROM)) %>:</span></td>
+                    <td class="label"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_FROM)) %>:</span></td>
                     <td>
                       <div class="autocompleterMenu">
                         <ul id="nav" class="nav" onmouseover="sfinit(this);" >
@@ -731,7 +730,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                   </tr>
 
                   <tr>
-                    <td class="label"><span class="nw"><%= (String)(codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true, true).get(CODE_TO)) %>:</span></td>
+                    <td class="label"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_TO)) %>:</span></td>
                     <td>
                       <div class="autocompleterMenu">
                         <ul id="nav" class="nav" onmouseover="sfinit(this);" >
@@ -770,7 +769,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                   </tr>
 
                   <tr>
-                    <td class="label"><span class="nw"><%= (String)(codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true, true).get(CODE_BCC)) %> (<%= app.getLabel(ADDRESSGROUP_CLASS) %>):</span></td>
+                    <td class="label"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_BCC)) %> (<%= app.getLabel(ADDRESSGROUP_CLASS) %>):</span></td>
                     <td>
                       <div class="autocompleterMenu">
                         <ul id="nav" class="nav" onmouseover="sfinit(this);" >
@@ -923,7 +922,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                           if (!senderOk) {
 %>
                             <tr>
-                              <td><%= (String)(codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true, true).get(CODE_FROM)) %></td>
+                              <td><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_FROM)) %></td>
                               <td>required field - bad value</td>
                             </tr>
 <%
@@ -931,7 +930,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                           if (!recipientOk) {
 %>
                             <tr>
-                              <td><%= (String)(codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true, true).get(CODE_TO)) %> (<%= app.getLabel(ADDRESSGROUP_CLASS) %>)</td>
+                              <td><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_TO)) %> (<%= app.getLabel(ADDRESSGROUP_CLASS) %>)</td>
                               <td>required field - bad value</td>
                             </tr>
 <%
@@ -939,7 +938,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                           if (!bulkRecipientGroupOk) {
 %>
                             <tr>
-                              <td><%= (String)(codes.getLongText(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true, true).get(CODE_BCC)) %></td>
+                              <td><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_BCC)) %></td>
                               <td>required field - bad value</td>
                             </tr>
 <%

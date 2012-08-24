@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoMkcol.java,v 1.12 2010/12/09 11:34:55 wfro Exp $
  * Description: DoMkcol
- * Revision:    $Revision: 1.12 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/12/09 11:34:55 $
  * ====================================================================
  *
  * This software is published under the BSD license

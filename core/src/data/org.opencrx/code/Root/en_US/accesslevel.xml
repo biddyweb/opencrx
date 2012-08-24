@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="accessLevel" _operation="set">
 										<_object>
 											<name>
+												<_item>accessLevel</_item>
 												<_item>org:opencrx:kernel:base:SecureObject:accessLevelBrowse</_item>
 												<_item>org:opencrx:kernel:base:SecureObject:accessLevelUpdate</_item>
 												<_item>org:opencrx:kernel:base:SecureObject:accessLevelDelete</_item>
@@ -27,10 +28,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
 													<_object>
 														<shortText>
-															<_item>[0] NA</_item>
+															<_item>0 - NA</_item>
 														</shortText>
 														<longText>
-															<_item>[0] N/A</_item>
+															<_item>0 - N/A</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -38,10 +39,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
 													<_object>
 														<shortText>
-															<_item>[1] private</_item>
+															<_item>1 - private</_item>
 														</shortText>
 														<longText>
-															<_item>[1] private</_item>
+															<_item>1 - private</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -49,10 +50,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
 													<_object>
 														<shortText>
-															<_item>[2] basic</_item>
+															<_item>2 - basic</_item>
 														</shortText>
 														<longText>
-															<_item>[2] basic (group members)</_item>
+															<_item>2 - basic (group members)</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -60,10 +61,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
 													<_object>
 														<shortText>
-															<_item>[3] deep</_item>
+															<_item>3 - deep</_item>
 														</shortText>
 														<longText>
-															<_item>[3] deep (group members recursively)</_item>
+															<_item>3 - deep (group members recursively)</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -71,10 +72,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
 													<_object>
 														<shortText>
-															<_item>[4] global</_item>
+															<_item>4 - global</_item>
 														</shortText>
 														<longText>
-															<_item>[4] global (all users)</_item>
+															<_item>4 - global (all users)</_item>
 														</longText>
 													</_object>
 													<_content/>

@@ -2,7 +2,7 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="23">
+			<array class="java.lang.String" length="25">
 
 				<void index="0">
 					<string>org:opencrx:kernel:code1:Segment:valueContainer</string>
@@ -76,6 +76,13 @@
 
 				<void index="22">
 					<string>org:opencrx:kernel:forecast1:Segment:budget</string>
+				</void>
+
+				<void index="23">
+					<string>org:opencrx:kernel:home1:Segment:userHome</string>
+				</void>
+				<void index="24">
+					<string>org:opencrx:kernel:home1:UserHome:reminder</string>
 				</void>
 
 			</array>

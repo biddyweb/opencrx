@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="partystatusAbstractActivityParty" _operation="set">
 										<_object>
 											<name>
+												<_item>partystatusAbstractActivityParty</_item>
 												<_item>org:opencrx:kernel:activity1:AbstractActivityParty:partyStatus</_item>
 												<!-- subsets of this code table are used for the following codes -->
 												<!--

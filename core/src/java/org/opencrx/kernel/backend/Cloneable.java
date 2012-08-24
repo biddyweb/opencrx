@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Cloneable.java,v 1.44 2010/10/19 11:25:14 wfro Exp $
  * Description: Cloneable
- * Revision:    $Revision: 1.44 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/10/19 11:25:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -178,7 +175,7 @@ public class Cloneable extends AbstractImpl {
 	        }
 	        else {
 	            clone = PersistenceHelper.clone(object);
-	        }        
+	        }
 	        if(clone instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
 	        	if(this.owningUser != null) {
 	        		((org.opencrx.kernel.base.jmi1.SecureObject)clone).setOwningUser(owningUser);

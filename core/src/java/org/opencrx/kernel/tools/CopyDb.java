@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CopyDb.java,v 1.57 2011/08/19 14:27:50 wfro Exp $
  * Description: CopyDb tool
- * Revision:    $Revision: 1.57 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/08/19 14:27:50 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -83,7 +80,14 @@ import org.openmdx.kernel.exception.BasicException;
 
 public class CopyDb {
 
-	// ---------------------------------------------------------------------------
+	/**
+	 * Map CLOB to String.
+	 * 
+	 * @param clob
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	private static String getStringFromClob(
 		java.sql.Clob clob
 	) throws IOException, SQLException {
@@ -96,7 +100,14 @@ public class CopyDb {
 		return s.toString();
 	}
 
-	// ---------------------------------------------------------------------------
+	/**
+	 * Map BLOB to byte[].
+	 * 
+	 * @param blob
+	 * @return
+	 * @throws IOException
+	 * @throws SQLException
+	 */
 	private static byte[] getBytesFromBlob(
 		java.sql.Blob blob
 	) throws IOException, SQLException {
@@ -110,7 +121,15 @@ public class CopyDb {
 		return os.toByteArray();
 	}
 
-	// ---------------------------------------------------------------------------
+	/**
+	 * Db-specific column name mapping.
+	 * 
+	 * @param conn
+	 * @param dbObject
+	 * @param columnName
+	 * @return
+	 * @throws SQLException
+	 */
 	private static String mapColumnName(
 		Connection conn, 
 		String dbObject, 
@@ -131,7 +150,19 @@ public class CopyDb {
 		}
 	}
 
-	// ---------------------------------------------------------------------------
+	/**
+	 * DB-specific column value mapping.
+	 * 
+	 * @param conn
+	 * @param dbObject
+	 * @param columnName
+	 * @param columnValue
+	 * @param providerNameSource
+	 * @param providerNameTarget
+	 * @return
+	 * @throws ServiceException
+	 * @throws SQLException
+	 */
 	private static Object mapColumnValue(
 		Connection conn, 
 		String dbObject, 
@@ -183,7 +214,18 @@ public class CopyDb {
 		}
 	}
 
-	// ---------------------------------------------------------------------------
+	/**
+	 * Copy dbObject from source to target database.
+	 * 
+	 * @param dbObject
+	 * @param useSuffix
+	 * @param connSource
+	 * @param connTarget
+	 * @param providerNameSource
+	 * @param providerNameTarget
+	 * @param out
+	 * @throws SQLException
+	 */
 	private static void copyDbObject(
 		String dbObject, 
 		boolean useSuffix, 
@@ -311,7 +353,18 @@ public class CopyDb {
 		}
 	}
 
-	// ---------------------------------------------------------------------------
+	/**
+	 * Copy all tables from source to target database.
+	 * 
+	 * @param connSource
+	 * @param connTarget
+	 * @param dbObjects
+	 * @param startFromDbObject
+	 * @param endWithDbObject
+	 * @param providerNameSource
+	 * @param providerNameTarget
+	 * @param out
+	 */
 	private static void copyNamespace(
 	    Connection connSource,
 	    Connection connTarget,
@@ -370,7 +423,11 @@ public class CopyDb {
 		}
 	}
 
-	// -----------------------------------------------------------------------
+	/**
+	 * CopyDb utility.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		try {
 			Properties env = System.getProperties();
@@ -397,7 +454,26 @@ public class CopyDb {
 		}
 	}
 
-	// -----------------------------------------------------------------------
+	/**
+	 * CopyDb utility. 
+	 * 
+	 * @param jdbcDriverSource
+	 * @param usernameSource
+	 * @param passwordSource
+	 * @param jdbcUrlSource
+	 * @param jdbcDriverTarget
+	 * @param usernameTarget
+	 * @param passwordTarget
+	 * @param jdbcUrlTarget
+	 * @param kernelStartFromDbObject
+	 * @param kernelEndWithDbObject
+	 * @param securityStartFromDbObject
+	 * @param securityEndWithDbObject
+	 * @param providerNameSource
+	 * @param providerNameTarget
+	 * @param out
+	 * @throws ServiceException
+	 */
 	public static void copyDb(
 	    String jdbcDriverSource,
 	    String usernameSource,
@@ -490,7 +566,7 @@ public class CopyDb {
 
 	static final List<String> DBOBJECTS_SECURITY = new ArrayList<String>();
 
-	static final Set<String> BOOLEAN_COLUMNS = new HashSet<String>(Arrays.asList(new String[] {
+	static final Set<String> BOOLEAN_COLUMNS = new HashSet<String>(Arrays.asList(
 	    "DISABLED", "USER_BOOLEAN0", "USER_BOOLEAN1", "USER_BOOLEAN2", "USER_BOOLEAN3", "USER_BOOLEAN4", "DO_NOT_BULK_POSTAL_MAIL", "DO_NOT_E_MAIL", "DO_NOT_FAX", "DO_NOT_PHONE",
 	    "DO_NOT_POSTAL_MAIL", "EXT_BOOLEAN0", "EXT_BOOLEAN1", "EXT_BOOLEAN2", "EXT_BOOLEAN3", "EXT_BOOLEAN4", "EXT_BOOLEAN5", "EXT_BOOLEAN6", "EXT_BOOLEAN7", "EXT_BOOLEAN8", "EXT_BOOLEAN9",
 	    "DISABLED", "DISCOUNT_IS_PERCENTAGE", "USER_BOOLEAN4", "IS_ALL_DAY_EVENT", "DELIVERY_RECEIPT_REQUESTED", "READ_RECEIPT_REQUESTED", "IS_MAIN", "RESET_TO_NULL", "IS_MAIN", "AUTOMATIC_PARSING",
@@ -500,8 +576,6 @@ public class CopyDb {
 	    "WEIGHT_IS_PERCENTAGE", "IS_FINAL", "DISCOUNT_IS_PERCENTAGE", "IS_DEFAULT", "ALLOW_MODIFICATION", "ALLOW_REMOVAL", "DISCOUNT_IS_PERCENTAGE", "OVERRIDE_PRICE", "IS_STOCK_ITEM",
 	    "DISCOUNT_IS_PERCENTAGE", "IS_DEFAULT", "BOOLEAN_VALUE", "IS_ACTIVE", "NEW_BOOLEAN", "OLD_BOOLEAN", "SELECTOR", "IS_SCHEDULE_BASE_UOM", "STORE_SETTINGS_ON_LOGOFF", "IS_SYNCHRONOUS", "FAILED",
 	    "IS_BILLABLE", "IS_REIMBURSABLE", "LOCKED", "ALLOW_ADD_DELETE", "ALLOW_CHANGE"
-	}));
+	));
 
 }
-
-// ---------------------------------------------------------------------------

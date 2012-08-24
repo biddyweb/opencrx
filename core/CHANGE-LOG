@@ -5,6 +5,252 @@
                     =====================================
 
 ==============================================================================
+Version 2.10.0                                                      2012-08-24
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10010952
+      DbSearchReplace. The method DbSearchReplace.dbSearchReplace() takes 
+      the following parameters:
+      * Connection conn
+      * String columnNameIncludes
+      * String columnNameExcludes
+      * String searchPattern
+      * String replacement
+      * boolean validateOnly
+      * PrintStream out
+      The operation is performed on all tables. Only columns matching the columnNameIncludes / 
+      columnNameExcludes patterns are processed. In case of validateOnly = true the UPDATE 
+      statements are printed to out only (no DB executes). The utility can be used
+      in custom wizards and extensions.
+      
+      Example:
+      DbSearchReplace.dbSearchReplace(
+	    conn, 
+	    "(.*)", // includes
+	    "(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // excludes 
+	    "(guest)",
+	    "newguest", 
+	    true, // validateOnly 
+	    System.out
+      );      
+      Replaces all occurences of 'guest' by 'newguest' (e.g. useful for principal migration).
+      
+      DbSearchReplace.dbSearchReplace(
+	    conn, 
+	    "(.*)", // includes
+	    "(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // excludes 
+	    "(/CRX/)",
+	    "/MYCOMPANY/", 
+	    true, // validateOnly 
+	    System.out
+      );       
+      Replaces all occurences of '/CRX/' by '/MYCOMPANY/' (e.g. useful for provider migration).
+      
+      CR10010925
+      AbstractServer: support for trust store and client cert auth. The IMAP and
+      LDAP servlet accept the following new init-parameters when configured for
+      SSL support:
+      * sslTruststoreFile
+      * sslTruststorePass
+      * sslTruststoreType
+      * sslNeedClientAuth      
+
+      CR10010707
+      JSP tag library. Portal offers the following tags:
+      * portal:showobject
+      * portal:query
+      The tags can be used in wizards and make it easy to render objects and grids. 
+      Example:      
+      
+        <%@ taglib uri="http://www.openmdx.org/tags/openmdx-portal" prefix="portal" %>
+         ...
+         <div id="content-wrap">
+      	   <div id="content" style="padding:10px 0.5em 0px 0.5em;">
+	         <portal:showobject id="AAA" object="<%= userHome %>" showAttributes="true" grids="alert,assignedActivity" navigationTarget="_none">
+	           <portal:query name="assignedActivity" query="<%= activityQuery %>" />
+	         </portal:showobject>
+	         <portal:showobject id="BBB" object="<%= userHome.getContact() %>" showAttributes="true" grids="address" navigationTarget="_none" />
+           </div> <!-- content -->
+        </div>
+
+      CR10010757
+      Timers allow to schedule workflows. Timers replace the now deprecated
+      Reminders.      
+      
+      CR10010648
+      FileBrowserWizard. Wizard which allows to view and download files (e.g.
+      log files) from AppServer. Access is restricted to admin-Root. 
+      Extending org.opencrx.kernel.portal.wizard.FileBrowserWizardExtension
+      allows to customize the behaviour of the wizard. 
+
+      CR10010644
+      AccountAssignmentDataBinding. Data binding returning a list of accounts 
+      assigned to contracts, products or inventory items. The data binding is 
+      configured in the UI configuration as follows:
+      
+      * featureDefinition
+		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:contract1:AbstractContract:account">
+		  <_object>
+		    <type>org:opencrx:kernel:account1:Account</type>
+		    <multiplicity>list</multiplicity>
+		    <changeable>false</changeable>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.StructuralFeatureDefinition>
+      
+      * elementDefinition
+		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:account">
+		  <_object>
+		    <dataBindingName>org.opencrx.kernel.portal.AccountAssignmentDataBinding</dataBindingName>
+		    <active>true</active>
+		    <filterable>true</filterable>
+		    <spanRow>6</spanRow>
+		    <toolTip>
+		      <_item>Assigned Accounts</_item>
+		    </toolTip>
+		    <label>
+		      <_item>Assigned Accounts</_item>
+		    </label>
+		    <shortLabel>
+		      <_item>Assigned Accounts</_item>
+		    </shortLabel>
+		    <order>
+		      <_item>0</_item>
+		      <_item>0</_item>
+		      <_item>5</_item>
+		    </order>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.ElementDefinition>
+      
+      CR10010636
+      Jabber IM. The workflow org.opencrx.application.jabber.SendMessageWorkflow
+      allows to send messages to a Jabber account (default and active Jabber
+      service account defined on a user's home). The fields of the service
+      account must be set as follows (e.g. for service jabber.org):
+      * name: Jabber-ID, e.g. joe_doe@jabber.org●
+      * username: account user name, e.g. joe_doe
+      * password: account password
+      * hostname: jabber.org
+      * service: jabber.org
+      The workflow is using the library smack library for sending XMPP messages.
+      For more information about the library on how to connect to service providers
+      see http://www.igniterealtime.org/projects/smack/.
+      
+      CR10010620
+      Localized fields. A LocalizedFieldContainer holds LocalizedFields. 
+      This allows to localize the values of any attribute of a CrxObject.
+      
+      CR10010549
+      Support for Outlook e-mail message format (msg). BusinessProcessManager.jsp and
+      UploadEMail.jsp wizards now support the Outlook MSG format for e-mail import.
+      In addition, the method org.opencrx.kerne.utils.MimeUtils.mapMsgToMime() provides 
+      a utility method for the conversion MSG --> MimeMessage.
+            
+      CR10010614
+      The dashlet allows to configure a static menu. The menu shortcuts are configured 
+      in a properties file with name ./wizards/StaticQuickAccessDashlet/<dashlet label>.properties. 
+
+		# SampleMenu.properties
+		e0000=<div style="font-size:120%;font-weight:bold;">Customers</div>
+		e0001=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Customers"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0002=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Customers"); > Reference.filteredActivity
+		e0003=<div style="font-size:120%;font-weight:bold;">Compliance</div>
+		e0004=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Compliance"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0005=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Compliance"); > Reference.filteredActivity
+		e0006=<div style="font-size:120%;font-weight:bold;">Generic</div>
+		e0007=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Generic"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0008=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Generic"); > Reference.filteredActivity
+		e0009=<div style="font-size:120%;font-weight:bold;">Communications</div>
+		e0010=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Communications"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0011=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Communications"); > Reference.filteredActivity
+		e0012=<div style="font-size:120%;font-weight:bold;">Analysis</div>
+		e0013=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Analysis"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0014=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Analysis"); > Reference.filteredActivity
+		e0021=<div style="font-size:120%;font-weight:bold;">Underwriting</div>
+		e0022=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityCreator&queryType=org:opencrx:kernel:activity1:ActivityCreator&query=name().equalTo("Sample~Underwriting"); > Operation.org:opencrx:kernel:activity1:ActivityCreator:newActivity
+		e0023=xri://@openmdx*org.opencrx.kernel.activity1/provider/CRX/segment/Standard/activityTracker&queryType=org:opencrx:kernel:activity1:ActivityTracker&query=name().equalTo("Sample~Underwriting"); > Reference.filteredActivity	
+
+      CR10010522
+      AccountIsMemberOfDataBinding. Data binding returning a list of accounts 
+      which have the current account as member. The data binding is configured
+      in the UI configuration as follows:
+      
+      * featureDefinition
+		<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Account:memberOf">
+		  <_object>
+		    <type>org:opencrx:kernel:account1:Account</type>
+		    <multiplicity>list</multiplicity>
+		    <changeable>false</changeable>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.StructuralFeatureDefinition>
+      
+      * elementDefinition
+		<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:memberOf">
+		  <_object>
+		    <dataBindingName>org.opencrx.kernel.portal.AccountIsMemberOfDataBinding</dataBindingName>
+		    <active>true</active>
+		    <filterable>true</filterable>
+		    <spanRow>6</spanRow>
+		    <toolTip>
+		      <_item>Is member of</_item>
+		    </toolTip>
+		    <label>
+		      <_item>Is member of</_item>
+		    </label>
+		    <shortLabel>
+		      <_item>Member of</_item>
+		    </shortLabel>
+		    <order>
+		      <_item>0</_item>
+		      <_item>0</_item>
+		      <_item>5</_item>
+		    </order>
+		  </_object>
+		  <_content/>
+		</org.openmdx.ui1.ElementDefinition>
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+
+      CR10010951
+      touchRealm ignores concurrent modification exceptions. This solves the problem
+      that the concurrent creation of users fails.
+
+      CR10010942
+      openMDX/Portal: Refactoring data bindings. Replace DataBinding_1_0 and 
+      DataBinding_2_0 interfaces by DataBinding interface.
+
+      CR10010930
+      openMDX/Portal: Unify Texts and Codes. The class Texts now delegates to Codes, 
+      i.e. texts are now stored as codes in the CodeValueContainer with name 
+      'TextsBundle'. In case Codes are not defined, Texts falls back to resource bundles. 
+
+      CR10010561
+      DataSourceRealm. Migrate from JDBCRealm to DataSourceRealm. All META-INF/context.xml
+      are now using the DataSourceRealm. The -D configuration options 
+      - opencrx.CRX.jdbc.driverName
+      - opencrx.CRX.jdbc.url
+      - opencrx.CRX.jdbc.userName
+      - opencrx.CRX.jdbc.password=manager99
+
+      CR20020010
+      Portal: Improve grid search for code columns. Use short and long texts 
+      for filter value to code mapping.
+      
+2.1.  FIXED BUGS
+      
+      CR10010783
+      Outlook 2010. IMAP adapter tested with Outlook 2010.
+
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
 Version 2.9.1                                                       2012-01-21
 ==============================================================================
 

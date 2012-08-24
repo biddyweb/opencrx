@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DbCopyWizard.jsp,v 1.6 2011/11/28 14:18:20 wfro Exp $
+ * Name:        $Id: DbCopyWizard.jsp,v 1.7 2012/07/08 13:30:31 wfro Exp $
  * Description: DbCopywizard
- * Revision:    $Revision: 1.6 $
+ * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:18:20 $
+ * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,7 +72,6 @@ org.openmdx.kernel.id.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

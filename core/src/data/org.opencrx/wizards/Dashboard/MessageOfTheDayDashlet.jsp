@@ -12,7 +12,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -64,15 +64,31 @@ java.math.*,
 java.net.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.naming.*,
+org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
+org.opencrx.kernel.backend.*,
 org.opencrx.kernel.generic.*,
 org.openmdx.kernel.log.*
 " %>
-<%
+
+<%!
+
+	public org.opencrx.kernel.document1.jmi1.Document findDocument(
+		String documentName,
+		org.opencrx.kernel.document1.jmi1.Segment segment
+	) throws ServiceException {
+		return Documents.getInstance().findDocument(
+			documentName,
+			segment
+		);
+	}
+
+%><%
+	final String MESSAGE_OF_THE_DAY_DOCUMENT_NAME = "Message of the day.html";
 	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
 	String parameters = request.getParameter(WebKeys.REQUEST_PARAMETER);
-  	if(app != null && parameters != null) {
+	if(app != null && parameters != null) {
 		String xri = Action.getParameter(parameters, Action.PARAMETER_OBJECTXRI);
 		String requestId = request.getParameter(Action.PARAMETER_REQUEST_ID);
 		String dashletId = Action.getParameter(parameters, Action.PARAMETER_ID);
@@ -82,41 +98,47 @@ org.openmdx.kernel.log.*
 			if(xri != null && requestId != null && dashletId != null && viewsCache.getView(requestId) != null) {
 				javax.jdo.PersistenceManager pm = app.getNewPmData();
 				RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(xri));
+				String providerName = obj.refGetPath().get(2);
 				String segmentName = obj.refGetPath().get(4);
-				org.opencrx.kernel.home1.jmi1.UserHome userHomeAdmin = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(
-					SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
-					obj.refGetPath(),
-					pm
-				);
+				
+				org.opencrx.kernel.document1.jmi1.Segment documentSegment = Documents.getInstance().getDocumentSegment(pm, providerName, segmentName);
+				
 				String messageOfTheDay = "";
-				org.opencrx.kernel.home1.cci2.MediaQuery query = (org.opencrx.kernel.home1.cci2.MediaQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Media.class);
-				query.orderByCreatedAt().descending();
-				query.thereExistsDescription().like(".*Message.*");
-				query.thereExistsContentMimeType().equalTo("text/html");
-				List<org.opencrx.kernel.home1.jmi1.Media> medias = userHomeAdmin.getChart(query);
-				int count = 0;
-				for(org.opencrx.kernel.home1.jmi1.Media media: medias) {
-					ByteArrayOutputStream bos = new ByteArrayOutputStream();
-					org.w3c.cci2.BinaryLargeObjects.streamCopy(
-						media.getContent().getContent(),
-						0L,
-						bos
+				try {
+					org.opencrx.kernel.document1.jmi1.Document messageOfTheDayDoc = findDocument (
+						MESSAGE_OF_THE_DAY_DOCUMENT_NAME,
+						documentSegment
 					);
-					bos.close();
-					messageOfTheDay += "<pre>" + media.getCreatedAt() + "</pre>";
-					messageOfTheDay += new String(bos.toByteArray(), "UTF-8");
-					messageOfTheDay += "<br />";
-					count++;
-					if(count >= 1) break;
-				}
-				if(messageOfTheDay.length() == 0) {
-					messageOfTheDay += "<pre>" + new Date() + "</pre>";
+					if (messageOfTheDayDoc != null) {
+						org.opencrx.kernel.document1.jmi1.MediaContent headRevision =
+							(org.opencrx.kernel.document1.jmi1.MediaContent)messageOfTheDayDoc.getHeadRevision();
+						ByteArrayOutputStream bos = new ByteArrayOutputStream();
+						org.w3c.cci2.BinaryLargeObjects.streamCopy(
+							headRevision.getContent().getContent(),
+							0L,
+							bos
+						);
+						bos.close();
+						messageOfTheDay += "<pre>" + headRevision.getModifiedAt() + "</pre>";
+						messageOfTheDay += new String(bos.toByteArray(), "UTF-8");
+						messageOfTheDay += "<br />";
+					}
+					if(messageOfTheDay.length() == 0) {
+						messageOfTheDay += "<pre> no message as of " + new Date() + "</pre>";
+					}
+				} catch (Exception e) {
+					new ServiceException(e).log();
+%>
+					<p>
+				    <i>Dashlet Exception - see log file for details</i>
+			    </p>
+<%
 				}
 				pm.close();
 %>
 				<%= messageOfTheDay %>
 <%
-	  		}
+			}
 			else {
 %>
 				<p>
@@ -125,7 +147,8 @@ org.openmdx.kernel.log.*
 				    <li><b>RequestId:</b> <%= requestId %></li>
 				    <li><b>XRI:</b> <%= xri %></li>
 				    <li><b>Dashlet-Id:</b> <%= dashletId %></li>
-				</ul>
+					</ul>
+				</p>
 <%
 			}
 %>		     

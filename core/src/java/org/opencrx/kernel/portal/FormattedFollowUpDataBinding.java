@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: FormattedFollowUpDataBinding.java,v 1.8 2011/12/02 12:36:51 wfro Exp $
  * Description: NoteDataBinding
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/02 12:36:51 $
  * ====================================================================
  *
  * This software is published under the BSD license

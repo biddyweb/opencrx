@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserHomes.java,v 1.117 2012/01/20 01:36:56 wfro Exp $
  * Description: UserHomes
- * Revision:    $Revision: 1.117 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/20 01:36:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -97,8 +94,8 @@ import org.opencrx.kernel.home1.jmi1.ContactsFeed;
 import org.opencrx.kernel.home1.jmi1.DocumentFeed;
 import org.opencrx.kernel.home1.jmi1.EMailAccount;
 import org.opencrx.kernel.home1.jmi1.ObjectFinder;
-import org.opencrx.kernel.home1.jmi1.Reminder;
 import org.opencrx.kernel.home1.jmi1.Subscription;
+import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
@@ -431,10 +428,12 @@ public class UserHomes extends AbstractImpl {
         // get principal
         org.opencrx.security.realm1.jmi1.Principal principal = null;
         try {
-            principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(
-            	SecureObject.getInstance().getLoginRealmIdentity(
+            principal = (org.opencrx.security.realm1.jmi1.Principal)SecureObject.getInstance().findPrincipal(
+            	principalName,
+        		SecureObject.getInstance().getLoginRealmIdentity(
             		userHome.refGetPath().get(2)
-            	).getDescendant(new String[]{"principal", principalName})
+            	),	            	
+            	pm
             );
         }
         catch(Exception e) {
@@ -521,14 +520,19 @@ public class UserHomes extends AbstractImpl {
 	                    errors
 	                );
 	                if(passwordCredential == null) {
+	                	errors.add("Creation of password credential failed for principal " + principalName);
 	                    return null;
-	                }            
+	                }
 	                // Set initial password
-	                this.changePassword(
+	                short changePasswordStatus = this.changePassword(
 	                    passwordCredential,
 	                    null,
 	                    initialPassword
 	                );
+	                if(changePasswordStatus != CHANGE_PASSWORD_OK) {
+	                	errors.add("Changing of password failed with status " + changePasswordStatus);
+	                	return null;
+	                }
 	                // Update principal's credential
 	                loginPrincipal.setCredential(passwordCredential);
 	            }
@@ -626,12 +630,13 @@ public class UserHomes extends AbstractImpl {
 	        	(org.opencrx.kernel.home1.jmi1.Segment)pmAdmin.getObjectById(
 	        		 new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName)
 	        	);
-	        primaryGroup = (PrincipalGroup)pmAdmin.getObjectById(primaryGroup.refGetPath());
+	        primaryGroup = primaryGroup == null ? null : (PrincipalGroup)pmAdmin.getObjectById(primaryGroup.refGetPath());
 	        UserHome userHome = userHomeSegment.getUserHome(principalName);
 	        if(userHome != null) {
 	        	if(primaryGroup != null) {
 	        		userHome.setPrimaryGroup(primaryGroup);
 	        	}
+	        	userHomeIdentity = userHome.refGetPath();
 	        }
 	        else {
 	            userHome = pmAdmin.newInstance(UserHome.class);
@@ -670,6 +675,7 @@ public class UserHomes extends AbstractImpl {
 	            	true, // settingShowTopNavigationSublevel
 	            	false, // settingGridDefaultAlignmentIsWide
 	            	false, // settingHideWorkspaceDashboard
+	            	false, // settingScrollHeader
 	            	null, // settingRootObjects 
 	            	null // settingSubscriptions
 	            );
@@ -723,12 +729,13 @@ public class UserHomes extends AbstractImpl {
         catch (UnsupportedEncodingException e) {
         	throw new ServiceException(e);
         }
+        String providerName = homeSegment.refGetPath().get(2);
+        String segmentName = homeSegment.refGetPath().get(4);
         org.openmdx.security.realm1.jmi1.Realm realm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
-        	SecureObject.getRealmIdentity(homeSegment.refGetPath().get(2), homeSegment.refGetPath().get(4))
+        	SecureObject.getRealmIdentity(providerName, segmentName)
         );
-        org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById( 
-        	new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + homeSegment.refGetPath().get(2) + "/segment/" + homeSegment.refGetPath().get(4))
-        );
+        org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
+        	Accounts.getInstance().getAccountSegment(pm, providerName, segmentName); 
         int nCreatedUsers = 0;
         int nFailedUsersNoPrimaryGroup = 0;
         int nFailedUsersNoContact = 0;
@@ -907,6 +914,7 @@ public class UserHomes extends AbstractImpl {
 		private final Boolean showTopNavigationSublevel;
 		private final Boolean gridDefaultAlignmentIsWide;
 		private final Boolean hideWorkspaceDashboard;
+		private final Boolean scrollHeader;
 
 		private final List<String> rootObjects;
 		private final Map<String,String> subscriptions;
@@ -921,6 +929,7 @@ public class UserHomes extends AbstractImpl {
 			Boolean showTopNavigationSublevel, 
 			Boolean gridDefaultAlignmentIsWide,
 			Boolean hideWorkspaceDashboard,
+			Boolean scrollHeader,
 			List<String> rootObjects,
 			Map<String,String> subscriptions
 		) {
@@ -933,6 +942,7 @@ public class UserHomes extends AbstractImpl {
 			this.showTopNavigationSublevel = showTopNavigationSublevel; 
 			this.gridDefaultAlignmentIsWide = gridDefaultAlignmentIsWide;
 			this.hideWorkspaceDashboard = hideWorkspaceDashboard;
+			this.scrollHeader = scrollHeader;
 			this.rootObjects = rootObjects;
 			this.subscriptions = subscriptions;
 		}
@@ -981,6 +991,10 @@ public class UserHomes extends AbstractImpl {
         	return subscriptions;
         }
 		
+		public Boolean getScrollHeader() {
+        	return scrollHeader;
+        }
+
     }
 
     //-------------------------------------------------------------------------
@@ -1003,6 +1017,7 @@ public class UserHomes extends AbstractImpl {
     	Boolean settingShowTopNavigationSublevel,
     	Boolean settingGridDefaultAlignmentIsWide,
     	Boolean settingHideWorkspaceDashboard,
+    	Boolean settingScrollHeader,
     	List<String> settingRootObjects,
     	Map<String,String> settingSubscriptions
     ) throws ServiceException {
@@ -1022,6 +1037,7 @@ public class UserHomes extends AbstractImpl {
 	    		settingShowTopNavigationSublevel, 
 	    		settingGridDefaultAlignmentIsWide,
 	    		settingHideWorkspaceDashboard,
+	    		settingScrollHeader,
 	    		settingRootObjects, 
 	    		settingSubscriptions
 	    	),
@@ -1128,7 +1144,7 @@ public class UserHomes extends AbstractImpl {
 			userHome.setPrimaryGroup(primaryGroup);				
 		}
     	if(newSettings.getTimezone() != null) {
-    		currentSettings.setProperty(UserSettings.TIMEZONE_NAME, newSettings.getTimezone());
+    		currentSettings.setProperty(UserSettings.TIMEZONE_NAME.getName(), newSettings.getTimezone());
     	}
 		userHome.setStoreSettingsOnLogoff(
 			Boolean.valueOf(newSettings.getStoreSettingsOnLogoff() == null ? "false" :"true")
@@ -1184,29 +1200,36 @@ public class UserHomes extends AbstractImpl {
 		// Show max items in top navigation
 		if(newSettings.getTopNavigationShowMax() != null) {
 			currentSettings.setProperty(
-				UserSettings.TOP_NAVIGATION_SHOW_MAX,
+				UserSettings.TOP_NAVIGATION_SHOW_MAX.getName(),
 				newSettings.getTopNavigationShowMax()
 			);
 		}
 		// Show sublevels
 		if(newSettings.getShowTopNavigationSublevel() != null) {
 			currentSettings.setProperty(
-				UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL,
+				UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL.getName(),
 				Boolean.toString(newSettings.getShowTopNavigationSublevel())
 			);			
 		}
 		// Grid default alignment
 		if(newSettings.getGridDefaultAlignmentIsWide() != null) {			
 			currentSettings.setProperty(
-				UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE,
+				UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE.getName(),
 				Boolean.toString(newSettings.getGridDefaultAlignmentIsWide())
 			);
 		}
 		// Show workspace dashboard
 		if(newSettings.getHideWorkspaceDashboard() != null) {			
 			currentSettings.setProperty(
-				UserSettings.HIDE_WORKSPACE_DASHBOARD,
+				UserSettings.HIDE_WORKSPACE_DASHBOARD.getName(),
 				Boolean.toString(newSettings.getHideWorkspaceDashboard())
+			);			
+		}
+		// Scroll header
+		if(newSettings.getScrollHeader() != null) {			
+			currentSettings.setProperty(
+				UserSettings.SCROLL_HEADER.getName(),
+				Boolean.toString(newSettings.getScrollHeader())
 			);			
 		}
 		// Subscriptions
@@ -1648,59 +1671,44 @@ public class UserHomes extends AbstractImpl {
     public String getUserTimezone(
     	Properties settings
     ) throws ServiceException {
-    	return settings.getProperty(UserSettings.TIMEZONE_NAME);
+    	return settings.getProperty(UserSettings.TIMEZONE_NAME.getName());
     }
     
     //-------------------------------------------------------------------------
-    public void updateReminder(
-    	Reminder reminder
+    public void updateTimer(
+    	Timer timer
     ) throws ServiceException {
     	Date now = new Date();
-        if(JDOHelper.isNew(reminder)) {
-        	if(reminder.getAlarmRepeat() == null) {
-        		reminder.setAlarmRepeat(1);
+        if(JDOHelper.isNew(timer)) {
+        	if(timer.getTriggerRepeat() == null) {
+        		timer.setTriggerRepeat(1);
         	}
-        	if(reminder.getAlarmIntervalMinutes() == null) {
-        		reminder.setAlarmIntervalMinutes(15);
+        	if(timer.getTriggerIntervalMinutes() == null) {
+        		timer.setTriggerIntervalMinutes(15);
         	}
-        	if(
-        		Boolean.TRUE.equals(reminder.isAutocalcTriggerAt()) ||
-        		reminder.getTriggerAt() == null
-        	) {
-        		ContextCapable reference = null;
+        	if(timer.getTimerStartAt() == null) {
+        		ContextCapable target = null;
         		try {
-        			reference = reminder.getReference();
+        			target = timer.getTarget();
         		} catch(Exception e) {}
-        		if(reference instanceof Activity) {
-        			if(reminder.isAutocalcTriggerAt() == null) {
-        				reminder.setAutocalcTriggerAt(Boolean.TRUE);
-        			}
-        			reminder.setTriggerEndAt(((Activity)reference).getScheduledStart());
-        			reminder.setReminderState(((Activity)reference).getActivityState());
+        		if(target instanceof Activity) {
+        			timer.setTimerStartAt(((Activity)target).getScheduledStart());
+        			timer.setTimerState(((Activity)target).getActivityState());
         		} else {
-        			if(reminder.isAutocalcTriggerAt() == null) {        			
-        				reminder.setAutocalcTriggerAt(Boolean.FALSE);
-        			}
-        			reminder.setTriggerAt(now);
-        			reminder.setTriggerEndAt(now);
+        			timer.setTimerStartAt(now);
+        			timer.setTimerState((short)TimerState.OPEN.getValue());
         		}
         	}
         }
-    	if(Boolean.TRUE.equals(reminder.isAutocalcTriggerAt())) {
-    		if(reminder.getTriggerEndAt() != null) {
-				Date newTriggerAt = new Date(
-					reminder.getTriggerEndAt().getTime() - 
-					(reminder.getAlarmRepeat() == null ? 1 : reminder.getAlarmRepeat()) * (reminder.getAlarmIntervalMinutes() == null ? 15 : reminder.getAlarmIntervalMinutes()) * 60000L
+        if(timer.getTimerStartAt() != null) {
+	    	if(timer.getLastTriggerAt() == null || timer.getTimerStartAt().compareTo(now) > 0) {
+	    		// Set lastTriggerAt period before timerStartAt. This way the timer triggers the 
+	    		// first time at timerStartAt. Update only if the timer starts in the future.
+	    		timer.setLastTriggerAt(
+					new Date(timer.getTimerStartAt().getTime() - timer.getTriggerIntervalMinutes() * 60000L) 
 				);
-    			reminder.setTriggerAt(newTriggerAt);    			
-    		}
-    	}
-    	// If triggerAt is in the future adjust lastAlarmAt
-    	if(JDOHelper.isNew(reminder) || reminder.getTriggerAt().compareTo(now) > 0) {
-			reminder.setLastAlarmAt(
-				new Date(reminder.getTriggerAt().getTime() - reminder.getAlarmIntervalMinutes() * 60000L) 
-			);
-    	}
+	    	}
+        }
     }
 
     //-------------------------------------------------------------------------
@@ -1715,6 +1723,29 @@ public class UserHomes extends AbstractImpl {
     public static final short MISSING_OLD_PASSWORD = 6;
     public static final short OLD_PASSWORD_VERIFICATION_MISMATCH = 7;
     public static final short PASSWORD_POLICY_VIOLATION = 8;
+
+    //-------------------------------------------------------------------------
+    public enum TimerState {
+    	
+    	NA(0),
+    	OPEN(10),
+    	CLOSED(20),
+    	CANCELLED(30);
+    	
+    	private final int value;
+    	    	
+    	private TimerState(
+    		int value
+    	) {
+    		this.value = value;
+    	}
+    	
+    	public int getValue(
+    	) {
+    		return this.value;
+    	}
+    	
+    }
 
 	public enum AlertState {
 		

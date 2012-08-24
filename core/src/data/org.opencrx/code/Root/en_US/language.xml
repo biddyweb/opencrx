@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="language" _operation="set">
 										<_object>
 											<name>
+												<_item>language</_item>
 												<_item>org:opencrx:kernel:account1:Contact:preferredWrittenLanguage</_item>
 												<_item>org:opencrx:kernel:account1:Contact:preferredSpokenLanguage</_item>
 												<_item>org:opencrx:kernel:contract1:AbstractContract:contractLanguage</_item>

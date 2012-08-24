@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="usageproductbaseprice" _operation="set">
 										<_object>
 											<name>
+												<_item>usageproductbaseprice</_item>
 												<_item>org:opencrx:kernel:product1:AbstractProductPrice:usage</_item>
 												<_item>org:opencrx:kernel:product1:AbstractPriceLevel:priceUsage</_item>
 											</name>

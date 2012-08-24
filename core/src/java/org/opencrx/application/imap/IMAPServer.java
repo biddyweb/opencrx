@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: IMAPServer.java,v 1.15 2011/10/07 14:36:20 wfro Exp $
  * Description: IMAPServer
- * Revision:    $Revision: 1.15 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/10/07 14:36:20 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -73,9 +70,25 @@ import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.openmdx.base.naming.Path;
 
+/**
+ * IMAPServer
+ *
+ */
 public class IMAPServer extends AbstractServer {
     
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * @param pmf
+	 * @param providerName
+	 * @param bindAddress
+	 * @param portNumber
+	 * @param sslKeystoreFile
+	 * @param sslKeystoreType
+	 * @param sslKeystorePass
+	 * @param sslKeyPass
+	 * @param isDebug
+	 * @param delayOnStartup
+	 */
 	protected IMAPServer(
 	    PersistenceManagerFactory pmf,
 	    String providerName,
@@ -85,6 +98,10 @@ public class IMAPServer extends AbstractServer {
 	    String sslKeystoreType,
 	    String sslKeystorePass,
 	    String sslKeyPass,
+	    String sslTruststoreFile,
+	    String sslTruststorePass,
+	    String sslTruststoreType,
+	    Boolean sslNeedClientAuth,	    
 	    boolean isDebug,
 	    int delayOnStartup
 	) {
@@ -98,12 +115,18 @@ public class IMAPServer extends AbstractServer {
 		    sslKeystoreType,
 		    sslKeystorePass,
 		    sslKeyPass,
+		    sslTruststoreFile,
+		    sslTruststorePass,
+		    sslTruststoreType,
+		    sslNeedClientAuth,
 			isDebug,
 			delayOnStartup
 		);
 	}
 	
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.adapter.AbstractServer#newSession(java.net.Socket, org.opencrx.application.adapter.AbstractServer)
+	 */
 	@Override
     public AbstractSession newSession(
     	Socket socket, 
@@ -115,7 +138,11 @@ public class IMAPServer extends AbstractServer {
 		);
     }
 	
-    //-----------------------------------------------------------------------
+    /**
+     * Encode folder name.
+     * @param name
+     * @return
+     */
     protected String encodeFolderName(
         String name
     ) {
@@ -138,9 +165,11 @@ public class IMAPServer extends AbstractServer {
         return encodedName.toString();      
     }
     
-    //-----------------------------------------------------------------------
     /**
      * Return all folders which the user is allowed to subscribe.
+     * @param segmentName
+     * @return
+     * @throws MessagingException
      */
     public Map<String,String> getAvailableFolders(
     	String segmentName    	
@@ -158,7 +187,7 @@ public class IMAPServer extends AbstractServer {
 		        String providerName = this.getProviderName();
 		        org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
 		            (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-		                new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
+		                new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
 		            );
 		        Collection<ActivityTracker> trackers = activitySegment.getActivityTracker();
 		        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup group: trackers) {

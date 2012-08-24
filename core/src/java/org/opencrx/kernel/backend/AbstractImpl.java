@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AbstractImpl.java,v 1.5 2009/04/21 15:19:58 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/21 15:19:58 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -124,12 +121,11 @@ public abstract class AbstractImpl {
 	//-------------------------------------------------------------------------
     public String getUidAsString(
     ) {
-        return UUIDConversion.toUID(AbstractImpl.uuidGenerator.next());        
+        return UUIDConversion.toUID(UUIDs.newUUID());        
     }
 
 	//-------------------------------------------------------------------------
     // Members
 	//-------------------------------------------------------------------------
-    private static UUIDGenerator uuidGenerator = UUIDs.getGenerator();
     
 }

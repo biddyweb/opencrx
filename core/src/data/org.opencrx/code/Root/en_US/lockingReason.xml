@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="lockingReason" _operation="set">
 										<_object>
 											<name>
+												<_item>lockingReason</_item>
 												<_item>org:opencrx:kernel:depot1:CompoundBooking:lockingReason</_item>
 												<_item>org:opencrx:kernel:depot1:LockCompoundBookingParams:lockingReason</_item>
 											</name>

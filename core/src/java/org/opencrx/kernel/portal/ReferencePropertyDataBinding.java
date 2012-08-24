@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ReferencePropertyDataBinding.java,v 1.6 2012/01/13 17:16:05 wfro Exp $
  * Description: ReferencePropertyDataBinding
- * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:16:05 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -61,23 +58,36 @@ import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.base.jmi1.ReferenceProperty;
+import org.openmdx.portal.servlet.ApplicationContext;
 
 public class ReferencePropertyDataBinding extends AbstractPropertyDataBinding {
 
+    /**
+     * Constructor.
+     */
     public ReferencePropertyDataBinding(
     ) {
         super(PropertySetHolderType.CrxObject);
     }
     
+    /**
+     * Constructor.
+     * @param type
+     */
     public ReferencePropertyDataBinding(
         PropertySetHolderType type
     ) {
         super(type);
     }
         
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
     public Object getValue(
         RefObject object, 
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        ApplicationContext app
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p instanceof ReferenceProperty) {
@@ -88,10 +98,15 @@ public class ReferencePropertyDataBinding extends AbstractPropertyDataBinding {
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DataBinding#setValue(javax.jmi.reflect.RefObject, java.lang.String, java.lang.Object, org.openmdx.portal.servlet.ApplicationContext)
+     */
+    @Override
     public void setValue(
         RefObject object, 
         String qualifiedFeatureName, 
-        Object newValue
+        Object newValue,
+        ApplicationContext app
     ) {
         Property p = this.findProperty(object, qualifiedFeatureName);
         if(p == null) {

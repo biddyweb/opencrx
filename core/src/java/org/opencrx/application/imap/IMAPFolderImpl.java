@@ -1,3 +1,55 @@
+/*
+ * ====================================================================
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Description: IMAPFolderImpl
+ * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
+ * ====================================================================
+ *
+ * This software is published under the BSD license
+ * as listed below.
+ * 
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without 
+ * modification, are permitted provided that the following conditions 
+ * are met:
+ * 
+ * * Redistributions of source code must retain the above copyright
+ * notice, this list of conditions and the following disclaimer.
+ * 
+ * * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in
+ * the documentation and/or other materials provided with the
+ * distribution.
+ * 
+ * * Neither the name of CRIXP Corp. nor the names of the contributors
+ * to openCRX may be used to endorse or promote products derived
+ * from this software without specific prior written permission
+ * 
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+ * CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES,
+ * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS
+ * BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ * 
+ * ------------------
+ * 
+ * This product includes software developed by the Apache Software
+ * Foundation (http://www.apache.org/).
+ * 
+ * This product includes software developed by contributors to
+ * openMDX (http://www.openmdx.org/)
+ */
 package org.opencrx.application.imap;
 
 import java.io.BufferedReader;
@@ -32,15 +84,26 @@ import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Activities.ActivityClass;
-import org.opencrx.kernel.backend.MimeMessageImpl;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
+import org.opencrx.kernel.utils.MimeUtils;
+import org.opencrx.kernel.utils.MimeUtils.MimeMessageImpl;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.format.DateTimeFormat;
 
+/**
+ * IMAPFolderImpl
+ *
+ */
 public class IMAPFolderImpl extends Folder implements UIDFolder {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * @param name
+     * @param folderId
+     * @param username
+     * @param pmf
+     */
     public IMAPFolderImpl(
         String name,
         String folderId,
@@ -59,7 +122,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         this.folderId = folderId;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Descriptor for mime file.
+     */
     static class MimeFileDescr {
     
     	public MimeFileDescr(
@@ -92,7 +157,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	private final File file;
     }
     
-    //-----------------------------------------------------------------------
+	/**
+	 * Get meta info for cached mime files folder.
+	 * @return
+	 */
 	public Object[] loadMetaInf(
 	) {
         File metainfFile = new File(this.folderDir, METAINF_FILE_NAME);
@@ -122,7 +190,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         return metainf;
 	}
 
-    //-----------------------------------------------------------------------
+	/**
+	 * Store meta info for cached mime files folder.
+	 * @param metainf
+	 */
 	public void storeMetaInf(
 		Object[] metainf
 	) {
@@ -146,7 +217,11 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         }            
 	}
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get configured maildir.
+     * @param username
+     * @return
+     */
     public static File getMailDir(
         String username
     ) {
@@ -159,7 +234,11 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         );
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get mime file uid.
+     * @param mimeFile
+     * @return
+     */
     private long getUID(
     	File mimeFile
     ) {
@@ -171,7 +250,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get map of all files stored in cached mime files folder.
+     * @return
+     */
     private Map<Long,File> getMimeFiles(
     ) {
     	Map<Long,File> sortedFiles = new TreeMap<Long,File>();    	
@@ -190,7 +272,11 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	return sortedFiles;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get descriptor for email activity.
+     * @param activity
+     * @return
+     */
     private MimeFileDescr getMimeFileDescr(
     	Activity activity
     ) {
@@ -209,7 +295,11 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	return null;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get descriptor for given mime file.
+     * @param uid
+     * @return
+     */
     private MimeFileDescr getMimeFileDescr(
     	long uid
     ) {
@@ -228,7 +318,11 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	return null;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get descriptor for given mime file.
+     * @param messageNumber
+     * @return
+     */
     private MimeFileDescr getMimeFileDescr(
     	int messageNumber
     ) {
@@ -247,7 +341,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	return null;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get activities helper.
+     * @return
+     */
     protected ActivityQueryHelper getActivitiesHelper(
     ) {
     	ActivityQueryHelper activitiesHelper = new ActivityQueryHelper(
@@ -259,7 +356,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	return activitiesHelper;
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#appendMessages(javax.mail.Message[])
+     */
     @Override
     public void appendMessages(
         Message[] newMessages
@@ -311,7 +410,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	}
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Synchronize mail dir, i.e. cache email activities in mime files folder.
+     */
     synchronized void synchronizeMailDir(
     ) {                
     	ActivityQueryHelper activitiesHelper = this.getActivitiesHelper();
@@ -325,12 +426,14 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
                 Object[] metainf = this.loadMetaInf();
                 if(metainf == null) {
                 	File[] files = this.folderDir.listFiles();
-                	for(int i = 0; i < files.length; i++) {
-                		if(files[i].isFile()) {
-                			try {
-                				files[i].delete();
-                			} catch(Exception e) {}
-                		}
+                	if(files != null) {
+	                	for(int i = 0; i < files.length; i++) {
+	                		if(files[i].isFile()) {
+	                			try {
+	                				files[i].delete();
+	                			} catch(Exception e) {}
+	                		}
+	                	}
                 	}
                 	createdAt = new Date();
                 	nextUID = 1L;
@@ -359,7 +462,7 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
 	                        uid + "-" + activityNumber + ".eml"
 	                    );
 	                    try {
-	                        MimeMessageImpl mimeMessage = new MimeMessageImpl();
+	                        MimeUtils.MimeMessageImpl mimeMessage = new MimeUtils.MimeMessageImpl();
 	                        Object mappedMessage = Activities.getInstance().mapToMessage(
 	                            (EMail)activity, 
 	                            mimeMessage
@@ -447,19 +550,25 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#close(boolean)
+     */
     @Override
     public void close(boolean arg0) throws MessagingException {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#create(int)
+     */
     @Override
     public boolean create(int arg0) throws MessagingException {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#delete(boolean)
+     */
     @Override
     public boolean delete(
         boolean arg0
@@ -467,21 +576,27 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#exists()
+     */
     @Override
     public boolean exists(
     ) throws MessagingException {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#expunge()
+     */
     @Override
     public Message[] expunge(
     ) throws MessagingException {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getFolder(java.lang.String)
+     */
     @Override
     public Folder getFolder(
         String arg0
@@ -489,7 +604,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getMessage(int)
+     */
     @Override
     public Message getMessage(
         int messageNumber
@@ -517,7 +634,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         return null;
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getMessageCount()
+     */
     @Override
     public int getMessageCount(
     ) throws MessagingException {
@@ -526,63 +645,81 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         return mimeFiles.size();
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getFullName()
+     */
     @Override
     public String getFullName(
     ) {
         return this.name;        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getName()
+     */
     @Override
     public String getName(
     ) {
         return this.name;        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getParent()
+     */
     @Override
     public Folder getParent(
     ) throws MessagingException {
         return null;        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getPermanentFlags()
+     */
     @Override
     public Flags getPermanentFlags(
     ) {
         throw new UnsupportedOperationException();        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getSeparator()
+     */
     @Override
     public char getSeparator(
     ) throws MessagingException {
         throw new MessagingException("Unsupported Operation");
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#getType()
+     */
     @Override
     public int getType(
     ) throws MessagingException {
         throw new MessagingException("Unsupported Operation");
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#hasNewMessages()
+     */
     @Override
     public boolean hasNewMessages(
     ) throws MessagingException {
         return false;
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#isOpen()
+     */
     @Override
     public boolean isOpen(
     ) {
         return true;        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#list(java.lang.String)
+     */
     @Override
     public Folder[] list(
         String arg0
@@ -590,7 +727,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         throw new MessagingException("Unsupported Operation");
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#open(int)
+     */
     @Override
     public void open(
         int arg0
@@ -598,7 +737,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         throw new MessagingException("Unsupported Operation");
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#renameTo(javax.mail.Folder)
+     */
     @Override
     public boolean renameTo(
         Folder arg0
@@ -606,9 +747,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         throw new MessagingException("Unsupported Operation");
     }
 
-    //-----------------------------------------------------------------------
-    // UIDFolder
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.UIDFolder#getMessageByUID(long)
+     */
     @Override
     public Message getMessageByUID(
         long uid
@@ -630,7 +771,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         return null;
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.UIDFolder#getMessagesByUID(long[])
+     */
     @Override
     public Message[] getMessagesByUID(
         long[] uids
@@ -638,7 +781,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         throw new MessagingException("Unsupported Operation");
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.UIDFolder#getMessagesByUID(long, long)
+     */
     @Override
     public Message[] getMessagesByUID(
         long start, 
@@ -655,7 +800,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         return result.toArray(new Message[result.size()]);
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.UIDFolder#getUID(javax.mail.Message)
+     */
     @Override
     public long getUID(
         Message message
@@ -663,7 +810,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
         return ((MimeMessageImpl)message).getUid();
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.UIDFolder#getUIDValidity()
+     */
     @Override
     public long getUIDValidity(
     ) throws MessagingException {
@@ -683,7 +832,9 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
     	}
     }
     
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.mail.Folder#search(javax.mail.search.SearchTerm)
+     */
     @Override
     public Message[] search(
     	SearchTerm searchTerm

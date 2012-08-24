@@ -1,17 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AccountCollectionResource.java,v 1.2 2010/11/24 14:34:24 wfro Exp $
  * Description: AccountCollectionResource
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/24 14:34:24 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -73,7 +70,11 @@ import org.openmdx.base.marshalling.Marshaller;
 
 public class AccountCollectionResource extends CardDavResource {
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Marshaling collection which maps AccountMembers to AccountResources.
+	 *
+	 * @param <T>
+	 */
 	static class AccountResourceCollection<T> extends MarshallingCollection<T> {
 		
 		public AccountResourceCollection(
@@ -120,7 +121,11 @@ public class AccountCollectionResource extends CardDavResource {
 
 	}
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor
+	 * @param requestContext
+	 * @param contactsFeed
+	 */
 	public AccountCollectionResource(
 		RequestContext requestContext,
 		ContactsFeed contactsFeed
@@ -131,14 +136,19 @@ public class AccountCollectionResource extends CardDavResource {
 		);
 	}
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.carddav.CardDavResource#getObject()
+	 */
 	@Override
     public ContactsFeed getObject(
     ) {
         return (ContactsFeed)super.getObject();
     }
 
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.uses.net.sf.webdav.Resource#getDisplayName()
+     */
+	@Override
     public String getDisplayName(
     ) {
     	Set<String> features = this.getObject().refDefaultFetchGroup();
@@ -149,30 +159,37 @@ public class AccountCollectionResource extends CardDavResource {
     	return name;
     }
     		
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#isCollection()
+	 */
 	@Override
     public boolean isCollection(
     ) {
 		return true;
     }
 	
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.carddav.CardDavResource#getName()
+     */
     @Override
     public String getName(
     ) {
     	return super.getName();
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.carddav.CardDavResource#getMimeType()
+	 */
 	@Override
     public String getMimeType(
     ) {
 		return ICalendar.MIME_TYPE;
     }
 
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.carddav.CardDavResource#getChildren()
+     */
     @Override
-    @SuppressWarnings("unchecked")
 	public Collection<Resource> getChildren(
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(this.getObject());
@@ -180,7 +197,7 @@ public class AccountCollectionResource extends CardDavResource {
         query.forAllDisabled().isFalse();                    
         query.thereExistsAccount().vcard().isNonNull();
         query.orderByCreatedAt().ascending();
-        return new AccountResourceCollection(
+        return new AccountResourceCollection<Resource>(
         	this.getRequestContext(),
         	this.getObject().getAccountGroup().getMember(query),
         	this

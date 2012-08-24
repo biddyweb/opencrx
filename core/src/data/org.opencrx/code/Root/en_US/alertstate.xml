@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="alertstate" _operation="set">
 										<_object>
 											<name>
+												<_item>alertstate</_item>
 												<_item>org:opencrx:kernel:home1:Alert:alertState</_item>
 											</name>
 										</_object>

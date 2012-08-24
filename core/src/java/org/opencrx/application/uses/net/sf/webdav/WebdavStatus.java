@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: WebdavStatus.java,v 1.4 2010/11/22 16:09:39 wfro Exp $
  * Description: WebdavStatus
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/22 16:09:39 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: BasicObjectImpl.java,v 1.1 2012/01/13 17:15:17 wfro Exp $
  * Description: BasicObjectImpl
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/01/13 17:15:17 $
  * ====================================================================
  *
  * This software is published under the BSD license

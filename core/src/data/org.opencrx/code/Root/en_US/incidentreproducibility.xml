@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="reproducibility" _operation="set">
 										<_object>
 											<name>
+												<_item>reproducibility</_item>
 												<_item>org:opencrx:kernel:activity1:Incident:reproducibility</_item>
 											</name>
 										</_object>

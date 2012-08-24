@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="closeType" _operation="set">
 										<_object>
 											<name>
+												<_item>closeType</_item>
 												<_item>org:opencrx:kernel:activity1:IncidentCloseParams:closeType</_item>
 											</name>
 										</_object>

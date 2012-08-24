@@ -11,11 +11,4 @@ export JAVA_OPTS="$JAVA_OPTS -Dorg.opencrx.airsyncdir=$CATALINA_BASE/airsyncdir"
 export CLASSPATH=$CLASSPATH:$CATALINA_BASE/bin/openmdx-system.jar
 # [openCRX]
 
-# [openCRX META-INF/context.xml configuration]
-export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.driverName=org.hsqldb.jdbcDriver"
-export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.url=jdbc:hsqldb:hsql://127.0.0.1:$HSQLDB_PORT/CRX"
-export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.userName=sa"
-export JAVA_OPTS="$JAVA_OPTS -Dopencrx.CRX.jdbc.password=manager99"
-# [openCRX META-INF/context.xml configuration]
-
 echo "Using JAVA_OPTS:       $JAVA_OPTS"

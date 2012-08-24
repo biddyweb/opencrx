@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: SecurityKeys.java,v 1.20 2011/12/21 13:45:15 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.20 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/21 13:45:15 $
  * ====================================================================
  *
  * This software is published under the BSD license

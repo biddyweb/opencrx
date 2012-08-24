@@ -1,18 +1,18 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ConnectionHelper.jsp,v 1.28 2011/11/28 14:18:20 wfro Exp $
- * Description: Generate vCard/iCal/CalDAV URLs
- * Revision:    $Revision: 1.28 $
+ * Name:        $Id: ConnectionHelper.jsp,v 1.35 2012/07/08 13:30:30 wfro Exp $
+ * Description: ConnectionHelper: Generate Adapter URLs
+ * Revision:    $Revision: 1.35 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 14:18:20 $
+ * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2011 CRIXP Corp., Switzerland
+ * Copyright (c) 2012 CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,14 +68,51 @@ org.openmdx.kernel.id.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
 org.openmdx.kernel.log.*
-" %><%
+" %>
+<%!
+	enum ResourceType {
+    	PROFILE("Profiles"),
+    	EVENTS_AND_TASKS("Events / Tasks"),
+    	CONTACT("Contacts");
+    	
+    	private ResourceType(
+    		String label
+    	) {
+    		this.label = label;
+    	}
+    	public String getLabel(
+    	) {
+    		return this.label;
+    	}
+    	private final String label;
+	}
+
+    enum SelectorType {
+    	TRACKER,
+    	TRACKER_FILTER,
+    	CATEGORY,
+    	CATEGORY_FILTER,
+    	MILESTONE,
+    	MILESTONE_FILTER,
+    	GLOBAL_FILTER,
+    	USERHOME,
+    	AIRSYNCPROFILE,
+    	CALENDARPROFILE,
+    	RESOURCE,
+    	BDAY,
+    	VCARD,
+    	DOCUMENTPROFILE,
+    	CARDPROFILE
+    }
+
+%>
+<%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
@@ -161,11 +198,16 @@ org.openmdx.kernel.log.*
             obj = (RefObject_1_0)pm.getObjectById(new Path(anchorObjectXri));
         } catch (Exception e) {}
     }
-    String type = request.getParameter("type") != null ? request.getParameter("type") : "";
-    String selectorType = request.getParameter("selectorType") != null ? request.getParameter("selectorType") : "";
-
-    //System.out.println("anchor = " + anchorObjectXri);
-    //System.out.println("obj    = " + obj.refMofId());
+    ResourceType type = request.getParameter("type") != null ? ResourceType.valueOf(request.getParameter("type")) : null;
+    SelectorType selectorType = request.getParameter("selectorType") != null ? SelectorType.valueOf(request.getParameter("selectorType")) : null;
+	String optionMax = request.getParameter("optionMax") == null ? "500" : request.getParameter("optionMax");	
+	String optionUser = request.getParameter("optionUser") == null ? app.getLoginPrincipal() : request.getParameter("optionUser");	
+	String optionIsDisabled = request.getParameter("optionIsDisabled") == null ? "false" : request.getParameter("optionIsDisabled");
+	String optionSummaryPrefix = request.getParameter("optionSummaryPrefix") == null ? "Birthdays" : request.getParameter("optionSummaryPrefix");
+	String optionCategories = request.getParameter("optionCategories") == null ? "Birthday" : request.getParameter("optionCategories");
+	String optionYear = request.getParameter("optionYear") == null ? "2012" : request.getParameter("optionYear");
+	String optionTimelineHeight = request.getParameter("optionTimelineHeight") == null ? "500" : request.getParameter("optionTimelineHeight");
+	String optionAlarm = request.getParameter("optionAlarm") == null ? "false" : request.getParameter("optionAlarm");
 
     final String ACTIVITYTRACKER_CLASS = "org:opencrx:kernel:activity1:ActivityTracker";
     final String ACTIVITYCATEGORY_CLASS = "org:opencrx:kernel:activity1:ActivityCategory";
@@ -175,6 +217,7 @@ org.openmdx.kernel.log.*
     final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
     final String RESOURCEASSIGNMENT_CLASS = "org:opencrx:kernel:activity1:ResourceAssignment";
     final String USERHOME_CLASS = "org:opencrx:kernel:home1:UserHome";
+    final String AIRSYNCPROFILE_CLASS = "org:opencrx:kernel:home1:AirSyncProfile";
     final String CALENDARPROFILE_CLASS = "org:opencrx:kernel:home1:CalendarProfile";
     final String ACCOUNTFILTERGLOBAL_CLASS = "org:opencrx:kernel:account1:AccountFilterGlobal";
     final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
@@ -188,422 +231,262 @@ org.openmdx.kernel.log.*
     final String PROTOCOL_SPECIFIER_HTTPS = "https:";
     final String UNKNOWN = "_?_";
 
-    final String TYPE_AIRSYNC               = "AirSync";
-    final String TYPE_CALENDAR              = "Calendar";
-    final String TYPE_VCARD                 = "vCard";
-    final String TYPE_WEBDAV                = "WebDAV";
-    final String TYPE_CARDDAV               = "CardDAV";
-
-    final String SELTYPE_TRACKER            = "tracker";
-    final String SELTYPE_CATEGORY           = "category";
-    final String SELTYPE_MILESTONE          = "milestone";
-    final String SELTYPE_FILTERED           = "Filtered";
-    final String SELTYPE_GLOBALFILTER       = "globalfilter";
-    final String SELTYPE_USERHOME           = "userhome";
-    final String SELTYPE_AIRSYNCPROFILE     = "airsyncprofile";
-    final String SELTYPE_CALENDARPROFILE    = "calendarprofile";
-    final String SELTYPE_RESOURCE           = "resource";
-    final String SELTYPE_BDAY               = "bday";
-    final String SELTYPE_VCARD              = "vcard";
-    final String SELTYPE_DOCUMENTPROFILE    = "documentprofile";
-    final String SELTYPE_CARDPROFILE        = "cardprofile";
-
-
-    final String optionSourceFreebusy   = "freebusy";
-    final String optionSourceActivities = "activities";
-    final String optionSourceBdays      = "bdays";
-    final String optionSourceVcards     = "accounts";
-    final String optionSourceBdaysLText = "Birthdays";
-    final String optionCategoriesDefault = "Birthday";
-    final String optionSummaryPrefixDefault = "";
-    final String optionTypeHtml = "html";
-    final String optionTypeCalDAV = "CalDAV_VEVENT";        // VEVENT is the default
-    final String optionTypeCalDAV_VTODO = "CalDAV_VTODO";   // VTODO by request
-    final String optionTypeAirSync = "AirSync";
-    final String optionTypeIcs  = "ics";
-    final String optionTypeXml  = "xml";
-    final String optionIcalTypeEvent= "VEVENT";
-    final String optionIcalTypeTodo= "VTODO";
-
-    final String optionValueTRUE  = "true";
-    final String optionValueFALSE = "false";
-    final String hintDefaultValue = "default";
-    final String hintManualEntry = "enter value below";
-    final String optionValueUSER = "USER";
-    final String optionValueMANUAL = "MANUAL ENTRY";
-
     String urlBase = (request.getRequestURL().toString()).substring(0, (request.getRequestURL().toString()).indexOf(request.getServletPath().toString()));
-    String groupComponent = "";
-    String filterComponent = "";
-    String typeFromInitialObject = "";
-    String selectorTypeFromInitialObject = "";
     String anchorObjectXriFromInitialObject = "";
     String anchorObjectFilteredXriFromInitialObject = null;
 
-    String target = "";
     String server = "";
     String path = "";
-    String options = "";
                  
-    String sourceType          = request.getParameter("sourceType")          != null ? request.getParameter("sourceType"         ) : optionSourceActivities;    // [freebusy|activities|bdays|webdav]
-    String optionType          = request.getParameter("optionType")          != null ? request.getParameter("optionType"         ) : optionTypeIcs;             // [AirSync|CalDAV|ics|xml|html] activities
-    String optionNonOwningUser = request.getParameter("optionNonOwningUser") != null ? request.getParameter("optionNonOwningUser") : optionValueFALSE;          // [true|false]     allow option .../user/<user>/...
-    String optionUsernameEmail = request.getParameter("optionUsernameEmail") != null ? request.getParameter("optionUsernameEmail") : app.getLoginPrincipal(); // [user name|e-mail address] for option .../user/<user>/...
-    String optionDisabled      = request.getParameter("optionDisabled")      != null ? request.getParameter("optionDisabled"     ) : optionValueFALSE;          // [true|false]     activities, freebusy
-    String optionAlarm         = request.getParameter("optionAlarm")         != null ? request.getParameter("optionAlarm"        ) : optionValueFALSE;          // [true|false]     bdays
-    String optionIcalType      = request.getParameter("optionIcalType")      != null ? request.getParameter("optionIcalType"     ) : optionIcalTypeEvent;       // [VTODO|VEVENT]   bdays
-    String optionFreebusyAsCal = request.getParameter("optionFreebusyAsCal") != null ? request.getParameter("optionFreebusyAsCal") : optionValueFALSE;          // [true|false]     freebusy only vs. freebusy as calendar
-    String optionFreebusyUser  = request.getParameter("optionFreebusyUser")  != null ? request.getParameter("optionFreebusyUser" ) : optionValueUSER;           // [USER or e-mail] freebusy with e-mail vs. username
-    String optionMax           = request.getParameter("optionMax"     )      != null ? request.getParameter("optionMax"          ) : "";                        //                  bdays
-    String optionCategories    = request.getParameter("optionCategories")    != null ? request.getParameter("optionCategories"   ) : optionCategoriesDefault;   //                  bdays
-    String optionSummaryPrefix = request.getParameter("optionSummaryPrefix") != null ? request.getParameter("optionSummaryPrefix") : optionSummaryPrefixDefault;//                  bdays
-    String optionYear          = request.getParameter("optionYear")          != null ? request.getParameter("optionYear"         ) : "";                        // YYYY             bdays
-
-    String optionUserTz     = "GMT-0000";
-    String optionUserLocale = "en_US";
-    String optionHeight        = request.getParameter("optionHeight")        != null ? request.getParameter("optionHeight"       ) : "500";                  // in pixels        activities/xml
-
     String selectedAnchorObjectXRI = "";
-
-    boolean supportsAccessByUser = true; // enable insertion of /user/<user>/ into URL
 
     int tabIndex = 0;
 
     // get current userHome
     org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
+    org.opencrx.kernel.account1.jmi1.Segment accountSegment = org.opencrx.kernel.backend.Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
+    org.opencrx.kernel.activity1.jmi1.Segment activitySegment = org.opencrx.kernel.backend.Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
+    org.opencrx.kernel.home1.jmi1.Segment homeSegment = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
 
-    org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
-    org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-        new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-    );
-    org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-    org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-    );
-    org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
-    org.opencrx.kernel.home1.jmi1.Segment homeSegment = (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-        new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-    );
-
-    String nonOwningUserComponent = "";
-    if ((optionNonOwningUser.compareTo(optionValueTRUE ) == 0) && (optionUsernameEmail != null) && (optionUsernameEmail.length() > 0)) {
-    		nonOwningUserComponent = "/user/" + optionUsernameEmail;
-    }
-
-    // activity filter
+    // Option activity filter at group level
+    boolean isGroupFilter = false;
     if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup) {
-    	typeFromInitialObject = TYPE_CALENDAR;
-    	selectorTypeFromInitialObject = SELTYPE_FILTERED;
-      org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup activityFilterGroup =
-        (org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup)obj;
-      if ((activityFilterGroup.getName() != null) && (activityFilterGroup.getName().length() > 0)) {
-        filterComponent = "/filter/" + URLEncoder.encode(activityFilterGroup.getName(), "UTF-8");
-        anchorObjectXriFromInitialObject = activityFilterGroup.refMofId();
-      }
-      // set obj to parent object
-      obj = (RefObject_1_0)pm.getObjectById(new Path(activityFilterGroup.refMofId()).getParent().getParent());
+    	isGroupFilter = true;
+		org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup activityFilterGroup =
+        	(org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup)obj;
+      	if((activityFilterGroup.getName() != null) && !activityFilterGroup.getName().isEmpty()) {
+        	anchorObjectXriFromInitialObject = activityFilterGroup.refMofId();
+      	}
+      	obj = (RefObject_1_0)pm.getObjectById(new Path(activityFilterGroup.refMofId()).getParent().getParent());
     }
-    else if (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal) {
-      typeFromInitialObject = TYPE_CALENDAR;
-      selectorTypeFromInitialObject = SELTYPE_GLOBALFILTER;
-      org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal activityFilterGlobal =
-        (org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal)obj;
-      if ((activityFilterGlobal.getName() != null) && (activityFilterGlobal.getName().length() > 0)) {
-        filterComponent = "/globalfilter/" + URLEncoder.encode(activityFilterGlobal.getName(), "UTF-8");
-        anchorObjectFilteredXriFromInitialObject = activityFilterGlobal.refMofId();
-      }
+    if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal) {
+    	if(type == null) {
+	    	type = ResourceType.EVENTS_AND_TASKS;
+	    	selectorType = SelectorType.GLOBAL_FILTER;
+    	}
+      	org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal activityFilterGlobal =
+        	(org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal)obj;
+      	if((activityFilterGlobal.getName() != null) && !activityFilterGlobal.getName().isEmpty()) {
+        	anchorObjectFilteredXriFromInitialObject = activityFilterGlobal.refMofId();
+      	}
     }
-    // activity group
-    if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
-      org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker =
-        (org.opencrx.kernel.activity1.jmi1.ActivityTracker)obj;
-      if ((activityTracker.getName() != null) && (activityTracker.getName().length() > 0)) {
-        groupComponent = "/tracker/" + URLEncoder.encode(activityTracker.getName(), "UTF-8");
-        if (selectorTypeFromInitialObject.compareTo(SELTYPE_FILTERED) != 0) {
-          anchorObjectXriFromInitialObject = activityTracker.refMofId();
-        }
-      }
-      typeFromInitialObject = TYPE_CALENDAR;
-      selectorTypeFromInitialObject = SELTYPE_TRACKER + selectorTypeFromInitialObject;
+    else if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
+		org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker =
+			(org.opencrx.kernel.activity1.jmi1.ActivityTracker)obj;
+		if((activityTracker.getName() != null) && !activityTracker.getName().isEmpty()) {
+	        if(!isGroupFilter) {
+				anchorObjectXriFromInitialObject = activityTracker.refMofId();
+	        }
+      	}
+		if(type == null) {
+			type = ResourceType.EVENTS_AND_TASKS;
+			selectorType = isGroupFilter ? SelectorType.TRACKER_FILTER : SelectorType.TRACKER;
+		}
     }
     else if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCategory) {
-      org.opencrx.kernel.activity1.jmi1.ActivityCategory activityCategory =
-        (org.opencrx.kernel.activity1.jmi1.ActivityCategory)obj;
-      if ((activityCategory.getName() != null) && (activityCategory.getName().length() > 0)) {
-        groupComponent = "/category/" + URLEncoder.encode(activityCategory.getName(), "UTF-8");
-        if (selectorTypeFromInitialObject.compareTo(SELTYPE_FILTERED) != 0) {
-          anchorObjectXriFromInitialObject = activityCategory.refMofId();
-        }
-      }
-      typeFromInitialObject = TYPE_CALENDAR;
-      selectorTypeFromInitialObject = SELTYPE_CATEGORY + selectorTypeFromInitialObject;
+		org.opencrx.kernel.activity1.jmi1.ActivityCategory activityCategory =
+			(org.opencrx.kernel.activity1.jmi1.ActivityCategory)obj;
+		if((activityCategory.getName() != null) && !activityCategory.getName().isEmpty()) {
+	        if (!isGroupFilter) {
+	          anchorObjectXriFromInitialObject = activityCategory.refMofId();
+	        }
+		}
+		if(type == null) {
+			type = ResourceType.EVENTS_AND_TASKS;
+			selectorType = isGroupFilter ? SelectorType.CATEGORY_FILTER : SelectorType.CATEGORY;
+		}
     }
     else if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityMilestone) {
-      org.opencrx.kernel.activity1.jmi1.ActivityMilestone activityMilestone =
-        (org.opencrx.kernel.activity1.jmi1.ActivityMilestone)obj;
-      if ((activityMilestone.getName() != null) && (activityMilestone.getName().length() > 0)) {
-        groupComponent = "/milestone/" + URLEncoder.encode(activityMilestone.getName(), "UTF-8");
-        if (selectorTypeFromInitialObject.compareTo(SELTYPE_FILTERED) != 0) {
-          anchorObjectXriFromInitialObject = activityMilestone.refMofId();
-        }
-      }
-      typeFromInitialObject = TYPE_CALENDAR;
-      selectorTypeFromInitialObject = SELTYPE_MILESTONE + selectorTypeFromInitialObject;
+		org.opencrx.kernel.activity1.jmi1.ActivityMilestone activityMilestone =
+			(org.opencrx.kernel.activity1.jmi1.ActivityMilestone)obj;
+		if ((activityMilestone.getName() != null) && !activityMilestone.getName().isEmpty()) {
+	        if(!isGroupFilter) {
+	          anchorObjectXriFromInitialObject = activityMilestone.refMofId();
+	        }
+		}
+		if(type == null) {
+			type = ResourceType.EVENTS_AND_TASKS;
+			selectorType = isGroupFilter ? SelectorType.MILESTONE_FILTER : SelectorType.MILESTONE;
+		}
     }
     else if(obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-        typeFromInitialObject = TYPE_CALENDAR;
-        selectorTypeFromInitialObject = SELTYPE_USERHOME + selectorTypeFromInitialObject;
-        groupComponent = "/userhome/" + (sourceType.compareTo(optionSourceFreebusy) == 0 
-        	? (optionFreebusyUser.compareTo(optionValueMANUAL) == 0 ? optionUsernameEmail : optionFreebusyUser)
-        	: URLEncoder.encode(obj.refGetPath().getBase(), "UTF-8")
-        );
-        if (isFirstCall) {
+    	if(type == null) {
+	    	type = ResourceType.EVENTS_AND_TASKS;
+	    	selectorType = SelectorType.USERHOME;
+    	}
+        if(isFirstCall) {
             anchorObjectXriFromInitialObject = ((org.opencrx.kernel.home1.jmi1.UserHome)obj).refMofId();
         }
     }
-    else if(obj instanceof org.opencrx.kernel.home1.jmi1.CalendarProfile) {
-        typeFromInitialObject = TYPE_CALENDAR;
-        selectorTypeFromInitialObject = SELTYPE_CALENDARPROFILE + selectorTypeFromInitialObject;
-        if (optionType.compareTo(optionTypeCalDAV_VTODO) != 0) {
-            optionType = optionTypeCalDAV;
-        }
-        org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile =
-            (org.opencrx.kernel.home1.jmi1.SyncProfile)obj;
-        if ((syncProfile.getName() != null) && (syncProfile.getName().length() > 0)) {
-            // userhome is parent object of syncProfile --> get parent object
-        	  org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(obj.refMofId()).getParent().getParent());
-            groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + URLEncoder.encode(syncProfile.getName(), "UTF-8");
-        }
-    }
-    else if(obj instanceof org.opencrx.kernel.home1.jmi1.DocumentProfile) {
-        typeFromInitialObject = TYPE_WEBDAV;
-        selectorTypeFromInitialObject = SELTYPE_DOCUMENTPROFILE + selectorTypeFromInitialObject;
-        org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile =
-            (org.opencrx.kernel.home1.jmi1.SyncProfile)obj;
-        if ((syncProfile.getName() != null) && (syncProfile.getName().length() > 0)) {
-            // userhome is parent object of syncProfile --> get parent object
-        	  org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(obj.refMofId()).getParent().getParent());
-            //groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + URLEncoder.encode(syncProfile.getName(), "UTF-8");
-            groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + syncProfile.getName();
-        }
-    }
-    else if(obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile) {
-        typeFromInitialObject = TYPE_AIRSYNC;
-        selectorTypeFromInitialObject = SELTYPE_AIRSYNCPROFILE + selectorTypeFromInitialObject;
-        //optionType = optionTypeAirSync;
-        org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile =
-            (org.opencrx.kernel.home1.jmi1.SyncProfile)obj;
-        if ((syncProfile.getName() != null) && (syncProfile.getName().length() > 0)) {
-            // userhome is parent object of syncProfile --> get parent object
-        	  org.opencrx.kernel.home1.jmi1.UserHome userHome =  (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(obj.refMofId()).getParent().getParent());
-            groupComponent = "/user/" + URLEncoder.encode(userHome.refGetPath().getBase(), "UTF-8") + "/profile/" + URLEncoder.encode(syncProfile.getName(), "UTF-8");
-        }
+    else if(obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile) {
+    	if(type == null) {
+    		type = ResourceType.PROFILE;
+    	}
+    	org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = (org.opencrx.kernel.home1.jmi1.SyncProfile)obj;
+		if((syncProfile.getName() != null) && !syncProfile.getName().isEmpty()) {
+	        if (!isGroupFilter) {
+	          anchorObjectXriFromInitialObject = syncProfile.refMofId();
+	        }
+		}
     }
     else if(obj instanceof org.opencrx.kernel.activity1.jmi1.Resource) {
-      typeFromInitialObject = TYPE_CALENDAR;
-      selectorTypeFromInitialObject = SELTYPE_RESOURCE + selectorTypeFromInitialObject;
-      org.opencrx.kernel.activity1.jmi1.Resource resource =
-        (org.opencrx.kernel.activity1.jmi1.Resource)obj;
-      if ((resource.getName() != null) && (resource.getName().length() > 0)) {
-        groupComponent = "/resource/" + URLEncoder.encode(resource.getName(), "UTF-8");
-      }
+    	if(type == null) {
+	    	type = ResourceType.EVENTS_AND_TASKS;
+	    	selectorType = SelectorType.RESOURCE;
+    	}
+    	org.opencrx.kernel.activity1.jmi1.Resource resource = (org.opencrx.kernel.activity1.jmi1.Resource)obj;
+		if((resource.getName() != null) && !resource.getName().isEmpty()) {
+	        if (!isGroupFilter) {
+	          anchorObjectXriFromInitialObject = resource.refMofId();
+	        }
+		}
     }
-    else if (obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal) {
-        if (type.compareTo(TYPE_VCARD) == 0) {
-            typeFromInitialObject = TYPE_VCARD;
-            selectorTypeFromInitialObject = SELTYPE_VCARD;
-            sourceType = optionSourceVcards;
-            options = "&type=vcf";
-        } else {
-            typeFromInitialObject = TYPE_CALENDAR;
-            selectorTypeFromInitialObject = SELTYPE_BDAY;
-            sourceType = optionSourceBdays;
+    else if(obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal) {
+        if(type == ResourceType.CONTACT) {
+        	selectorType = SelectorType.VCARD;
+        } else if(type == null) {
+        	type = ResourceType.EVENTS_AND_TASKS;
+        	selectorType = SelectorType.BDAY;
         }
         org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal =
           (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)obj;
         if ((accountFilterGlobal.getName() != null) && (accountFilterGlobal.getName().length() > 0)) {
-          filterComponent = "/filter/" + URLEncoder.encode(accountFilterGlobal.getName(), "UTF-8");
           anchorObjectFilteredXriFromInitialObject = accountFilterGlobal.refMofId();
         }
     }
-
-    if (anchorObjectFilteredXriFromInitialObject != null) {
+    if(anchorObjectFilteredXriFromInitialObject != null) {
         anchorObjectXriFromInitialObject = anchorObjectFilteredXriFromInitialObject;
     }
-
-    type = request.getParameter("type") != null ? request.getParameter("type") : typeFromInitialObject;
-    selectorType = request.getParameter("selectorType") != null ? request.getParameter("selectorType") : selectorTypeFromInitialObject;
     String anchorObjectLabel = "Anchor object";
 
-    if (sourceType.compareTo(optionSourceFreebusy) == 0) {
-    		supportsAccessByUser = false;
-    }
+    Map<String,String> anchorObjects = new TreeMap<String,String>();
 
-    if (type.compareTo(optionTypeAirSync) == 0) {
-        target = urlBase.replace("-core-", "-airsync-") + "/Microsoft-Server-ActiveSync/";
-        /* selectorType = SELTYPE_AIRSYNCPROFILE; */
-        java.security.cert.X509Certificate certs [] = (java.security.cert.X509Certificate [])
-          request.getAttribute("javax.servlet.request.X509Certificate");
-        server = request.getServerName() + ":" + request.getServerPort() + request.getContextPath().replace("-core-", "-airsync-") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + (urlBase.contains(PROTOCOL_SPECIFIER_HTTPS) ? "yes" : "no") + "]";
-        //server = request.getServerName() + ":" + request.getServerPort() + request.getContextPath().replace("-core-", "-airsync-") + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + ((certs != null) && (certs.length > 0) ? "yes" : "no") + "]";
-				supportsAccessByUser = false;
-    } else if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
-        if (type.compareTo(TYPE_CALENDAR) == 0) {
-            if ((optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeCalDAV_VTODO) == 0 || (obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile)) && (sourceType.compareTo(optionSourceActivities) == 0)) {
-                target =
-                    urlBase.replace("-core-", "-caldav-") + "/" +
-                    providerName + "/" + segmentName + (supportsAccessByUser ? nonOwningUserComponent : "") +
-                    groupComponent + filterComponent + (optionType.compareTo(optionTypeCalDAV_VTODO) == 0 ? "/" + optionIcalTypeTodo : "");
-            } else {
-                target =
-                    urlBase.replace("-core-", "-ical-") + "/" + sourceType + "?id=" +
-                    providerName + "/" + segmentName + (supportsAccessByUser ? nonOwningUserComponent : "") +
-                    groupComponent + filterComponent;
-            }
-        } else if (type.compareTo(TYPE_VCARD) == 0) {
-            target =
-                urlBase.replace("-core-", "-vcard-") + "/" + sourceType + "?id=" +
-                providerName + "/" + segmentName +
-                groupComponent + filterComponent;
-            supportsAccessByUser = false;
-        } else if (type.compareTo(TYPE_WEBDAV) == 0) {
-		        server = request.getServerName() + ":" + request.getServerPort() + "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[SSL " + (urlBase.contains(PROTOCOL_SPECIFIER_HTTPS) ? "yes" : "no") + "]";
-		        path = request.getContextPath().replace("-core-", "-webdav-") + "/" +
-		        providerName + "/" + segmentName +
-            groupComponent + filterComponent;
-            target =
-                urlBase.replace("-core-", "-webdav-").replace("http:", "webdav:").replace("https:", "webdavs:") + "/" +
-				        providerName + "/" + segmentName +
-                groupComponent + filterComponent;
-            supportsAccessByUser = false;
-        }
-    } else {
-        target = "";
-        supportsAccessByUser = false;
-    }
-
-    Map orderedanchorObjects = new TreeMap();
-
-    if (selectorType.compareTo(SELTYPE_TRACKER) == 0) {
+    if(selectorType == SelectorType.TRACKER) {
         anchorObjectLabel = app.getLabel(ACTIVITYTRACKER_CLASS);
         // get ActivityTrackers (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-        trackerFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
+        trackerQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
+        for(org.opencrx.kernel.activity1.jmi1.ActivityGroup ag: activitySegment.getActivityTracker(trackerQuery)) {
             String display = (ag.getName() != null ? ag.getName() : UNKNOWN);
             String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
+            anchorObjects.put(
                 HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                 ag.refMofId()
             );
         }
-    } else if (selectorType.compareTo(SELTYPE_TRACKER + SELTYPE_FILTERED) == 0) {
+    } else if(selectorType == SelectorType.TRACKER_FILTER) {
         anchorObjectLabel = app.getLabel(ACTIVITYTRACKER_CLASS);
         // get ActivityFilters of ActivityTrackers (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-        trackerFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
+        trackerQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-            for(Iterator j = ag.getActivityFilter().iterator(); j.hasNext() && index < MAX_ENTRY_SELECT; ) {
-                org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup afg = (org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup)j.next();
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityTracker> i = activitySegment.getActivityTracker(trackerQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = i.next();
+            for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup> j = ag.<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup>getActivityFilter().iterator(); j.hasNext() && index < MAX_ENTRY_SELECT; ) {
+                org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup afg = j.next();
                 String display = (ag.getName() != null ? ag.getName() : UNKNOWN) + " &lt;" + (afg.getName() != null ? afg.getName() : UNKNOWN) + "&gt;";
                 String sortKey = display.toUpperCase() + formatter.format(index++);
-                orderedanchorObjects.put(
+                anchorObjects.put(
                     HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                     afg.refMofId()
                 );
             }
         }
-    } else if (selectorType.compareTo(SELTYPE_CATEGORY) == 0) {
+    } else if(selectorType == SelectorType.CATEGORY) {
         anchorObjectLabel = app.getLabel(ACTIVITYCATEGORY_CLASS);
         // get ActivityCategories (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
-        categoryFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCategory.class);
+        categoryQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityCategory> i = activitySegment.getActivityCategory(categoryQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = i.next();
             String display = (ag.getName() != null ? ag.getName() : UNKNOWN);
             String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
+            anchorObjects.put(
                 HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                 ag.refMofId()
             );
         }
-    } else if (selectorType.compareTo(SELTYPE_CATEGORY + SELTYPE_FILTERED) == 0) {
+    } else if(selectorType == SelectorType.CATEGORY_FILTER) {
         anchorObjectLabel = app.getLabel(ACTIVITYCATEGORY_CLASS);
         // get ActivityFilters of ActivityCategories (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
-        categoryFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCategory.class);
+        categoryQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-            for(Iterator j = ag.getActivityFilter().iterator(); j.hasNext() && index < MAX_ENTRY_SELECT; ) {
-                org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup afg = (org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup)j.next();
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityCategory> i = activitySegment.getActivityCategory(categoryQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = i.next();
+            for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup> j = ag.<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup>getActivityFilter().iterator(); j.hasNext() && index < MAX_ENTRY_SELECT; ) {
+                org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup afg = j.next();
                 String display = (ag.getName() != null ? ag.getName() : UNKNOWN) + " &lt;" + (afg.getName() != null ? afg.getName() : UNKNOWN) + "&gt;";
                 String sortKey = display.toUpperCase() + formatter.format(index++);
-                orderedanchorObjects.put(
+                anchorObjects.put(
                     HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                     afg.refMofId()
                 );
             }
         }
-    } else if (selectorType.compareTo(SELTYPE_MILESTONE) == 0) {
+    } else if(selectorType == SelectorType.MILESTONE) {
         anchorObjectLabel = app.getLabel(ACTIVITYMILESTONE_CLASS);
         // get ActivityMilestones (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
-        milestoneFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityMilestone.class);
+        milestoneQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityMilestone> i = activitySegment.getActivityMilestone(milestoneQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = i.next();
             String display = (ag.getName() != null ? ag.getName() : UNKNOWN);
             String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
+            anchorObjects.put(
                 HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                 ag.refMofId()
             );
         }
-    } else if (selectorType.compareTo(SELTYPE_MILESTONE + SELTYPE_FILTERED) == 0) {
+    } else if(selectorType == SelectorType.MILESTONE_FILTER) {
         anchorObjectLabel = app.getLabel(ACTIVITYMILESTONE_CLASS);
         // get ActivityFilters of ActivityMilestones (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
-        milestoneFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityMilestone.class);
+        milestoneQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-            for(Iterator j = ag.getActivityFilter().iterator(); j.hasNext() && index < MAX_ENTRY_SELECT; ) {
-                org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup afg = (org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup)j.next();
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityMilestone> i = activitySegment.getActivityMilestone(milestoneQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = i.next();
+            for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup> j = ag.<org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup>getActivityFilter().iterator(); j.hasNext() && index < MAX_ENTRY_SELECT; ) {
+                org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup afg = j.next();
                 String display = (ag.getName() != null ? ag.getName() : UNKNOWN) + " &lt;" + (afg.getName() != null ? afg.getName() : UNKNOWN) + "&gt;";
                 String sortKey = display.toUpperCase() + formatter.format(index++);
-                orderedanchorObjects.put(
+                anchorObjects.put(
                     HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                     afg.refMofId()
                 );
             }
         }
-    } else if (selectorType.compareTo(SELTYPE_GLOBALFILTER) == 0) {
+    } else if(selectorType == SelectorType.GLOBAL_FILTER) {
         anchorObjectLabel = app.getLabel(ACTIVITYFILTERGLOBAL_CLASS);
         // get ActivityTrackers (not disabled)
-        org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery activityFilter = activityPkg.createActivityFilterGlobalQuery();
-        activityFilter.forAllDisabled().isFalse();
+        org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery activityQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal.class);
+        activityQuery.forAllDisabled().isFalse();
         int index = 0;
-        for(Iterator i = activitySegment.getActivityFilter(activityFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal af = (org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal)i.next();
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal> i = activitySegment.getActivityFilter(activityQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal af = i.next();
             String display = (af.getName() != null ? af.getName() : UNKNOWN);
             String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
+            anchorObjects.put(
                 HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                 af.refMofId()
             );
         }
-    } else if (selectorType.compareTo(SELTYPE_USERHOME) == 0) {
+    } else if(selectorType == SelectorType.USERHOME) {
         anchorObjectLabel = app.getLabel(USERHOME_CLASS);
         // get UserHomes
         int index = 0;
-        for(Iterator i = homeSegment.getUserHome().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
+        for(Iterator<org.opencrx.kernel.home1.jmi1.UserHome> i = homeSegment.<org.opencrx.kernel.home1.jmi1.UserHome>getUserHome().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.UserHome userHome = i.next();
             org.opencrx.kernel.account1.jmi1.Contact contact = null;
             try {
                 contact = userHome.getContact();
@@ -611,12 +494,12 @@ org.openmdx.kernel.log.*
             String principal = userHome.refGetPath().getBase();
             String display = (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " [" + principal + "]";
             String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
+            anchorObjects.put(
                 HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                 userHome.refMofId()
             );
         }
-    } else if (selectorType.compareTo(SELTYPE_CALENDARPROFILE) == 0) {
+    } else if(selectorType == SelectorType.CALENDARPROFILE) {
         anchorObjectLabel = app.getLabel(CALENDARPROFILE_CLASS);
         org.opencrx.kernel.account1.jmi1.Contact contact = null;
         try {
@@ -624,66 +507,50 @@ org.openmdx.kernel.log.*
         } catch (Exception e) {}
         String principal = currentUserHome.refGetPath().getBase();
         int index = 0;
-        for(Iterator i = currentUserHome.getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = (org.opencrx.kernel.home1.jmi1.SyncProfile)i.next();
-            String display = (syncProfile.getName() != null ? syncProfile.getName() : "?")
-              + (syncProfile instanceof org.opencrx.kernel.home1.jmi1.DocumentProfile ? " {WebDAV}" : (syncProfile instanceof org.opencrx.kernel.home1.jmi1.CalendarProfile ? " {CalDAV}" : " {AirSync}"))
-              + " [" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " /" + principal + "]";
-            String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
-                HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
-                syncProfile.refMofId()
-            );
+        for(Iterator<org.opencrx.kernel.home1.jmi1.SyncProfile> i = currentUserHome.<org.opencrx.kernel.home1.jmi1.SyncProfile>getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = i.next();
+            if(syncProfile instanceof org.opencrx.kernel.home1.jmi1.CalendarProfile) {
+	            String display = (syncProfile.getName() != null ? syncProfile.getName() : "?");
+	            String sortKey = display.toUpperCase() + formatter.format(index++);
+	            anchorObjects.put(
+	                HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+	                syncProfile.refMofId()
+	            );
+        	}
         }
-    } else if (selectorType.compareTo(SELTYPE_AIRSYNCPROFILE) == 0) {
-        anchorObjectLabel = optionTypeAirSync;
+    } else if(selectorType == SelectorType.AIRSYNCPROFILE) {
         int index = 0;
-        for(Iterator i = currentUserHome.getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = (org.opencrx.kernel.home1.jmi1.SyncProfile)i.next();
-            if (
-                (syncProfile instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile) &&
-                (syncProfile.getName() != null && syncProfile.getName().compareTo(TYPE_AIRSYNC) == 0)
-            ) {
+        for(Iterator<org.opencrx.kernel.home1.jmi1.SyncProfile> i = currentUserHome.<org.opencrx.kernel.home1.jmi1.SyncProfile>getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = i.next();
+            if(syncProfile instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile) {
                 String display = (syncProfile.getName() != null ? syncProfile.getName() : "?");
                 String sortKey = display.toUpperCase() + formatter.format(index++);
-                orderedanchorObjects.put(
+                anchorObjects.put(
                     HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                     syncProfile.refMofId()
                 );
             }
         }
-    } else if (selectorType.compareTo(SELTYPE_RESOURCE) == 0) {
-        anchorObjectLabel = app.getLabel(RESOURCE_CLASS);
-        // get Resources (not disabled)
-        org.opencrx.kernel.activity1.cci2.ResourceQuery resourceFilter = activityPkg.createResourceQuery();
-        resourceFilter.forAllDisabled().isFalse();
+    } else if(selectorType == SelectorType.CARDPROFILE) {
+        anchorObjectLabel = app.getLabel(CARDPROFILE_CLASS);
+        org.opencrx.kernel.account1.jmi1.Contact contact = null;
+        try {
+            contact = currentUserHome.getContact();
+        } catch (Exception e) {}
+        String principal = currentUserHome.refGetPath().getBase();
         int index = 0;
-        for(Iterator i = activitySegment.getResource(resourceFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.activity1.jmi1.Resource resource = (org.opencrx.kernel.activity1.jmi1.Resource)i.next();
-            org.opencrx.kernel.account1.jmi1.Contact contact = resource.getContact();
-            String display = (resource.getName() != null ? resource.getName() : UNKNOWN) + " [" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + "]";
-            String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
-                HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
-                resource.refMofId()
-            );
+        for(Iterator<org.opencrx.kernel.home1.jmi1.SyncProfile> i = currentUserHome.<org.opencrx.kernel.home1.jmi1.SyncProfile>getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = i.next();
+            if (syncProfile instanceof org.opencrx.kernel.home1.jmi1.CardProfile) {
+                String display = (syncProfile.getName() != null ? syncProfile.getName() : "?");
+                String sortKey = display.toUpperCase() + formatter.format(index++);
+                anchorObjects.put(
+                    HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+                    syncProfile.refMofId()
+                );
+            }
         }
-    } else if ((selectorType.compareTo(SELTYPE_BDAY) == 0) || (selectorType.compareTo(SELTYPE_VCARD) == 0)) {
-        anchorObjectLabel = app.getLabel(ACCOUNTFILTERGLOBAL_CLASS);
-        // get AccountFilterGlobals (not disabled)
-        org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountFilter = accountPkg.createAccountFilterGlobalQuery();
-        accountFilter.forAllDisabled().isFalse();
-        int index = 0;
-        for(Iterator i = accountSegment.getAccountFilter(accountFilter).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.account1.jmi1.AccountFilterGlobal af = (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)i.next();
-            String display = (af.getName() != null ? af.getName() : UNKNOWN);
-            String sortKey = display.toUpperCase() + formatter.format(index++);
-            orderedanchorObjects.put(
-                HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
-                af.refMofId()
-            );
-        }
-    } else if (selectorType.compareTo(SELTYPE_DOCUMENTPROFILE) == 0) {
+    } else if(selectorType == SelectorType.DOCUMENTPROFILE) {
         anchorObjectLabel = app.getLabel(DOCUMENTPROFILE_CLASS);
         org.opencrx.kernel.account1.jmi1.Contact contact = null;
         try {
@@ -691,16 +558,49 @@ org.openmdx.kernel.log.*
         } catch (Exception e) {}
         String principal = currentUserHome.refGetPath().getBase();
         int index = 0;
-        for(Iterator i = currentUserHome.getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = (org.opencrx.kernel.home1.jmi1.SyncProfile)i.next();
+        for(Iterator<org.opencrx.kernel.home1.jmi1.SyncProfile> i = currentUserHome.<org.opencrx.kernel.home1.jmi1.SyncProfile>getSyncProfile().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.home1.jmi1.SyncProfile syncProfile = i.next();
             if (syncProfile instanceof org.opencrx.kernel.home1.jmi1.DocumentProfile) {
                 String display = (syncProfile.getName() != null ? syncProfile.getName() : "?");
                 String sortKey = display.toUpperCase() + formatter.format(index++);
-                orderedanchorObjects.put(
+                anchorObjects.put(
                     HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
                     syncProfile.refMofId()
                 );
             }
+        }
+    } else if(selectorType == SelectorType.RESOURCE) {
+        anchorObjectLabel = app.getLabel(RESOURCE_CLASS);
+        // get Resources (not disabled)
+        org.opencrx.kernel.activity1.cci2.ResourceQuery resourceQuery = 
+        	(org.opencrx.kernel.activity1.cci2.ResourceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
+        resourceQuery.forAllDisabled().isFalse();
+        int index = 0;
+        for(Iterator<org.opencrx.kernel.activity1.jmi1.Resource> i = activitySegment.getResource(resourceQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.activity1.jmi1.Resource resource = i.next();
+            org.opencrx.kernel.account1.jmi1.Contact contact = resource.getContact();
+            String display = (resource.getName() != null ? resource.getName() : UNKNOWN) + " [" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + "]";
+            String sortKey = display.toUpperCase() + formatter.format(index++);
+            anchorObjects.put(
+                HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+                resource.refMofId()
+            );
+        }
+    } else if((selectorType == SelectorType.BDAY) || (selectorType == SelectorType.VCARD)) {
+        anchorObjectLabel = app.getLabel(ACCOUNTFILTERGLOBAL_CLASS);
+        // get AccountFilterGlobals (not disabled)
+        org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery accountQuery = 
+        	(org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal.class);
+        accountQuery.forAllDisabled().isFalse();
+        int index = 0;
+        for(Iterator<org.opencrx.kernel.account1.jmi1.AccountFilterGlobal> i = accountSegment.getAccountFilter(accountQuery).iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
+            org.opencrx.kernel.account1.jmi1.AccountFilterGlobal af = i.next();
+            String display = (af.getName() != null ? af.getName() : UNKNOWN);
+            String sortKey = display.toUpperCase() + formatter.format(index++);
+            anchorObjects.put(
+                HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
+                af.refMofId()
+            );
         }
     }
 %>
@@ -734,60 +634,63 @@ org.openmdx.kernel.log.*
             <input type="checkbox" style="display:none;" id="isFirstCall" name="isFirstCall" checked />
             <input type="checkbox" style="display:none;" id="mustReload" name="mustReload" />
 
-            <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
-
+            <div class="fieldGroupName">Resource</div>
+			<div>
                 <table class="fieldGroup">
                   <tr>
                     <td class="label"><span class="nw"><%= userView.getFieldLabel(RESOURCEASSIGNMENT_CLASS, "resourceRole", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
                         <select class="valueL" id="type" name="type" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('mustReload').checked = true;$('reload.button').click();">
-                            <option <%= type.compareTo(TYPE_AIRSYNC ) == 0 ? "selected" : "" %> value="<%= TYPE_AIRSYNC  %>"><%= TYPE_AIRSYNC  %></option>
-                            <option <%= type.compareTo(TYPE_CALENDAR) == 0 ? "selected" : "" %> value="<%= TYPE_CALENDAR %>"><%= TYPE_CALENDAR %></option>
-                            <option <%= type.compareTo(TYPE_VCARD   ) == 0 ? "selected" : "" %> value="<%= TYPE_VCARD    %>"><%= TYPE_VCARD    %></option>
-                            <option <%= type.compareTo(TYPE_WEBDAV  ) == 0 ? "selected" : "" %> value="<%= TYPE_WEBDAV   %>"><%= TYPE_WEBDAV   %></option>
+                            <option <%= type == ResourceType.PROFILE ? "selected" : "" %> value="<%= ResourceType.PROFILE.toString()  %>"><%= ResourceType.PROFILE.getLabel() %></option>
+                            <option <%= type == ResourceType.EVENTS_AND_TASKS ? "selected" : "" %> value="<%= ResourceType.EVENTS_AND_TASKS.toString() %>"><%= ResourceType.EVENTS_AND_TASKS.getLabel() %></option>
+                            <option <%= type == ResourceType.CONTACT ? "selected" : "" %> value="<%= ResourceType.CONTACT.toString() %>"><%= ResourceType.CONTACT.getLabel() %></option>
                         </select>
                     </td>
                     <td class="addon"></td>
                   </tr>
 
-                  <tr <%= type.compareTo(TYPE_AIRSYNC) == 0 ? "style='display:none;'" : "" %>>
+                  <tr>
 <%
-                    if (type.compareTo(TYPE_CALENDAR) == 0) {
+                    if(type == ResourceType.EVENTS_AND_TASKS) {
 %>
                         <td class="label"><span class="nw"><%= userView.getFieldLabel(ABSTRACTPRICELEVEL_CLASS, "basedOn", app.getCurrentLocaleAsIndex()) %>:</span></td>
                         <td>
                             <select class="valueL" id="selectorType" name="selectorType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-                                <option <%= selectorType.compareTo(SELTYPE_TRACKER                     ) == 0 ? "selected" : "" %> value="<%= SELTYPE_TRACKER                      %>"><%= app.getLabel(ACTIVITYTRACKER_CLASS)      %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_TRACKER + SELTYPE_FILTERED  ) == 0 ? "selected" : "" %> value="<%= SELTYPE_TRACKER + SELTYPE_FILTERED   %>"><%= app.getLabel(ACTIVITYTRACKER_CLASS)      %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
-                                <option <%= selectorType.compareTo(SELTYPE_CATEGORY                    ) == 0 ? "selected" : "" %> value="<%= SELTYPE_CATEGORY                     %>"><%= app.getLabel(ACTIVITYCATEGORY_CLASS)     %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_CATEGORY + SELTYPE_FILTERED ) == 0 ? "selected" : "" %> value="<%= SELTYPE_CATEGORY + SELTYPE_FILTERED  %>"><%= app.getLabel(ACTIVITYCATEGORY_CLASS)     %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
-                                <option <%= selectorType.compareTo(SELTYPE_MILESTONE                   ) == 0 ? "selected" : "" %> value="<%= SELTYPE_MILESTONE                    %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS)    %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_MILESTONE + SELTYPE_FILTERED) == 0 ? "selected" : "" %> value="<%= SELTYPE_MILESTONE + SELTYPE_FILTERED %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS)    %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
-                                <option <%= selectorType.compareTo(SELTYPE_GLOBALFILTER                ) == 0 ? "selected" : "" %> value="<%= SELTYPE_GLOBALFILTER                 %>"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_USERHOME                    ) == 0 ? "selected" : "" %> value="<%= SELTYPE_USERHOME                     %>"><%= app.getLabel(USERHOME_CLASS)             %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_CALENDARPROFILE             ) == 0 ? "selected" : "" %> value="<%= SELTYPE_CALENDARPROFILE              %>">CalDAV <%= app.getLabel(CALENDARPROFILE_CLASS) %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_RESOURCE                    ) == 0 ? "selected" : "" %> value="<%= SELTYPE_RESOURCE                     %>"><%= app.getLabel(RESOURCE_CLASS)             %></option>
-                                <option <%= selectorType.compareTo(SELTYPE_BDAY                        ) == 0 ? "selected" : "" %> value="<%= SELTYPE_BDAY                         %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS)  %> / <%= userView.getFieldLabel(CONTACT_CLASS, "birthdate", app.getCurrentLocaleAsIndex()) %></option>
+                                <option <%= selectorType == SelectorType.TRACKER ?          "selected" : "" %> value="<%= SelectorType.TRACKER.toString() %>"><%= app.getLabel(ACTIVITYTRACKER_CLASS)      %></option>
+                                <option <%= selectorType == SelectorType.TRACKER_FILTER ?   "selected" : "" %> value="<%= SelectorType.TRACKER_FILTER.toString() %>"><%= app.getLabel(ACTIVITYTRACKER_CLASS)      %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
+                                <option <%= selectorType == SelectorType.CATEGORY?          "selected" : "" %> value="<%= SelectorType.CATEGORY %>"><%= app.getLabel(ACTIVITYCATEGORY_CLASS)     %></option>
+                                <option <%= selectorType == SelectorType.CATEGORY_FILTER ?  "selected" : "" %> value="<%= SelectorType.CATEGORY_FILTER.toString() %>"><%= app.getLabel(ACTIVITYCATEGORY_CLASS)     %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
+                                <option <%= selectorType == SelectorType.MILESTONE ?        "selected" : "" %> value="<%= SelectorType.MILESTONE.toString() %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS)    %></option>
+                                <option <%= selectorType == SelectorType.MILESTONE_FILTER ? "selected" : "" %> value="<%= SelectorType.MILESTONE_FILTER.toString() %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS)    %> &lt;<%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>&gt;</option>
+                                <option <%= selectorType == SelectorType.GLOBAL_FILTER ?    "selected" : "" %> value="<%= SelectorType.GLOBAL_FILTER.toString() %>"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %></option>
+                                <option <%= selectorType == SelectorType.USERHOME ?         "selected" : "" %> value="<%= SelectorType.USERHOME.toString() %>"><%= app.getLabel(USERHOME_CLASS)             %></option>
+                                <option <%= selectorType == SelectorType.RESOURCE ?         "selected" : "" %> value="<%= SelectorType.RESOURCE.toString() %>"><%= app.getLabel(RESOURCE_CLASS)             %></option>
+                                <option <%= selectorType == SelectorType.BDAY ?             "selected" : "" %> value="<%= SelectorType.BDAY.toString() %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS)  %> / <%= userView.getFieldLabel(CONTACT_CLASS, "birthdate", app.getCurrentLocaleAsIndex()) %></option>
                             </select>
                         </td>
                         <td class="addon"></td>
 <%
-                    } else if (type.compareTo(TYPE_WEBDAV) == 0) {
+                    } 
+                    else if(type == ResourceType.PROFILE) {
 %>
                         <td class="label"><span class="nw">Selector type:</span></td>
                         <td>
                             <select class="valueL" id="selectorType" name="selectorType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-                                <option <%= selectorType.compareTo(SELTYPE_DOCUMENTPROFILE) == 0 ? "selected" : "" %> value="<%= SELTYPE_DOCUMENTPROFILE %>"><%= app.getLabel(DOCUMENTPROFILE_CLASS)  %></option>
+                                <option <%= selectorType == SelectorType.AIRSYNCPROFILE ? "selected" : "" %> value="<%= SelectorType.AIRSYNCPROFILE %>"><%= app.getLabel(AIRSYNCPROFILE_CLASS) %></option>
+                                <option <%= selectorType == SelectorType.CALENDARPROFILE ? "selected" : "" %> value="<%= SelectorType.CALENDARPROFILE %>"><%= app.getLabel(CALENDARPROFILE_CLASS) %></option>
+                                <option <%= selectorType == SelectorType.CARDPROFILE ? "selected" : "" %> value="<%= SelectorType.CARDPROFILE %>"><%= app.getLabel(CARDPROFILE_CLASS) %></option>
+                                <option <%= selectorType == SelectorType.DOCUMENTPROFILE ? "selected" : "" %> value="<%= SelectorType.DOCUMENTPROFILE %>"><%= app.getLabel(DOCUMENTPROFILE_CLASS) %></option>
                             </select>
                         </td>
                         <td class="addon"></td>
 <%
-                    } else {
+                    } 
+                    else if(type == ResourceType.CONTACT) {
 %>
                         <td class="label"><span class="nw">Selector type:</span></td>
                         <td>
                             <select class="valueL" id="selectorType" name="selectorType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-                                <option <%= selectorType.compareTo(SELTYPE_VCARD) == 0 ? "selected" : "" %> value="<%= SELTYPE_VCARD %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS)  %></option>
+                                <option <%= selectorType.equals(SelectorType.VCARD) ? "selected" : "" %> value="<%= SelectorType.VCARD %>"><%= app.getLabel(ACCOUNTFILTERGLOBAL_CLASS)  %></option>
                             </select>
                         </td>
                         <td class="addon"></td>
@@ -796,12 +699,11 @@ org.openmdx.kernel.log.*
 %>
                   </tr>
 
-                  <tr <%= type.compareTo(TYPE_AIRSYNC) == 0 ? "style='display:none;'" : "" %>>
+                  <tr>
                     <td class="label"><span class="nw"><%= anchorObjectLabel %>:</span></td>
                     <td>
 <%
-                        if (orderedanchorObjects.isEmpty()) {
-                            target = "";
+                        if (anchorObjects.isEmpty()) {
 %>
                             <select class="valueL" id="anchorObjectXri" name="anchorObjectXri" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
                                 <option value="">--</option>
@@ -812,15 +714,11 @@ org.openmdx.kernel.log.*
                             <select class="valueL" id="anchorObjectXri" name="anchorObjectXri" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
 <%
                                 boolean hasSelection = false;
-                                for (
-                                		Iterator i = orderedanchorObjects.keySet().iterator();
-                                		i.hasNext();
-                                ) {
-                                    String key = (String)i.next();
-                                    String value = (String)orderedanchorObjects.get(key);
-                                    boolean selected = ((anchorObjectXri != null) && (value != null) && (anchorObjectXri.compareTo(value) == 0)) ||
-                                                       //(isFirstCall && value.compareTo(obj.refMofId()) == 0);
-                                                       (isFirstCall && value.compareTo(anchorObjectXriFromInitialObject) == 0);
+                                for (Iterator<String> i = anchorObjects.keySet().iterator(); i.hasNext();) {
+                                    String key = i.next();
+                                    String value = anchorObjects.get(key);
+                                    boolean selected = ((anchorObjectXri != null) && (value != null) && (anchorObjectXri.equals(value))) ||
+                                                       (isFirstCall && value.equals(anchorObjectXriFromInitialObject));
                                     if (selected) {
                                         hasSelection = true;
                                         selectedAnchorObjectXRI = value;
@@ -842,442 +740,335 @@ org.openmdx.kernel.log.*
                   </tr>
                 </table>
             </div>
-
-            <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
-
-                <div class="fieldGroupName"><%= type %> Options</div>
-                <div class="fieldGroupName">&nbsp;</div>
 <%
-                if (type.compareTo(TYPE_CALENDAR) == 0) {
+			RefObject_1_0 anchorObject = obj;
+			if(anchorObjectXriFromInitialObject != null && !anchorObjectXriFromInitialObject.isEmpty()) {
+				anchorObject = (RefObject_1_0)pm.getObjectById(new Path(anchorObjectXriFromInitialObject));
+			}
+			boolean showOptionIsDisabled = false;
+			boolean showOptionMax = false;
+			boolean showOptionUser = false;
+			boolean showOptionSummaryPrefix = false;
+			boolean showOptionCategories = false;
+			boolean showOptionYear = false;
+			boolean showOptionAlarm = false;
+			boolean showOptionTimelineHeight = false;
+			
+			List<URL> urls = org.opencrx.application.utils.AdapterConnectionHelper.getCalDavCollectionSetURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
 %>
-                    <table class="fieldGroup">
-                      <tr>
-                        <td class="label"><span class="nw">Generate:</span></td>
-                        <td>
-                            <select class="valueL" id="sourceType" name="sourceType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-<%
-                                boolean hasSourceTypeSelection = false;
-                                boolean hasFreebusyTypeSelection = false;
-                                if (obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal) {
-                                    if (optionIcalType.compareTo(optionIcalTypeTodo) == 0) {
-                                                                           options += "&icalType="      + URLEncoder.encode(optionIcalTypeTodo,  "UTF-8");
-                                    }
-                                    if (optionCategories.length()    > 0 && optionCategories.compareTo(optionCategoriesDefault) != 0) {
-                                                                           options += "&categories="    + URLEncoder.encode(optionCategories,    "UTF-8");
-                                    }
-                                    if (optionSummaryPrefix.length() > 0) {options += "&summaryPrefix=" + URLEncoder.encode(optionSummaryPrefix, "UTF-8");}
-                                    if (optionMax.length()           > 0) {options += "&max="           + URLEncoder.encode(optionMax,           "UTF-8");}
-                                    if (optionYear.length()          > 0) {options += "&year="          + URLEncoder.encode(optionYear,          "UTF-8");}
-                                    if (sourceType.compareTo(optionSourceBdays) == 0) {
-                                        hasSourceTypeSelection = true;
-                                    }
+				<br />
+				<div class="fieldGroupName">CalDAV Collection Sets</div>
+				<br />
+<%				
+	            for(URL url: urls) {
 %>
-                                    <option <%= sourceType.compareTo(optionSourceBdays     ) == 0 ? "selected" : "" %> value="<%= optionSourceBdays      %>"><%= optionSourceBdaysLText %> (from Contacts)</option>
+    	            <a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+    	            <br />
 <%
-                                } else if (selectorType.compareTo(SELTYPE_CALENDARPROFILE) == 0) {
-                                    sourceType =  optionSourceActivities;
-                                    hasSourceTypeSelection = true;
+        	    }
+			}
+            urls = org.opencrx.application.utils.AdapterConnectionHelper.getCalDavEventCollectionURLs(urlBase, anchorObject);
+            if(!urls.isEmpty()) {
 %>
-                                    <option <%= sourceType.compareTo(optionSourceActivities) == 0 ? "selected" : "" %> value="<%= optionSourceActivities %>"><%= optionSourceActivities %> (from Activities)</option>
-<%
-                                } else {
-                                    if ((sourceType.compareTo(optionSourceActivities) == 0) || (sourceType.compareTo(optionSourceFreebusy) == 0)) {
-                                        hasSourceTypeSelection = true;
-                                    }
-                                    if ((sourceType.compareTo(optionSourceFreebusy) == 0)) {
-                                        hasFreebusyTypeSelection = true;
-                                    }
-
+				<br />
+				<div class="fieldGroupName">CalDAV Event Collections</div>
+				<br />
+<%				
+				for(URL url: urls) {
 %>
-                                    <option <%= sourceType.compareTo(optionSourceActivities        ) == 0 ? "selected" : "" %> value="<%= optionSourceActivities         %>"><%= optionSourceActivities         %> (from Activities)</option>
-                                    <option <%= sourceType.compareTo(optionSourceFreebusy          ) == 0 ? "selected" : "" %> value="<%= optionSourceFreebusy           %>"><%= optionSourceFreebusy           %> (from Activities)</option>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
 <%
-                                }
-                                if (!hasSourceTypeSelection) {
-                                    mustReload = true;
-                                }
-%>
-                            </select>
-                        </td>
-                        <td class="addon"></td>
-                      </tr>
-<%
-                      if (sourceType.compareTo(optionSourceBdays) == 0) {
-%>
-                          <tr>
-                            <td class="label"><span class="nw">iCal type:</span></td>
-                            <td>
-                                <select class="valueL" id="optionIcalType" name="optionIcalType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-<%
-                                    if ((optionIcalType.compareTo(optionIcalTypeEvent) != 0) && (optionIcalType.compareTo(optionIcalTypeTodo  ) != 0)) {
-                                        mustReload = true;
-                                    }
-%>
-                                    <option <%= optionIcalType.compareTo(optionIcalTypeEvent) == 0 ? "selected" : "" %> value="<%= optionIcalTypeEvent %>"><%= optionIcalTypeEvent %></option>
-                                    <option <%= optionIcalType.compareTo(optionIcalTypeTodo ) == 0 ? "selected" : "" %> value="<%= optionIcalTypeTodo  %>"><%= optionIcalTypeTodo  %></option>
-                                </select>
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-
-                          <tr title="Categories - default is '<%= optionCategoriesDefault %>'">
-                            <td class="label"><span class="nw">Categories:</span></td>
-                            <td>
-                                <input type="text" value="<%= optionCategories %>" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionCategories" id="optionCategories"  onchange="javascript:$('reload.button').click();" />
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-
-                          <tr title="Summary prefix - default is '<%= optionSummaryPrefixDefault %>'">
-                            <td class="label"><span class="nw">Summary prefix:</span></td>
-                            <td>
-                                <input type="text" value="<%= optionSummaryPrefix %>" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionSummaryPrefix" id="optionSummaryPrefix"  onchange="javascript:$('reload.button').click();" />
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-
-                          <tr title="maximum number of accounts - default is '500'">
-                            <td class="label"><span class="nw">Max #Accounts:</span></td>
-                            <td>
-                                <input type="text" value="<%= optionMax %>" maxlength="4" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionMax" id="optionMax"  onchange="javascript:$('reload.button').click();" />
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-
-                          <tr title="generate data for year-1, year, year+1 - default is current year">
-                            <td class="label"><span class="nw">Year [YYYY]:</span></td>
-                            <td>
-                                <input type="text" value="<%= optionYear %>" maxlength="4" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionYear" id="optionYear"  onchange="javascript:$('reload.button').click();" />
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-<%
-                      } else {
-                          if (sourceType.compareTo(optionSourceActivities) == 0) {
-%>
-                              <tr>
-                                <td class="label"><span class="nw">Type:</span></td>
-                                <td>
-                                    <select class="valueL" id="optionType" name="optionType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-<%
-                                        if (optionType.compareTo(optionTypeCalDAV) == 0) {
-%>
-                                            <option selected value="<%= optionTypeCalDAV %>"><%= optionTypeCalDAV %></option>
-                                            <option          value="<%= optionTypeCalDAV_VTODO %>"><%= optionTypeCalDAV_VTODO %></option>
-<%
-                                        } else if (optionType.compareTo(optionTypeCalDAV_VTODO) == 0) {
-%>
-                                            <option          value="<%= optionTypeCalDAV %>"><%= optionTypeCalDAV %></option>
-                                            <option selected value="<%= optionTypeCalDAV_VTODO %>"><%= optionTypeCalDAV_VTODO %></option>
-<%
-                                        } else if (obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile) {
-%>
-                                            <option <%= optionType.compareTo(optionTypeCalDAV)       == 0 ? "selected" : "" %> value="<%= optionTypeCalDAV %>"><%= optionTypeCalDAV %></option>
-                                            <option <%= optionType.compareTo(optionTypeCalDAV_VTODO) == 0 ? "selected" : "" %> value="<%= optionTypeCalDAV_VTODO %>"><%= optionTypeCalDAV_VTODO %></option>
-<%
-                                        } else if (selectorType.compareTo(SELTYPE_CALENDARPROFILE) != 0) {
-%>
-                                            <option value="<%= optionTypeCalDAV %>"><%= optionTypeCalDAV %></option>
-                                            <option value="<%= optionTypeCalDAV_VTODO %>"><%= optionTypeCalDAV_VTODO %></option>
-<%
-                                        }
-                                        if (selectorType.compareTo(SELTYPE_CALENDARPROFILE) != 0) {
-%>
-                                            <option <%= optionType.compareTo(optionTypeHtml)   == 0 ? "selected" : "" %> value="<%= optionTypeHtml   %>"><%= optionTypeHtml   %> (Timeline)</option>
-                                            <option <%= optionType.compareTo(optionTypeIcs )   == 0 ? "selected" : "" %> value="<%= optionTypeIcs    %>"><%= optionTypeIcs    %></option>
-                                            <option <%= optionType.compareTo(optionTypeXml )   == 0 ? "selected" : "" %> value="<%= optionTypeXml    %>"><%= optionTypeXml    %></option>
-<%
-                                        }
-%>
-                                    </select>
-                                </td>
-                                <td class="addon"></td>
-                              </tr>
-<%
-                              boolean hasSelection = false;
-                              if (
-                                  optionType.compareTo(optionTypeCalDAV)  == 0 ||
-                                  optionType.compareTo(optionTypeCalDAV_VTODO) == 0 ||
-                                  obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile
-                              ) {
-                                  hasSelection = true;
-                                  optionDisabled = optionValueFALSE; // CalDAV does NOT support this option
-                              }
-                              if (optionType.compareTo(optionTypeIcs)  == 0) {
-                                  options += "&type=" + optionTypeIcs;
-                                  hasSelection = true;
-                              }
-                              if (optionType.compareTo(optionTypeXml)  == 0) {
-                                  options += "&type=" + optionTypeXml;
-                                  hasSelection = true;
-                              }
-                              if (optionType.compareTo(optionTypeHtml) == 0) {
-                                  options += "&type=" + optionTypeHtml;
-                                  hasSelection = true;
-%>
-                                  <tr title="height of Timeline chart">
-                                    <td class="label"><span class="nw">Timeline height [in pixels]:</span></td>
-                                    <td>
-                                        <input type="text" value="<%= optionHeight %>" maxlength="4" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionHeight" id="optionHeight"  onchange="javascript:$('reload.button').click();" />
-                                    </td>
-                                    <td class="addon"></td>
-                                  </tr>
-<%
-                                  if (optionHeight.length() > 0) {options += "&height=" + URLEncoder.encode(optionHeight, "UTF-8");}
-
-                              }
-                              if (!hasSelection) {
-                                  mustReload = true;
-                              }
-                          }
-
-                          if (optionFreebusyAsCal.compareTo(optionValueTRUE) == 0) {options += "&type=" + optionTypeIcs;}
-%>
-                          <tr title="activate option 'as calendar' to retrieve freebusy information in ics calendar format" <%= (sourceType.compareTo(optionSourceFreebusy) == 0) ? "" : "style='display:none;'" %>>
-                            <td class="label"><span class="nw">freebusy as <i>ics calendar</i>:</span></td>
-                            <td>
-                                <select class="valueL" id="optionFreebusyAsCal" name="optionFreebusyAsCal" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-                                    <option <%= optionFreebusyAsCal.compareTo(optionValueFALSE) == 0 ? "selected" : "" %> value="<%= optionValueFALSE %>"><%= optionValueFALSE %> (<%= hintDefaultValue %>)</option>
-                                    <option <%= optionFreebusyAsCal.compareTo(optionValueTRUE ) == 0 ? "selected" : "" %> value="<%= optionValueTRUE  %>"><%= optionValueTRUE  %></option>
-                                </select>
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-
-                          <tr title="select access by user name or e-mail address'" <%= (sourceType.compareTo(optionSourceFreebusy) == 0) ? "" : "style='display:none;'" %>>
-                            <td class="label"><span class="nw">freebusy <i>for user</i>:</span></td>
-                            <td>
-                                <select class="valueL" id="optionFreebusyUser" name="optionFreebusyUser" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-<%
-																		Map entries = new TreeMap();
-																		if (selectorType.compareTo(SELTYPE_USERHOME) == 0) {
-				                                // try to get selected Userhome
-				                                org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
-				                                String principal = "";
-				                                try {
-				                                  userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(selectedAnchorObjectXRI));
-				                                  principal = userHome.refGetPath().getBase();
-				                                } catch (Exception e) {}
-																				if (userHome != null) {
-																						org.opencrx.kernel.account1.jmi1.Contact contact = null;
-																						try {
-																								contact = userHome.getContact();
-																						} catch (Exception e) {}
-																						String display = optionValueUSER + ":&nbsp;&nbsp;" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " [" + principal + "]";
-																						String sortKey = display.toUpperCase() + formatter.format(0);
-																						entries.put(
-																								HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
-																								userHome.refMofId()
-																						);
-																				}
-																		} else {
-																				if (sourceType.compareTo(optionSourceFreebusy) == 0) {
-																						options += "/&user=" + optionFreebusyUser;
-																				}
-																				// get all UserHomes
-																				int index = 0;
-																				for(Iterator i = homeSegment.getUserHome().iterator(); i.hasNext() && index < MAX_ENTRY_SELECT; ) {
-																						org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
-																						org.opencrx.kernel.account1.jmi1.Contact contact = null;
-																						try {
-																								contact = userHome.getContact();
-																						} catch (Exception e) {}
-																						String principal = userHome.refGetPath().getBase();
-																						String display = optionValueUSER + ":&nbsp;&nbsp;" + (contact != null && contact.getFullName() != null ? contact.getFullName() : UNKNOWN) + " [" + principal + "]";
-																						String sortKey = display.toUpperCase() + formatter.format(index++);
-																						entries.put(
-																								HTML_COMMENT_BEGIN + sortKey + HTML_COMMENT_END + display,
-																								userHome.refMofId()
-																						);
-																				}
-																		}
-														        if (entries.isEmpty()) {
-														        		mustReload = true;
-%>
-												                <option value="">--</option>
-<%
-														        } else {
-														        		boolean hasSelection = false;
-												                for (
-												                		Iterator i = entries.keySet().iterator();
-												                		i.hasNext();
-												                ) {
-												                    String key = (String)i.next();
-												                    String value = (String)entries.get(key);
-												                    String principal = "";
-								                            org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
-								                            try {
-								                              userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(new Path(value));
-								                              principal = userHome.refGetPath().getBase();
-								                            } catch (Exception e) {}
-								                            value = principal;
-												                    boolean selected = ((optionFreebusyUser != null) && (value != null) && (optionFreebusyUser.compareTo(value) == 0));
-												                    if (selected) {hasSelection = true;}
-%>
-													                  <option <%= selected ? "selected" : "" %> value="<%= value != null ? value : "" %>"><%= key %></option>
-<%
-								                            // try to get the list of E-Mail Addresses
-								                            if (userHome != null) {
-																								org.opencrx.kernel.home1.cci2.EMailAccountQuery eMailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
-																								eMailAccountQuery.thereExistsIsActive().isTrue();
-																								eMailAccountQuery.orderByName().ascending();
-																								List<org.opencrx.kernel.home1.jmi1.EMailAccount> emailAccounts = userHome.getEMailAccount(eMailAccountQuery);
-																								for(org.opencrx.kernel.home1.jmi1.EMailAccount eMailAccount: emailAccounts) {
-								                                  try {
-								                                    if ((eMailAccount.getName() != null) && (eMailAccount.getName().length() > 0)) {
-								                                      String eMailAddress = eMailAccount.getName();
-								                                      selected = optionFreebusyUser.compareTo(eMailAddress) == 0;
-																	                    if (selected) {hasSelection = true;}
-%>
-				                                              <option <%= selected ? "selected" : "" %> value="<%= eMailAddress %>">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%= eMailAddress %></option>
-<%
-								                                    }
-								                                  } catch (Exception e) {
-								                                    new ServiceException(e).log();
-								                                  }
-								                                }
-								                            }
-													              }
-										                    if (!hasSelection) {
-										                        mustReload = true;
-										                    }
-														        }
-%>
-		                                <!-- this option is not useful
-		                                <option <%= optionFreebusyUser.compareTo(optionValueMANUAL) == 0 ? "selected" : "" %> value="<%= optionValueMANUAL %>"><%= optionValueMANUAL %>:&nbsp;&nbsp; <%= hintManualEntry %></option>
-		                                -->
-                                </select>
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-<%
-                          if (supportsAccessByUser) {
-%>
-		                        <tr title="access by non-owning user">
-		                          <td class="label"><span class="nw">Access by <i>non-owning</i> user:</span></td>
-		                          <td>
-		                              <select class="valueL" id="optionNonOwningUser" name="optionNonOwningUser" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-		                                  <option <%= optionNonOwningUser.compareTo(optionValueFALSE) == 0 ? "selected" : "" %> value="<%= optionValueFALSE %>"><%= optionValueFALSE %> (<%= hintDefaultValue %>)</option>
-		                                  <option <%= optionNonOwningUser.compareTo(optionValueTRUE ) == 0 ? "selected" : "" %> value="<%= optionValueTRUE  %>"><%= optionValueTRUE  %></option>
-		                              </select>
-		                          </td>
-		                          <td class="addon"></td>
-		                        </tr>
-<%
-													}
-													
-													if ((supportsAccessByUser && (optionNonOwningUser.compareTo(optionValueTRUE ) == 0)) || optionFreebusyUser.compareTo(optionValueMANUAL) == 0) {
-%>
-				                    <tr title="user name or e-mail address">
-				                      <td class="label"><span class="nw">&nbsp;&nbsp;\-- User name or e-mail address:</span></td>
-				                      <td>
-																<input type="text" value="<%= optionUsernameEmail %>" tabindex="<%= tabIndex + 10 %>" class="valueL" name="optionUsernameEmail" id="optionUsernameEmail"  onchange="javascript:$('reload.button').click();" />
-				                      </td>
-				                      <td class="addon"></td>
-				                    </tr>
-<%
-                          }
-
-                          if (optionDisabled.compareTo(optionValueTRUE) == 0) {options += "&disabled=" + optionValueTRUE;}
-%>
-                          <tr title="activate filter 'disabled' to process disabled activities only" <%= (sourceType.compareTo(optionSourceActivities) == 0) && (optionType.compareTo(optionTypeCalDAV) == 0 || optionType.compareTo(optionTypeCalDAV_VTODO) == 0 || (obj instanceof org.opencrx.kernel.home1.jmi1.SyncProfile || obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncProfile)) ? "style='display:none;'" : "" %>>
-                            <td class="label"><span class="nw">Filter <i>disabled</i>:</span></td>
-                            <td>
-                                <select class="valueL" id="optionDisabled" name="optionDisabled" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('reload.button').click();">
-                                    <option <%= optionDisabled.compareTo(optionValueFALSE) == 0 ? "selected" : "" %> value="<%= optionValueFALSE %>"><%= optionValueFALSE %> (<%= hintDefaultValue %>)</option>
-                                    <option <%= optionDisabled.compareTo(optionValueTRUE ) == 0 ? "selected" : "" %> value="<%= optionValueTRUE  %>"><%= optionValueTRUE  %></option>
-                                </select>
-                            </td>
-                            <td class="addon"></td>
-                          </tr>
-<%
-                      }
-%>
-                    </table>
-                    <br>
-<%
-                    if ((optionType.compareTo(optionTypeIcs)  == 0) || (sourceType.compareTo(optionSourceFreebusy) == 0)) {
-%>
-                    	<div class="fieldGroupName" style="padding-top:10px;font-size:12px;">Hint: you can set <strong>maxActivities</strong> in the Component-Configuration of the ICalServlet (default is 500) - see <a href="http://www.opencrx.org/documents.htm" target="_blank"><strong>openCRX Admin Guide</strong></a></div>
-<%
-                    } else if (
-                        optionType.compareTo(optionTypeCalDAV)  == 0 ||
-                        optionType.compareTo(optionTypeCalDAV_VTODO) == 0
-                    ) {
-%>
-                    	<div class="fieldGroupName" style="padding-top:10px;font-size:12px;">Hint: you can set <strong>maxActivities</strong> in the Component-Configuration of the CalDavServlet (default is 500) - see <a href="http://www.opencrx.org/documents.htm" target="_blank"><strong>openCRX Admin Guide</strong></a></div>
-<%
-										}
-                }
-                if (type.compareTo(TYPE_VCARD) == 0) {
-%>
-                    <div class="fieldGroupName">Hint: you can set <strong>maxAccounts</strong> in the Component-Configuration of the vCardServlet (default is 500)</div>
-<%
-                }
-%>
-            </div>
-
-<%
-            if (target != null && target.length() > 0) {
-                target = target.replace("+", "%20");
-                options = options.replace("+", "%20");
-                
-%>
-                <br>
-                URL: <a href="<%= target + options %>" target="_blank"><%= target + options %></a><br>
-<%
+				}
             }
-            if (server != null && server.length() > 0) {
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getCalDavTaskCollectionURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
 %>
-                <br>
-                <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
-                <table class="fieldGroup">
-                  <tr>
-                    <td class="label"><span class="nw">Server:</span></td>
-                    <td><b><%= server %></b></td>
-                    <td class="addon"></td>
-                  </tr>
+				<br />
+				<div class="fieldGroupName">CalDAV Task Collections</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
 <%
-                  if (type.compareTo(TYPE_WEBDAV) == 0) {
+				}
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getWebDavCollectionURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
 %>
-	                  <tr>
-	                    <td class="label"><span class="nw">Path:</span></td>
-	                    <td><b><%= path %></b></td>
-	                    <td class="addon"></td>
-	                  </tr>
+				<br />
+				<div class="fieldGroupName">WebDAV Collections</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
 <%
-                  } else {
-                  	// AirSync
+				}
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getCardDavCollectionSetURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
 %>
-	                  <tr>
-	                    <td class="label"><span class="nw">Domain:</span></td>
-	                    <td><b><%= segmentName %></b></td>
-	                    <td class="addon"></td>
-	                  </tr>
+				<br />
+				<div class="fieldGroupName">CardDAV Collection Sets</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
 <%
-                  }
+				}
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getCardDavCollectionURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
 %>
-                  <tr>
-                    <td class="label"><span class="nw">Username:</span></td>
-                    <td><b><%= currentUserHome.refGetPath().getBase() %></b></td>
-                    <td class="addon"></td>
-                  </tr>
-                </table>
-                </div>
+				<br />
+				<div class="fieldGroupName">CardDAV Collections</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
 <%
-            }
+				}
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getICalURLs(
+				urlBase, 
+				anchorObject,
+				optionMax,
+				optionIsDisabled
+			);
+			if(!urls.isEmpty()) {
 %>
-
-            <br>
+				<br />
+				<div class="fieldGroupName">ICAL Calendars</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
+<%
+				}
+				showOptionIsDisabled = true;
+				showOptionMax = true;
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getTimelineURLs(
+				urlBase, 
+				anchorObject,
+				optionMax,
+				optionIsDisabled,
+				optionTimelineHeight
+			);
+			if(!urls.isEmpty()) {
+%>
+				<br />
+				<div class="fieldGroupName">Timeline URLs</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
+<%
+				}
+				showOptionIsDisabled = true;
+				showOptionMax = true;
+				showOptionTimelineHeight = true;
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getVCardURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
+%>
+				<br />
+				<div class="fieldGroupName">VCARD Collections</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
+<%
+				}
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getAirSyncURLs(urlBase, anchorObject);
+			if(!urls.isEmpty()) {
+%>
+				<br />
+				<div class="fieldGroupName">AirSync URLs</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />                	
+<%
+				}
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getBirthdayCalendarURLs(
+				urlBase, 
+				anchorObject,
+				optionMax,
+				optionSummaryPrefix,
+				optionCategories,
+				optionYear,
+				optionAlarm
+			);
+			if(!urls.isEmpty()) {
+%>
+				<br />
+				<div class="fieldGroupName">Birthday Calendars</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
+<%
+				}
+				showOptionMax = true;
+				showOptionSummaryPrefix = true;
+				showOptionCategories = true;
+				showOptionYear = true;
+				showOptionAlarm = true;
+			}
+			urls = org.opencrx.application.utils.AdapterConnectionHelper.getFreeBusyURLs(
+				urlBase, 
+				anchorObject,
+				optionUser,
+				optionMax,
+				optionIsDisabled
+			);
+			if(!urls.isEmpty()) {
+%>
+				<br />
+				<div class="fieldGroupName">FreeBusy Calendars</div>
+				<br />
+<%				
+				for(URL url: urls) {
+%>
+                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<br />
+<%
+				}
+				showOptionIsDisabled = true;
+				showOptionMax = true;
+				showOptionUser = true;
+			}
+%>
+			<br />
+			<div class="fieldGroupName">Options</div>
+			<br />
+			<table class="fieldGroup">
+<%
+				if(showOptionUser) {	
+%>				
+					<tr>
+					    <td class="label"><span class="nw">User:</span></td>
+					    <td><input type="text" class="valueL" name="optionUser" value="<%= optionUser %>" onchange="javascript:$('reload.button').click();"></input></td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionMax) {
+%>					  
+					<tr title="maximum number of accounts - default is '500'">
+					    <td class="label"><span class="nw">Max:</span></td>
+					    <td><input type="text" class="valueL" name="optionMax" value="<%= optionMax %>" onchange="javascript:$('reload.button').click();"></input></td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionIsDisabled) {
+%>					  
+					<tr title="activate filter 'disabled' to process disabled activities only">
+						<td class="label"><span class="nw">Disabled:</span></td>
+					    <td>
+							<select class="valueL" name="optionIsDisabled" onchange="javascript:$('reload.button').click();">
+								<option <%= "true".equals(optionIsDisabled) ? "selected" : "" %> value="true">true</option>						
+								<option <%= "false".equals(optionIsDisabled) ? "selected" : "" %> value="false">false</option>						
+							</select>						
+					    </td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionSummaryPrefix) {
+%>					  
+					<tr title="Summary prefix - default is ''">
+					    <td class="label"><span class="nw">Summary prefix:</span></td>
+					    <td><input type="text" class="valueL" name="optionSummaryPrefix" value="<%= optionSummaryPrefix %>" onchange="javascript:$('reload.button').click();"></input></td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionCategories) {
+%>					  
+					<tr>
+					    <td class="label"><span class="nw">Categories:</span></td>
+					    <td><input type="text" class="valueL" name="optionCategories" value="<%= optionCategories %>" onchange="javascript:$('reload.button').click();"></input></td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionYear) {
+%>					  
+					<tr title="generate data for year-1, year, year+1 - default is current year">
+					    <td class="label"><span class="nw">Year:</span></td>
+					    <td><input type="text" class="valueL" name="optionYear" value="<%= optionYear %>" onchange="javascript:$('reload.button').click();"></input></td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionTimelineHeight) {
+%>					  
+					<tr>
+					    <td class="label"><span class="nw">Timeline height (in pixels):</span></td>
+					    <td><input type="text" class="valueL" name="optionTimelineHeight" value="<%= optionTimelineHeight %>" onchange="javascript:$('reload.button').click();"></input></td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+				if(showOptionAlarm) {
+%>					  
+					<tr>
+						<td class="label"><span class="nw">Alarm:</span></td>
+					    <td>
+							<select class="valueL" name="optionAlarm" onchange="javascript:$('reload.button').click();">
+								<option <%= "true".equals(optionAlarm) ? "selected" : "" %> value="true">true</option>						
+								<option <%= "false".equals(optionAlarm) ? "selected" : "" %> value="false">false</option>						
+							</select>						
+					    </td>
+					    <td class="addon"></td>
+					</tr>
+<%
+				}
+%>					  
+			</table>
+			<br />
+			<div class="fieldGroupName">Hints</div>
+				<p>
+				See the <a href="http://www.opencrx.org/documents.htm" target="_blank"><strong>openCRX Admin Guide</strong></a> for 
+				the component configuration of the CalDAV, CardDAV, ICAL and VCARD adapters.
+				<p>
+				The properties <strong>maxActivities</strong> and <strong>maxAccounts</strong> allow
+				to configure the maximum number of items returned by the adapters (default is 500).
+			</div>			
+			<br />
+			<div class="fieldGroupName">&nbsp;</div>
             <input type="submit" id="reload.button" name="reload.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
             <input type="submit" id="Cancel" name="Cancel" tabindex="30" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
-            <br>
+            <br />
           </form>
         </div> <!-- content -->
       </div> <!-- content-wrap -->
      </div> <!-- wrap -->
     </div> <!-- container -->
-
     <script language="javascript" type="text/javascript">
         function initPage() {
 <%
@@ -1285,11 +1076,10 @@ org.openmdx.kernel.log.*
 %>
                 $('reload.button').click();
 <%
-            }
+		}
 %>
 }
     </script>
-
     </body>
     </html>
 <%

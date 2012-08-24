@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: StringPropertySetEntryImpl.java,v 1.1 2009/04/15 16:43:14 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/15 16:43:14 $
  * ====================================================================
  *
  * This software is published under the BSD license

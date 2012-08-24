@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: DatatypeMappers.java,v 1.23 2011/05/11 17:58:37 wfro Exp $
  * Description: DatatypeMappers
- * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/05/11 17:58:37 $
  * ====================================================================
  *
  * This software is published under the BSD license

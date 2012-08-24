@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ByteArrayDataSource.java,v 1.2 2010/04/07 12:16:27 wfro Exp $
  * Description: ByteArrayDataSource
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/07 12:16:27 $
  * ====================================================================
  *
  * This software is published under the BSD license

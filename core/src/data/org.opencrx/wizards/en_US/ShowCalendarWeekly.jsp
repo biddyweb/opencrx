@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: ShowCalendarWeekly.jsp,v 1.3 2011/11/19 10:59:01 cmu Exp $
+ * Name:        $Id: ShowCalendarWeekly.jsp,v 1.5 2012/07/08 13:30:32 wfro Exp $
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.3 $
+ * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/19 10:59:01 $
+ * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,6 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,

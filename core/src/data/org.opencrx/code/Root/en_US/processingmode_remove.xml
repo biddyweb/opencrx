@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="processingModeRemove" _operation="set">
 										<_object>
 											<name>
+												<_item>processingModeRemove</_item>
 												<_item>org:opencrx:kernel:product1:RemovePricesParams:processingMode</_item>
 												<_item>org:opencrx:kernel:product1:RemovePriceLevelsParams:processingMode</_item>
 											</name>

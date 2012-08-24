@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Audit_1.java,v 1.68 2011/11/28 09:41:02 wfro Exp $
  * Description: openCRX audit plugin
- * Revision:    $Revision: 1.68 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/28 09:41:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -91,6 +88,8 @@ import org.openmdx.base.resource.spi.RestInteractionSpec;
 import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
+import org.openmdx.base.text.conversion.UUIDConversion;
+import org.openmdx.kernel.id.UUIDs;
 import org.w3c.format.DateTimeFormat;
 
 /**
@@ -269,7 +268,17 @@ public class Audit_1 extends Indexed_1 {
         ) throws ResourceException {
             super(connection);
         }
-            
+
+	    //-------------------------------------------------------------------------
+        private String getVisitedBy(
+        	String visitorId
+        ) throws ServiceException {
+        	// In case of bulk load mark audit entry as visited. 
+        	return visitorId + ":" + (this.isBulkLoad() ?
+        		DateTimeFormat.BASIC_UTC_FORMAT.format(new Date()) :
+        			NOT_VISITED_SUFFIX);
+        }
+
 	    //-------------------------------------------------------------------------
 	    private boolean isAuditSegment(
 	        ServiceHeader header,
@@ -488,7 +497,12 @@ public class Audit_1 extends Indexed_1 {
 		                // Create ObjectModificationAuditEntry and add it to segment
 		                if(Audit_1.this.isAuditee(existing)) {
 		                	MappedRecord auditEntry = Object_2Facade.newInstance(
-		                        request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
+		                        request.path().getPrefix(5).getDescendant(
+		                        	new String[]{
+		                        		"audit", 
+		                        		UUIDConversion.toUID(UUIDs.newUUID())
+		                        	}
+		                        ),
 		                        "org:opencrx:kernel:base:ObjectModificationAuditEntry"
 		                    ).getDelegate();
 		                	Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
@@ -498,7 +512,7 @@ public class Audit_1 extends Indexed_1 {
 		                    for(Iterator<String> i = Audit_1.this.visitorIds.iterator(); i.hasNext(); ) {
 		                        String visitorId = i.next();
 		                        auditEntryFacade.attributeValuesAsList("visitedBy").add(
-		                            visitorId + ":" + NOT_VISITED_SUFFIX
+		                            this.getVisitedBy(visitorId)
 		                        );
 		                    }
 		                    // Remove all attribute names from existing object (before
@@ -604,7 +618,12 @@ public class Audit_1 extends Indexed_1 {
 		        ) {	
 		            // Create audit entry
 		        	MappedRecord auditEntry = Object_2Facade.newInstance(
-		                request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
+		                request.path().getPrefix(5).getDescendant(
+		                	new String[]{
+		                		"audit", 
+		                		UUIDConversion.toUID(UUIDs.newUUID())
+		                	}
+		                ),
 		                "org:opencrx:kernel:base:ObjectCreationAuditEntry"
 		            ).getDelegate();
 		        	Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
@@ -614,9 +633,9 @@ public class Audit_1 extends Indexed_1 {
 		            for(Iterator<String> i = Audit_1.this.visitorIds.iterator(); i.hasNext(); ) {
 		                String visitorId = i.next();
 		                auditEntryFacade.attributeValuesAsList("visitedBy").add(
-		                    visitorId + ":" + NOT_VISITED_SUFFIX
+		                    this.getVisitedBy(visitorId)
 		                );
-		            }            
+		            }
 		            Audit_1.this.setSystemAttributes(
 		                header, 
 		                auditEntry, 
@@ -677,7 +696,12 @@ public class Audit_1 extends Indexed_1 {
 		            // Create ObjectRemovalAuditEntry and add it to segment
 		            if(Audit_1.this.isAuditee(existing)) {
 		            	MappedRecord auditEntry = Object_2Facade.newInstance(
-		                    request.path().getPrefix(5).getDescendant(new String[]{"audit", super.uidAsString()}),
+		                    request.path().getPrefix(5).getDescendant(
+		                    	new String[]{
+		                    		"audit", 
+		                    		UUIDConversion.toUID(UUIDs.newUUID())
+		                    	}
+		                    ),
 		                    "org:opencrx:kernel:base:ObjectRemovalAuditEntry"
 		                ).getDelegate();
 		            	Object_2Facade auditEntryFacade = Object_2Facade.newInstance(auditEntry);
@@ -687,9 +711,9 @@ public class Audit_1 extends Indexed_1 {
 		                for(Iterator<String> i = Audit_1.this.visitorIds.iterator(); i.hasNext(); ) {
 		                    String visitorId = i.next();
 		                    auditEntryFacade.attributeValuesAsList("visitedBy").add(
-		                        visitorId + ":" + NOT_VISITED_SUFFIX
+		                        this.getVisitedBy(visitorId)
 		                    );
-		                }                
+		                }
 		                auditEntryFacade.attributeValuesAsList("beforeImage").add(
 		                	Audit_1.this.getBeforeImageAsString(existing)
 		                );
@@ -844,7 +868,10 @@ public class Audit_1 extends Indexed_1 {
         try {
 	        result = Object_2Facade.newInstance(
 	            request.path().getDescendant(
-	              new String[]{ "reply", super.uidAsString()}
+	              new String[]{
+	            	  "reply", 
+	            	  UUIDConversion.toUID(UUIDs.newUUID())
+	              }
 	            ),
 	            structName
 	        ).getDelegate();

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityCreatorImpl.java,v 1.9 2011/06/13 17:46:25 wfro Exp $
  * Description: ActivityCreatorImpl
- * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/13 17:46:25 $
  * ====================================================================
  *
  * This software is published under the BSD license

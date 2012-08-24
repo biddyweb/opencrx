@@ -545,7 +545,7 @@
                         <_item>Date de naissance</_item>
                       </label>
                       <toolTip>
-                        <_item>Date de naissance de la personne</_item>
+                        <_item>Date de naissance de la personne (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -556,7 +556,7 @@
                         <_item>Date d&apos;anniversaire</_item>
                       </label>
                       <toolTip>
-                        <_item>Date d&apos;anniversaire de la personne</_item>
+                        <_item>Date d&apos;anniversaire de la personne (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

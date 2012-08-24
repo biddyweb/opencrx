@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AlertImpl.java,v 1.14 2009/04/20 17:56:46 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Text.java,v 1.1 2008/12/10 15:32:35 wfro Exp $
  * Description: Text
- * Revision:    $Revision: 1.1 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2008/12/10 15:32:35 $
  * ====================================================================
  *
  * This software is published under the BSD license

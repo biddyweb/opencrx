@@ -2,17 +2,17 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SegmentSetup.jsp,v 1.91 2011/12/18 22:45:12 wfro Exp $
+ * Name:        $Id: SegmentSetup.jsp,v 1.99 2012/07/08 13:30:29 wfro Exp $
  * Description: SegmentSetup
- * Revision:    $Revision: 1.91 $
+ * Revision:    $Revision: 1.99 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/12/18 22:45:12 $
+ * Date:        $Date: 2012/07/08 13:30:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,6 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -539,7 +538,7 @@ org.openmdx.base.text.conversion.*
 	final String MISSING = "<img src='../../images/cancel.gif' />";
 
 	final String ACCOUNT_FILTER_NAME_ALL = "All Accounts";
-  final String ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD = "Accounts with missing or broken vCard";
+	final String ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD = "Accounts with missing or broken vCard";
 	final String ADDRESS_FILTER_NAME_ALL = "All Addresses";
 
 	final String CONTRACT_FILTER_NAME_LEAD_FORECAST = "Lead Forecast";
@@ -564,6 +563,8 @@ org.openmdx.base.text.conversion.*
 	final String MAILMERGE_TEMPLATE_FOLDER_NAME = "Mail Merge Templates";
 	final String MAILMERGE_TEMPLATE_NAME_LETTER = "Letter Template";
 	final String MAILMERGE_TEMPLATE_NAME_LABEL = "Label Template";
+	final String MESSAGE_OF_THE_DAY_FOLDER_NAME = "Message of the day";
+	final String MESSAGE_OF_THE_DAY_DOCUMENT_NAME = "Message of the day.html";
 
 	final String SALES_TAX_TYPE_NAME_8_5 = "Sales Tax 8.5%";
 
@@ -589,7 +590,7 @@ org.openmdx.base.text.conversion.*
 	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
 	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
-	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
+	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + URLEncoder.encode(objectXri);
 	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
 		session.setAttribute(WIZARD_NAME, null);
 		response.sendRedirect(
@@ -669,6 +670,14 @@ org.openmdx.base.text.conversion.*
 				providerName,
 				segmentName
 			);
+			org.opencrx.kernel.activity1.jmi1.ActivityProcess bulkEmailProcess =
+				org.opencrx.kernel.backend.Activities.getInstance().initBulkEmailProcess(
+					pm,
+					providerName,
+					segmentName,
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
+				);
 			org.opencrx.kernel.activity1.jmi1.ActivityProcess emailProcess =
 				org.opencrx.kernel.backend.Activities.getInstance().initEmailProcess(
 					pm,
@@ -721,6 +730,14 @@ org.openmdx.base.text.conversion.*
 					bugAndFeatureTrackingProcess,
 					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES,
 					Activities.ActivityClass.INCIDENT.getValue(),
+					allUsers,
+					SecurityKeys.ACCESS_LEVEL_PRIVATE
+				);
+			org.opencrx.kernel.activity1.jmi1.ActivityType bulkEmailsType =
+				org.opencrx.kernel.backend.Activities.getInstance().initActivityType(
+					bulkEmailProcess,
+					org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS,
+					Activities.ActivityClass.EMAIL.getValue(),
 					allUsers,
 					SecurityKeys.ACCESS_LEVEL_PRIVATE
 				);
@@ -893,7 +910,6 @@ org.openmdx.base.text.conversion.*
 				new ServiceException(e).log();
 				try {
 					pm.currentTransaction().rollback();
-					pm.currentTransaction().begin();
 				} catch (Exception re) {}
 			}
 			
@@ -935,29 +951,29 @@ org.openmdx.base.text.conversion.*
 				allUsers
 			);
 
-      // ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD
-      org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty accountQueryFilterProperty = pm.newInstance(org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty .class);
-      accountQueryFilterProperty.refInitialize(false, false);
-      accountQueryFilterProperty.setName("external_link is null or vcard is null");
-      accountQueryFilterProperty.setActive(new Boolean (true));
-      accountQueryFilterProperty.setClause("object_id IN (\n" +
+			// ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD
+			org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty accountQueryFilterProperty = pm.newInstance(org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty .class);
+			accountQueryFilterProperty.refInitialize(false, false);
+			accountQueryFilterProperty.setName("external_link is null or vcard is null");
+			accountQueryFilterProperty.setActive(new Boolean (true));
+			accountQueryFilterProperty.setClause("object_id IN (\n" +
               "  select oocke1_account.object_id from oocke1_account, oocke1_account_\n" +
               "  where oocke1_account.object_id = oocke1_account_.object_id\n" +
               "  and oocke1_account_.idx=0\n" +
               "  and ((oocke1_account_.external_link is null) or (oocke1_account.vcard is null))\n" +
               "  )"
-      );
-      org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterBrokenVcard = initAccountFilter(
-    		ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD,
-        new org.opencrx.kernel.account1.jmi1.AccountFilterProperty[]{
-            accountQueryFilterProperty
-        },
-        pm,
-        accountSegment,
-        allUsers
-      );
-
-      // ADDRESS_FILTER_NAME_ALL
+			);
+			org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterBrokenVcard = initAccountFilter(
+			ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD,
+			  new org.opencrx.kernel.account1.jmi1.AccountFilterProperty[]{
+			      accountQueryFilterProperty
+			  },
+			  pm,
+			  accountSegment,
+			  allUsers
+			);
+			
+			// ADDRESS_FILTER_NAME_ALL
 			initAddressFilter(
 				ADDRESS_FILTER_NAME_ALL,
 				new org.opencrx.kernel.account1.jmi1.AddressFilterProperty[]{},
@@ -1214,6 +1230,22 @@ org.openmdx.base.text.conversion.*
 				allUsers
 			);
 
+			// MessageOfTheDay
+			org.opencrx.kernel.document1.jmi1.DocumentFolder messageOfTheDayFolder = initDocumentFolder(
+				MESSAGE_OF_THE_DAY_FOLDER_NAME,
+				documentSegment,
+				allUsers
+			);
+			org.opencrx.kernel.document1.jmi1.Document messageOfTheDay = initDocument(
+				MESSAGE_OF_THE_DAY_DOCUMENT_NAME,
+				getServletContext().getResource("/documents/" + MESSAGE_OF_THE_DAY_DOCUMENT_NAME),
+				"text/html",
+				MESSAGE_OF_THE_DAY_DOCUMENT_NAME,
+				messageOfTheDayFolder,
+				documentSegment,
+				allUsers
+			);
+
 			// Mail Merge Templates
 			org.opencrx.kernel.document1.jmi1.DocumentFolder templateFolder = initDocumentFolder(
 				MAILMERGE_TEMPLATE_FOLDER_NAME,
@@ -1245,6 +1277,7 @@ org.openmdx.base.text.conversion.*
 				documentSegment,
 				allUsers
 			);
+
 			org.opencrx.kernel.document1.jmi1.Document templateContractList = initDocument(
 				REPORT_TEMPLATE_NAME_CONTRACT_LIST,
 				getServletContext().getResource("/documents/Template_ContractList.xls"),
@@ -1454,7 +1487,7 @@ org.openmdx.base.text.conversion.*
 			    FAVORITE_NAME_SCHEDULE_EVENT,
 			    activitySegment,
 			    "Meeting.gif",
-			    "$('UserDialogWait').className='loading udwait';window.location.href='./wizards/en_US/ScheduleEventWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName + "';",
+			    "$('UserDialogWait').className='loading udwait';window.location.href='./wizards/en_US/ScheduleEventWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=" + URLEncoder.encode("xri://@openmdx*org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName) + "';",
 				pm,
 				userHome
 			);
@@ -1471,7 +1504,9 @@ org.openmdx.base.text.conversion.*
 <html dir="<%= texts.getDir() %>">
 <head>
 	<style type="text/css" media="all">
-		body{font-family: Arial, Helvetica, sans-serif; padding: 0; margin:0;}
+		body{
+		  font-family: "Open Sans", "DejaVu Sans Condensed", "lucida sans", tahoma, verdana, arial, sans-serif;
+			padding: 0; margin:0;}
 		h1{ margin: 0.5em 0em; font-size: 150%;}
 		h2{ font-size: 130%; margin: 0.5em 0em; text-align: left;}
     textarea,
@@ -1481,7 +1516,7 @@ org.openmdx.base.text.conversion.*
     	margin: 0; border: 1px solid silver;
     	padding: 0;
     	font-size: 100%;
-    	font-family: Arial, Helvetica, sans-serif;
+		  font-family: "Open Sans", "DejaVu Sans Condensed", "lucida sans", tahoma, verdana, arial, sans-serif;
     }
     input.button{
     	-moz-border-radius: 4px;
@@ -1500,6 +1535,7 @@ org.openmdx.base.text.conversion.*
 	<meta name="order" content="2100">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
+	<link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 <body>
 <div id="container">
@@ -1543,6 +1579,10 @@ org.openmdx.base.text.conversion.*
 						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityProcess(org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
 					</tr>
 					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_BULK_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityProcess(org.opencrx.kernel.backend.Activities.ACTIVITY_PROCESS_NAME_BULK_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
 						<td colspan="2"><h2>Calendars</h2></td>
 					</tr>
 					<tr>
@@ -1559,6 +1599,10 @@ org.openmdx.base.text.conversion.*
 					<tr>
 						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS %></td>
 						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS %></td>
+						<td><%= org.opencrx.kernel.backend.Activities.getInstance().findActivityType(org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS, activitySegment, pm) == null ? MISSING : OK %></td>
 					</tr>
 					<tr>
 						<td><%= org.opencrx.kernel.backend.Activities.ACTIVITY_TYPE_NAME_TASKS %></td>
@@ -1683,6 +1727,10 @@ org.openmdx.base.text.conversion.*
 						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER, workflowSegment, pm) == null ? MISSING : OK %></td>
 					</tr>
 					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_JABBER %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_JABBER, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
 						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS %></td>
 						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
 					</tr>
@@ -1719,8 +1767,8 @@ org.openmdx.base.text.conversion.*
 						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
 					</tr>
 					<tr>
-						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_REMINDER_MODIFICATIONS %></td>
-						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_REMINDER_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK %></td>
+						<td><%=org.opencrx.kernel.backend.Workflows.TOPIC_NAME_TIMER_MODIFICATIONS%></td>
+						<td><%=org.opencrx.kernel.backend.Workflows.getInstance().findTopic(org.opencrx.kernel.backend.Workflows.TOPIC_NAME_TIMER_MODIFICATIONS, workflowSegment, pm) == null ? MISSING : OK%></td>
 					</tr>
 					<tr>
 						<td><%= org.opencrx.kernel.backend.Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS %></td>
@@ -1750,8 +1798,16 @@ org.openmdx.base.text.conversion.*
 						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
 					</tr>
 					<tr>
-						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER %></td>
-						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_DIRECT_MESSAGE_TWITTER, workflowSegment, pm) == null && org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", workflowSegment, pm) == null ? MISSING : OK %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MESSAGE_TWITTER %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MESSAGE_TWITTER, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MESSAGE_JABBER %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_SEND_MESSAGE_JABBER, workflowSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
+					<tr>
+						<td><%= org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP %></td>
+						<td><%= org.opencrx.kernel.backend.Workflows.getInstance().findWfProcess(org.opencrx.kernel.backend.Workflows.WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP, workflowSegment, pm) == null ? MISSING : OK %></td>
 					</tr>
 				</table>
 			</fieldset>
@@ -1790,6 +1846,21 @@ org.openmdx.base.text.conversion.*
 					</tr>
 				</table>
 			</fieldset>
+
+			<fieldset>
+				<legend>Documents</legend>
+				<table>
+					<tr>
+						<td colspan="2"><h2>Message of the day</h2></td>
+					</tr>
+					<tr>
+						<td width="400px"><%= MESSAGE_OF_THE_DAY_DOCUMENT_NAME %></td>
+						<td><%= findDocument(MESSAGE_OF_THE_DAY_DOCUMENT_NAME, documentSegment) == null ? MISSING : OK %></td>
+					</tr>
+				</table>
+			</fieldset>
+
+
 			<fieldset>
 				<legend>Reports</legend>
 				<table>
@@ -1800,10 +1871,10 @@ org.openmdx.base.text.conversion.*
 						<td width="400px"><%= ACCOUNT_FILTER_NAME_ALL %></td>
 						<td><%= findAccountFilter(ACCOUNT_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>
 					</tr>
-	        <tr>
-	          <td width="400px"><%= ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD %></td>
-	          <td><%= findAccountFilter(ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, accountSegment, pm) == null ? MISSING : OK %></td>
-	        </tr>
+					<tr>
+						<td width="400px"><%= ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD %></td>
+						<td><%= findAccountFilter(ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, accountSegment, pm) == null ? MISSING : OK %></td>
+					</tr>
 					<tr>
 						<td width="400px"><%= ADDRESS_FILTER_NAME_ALL %></td>
 						<td><%= findAddressFilter(ADDRESS_FILTER_NAME_ALL, accountSegment, pm) == null ? MISSING : OK %></td>

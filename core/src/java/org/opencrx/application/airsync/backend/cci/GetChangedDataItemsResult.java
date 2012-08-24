@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: GetChangedDataItemsResult.java,v 1.2 2011/02/06 15:09:41 wfro Exp $
  * Description: GetChangedDataItemsResult
- * Revision:    $Revision: 1.2 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/02/06 15:09:41 $
  * ====================================================================
  *
  * This software is published under the BSD license

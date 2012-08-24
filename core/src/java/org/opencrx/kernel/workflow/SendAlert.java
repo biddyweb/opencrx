@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SendAlert.java,v 1.32 2011/06/10 14:55:02 wfro Exp $
  * Description: PrintConsole workflow
- * Revision:    $Revision: 1.32 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/10 14:55:02 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,20 +61,23 @@ import javax.jmi.reflect.RefObject;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Activities.Priority;
 import org.opencrx.kernel.backend.Base;
-import org.opencrx.kernel.backend.SynchWorkflow_2_0;
+import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.utils.WorkflowHelper;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 
-public class SendAlert 
-    implements SynchWorkflow_2_0 {
+public class SendAlert extends Workflows.SynchronousWorkflow {
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.Workflows.SynchronousWorkflow#execute(org.opencrx.kernel.base.jmi1.WorkflowTarget, org.openmdx.base.jmi1.ContextCapable, org.openmdx.base.jmi1.ContextCapable, org.opencrx.kernel.home1.jmi1.WfProcessInstance)
+	 */
+	@Override
     public void execute(
         WorkflowTarget wfTarget,
         ContextCapable targetObject,
-        Map<String,Object> params,
         WfProcessInstance wfProcessInstance
     ) throws ServiceException {
         String name = null;
@@ -90,6 +90,7 @@ public class SendAlert
             } 
             catch(Exception e) {}
         }
+        Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance);
         String description = "";
         for(
             Iterator<Entry<String,Object>> i = params.entrySet().iterator(); 

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.37 2012/01/19 22:28:57 wfro Exp $
+ * = Name:        $Id: build.xml,v 1.41 2012/07/08 11:28:07 wfro Exp $
  * = Description: openCRX/Core Test build.xml
- * = Revision:    $Revision: 1.37 $
- * = Date:        $Date: 2012/01/19 22:28:57 $
+ * = Revision:    $Revision: 1.41 $
+ * = Date:        $Date: 2012/07/08 11:28:07 $
  * = Copyright:   (c) 2003-2011 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,7 +61,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.9.1"/>
+	<property name="openmdx.version" value="2.10.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<!-- classpath -->
@@ -81,9 +81,15 @@
 		<pathelement location="${basedir}/src/resource"/>
 		<pathelement location="${build.dir}/bin"/>
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
+		<pathelement location="../codehaus/${build.java.platform}/janino/lib/janino.jar"/>
+		<pathelement location="../apache/${build.java.platform}/poi/lib/poi.jar"/>
+		<pathelement location="../apache/${build.java.platform}/poi/lib/dom4j.jar"/>
+		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-excelant.jar"/>
+		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-ooxml.jar"/>
+		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-ooxml-schemas.jar"/>
+		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-scratchpad.jar"/>
 		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-9/lib/postgresql-9.1.jdbc4.jar"/>
 		<pathelement location="../opt/hsqldb/${build.java.platform}/hsqldb-2/lib/hsqldb.jar"/>
-		<pathelement location="../codehaus/${build.java.platform}/janino/lib/janino.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-lang.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections-extendedproperties.jar"/>

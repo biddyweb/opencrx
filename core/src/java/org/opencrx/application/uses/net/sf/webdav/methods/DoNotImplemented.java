@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/core, http://www.opencrx.org/
- * Name:        $Id: DoNotImplemented.java,v 1.7 2010/11/22 16:09:39 wfro Exp $
  * Description: DoNotImplemented
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/11/22 16:09:39 $
  * ====================================================================
  *
  * This software is published under the BSD license

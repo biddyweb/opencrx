@@ -414,7 +414,7 @@ indikator</_item>
                         <_item>Data urodzenia</_item>
                       </label>
                       <toolTip>
-                        <_item>Data urodzenia</_item>
+                        <_item>Data urodzenia (local time place of birth!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -425,7 +425,7 @@ indikator</_item>
                         <_item>Data Jubileuszu</_item>
                       </label>
                       <toolTip>
-                        <_item>Data Jubileuszu</_item>
+                        <_item>Data Jubileuszu (local time place of event!)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

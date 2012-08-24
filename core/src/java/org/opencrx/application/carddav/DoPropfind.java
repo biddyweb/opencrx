@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DoPropfind.java,v 1.6 2011/11/04 16:50:56 wfro Exp $
  * Description: DoPropfind
- * Revision:    $Revision: 1.6 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/11/04 16:50:56 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -66,11 +63,8 @@ import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.application.uses.net.sf.webdav.fromcatalina.XMLWriter;
-import org.opencrx.kernel.backend.UserHomes;
-import org.opencrx.kernel.home1.jmi1.ContactsFeed;
+import org.opencrx.kernel.home1.jmi1.SyncProfile;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.naming.Path;
 
 public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.methods.DoPropfind {
 
@@ -129,6 +123,13 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 		HttpServletRequest req = requestContext.getHttpServletRequest();
 		HttpServletResponse resp = requestContext.getHttpServletResponse();
 		if(res instanceof CardProfileResource) {
+			SyncProfile syncProfile = ((CardProfileResource)res).getObject();
+			PersistenceManager pm = JDOHelper.getPersistenceManager(syncProfile);
+    		UserHome userHome = (UserHome)pm.getObjectById(
+    			syncProfile.refGetPath().getParent().getParent()
+    		);
+    		String providerName = userHome.refGetPath().get(2);
+    		String segmentName = userHome.refGetPath().get(4);			
 			if(property.indexOf("principal-address") > 0) {
 	            writer.writeElement("urn:ietf:params:xml:ns:carddav:principal-address", XMLWriter.OPENING);
 	            writer.writeElement("DAV::href", XMLWriter.OPENING);
@@ -137,46 +138,53 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 	            writer.writeElement("urn:ietf:params:xml:ns:carddav:principal-address", XMLWriter.CLOSING);
 	            return true;
 			}		
+			else if(property.indexOf("addressbook-home-set") > 0) {
+	            writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-home-set", XMLWriter.OPENING);
+	            writer.writeElement("DAV::href", XMLWriter.OPENING);
+	            writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + providerName + "/" + segmentName + "/" + userHome.refGetPath().getBase() + "/" + res.getName(), true)));
+	            writer.writeElement("DAV::href", XMLWriter.CLOSING);
+	            writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-home-set", XMLWriter.CLOSING);
+	            return true;
+			}
+			else if(property.indexOf("principal-URL") > 0) {
+	            writer.writeElement("DAV::principal-URL", XMLWriter.OPENING);
+	            writer.writeElement("DAV::href", XMLWriter.OPENING);
+	            writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + providerName + "/" + segmentName + "/user/" + userHome.refGetPath().getBase() + "/profile/" + syncProfile.getName(), true)));
+	            writer.writeElement("DAV::href", XMLWriter.CLOSING);
+	            writer.writeElement("DAV::principal-URL", XMLWriter.CLOSING);
+	            return true;				
+			}
 			else {
 				return false;
 			}
 		}
 		else if(res instanceof AccountCollectionResource) {
-			ContactsFeed contactsFeed = ((AccountCollectionResource)res).getObject();
 			if(property.indexOf("addressbook-description") > 0) {
 				writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-description", XMLWriter.OPENING);
 	            writer.writeData(res.getDisplayName());				
 				writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-description", XMLWriter.CLOSING);
 				return true;
-			}
-			else if(property.indexOf("addressbook-home-set") > 0) {
-				try {
-					PersistenceManager pm = JDOHelper.getPersistenceManager(contactsFeed);
-					UserHome userHome = UserHomes.getInstance().getUserHome(contactsFeed.refGetPath(), pm);
-					Path userHomeIdentity = userHome.refGetPath();			
-		            writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-home-set", XMLWriter.OPENING);
-		            writer.writeElement("DAV::href", XMLWriter.OPENING);
-		            writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + userHomeIdentity.get(2) + "/" + userHomeIdentity.get(4) + "/" + userHomeIdentity.getBase() + "/" + contactsFeed.refGetPath().get(8) + "/" + res.getName(), true)));
-		            writer.writeElement("DAV::href", XMLWriter.CLOSING);
-		            writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-home-set", XMLWriter.CLOSING);
-		            return true;
-				} catch(Exception e) {
-					new ServiceException(e).log();
-					return false;
-				}
-			}
-			else if(property.indexOf("supported-address-data") > 0) {
+			} else if(property.indexOf("supported-address-data") > 0) {
 				writer.writeElement("urn:ietf:params:xml:ns:carddav:supported-address-data", XMLWriter.OPENING);
 				writer.writeText("<C:address-data-type content-type=\"text/vcard\" version=\"3.0\"/>");				
 				writer.writeElement("urn:ietf:params:xml:ns:carddav:supported-address-data", XMLWriter.CLOSING);	
 				return true;
-			}
-			else {
+			} else if(property.indexOf("getctag") > 0) {
+				writer.writeElement("http://calendarserver.org/ns/:getctag", XMLWriter.OPENING);
+	            writer.writeText(Long.toString(System.currentTimeMillis()));				
+				writer.writeElement("http://calendarserver.org/ns/:getctag", XMLWriter.CLOSING);				
+				return true;
+			} else {
 				return false;
 			}
 		}
 		else if(res instanceof AccountResource) {
-			if(property.indexOf("owner") > 0) {
+			if(property.indexOf("getctag") > 0) {
+				writer.writeElement("http://calendarserver.org/ns/:getctag", XMLWriter.OPENING);
+	            writer.writeText(this.getETag(res));				
+				writer.writeElement("http://calendarserver.org/ns/:getctag", XMLWriter.CLOSING);				
+				return true;
+			} else if(property.indexOf("owner") > 0) {
 				return true;
 			}
 		}

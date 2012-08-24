@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ExporterImpl.java,v 1.7 2009/06/19 18:06:03 wfro Exp $
  * Description: openCRX application plugin
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/06/19 18:06:03 $
  * ====================================================================
  *
  * This software is published under the BSD license

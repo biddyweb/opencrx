@@ -11,13 +11,14 @@
 							<_object />
 							<_content>
 								<formDefinition>
-									<org.openmdx.ui1.FormDefinition name="bulkCreateActivityForm">
+									<!-- Activity creator -->
+									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormCreator">
 										<_object>
 											<title>
-												<_item>Bulk - Create Activities</_item>
+												<_item>Bulk Activity Creator</_item>
 											</title>
 											<toolTip>
-												<_item>Bulk - Create Activities</_item>
+												<_item>Bulk Activity Creator</_item>
 											</toolTip>
 										</_object>
 										<_content>
@@ -39,15 +40,73 @@
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="locale">
+																<_object>
+																	<forClass>org:opencrx:kernel:generic:LocalizedField</forClass>
+																	<featureName>locale</featureName>
+																	<order>110</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
 														</formFieldDefinition>
 													</_content>
 												</org.openmdx.ui1.FormFieldGroupDefinition>
+											</formFieldGroupDefinition>
+										</_content>
+									</org.openmdx.ui1.FormDefinition>
+									<!-- Place holders -->
+									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormPlaceHolders">
+										<_object>
+											<title>
+												<_item>&amp;nbsp;</_item>
+											</title>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+										</_object>
+										<_content>
+											<formFieldGroupDefinition>
+												<org.openmdx.ui1.FormFieldGroupDefinition name="PlaceHolders">
+													<_object>
+														<label>
+															<_item>Place holders (specify with name=value pairs)</_item>
+														</label>
+														<order>10</order>
+													</_object>
+													<_content>
+														<formFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="text">
+																<_object>
+																	<forClass>org:opencrx:kernel:base:Note</forClass>
+																	<featureName>text</featureName>
+																	<order>100</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+														</formFieldDefinition>
+													</_content>
+												</org.openmdx.ui1.FormFieldGroupDefinition>
+											</formFieldGroupDefinition>
+										</_content>
+									</org.openmdx.ui1.FormDefinition>
+									<!-- Activity -->
+									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormActivity">
+										<_object>
+											<title>
+												<_item>&amp;nbsp;</_item>
+											</title>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+										</_object>
+										<_content>
+											<formFieldGroupDefinition>										
 												<org.openmdx.ui1.FormFieldGroupDefinition name="Activity">
 													<_object>
 														<label>
-															<_item>&amp;nbsp;</_item>
+															<_item>Activity</_item>
 														</label>
-														<order>20</order>
+														<order>10</order>
 													</_object>
 													<_content>
 														<formFieldDefinition>
@@ -113,6 +172,162 @@
 											</formFieldGroupDefinition>
 										</_content>
 									</org.openmdx.ui1.FormDefinition>
+									<!-- EMail -->
+									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormEMail">
+										<_object>
+											<title>
+												<_item>&amp;nbsp;</_item>
+											</title>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+										</_object>
+										<_content>
+											<formFieldGroupDefinition>										
+												<org.openmdx.ui1.FormFieldGroupDefinition name="EMail">
+													<_object>
+														<label>
+															<_item>EMail</_item>
+														</label>
+														<order>10</order>
+													</_object>
+													<_content>
+														<formFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="sender">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>sender</featureName>
+																	<order>110</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="gateway">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>gateway</featureName>
+																	<order>120</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="usage">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:EMailAddress</forClass>
+																	<featureName>usage</featureName>
+																	<order>130</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="subject">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>messageSubject</featureName>
+																	<order>140</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="messageBody">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>messageBody</featureName>
+																	<order>150</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+														</formFieldDefinition>
+													</_content>
+												</org.openmdx.ui1.FormFieldGroupDefinition>
+											</formFieldGroupDefinition>
+										</_content>
+									</org.openmdx.ui1.FormDefinition>
+
+									<!-- TestRecipientsEmail -->
+									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormEMailTo">
+										<_object>
+											<title>
+												<_item>&amp;nbsp;</_item>
+											</title>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+										</_object>
+										<_content>
+											<formFieldGroupDefinition>										
+												<org.openmdx.ui1.FormFieldGroupDefinition name="EMailRecipients">
+													<_object>
+														<label>
+															<_item>Optional: Additional Test Recipients</_item>
+														</label>
+														<order>20</order>
+													</_object>
+													<_content>
+														<formFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="to0">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>to0</featureName>
+																	<order>110</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="to1">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>to1</featureName>
+																	<order>120</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="to2">
+																<_object>
+																	<forClass>org:opencrx:kernel:activity1:EMail</forClass>
+																	<featureName>to2</featureName>
+																	<order>130</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+														</formFieldDefinition>
+													</_content>
+												</org.openmdx.ui1.FormFieldGroupDefinition>
+											</formFieldGroupDefinition>
+										</_content>
+									</org.openmdx.ui1.FormDefinition>
+
+									<!-- TestRecipientsAccounts -->
+									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormRecipient">
+										<_object>
+											<title>
+												<_item>&amp;nbsp;</_item>
+											</title>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+										</_object>
+										<_content>
+											<formFieldGroupDefinition>										
+												<org.openmdx.ui1.FormFieldGroupDefinition name="Recipients">
+													<_object>
+														<label>
+															<_item>Optional: Additional Test Recipient</_item>
+														</label>
+														<order>20</order>
+													</_object>
+													<_content>
+														<formFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="account">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:AccountAssignment</forClass>
+																	<featureName>account</featureName>
+																	<order>110</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+														</formFieldDefinition>
+													</_content>
+												</org.openmdx.ui1.FormFieldGroupDefinition>
+											</formFieldGroupDefinition>
+										</_content>
+									</org.openmdx.ui1.FormDefinition>
+
 								</formDefinition>
 							</_content>
 						</org.openmdx.ui1.Segment>

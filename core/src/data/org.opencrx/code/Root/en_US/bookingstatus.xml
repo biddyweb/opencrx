@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="bookingStatus" _operation="set">
 										<_object>
 											<name>
+												<_item>bookingStatus</_item>
 												<_item>org:opencrx:kernel:depot1:Booking:bookingStatus</_item>
 												<_item>org:opencrx:kernel:depot1:CompoundBooking:bookingStatus</_item>
 												<_item>org:opencrx:kernel:depot1:DepotReport:bookingStatusThreshold</_item>

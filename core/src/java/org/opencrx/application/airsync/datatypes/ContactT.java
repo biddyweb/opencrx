@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: ContactT.java,v 1.7 2010/06/16 11:43:37 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.7 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/06/16 11:43:37 $
  * ====================================================================
  *
  * This software is published under the BSD license

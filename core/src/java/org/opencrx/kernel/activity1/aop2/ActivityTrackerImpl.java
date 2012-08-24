@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityTrackerImpl.java,v 1.9 2009/04/20 17:56:46 wfro Exp $
  * Description: ActivityTrackerImpl
- * Revision:    $Revision: 1.9 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2009/04/20 17:56:46 $
  * ====================================================================
  *
  * This software is published under the BSD license

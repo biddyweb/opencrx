@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: SyncHandler.java,v 1.52 2011/09/08 19:15:39 wfro Exp $
  * Description: AirSync Client SyncHandler
- * Revision:    $Revision: 1.52 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/09/08 19:15:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -104,6 +101,9 @@ public class SyncHandler extends AbstractClientHandler {
 		this.batchSize = batchSize;		
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.airsync.client.ClientHandler#handle(org.opencrx.application.airsync.client.ClientHandler.SyncTarget, java.lang.String, java.lang.String, java.lang.Object)
+	 */
 	@Override
     public void handle(
     	SyncTarget target,
@@ -303,12 +303,12 @@ public class SyncHandler extends AbstractClientHandler {
 											org.w3c.dom.Element eApplicationData = DOMUtils.createElement(eCommand, null, "ApplicationData");
 											if(changedItem.getData() instanceof EventT) {
 												EventT eventT = (EventT)changedItem.getData();
-												// Exchange requires a timezone although the spec says it is optional
-												eventT.setTimezone("4AEAAFAAYQBjAGkAZgBpAGMAIABTAHQAYQBuAGQAYQByAGQAIABUAGkAbQBlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAsAAAABAAIAAAAAAAAAAAAAAFAAYQBjAGkAZgBpAGMAIABEAGEAeQBsAGkAZwBoAHQAIABUAGkAbQBlAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAACAAIAAAAAAAAAxP///w==");
+												// Exchange requires a timezone
+												eventT.setTimezone("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAAAAFAAMAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMAAAAFAAIAAAAAAAAAAAAAAA=="); // Bias = 0 minutes
 												// Exchange: Status and type of attendees are not modifiable
 												for(AttendeeT attendeeT: eventT.getAttendees()) {
-													attendeeT.setAttendeeStatus(null);											
-													attendeeT.setAttendeeType(null);											
+													attendeeT.setAttendeeStatus(null);
+													attendeeT.setAttendeeType(null);
 												}
 											}
 											else if(changedItem.getData() instanceof ContactT) {

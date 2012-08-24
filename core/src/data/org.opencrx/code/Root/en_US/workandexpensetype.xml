@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="workAndExpenseType" _operation="set">
 										<_object>
 											<name>
+												<_item>workAndExpenseType</_item>
 												<_item>org:opencrx:kernel:activity1:CalcTotalQuantityParams:recordType</_item>
 												<_item>org:opencrx:kernel:activity1:WorkAndExpenseRecord:recordType</_item>
 											</name>

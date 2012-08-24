@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: NewsServlet.java,v 1.16 2011/07/07 22:38:09 wfro Exp $
  * Description: NewsServlet
- * Revision:    $Revision: 1.16 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/07/07 22:38:09 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -123,7 +120,7 @@ public class NewsServlet extends HttpServlet {
             null :
             this.persistenceManagerFactory.getPersistenceManager(
                 req.getUserPrincipal().getName(),
-                UUIDs.getGenerator().next().toString()
+                null
             );
     }
 
@@ -132,7 +129,7 @@ public class NewsServlet extends HttpServlet {
     ) {
         return this.persistenceManagerFactory.getPersistenceManager(
             SecurityKeys.ROOT_PRINCIPAL,
-            UUIDs.getGenerator().next().toString()
+            null
         );                	
     }
     

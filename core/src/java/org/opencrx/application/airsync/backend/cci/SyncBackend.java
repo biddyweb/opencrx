@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: SyncBackend.java,v 1.22 2010/08/24 17:46:12 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/08/24 17:46:12 $
  * ====================================================================
  *
  * This software is published under the BSD license

@@ -14,6 +14,7 @@
 									<org.opencrx.kernel.code1.CodeValueContainer name="invoiceState" _operation="set">
 										<_object>
 											<name>
+												<_item>invoiceState</_item>
 												<_item>org:opencrx:kernel:contract1:Invoice:contractState</_item>
 												<_item>org:opencrx:kernel:contract1:InvoiceMarkAsClosedParams:invoiceState</_item>
 												<_item>org:opencrx:kernel:contract1:InvoicePosition:contractPositionState</_item>

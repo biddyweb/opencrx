@@ -1,11 +1,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Application, http://www.opencrx.org/
- * Name:        $Id: AttachmentT.java,v 1.4 2010/09/09 15:18:13 wfro Exp $
  * Description: Sync for openCRX
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/09/09 15:18:13 $
  * ====================================================================
  *
  * This software is published under the BSD license

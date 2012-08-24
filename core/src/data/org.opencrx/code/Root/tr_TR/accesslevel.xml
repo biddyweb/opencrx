@@ -18,10 +18,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[0] G/D</_item>
+                              <_item>0 - G/D</_item>
                             </shortText>
                             <longText>
-                              <_item>[0] G/D</_item>
+                              <_item>0 - G/D</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -29,10 +29,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="1" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[1] Özel</_item>
+                              <_item>1 - Özel</_item>
                             </shortText>
                             <longText>
-                              <_item>[1] Özel</_item>
+                              <_item>1 - Özel</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -40,10 +40,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="2" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[2] temel</_item>
+                              <_item>2 - temel</_item>
                             </shortText>
                             <longText>
-                              <_item>[2] temel</_item>
+                              <_item>2 - temel</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -51,10 +51,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="3" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[3] derin</_item>
+                              <_item>3 - derin</_item>
                             </shortText>
                             <longText>
-                              <_item>[3] derin</_item>
+                              <_item>3 - derin</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -62,10 +62,10 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="4" _operation="set">
                           <_object>
                             <shortText>
-                              <_item>[4] küresel</_item>
+                              <_item>4 - küresel</_item>
                             </shortText>
                             <longText>
-                              <_item>[4] küresel (tüm kullanıcılar)</_item>
+                              <_item>4 - küresel (tüm kullanıcılar)</_item>
                             </longText>
                           </_object>
                           <_content/>

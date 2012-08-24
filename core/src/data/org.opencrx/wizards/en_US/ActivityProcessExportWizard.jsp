@@ -2,11 +2,11 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityProcessExportWizard.jsp,v 1.2 2011/06/30 22:28:44 wfro Exp $
+ * Name:        $Id: ActivityProcessExportWizard.jsp,v 1.3 2012/07/08 13:29:33 wfro Exp $
  * Description: ExportActivityProcess
- * Revision:    $Revision: 1.2 $
+ * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2011/06/30 22:28:44 $
+ * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -72,7 +72,6 @@ org.openmdx.kernel.id.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
