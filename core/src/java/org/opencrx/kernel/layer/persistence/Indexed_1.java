@@ -758,7 +758,7 @@ public class Indexed_1 extends Database_1 {
 		                                // All objects which do not have an up-to-date index entry
 		                                new FilterProperty(
 		                                    Quantifier.codeOf(null),
-		                                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+		                                    queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 		                                    ConditionType.codeOf(null),
 		                                    new Object[]{
 		                                    	Database_1_Attributes.HINT_COLUMN_SELECTOR + " v.object_id, v.dtype */ NOT EXISTS (SELECT 0 FROM OOCKE1_INDEXENTRY e WHERE v.object_id = e.indexed_object AND v.modified_at <= e.created_at)"
@@ -768,7 +768,7 @@ public class Indexed_1 extends Database_1 {
 		                                    Quantifier.codeOf(null),
 		                                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
 		                                    ConditionType.codeOf(null),
-		                                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+		                                    new Object[]{Database_1_Attributes.QUERY_EXTENSION_CLASS}
 		                                )
 		                            },
 		                            0,

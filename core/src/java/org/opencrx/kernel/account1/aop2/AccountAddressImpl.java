@@ -57,10 +57,11 @@ import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Accounts;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class AccountAddressImpl
 	<S extends org.opencrx.kernel.account1.jmi1.AccountAddress,N extends org.opencrx.kernel.account1.cci2.AccountAddress,C extends Void>
@@ -86,11 +87,11 @@ public class AccountAddressImpl
                 params.getUpdateRelationshipsSince(),
                 params.getUpdateRelationshipsBefore()
             );
-            return Utils.getAccountPackage(this.sameManager()).createMoveAddressToAccountResult(
-                count
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.account1.jmi1.MoveAddressToAccountResult.class, 
+            	Datatypes.member(org.opencrx.kernel.account1.jmi1.MoveAddressToAccountResult.Member.count, count)
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
@@ -106,11 +107,11 @@ public class AccountAddressImpl
                 params.getUpdateRelationshipsSince(),
                 params.getUpdateRelationshipsBefore()
             );
-            return Utils.getAccountPackage(this.sameManager()).createMoveAddressResult(
-                count
+            return Structures.create(
+            	org.opencrx.kernel.account1.jmi1.MoveAddressResult.class, 
+            	Datatypes.member(org.opencrx.kernel.account1.jmi1.MoveAddressResult.Member.count, count)
             );
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
@@ -124,8 +125,7 @@ public class AccountAddressImpl
 				this.sameObject()
 			);
 			super.jdoPreStore();
-		}
-    	catch(ServiceException e) {
+		} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,

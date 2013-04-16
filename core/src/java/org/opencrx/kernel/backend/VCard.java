@@ -83,7 +83,6 @@ import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
@@ -93,7 +92,6 @@ import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.base.jmi1.ImportParams;
 import org.opencrx.kernel.document1.jmi1.Media;
 import org.opencrx.kernel.generic.jmi1.Note;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.BasicObject;
@@ -106,6 +104,8 @@ import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Codes;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class VCard extends AbstractImpl {
 
@@ -1665,22 +1665,19 @@ public class VCard extends AbstractImpl {
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         String uid
     ) {
-        Account1Package accountPkg = Utils.getAccountPackage(pm);
-        AccountQuery query = accountPkg.createAccountQuery();
+        AccountQuery query = (AccountQuery)pm.newQuery(Account.class);
         query.thereExistsExternalLink().equalTo(VCard.VCARD_SCHEMA + uid);
         List<Account> accounts = accountSegment.getAccount(query);
         if(accounts.isEmpty()) {
-            query = accountPkg.createAccountQuery();
+            query = (AccountQuery)pm.newQuery(Account.class);
             query.thereExistsExternalLink().equalTo(VCard.VCARD_SCHEMA + uid.replace('.', '+'));
             accounts = accountSegment.getAccount(query);
             if(accounts.isEmpty()) {
                 return null;
-            }
-            else {
+            } else {
                 return accounts.iterator().next();
             }
-        }
-        else {
+        } else {
             return accounts.iterator().next();
         }
     }
@@ -1835,33 +1832,31 @@ public class VCard extends AbstractImpl {
                             	if(!pm.currentTransaction().isActive()) {
                             		pm.currentTransaction().begin();
                             	}
-                                ImportParams importItemParams = Utils.getBasePackage(pm).createImportParams(
-                                    vcard.toString().getBytes("UTF-8"), 
-                                    VCard.MIME_TYPE, 
-                                    "import.vcf", 
-                                    (short)0
+                                ImportParams importItemParams = Structures.create(
+                                	ImportParams.class, 
+                                	Datatypes.member(ImportParams.Member.item, vcard.toString().getBytes("UTF-8")),
+                                	Datatypes.member(ImportParams.Member.itemMimeType, VCard.MIME_TYPE),                                	
+                                	Datatypes.member(ImportParams.Member.itemName, "import.vcf"),                                	
+                                	Datatypes.member(ImportParams.Member.locale, (short)0)                       	
                                 );
                                 account.importItem(importItemParams);
                                 if(isTxLocal) {
 	                                pm.currentTransaction().commit();
 		                            pm.refresh(account);
                                 }
-                        	}
-	                        catch(Exception e) {
+                        	} catch(Exception e) {
 	                        	new ServiceException(e).log();
 	                            try {
 	                                pm.currentTransaction().rollback();
-	                            } 
-	                            catch(Exception e0) {}                                    
+	                            } catch(Exception e0) {}                                    
 	                        }
                     	}
 	                }
 	            }
 	        }
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
         	throw new ServiceException(e);
-        }       
+        }
         return new PutVCardResult(
         	status,
         	cardUID,

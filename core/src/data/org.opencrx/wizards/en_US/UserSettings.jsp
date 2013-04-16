@@ -2,11 +2,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: UserSettings.jsp,v 1.74 2012/07/08 13:30:29 wfro Exp $
  * Description: UserSettings
- * Revision:    $Revision: 1.74 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:29 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -64,7 +61,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.kernel.log.*,
@@ -236,7 +232,7 @@ org.openmdx.base.exception.*
     </div>
 
     <div id="content-wrap">
-    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
+    	<div id="content" style="padding:35px 0.5em 0px 0em;">
 <%
     if (false) {
     //if (!currentUserIsAdmin) {
@@ -415,7 +411,7 @@ org.openmdx.base.exception.*
                   }
 %>
 							</select>
-							<input type="text" id="timezone" name="timezone"  value="<%= initiallySelectedTZ %>" style="width:0;visibility:hidden;" />
+							<input type="text" id="timezone" name="timezone"  value="<%= initiallySelectedTZ %>" style="position:absolute;width:0;visibility:hidden;" />
 						</td></tr>
 						<tr><td nowrap><label for="storeSettingsOnLogoff">Store settings on logoff:</label></td>
 						<td><input type="checkbox" <%= userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "checked" : "" %> id="storeSettingsOnLogoff" name="storeSettingsOnLogoff"/></td></tr>

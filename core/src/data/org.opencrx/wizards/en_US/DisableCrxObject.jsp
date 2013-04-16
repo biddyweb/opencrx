@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: DisableCrxObject.jsp,v 1.9 2012/07/08 13:30:32 wfro Exp $
- * Description: disable account, composites like addresses, and members referencing account
- * Revision:    $Revision: 1.9 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Description: Disable CrxObject and its composites
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,251 +53,97 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.text.*,
-org.opencrx.kernel.utils.*,
-org.openmdx.base.accessor.jmi.cci.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
+org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.exception.BasicException,
-org.openmdx.kernel.id.*
+org.openmdx.base.naming.*
 " %>
-<%!
-
-	public static class Counter {
-
-		public Counter(
-			int initialValue
-		) {
-			this.counter = initialValue;
-		}
-		
-		public void increment(
-		) {
-			this.counter++;
-		}
-		
-		public int getValue(
-		) {
-			return this.counter;
-		}
-		
-		private int counter;
-
+<%
+	final String FORM_NAME = "DisableCrxObject";
+	DisableCrxObjectController wc = new DisableCrxObjectController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();		
+		return;
 	}
-
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
 %>
+<!--
+	<meta name="UNUSEDlabel" content="Disable">
+	<meta name="UNUSEDtoolTip" content="Disable">
+	<meta name="targetType" content="_inplace">
+	<meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
+	<meta name="order" content="org:opencrx:kernel:generic:CrxObject:disable">
+-->
+<br />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="utf-8" method="post" action="<%= wc.getServletPath() %>">
+	<input type="hidden" class="valueL" name="xri" value="<%= wc.getObjectIdentity().toXRI() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" id="Command" name="Command" value="" />	
+	<input type="checkbox" name="disable" checked value="true" style="display:none;" />
 <%
-	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
-	String objectXri = request.getParameter("xri");
-	if(app == null || objectXri == null || viewsCache.getView(requestId) == null) {
-	    response.sendRedirect(
-	       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-	    );
-	    return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	Texts_1_0 texts = app.getTexts();
+	String objectTitle = new ObjectReference(wc.getObject(), app).getTitle();
+	String objectLabel = new ObjectReference(wc.getObject(), app).getLabel();
+  	if("OK".equals(wc.getCommand())) {
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<%= texts.getDir() %>">
-<head>
-  <title><%= app.getApplicationName() + " - Disable " + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %></title>
-  <meta name="UNUSEDlabel" content="Disable">
-  <meta name="UNUSEDtoolTip" content="Disable">
-  <meta name="targetType" content="_self">
-  <meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
-  <meta name="order" content="org:opencrx:kernel:generic:CrxObject:disable">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
-</head>
-
-<body>
-<div id="container">
-	<div id="wrap">
-		<div id="header" style="height:90px;">
-      <div id="logoTable">
-        <table id="headerlayout">
-          <tr id="headRow">
-            <td id="head" colspan="2">
-              <table id="info">
-                <tr>
-                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-                  <td id="headerCellSpacerLeft"></td>
-                  <td id="headerCellMiddle">&nbsp;</td>
-                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <div id="content-wrap">
-    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
+        <b><%= objectTitle + (objectTitle.isEmpty() ? "" : " - ") + objectLabel %></b> is disabled.<br />
 <%
-	try {
-		final String WIZARD_NAME = "DisableCrxObject.jsp";
-		boolean actionOk = request.getParameter("OK.Button") != null;
-		boolean actionCancel = request.getParameter("Cancel.Button") != null;
-		boolean actionContinue = request.getParameter("Continue.Button") != null;
-		final boolean disable = !((request.getParameter("disable") != null) && (request.getParameter("disable").length() > 0));
-		Path objectPath = new Path(objectXri);
-		RefObject_1_0 refObj = (RefObject_1_0)pm.getObjectById(objectPath);
-		final String providerName = objectPath.get(2);
-		final String segmentName = objectPath.get(4);
-		final long compositeCounter = 0;
-		boolean currentUserIsAdmin =
-			app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
-		final String currentUserRole = app.getCurrentUserRole();
-		boolean permissionOk = true; //currentUserIsAdmin;
+		if(wc.getErrorMsg() != null && !wc.getErrorMsg().isEmpty()) {
 %>
-    <form name="disabler" accept-charset="utf-8" method="post" action="<%= WIZARD_NAME %>">
-      <input type="hidden" class="valueL" name="xri" value="<%= objectXri %>" />
-      <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-      <input type="Checkbox" name="disable" <%= disable ? "" : "checked" %> value="disable" style="display:none;" />
+			<br />
+			<br />
+			<div title="<%= wc.getErrorTitle().replace("\"", "'") %>"  style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+				<%= wc.getErrorMsg() %>
+			</div>
+			<br>
 <%
-  		if(permissionOk && actionOk) {
+		}
+  	} else {
 %>
-        <%= (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %><br />
-        Qualifier = <%= objectXri %><br /><br /><br />
+		<div title="XRI=<%= wc.getObjectIdentity().toXRI() %>">
+			Disable <b><%= objectTitle + (objectTitle.isEmpty() ? "" : " - ") + objectLabel %></b> and composites?<br>
+		</div>
+		<br />		
+		<div id="WaitIndicator" style="width:50px;height:24px;" class="wait">&nbsp;</div>
+		<div id="SubmitArea" style="display:none;">										    
+			<input type="Submit" name="OK" tabindex="1000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;"/>
+		    <input type="Submit" name="Cancel" tabindex="2000" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
+		</div>
 <%
-		try {
-			RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-			String parentXri = new Path(objectXri).getParent().getParent().toXri();
-			org.opencrx.kernel.generic.jmi1.CrxObject crxObject = (org.opencrx.kernel.generic.jmi1.CrxObject)obj;
-			pm.currentTransaction().begin();
-			crxObject.setDisabled(new Boolean(disable));
-			crxObject.setDisabledReason(currentUserRole);
-			System.out.println(new Date() + "  " + WIZARD_NAME + ": " + (disable ? "Disabling: " : "Enabling: ") + crxObject.refGetPath());
-			// Disable/enable composites			
-			try {
-				Utils.traverseObjectTree(
-					crxObject,
-					null, // referenceFilter
-					new Utils.TraverseObjectTreeCallback() {
-
-						// @Override
-						public Object visit(
-							RefObject_1_0 object,
-							Object context
-						) throws ServiceException {
-							if(context instanceof Counter) {
-								Counter counter = (Counter)context;
-								counter.increment();
-								// Avoid transaction timeout. Commit every 100 modified objects
-								if(counter.getValue() % 100 == 0) {
-									javax.jdo.PersistenceManager pm = javax.jdo.JDOHelper.getPersistenceManager(object);
-									System.out.println(new Date() + "  " + WIZARD_NAME + ": commit after " + counter.getValue() + " modified objects");
-									pm.currentTransaction().commit();
-									pm.currentTransaction().begin();
-								}
-							}
-							if (object instanceof org.opencrx.kernel.generic.jmi1.CrxObject) {
-								((org.opencrx.kernel.generic.jmi1.CrxObject)object).setDisabled(new Boolean(disable));
-								((org.opencrx.kernel.generic.jmi1.CrxObject)object).setDisabledReason(currentUserRole);
-								System.out.println(new Date() + "  " + WIZARD_NAME + ": " + (disable ? "Disabling: " : "Enabling: ") + object.refGetPath());
-							}
-							return context;
-						}
-					},
-					new Counter(0) // context
-				);
+  	}
+%>
+</form>
+<br />
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
+			onFailure: function() { },
+			onSuccess: function(t) {
+				$('UserDialog').update(t.responseText);
 			}
-			catch(Exception e) {
-				new ServiceException(e).log();
-			}
-			pm.currentTransaction().commit();
-%>
-          ...<%= disable ? "Disabled" : "Enabled" %>
-<%
-    	    // Go back to previous view
-      		Action action = new ObjectReference(refObj, app).getSelectObjectAction();
-      		response.sendRedirect(
-      			request.getContextPath() + "/" + action.getEncodedHRef()
-        	);
-        }
-        catch(Exception e) {
-%>
-          ...<b>NOT</b> <%= disable ? "Disabled" : "Enabled" %> <%= compositeCounter %> objects
-          <br><br>
-          <INPUT type="Submit" name="Cancel.Button" tabindex="2010" value=">>" />
-<%
-          try {
-              pm.currentTransaction().rollback();
-          } catch(Exception e1) {}
-          new ServiceException(e).log();
-        }
-      }
-      else {
-        if (actionContinue || actionCancel) {
-    	    // Go back to previous view
-      		Action nextAction = new ObjectReference(refObj, app).getSelectObjectAction();
-      		response.sendRedirect(
-      			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-        	);
-        	return;
-        }
-        else {
-          if (permissionOk) {
-%>
-            <div style="border:1px solid black;padding:10px;margin:2px 2px 10px 2px;background-color:<%= disable ? "#FF9900" : "#20FF20" %>;">
-              <div title="XRI=<%= objectXri %>">
-                <%= disable ? "Disable" : "Enable" %> <b><%= (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %></b> and composites<br>
-                XRI=<%= objectXri %>
-              </div>
-            </div>
-            <INPUT type="Submit" name="OK.Button" tabindex="2000" value="<%= app.getTexts().getOkTitle() %>" />
-            <INPUT type="Submit" name="Cancel.Button" tabindex="2000" value="<%= app.getTexts().getCancelTitle() %>" />
-<%
-          }
-          else {
-%>
-            <h1><font color="red">No Permission</font></h1>
-            <br />
-            <br />
-          	<INPUT type="Submit" name="Cancel.Button" tabindex="2010" value="<%= app.getTexts().getCancelTitle() %>" />
-<%
-          }
-        }
-      }
-    }
-    catch (Exception e) {
-      ServiceException e0 = new ServiceException(e);
-      e0.log();
-      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-      PrintWriter pw = new PrintWriter(out);
-      e0.printStackTrace(pw);
-      out.println("</pre></p>");
-    }
-%>
-  </form>
-
-      </div> <!-- content -->
-    </div> <!-- content-wrap -->
-  </div> <!-- wrap -->
-</div> <!-- container -->
-
-</body>
-</html>
-<%
-if(pm != null) {
-	pm.close();
-}
-%>
+		});
+		Event.stop(event);
+	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';		
+</script>
+<t:wizardClose controller="<%= wc %>" />

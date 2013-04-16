@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,6 +55,8 @@ package org.opencrx.kernel.workflow.servlet;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -79,10 +81,12 @@ import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
+import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 /**
  * The WorkflowHandlerServlet scans for non-executed 
@@ -90,146 +94,296 @@ import org.openmdx.kernel.log.SysLog;
  * marked as executed. The workflows to be executed must implement 
  * the interface org.opencrx.kernel.workflow.AsynchWorkflow_1_0.
  */
-public class WorkflowHandlerServlet
-    extends HttpServlet {
+public class WorkflowHandlerServlet extends HttpServlet {
 
-    //-----------------------------------------------------------------------
+	/**
+	 * ExecutionStatus
+	 *
+	 */
+	enum ExecutionStatus {
+		SUCCESS,
+		FAILED,
+		SKIPPED
+	}
+
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     public void init(
         ServletConfig config
     ) throws ServletException {
-
         super.init(config);
-        // data connection
         try {
             this.pmf = Utils.getPersistenceManagerFactory();
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             throw new ServletException("Can not get connection to data provider", e);
         }
     }
 
-    //-----------------------------------------------------------------------
-    private boolean executeWorkflow(
-        WfProcessInstance wfInstance
-    ) {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(wfInstance);
-    	SysLog.info("Execute", wfInstance.getProcess().getName());        
-        try {
-            String workflowName = wfInstance.getProcess().getName();
-            Boolean isSynchronous = wfInstance.getProcess().isSynchronous();        
-            // Synchronous workflow
-            if(
-                (isSynchronous != null) &&
-                isSynchronous.booleanValue()
-            ) {
-                org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm);
-                UserHome userHome = (UserHome)pm.getObjectById(
-                    wfInstance.refGetPath().getParent().getParent()
-                );
-                ContextCapable targetObject = null;
-                try {
-                	targetObject = (ContextCapable)pm.getObjectById(
-	                	wfInstance.getTargetObject()
-	                );
-                } catch(Exception e) {}
-                if(targetObject != null) {
-	                ExecuteWorkflowParams params = basePackage.createExecuteWorkflowParams(
-	                    null,
-	                    targetObject,
-	                    null, // triggeredBy
-	                    // execute workflow with same eventId. This way the workflow
-	                    // is executed in the same context, i.e. no new workflow instance is created
-	                    wfInstance.refGetPath().getBase(),
-	                    null,
-	                    wfInstance.getProcess()
-	                );
-	                try {
-	                    pm.currentTransaction().begin();
-	                    userHome.executeWorkflow(params);
-	                    pm.currentTransaction().commit();
-	                    pm.refresh(wfInstance);
-	                    // Successful execution if workflow was started (and completed)
-	                    return wfInstance.getStartedOn() != null;
-	                }
-	                catch(Exception e) {
-	                	SysLog.warning("Can not execute workflow. Exception occurred", "Workflow instance=" + wfInstance + "; home=" + userHome.refGetPath());
-	                	SysLog.warning(e.getMessage(), e.getCause());
-	                    try {
-	                        pm.currentTransaction().rollback();
-	                    } 
-	                    catch(Exception e0) {}
-	                    return false;
-	                }
+    /**
+     * WorkflowExecutorThread
+     *
+     */
+    public class WorkflowExecutorThread extends Thread {
+    
+    	/**
+    	 * Constructor.
+    	 * 
+    	 * @param segmentName
+    	 * @param wfProcessInstanceIdentities
+    	 * @param beginIndex
+    	 * @param endIndex
+    	 * @param pmf
+    	 */
+    	public WorkflowExecutorThread(
+    		String segmentName,
+    		List<Path> wfProcessInstanceIdentities,
+    		boolean isAtomic,
+    		int beginIndex,
+    		int endIndex,
+    		PersistenceManagerFactory pmf
+    	) {
+    		this.wfProcessInstanceIdentities = wfProcessInstanceIdentities;
+    		this.isAtomic = isAtomic;
+    		this.beginIndex = beginIndex;
+    		this.endIndex = endIndex;
+    		this.pm = pmf.getPersistenceManager(
+                SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
+                null
+            );
+    	}
+    	
+        /**
+         * Execute workflow.
+         * 
+         * @param wfInstance
+         * @return
+         */
+        private ExecutionStatus executeWorkflow(
+            WfProcessInstance wfInstance,
+            boolean isAtomic
+        ) {
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(wfInstance);
+        	SysLog.info("Execute", wfInstance.getProcess().getName());        
+            try {
+                String workflowName = wfInstance.getProcess().getName();
+                Boolean isSynchronous = wfInstance.getProcess().isSynchronous();        
+                // Synchronous workflow
+                if(Boolean.TRUE.equals(isSynchronous)) {
+                	// Synchronous workflows are by definition atomic
+                	if(isAtomic) {
+    	                UserHome userHome = (UserHome)pm.getObjectById(
+    	                    wfInstance.refGetPath().getParent().getParent()
+    	                );
+    	                ContextCapable targetObject = null;
+    	                try {
+    	                	targetObject = (ContextCapable)pm.getObjectById(
+    		                	wfInstance.getTargetObject()
+    		                );
+    	                } catch(Exception e) {}
+    	                if(targetObject != null) {
+    		                ExecuteWorkflowParams params = Structures.create(
+    		                	ExecuteWorkflowParams.class, 
+    		                	Datatypes.member(ExecuteWorkflowParams.Member.targetObject, targetObject),
+    		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredByEventId, wfInstance.refGetPath().getBase()),
+    		                	Datatypes.member(ExecuteWorkflowParams.Member.workflow, wfInstance.getProcess())
+    		                );
+    		                try {
+    		                    pm.currentTransaction().begin();
+    		                    userHome.executeWorkflow(params);
+    		                    pm.currentTransaction().commit();
+    		                    pm.refresh(wfInstance);
+    		                    // Successful execution if workflow was started (and completed)
+    		                    return wfInstance.getStartedOn() == null 
+    		                    	? ExecutionStatus.FAILED
+    		                    	: ExecutionStatus.SUCCESS;
+    		                } catch(Exception e) {
+    		                	SysLog.warning("Can not execute workflow. Exception occurred", "Workflow instance=" + wfInstance + "; home=" + userHome.refGetPath());
+    		                	SysLog.warning(e.getMessage(), e.getCause());
+    		                    try {
+    		                        pm.currentTransaction().rollback();
+    		                    } catch(Exception e0) {}
+    		                    return ExecutionStatus.FAILED;
+    		                }
+    	                } else {
+    	                	SysLog.warning("Can not execute workflow. Target object not accessible", "Workflow instance=" + wfInstance + "; home=" + userHome.refGetPath());
+    	                    return ExecutionStatus.FAILED;                	
+    	                }
+                	} else {
+                		return ExecutionStatus.SKIPPED;
+                	}
                 }
+                // Asynchronous workflow
                 else {
-                	SysLog.warning("Can not execute workflow. Target object not accessible", "Workflow instance=" + wfInstance + "; home=" + userHome.refGetPath());
-                    return false;                	
+                    Workflows.AsynchronousWorkflow workflow = null;            
+                    Class<?> workflowClass = null;
+                    try {
+                        workflowClass = Classes.getApplicationClass(
+                            workflowName
+                        );
+                    } catch(ClassNotFoundException e) {
+                    	SysLog.error("Implementation for workflow " + workflowName + " not found");
+                        return ExecutionStatus.FAILED;          
+                    }
+                    // Look up constructor
+                    Constructor<?> workflowConstructor = null;
+                    try {
+                        workflowConstructor = workflowClass.getConstructor(new Class[]{});
+                    } catch(NoSuchMethodException e) {
+                    	SysLog.error("No constructor found for workflow " + workflowName);
+                    }
+                    // Instantiate workflow
+                    try {
+                        workflow = (Workflows.AsynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
+                    } catch(InstantiationException e) {
+                    	SysLog.error("Can not create workflow (can not instantiate)", workflowName);
+                        return ExecutionStatus.FAILED;
+                    } catch(IllegalAccessException e) {
+                    	SysLog.error("Can not create workflow (illegal access)", workflowName);
+                        return ExecutionStatus.FAILED;
+                    } catch(IllegalArgumentException e) {
+                    	SysLog.error("Can not create workflow (illegal argument)", workflowName);
+                        return ExecutionStatus.FAILED;
+                    } catch(InvocationTargetException e) {
+                    	SysLog.error("Can not create workflow (can not invoke target)", workflowName + "(" + e.getTargetException().getMessage() + ")");
+                        return ExecutionStatus.FAILED;         
+                    }
+                    if(isAtomic == workflow.isAtomic()) {
+    	                workflow.execute(
+    	                    wfInstance
+    	                );
+    	                SysLog.info("SUCCESS");
+    	                return ExecutionStatus.SUCCESS;
+                    } else {
+                    	return ExecutionStatus.SKIPPED;                	
+                    }
                 }
-            }            
-            // Asynchronous workflow
-            else {
-                Workflows.AsynchronousWorkflow workflow = null;            
-                Class<?> workflowClass = null;
-                try {
-                    workflowClass = Classes.getApplicationClass(
-                        workflowName
-                    );
-                }
-                catch(ClassNotFoundException e) {
-                	SysLog.error("Implementation for workflow " + workflowName + " not found");
-                    return false;          
-                }
-                // Look up constructor
-                Constructor<?> workflowConstructor = null;
-                try {
-                    workflowConstructor = workflowClass.getConstructor(new Class[]{});
-                }
-                catch(NoSuchMethodException e) {
-                	SysLog.error("No constructor found for workflow " + workflowName);
-                }
-                // Instantiate workflow
-                try {
-                    workflow = (Workflows.AsynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
-                }
-                catch(InstantiationException e) {
-                	SysLog.error("Can not create workflow (can not instantiate)", workflowName);
-                    return false;
-                }
-                catch(IllegalAccessException e) {
-                	SysLog.error("Can not create workflow (illegal access)", workflowName);
-                    return false;
-                }
-                catch(IllegalArgumentException e) {
-                	SysLog.error("Can not create workflow (illegal argument)", workflowName);
-                    return false;
-                }
-                catch(InvocationTargetException e) {
-                	SysLog.error("Can not create workflow (can not invoke target)", workflowName + "(" + e.getTargetException().getMessage() + ")");
-                    return false;         
-                }  
-                workflow.execute(
-                    wfInstance
-                );
-                SysLog.info("SUCCESS");
-                return true;
+            } catch(Exception e) {
+            	SysLog.warning("FAILED", e.getMessage());
+                new ServiceException(e).log();
+                return ExecutionStatus.FAILED;
             }
         }
-        catch(Exception e) {
-        	SysLog.warning("FAILED", e.getMessage());
-            new ServiceException(e).log();
-            return false;
-        }            
+    	
+    	/* (non-Javadoc)
+		 * @see java.lang.Thread#run()
+		 */
+        @Override
+        public void run(
+        ) {
+        	try {
+        		for(int i = this.beginIndex; i < Math.min(this.endIndex, this.wfProcessInstanceIdentities.size()); i++) {
+        			Path wfProcessInstanceIdentity = this.wfProcessInstanceIdentities.get(i);
+                	WfProcessInstance wfProcessInstance = (WfProcessInstance)this.pm.getObjectById(wfProcessInstanceIdentity);
+                    int stepCounter = wfProcessInstance.getStepCounter() == null
+                        ? 0
+                        : wfProcessInstance.getStepCounter().intValue();
+                    boolean maxRetriesReached =
+                        (wfProcessInstance.getProcess().getMaxRetries() != null) &&
+                        (stepCounter >= wfProcessInstance.getProcess().getMaxRetries().intValue());
+                    // Double retry delay after each unsuccessful execution 
+                    int retryDelayMillis = (1 << stepCounter) * 1000;
+                    boolean maxRetryDelayReached =
+                        retryDelayMillis > MAX_RETRY_DELAY_MILLIS;
+                    if(
+                        !maxRetriesReached &&
+                        !maxRetryDelayReached &&
+                        ((wfProcessInstance.getLastActivityOn() == null ? 0L : wfProcessInstance.getLastActivityOn().getTime()) + retryDelayMillis < new Date().getTime())
+                    ) {
+                    	Date startedOn = new Date();
+                    	ExecutionStatus status = this.executeWorkflow(
+                    		wfProcessInstance,
+                    		this.isAtomic
+                    	);
+                        if(status == ExecutionStatus.SUCCESS) {
+                            try {
+                            	this.pm.refresh(wfProcessInstance);
+                            	this.pm.currentTransaction().begin();
+                                wfProcessInstance.setStartedOn(startedOn);
+                                wfProcessInstance.setFailed(Boolean.FALSE);
+                                wfProcessInstance.setLastActivityOn(new Date());
+                                wfProcessInstance.setStepCounter(
+                                    new Integer(wfProcessInstance.getStepCounter().intValue() + 1)
+                                );
+                                this.pm.currentTransaction().commit();
+                            } catch(Exception e) {
+                            	SysLog.info(e.getMessage(), e.getCause());
+                                try {
+                                	this.pm.currentTransaction().rollback();
+                                } catch(Exception e0) {}
+                            }
+                        } else if(status == ExecutionStatus.FAILED) {
+                            try {
+                            	this.pm.currentTransaction().begin();
+                                wfProcessInstance.setLastActivityOn(new Date());
+                                wfProcessInstance.setStepCounter(
+                                    new Integer(wfProcessInstance.getStepCounter().intValue() + 1)
+                                );
+                                this.pm.currentTransaction().commit();
+                            } catch(Exception e) {
+                            	SysLog.info(e.getMessage(), e.getCause());
+                                try {
+                                	this.pm.currentTransaction().rollback();
+                                } catch(Exception e0) {}
+                            }
+                        } else {
+                        	// The execution was skipped. E.g. this happens in case of 
+                        	// asynchronous workflows and isAtomic does not match 
+                        	// the atomicity of the workflow
+                        }
+                    }
+                    // Execution fails if maxRetryDelayReached || maxRetriesReached 
+                    else if(maxRetryDelayReached || maxRetriesReached) {
+                        try {
+                        	this.pm.currentTransaction().begin();
+                            wfProcessInstance.setStartedOn(new Date());
+                            wfProcessInstance.setFailed(Boolean.TRUE);                    
+                            this.pm.currentTransaction().commit();
+                        } catch(Exception e) {
+                        	SysLog.info(e.getMessage(), e.getCause());
+                            try {
+                            	this.pm.currentTransaction().rollback();
+                            } catch(Exception e0) {}                        
+                        }
+                    }        			
+        		}
+        	} finally {
+        		try {
+        			this.pm.close();
+        		} catch(Exception ignore) {}
+        	}
+        }
+
+        //-------------------------------------------------------------------
+        // Members
+        //-------------------------------------------------------------------
+		private final List<Path> wfProcessInstanceIdentities;
+		private final boolean isAtomic;
+    	private final int beginIndex;
+    	private final int endIndex;
+    	private final PersistenceManager pm;
     }
-    
-    //-----------------------------------------------------------------------
+
+    /**
+     * Process pending workflows.
+     * 
+     * @param providerName
+     * @param segmentName
+     * @param isAtomic
+     * @param req
+     * @param res
+     * @throws IOException
+     */
     private void processPendingWorklows(
+    	String id,
         String providerName,
         String segmentName,
+        boolean isAtomic,
         HttpServletRequest req, 
         HttpServletResponse res
     ) throws IOException {
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
-        SysLog.detail(WORKFLOW_NAME + " " + providerName + "/" + segmentName);        
+        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + id);
+        SysLog.detail(WORKFLOW_NAME + " " + id);    
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
                 SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
@@ -238,7 +392,7 @@ public class WorkflowHandlerServlet
             Workflows.getInstance().initWorkflows(
                 pm,
                 providerName,
-                segmentName                
+                segmentName
             );
             // Get user homes segment
             org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
@@ -247,93 +401,60 @@ public class WorkflowHandlerServlet
             	userHomeSegment.refGetPath().getDescendant("userHome", ":*", "wfProcessInstance", ":*")
             );
             query.startedOn().isNull();
-            query.orderByStepCounter().ascending();
+            query.orderByStepCounter().ascending(); // process first with lower step counter
+            query.orderByCreatedAt().ascending(); // first come - first serve
             List<WfProcessInstance> wfInstances = userHomeSegment.getExtent(query);
-            SysLog.info("Executing workflows");
+            List<Path> wfProcessInstanceIdentities = new ArrayList<Path>();
             for(WfProcessInstance wfInstance: wfInstances) {
-                int stepCounter = wfInstance.getStepCounter() == null
-                    ? 0
-                    : wfInstance.getStepCounter().intValue();
-                boolean maxRetriesReached =
-                    (wfInstance.getProcess().getMaxRetries() != null) &&
-                    (stepCounter >= wfInstance.getProcess().getMaxRetries().intValue());
-                // Double retry delay after each unsuccessful execution 
-                int retryDelayMillis = (1 << stepCounter) * 1000;
-                boolean maxRetryDelayReached =
-                    retryDelayMillis > MAX_RETRY_DELAY_MILLIS;
-                if(
-                    !maxRetriesReached &&
-                    !maxRetryDelayReached &&
-                    ((wfInstance.getLastActivityOn() == null ? 0L : wfInstance.getLastActivityOn().getTime()) + retryDelayMillis < new Date().getTime())
-                ) {
-                    boolean success = this.executeWorkflow(
-                        wfInstance
-                    );
-                    if(success) {
-                        try {
-                        	pm.refresh(wfInstance);
-                            pm.currentTransaction().begin();
-                            wfInstance.setStartedOn(new Date());
-                            wfInstance.setFailed(Boolean.FALSE);
-                            wfInstance.setLastActivityOn(new Date());
-                            wfInstance.setStepCounter(
-                                new Integer(wfInstance.getStepCounter().intValue() + 1)
-                            );
-                            pm.currentTransaction().commit();
-                        }
-                        catch(Exception e) {
-                        	SysLog.info(e.getMessage(), e.getCause());
-                            try {
-                                pm.currentTransaction().rollback();
-                            } 
-                            catch(Exception e0) {}
-                        }
-                    }
-                    else {
-                        try {
-                            pm.currentTransaction().begin();
-                            wfInstance.setLastActivityOn(new Date());
-                            wfInstance.setStepCounter(
-                                new Integer(wfInstance.getStepCounter().intValue() + 1)
-                            );
-                            pm.currentTransaction().commit();
-                        }
-                        catch(Exception e) {
-                        	SysLog.info(e.getMessage(), e.getCause());
-                            try {
-                                pm.currentTransaction().rollback();
-                            } 
-                            catch(Exception e0) {}
-                        }
-                    }
-                }
-                // Execution fails if maxRetryDelayReached || maxRetriesReached 
-                else if(maxRetryDelayReached || maxRetriesReached) {
-                    try {
-                        pm.currentTransaction().begin();
-                        wfInstance.setStartedOn(new Date());
-                        wfInstance.setFailed(Boolean.TRUE);                    
-                        pm.currentTransaction().commit();
-                    }
-                    catch(Exception e) {
-                    	SysLog.info(e.getMessage(), e.getCause());
-                        try {
-                            pm.currentTransaction().rollback();
-                        } 
-                        catch(Exception e0) {}                        
-                    }
-                }
-                // Wait
-                else {
-                    // wait
-                }
+            	wfProcessInstanceIdentities.add(
+            		wfInstance.refGetPath()
+            	);
+            	if(wfProcessInstanceIdentities.size() > BATCH_SIZE) {
+            		break;
+            	}
+            }
+            SysLog.info("Executing workflows");
+            {
+        		List<WorkflowExecutorThread> threads = new ArrayList<WorkflowExecutorThread>();
+        		// Up to MAX_THREADS for atomic processes
+            	if(isAtomic) {
+            		int batchSize = (wfProcessInstanceIdentities.size() / MAX_THREADS) + 1;
+            		for(int i = 0; i < MAX_THREADS; i++) {
+            			WorkflowExecutorThread t = new WorkflowExecutorThread(
+            				segmentName,
+            				wfProcessInstanceIdentities,
+            				isAtomic,
+            				i * batchSize,
+            				(i + 1) * batchSize,
+            				this.pmf
+            			);
+            			threads.add(t);
+            			t.start();
+            		}
+            	}
+            	// Only one thread for non-atomic processes
+            	else {
+        			WorkflowExecutorThread t = new WorkflowExecutorThread(
+        				segmentName,
+        				wfProcessInstanceIdentities,
+        				isAtomic,
+        				0,
+        				wfProcessInstanceIdentities.size(),
+        				this.pmf
+        			);
+        			threads.add(t);
+        			t.start();
+            	}
+            	for(Thread t: threads) {
+            		try {
+            			t.join();
+            		} catch(Exception ignore) {}
+            	}
             }
             try {
                 pm.close();
-            } 
-            catch(Exception e) {}
-        }
-        catch(Exception e) {
+            } catch(Exception e) {}
+        } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             System.out.println("Exception occured " + e0.getMessage() + ". Continuing");
             SysLog.warning("Exception occured " + e0.getMessage() + ". Continuing");
@@ -341,51 +462,66 @@ public class WorkflowHandlerServlet
         }
     }    
 
-    //-----------------------------------------------------------------------
+    /**
+     * Handle request.
+     * 
+     * @param request
+     * @param response
+     * @throws ServletException
+     * @throws IOException
+     */
     protected void handleRequest(
-        HttpServletRequest req, 
-        HttpServletResponse res
+        HttpServletRequest request, 
+        HttpServletResponse response
     ) throws ServletException, IOException {
         if(System.currentTimeMillis() > this.startedAt + 180000L) {
-            String segmentName = req.getParameter("segment");
-            String providerName = req.getParameter("provider");
-            String id = providerName + "/" + segmentName;
-            if(COMMAND_EXECUTE.equals(req.getPathInfo())) {
-            	if(!runningSegments.containsKey(id)) {
-            		try {
-	                    runningSegments.put(
-	                    	id,
-	                    	Thread.currentThread()
-	                    );
-	                    this.processPendingWorklows(
-	                        providerName,
-	                        segmentName,
-	                        req,
-	                        res
-	                    );
-	                } 
-	                catch(Exception e) {
-	                	SysLog.warning(e.getMessage(), e.getCause());
-	                }
-	                finally {
-	                    runningSegments.remove(id);
-	                }
+            String segmentName = request.getParameter("segment");
+            String providerName = request.getParameter("provider");
+            String baseId = providerName + "/" + segmentName;
+            if(COMMAND_EXECUTE.equals(request.getPathInfo())) {
+            	// Workflows are processed in two queues: one for
+            	// atomic workflows and one for non-atomic workflows.
+            	// The workflows in each queue are processed sequentially.
+            	// By definitin, atomic workflows do not have side-effects
+            	// on non-atomic workflows.
+            	for(boolean isAtomic: Arrays.asList(false, true)) {
+            		String id = baseId + "[isAtomic=" + isAtomic + "]";
+	            	if(!runningSegments.containsKey(id)) {
+	            		try {
+		                    runningSegments.put(
+		                    	id,
+		                    	Thread.currentThread()
+		                    );
+		                    this.processPendingWorklows(
+		                    	id,
+		                        providerName,
+		                        segmentName,
+		                        isAtomic,
+		                        request,
+		                        response
+		                    );
+		                } catch(Exception e) {
+		                	SysLog.warning(e.getMessage(), e.getCause());
+		                } finally {
+		                    runningSegments.remove(id);
+		                }
+	            	} else if(
+	            		!runningSegments.get(id).isAlive() || 
+	            		runningSegments.get(id).isInterrupted()
+	            	) {
+		            	Thread t = runningSegments.get(id);
+	            		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + id + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+	            	}
             	}
-            	else if(
-            		!runningSegments.get(id).isAlive() || 
-            		runningSegments.get(id).isInterrupted()
-            	) {
-	            	Thread t = runningSegments.get(id);
-            		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
-            	}            	
-            }
-            else {
-            	SysLog.warning(WORKFLOW_NAME + " " + providerName + "/" + segmentName + ". Ignoring command. Running segments are", runningSegments);                
+            } else {
+            	SysLog.warning(WORKFLOW_NAME + " " + baseId + ". Ignoring command. Running segments are", runningSegments);                
             }
         }
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     protected void doGet(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -398,7 +534,9 @@ public class WorkflowHandlerServlet
         );
     }
         
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     protected void doPost(
         HttpServletRequest req, 
         HttpServletResponse res
@@ -419,7 +557,9 @@ public class WorkflowHandlerServlet
     private static final String WORKFLOW_NAME = "WorkflowHandler";
     private static final String COMMAND_EXECUTE = "/execute";
     private static final long MAX_RETRY_DELAY_MILLIS = 604800000L; // 7 days
-    private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();
+    private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();    
+    private static final int BATCH_SIZE = 500;
+    private static final int MAX_THREADS = 5;
     
     private PersistenceManagerFactory pmf = null;
     private long startedAt = System.currentTimeMillis();

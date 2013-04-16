@@ -212,8 +212,7 @@ public abstract class MimeUtils {
     private static String mapX500ToSMTPAddress(
     	String x500Address,
     	org.opencrx.kernel.account1.jmi1.Segment accountSegment,
-    	Map<String,String> addressMap,
-    	boolean validateMappedAddresses
+    	Map<String,String> addressMap
     ) throws ServiceException {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
     	// Try to find X500 address
@@ -221,7 +220,7 @@ public abstract class MimeUtils {
     		AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
     		EMailAddressQuery emailAddressQuery = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
     		emailAddressQuery.emailType().equalTo(EMailType.X500.getValue());
-    		emailAddressQuery.thereExistsEmailAddress().equalTo(x500Address);
+    		emailAddressQuery.thereExistsEmailAddress().like("(?i)" + x500Address);
     		accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(emailAddressQuery));
     		List<Account> accounts = accountSegment.getAccount(accountQuery);
     		if(accounts.size() == 1) {
@@ -234,18 +233,44 @@ public abstract class MimeUtils {
     			}
     		}
     	}
-    	// Map by address map
-    	if(addressMap.containsKey(x500Address)) {
-    		String smtpAddress = addressMap.get(x500Address);
-    		if(validateMappedAddresses) {
-    			List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(pm, accountSegment.refGetPath().get(2), accountSegment.refGetPath().get(4), smtpAddress);
-    			if(emailAddresses.isEmpty()) {
-    				return null;
-    			}
-    		}
-    		return smtpAddress;
+    	return addressMap.containsKey(x500Address) 
+    		? addressMap.get(x500Address)
+    		: null;
+    }
+
+    /**
+     * Return true if smtp address is valid and exists. 
+     * 
+     * @param accountSegment
+     * @param validate
+     * @param smtpAddress
+     * @return
+     * @throws ServiceException
+     */
+    private static boolean smtpAddressIsValid(
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment,
+    	String smtpAddress,
+    	boolean validate
+    ) throws ServiceException {
+    	if(smtpAddress == null) {
+    		return false;
     	} else {
-    		return null;
+	    	if(validate) {
+	    		if(accountSegment == null) {
+	    			return false;
+	    		} else {
+					PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+					List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+						pm, 
+						accountSegment.refGetPath().get(2), 
+						accountSegment.refGetPath().get(4), 
+						smtpAddress
+					);
+					return !emailAddresses.isEmpty();
+	    		}
+	    	} else {
+	    		return true;
+	    	}
     	}
     }
 
@@ -255,7 +280,7 @@ public abstract class MimeUtils {
 	 * @param msgStream
 	 * @param accountSegment
 	 * @param addressMap
-	 * @param validateMappedAddresses if true, validates whether the mapped SMTP address exists 
+	 * @param validateAddresses if true, validates whether the mapped SMTP address exists 
 	 *        in account segment.
 	 * @param errors
 	 * @return mapped MimeMessage or null in case of errors.
@@ -264,7 +289,7 @@ public abstract class MimeUtils {
 		InputStream msgStream,
 		org.opencrx.kernel.account1.jmi1.Segment accountSegment,
 		Map<String,String> addressMap,
-		boolean validateMappedAddresses,
+		boolean validateAddresses,
 		List<String> errors
 	) {
 		MimeMessage mimeMessage = new MimeMessageImpl();
@@ -280,21 +305,20 @@ public abstract class MimeUtils {
 			// From
 			try {
 				String emailAddress = msg.getFromEmail();
+				String smtpAddress = null;
 				if(emailAddress.startsWith("/")) {
-					String smtpAddress = mapX500ToSMTPAddress(emailAddress, accountSegment, addressMap, validateMappedAddresses);
-					if(smtpAddress != null) {
-						mimeMessage.setFrom(
-							new InternetAddress(smtpAddress, msg.getFromName())
-						);
-					} else {
-						errors.add(emailAddress);
-					}
+					smtpAddress = mapX500ToSMTPAddress(emailAddress, accountSegment, addressMap);
 				} else {
-					mimeMessage.setFrom(
-						new InternetAddress(emailAddress, msg.getFromName())
-					);
+					smtpAddress = emailAddress;
 				}
-			} catch(Exception uncaught) {}
+				if(smtpAddressIsValid(accountSegment, smtpAddress, validateAddresses)) {
+					mimeMessage.setFrom(
+						new InternetAddress(smtpAddress, msg.getFromName())
+					);
+				} else {
+					errors.add(emailAddress);
+				}
+			} catch(Exception ignore) {}
 			// Subject
 			{
 				mimeMessage.setSubject(msg.getSubject());
@@ -302,21 +326,19 @@ public abstract class MimeUtils {
 			// Recipients
 			for(RecipientEntry recipient: msg.getRecipients()) {
 				String emailAddress = recipient.getToEmail();
+				String smtpAddress = null;
 				if(emailAddress.startsWith("/")) {
-					String stmpAddress = mapX500ToSMTPAddress(emailAddress, accountSegment, addressMap, validateMappedAddresses);
-					if(stmpAddress != null) {
-						mimeMessage.addRecipient(
-							RecipientType.TO,
-							new InternetAddress(stmpAddress, recipient.getToName())
-						);
-					} else {
-						errors.add(emailAddress);
-					}			
+					smtpAddress = mapX500ToSMTPAddress(emailAddress, accountSegment, addressMap);
 				} else {
+					smtpAddress = emailAddress;
+				}
+				if(smtpAddressIsValid(accountSegment, smtpAddress, validateAddresses)) {
 					mimeMessage.addRecipient(
 						RecipientType.TO,
-						new InternetAddress(emailAddress, recipient.getToName())
+						new InternetAddress(smtpAddress, recipient.getToName())
 					);
+				} else {
+					errors.add(emailAddress);
 				}
 			}
 			// Message-ID
@@ -328,12 +350,14 @@ public abstract class MimeUtils {
 			// Body
 			{
 		        MimeBodyPart messageBodyPart = new MimeBodyPart();
-		        if(msg.getBodyRTF() != null) {
+		        if(msg.getBodyText() != null) {
+		        	messageBodyPart.setText(msg.getBodyText());
+		        } else if(msg.getBodyRTF() != null) {
 		        	messageBodyPart.setText(
 		        		RTFToText.toTextAsString(new StringInputStream(msg.getBodyRTF()))
 		        	);
 		        } else {
-		        	messageBodyPart.setText(msg.getBodyText());
+		        	messageBodyPart.setText("");		        	
 		        }
 		        mimeMultipart.addBodyPart(messageBodyPart);
 			}
@@ -356,8 +380,7 @@ public abstract class MimeUtils {
 			}
 			// Complete
 	        mimeMessage.setContent(mimeMultipart);
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			ServiceException e0 = new ServiceException(e);
 			e0.log();
 			errors.add(e0.getMessage());

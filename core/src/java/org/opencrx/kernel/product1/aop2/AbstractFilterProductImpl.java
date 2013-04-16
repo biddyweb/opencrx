@@ -53,10 +53,11 @@
 package org.opencrx.kernel.product1.aop2;
 
 import org.opencrx.kernel.backend.Products;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class AbstractFilterProductImpl
 	<S extends org.opencrx.kernel.product1.jmi1.AbstractFilterProduct,N extends org.opencrx.kernel.product1.cci2.AbstractFilterProduct,C extends Void>
@@ -77,11 +78,11 @@ public class AbstractFilterProductImpl
             int count = Products.getInstance().countFilteredProduct(
                 this.sameObject()
             );
-            return Utils.getBasePackage(this.sameManager()).createCountFilteredObjectsResult(
-                count
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.Member.count, count)
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }

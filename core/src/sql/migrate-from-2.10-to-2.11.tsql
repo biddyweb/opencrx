@@ -1,0 +1,4 @@
+#include "sql-definitions.tsql"
+
+UPDATE OOCKE1_ACTIVITY_CREATOR SET ICAL_CLASS = 0 WHERE ICAL_CLASS IS NULL COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

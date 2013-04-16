@@ -88,6 +88,7 @@ import org.opencrx.kernel.product1.jmi1.ConfiguredProduct;
 import org.opencrx.kernel.product1.jmi1.DefaultSalesTaxTypeFilterProperty;
 import org.opencrx.kernel.product1.jmi1.DisabledFilterProperty;
 import org.opencrx.kernel.product1.jmi1.DiscountPriceModifier;
+import org.opencrx.kernel.product1.jmi1.GetPriceLevelResult;
 import org.opencrx.kernel.product1.jmi1.LinearPriceModifier;
 import org.opencrx.kernel.product1.jmi1.PriceListEntry;
 import org.opencrx.kernel.product1.jmi1.PriceModifier;
@@ -108,6 +109,7 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
@@ -116,6 +118,8 @@ import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class Products extends AbstractImpl {
 
@@ -254,14 +258,37 @@ public class Products extends AbstractImpl {
         
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Find pricing rule.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     * 
+     * @deprecated
+     */
     public org.opencrx.kernel.product1.jmi1.PricingRule findPricingRule(
         String name,
         org.opencrx.kernel.product1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
-        org.opencrx.kernel.product1.jmi1.Product1Package productPkg = org.opencrx.kernel.utils.Utils.getProductPackage(pm);
-        org.opencrx.kernel.product1.cci2.PricingRuleQuery pricingRuleQuery = productPkg.createPricingRuleQuery();
+    	return this.findPricingRule(name, segment);
+    }
+
+    /**
+     * Find pricing rule.
+     * 
+     * @param name
+     * @param segment
+     * @return
+     */
+    public org.opencrx.kernel.product1.jmi1.PricingRule findPricingRule(
+        String name,
+        org.opencrx.kernel.product1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
+        PricingRuleQuery pricingRuleQuery = (PricingRuleQuery)pm.newQuery(PricingRule.class);
         pricingRuleQuery.name().equalTo(name);
         List<org.opencrx.kernel.product1.jmi1.PricingRule> pricingRules = segment.getPricingRule(pricingRuleQuery);
         return pricingRules.isEmpty()
@@ -305,7 +332,6 @@ public class Products extends AbstractImpl {
         String providerName,
         String segmentName
     ) {
-        Product1Package productPkg = Utils.getProductPackage(pm);
         org.opencrx.kernel.product1.jmi1.Segment productSegment = this.getProductSegment(
             pm, 
             providerName, 
@@ -316,7 +342,7 @@ public class Products extends AbstractImpl {
             return pricingRule;            
         }                
         pm.currentTransaction().begin();
-        pricingRule = productPkg.getPricingRule().createPricingRule();
+        pricingRule = pm.newInstance(PricingRule.class);
         pricingRule.setName(pricingRuleName);
         pricingRule.setDescription(description);
         pricingRule.setGetPriceLevelScript(getPriceLevelScript);
@@ -679,6 +705,8 @@ public class Products extends AbstractImpl {
 	                				case IS_NOT_IN: 
 	                					query.forAllDisabled().equalTo(!p.isDisabled());	                						
 	                					break;
+	                				default:
+	                					break;
 	                			}
 	                			break;
 	                		default:
@@ -688,6 +716,8 @@ public class Products extends AbstractImpl {
 	                					break;
 	                				case IS_NOT_IN: 
 	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
+	                					break;
+	                				default:
 	                					break;
 	                			}
 	                			break;
@@ -1340,8 +1370,30 @@ public class Products extends AbstractImpl {
         return numberProcessed;
     }
     
+    //-----------------------------------------------------------------------
+    protected javax.jmi.reflect.RefPackage getJmiPackage(
+        PersistenceManager pm,
+        String authorityXri
+    ) {
+    	Authority obj = pm.getObjectById(
+            Authority.class,
+            authorityXri
+        );  
+    	return obj.refOutermostPackage().refPackage(obj.refGetPath().getBase());
+    }
+
+    //-----------------------------------------------------------------------
+    protected Product1Package getProductPackage(
+        PersistenceManager pm
+    ) {
+    	return (Product1Package)getJmiPackage(
+    		pm,
+    		Product1Package.AUTHORITY_XRI
+    	);            
+    }
+
     //-------------------------------------------------------------------------
-    public org.opencrx.kernel.product1.jmi1.GetPriceLevelResult getPriceLevel(
+    public GetPriceLevelResult getPriceLevel(
         PricingRule pricingRule,
         AbstractContract contract,
         AbstractProduct product,
@@ -1353,7 +1405,6 @@ public class Products extends AbstractImpl {
         String script = (pricingRule.getGetPriceLevelScript() == null) || (pricingRule.getGetPriceLevelScript().length() == 0) ? 
         	PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE : 
         	pricingRule.getGetPriceLevelScript().intern();
-        org.opencrx.kernel.product1.jmi1.Product1Package productPkg = Utils.getProductPackage(pm); 
         try {
             Class<?> clazz = ScriptUtils.getClass(script);
             Method m = clazz.getMethod(
@@ -1372,7 +1423,7 @@ public class Products extends AbstractImpl {
                 (org.opencrx.kernel.product1.jmi1.GetPriceLevelResult)m.invoke(
                     null, 
                     new Object[] {
-                        Utils.getProductPackage(pm).refOutermostPackage(),
+                        this.getProductPackage(pm).refOutermostPackage(),
                         pricingRule,
                         contract,
                         product,
@@ -1382,38 +1433,30 @@ public class Products extends AbstractImpl {
                     }
                 );
             return result;
-        }
-        catch(NoSuchMethodException e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "getPriceLevelScript does not define a method with the following signature:\n" +
-                PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE
-            );
-        }
-        catch(InvocationTargetException e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not invoke getPriceLevel():\n" +
-                e.getTargetException().getMessage()
-            );
-        }
-        catch(IllegalAccessException e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "Illegal access when invoking getPriceLevel():\n" +
-                e.getMessage()
-            );
-        }
-        catch(Exception e) {
-            return productPkg.createGetPriceLevelResult(
-                null, null, null, null,
-                STATUS_CODE_ERROR,
-                "Can not compile getPriceLevelScript:\n" +
-                e.getMessage()
-            );
+        } catch(NoSuchMethodException e) {
+        	return Structures.create(
+        		GetPriceLevelResult.class, 
+        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
+        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "getPriceLevelScript does not define a method with the following signature:\n" + PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE)
+        	);
+        } catch(InvocationTargetException e) {
+        	return Structures.create(
+        		GetPriceLevelResult.class, 
+        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
+        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "Can not invoke getPriceLevel():\n" + e.getTargetException().getMessage())
+        	);
+        } catch(IllegalAccessException e) {
+        	return Structures.create(
+        		GetPriceLevelResult.class, 
+        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
+        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "Illegal access when invoking getPriceLevel():\n" + e.getMessage())
+        	);
+        } catch(Exception e) {
+        	return Structures.create(
+        		GetPriceLevelResult.class, 
+        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
+        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "Can not compile getPriceLevelScript:\n" + e.getMessage())
+        	);
         }
     }
 
@@ -1632,21 +1675,21 @@ public class Products extends AbstractImpl {
                       }
                   }
               }
-          }
-          catch(Exception e) {
+          } catch(Exception e) {
               statusCode = 1;
               ServiceException e0 = new org.openmdx.base.exception.ServiceException(e);
               statusMessage = e0.getMessage();
               e0.log();
           }
         }
-        org.opencrx.kernel.product1.jmi1.GetPriceLevelResult result = Utils.getProductPackage(pm).createGetPriceLevelResult(
-            lowestPriceCustomer,
-            lowestPriceCustomerDiscount,
-            lowestPriceCustomerDiscountIsPercentage,
-            priceLevel,
-            statusCode,
-            statusMessage
+        GetPriceLevelResult result = Structures.create(
+        	GetPriceLevelResult.class, 
+        	Datatypes.member(GetPriceLevelResult.Member.customer, lowestPriceCustomer),
+        	Datatypes.member(GetPriceLevelResult.Member.customerDiscount, lowestPriceCustomerDiscount),
+        	Datatypes.member(GetPriceLevelResult.Member.customerDiscountIsPercentage, lowestPriceCustomerDiscountIsPercentage),
+        	Datatypes.member(GetPriceLevelResult.Member.priceLevel, priceLevel),
+        	Datatypes.member(GetPriceLevelResult.Member.statusCode, statusCode),
+        	Datatypes.member(GetPriceLevelResult.Member.statusMessage, statusMessage)        	
         );
         return result;
     }

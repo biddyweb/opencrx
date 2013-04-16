@@ -78,8 +78,6 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
-import javax.naming.spi.NamingManager;
-import javax.resource.cci.ConnectionFactory;
 
 import org.oasisopen.jmi1.RefContainer;
 import org.opencrx.kernel.account1.jmi1.Account1Package;
@@ -97,7 +95,6 @@ import org.opencrx.kernel.uom1.jmi1.Uom1Package;
 import org.opencrx.security.realm1.jmi1.Realm1Package;
 import org.openmdx.application.rest.ejb.DataManager_2ProxyFactory;
 import org.openmdx.application.rest.http.SimplePort;
-import org.openmdx.application.rest.spi.EntityManagerProxyFactory_2;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
@@ -113,7 +110,6 @@ import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.transaction.TransactionAttributeType;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.attribute.DateValue;
 import org.openmdx.security.realm1.jmi1.Permission;
@@ -121,7 +117,11 @@ import org.openmdx.security.realm1.jmi1.Role;
 
 public abstract class Utils {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get handle to model repository.
+     * 
+     * @return
+     */
     public static Model_1_0 getModel(
     ) {
         Model_1_0 model = null;
@@ -135,28 +135,41 @@ public abstract class Utils {
         return model;
     }
         
-    //-----------------------------------------------------------------------
+    /**
+     * Get persistence manager factory for local access.
+     * 
+     * @return
+     * @throws NamingException
+     * @throws ServiceException
+     */
     public static PersistenceManagerFactory getPersistenceManagerFactory(
     ) throws NamingException, ServiceException {
         return JDOHelper.getPersistenceManagerFactory("EntityManagerFactory");
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get persistence manager factory for remote access.
+     * 
+     * @param url
+     * @param userName
+     * @param password
+     * @param mimeType
+     * @return
+     * @throws NamingException
+     * @throws ServiceException
+     */
     public static PersistenceManagerFactory getPersistenceManagerFactoryProxy(
     	String url,
     	String userName,
     	String password,
     	String mimeType
     ) throws NamingException, ServiceException {
-        if(!NamingManager.hasInitialContextFactoryBuilder()) {
-            NonManagedInitialContextFactoryBuilder.install(null);
-        }
     	SimplePort port = new SimplePort();
     	port.setMimeType(mimeType == null ? "application/vnd.openmdx.wbxml" : mimeType);
     	port.setUserName(userName);
     	port.setPassword(password);
     	port.setConnectionURL(url);
-        ConnectionFactory connectionFactory = new ConnectionFactoryAdapter(
+    	org.openmdx.base.resource.cci.ConnectionFactory connectionFactory = new ConnectionFactoryAdapter(
         	port,
             true, // supportsLocalTransactionDemarcation
             TransactionAttributeType.NEVER
@@ -168,12 +181,11 @@ public abstract class Utils {
         );
         dataManagerProxyConfiguration.put(
             ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-            EntityManagerProxyFactory_2.class.getName()
-        );    
+            org.openmdx.base.rest.connector.EntityManagerProxyFactory_2.class.getName()
+        );
         PersistenceManagerFactory outboundConnectionFactory = JDOHelper.getPersistenceManagerFactory(
             dataManagerProxyConfiguration
         );
-
         Map<String,Object> entityManagerConfiguration = new HashMap<String,Object>();
         entityManagerConfiguration.put(
             ConfigurableProperty.ConnectionFactory.qualifiedName(),
@@ -186,7 +198,14 @@ public abstract class Utils {
         return JDOHelper.getPersistenceManagerFactory(entityManagerConfiguration);        
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get persistence manager factory with given context name.
+     * 
+     * @param contextName
+     * @return
+     * @throws NamingException
+     * @throws ServiceException
+     */
     public static PersistenceManagerFactory getPersistenceManagerFactoryProxy(
     	String contextName
     ) throws NamingException, ServiceException {    	
@@ -216,7 +235,13 @@ public abstract class Utils {
         return JDOHelper.getPersistenceManagerFactory(entityManagerConfiguration);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package with given name.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static javax.jmi.reflect.RefPackage getJmiPackage(
         PersistenceManager pm,
         String authorityXri
@@ -228,7 +253,13 @@ public abstract class Utils {
     	return obj.refOutermostPackage().refPackage(obj.refGetPath().getBase());
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:workflow1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static org.opencrx.kernel.workflow1.jmi1.Workflow1Package getWorkflowPackage(
         PersistenceManager pm
     ) {
@@ -238,7 +269,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:code1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static org.opencrx.kernel.code1.jmi1.Code1Package getCodePackage(
         PersistenceManager pm
     ) {
@@ -248,7 +285,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:document1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static org.opencrx.kernel.document1.jmi1.Document1Package getDocumentPackage(
         PersistenceManager pm
     ) {
@@ -258,7 +301,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:admin1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Admin1Package getAdminPackage(
         PersistenceManager pm
     ) {
@@ -268,7 +317,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:openmdx:base.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static org.openmdx.base.jmi1.BasePackage getOpenMdxBasePackage(
         PersistenceManager pm
     ) {
@@ -278,7 +333,13 @@ public abstract class Utils {
          );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:security:home1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Home1Package getHomePackage(
         PersistenceManager pm
     ) {
@@ -288,7 +349,13 @@ public abstract class Utils {
          );            
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:security:contract1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Contract1Package getContractPackage(
         PersistenceManager pm
     ) {
@@ -298,7 +365,13 @@ public abstract class Utils {
     	);            
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:security:depot1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Depot1Package getDepotPackage(
         PersistenceManager pm
     ) {
@@ -308,7 +381,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:building1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Building1Package getBuildingPackage(
         PersistenceManager pm
     ) {
@@ -318,7 +397,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:product1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Product1Package getProductPackage(
         PersistenceManager pm
     ) {
@@ -328,7 +413,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:uom1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Uom1Package getUomPackage(
         PersistenceManager pm
     ) {
@@ -338,7 +429,13 @@ public abstract class Utils {
     	);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:security:realm1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Realm1Package getRealmPackage(
         PersistenceManager pm
     ) {
@@ -348,7 +445,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:base.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static org.opencrx.kernel.base.jmi1.BasePackage getBasePackage(
         PersistenceManager pm
     ) {
@@ -358,7 +461,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:activity1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Activity1Package getActivityPackage(
         PersistenceManager pm
     ) {
@@ -368,7 +477,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:account1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Account1Package getAccountPackage(
         PersistenceManager pm
     ) {
@@ -378,7 +493,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:forecast1.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static Forecast1Package getForecastPackage(
         PersistenceManager pm
     ) {
@@ -388,7 +509,13 @@ public abstract class Utils {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get JMI package for org:opencrx:kernel:generic.
+     * 
+     * @param pm
+     * @return
+     * @deprecated use PersistenceManager.newInstance(), PersistenceManager.newQuery(), Structures.create() instead. 
+     */
     public static GenericPackage getGenericPackage(
         PersistenceManager pm
     ) {
@@ -398,7 +525,12 @@ public abstract class Utils {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Map string to a valid file name.
+     * 
+     * @param s
+     * @return
+     */
     public static String toFilename(
         String s
     ) {
@@ -429,7 +561,13 @@ public abstract class Utils {
         return s;
     }
         
-    //-----------------------------------------------------------------------
+    /**
+     * Get digest for given password.
+     * 
+     * @param password
+     * @param algorithm
+     * @return
+     */
     public static String getPasswordDigest(
         String password,
         String algorithm
@@ -446,7 +584,13 @@ public abstract class Utils {
         return null;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Returns true if the two values are equal.
+     * 
+     * @param v1
+     * @param v2
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static boolean areEqual(
         Object v1,
@@ -464,7 +608,13 @@ public abstract class Utils {
         return v1.equals(v2);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get uom scale factor.
+     * 
+     * @param from
+     * @param to
+     * @return
+     */
     public static BigDecimal getUomScaleFactor(
         org.opencrx.kernel.uom1.jmi1.Uom from,
         org.opencrx.kernel.uom1.jmi1.Uom to
@@ -505,7 +655,12 @@ public abstract class Utils {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get localized date format.
+     * 
+     * @param userHome
+     * @return
+     */
     public static SimpleDateFormat getLocalizedDateFormat(
     	UserHome userHome
     ) {
@@ -550,7 +705,10 @@ public abstract class Utils {
     	return dateTimeFormat;
     }
     	
-    //-------------------------------------------------------------------------
+    /**
+     * Callback interface for traverseObjectTree method.
+     *
+     */
     public interface TraverseObjectTreeCallback {
     
     	public Object visit(
@@ -560,14 +718,26 @@ public abstract class Utils {
     	
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get UUID.
+     * 
+     * @return
+     */
     public static String getUidAsString(
     ) {
         return UUIDConversion.toUID(UUIDs.newUUID());        
     }
 
-    //-------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
+    /**
+     * Model-driven, recursive traversal of object tree.
+     * 
+     * @param object
+     * @param referenceFilter
+     * @param callback
+     * @param context
+     * @return
+     * @throws ServiceException
+     */
     public static Object traverseObjectTree(
     	RefObject_1_0 object,
         Set<String> referenceFilter,
@@ -579,10 +749,10 @@ public abstract class Utils {
     		context
     	);
         Model_1_0 model = Model_1Factory.getModel();
-        @SuppressWarnings("rawtypes")
-        Map<String,ModelElement_1_0> references = (Map)model.getElement(
+        @SuppressWarnings("unchecked")
+        Map<String,ModelElement_1_0> references = model.getElement(
         	object.refClass().refMofId()
-        ).objGetValue("reference");
+        ).objGetMap("reference");
         for(ModelElement_1_0 featureDef: references.values()) {
             ModelElement_1_0 referencedEnd = model.getElement(
                 featureDef.objGetValue("referencedEnd")
@@ -623,7 +793,14 @@ public abstract class Utils {
         return newContext;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get principal assigned to pm.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public static org.openmdx.security.realm1.jmi1.Principal getRequestingPrincipal(
     	PersistenceManager pm,
     	String providerName,
@@ -636,7 +813,13 @@ public abstract class Utils {
         );
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Return true if principal is member of given groups.
+     * 
+     * @param principal
+     * @param principalGroups
+     * @return
+     */
     public static boolean principalIsMemberOf(
     	org.openmdx.security.realm1.jmi1.Principal principal,
     	String... principalGroups
@@ -653,7 +836,14 @@ public abstract class Utils {
     	return false;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get permissions for given action and principal.
+     * 
+     * @param principal
+     * @param action
+     * @return
+     * @throws ServiceException
+     */
     public static List<String> getPermissions(
     	org.openmdx.security.realm1.jmi1.Principal principal,
     	String action

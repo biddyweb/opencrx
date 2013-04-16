@@ -60,10 +60,11 @@ import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
 import org.opencrx.kernel.depot1.jmi1.DepotPosition;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class DepotImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.Depot,N extends org.opencrx.kernel.depot1.cci2.Depot,C extends Void>
@@ -89,12 +90,12 @@ public class DepotImpl
                 params.getClosingDate(),
                 errors
             );
-            return Utils.getDepotPackage(this.sameManager()).createCloseDepotResult(
-                (short)0, 
-                null
-            );
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.depot1.jmi1.CloseDepotResult.class, 
+            	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CloseDepotResult.Member.status, (short)0),
+            	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CloseDepotResult.Member.statusMessage, null)                	
+            );            
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
@@ -115,21 +116,21 @@ public class DepotImpl
                 Boolean.FALSE
             );
             if(depotPosition == null) {
-                return Utils.getDepotPackage(this.sameManager()).createOpenDepotPositionResult(
-                    null,
-                    (short)1, 
-                    errors.toString()
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.Member.depotPosition, null),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.Member.status, (short)1),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.Member.statusMessage, errors.toString())                	
                 );
+            } else {
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.Member.depotPosition, depotPosition),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.Member.status, (short)0),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotPositionResult.Member.statusMessage, null)                	
+                );            	
             }
-            else {
-                return Utils.getDepotPackage(this.sameManager()).createOpenDepotPositionResult(
-                    depotPosition,
-                    (short)0, 
-                    null
-                );
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }        
     }

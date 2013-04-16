@@ -1,6 +1,6 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: Base
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -79,6 +79,7 @@ import org.opencrx.kernel.account1.jmi1.RevenueReport;
 import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
@@ -138,32 +139,56 @@ import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.portal.servlet.Action;
-import org.openmdx.portal.servlet.Codes;
 import org.openmdx.portal.servlet.WebKeys;
 import org.openmdx.portal.servlet.action.SelectObjectAction;
 import org.w3c.cci2.BinaryLargeObjects;
 
+/**
+ * Base backend class.
+ *
+ */
 public class Base extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register backend.
+	 */
 	public static void register(
 	) {
 		registerImpl(new Base());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get backend instance.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Base getInstance(
 	) throws ServiceException {
 		return getInstance(Base.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	protected Base(
 	) {
 		
 	}
 	
-    //-------------------------------------------------------------------------
+    /**
+     * Send alert to given users.
+     * 
+     * @param target
+     * @param toUsers
+     * @param name
+     * @param description
+     * @param importance
+     * @param resendDelayInSeconds
+     * @param reference
+     * @throws ServiceException
+     */
     public void sendAlert(
     	ContextCapable target,
         String toUsers,        
@@ -233,7 +258,14 @@ public class Base extends AbstractImpl {
         }
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Assign object to current principal.
+     * 
+     * @param target
+     * @param overwrite
+     * @param useRunAsPrincipal
+     * @throws ServiceException
+     */
     public void assignToMe(
         RefObject_1_0 target,
         boolean overwrite,
@@ -267,10 +299,12 @@ public class Base extends AbstractImpl {
         }
     }
 
-	//-------------------------------------------------------------------------
     /**
      * Counts the number of occurences of items in report and returns a string
      * of the form item0: n0, item1: n1, etc.
+     * 
+     * @param report
+     * @return
      */
     public String analyseReport(
         List<String> report
@@ -290,7 +324,14 @@ public class Base extends AbstractImpl {
         return reportAsMap.toString();
     }
         
-    //-------------------------------------------------------------------------
+    /**
+     * Create non-tiny GUI access URL for given object.
+     * 
+     * @param context
+     * @param contextPattern
+     * @param object
+     * @return
+     */
     public String getAccessUrl(
     	Object context,
     	String contextPattern,
@@ -304,7 +345,15 @@ public class Base extends AbstractImpl {
     	);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create GUI access URL for given object.
+     * 
+     * @param context
+     * @param contextPattern
+     * @param object
+     * @param asTinyUrl
+     * @return
+     */
     public String getAccessUrl(
     	Object context,
     	String contextPattern,
@@ -370,7 +419,12 @@ public class Base extends AbstractImpl {
     	}
     }
 
-	//-------------------------------------------------------------------------
+    /**
+     * Test if given URL matches application GUI access URL.
+     * 
+     * @param url
+     * @return
+     */
     public boolean isAccessUrl(
     	String url
     ) {
@@ -378,8 +432,16 @@ public class Base extends AbstractImpl {
         	url.indexOf(WebKeys.SERVLET_NAME) > 0 || 
         	url.startsWith(TinyUrlUtils.PREFIX);    	
     }
-    
-    //-----------------------------------------------------------------------
+
+    /**
+     * Create media from given input stream and create or update media to given CrxObject.
+     * 
+     * @param object
+     * @param contentType
+     * @param contentName
+     * @param content
+     * @throws IOException
+     */
     public void createOrUpdateMedia(
         CrxObject object,
         String contentType,
@@ -398,7 +460,6 @@ public class Base extends AbstractImpl {
         if(media == null) {    	    	
 	        media = pm.newInstance(Media.class);
 	        object.addMedia(
-	            false,
 	            this.getUidAsString(),
 	            media
 	        );
@@ -419,34 +480,39 @@ public class Base extends AbstractImpl {
     }
     
     /**
-     * Return toString() of given object. If object is a collection return toString
-     * of first object in collection.
+     * Returns toString() of the given object. If object is a collection 
+     * return toString() of first element.
+     * 
      * @param obj
      * @return
      */
-    public static String toS(
+    public String toPlain(
         Object obj
     ) {
-        return obj == null ? 
-        	"" : 
-        		(obj instanceof Collection) && !((Collection<?>)obj).isEmpty() ? 
-        			((Collection<?>)obj).iterator().next().toString() : 
-        				obj.toString();
+        String s = obj == null ? "" : 
+    		(obj instanceof Collection) && !((Collection<?>)obj).isEmpty() ? 
+    			((Collection<?>)obj).iterator().next().toString() : 
+    				obj.toString();
+    	return s;
     }
-
+    
     /**
-     * Replace blanks by &nbsp;
-     * @param obj
-     * @return
+     * Callback interface for mapping codes.
+     *
      */
-    public String toNbspS(
-        Object obj
-    ) {
-        return toS(obj).replace(" ", "&nbsp;");
+    public interface CodeMapper {
+    	
+    	public String getLocaleText(short locale);
+    	
+    	public String getCurrencyText(short currency, short locale);
+    	
+    	public String getCountryText(short country, short locale);
+    	
     }
 
     /**
      * Return display title of given object.
+     * 
      * @param refObj
      * @param codes
      * @param texts
@@ -457,7 +523,7 @@ public class Base extends AbstractImpl {
      */
     public String getTitle(
     	RefObject_1_0 refObj,
-    	Codes codes,
+    	CodeMapper codeMapper,
     	short locale,
     	boolean asShortTitle
     ) throws ServiceException {
@@ -465,14 +531,16 @@ public class Base extends AbstractImpl {
     		return "#NULL";
     	}
     	if(JDOHelper.isNew(refObj) || !JDOHelper.isPersistent(refObj)) {
-    		return "Untitled";
-    	}        
+    		return this.toPlain("Untitled");
+    	}
     	try {
     		PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
     		String localeAsString = "en_US";
-    		try {
-    			localeAsString = (String)codes.getShortText("locale", (short)0, true, true).get(locale);
-    		} catch(Exception e) {}
+    		if(codeMapper != null) {
+	    		try {
+	    			localeAsString = codeMapper.getLocaleText(locale);
+	    		} catch(Exception e) {}
+    		}
     		String language = "en";
     		if(localeAsString.indexOf("_") > 0) {
     			language = localeAsString.substring(0, 2);
@@ -482,26 +550,31 @@ public class Base extends AbstractImpl {
     		DecimalFormat decimalFormat = Utils.getDecimalFormat(language);          
     		if(refObj instanceof Account) {
     			Account obj = (Account)refObj;
-    			return toNbspS(obj.getFullName());
+    			return this.toPlain(obj.getFullName());
     		} else if(refObj instanceof ProductBasePrice) {
     			ProductBasePrice obj = (ProductBasePrice)refObj;
-    			@SuppressWarnings("unchecked")
-                Map<Object,Object> currencyTexts = codes.getLongText("currency", locale, true, true);
     			try {
-    				return toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " " + toS(currencyTexts.get(new Short(obj.getPriceCurrency())));
-    			}
-    			catch(Exception e) {
-    				return toS(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + " N/A";                  
+    				return 
+    					this.toPlain(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + 
+    					this.toPlain(" ") + 
+    					this.toPlain(codeMapper == null ? obj.getPriceCurrency() : codeMapper.getCurrencyText(obj.getPriceCurrency(), locale));
+    			} catch(Exception e) {
+    				return 
+    					this.toPlain(obj.getPrice() == null ? "N/A" : decimalFormat.format(obj.getPrice().doubleValue())) + 
+    					this.toPlain(" N/A");
     			}
     		} else if(refObj instanceof PriceListEntry) {
     			PriceListEntry obj = (PriceListEntry)refObj;
-    			return toS(obj.getProductName());
+    			return this.toPlain(obj.getProductName());
     		} else if(refObj instanceof Activity) {
     			Activity obj = (Activity)refObj;
-    			return toS(obj.getActivityNumber()).trim() + ": " + toS(obj.getName());
+    			return 
+    				this.toPlain(obj.getActivityNumber()).trim() + 
+    				this.toPlain(": ") + 
+    				this.toPlain(obj.getName());
     		} else if(refObj instanceof ActivityProcessState) {
     			ActivityProcessState obj = (ActivityProcessState)refObj;
-    			return toNbspS(obj.getName());
+    			return this.toPlain(obj.getName());
     		} else if(refObj instanceof ActivityFollowUp) {
     			ActivityFollowUp followUp = (ActivityFollowUp)refObj;
     			Activity activity = null;
@@ -511,16 +584,19 @@ public class Base extends AbstractImpl {
     					followUp.refGetPath().getParent().getParent()
     				);
     				activity.getName();
-    			} 
-    			catch(Exception e) {}
-    			return 
-    			(activity == null ? "" : getTitle(activity, codes, locale, asShortTitle) + ": ") + 
-    			toS(followUp.getTitle());
+    			} catch(Exception e) {}
+    			return activity == null ? "" : 
+    				this.getTitle(activity, codeMapper, locale, asShortTitle) + 
+    				this.toPlain(": ") + 
+    				this.toPlain(followUp.getTitle());
+    		} else if(refObj instanceof ActivityGroup) {
+    			ActivityGroup obj = (ActivityGroup)refObj;
+    			return obj == null ? this.toPlain("Untitled") : 
+    				this.toPlain(obj.getName());
     		} else if(refObj instanceof ActivityGroupAssignment) {
     			ActivityGroupAssignment obj = (ActivityGroupAssignment)refObj;
-    			return obj == null ? 
-    				"Untitled" : 
-    					getTitle(obj.getActivityGroup(), codes, locale, asShortTitle);
+    			return obj == null ? this.toPlain("Untitled") : 
+    				this.getTitle(obj.getActivityGroup(), codeMapper, locale, asShortTitle);
     		} else if(refObj instanceof AddressGroupMember) {
     			AddressGroupMember member = (AddressGroupMember)refObj;
     			org.opencrx.kernel.account1.jmi1.AccountAddress address = member.getAddress();
@@ -529,12 +605,14 @@ public class Base extends AbstractImpl {
     					(Account)pm.getObjectById(
     						address.refGetPath().getParent().getParent()
     					);
-    				return getTitle(address, codes, locale, asShortTitle) + " / " + account.getFullName();
+    				return
+    					this.getTitle(address, codeMapper, locale, asShortTitle) + 
+    					this.toPlain(" / ") + 
+    					this.toPlain(account.getFullName());
     			}
     			else {
-    				return address  == null ? 
-    					"Untitled" : 
-    						getTitle(address, codes, locale, asShortTitle);                
+    				return address  == null ? this.toPlain("Untitled") : 
+    					this.getTitle(address, codeMapper, locale, asShortTitle);                
     			}
     		} else if(refObj instanceof AbstractActivityParty) {
     			RefObject_1_0 party = null;
@@ -547,20 +625,17 @@ public class Base extends AbstractImpl {
     					EMailRecipient recipient = (EMailRecipient)refObj;
     					address = recipient.getParty();
     					if(address instanceof EMailAddress) {
-    						String title = getTitle(address, codes, locale, asShortTitle);
+    						String title = this.getTitle(address, codeMapper, locale, asShortTitle);
     						if(asShortTitle) {
     							return title;
-    						}
-    						else {
+    						} else {
     							EMail email = (EMail)pm.getObjectById(
     								recipient.refGetPath().getParent().getParent()
     							);
-    							String messageSubject = email.getMessageSubject() == null ? 
-    								"" :
-    									URLEncoder.encode(email.getMessageSubject(), "UTF-8").replace("+", "%20");
-    							String messageBody = email.getMessageBody() == null ?
-    								"" :
-    									URLEncoder.encode(email.getMessageBody(), "UTF-8").replace("+", "%20");
+    							String messageSubject = email.getMessageSubject() == null ? "" :
+    								URLEncoder.encode(email.getMessageSubject(), "UTF-8").replace("+", "%20");
+    							String messageBody = email.getMessageBody() == null ? "" :
+    								URLEncoder.encode(email.getMessageBody(), "UTF-8").replace("+", "%20");
     							// Browser limit
     							if(messageBody.length() > 1500) {
     								messageBody = messageBody.substring(0, 1500);
@@ -568,8 +643,7 @@ public class Base extends AbstractImpl {
     							return title + (title.indexOf("@") > 0 ? "?subject=" + messageSubject + "&body=" + messageBody : "");
     						}
     					}
-    				}
-    				else {
+    				} else {
     					PhoneCallRecipient recipient = (PhoneCallRecipient)refObj;
     					address = recipient.getParty();                      
     				}
@@ -578,194 +652,218 @@ public class Base extends AbstractImpl {
     						(Account)pm.getObjectById(
     							address.refGetPath().getParent().getParent()
     						);
-    					return getTitle(address, codes, locale, asShortTitle) + " / " + account.getFullName();
+    					return 
+    						this.getTitle(address, codeMapper, locale, asShortTitle) + 
+    						this.toPlain(" / ") + 
+    						this.toPlain(account.getFullName());
+    				} else {
+    					return address  == null ? this.toPlain("Untitled") : 
+    						this.getTitle(address, codeMapper, locale, asShortTitle);                
     				}
-    				else {
-    					return address  == null ? 
-    						"Untitled" : 
-    							getTitle(address, codes, locale, asShortTitle);                
-    				}
-    			}
-    			else if(refObj instanceof EMailRecipientGroup) {
+    			} else if(refObj instanceof EMailRecipientGroup) {
     				party = ((EMailRecipientGroup)refObj).getParty();
-    			}
-    			else if(refObj instanceof IncidentParty) {
+    			} else if(refObj instanceof IncidentParty) {
     				party = ((IncidentParty)refObj).getParty();
-    			}
-    			else if(refObj instanceof MailingRecipient) {
+    			} else if(refObj instanceof MailingRecipient) {
     				party = ((MailingRecipient)refObj).getParty();
-    			}
-    			else if(refObj instanceof MailingRecipientGroup) {
+    			} else if(refObj instanceof MailingRecipientGroup) {
     				party = ((MailingRecipientGroup)refObj).getParty();
-    			}
-    			else if(refObj instanceof MeetingParty) {
+    			} else if(refObj instanceof MeetingParty) {
     				party = ((MeetingParty)refObj).getParty();
-    			}
-    			else if(refObj instanceof TaskParty) {
+    			} else if(refObj instanceof TaskParty) {
     				party = ((TaskParty)refObj).getParty();
-    			}
-    			else if(refObj instanceof PhoneCallRecipientGroup) {
+    			} else if(refObj instanceof PhoneCallRecipientGroup) {
     				party = ((PhoneCallRecipientGroup)refObj).getParty();                  
     			}
     			String emailHint = ((AbstractActivityParty)refObj).getEmailHint();
-    			return party == null ? 
-    				"Untitled" :
-    					getTitle(party, codes, locale, asShortTitle) + (emailHint == null ? "" : " (" + emailHint + ")");
+    			return party == null ? this.toPlain("Untitled") :
+    				this.getTitle(party, codeMapper, locale, asShortTitle) + 
+    				(emailHint == null ? "" : this.toPlain(" (" + emailHint + ")"));
     		} else if(refObj instanceof org.opencrx.kernel.contract1.jmi1.AccountAddress) {
-    			return refObj.refGetValue("address") == null ? 
-    				"Untitled" : 
-    					getTitle((RefObject_1_0)refObj.refGetValue("address"), codes, locale, asShortTitle);
+    			return refObj.refGetValue("address") == null ? this.toPlain("Untitled") : 
+    				this.getTitle((RefObject_1_0)refObj.refGetValue("address"), codeMapper, locale, asShortTitle);
     		} else if(refObj instanceof EMailAddressable) {
-    			return "* " + toS(refObj.refGetValue("emailAddress"));
+    			return "* " + this.toPlain(refObj.refGetValue("emailAddress"));
     		} else if(refObj instanceof SalesContractPosition) {
-    			return toS(refObj.refGetValue("lineItemNumber"));
+    			return this.toPlain(refObj.refGetValue("lineItemNumber"));
     		} else if(refObj instanceof AbstractProduct) {
     			AbstractProduct product = (AbstractProduct)refObj;
-    			return product.getProductNumber() == null || product.getProductNumber().length() == 0 || product.getProductNumber().equals(product.getName()) ? 
-    				toS(product.getName()) : 
-    					toS(product.getName() + " / " + product.getProductNumber()); 
+    			return product.getProductNumber() == null || product.getProductNumber().isEmpty() || product.getProductNumber().equals(product.getName()) ? 
+    				this.toPlain(product.getName()) : 
+    					this.toPlain(product.getName() + 
+    					this.toPlain(" / ") + 
+    					this.toPlain(product.getProductNumber())); 
     		} else if(refObj instanceof PostalAddressable) {
     			String address = "";
     			int nLines = 0;
-    			for(String l: (List<String>)refObj.refGetValue("postalAddressLine")) {
-    				String line = toS(l);
-    				if(nLines > 0) address += "<br />";
+    			@SuppressWarnings("unchecked")
+                List<String> postalAddressLines = (List<String>)refObj.refGetValue("postalAddressLine");
+    			for(String l: postalAddressLines) {
+    				String line = this.toPlain(l);
+    				if(nLines > 0) address += "\n";
     				address += line;
     				nLines++;
     			}
-    			for(String l: (List<String>)refObj.refGetValue("postalStreet")) {
-    				String street = toS(l);
-    				if(nLines > 0) address += "<br />";
+    			@SuppressWarnings("unchecked")
+                List<String> postalStreetLines = (List<String>)refObj.refGetValue("postalStreet"); 
+    			for(String l: postalStreetLines) {
+    				String street = this.toPlain(l);
+    				if(nLines > 0) address += "\n";
     				address += street;
     				nLines++;
     			}
-    			Object postalCountry = refObj.refGetValue("postalCountry");
-    			String postalCountryS = postalCountry == null ? 
-    				"" : 
-    					codes == null ? 
-    						"" + postalCountry : 
-    							toS(codes.getLongText("org:opencrx:kernel:address1:PostalAddressable:postalCountry", locale, true, true).get(postalCountry));
-    			return address + "<br />" + toS(refObj.refGetValue("postalCode")) + " " + toS(refObj.refGetValue("postalCity")) + "<br />" + postalCountryS;
+    			Number postalCountry = (Number)refObj.refGetValue("postalCountry");
+    			String postalCountryS = postalCountry == null ? "" : 
+    				codeMapper == null ? "" + postalCountry : 
+    					this.toPlain(codeMapper.getCountryText(postalCountry.shortValue(), locale));
+    			return
+    				address + "\n" + 
+    				this.toPlain(refObj.refGetValue("postalCode")) + this.toPlain(" ") + 
+    				this.toPlain(refObj.refGetValue("postalCity")) + "\n" + 
+    				postalCountryS;
     		} else if(refObj instanceof PhoneNumberAddressable) {
-    			return "* " + toS(refObj.refGetValue("phoneNumberFull"));
+    			return "* " + this.toPlain(refObj.refGetValue("phoneNumberFull"));
     		} else if(refObj instanceof RoomAddressable) {
     			RoomAddressable obj = (RoomAddressable)refObj;
     			if(refObj instanceof Addressable) {              
     				AbstractBuildingUnit building = ((Addressable)refObj).getBuilding();
     				if(building == null) {
-    					return toS(obj.getRoomNumber());
+    					return this.toPlain(obj.getRoomNumber());
+    				} else {
+    					return 
+    						this.getTitle(building, codeMapper, locale, asShortTitle) + 
+    						this.toPlain(" ") +  
+    						this.toPlain(obj.getRoomNumber());
     				}
-    				else {
-    					return getTitle(building, codes, locale, asShortTitle) + " " +  toS(obj.getRoomNumber());
-    				}
-    			}
-    			else {
-    				return toS(obj.getRoomNumber());
+    			} else {
+    				return this.toPlain(obj.getRoomNumber());
     			}
     		} else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Rating) {
-    			return toS(refObj.refGetValue("ratingLevel"));
+    			return this.toPlain(refObj.refGetValue("ratingLevel"));
     		} else if(refObj instanceof RevenueReport) {
-    			return toS(refObj.refGetValue("reportNumber"));
+    			return this.toPlain(refObj.refGetValue("reportNumber"));
     		} else if(refObj instanceof WebAddressable) {
-    			return "* " + toS(refObj.refGetValue("webUrl"));
+    			return "* " + this.toPlain(refObj.refGetValue("webUrl"));
     		} else if(refObj instanceof CodeValueEntry) {
-    			return toS(refObj.refGetValue("shortText"));
+    			return this.toPlain(refObj.refGetValue("shortText"));
     		} else if(refObj instanceof org.opencrx.kernel.generic.jmi1.Description) {
-    			return toS(refObj.refGetValue("language"));
+    			return this.toPlain(refObj.refGetValue("language"));
     		} else if(refObj instanceof Document) {
     			Document document = (Document)refObj;
     			if(document.getQualifiedName() != null) {
-    				return toS(document.getQualifiedName());
-    			}
-    			else if(document.getName() != null) {
-    				return toS(document.getName());                  
-    			}
-    			else {
-    				return toS(document.getDocumentNumber());
+    				return this.toPlain(document.getQualifiedName());
+    			} else if(document.getName() != null) {
+    				return this.toPlain(document.getName());                  
+    			} else {
+    				return this.toPlain(document.getDocumentNumber());
     			}
     		} else if(refObj instanceof Member) {
-    			return (refObj.refGetValue("account") == null ? "Untitled" : getTitle((RefObject_1_0)refObj.refGetValue("account"), codes, locale, asShortTitle));
+    			return (refObj.refGetValue("account") == null ? this.toPlain("Untitled") : 
+    				this.getTitle((RefObject_1_0)refObj.refGetValue("account"), codeMapper, locale, asShortTitle));
     		} else if(refObj instanceof ContactRelationship) {
-    			return (refObj.refGetValue("toContact") == null ? "Untitled" : getTitle((RefObject_1_0)refObj.refGetValue("toContact"), codes, locale, asShortTitle));
+    			return (refObj.refGetValue("toContact") == null ? this.toPlain("Untitled") : 
+    				this.getTitle((RefObject_1_0)refObj.refGetValue("toContact"), codeMapper, locale, asShortTitle));
     		} else if(refObj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
     			org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)refObj;
-    			return getTitle(userHome.getContact(), codes, locale, asShortTitle);
+    			return this.getTitle(userHome.getContact(), codeMapper, locale, asShortTitle);
     		} else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
-    			return (refObj.refGetValue("reference") == null ? "Untitled" : getTitle((RefObject_1_0)refObj.refGetValue("reference"), codes, locale, asShortTitle));
+    			return (refObj.refGetValue("reference") == null ? this.toPlain("Untitled") : 
+    				this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), codeMapper, locale, asShortTitle));
     		} else if(refObj instanceof WfProcessInstance) {
     			WfProcessInstance wfProcessInstance = (WfProcessInstance)refObj;
-    			return wfProcessInstance.getProcess() == null ? "Untitled" : getTitle(wfProcessInstance.getProcess(), codes, locale, asShortTitle) + " " + toS(refObj.refGetValue("startedOn"));
+    			return wfProcessInstance.getName() != null
+    				? this.toPlain(wfProcessInstance.getName())
+    				: wfProcessInstance.getProcess() == null 
+    					? this.toPlain("Untitled") 
+    					: this.getTitle(wfProcessInstance.getProcess(), codeMapper, locale, asShortTitle) + 
+    						this.toPlain(" ") + 
+    						this.toPlain(refObj.refGetValue("startedOn"));
     		} else if(refObj instanceof org.opencrx.kernel.workflow1.jmi1.WfProcess) {
-    			return toS(((org.opencrx.kernel.workflow1.jmi1.WfProcess)refObj).getName());
+    			return this.toPlain(((org.opencrx.kernel.workflow1.jmi1.WfProcess)refObj).getName());
     		} else if(refObj instanceof org.opencrx.kernel.base.jmi1.AuditEntry) {
     			Object createdAt = refObj.refGetValue(SystemAttributes.CREATED_AT);
-    			return (refObj.refGetValue(SystemAttributes.CREATED_AT) == null) ? "Untitled" : dateFormat.format(createdAt) + " " + timeFormat.format(createdAt);
+    			return (refObj.refGetValue(SystemAttributes.CREATED_AT) == null) ? this.toPlain("Untitled") : 
+    				this.toPlain(dateFormat.format(createdAt)) + 
+    				this.toPlain(" ") + 
+    				this.toPlain(timeFormat.format(createdAt));
     		} else if(refObj instanceof org.opencrx.kernel.base.jmi1.Note) {
-    			return toS(refObj.refGetValue("title"));
+    			return this.toPlain(refObj.refGetValue("title"));
     		} else if(refObj instanceof org.opencrx.kernel.base.jmi1.Chart) {
-    			return toS(refObj.refGetValue("description"));
+    			return this.toPlain(refObj.refGetValue("description"));
     		} else if(refObj instanceof org.opencrx.kernel.model1.jmi1.Element) {
-    			String title = toS(refObj.refGetValue("qualifiedName"));              
+    			String title = this.toPlain(refObj.refGetValue("qualifiedName"));              
     			if(title.indexOf(":") > 0) {
     				int pos = title.lastIndexOf(":");
-    				title = title.substring(pos + 1) + " (" + title.substring(0, pos) + ")";
+    				title = 
+    					title.substring(pos + 1) + 
+    					this.toPlain(" (") + 
+    					title.substring(0, pos) + 
+    					this.toPlain(")");
     			}
     			return title;
     		} else if(refObj instanceof DepotEntity) {
     			DepotEntity obj = (DepotEntity)refObj;
-    			return obj.getDepotEntityNumber() == null ? toS(obj.getName()) : toS(obj.getDepotEntityNumber());
+    			return obj.getDepotEntityNumber() == null ? this.toPlain(obj.getName()) : 
+    				this.toPlain(obj.getDepotEntityNumber());
     		} else if(refObj instanceof DepotContract) {
     			DepotContract obj = (DepotContract)refObj;
-    			return obj.getDepotHolderNumber() == null ? toS(obj.getName()) : toS(obj.getDepotHolderNumber());
+    			return obj.getDepotHolderNumber() == null ? this.toPlain(obj.getName()) : 
+    				this.toPlain(obj.getDepotHolderNumber());
     		} else if(refObj instanceof Depot) {
     			Depot obj = (Depot)refObj;
-    			return obj.getDepotNumber() == null ? toS(obj.getName()) : toS(obj.getDepotNumber());          
+    			return obj.getDepotNumber() == null ? this.toPlain(obj.getName()) : 
+    				this.toPlain(obj.getDepotNumber());          
     		} else if(refObj instanceof DepotPosition) {
     			DepotPosition obj = (DepotPosition)refObj;
-    			String depotTitle = getTitle(obj.getDepot(), codes, locale, asShortTitle);
-    			return depotTitle + " / " + toS(obj.getName());                    
+    			String depotTitle = this.getTitle(obj.getDepot(), codeMapper, locale, asShortTitle);
+    			return 
+    				depotTitle + 
+    				this.toPlain(" / ") + 
+    				this.toPlain(obj.getName());                    
     		} else if(refObj instanceof DepotReport) {
     			DepotReport obj = (DepotReport)refObj;
-    			String depotTitle = getTitle(obj.getDepot(), codes, locale, asShortTitle);
-    			return depotTitle + " / " + toS(obj.getName());                    
+    			String depotTitle = this.getTitle(obj.getDepot(), codeMapper, locale, asShortTitle);
+    			return 
+    				depotTitle + 
+    				this.toPlain(" / ") + 
+    				this.toPlain(obj.getName());                    
     		} else if(refObj instanceof DepotReportItemPosition) {
     			DepotReportItemPosition obj = (DepotReportItemPosition)refObj;
-    			return obj.getPositionName();
+    			return this.toPlain(obj.getPositionName());
     		} else if(refObj instanceof SimpleEntry) {
     			SimpleEntry obj = (SimpleEntry)refObj;
-    			return toS(obj.getEntryValue());
+    			return this.toPlain(obj.getEntryValue());
     		} else if(refObj instanceof Media) {
     			Media obj = (Media)refObj;
-    			return toS(obj.getContentName());
+    			return this.toPlain(obj.getContentName());
     		} else if(refObj instanceof ContractRole) {
     			ContractRole contractRole = (ContractRole)refObj;
     			return 
-	    			getTitle(contractRole.getContract(), codes, locale, asShortTitle) + " / " + 
-	    			getTitle(contractRole.getAccount(), codes, locale, asShortTitle) + " / " + 
-	    			getTitle(contractRole.getContractReferenceHolder(), codes, locale, asShortTitle);
+	    			this.getTitle(contractRole.getContract(), codeMapper, locale, asShortTitle) + this.toPlain(" / ") + 
+	    			this.getTitle(contractRole.getAccount(), codeMapper, locale, asShortTitle) + this.toPlain(" / ") + 
+	    			this.getTitle(contractRole.getContractReferenceHolder(), codeMapper, locale, asShortTitle);
     		} else if(refObj instanceof InvolvedObject) {
     			InvolvedObject involved = (InvolvedObject)refObj;
-    			return getTitle(involved.getInvolved(), codes, locale, asShortTitle);
+    			return getTitle(involved.getInvolved(), codeMapper, locale, asShortTitle);
     		} else if(refObj instanceof AccountAssignment) {
     			AccountAssignment obj = (AccountAssignment)refObj;
-    			return getTitle(obj.getAccount(), codes, locale, asShortTitle);
+    			return this.getTitle(obj.getAccount(), codeMapper, locale, asShortTitle);
     		} else if(refObj instanceof Uom) {
-    			return ((Uom)refObj).getName();
+    			return this.toPlain(((Uom)refObj).getName());
     		} else if(refObj instanceof AbstractPriceLevel) {
-    			return toS(((AbstractPriceLevel)refObj).getName());
+    			return this.toPlain(((AbstractPriceLevel)refObj).getName());
     		} else if(refObj instanceof DocumentRevision) {
     			if(refObj instanceof MediaContent) {
-    				return toS(((MediaContent)refObj).getContentName());
+    				return this.toPlain(((MediaContent)refObj).getContentName());
     			} else {
-    				return toS(((DocumentRevision)refObj).getName());
+    				return this.toPlain(((DocumentRevision)refObj).getName());
     			}
     		} else if(refObj instanceof InventoryItem) {
-				return toS(((InventoryItem)refObj).getName());    			
+				return this.toPlain(((InventoryItem)refObj).getName());    			
     		} else {
     			return null;
     		}
-    	}
-    	catch(Exception e) {
+    	} catch(Exception e) {
     		throw new ServiceException(e);
     	}
     }

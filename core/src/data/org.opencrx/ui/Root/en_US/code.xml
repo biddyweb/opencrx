@@ -257,6 +257,7 @@
 										<_object>
 											<active>true</active>
 											<spanRow>5</spanRow>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Short text</_item>
 											</toolTip>
@@ -276,6 +277,7 @@
 											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<spanRow>5</spanRow>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Long text</_item>
 											</toolTip>

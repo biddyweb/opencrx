@@ -59,6 +59,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.MappedRecord;
@@ -67,9 +68,11 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Addresses;
+import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.backend.Products;
 import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
@@ -77,7 +80,6 @@ import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction;
-import org.openmdx.application.dataprovider.spi.ResourceHelper;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
@@ -87,6 +89,7 @@ import org.openmdx.base.query.Filter;
 import org.openmdx.base.query.IsInCondition;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.query.SortOrder;
+import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.openmdx.base.rest.spi.Query_2Facade;
 import org.w3c.format.DateTimeFormat;
@@ -100,33 +103,79 @@ public class DerivedReferences {
     ) {
         this.requestHelper = backend;
     }
-        
-    //-------------------------------------------------------------------------
-    private DataproviderRequest remapFindRequest(
-        DataproviderRequest request,        
+
+    /**
+     * Remap find request to given reference and add additional filter properties and attribute specifiers.
+     * 
+     * @param request
+     * @param reference
+     * @param additionalFilterProperties
+     * @param additionalAttributeSpecifiers
+     * @return
+     * @throws ServiceException
+     */
+    protected DataproviderRequest remapFindRequest(
+        DataproviderRequest request,
         Path reference,
-        FilterProperty[] additionalFilter        
+        FilterProperty[] additionalFilterProperties,
+        AttributeSpecifier[] additionalAttributeSpecifiers
     ) throws ServiceException {
-        for(int i = 0; i < additionalFilter.length; i++) {            
-            request.addAttributeFilterProperty(
-                additionalFilter[i]
-            );
-        }
+    	List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
+    	filterProperties.addAll(Arrays.asList(request.attributeFilter()));
+    	if(additionalFilterProperties != null) {
+    		filterProperties.addAll(Arrays.asList(additionalFilterProperties));
+    	}
+    	List<AttributeSpecifier> attributeSpecifiers = new ArrayList<AttributeSpecifier>();
+    	attributeSpecifiers.addAll(Arrays.asList(request.attributeSpecifier()));
+    	if(additionalAttributeSpecifiers != null) {
+    		attributeSpecifiers.addAll(Arrays.asList(additionalAttributeSpecifiers));
+    	}    	
         try {
 	        return new DataproviderRequest(
 	            Query_2Facade.newInstance(reference).getDelegate(),
 	            request.operation(),
-	            request.attributeFilter(),
+	            filterProperties.toArray(new FilterProperty[filterProperties.size()]),
 	            request.position(),
 	            request.size(),
 	            request.direction(),
 	            request.attributeSelector(),
-	            request.attributeSpecifier()
+	            attributeSpecifiers.toArray(new AttributeSpecifier[attributeSpecifiers.size()])
 	        );
-        }
-        catch (ResourceException e) {
+        } catch (ResourceException e) {
         	throw new ServiceException(e);
         }
+    }
+
+    /**
+     * Remap find request to given reference.
+     * 
+     * @param request
+     * @param reference
+     * @return
+     * @throws ServiceException
+     */
+    protected DataproviderRequest remapFindRequest(
+        DataproviderRequest request,
+        Path reference
+    ) throws ServiceException {
+    	return this.remapFindRequest(request, reference, null, null);
+    }
+    
+    /**
+     * Remap find request to given reference and add additional filter properties.
+     * 
+     * @param request
+     * @param reference
+     * @param additionalFilterProperties
+     * @return
+     * @throws ServiceException
+     */
+    protected DataproviderRequest remapFindRequest(
+        DataproviderRequest request,
+        Path reference,
+        FilterProperty[] additionalFilterProperties
+    ) throws ServiceException {
+    	return this.remapFindRequest(request, reference, additionalFilterProperties, null);
     }
     
     //-------------------------------------------------------------------------
@@ -141,12 +190,12 @@ public class DerivedReferences {
 	            request.path().isLike(GLOBAL_FILTER_INCLUDES_ACTIVITY)
 	        ) {
 	        	MappedRecord globalFilter = this.requestHelper.retrieveObject(request.path().getPrefix(7));
-	        	Object_2Facade globalFilterFacade = ResourceHelper.getObjectFacade(globalFilter);	        	
+	        	Object_2Facade globalFilterFacade = Facades.asObject(globalFilter);	        	
 	        	Path reference = request.path().getPrefix(5).getChild("activity");
 	        	if(globalFilterFacade.attributeValue("activitiesSource") != null) {
 	        		Path activitiesSourceIdentity = (Path)globalFilterFacade.attributeValue("activitiesSource");
 	        		MappedRecord activitiesSource = this.requestHelper.retrieveObject(activitiesSourceIdentity);
-	        		Object_2Facade activitiesSourceFacade = ResourceHelper.getObjectFacade(activitiesSource);
+	        		Object_2Facade activitiesSourceFacade = Facades.asObject(activitiesSource);
 	        		Model_1_0 model = this.requestHelper.getModel();
 		        	if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:ActivityGroup")) {
 		        		reference = activitiesSourceIdentity.getChild("filteredActivity");		        		
@@ -164,7 +213,7 @@ public class DerivedReferences {
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                reference,
-	                DerivedReferences.getActivityFilterProperties(
+	                this.getActivityFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
@@ -183,11 +232,11 @@ public class DerivedReferences {
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("account"),
-	                DerivedReferences.getAccountFilterProperties(
+	                this.getAccountFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
-	            );        	
+	            );  	
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
 	                Query_2Facade.newInstance(findRequest.object()),
@@ -202,7 +251,7 @@ public class DerivedReferences {
 	        	DataproviderRequest findRequest =  this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("address"),
-	                DerivedReferences.getAddressFilterProperties(
+	                this.getAddressFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
@@ -221,7 +270,7 @@ public class DerivedReferences {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
-	                    DerivedReferences.getActivityFilterProperties(
+	                    this.getActivityFilterProperties(
 	                        request.path().getPrefix(request.path().size() - 1),
 	                        this.requestHelper.getDelegatingInteraction()
 	                    )
@@ -247,7 +296,7 @@ public class DerivedReferences {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
-	                    DerivedReferences.getContractFilterProperties(
+	                    this.getContractFilterProperties(
 	                        request.path().getPrefix(request.path().size() - 1),
 	                        this.requestHelper.getDelegatingInteraction()
 	                    )
@@ -273,7 +322,7 @@ public class DerivedReferences {
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path(),
-	                DerivedReferences.getContractFilterProperties(
+	                this.getContractFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
@@ -292,12 +341,12 @@ public class DerivedReferences {
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("product"),
-	                DerivedReferences.getProductFilterProperties(
+	                this.getProductFilterProperties(
 	                    request.path().getPrefix(request.path().size() - 1),
 	                    false,
 	                    this.requestHelper.getDelegatingInteraction()
 	                )
-	            );        	
+	            );  	
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
 	                Query_2Facade.newInstance(findRequest.object()),
@@ -312,12 +361,12 @@ public class DerivedReferences {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
-	                    DerivedReferences.getAccountFilterProperties(
+	                    this.getAccountFilterProperties(
 	                        request.path().getPrefix(request.path().size() - 1),
 	                        this.requestHelper.getDelegatingInteraction()
 	                    )
 	                )
-	            );         
+	            );
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(
@@ -340,13 +389,13 @@ public class DerivedReferences {
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
-	                    DerivedReferences.getProductFilterProperties(
+	                    this.getProductFilterProperties(
 	                        request.path().getPrefix(request.path().size() - 1),
 	                        false,
 	                        this.requestHelper.getDelegatingInteraction()
 	                    )
 	                )
-	            );      
+	            );
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                new Path("xri://@openmdx*org.opencrx.kernel.product1/provider").getDescendant(
@@ -371,8 +420,7 @@ public class DerivedReferences {
 	                    Quantifier.THERE_EXISTS.code(),
 	                    "priceLevel",
 	                    ConditionType.IS_IN.code(),
-	                    new Object[]{request.path().getPrefix(7)}
-	                    
+	                    new Object[]{request.path().getPrefix(7)}	                    
 	                )
 	            );
 	            DataproviderRequest findRequest = this.remapFindRequest(
@@ -598,11 +646,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -619,11 +670,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -640,11 +694,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -661,11 +718,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }	                
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -682,11 +742,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }	                
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -703,11 +766,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }	                
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -724,11 +790,14 @@ public class DerivedReferences {
 	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
 	                 request.path().getParent()
 	            );
-	            FilterProperty[] filter = DerivedReferences.mapObjectFinderToFilter(objectFinder);
+	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
 	            DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                segmentIdentity.getChild("indexEntry"),
-	                filter
+	                filter,
+	                new AttributeSpecifier[]{
+	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	                }	                
 	            );
 	            this.requestHelper.getDelegatingInteraction().find(
 	                findRequest.getInteractionSpec(),
@@ -790,14 +859,17 @@ public class DerivedReferences {
     	}
     }
     
-    //-------------------------------------------------------------------------
     /**
-     * @deprecated
-     */    
-    public static FilterProperty[] mapObjectFinderToFilter(
+     * Map object finder to query.
+     * 
+     * @param objectFinder
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] mapObjectFinderToFilter(
     	MappedRecord objectFinder
     ) throws ServiceException {
-    	Object_2Facade objectFinderFacade = ResourceHelper.getObjectFacade(objectFinder);
+    	Object_2Facade objectFinderFacade = Facades.asObject(objectFinder);
         List<FilterProperty> filter = new ArrayList<FilterProperty>();
         String allWords = (String)objectFinderFacade.attributeValue("allWords");
         if((allWords != null) && (allWords.length() > 0)) {
@@ -842,11 +914,37 @@ public class DerivedReferences {
                 )
             );
         }
+        // Return newest index entry only
+        String queryExtensionId = SystemAttributes.CONTEXT_PREFIX + Base.getInstance().getUidAsString() + ":";
+        filter.add(
+            new FilterProperty(
+                Quantifier.codeOf(null),
+                queryExtensionId + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
+                ConditionType.codeOf(null),
+                "(v.created_at IN (SELECT MAX(created_at) FROM OOCKE1_INDEXENTRY e WHERE e.indexed_object = v.indexed_object))"
+            )
+        );
+        filter.add(
+            new FilterProperty(
+                Quantifier.codeOf(null),
+                queryExtensionId + SystemAttributes.OBJECT_CLASS,
+                ConditionType.codeOf(null),
+                new Object[]{Database_1_Attributes.QUERY_EXTENSION_CLASS}
+            )
+        );
         return filter.toArray(new FilterProperty[filter.size()]);
     }
 
-	//-------------------------------------------------------------------------
-    public static FilterProperty[] getProductFilterProperties(
+    /**
+     * Map product filter to query.
+     * 
+     * @param productFilterIdentity
+     * @param forCounting
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] getProductFilterProperties(
         Path productFilterIdentity,
         boolean forCounting,
         LayerInteraction delegatingInteraction
@@ -872,8 +970,8 @@ public class DerivedReferences {
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        boolean hasQueryFilterClause = false;        
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
-	            String filterPropertyClass = filterPropertyFacade.getObjectClass();    
+	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
 	                // Query filter
@@ -883,9 +981,9 @@ public class DerivedReferences {
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 	                            ConditionType.codeOf(null),
-	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause")
+	                            (forCounting ? Database_1_Attributes.HINT_COUNT : "") + filterPropertyFacade.attributeValue("clause") 
 	                        )
 	                    );
 	                    filter.add(
@@ -893,81 +991,71 @@ public class DerivedReferences {
 	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
 	                            ConditionType.codeOf(null),
-	                            new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+	                            new Object[]{Database_1_Attributes.QUERY_EXTENSION_CLASS}
 	                        )
 	                    );
 	                    // stringParam
-	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // integerParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // decimalParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // booleanParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM)) {
+	                        values.add(Datatypes.create(XMLGregorianCalendar.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateTimeParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(Date.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM)) {
+	                        values.add(Datatypes.create(Date.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
@@ -999,8 +1087,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("classification").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:product1:DefaultSalesTaxTypeFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1009,8 +1096,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("salesTaxType").toArray()                    
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:product1:CategoryFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:product1:CategoryFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1019,8 +1105,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("category").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:product1:PriceUomFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:product1:PriceUomFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1029,8 +1114,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("priceUom").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:product1:DisabledFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:product1:DisabledFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1042,14 +1126,14 @@ public class DerivedReferences {
 	                    }
 	                }
 	            }
-	        }        
+	        }
 	        if(!hasQueryFilterClause && forCounting) {
 	            String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + Products.getInstance().getUidAsString() + ":";
 	            // Clause and class
 	            filter.add(
 	                new FilterProperty(
 	                    Quantifier.codeOf(null),
-	                    queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                    queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 	                    ConditionType.codeOf(null),
 	                    new Object[]{
 	                        Database_1_Attributes.HINT_COUNT + "(1=1)"
@@ -1061,7 +1145,7 @@ public class DerivedReferences {
 	                    Quantifier.codeOf(null),
 	                    queryFilterContext + SystemAttributes.OBJECT_CLASS,
 	                    ConditionType.codeOf(null),
-	                    new Object[]{Database_1_Attributes.QUERY_FILTER_CLASS}
+	                    new Object[]{Database_1_Attributes.QUERY_EXTENSION_CLASS}
 	                )
 	            );            
 	        }        
@@ -1071,9 +1155,15 @@ public class DerivedReferences {
     	}
     }
 
-	//-------------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
-    public static FilterProperty[] getContractFilterProperties(
+    /**
+     * Map ContractFilter to query.
+     * 
+     * @param contractFilterIdentity
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] getContractFilterProperties(
         Path contractFilterIdentity,
         LayerInteraction delegatingInteraction
     ) throws ServiceException {
@@ -1095,10 +1185,10 @@ public class DerivedReferences {
 	    		findReply.getResult()
 	    	);
 	        MappedRecord[] filterProperties = findReply.getObjects();
-	        List filter = new ArrayList();
+	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
-	            String filterPropertyClass = filterPropertyFacade.getObjectClass();    
+	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
 	                // Query filter
@@ -1108,9 +1198,14 @@ public class DerivedReferences {
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 	                            ConditionType.codeOf(null),
-	                            filterPropertyFacade.attributeValue("clause")
+	                            resolveQueryClause(
+	                            	(String)filterPropertyFacade.attributeValue("clause"), 
+	                            	contractFilterIdentity.getParent(),
+	                            	"filterProperty",
+	                            	delegatingInteraction
+	                            )	                            	                            
 	                        )
 	                    );
 	                    filter.add(
@@ -1118,81 +1213,71 @@ public class DerivedReferences {
 	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
 	                            ConditionType.codeOf(null),
-	                            Database_1_Attributes.QUERY_FILTER_CLASS
+	                            Database_1_Attributes.QUERY_EXTENSION_CLASS
 	                        )
 	                    );
 	                    // stringParam
-	                    List values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // integerParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // decimalParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // booleanParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateParam
-	                    values = new ArrayList();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-	                        );
+	                    values = new ArrayList<Object>();
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM)) {
+	                        values.add(Datatypes.create(XMLGregorianCalendar.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateTimeParam
-	                    values = new ArrayList();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(Date.class, j.next())
-	                        );
+	                    values = new ArrayList<Object>();
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM)) {
+	                        values.add(Datatypes.create(Date.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
@@ -1223,8 +1308,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("contractType").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:ContractStateFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:ContractStateFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1233,8 +1317,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("contractState").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:ContractPriorityFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:ContractPriorityFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1243,8 +1326,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("priority").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:TotalAmountFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:TotalAmountFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1253,8 +1335,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("totalAmount").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:CustomerFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:CustomerFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1263,8 +1344,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("customer").toArray()                    
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:SupplierFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:SupplierFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1273,8 +1353,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("supplier").toArray()                    
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:SalesRepFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:SalesRepFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1283,8 +1362,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("salesRep").toArray()                    
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:contract1:DisabledFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:contract1:DisabledFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1297,14 +1375,21 @@ public class DerivedReferences {
 	                }
 	            }
 	        }        
-	        return (FilterProperty[])filter.toArray(new FilterProperty[filter.size()]);
+	        return filter.toArray(new FilterProperty[filter.size()]);
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
     	}
     }
 
-	//-------------------------------------------------------------------------
-    public static FilterProperty[] getActivityFilterProperties(
+    /**
+     * Map ActivityFilter to query.
+     * 
+     * @param activityFilterIdentity
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] getActivityFilterProperties(
         Path activityFilterIdentity,
         LayerInteraction delegatingInteraction
     ) throws ServiceException {
@@ -1328,7 +1413,7 @@ public class DerivedReferences {
 	        MappedRecord[] filterProperties = findReply.getObjects();
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
+	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1339,9 +1424,14 @@ public class DerivedReferences {
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 	                            ConditionType.codeOf(null),
-	                            filterPropertyFacade.attributeValue("clause")
+	                            resolveQueryClause(
+	                            	(String)filterPropertyFacade.attributeValue("clause"), 
+	                            	activityFilterIdentity.getParent(),
+	                            	"filterProperty",
+	                            	delegatingInteraction
+	                            )	                            	                            
 	                        )
 	                    );
 	                    filter.add(
@@ -1349,81 +1439,71 @@ public class DerivedReferences {
 	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
 	                            ConditionType.codeOf(null),
-	                            Database_1_Attributes.QUERY_FILTER_CLASS
+	                            Database_1_Attributes.QUERY_EXTENSION_CLASS
 	                        )
 	                    );
 	                    // stringParam
-	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // integerParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // decimalParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // booleanParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM)) {
+	                        values.add(Datatypes.create(XMLGregorianCalendar.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateTimeParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(Date.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM)) {
+	                        values.add(Datatypes.create(Date.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
@@ -1444,7 +1524,6 @@ public class DerivedReferences {
 	                    filterQuantor = filterQuantor == 0
 	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
-	                    
 	                    if("org:opencrx:kernel:activity1:ActivityStateFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1454,8 +1533,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("activityState").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ScheduledStartFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ScheduledStartFilterProperty".equals(filterPropertyClass)) {
 	                        if(filterPropertyFacade.attributeValuesAsList("scheduledStart").isEmpty()) {
 	                        	filterPropertyFacade.attributeValuesAsList("scheduledStart").add(
 	                                DateTimeFormat.BASIC_UTC_FORMAT.format(new Date())
@@ -1486,8 +1564,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("scheduledStart").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ScheduledEndFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ScheduledEndFilterProperty".equals(filterPropertyClass)) {
 	                        if(filterPropertyFacade.attributeValuesAsList("scheduledEnd").isEmpty()) {
 	                        	filterPropertyFacade.attributeValuesAsList("scheduledEnd").add(
 	                                DateTimeFormat.BASIC_UTC_FORMAT.format(new Date())
@@ -1518,8 +1595,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("scheduledEnd").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ActivityProcessStateFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1528,8 +1604,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("processState").toArray()
 	                            )                    
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ActivityTypeFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ActivityTypeFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1538,8 +1613,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("activityType").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:AssignedToFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:AssignedToFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1548,8 +1622,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("contact").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ReportedByContactFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ReportedByContactFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1558,8 +1631,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("contact").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ReportedByAccountFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ReportedByAccountFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1568,8 +1640,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("account").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:ActivityNumberFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:ActivityNumberFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1578,8 +1649,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("activityNumber").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:activity1:DisabledFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:activity1:DisabledFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1598,14 +1668,21 @@ public class DerivedReferences {
     	}
     }
 
-	//-------------------------------------------------------------------------
-    public static FilterProperty[] getAddressFilterProperties(
-        Path activityFilterIdentity,
+    /**
+     * Map AddressFilter to query.
+     * 
+     * @param addressFilterIdentity
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] getAddressFilterProperties(
+        Path addressFilterIdentity,
         LayerInteraction delegatingInteraction
     ) throws ServiceException {    	
     	try {
 	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(activityFilterIdentity.getChild("addressFilterProperty")).getDelegate(),
+	            Query_2Facade.newInstance(addressFilterIdentity.getChild("addressFilterProperty")).getDelegate(),
 	            DataproviderOperations.ITERATION_START,
 	            null,
 	            0, 
@@ -1623,7 +1700,7 @@ public class DerivedReferences {
 	        MappedRecord[] filterProperties = findReply.getObjects();    	
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
+	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1634,9 +1711,14 @@ public class DerivedReferences {
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 	                            ConditionType.codeOf(null),
-	                            filterPropertyFacade.attributeValue("clause")
+	                            resolveQueryClause(
+	                            	(String)filterPropertyFacade.attributeValue("clause"), 
+	                            	addressFilterIdentity.getParent(),
+	                            	"addressFilterProperty",
+	                            	delegatingInteraction
+	                            )	                            
 	                        )
 	                    );
 	                    filter.add(
@@ -1644,81 +1726,71 @@ public class DerivedReferences {
 	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
 	                            ConditionType.codeOf(null),
-	                            Database_1_Attributes.QUERY_FILTER_CLASS
+	                            Database_1_Attributes.QUERY_EXTENSION_CLASS
 	                        )
 	                    );
 	                    // stringParam
-	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // integerParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // decimalParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // booleanParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM)) {
+	                        values.add(Datatypes.create(XMLGregorianCalendar.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateTimeParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(Date.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM)) {
+	                        values.add(Datatypes.create(Date.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
@@ -1727,18 +1799,18 @@ public class DerivedReferences {
 	                // Attribute filter
 	                else {
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() ? 
-	                    	ConditionType.IS_IN.code() : 
-	                    		((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
-	                    filterOperator = filterOperator == 0 ? 
-	                    	ConditionType.IS_IN.code() : 
-	                    		filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty() ? 
-	                    	Quantifier.THERE_EXISTS.code() : 
-	                    		((Number)filterPropertyFacade.attributeValuesAsList("filterQuantor").get(0)).shortValue();
-	                    filterQuantor = filterQuantor == 0 ? 
-	                    	Quantifier.THERE_EXISTS.code() : 
-	                    		filterQuantor;	                    
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() 
+	                    	? ConditionType.IS_IN.code() 
+	                    	: ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
+	                    filterOperator = filterOperator == 0 
+	                    	? ConditionType.IS_IN.code() 
+	                    	: filterOperator;
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty() 
+	                    	? Quantifier.THERE_EXISTS.code() 
+	                    	: ((Number)filterPropertyFacade.attributeValuesAsList("filterQuantor").get(0)).shortValue();
+	                    filterQuantor = filterQuantor == 0 
+	                    	? Quantifier.THERE_EXISTS.code() 
+	                    	: filterQuantor;	                    
 	                    if("org:opencrx:kernel:account1:AddressCategoryFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1748,8 +1820,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("category").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:AddressTypeFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AddressTypeFilterProperty".equals(filterPropertyClass)) {
 	                        List<String> addressTypes = new ArrayList<String>();
 	                        for(Iterator<Object> j = filterPropertyFacade.attributeValuesAsList("addressType").iterator(); j.hasNext(); ) {
 	                            int addressType = ((Number)j.next()).intValue();
@@ -1765,8 +1836,7 @@ public class DerivedReferences {
 	                                addressTypes.toArray()
 	                            )
 	                        );
-	                    }                    
-	                    else if("org:opencrx:kernel:account1:AddressMainFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AddressMainFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1775,8 +1845,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("isMain").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:AddressUsageFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AddressUsageFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1785,8 +1854,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("usage").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:AddressDisabledFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AddressDisabledFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1795,8 +1863,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("disabled").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:AddressAccountMembershipFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AddressAccountMembershipFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                            	Quantifier.THERE_EXISTS.code(),
@@ -1835,8 +1902,144 @@ public class DerivedReferences {
     	}
     }
 
-	//-------------------------------------------------------------------------
-    public static FilterProperty[] getAccountFilterProperties(
+    /**
+     * Resolve query clause. If clause contains place holders of the form 
+     * ${"filter name"."filter property name"} they are resolved recursively.
+     * 
+     * @param filterReference
+     * @param propertyKind
+     * @param clause
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     * @throws ResourceException
+     */
+    public String resolveQueryClause(
+    	String clause,
+    	Path filterReference,
+    	String propertyKind,
+        LayerInteraction delegatingInteraction    	
+    ) throws ServiceException, ResourceException {
+    	while(true) {
+    		int placeHolderStart = clause.indexOf("${");
+    		int placeHolderEnd = clause.indexOf("}", placeHolderStart);
+    		if(placeHolderEnd <= placeHolderStart) {
+    			break;
+    		}
+    		String replacement = "(null=null)";
+    		StringTokenizer placeHolder = new StringTokenizer(
+    			clause.substring(placeHolderStart + 2, placeHolderEnd),
+    			".",
+    			false
+    		);
+    		// Place holder is of the form ${"filter name"."filter property name"} or {filter id.filter property id}
+    		// Lookup a filter and filter property with given names or ids
+    		if(placeHolder.countTokens() == 2) {
+    			String filterName = placeHolder.nextToken();
+    			Object_2Facade filter = null;
+    			if(filterName.startsWith("\"")) {
+    				filterName = filterName.substring(1);
+    				filterName = filterName.endsWith("\"") ? filterName.substring(0, filterName.length() - 1) : filterName;
+        	    	DataproviderRequest filterFindRequest = new DataproviderRequest(
+        	            Query_2Facade.newInstance(filterReference).getDelegate(),
+        	            DataproviderOperations.ITERATION_START,
+        	            new FilterProperty[]{
+        	                new FilterProperty(
+        	                    Quantifier.THERE_EXISTS.code(),
+        	                    "name",
+        	                    ConditionType.IS_IN.code(),
+        	                    new Object[]{filterName}	                    
+        	                )    	            	
+        	            },
+        	            0, 
+        	            Integer.MAX_VALUE,
+        	            SortOrder.ASCENDING.code(),
+        	            AttributeSelectors.ALL_ATTRIBUTES,
+        	            null
+        	    	);
+        	    	DataproviderReply filterFindReply = delegatingInteraction.newDataproviderReply();
+        	    	delegatingInteraction.find(
+        	    		filterFindRequest.getInteractionSpec(), 
+        	    		Query_2Facade.newInstance(filterFindRequest.object()), 
+        	    		filterFindReply.getResult()
+        	    	);
+        	    	if(filterFindReply.getObjects().length > 0) {
+        	    		filter = Facades.asObject(filterFindReply.getObject());
+        	    	}
+    			} else {
+    				try {
+    					filter = Facades.asObject(this.requestHelper.retrieveObject(filterReference.getChild(filterName)));
+    				} catch(Exception ignore) {}
+    			}
+    	    	if(filter != null) {
+        			String filterPropertyName = placeHolder.nextToken();
+        			Object_2Facade filterProperty = null;
+        			if(filterPropertyName.startsWith("\"")) {
+            			filterPropertyName = filterPropertyName.substring(1);
+            			filterPropertyName = filterPropertyName.endsWith("\"") ? filterPropertyName.substring(0, filterPropertyName.length() - 1) : filterPropertyName;        			
+	    	    		// Filter found. Now find property
+	        	    	DataproviderRequest filterPropertyFindRequest = new DataproviderRequest(
+	        	            Query_2Facade.newInstance(filter.getPath().getChild(propertyKind)).getDelegate(),
+	        	            DataproviderOperations.ITERATION_START,
+	        	            new FilterProperty[]{
+	        	                new FilterProperty(
+	        	                    Quantifier.THERE_EXISTS.code(),
+	        	                    "name",
+	        	                    ConditionType.IS_IN.code(),
+	        	                    new Object[]{filterPropertyName}   
+	        	                )    	            	
+	        	            },
+	        	            0, 
+	        	            Integer.MAX_VALUE,
+	        	            SortOrder.ASCENDING.code(),
+	        	            AttributeSelectors.ALL_ATTRIBUTES,
+	        	            null
+	        	    	);
+	        	    	DataproviderReply filterPropertyFindReply = delegatingInteraction.newDataproviderReply();
+	        	    	delegatingInteraction.find(
+	        	    		filterPropertyFindRequest.getInteractionSpec(), 
+	        	    		Query_2Facade.newInstance(filterPropertyFindRequest.object()), 
+	        	    		filterPropertyFindReply.getResult()
+	        	    	);
+	        	    	if(filterPropertyFindReply.getObjects().length > 0) {
+	        	    		filterProperty = Facades.asObject(filterPropertyFindReply.getObject());
+	        	    	}
+        			} else {
+        				try {
+            				try {
+            					filterProperty = Facades.asObject(this.requestHelper.retrieveObject(filter.getPath().getDescendant(propertyKind, filterPropertyName)));
+            				} catch(Exception ignore) {}        					
+        				} catch(Exception ignore) {}
+        			}
+    	    		if(filterProperty != null) {
+    	    			if(filterProperty.attributeValue("clause") != null) {
+    	    				replacement = resolveQueryClause(
+    	    					(String)filterProperty.attributeValue("clause"),
+    	    					filterReference,
+    	    					propertyKind, 
+    	    					delegatingInteraction
+    	    				);    	    				
+    	    			}
+    	    		}
+    	    	}
+    		}
+    		clause = 
+    			clause.substring(0, placeHolderStart) + 
+    			replacement + 
+    			clause.substring(placeHolderEnd + 1);
+    	}
+    	return clause;
+    }
+
+    /**
+     * Map AccountFilter to query.
+     * 
+     * @param accountFilterIdentity
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] getAccountFilterProperties(
         Path accountFilterIdentity,
         LayerInteraction delegatingInteraction        
     ) throws ServiceException {
@@ -1860,8 +2063,8 @@ public class DerivedReferences {
 	        MappedRecord[] filterProperties = findReply.getObjects();    	
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = ResourceHelper.getObjectFacade(filterProperty);
-	            String filterPropertyClass = filterPropertyFacade.getObjectClass();    
+	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
 	                // Query filter
@@ -1871,9 +2074,14 @@ public class DerivedReferences {
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_CLAUSE,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
 	                            ConditionType.codeOf(null),
-	                            filterPropertyFacade.attributeValue("clause")
+	                            resolveQueryClause(
+	                            	(String)filterPropertyFacade.attributeValue("clause"), 
+	                            	accountFilterIdentity.getParent(),
+	                            	"accountFilterProperty",
+	                            	delegatingInteraction
+	                            )
 	                        )
 	                    );
 	                    filter.add(
@@ -1881,81 +2089,71 @@ public class DerivedReferences {
 	                            Quantifier.codeOf(null),
 	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
 	                            ConditionType.codeOf(null),
-	                            Database_1_Attributes.QUERY_FILTER_CLASS
+	                            Database_1_Attributes.QUERY_EXTENSION_CLASS
 	                        )
 	                    );
 	                    // stringParam
-	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_STRING_PARAM);
+	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_STRING_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // integerParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_INTEGER_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // decimalParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DECIMAL_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // booleanParam
-	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM);
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM);
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_BOOLEAN_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATE_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(XMLGregorianCalendar.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM)) {
+	                        values.add(Datatypes.create(XMLGregorianCalendar.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATE_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
 	                    );
 	                    // dateTimeParam
 	                    values = new ArrayList<Object>();
-	                    for(
-	                        Iterator<Object> j = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM).iterator();
-	                        j.hasNext();
-	                    ) {
-	                        values.add(
-	                            Datatypes.create(Date.class, j.next())
-	                        );
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM)) {
+	                        values.add(Datatypes.create(Date.class, value));
 	                    }
 	                    filter.add(
 	                        new FilterProperty(
 	                            Quantifier.codeOf(null),
-	                            queryFilterContext + Database_1_Attributes.QUERY_FILTER_DATETIME_PARAM,
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM,
 	                            ConditionType.codeOf(null),
 	                            values.toArray()
 	                        )
@@ -1964,18 +2162,18 @@ public class DerivedReferences {
 	                // Attribute filter
 	                else {
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() ? 
-	                    	ConditionType.IS_IN.code() : 
-	                    		((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
-	                    filterOperator = filterOperator == 0 ? 
-	                    	ConditionType.IS_IN.code() : 
-	                    		filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty() ? 
-	                    	Quantifier.THERE_EXISTS.code() : 
-	                    		((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
-	                    filterQuantor = filterQuantor == 0 ? 
-	                    	Quantifier.THERE_EXISTS.code() : 
-	                    		filterQuantor;	                    
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() 
+	                    	? ConditionType.IS_IN.code() 
+	                    	: ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
+	                    filterOperator = filterOperator == 0 
+	                    	? ConditionType.IS_IN.code() 
+	                    	: filterOperator;
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty() 
+	                    	? Quantifier.THERE_EXISTS.code() 
+	                    	: ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
+	                    filterQuantor = filterQuantor == 0 
+	                    	? Quantifier.THERE_EXISTS.code() 
+	                    	: filterQuantor;	                    
 	                    if("org:opencrx:kernel:account1:AccountTypeFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1985,8 +2183,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("accountType").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:AccountCategoryFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AccountCategoryFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -1995,8 +2192,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("accountCategory").toArray()                    
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:CategoryFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:CategoryFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -2005,8 +2201,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("category").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:DisabledFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:DisabledFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                                filterQuantor,
@@ -2015,8 +2210,7 @@ public class DerivedReferences {
 	                                filterPropertyFacade.attributeValuesAsList("disabled").toArray()
 	                            )
 	                        );
-	                    }
-	                    else if("org:opencrx:kernel:account1:AccountMembershipFilterProperty".equals(filterPropertyClass)) {
+	                    } else if("org:opencrx:kernel:account1:AccountMembershipFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
 	                            	Quantifier.THERE_EXISTS.code(),
@@ -2050,6 +2244,7 @@ public class DerivedReferences {
 
 	//-------------------------------------------------------------------------
     // Patterns for derived find requests
+	//-------------------------------------------------------------------------
     private static final Path COMPOUND_BOOKING_HAS_BOOKINGS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/cb/:*/booking");
     private static final Path DEPOT_POSITION_HAS_BOOKINGS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/position/:*/booking");
     private static final Path DEPOT_POSITION_HAS_SIMPLE_BOOKINGS = new Path("xri://@openmdx*org.opencrx.kernel.depot1/provider/:*/segment/:*/entity/:*/depotHolder/:*/depot/:*/position/:*/simpleBooking");

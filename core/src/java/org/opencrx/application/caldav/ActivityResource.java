@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -67,11 +68,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.home1.jmi1.Timer;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
@@ -164,36 +164,6 @@ class ActivityResource extends CalDavResource {
     	}    	
     	return uid;
     }
-
-	/**
-	 * Print alarm tags for the given event.
-	 * 
-	 * @param p
-	 * @param event
-	 */
-	protected void printAlarms(
-		PrintWriter p,
-		Activity event
-	) {
-		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
-        Collection<Timer> timers = event.getAssignedTimer();
-        List<String> principalChain = UserObjects.getPrincipalChain(pm);
-        for(Timer timer: timers) {
-        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
-        		p.println("BEGIN:VALARM");
-        		p.println("ACTION:DISPLAY");
-        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
-        		p.println("TRIGGER;VALUE=DURATION:" + (triggerMinutes < 0 ? "-" : "") + "PT" + Math.abs(triggerMinutes) + "M");
-        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
-        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
-        		p.println("SUMMARY:" + timer.getName());
-        		if(timer.getDescription() != null) {
-        			p.println("DESCRIPTION:" + timer.getDescription());
-        		}
-        		p.println("END:VALARM");
-        	}
-        }
-	}
 
 	/* (non-Javadoc)
 	 * @see org.opencrx.application.caldav.CalDavResource#getContent()
@@ -330,86 +300,99 @@ class ActivityResource extends CalDavResource {
 	        	SysLog.detail(e0.getMessage(), e0.getCause());
 	        }
 	        ical = ical.replace("\r\n", "\n"); // Remove \r just in case
+	        // VEVENT
 	        if(ical.indexOf("BEGIN:VEVENT") >= 0) {
 	            int start = ical.indexOf("BEGIN:VEVENT");
 	            int end = ical.indexOf("END:VEVENT");
-	            String vevent = ical.substring(start, end);
-	    		String url = null;
-	    		try {
-	    			url = Base.getInstance().getAccessUrl(req, "-caldav-", event);
-	    		} catch(Exception e) {}
-	            // The attribute ORGANIZER (and ATTENDE and maybe other) attribute
-	            // puts the event into read-only mode in case of iPhone.
-	        	if(iPhone) {
-	        		if((vevent.indexOf("ORGANIZER:") > 0) && (vevent.indexOf("ATTENDEE:") < 0)) {
-	        			start = vevent.indexOf("ORGANIZER:");
-	        			end = vevent.indexOf("\n", start);
-	        			vevent = vevent.substring(0, start) + vevent.substring(end + 1); 
-	        		}
-	        		if(vevent.indexOf("DESCRIPTION:") > 0) {
-	        			start = vevent.indexOf("DESCRIPTION:");
-	        			end = vevent.indexOf("\n", start);
-	        			if(end > start) {
-	        				vevent = 
-	        					vevent.substring(0, end) + 
-	        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
-	        					vevent.substring(end);    					        					
-	        			}
-	        		}
-	        		else {
-	        			vevent += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
-	        		}
-	        	}
-	            p.print(vevent);            
-	            SysLog.detail(vevent);
-	            if(vevent.indexOf("TRANSP:") < 0) {
-		        	try {
-		        		String transp = "OPAQUE";
-		        		if(transp != null) {
-		        			p.println("TRANSP:" + transp);
+	            if(end < 0 || start < 0 || end < start) {
+	            	SysLog.log(Level.WARNING, "ICAL {0} of activity {1} has bad format and will be ignored", ical, event.refGetPath().toXRI());
+	            } else {
+		            String vevent = ical.substring(start, end);
+		    		String url = null;
+		    		try {
+		    			url = Base.getInstance().getAccessUrl(req, "-caldav-", event);
+		    		} catch(Exception e) {}
+		            // The attribute ORGANIZER (and ATTENDE and maybe other) attribute
+		            // puts the event into read-only mode in case of iPhone.
+		        	if(iPhone) {
+		        		if((vevent.indexOf("ORGANIZER:") > 0) && (vevent.indexOf("ATTENDEE:") < 0)) {
+		        			start = vevent.indexOf("ORGANIZER:");
+		        			end = vevent.indexOf("\n", start);
+		        			vevent = vevent.substring(0, start) + vevent.substring(end + 1); 
 		        		}
-		        	} catch(Exception e) {}
+		        		if(vevent.indexOf("DESCRIPTION:") > 0) {
+		        			start = vevent.indexOf("DESCRIPTION:");
+		        			end = vevent.indexOf("\n", start);
+		        			if(end > start) {
+		        				vevent = 
+		        					vevent.substring(0, end) + 
+		        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
+		        					vevent.substring(end);    					        					
+		        			}
+		        		}
+		        		else {
+		        			vevent += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
+		        		}
+		        	}
+		            p.print(vevent);            
+		            SysLog.detail(vevent);
+		            if(vevent.indexOf("TRANSP:") < 0) {
+			        	try {
+			        		String transp = "OPAQUE";
+			        		if(transp != null) {
+			        			p.println("TRANSP:" + transp);
+			        		}
+			        	} catch(Exception e) {}
+		            }
+		            if(vevent.indexOf("URL:") < 0) {
+		            	if(url != null) {
+		            		p.println("URL:" + url);
+		            	}
+		            }
+		            try {
+		            	Activities.getInstance().printAlarms(p, event);
+		            } catch(Exception ignore) {}
+		            p.println("END:VEVENT");
 	            }
-	            if(vevent.indexOf("URL:") < 0) {
-	            	if(url != null) {
-	            		p.println("URL:" + url);
-	            	}
-	            }
-	            this.printAlarms(p, event);
-	            p.println("END:VEVENT");
 	        }
+	        // VTODO
 	        else if(ical.indexOf("BEGIN:VTODO") >= 0) {
 	            int start = ical.indexOf("BEGIN:VTODO");
 	            int end = ical.indexOf("END:VTODO");
-	            String vtodo = ical.substring(start, end);
-	            String url = null;
-	            try {
-	            	url = Base.getInstance().getAccessUrl(req, "-caldav-", event);
-	            } catch(Exception e) {}
-	            if(iPhone) {
-	        		if(vtodo.indexOf("DESCRIPTION:") > 0) {
-	        			start = vtodo.indexOf("DESCRIPTION:");
-	        			end = vtodo.indexOf("\n", start);
-	        			if(end > start) {
-	        				vtodo = 
-	        					vtodo.substring(0, end) + 
-	        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
-	        					vtodo.substring(end);        					        					
-	        			}
-	        		}            	
-		    		else {
-		    			vtodo += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
-		    		}
+	            if(end < 0 || start < 0 || end < start) {
+	            	SysLog.log(Level.WARNING, "ICAL {0} of activity {1} has bad format and will be ignored", ical, event.refGetPath().toXRI());
+	            } else {	            
+		            String vtodo = ical.substring(start, end);
+		            String url = null;
+		            try {
+		            	url = Base.getInstance().getAccessUrl(req, "-caldav-", event);
+		            } catch(Exception e) {}
+		            if(iPhone) {
+		        		if(vtodo.indexOf("DESCRIPTION:") > 0) {
+		        			start = vtodo.indexOf("DESCRIPTION:");
+		        			end = vtodo.indexOf("\n", start);
+		        			if(end > start) {
+		        				vtodo = 
+		        					vtodo.substring(0, end) + 
+		        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
+		        					vtodo.substring(end);        					        					
+		        			}
+		        		} else {
+			    			vtodo += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
+			    		}
+		            }
+		            p.print(vtodo);
+		            SysLog.detail(vtodo);
+		            if(vtodo.indexOf("URL:") < 0) {
+		            	if(url != null) {
+		            		p.println("URL:" + url);
+		            	}
+		            }
+		            try {
+		            	Activities.getInstance().printAlarms(p, event);
+		            } catch(Exception ignore) {}
+		            p.println("END:VTODO");
 	            }
-	            p.print(vtodo);
-	            SysLog.detail(vtodo);
-	            if(vtodo.indexOf("URL:") < 0) {
-	            	if(url != null) {
-	            		p.println("URL:" + url);
-	            	}
-	            }
-	            this.printAlarms(p, event);	            
-	            p.println("END:VTODO");                        
 	        }
     	}
         p.print("END:VCALENDAR");			

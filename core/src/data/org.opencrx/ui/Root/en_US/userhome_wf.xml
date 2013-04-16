@@ -27,8 +27,8 @@
 												<_item>0</_item>
 												<_item>500</_item>
 											</order>
-											<iconKey>Wf</iconKey>
-											<maxMember>7</maxMember>
+											<maxMember>8</maxMember>
+											<showMaxMember>7</showMaxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -37,12 +37,11 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Workflow Process Instance</_item>
+												<_item>Workflow Process</_item>
 											</toolTip>
 											<label>
-												<_item>Workflow Process Instance</_item>
+												<_item>Workflow Process</_item>
 											</label>
-											<iconKey>Wf</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -60,19 +59,36 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:WfProcessInstance:process">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:WfProcessInstance:name">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Workflow process</_item>
+												<_item>Name</_item>
 											</toolTip>
 											<label>
-												<_item>Workflow process</_item>
+												<_item>Name</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:WfProcessInstance:process">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Workflow</_item>
+											</toolTip>
+											<label>
+												<_item>Workflow</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -89,8 +105,13 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>30</_item>
 											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>45</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -98,15 +119,15 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Parent instance</_item>
+												<_item>Parent workflow process</_item>
 											</toolTip>
 											<label>
-												<_item>Parent instance</_item>
+												<_item>Parent workflow process</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>30</_item>
+												<_item>40</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -200,6 +221,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
 									<!--Tab Definitions Pane1-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:WfProcessInstance:actionLog">
 										<_object>
@@ -215,7 +237,27 @@
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<iconKey>Wf</iconKey>
+											<maxMember>6</maxMember>
+											<showMaxMember>4</showMaxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:WfProcessInstance:childProcessInstance">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Child Workflow Processes</_item>
+											</toolTip>
+											<label>
+												<_item>Child Workflow Processes</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>8</maxMember>
+											<showMaxMember>7</showMaxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -230,7 +272,7 @@
 											<label>
 												<_item>Action Log Entry</_item>
 											</label>
-											<iconKey>org:opencrx:kernel:workflow1:Wf</iconKey>
+											<iconKey>Wf</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -286,6 +328,23 @@
 												<_item>0</_item>
 												<_item>30</_item>
 											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:WfActionLogEntry:modifiedAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>time and date when object was last modified</_item>
+											</toolTip>
+											<label>
+												<_item>Modified at</_item>
+											</label>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

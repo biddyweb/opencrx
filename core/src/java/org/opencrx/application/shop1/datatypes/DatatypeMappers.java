@@ -119,8 +119,6 @@ import org.opencrx.kernel.base.jmi1.PropertySet;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.code1.jmi1.CodeValueContainer;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
-import org.opencrx.kernel.contract1.jmi1.SalesContract;
-import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractInvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.AccountAssignmentContract;
@@ -129,6 +127,8 @@ import org.opencrx.kernel.contract1.jmi1.DeliveryInformation;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.InvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.Lead;
+import org.opencrx.kernel.contract1.jmi1.SalesContract;
+import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.document1.jmi1.Document;
@@ -137,12 +137,12 @@ import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.opencrx.kernel.generic.jmi1.Description;
 import org.opencrx.kernel.product1.cci2.ProductFilterGlobalQuery;
+import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.AbstractPriceLevel;
 import org.opencrx.kernel.product1.jmi1.AbstractProductConfiguration;
 import org.opencrx.kernel.product1.jmi1.ConfiguredProduct;
 import org.opencrx.kernel.product1.jmi1.PricingRule;
 import org.opencrx.kernel.product1.jmi1.Product;
-import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
 import org.opencrx.kernel.product1.jmi1.ProductClassification;
 import org.opencrx.kernel.product1.jmi1.ProductClassificationFilterProperty;
@@ -154,7 +154,6 @@ import org.opencrx.kernel.product1.jmi1.ProductFilterProperty;
 import org.opencrx.kernel.product1.jmi1.ProductPhase;
 import org.opencrx.kernel.product1.jmi1.RelatedProduct;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.spi.IntegerMarshaller;
 import org.openmdx.base.accessor.spi.ShortMarshaller;
 import org.openmdx.base.collection.MarshallingList;
@@ -194,22 +193,20 @@ public class DatatypeMappers {
     }
     
     //-----------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
 	public static List<Short> toShortList(
         List<?> values
     ) {
-        return new MarshallingList(
+        return new MarshallingList<Short>(
             ShortMarshaller.NORMALIZE,
             values
         );
     }
     
     //-----------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
 	public static List<Integer> toIntegerList(
         List<?> values
     ) {
-        return new MarshallingList(
+        return new MarshallingList<Integer>(
             IntegerMarshaller.NORMALIZE,
             values
         );
@@ -1776,13 +1773,12 @@ public class DatatypeMappers {
         // Get product filters of type PRODUCT_BUNDLE and test whether product is
         // a filtered product of these filters. If yes, product is part of the
         // product bundle defined by the filter
-        Product1Package productPackage = Utils.getProductPackage(pm);
         List<String> productBundles = new ArrayList<String>();
-        ProductFilterGlobalQuery productFilterQuery = productPackage.createProductFilterGlobalQuery();
+        ProductFilterGlobalQuery productFilterQuery = (ProductFilterGlobalQuery)pm.newQuery(ProductFilterGlobal.class);
         productFilterQuery.thereExistsUserCode0().equalTo(new Short((short)ProductFilterType.PRODUCT_BUNDLE.getValue()));
         Collection<ProductFilterGlobal> bundleFilters = productSegment.getProductFilter(productFilterQuery);
         for(ProductFilterGlobal bundleFilter: bundleFilters) {
-            org.opencrx.kernel.product1.cci2.ProductQuery productQuery = productPackage.createProductQuery();
+            org.opencrx.kernel.product1.cci2.ProductQuery productQuery = (ProductQuery)pm.newQuery(Product.class);
             productQuery.identity().equalTo(
                 product.refMofId()
             );
@@ -1796,11 +1792,11 @@ public class DatatypeMappers {
         // a filtered product of these filters. If yes, product is part of the
         // product bundle defined by the filter
         List<String> contentPartners = new ArrayList<String>();
-        productFilterQuery = productPackage.createProductFilterGlobalQuery();
+        productFilterQuery = (ProductFilterGlobalQuery)pm.newQuery(ProductFilterGlobal.class);
         productFilterQuery.thereExistsUserCode0().equalTo(new Short((short)ProductFilterType.CONTENT_PARTNER.getValue()));
         Collection<ProductFilterGlobal> contentPartnerFilters = productSegment.getProductFilter(productFilterQuery);
         for(ProductFilterGlobal contentPartnerFilter: contentPartnerFilters) {
-            org.opencrx.kernel.product1.cci2.ProductQuery productQuery = productPackage.createProductQuery();
+            org.opencrx.kernel.product1.cci2.ProductQuery productQuery = (ProductQuery)pm.newQuery(Product.class);
             productQuery.identity().equalTo(
                 product.refMofId()
             );
@@ -1814,7 +1810,7 @@ public class DatatypeMappers {
         Boolean isBundle = this.getProductFieldMapper().isBundle(product);
         ProductBundleDataT bundleData = null;        
         if((isBundle != null) && isBundle.booleanValue()) {  
-            productFilterQuery = productPackage.createProductFilterGlobalQuery();
+            productFilterQuery = (ProductFilterGlobalQuery)pm.newQuery(ProductFilterGlobal.class);
             productFilterQuery.name().equalTo(product.getProductNumber());
             bundleFilters = productSegment.getProductFilter(productFilterQuery);
             List<String> classificationIdFilter = null;

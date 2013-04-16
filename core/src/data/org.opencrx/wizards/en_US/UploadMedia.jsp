@@ -2,17 +2,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
- * Name:        $Id: UploadMedia.jsp,v 1.48 2012/07/08 13:30:32 wfro Exp $
  * Description: UploadMedia
- * Revision:    $Revision: 1.48 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2009, CRIXP AG, Switzerland
+ * Copyright (c) 2004-2012, CRIXP AG, Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -66,7 +63,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.kernel.log.*,
@@ -286,9 +282,7 @@ org.openmdx.kernel.id.*
 								}
 								boolean isNew = false;
 								if(media == null) {
-									org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = org.opencrx.kernel.utils.Utils.getGenericPackage(pm);
-									media = genericPkg.getMedia().createMedia();
-									media.refInitialize(false, false);
+									media = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
 									isNew = true;
 								}
 								if(isNew) {
@@ -323,9 +317,7 @@ org.openmdx.kernel.id.*
 								}
 								boolean isNew = false;
 								if(media == null) {
-									org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
-									media = homePkg.getMedia().createMedia();
-									media.refInitialize(false, false);
+									media = pm.newInstance(org.opencrx.kernel.home1.jmi1.Media.class);
 									isNew = true;
 								}
 								if(isNew) {
@@ -360,9 +352,7 @@ org.openmdx.kernel.id.*
 								// Add media to document object
 								boolean isNew = false;
 								if(documentAttachment == null) {
-									org.opencrx.kernel.document1.jmi1.Document1Package documentPkg = org.opencrx.kernel.utils.Utils.getDocumentPackage(pm);
-									documentAttachment = documentPkg.getDocumentAttachment().createDocumentAttachment();
-									documentAttachment.refInitialize(false, false);
+									documentAttachment = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentAttachment.class);
 									isNew = true;
 								}
 								documentAttachment.setName(description.length() > 0 ? description : contentName);

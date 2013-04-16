@@ -57,7 +57,6 @@ import java.text.ParseException;
 
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
-import javax.naming.spi.NamingManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -67,7 +66,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.Member;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 
 import test.org.opencrx.generic.AbstractTest;
 
@@ -87,10 +85,12 @@ public class TestApi {
     @BeforeClass
     public static void initialize(
     ) throws NamingException, ServiceException {
-        if(!NamingManager.hasInitialContextFactoryBuilder()) {
-            NonManagedInitialContextFactoryBuilder.install(null);
-        }
-        entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
+    	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactoryProxy(
+    		"http://127.0.0.1:8080/opencrx-rest-CRX/", 
+    		"admin-Standard", 
+    		"admin-Standard", 
+    		"application/vnd.openmdx.wbxml" // text/xml
+    	);        
     }
     
     //-----------------------------------------------------------------------

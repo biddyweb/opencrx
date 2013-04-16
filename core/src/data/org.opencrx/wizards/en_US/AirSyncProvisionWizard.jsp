@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: AirSyncProvisionWizard.jsp,v 1.4 2012/07/08 13:29:33 wfro Exp $
  * Description: AirSyncProvisionWizard
- * Revision:    $Revision: 1.4 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -55,60 +54,21 @@
  * openMDX (http://www.openmdx.org/)
  */
 %>
-<%@ page session="true" import="
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.net.*,
 java.math.*,
 java.sql.*,
 java.text.*,
-javax.net.ssl.*,
-javax.naming.Context,
-javax.naming.InitialContext,
 javax.xml.transform.stream.*,
-org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.base.exception.*,
-org.openmdx.kernel.id.cci.*,
-org.openmdx.portal.servlet.*,
-org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
-org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.id.*,
-org.openmdx.kernel.exception.*,
+org.opencrx.kernel.portal.wizard.*,
 org.opencrx.kernel.backend.*,
-org.opencrx.application.airsync.utils.*,
-org.opencrx.application.airsync.datatypes.*
+org.openmdx.base.exception.*,
+org.openmdx.portal.servlet.*,
+org.openmdx.kernel.id.*,
+org.openmdx.kernel.exception.*
 "%>
-<%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	// ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	// String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	// requestId is optional and may not be provided be external invokers
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null /* || viewsCache.getView(requestId) == null */) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
-		return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	if(!(obj instanceof org.opencrx.kernel.home1.jmi1.AirSyncClientProfile)) {
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
-	org.opencrx.kernel.home1.jmi1.AirSyncClientProfile syncProfile = (org.opencrx.kernel.home1.jmi1.AirSyncClientProfile)obj;
-%>
 <!--
 	<meta name="label" content="AirSync - Provision">
 	<meta name="toolTip" content="AirSync - Provision">
@@ -116,42 +76,13 @@ org.opencrx.application.airsync.datatypes.*
 	<meta name="forClass" content="org:opencrx:kernel:home1:AirSyncClientProfile">
 	<meta name="order" content="30">
 -->
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-  <head></head>
-  <body>
 <%
-    try {
-    	org.opencrx.application.airsync.backend.cci.SyncBackend syncBackend =
-    		new org.opencrx.application.airsync.backend.impl.OpenCrxSyncBackend(
-    			pm.getPersistenceManagerFactory(),
-    			syncProfile.refGetPath().get(2)
-    		);
-    	org.opencrx.application.airsync.client.ClientHandler syncHandler =
-    		new org.opencrx.application.airsync.client.ProvisionHandler(syncBackend);
-    	syncHandler.handle(
-   			org.opencrx.application.airsync.utils.AirSyncUtils.newRemoteSyncTarget(
-				syncProfile.getServerUrl(),
-				syncProfile.getUsername(),
-				syncProfile.getDomain(),
-				syncProfile.getPassword(),
-				syncProfile.refGetPath().getBase()
-			),
-   			syncProfile.refGetPath().get(4) + org.opencrx.application.airsync.backend.cci.SyncBackend.DOMAIN_SEPARATOR + syncProfile.refGetPath().get(6),
-   			syncProfile.getName(),
-   			UserHomes.getInstance().getUserHome(syncProfile.refGetPath(), pm)
-    	);
-    } catch (Exception e) {
-        new ServiceException(e).log();
-    } finally {
-    }
-   	Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-   	response.sendRedirect(
-   		request.getContextPath() + "/" + nextAction.getEncodedHRef()
-   	);
-   	if(pm != null) {
-   		pm.close();
-   	}
+	AirSyncProvisionWizardController wc = new AirSyncProvisionWizardController();
 %>
-  </body>
-</html>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='OK' assertRequestId='false'/>
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
+		return;
+	}
+%>

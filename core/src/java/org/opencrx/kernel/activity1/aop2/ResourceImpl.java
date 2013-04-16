@@ -59,12 +59,13 @@ import java.util.List;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ResourceImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.Resource,N extends org.opencrx.kernel.activity1.cci2.Resource,C extends Void>
@@ -111,15 +112,15 @@ public class ResourceImpl
                 Boolean.FALSE, // isReimbursable
                 owningGroups
             );
-            return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
-                workRecord
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.Member.workRecord, workRecord)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
-        }                    
+        }                   
     }
-        
+
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult addExpenseRecord(
         org.opencrx.kernel.activity1.jmi1.ResourceAddExpenseRecordParams params
@@ -144,11 +145,11 @@ public class ResourceImpl
                 params.isReimbursable(),
                 owningGroups
             );
-            return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
-                workRecord
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.Member.workRecord, workRecord)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                    
     }
@@ -168,14 +169,14 @@ public class ResourceImpl
                 totalQuantities,
                 quantityUoms
             );
-            return Utils.getActivityPackage(this.sameManager()).createCalcTotalQuantityResult(
-                quantityUoms,
-                totalQuantities
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.Member.quantityUom, quantityUoms),
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.Member.totalQuantity, totalQuantities)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }
-        
+
 }

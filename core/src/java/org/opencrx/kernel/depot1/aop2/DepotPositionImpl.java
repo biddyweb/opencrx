@@ -59,10 +59,11 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class DepotPositionImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.DepotPosition,N extends org.opencrx.kernel.depot1.cci2.DepotPosition,C extends Void>
@@ -88,12 +89,12 @@ public class DepotPositionImpl
                 params.getClosingDate(),
                 errors
             );
-            return Utils.getDepotPackage(this.sameManager()).createCloseDepotPositionResult(
-                (short)0, 
-                null
-            );
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.depot1.jmi1.CloseDepotPositionResult.class, 
+            	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CloseDepotPositionResult.Member.status, (short)0),
+            	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CloseDepotPositionResult.Member.statusMessage, null)                	
+            );            
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }        
     }

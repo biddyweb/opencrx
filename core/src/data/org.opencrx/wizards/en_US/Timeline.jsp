@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: Timeline.jsp,v 1.23 2012/07/08 13:30:31 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: launch timeline (based on http://simile.mit.edu/timeline/)
- * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2007-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,161 +53,68 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
-java.net.*,
 java.text.*,
-org.openmdx.base.naming.*,
-org.openmdx.base.query.*,
-org.openmdx.base.accessor.jmi.cci.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
+org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*
-" %><%
-	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-    String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
+org.openmdx.base.naming.*
+" %>
+<%
+	final String FORM_NAME = "Timeline";	
+	TimelineController wc = new TimelineController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
 		return;
 	}
-	Texts_1_0 texts = app.getTexts();
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<%= texts.getDir() %>">
-<head>
-  <title><%= app.getApplicationName() %> - Timeline Launcher</title>
-  <meta name="label" content="Timeline">
-  <meta name="toolTip" content="Timeline">
-  <meta name="targetType" content="_blank">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCategory">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityMilestone">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGlobal">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGroup">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:Resource">
-  <meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
-  <!-- calendars based on contacts -->
-  <meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal"> <!-- bday -->
-  <meta name="order" content="5999">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
-</head>
-<body>
+<!-- 
+	<meta name="label" content="Timeline">
+	<meta name="toolTip" content="Timeline">
+	<meta name="targetType" content="_blank">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCategory">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityMilestone">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGlobal">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGroup">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:Resource">
+	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
+	<meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal">
+	<meta name="order" content="5999">
+-->
 <%
-	try {
-    RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-    Path objectPath = obj.refGetPath();
-    String providerName = objectPath.get(2);
-    String segmentName = objectPath.get(4);
-
-    String urlBase = (request.getRequestURL().toString()).substring(0, (request.getRequestURL().toString()).indexOf(request.getServletPath().toString()));
-    String groupComponent = "";
-    String filterComponent = "";
-
-    // activity filter
-    if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup) {
-      org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup activityFilterGroup =
-        (org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup)obj;
-      if ((activityFilterGroup.getName() != null) && (activityFilterGroup.getName().length() > 0)) {
-        filterComponent = "/filter/" + URLEncoder.encode(activityFilterGroup.getName(), "UTF-8");
-      }
-      // set obj to parent object
-      obj = (RefObject_1_0)pm.getObjectById(new Path(activityFilterGroup.refMofId()).getParent().getParent());
-    }
-    else if (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal) {
-      org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal activityFilterGlobal =
-        (org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal)obj;
-      if ((activityFilterGlobal.getName() != null) && (activityFilterGlobal.getName().length() > 0)) {
-        filterComponent = "/globalfilter/" + URLEncoder.encode(activityFilterGlobal.getName(), "UTF-8");
-      }
-    }
-    // activity group
-    if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
-      org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker =
-        (org.opencrx.kernel.activity1.jmi1.ActivityTracker)obj;
-      if ((activityTracker.getName() != null) && (activityTracker.getName().length() > 0)) {
-        groupComponent = "/tracker/" + URLEncoder.encode(activityTracker.getName(), "UTF-8");
-      }
-    }
-    else if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCategory) {
-      org.opencrx.kernel.activity1.jmi1.ActivityCategory activityCategory =
-        (org.opencrx.kernel.activity1.jmi1.ActivityCategory)obj;
-      if ((activityCategory.getName() != null) && (activityCategory.getName().length() > 0)) {
-        groupComponent = "/category/" + URLEncoder.encode(activityCategory.getName(), "UTF-8");
-      }
-    }
-    else if(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityMilestone) {
-      org.opencrx.kernel.activity1.jmi1.ActivityMilestone activityMilestone =
-        (org.opencrx.kernel.activity1.jmi1.ActivityMilestone)obj;
-      if ((activityMilestone.getName() != null) && (activityMilestone.getName().length() > 0)) {
-        groupComponent = "/milestone/" + URLEncoder.encode(activityMilestone.getName(), "UTF-8");
-      }
-    }
-    else if(obj instanceof org.opencrx.kernel.activity1.jmi1.Resource) {
-      org.opencrx.kernel.activity1.jmi1.Resource resource =
-        (org.opencrx.kernel.activity1.jmi1.Resource)obj;
-      if ((resource.getName() != null) && (resource.getName().length() > 0)) {
-        groupComponent = "/resource/" + URLEncoder.encode(resource.getName(), "UTF-8");
-      }
-    }
-    else if(obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-      groupComponent = "/userhome/" + URLEncoder.encode(obj.refGetPath().getBase(), "UTF-8");
-    }
-    else if (obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal) {
-        org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal =
-          (org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)obj;
-        if ((accountFilterGlobal.getName() != null) && (accountFilterGlobal.getName().length() > 0)) {
-          filterComponent = "/filter/" + URLEncoder.encode(accountFilterGlobal.getName(), "UTF-8");
-        }
-    }
-
-    if ((groupComponent.length() > 0) || (filterComponent.length() > 0)) {
-		String target =
-			request.getContextPath().replace("-core-", "-ical-") + "/" +
-			(obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal ? "bdays" : "ical") + "?id=" +
-			providerName + "/" + segmentName +
-			groupComponent + filterComponent +
-			"&resource=activities.html&user.locale=" + URLEncoder.encode(app.getCurrentLocaleAsString()) + "&user.tz=" + URLEncoder.encode(app.getCurrentTimeZone());
+	if(wc.getTargetUrl() != null) {
 %>
-      <a href="<%= target %>" target="_blank"><%= target %></a>
+		<a href="<%= wc.getTargetUrl() %>" target="_blank"><%= wc.getTargetUrl() %></a>
 <%
-      response.sendRedirect(target);
-    } else {
+		response.sendRedirect(wc.getTargetUrl());
+	} 
+	else {
 %>
-      <p>cannot call timeline for xri<br><%= obj.refMofId() %></p>
-      <p>possible reasons include
-      <ul>
-        <li>name is empty</li>
-        <li>name contains blanks</li>
-      </ul>
+		<br />
+		<p>Cannot call Timeline for <br><%= wc.getObjectIdentity().toXRI() %></p>
+		<p>Possible reasons are
+		<ul>
+			<li>name is empty</li>
+			<li>name contains blanks</li>
+		</ul>
+		<br />
 <%
-    }
-  }
-  catch (Exception e) {
-      ServiceException e0 = new ServiceException(e);
-      e0.log();
-      out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-      PrintWriter pw = new PrintWriter(out);
-      e0.printStackTrace(pw);
-      out.println("</pre></p>");
-  } finally {
-	  if(pm != null) {
-		  pm.close();
-	  }
-  }
+	}
 %>
-</body>
-</html>
+<t:wizardClose controller="<%= wc %>" />

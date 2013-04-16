@@ -5,6 +5,174 @@
                     =====================================
 
 ==============================================================================
+Version 2.11.0                                                      2013-04-02
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10011324
+      Use WITH RECURSIVE for view OOCKE1_TOBJ_ACCTMEMBERSHIP. If a database
+      does not support WITH RECURSIVE, DbSchemaWizard makes a fallback to
+      OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT which uses cascading JOINs and UNIONs down
+      to level 2.
+
+      CR10010562
+      Assignment of auto-created EMailAddresses. Add method Accounts.getUnassignableAddressesHolder(). 
+      This way custom-specific extensions can specify the account. Default is 
+      the segment administrator.
+      
+      CR10011164
+      New workflows BulkCreateActivityWorkflow and BulkActivityFollowUpWorkflow.
+      The workflows are launched by the corresponding wizards BulkCreateActivityWizard
+      and BulkActivityFollowUpWizard. The new asynchronous workflows allow to create 
+      and manage large amount of activities in the background. Status and progress
+      is logged in the workflow process log. 
+       
+      CR10011268
+      Workflows: structuring processes. Workflow processes can be now be structured
+      using the WfProcessInstance::parent feature. The shared association 
+      WfProcessInstanceHasChildren allows drill down the process hierarchy. 
+      Typically, bulk workflows which create child processes use this feature.
+ 
+      CR10011238
+      BPI adapter. Simple, extensible adapter for business process integration.
+      The default implementation supports the actions listed below. Additional
+      actions can be added in custom projects by extending 
+      org.opencrx.application.bpi.adapter.BpiAdapterServlet.
+      
+      1. Get code table
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Root/codeTable/country
+         * Method: GET
+
+      2. Get contact
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/contact/10000
+         * Method: GET
+
+      3. Get organization
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/organization/0
+         * Method: GET
+
+      4: Get organization members
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/organization/0/member
+         * Method: GET
+
+      5. Get activity creator
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/activityCreator/($t*ces*Bugs%20and%20Features)
+         * Method: GET
+
+      6. Create activity
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/activityCreator/($t*ces*Bugs%20and%20Features)/createActivity
+         * Method: POST
+         * Body:
+		   { 
+			   "name" : "name of activity",
+			   "description" : "description of activity",
+			   "detailedDescription" : "detailed description of activity",
+			   "priority" : "required priority 0-5",
+			   "reportingContact": "id of reporting contact",
+			   "scheduledStart": "Jan 01, 2013 4:47:13 PM",
+			   "scheduledEnd": "Jan 01, 2013 5:47:13 PM"
+		   }
+
+      7. Get activity
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/activity/1000000
+         * Method: GET
+
+      8. Do Follow-Up
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/activity/100000/doFollowUp
+         * Method: POST
+         * Body:
+		   { 
+			   "title" : "title of follow up",
+			   "text" : "text of follow up",
+			   "assignTo" : "optional contact id of assignTo contact",
+			   "transition" : "optional transition name"
+			   "updateActivity": "optional flag. When set to true, activity's detailedDescription is set to text and follow up is created with old detailedDescription"
+		   }
+
+      9. Get assigned activities
+         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/contact/1000000/assignedActivity
+         * Method: GET
+
+
+      CR10011155
+      Support for openCRX remote clients with minimal set of JARs. A remote
+      client initializes the persistence manager factory as follows:
+      
+      javax.jdo.PersistenceManagerFatory persistenceManagerFactory =
+          org.opencrx.kernel.utils.Utils.getPersistenceManagerFactoryProxy(
+	          "http://127.0.0.1:8080/opencrx-rest-CRX/", 
+	            "<username>, 
+	            "<password>", 
+	            "application/vnd.openmdx.wbxml"
+	    	);
+
+      The remote client communicates with the openCRX server via http/REST. The
+      XML payload is encoded as web binary XML. The client has access to the full 
+      API of openCRX. 
+      
+      The following libraries are required on Java SE and EE platforms:
+      * opencrx-client.jar
+      * openmdx-client.jar
+
+      The following additional libraries are required on Java SE platforms:
+      * openmdx/osgi/jre-1.6/enterprise/lib/osgi.enterprise.transaction.jar
+      * openmdx/osgi/jre-1.6/extension/lib/resource.jar
+ 
+      CR10011140
+      New attribute Contact::dateOfDeath. The ICAL servlet now supports
+      calendars for
+      * Birthdays (/bdays)
+      * Anniversaries (/anniversaries)
+      * Dates Of Death (/datesofdeath)
+      
+      CR10011143
+      ActivityCreator: icalClass. icalClass allows to define the default value 
+      for newly created ICALs if not supplied by the client.
+      
+      CR10010470
+      Contract::contractType. Add reference AbstractContract::contractType. 
+      Amend backend so that createContract() sets the supplied contractType.
+
+      CR10011065
+      WorkExpenseRecord is a ConfiguredProduct. This allows to specify a
+      (configured) product on work and expense records in addition to the
+      uom. This simplifies the mapping to sales contract positions.
+
+      CR10011067
+      Addressable::regionType / region. Allows to assign an address to one or
+      more regions (currently 3). Region types are defined by code value containers 
+      where the entries denote regions. Custom-specific implementations (e.g.
+      Accounts.updateAddress()) assign - according to the region type and e.g.
+      postal code - the Addressable to a region.
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10010724
+      Refactoring of wizards:
+      * Move business-logic to Java classes (wizard controllers). This allows
+        to customize the business-logic by extending the controller classes.
+      * Change to inline mode and use new wizard-specific tags
+
+      CR10011058
+      ObjectFinder: optimize result set. ObjectFinder shows newest matching 
+      index entry for a given object only. Entries are ordered by createdAt 
+      descending.
+      
+2.1.  FIXED BUGS
+      
+      CR10011082
+      ADDRESS_TYPES. Fix qualified class name to 
+      org:opencrx:kernel:address1:PhoneNumberAddressable.
+      
+      ... and many more bug-fixes.
+
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
 Version 2.10.0                                                      2012-08-24
 ==============================================================================
 

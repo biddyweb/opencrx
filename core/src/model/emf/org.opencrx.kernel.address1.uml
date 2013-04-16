@@ -148,6 +148,33 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_I4NJABzPEeGTXbJH1WaQBg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_I4NJARzPEeGTXbJH1WaQBg"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_hXThggvXEeKVD5YCc253Vg" name="regionType1" association="_hXKXkAvXEeKVD5YCc253Vg">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.code1.uml#_3C7B8A60016D3F42A01900B6"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hXUIkQvXEeKVD5YCc253Vg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hXUIkAvXEeKVD5YCc253Vg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_1ZGb4wvXEeKVD5YCc253Vg" name="regionType2" association="_1ZFNwAvXEeKVD5YCc253Vg">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.code1.uml#_3C7B8A60016D3F42A01900B6"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_1ZHC8QvXEeKVD5YCc253Vg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1ZHC8AvXEeKVD5YCc253Vg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_FQX2kAvYEeKVD5YCc253Vg" name="regionType3" association="_FQUMMAvYEeKVD5YCc253Vg">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.code1.uml#_3C7B8A60016D3F42A01900B6"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FQYdoQvYEeKVD5YCc253Vg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FQYdoAvYEeKVD5YCc253Vg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_qoGFgAvZEeKVD5YCc253Vg" name="region1" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_za-QYAvZEeKVD5YCc253Vg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_s_c-cAvZEeKVD5YCc253Vg" name="region2" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_0JpUQAvZEeKVD5YCc253Vg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_uaKB4AvZEeKVD5YCc253Vg" name="region3" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_00UB4AvZEeKVD5YCc253Vg"/>
+            </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_fBLBcO8BEdmRceqq7KYXeQ" name="RoomAddressable" isAbstract="true">
             <eAnnotations xmi:id="_holvoO8BEdmRceqq7KYXeQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
@@ -163,6 +190,24 @@
             <ownedEnd xmi:id="_i2aTAEi1Ed-hZsNYMNcVzA" name="addressable" type="_3C7B8A60016D3F932399021B" association="_i2ZE4Ei1Ed-hZsNYMNcVzA">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_v0fTAEi1Ed-hZsNYMNcVzA" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_v0fTAUi1Ed-hZsNYMNcVzA"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_hXKXkAvXEeKVD5YCc253Vg" name="AddressableHasRegionType1" memberEnd="_hXS6cAvXEeKVD5YCc253Vg _hXThggvXEeKVD5YCc253Vg">
+            <ownedEnd xmi:id="_hXS6cAvXEeKVD5YCc253Vg" name="addressable" type="_3C7B8A60016D3F932399021B" association="_hXKXkAvXEeKVD5YCc253Vg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hXThgQvXEeKVD5YCc253Vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hXThgAvXEeKVD5YCc253Vg"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_1ZFNwAvXEeKVD5YCc253Vg" name="AddressableHasRegionType2" memberEnd="_1ZGb4AvXEeKVD5YCc253Vg _1ZGb4wvXEeKVD5YCc253Vg">
+            <ownedEnd xmi:id="_1ZGb4AvXEeKVD5YCc253Vg" name="addressable" type="_3C7B8A60016D3F932399021B" association="_1ZFNwAvXEeKVD5YCc253Vg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_1ZGb4gvXEeKVD5YCc253Vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1ZGb4QvXEeKVD5YCc253Vg"/>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_FQUMMAvYEeKVD5YCc253Vg" name="AddressableHasRegionType3" memberEnd="_FQWocAvYEeKVD5YCc253Vg _FQX2kAvYEeKVD5YCc253Vg">
+            <ownedEnd xmi:id="_FQWocAvYEeKVD5YCc253Vg" name="addressable" type="_3C7B8A60016D3F932399021B" association="_FQUMMAvYEeKVD5YCc253Vg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_FQXPgQvYEeKVD5YCc253Vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_FQXPgAvYEeKVD5YCc253Vg"/>
             </ownedEnd>
           </packagedElement>
         </packagedElement>

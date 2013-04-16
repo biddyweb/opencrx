@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityProcessImportWizard.jsp,v 1.5 2012/07/08 13:29:33 wfro Exp $
  * Description: ActivityProcessImportWizard
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,68 +57,20 @@
 <%@ page session="true" import="
 java.util.*,
 java.io.*,
-java.net.*,
-java.math.*,
-java.sql.*,
 java.text.*,
-javax.net.ssl.*,
-javax.naming.Context,
-javax.naming.InitialContext,
-javax.xml.transform.stream.*,
-org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.base.exception.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.id.*,
-org.openmdx.kernel.exception.*,
-org.openmdx.base.text.conversion.*,
-org.opencrx.kernel.backend.*,
-org.opencrx.application.airsync.utils.*,
-org.opencrx.application.airsync.datatypes.*
+org.openmdx.base.naming.*
 "%>
-<%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
-		return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	String formName = "ActivityProcessImportForm";
-	String wizardName = "ActivityProcessImportWizard.jsp";
-
-	// Get Parameters
-	String command = request.getParameter("Command");
-	if(command == null) command = "";
-	boolean actionCreate = "OK".equals(command);
-	boolean actionCancel = "Cancel".equals(command);
-
-	if(actionCancel) {
-	  session.setAttribute(wizardName, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
-%>
 <!--
 	<meta name="label" content="State Chart XML - Import Activity Process">
 	<meta name="toolTip" content="State Chart XML - Import Activity Process">
@@ -128,105 +79,39 @@ org.opencrx.application.airsync.datatypes.*
 	<meta name="order" content="9999">
 -->
 <%
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = org.opencrx.kernel.backend.Activities.getInstance().getActivitySegment(
-		pm,
-		providerName,
-		segmentName
-	);
-	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
-	org.openmdx.portal.servlet.control.FormControl form = new org.openmdx.portal.servlet.control.FormControl(
-		formDefinition.refGetPath().getBase(),
-		app.getCurrentLocaleAsString(),
-		app.getCurrentLocaleAsIndex(),
-		app.getUiContext(),
-		formDefinition
-	);
-	Map formValues = new HashMap();
-	form.updateObject(
-		request.getParameterMap(),
-		formValues,
-		app,
-		pm
-	);
-	List<String> report = new ArrayList<String>();
-	if(actionCreate) {
-	    org.opencrx.kernel.document1.jmi1.Document document = 
-	    	(org.opencrx.kernel.document1.jmi1.Document)pm.getObjectById(
-	    		formValues.get("org:opencrx:kernel:generic:DocumentAttachment:document")
-	    	);
-	    if(document != null) {
-	    	String contentType = document.getContentType();
-	    	if(contentType != null && contentType.startsWith("text/")) {
-	    		org.opencrx.kernel.document1.jmi1.DocumentRevision headRevision = document.getHeadRevision();
-	    		if(headRevision instanceof org.opencrx.kernel.document1.jmi1.MediaContent) {
-	    			org.opencrx.kernel.document1.jmi1.MediaContent mediaContent = (org.opencrx.kernel.document1.jmi1.MediaContent)headRevision;
-	    			InputStream content = mediaContent.getContent().getContent();
-    				pm.currentTransaction().begin();
-    				org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = Activities.getInstance().importActivityProcessFromScXml(
-   						activitySegment,
-   						content,
-   						report
-   					);
-    				if(report.isEmpty()) {
-    					pm.currentTransaction().commit();
-		    	    	if(activityProcess != null) {
-			    		    Action nextAction = new ObjectReference(
-			    		    	activityProcess,
-			    		    	app
-			    		   	).getSelectObjectAction();
-			    			response.sendRedirect(
-			    				request.getContextPath() + "/" + nextAction.getEncodedHRef()
-			    			);
-			    			return;
-		    	    	}    					
-    				} else {
-    					try {
-    						pm.currentTransaction().rollback();
-    					} catch(Exception e1) {}
-    				}
-	    		}
-	    	}
-	    }
+	final String FORM_NAME = "ActivityProcessImportForm";
+	ActivityProcessImportWizardController wc = new ActivityProcessImportWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='OK' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
+		return;
 	}
-	TransientObjectView view = new TransientObjectView(
-		formValues,
-		app,
-		obj,
-		pm
-	);
-	ViewPort p = ViewPortFactory.openPage(
-		view,
-		request,
-		out
-	);
+	ViewPort viewPort = wc.getViewPort(out);
 %>
 <br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
-	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
-	<table cellspacing="8" class="tableLayout">
+	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= formName %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
 <%
-					form.paint(
-						p,
-						null, // frame
-						true // forEditing
-					);
-					p.flush();
+					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
+					viewPort.flush();
 %>
 				</div>
 <%
-				if(!report.isEmpty()) {
+				if(!wc.getReport().isEmpty()) {
 %>				
 					<pre>
 Report:<%
 					int n = 0;
-					for(String reportLine: report) {
+					for(String reportLine: wc.getReport()) {
 %>
 <%= n + ": " + reportLine %><%
 						n++;
@@ -235,15 +120,18 @@ Report:<%
 <%
 				}
 %>
-				<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9000" value="Create" onclick="javascript:$('Command').value=this.name;" />
-				<input  type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+				<div id="SubmitArea" style="float:left;display:none;">
+					<input type="submit" name="OK" id="OK.Button" tabindex="9010" value="<%= wc.getTexts().getNewText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;this.name='---';" />
+					<input type="submit" name="Cancel" tabindex="9020" value="<%= wc.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+				</div>
 			</td>
 		</tr>
 	</table>
 </form>
-<script language="javascript" type="text/javascript">
-	Event.observe('<%= formName %>', 'submit', function(event) {
-		$('<%= formName %>').request({
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
 			onFailure: function() { },
 			onSuccess: function(t) {
 				$('UserDialog').update(t.responseText);
@@ -251,10 +139,7 @@ Report:<%
 		});
 		Event.stop(event);
 	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';
 </script>
-<%
-p.close(false);
-if(pm != null) {
-	pm.close();
-}
-%>
+<t:wizardClose controller="<%= wc %>" />

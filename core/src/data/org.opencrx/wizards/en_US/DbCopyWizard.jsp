@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DbCopyWizard.jsp,v 1.7 2012/07/08 13:30:31 wfro Exp $
- * Description: DbCopywizard
- * Revision:    $Revision: 1.7 $
+ * Description: DbCopyWizard
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,164 +57,35 @@
 <%@ page session="true" import="
 java.util.*,
 java.io.*,
-java.net.*,
-java.math.*,
-java.sql.*,
 java.text.*,
-javax.net.ssl.*,
-javax.naming.Context,
-javax.naming.InitialContext,
-javax.xml.transform.stream.*,
-org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.base.exception.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
+org.openmdx.base.exception.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.id.*,
-org.openmdx.kernel.exception.*,
-org.openmdx.base.text.conversion.*,
-org.opencrx.kernel.backend.*,
-org.opencrx.application.airsync.utils.*,
-org.opencrx.application.airsync.datatypes.*
+org.openmdx.base.naming.*
 "%>
-<%!
-	static class CopyThread extends Thread {
-	
-		public CopyThread(
-			String runningUser,
-			String usernameSource,
-			String passwordSource,
-			String jdbcUrlSource,
-			String usernameTarget,
-			String passwordTarget,
-			String jdbcUrlTarget,
-			String kernelStartFromDbObject,
-			String kernelEndWithDbObject,
-			String securityStartFromDbObject,
-			String securityEndWithDbObject,
-			String providerNameSource,
-			String providerNameTarget				
-		) {
-			super(runningUser + "@CopyThread");
-			this.usernameSource = usernameSource; 
-			this.passwordSource = passwordSource;
-			this.jdbcUrlSource = jdbcUrlSource;
-			this.usernameTarget = usernameTarget;
-			this.passwordTarget = passwordTarget;
-			this.jdbcUrlTarget = jdbcUrlTarget;
-			this.kernelStartFromDbObject = kernelStartFromDbObject;
-			this.kernelEndWithDbObject = kernelEndWithDbObject;
-			this.securityStartFromDbObject = securityStartFromDbObject;
-			this.securityEndWithDbObject = securityEndWithDbObject;
-			this.providerNameSource = providerNameSource;
-			this.providerNameTarget = providerNameTarget;
-			this.reportBos = new ByteArrayOutputStream();
-			this.report = new PrintStream(reportBos);			
-		}
-	
-		public void run(
-		) {
-			try {
-				org.opencrx.kernel.tools.CopyDb.copyDb(
-					org.opencrx.kernel.utils.DbSchemaUtils.getJdbcDriverName(this.jdbcUrlSource),
-					this.usernameSource,
-					this.passwordSource,
-					this.jdbcUrlSource,
-					org.opencrx.kernel.utils.DbSchemaUtils.getJdbcDriverName(this.jdbcUrlTarget),
-					this.usernameTarget,
-					this.passwordTarget,
-					this.jdbcUrlTarget,
-					this.kernelStartFromDbObject,
-					this.kernelEndWithDbObject,
-					this.securityStartFromDbObject,
-					this.securityEndWithDbObject,
-					this.providerNameSource,
-					this.providerNameTarget,
-					report
-				);
-			} catch(Exception e) {
-				ServiceException e0 = new ServiceException(e);
-				e0.printStackTrace(this.report);
-			}
-		}
-		
-		public String getReport(
-		) {
-			try {
-				return this.reportBos.toString("UTF-8");
-			} catch(Exception e) {
-				return this.reportBos.toString();
-			}
-		}
-		
-		private final String usernameSource;
-		private final String passwordSource;
-		private final String jdbcUrlSource;
-		private final String usernameTarget;
-		private final String passwordTarget;
-		private final String jdbcUrlTarget;
-		private final String kernelStartFromDbObject;
-		private final String kernelEndWithDbObject;
-		private final String securityStartFromDbObject;
-		private final String securityEndWithDbObject;
-		private final String providerNameSource;
-		private final String providerNameTarget;			
-		private final ByteArrayOutputStream reportBos;
-		private final PrintStream report;
-	}
-
-%>
 <%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
+	final String FORM_NAME = "DbCopyForm";
+	DbCopyWizardController wc = new DbCopyWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();		
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	String formName = "DbCopyForm";
-	String wizardName = "DbCopyWizard.jsp";
-
-	// Get Parameters
-	String command = request.getParameter("Command");
-	if(command == null) command = "";
-	boolean actionCopy = "Copy".equals(command);
-	boolean actionCancel = "Cancel".equals(command);
-	boolean actionClear = "Clear".equals(command);
-	String jdbcUrlSource = request.getParameter("jdbcUrlSource");
-	String usernameSource = request.getParameter("usernameSource");
-	String passwordSource = request.getParameter("passwordSource");
-	String jdbcUrlTarget = request.getParameter("jdbcUrlTarget");
-	String usernameTarget = request.getParameter("usernameTarget");
-	String passwordTarget = request.getParameter("passwordTarget");
-	String kernelStartFromDbObject = request.getParameter("kernelStartFromDbObject");
-	String kernelEndWithDbObject = request.getParameter("kernelEndWithDbObject");
-	String securityStartFromDbObject = request.getParameter("securityStartFromDbObject");
-	String securityEndWithDbObject = request.getParameter("securityEndWithDbObject");
-	if(actionCancel) {
-	  	session.setAttribute(wizardName, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}	
+	ApplicationContext app = wc.getApp();
+	RefObject_1_0 obj = wc.getObject();
+	Texts_1_0 texts = wc.getTexts();
+	boolean isRefreshReport = "RefreshReport".equals(wc.getCommand());
 %>
 <!--
 	<meta name="label" content="Database Copy wizard">
@@ -224,73 +94,17 @@ org.opencrx.application.airsync.datatypes.*
 	<meta name="forClass" content="org:opencrx:kernel:admin1:Segment">
 	<meta name="order" content="9999">
 -->
-<%
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-	String currentPrincipal = app.getLoginPrincipal();
-	CopyThread copyThread = (CopyThread)session.getAttribute(org.opencrx.kernel.tools.CopyDb.class.getName());
-	// In case of a logoff try to lookup copy thread in list of active threads
-	if(copyThread == null) {
-		Thread[] runningThreads = new Thread[Thread.activeCount()];
-		Thread.enumerate(runningThreads);
-		copyThread = null;
-		for(Thread thread: runningThreads) {
-			if(thread instanceof CopyThread && thread.getName().equals(currentPrincipal + "@CopyThread")) {
-				copyThread = (CopyThread)thread;
-				session.setAttribute(
-					org.opencrx.kernel.tools.CopyDb.class.getName(), 
-					copyThread
-				);	
-				break;
-			}
-		}
-	}
-	// actionClear
-	if(actionClear && copyThread != null && !copyThread.isAlive()) {
-		session.removeAttribute(
-			org.opencrx.kernel.tools.CopyDb.class.getName() 
-		);
-	}
-	// actionCopy
-	if(copyThread == null && actionCopy) {
-		copyThread = new CopyThread(
-			currentPrincipal,
-			usernameSource,
-			passwordSource,
-			jdbcUrlSource,
-			usernameTarget,
-			passwordTarget,
-			jdbcUrlTarget,
-			kernelStartFromDbObject,
-			kernelEndWithDbObject,
-			securityStartFromDbObject,
-			securityEndWithDbObject,
-			obj.refGetPath().get(2),
-			obj.refGetPath().get(2)
-		);
-		session.setAttribute(
-			org.opencrx.kernel.tools.CopyDb.class.getName(), 
-			copyThread
-		);	
-		copyThread.start();
-	}
-%>
 <br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
-	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
-	<table cellspacing="8" class="tableLayout">
+	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div>
-					<h1>openCRX copy database wizard</h1>
-				</div>
 				<div id="contentArea">
-<%
-					// Read to launch new copy thread
-					if(copyThread == null) {
-%>
+					<div id="SubmitArea" style="display:<%= "Copy".equals(wc.getCommand()) || isRefreshReport || Boolean.TRUE.equals(wc.isRunning()) ? "none" : "block" %>">
 						<h1>WARNING: all data in the TARGET database will be LOST.</h1>										
 						<table>
 							<tr>
@@ -301,7 +115,7 @@ org.opencrx.application.airsync.datatypes.*
 							<tr>
 								<td>URL:</td>
 								<td>
-									<input type="text" name="jdbcUrlSource" id="connectionUrl" tabIndex="9000" style="width:50em;" value="<%= jdbcUrlSource == null ? "" : jdbcUrlSource %>" />
+									<input type="text" name="jdbcUrlSource" id="connectionUrl" tabIndex="9000" style="width:50em;" value="<%= wc.getFormFields().getJdbcUrlSource() == null ? "" : wc.getFormFields().getJdbcUrlSource() %>" />
 <pre>Examples:
 * jdbc:postgresql://127.0.0.1/CRX
 * jdbc:mysql://127.0.0.1/CRX
@@ -313,11 +127,11 @@ org.opencrx.application.airsync.datatypes.*
 							</tr>
 							<tr>
 								<td>User:</td>
-								<td><input type="text" name="usernameSource" id="usernameSource" tabIndex="9001" style="width:20em;" value="<%= usernameSource == null ? "" : usernameSource %>" /></td>
+								<td><input type="text" name="usernameSource" id="usernameSource" tabIndex="9001" style="width:20em;" value="<%= wc.getFormFields().getUsernameSource() == null ? "" : wc.getFormFields().getUsernameSource() %>" /></td>
 							</tr>
 							<tr>
 								<td>Password:</td>
-								<td><input type="password" name="passwordSource" id="passwordSource" tabIndex="9002" style="width:20em;" value="<%= passwordSource == null ? "" : passwordSource %>" /></td>
+								<td><input type="password" name="passwordSource" id="passwordSource" tabIndex="9002" style="width:20em;" value="<%= wc.getFormFields().getPasswordSource() == null ? "" : wc.getFormFields().getPasswordSource() %>" /></td>
 							</tr>
 							<tr>
 								<td colspan="2">
@@ -326,15 +140,15 @@ org.opencrx.application.airsync.datatypes.*
 							</tr>
 							<tr>
 								<td>URL:</td>
-								<td><input type="text" name="jdbcUrlTarget" id="jdbcUrlTarget" tabIndex="9010" style="width:50em;" value="<%= jdbcUrlTarget == null ? "" : jdbcUrlTarget %>" /></td>
+								<td><input type="text" name="jdbcUrlTarget" id="jdbcUrlTarget" tabIndex="9010" style="width:50em;" value="<%=  wc.getFormFields().getJdbcUrlTarget() == null ? "" : wc.getFormFields().getJdbcUrlTarget() %>" /></td>
 							</tr>
 							<tr>						
 								<td>User:</td>
-								<td><input type="text" name="usernameTarget" id="usernameTarget" tabIndex="9011" style="width:20em;" value="<%= usernameTarget == null ? "" : usernameTarget %>" /></td>
+								<td><input type="text" name="usernameTarget" id="usernameTarget" tabIndex="9011" style="width:20em;" value="<%= wc.getFormFields().getUsernameTarget() == null ? "" :  wc.getFormFields().getUsernameTarget() %>" /></td>
 							</tr>
 							<tr>
 								<td>Password:</td>
-								<td><input type="password" name="passwordTarget" id="passwordTarget" tabIndex="9012" style="width:20em;" value="<%= passwordTarget == null ? "" : passwordTarget %>" /></td>
+								<td><input type="password" name="passwordTarget" id="passwordTarget" tabIndex="9012" style="width:20em;" value="<%= wc.getFormFields().getPasswordTarget() == null ? "" :  wc.getFormFields().getPasswordTarget() %>" /></td>
 							</tr>
 							<tr>
 								<td colspan="2">
@@ -343,48 +157,75 @@ org.opencrx.application.airsync.datatypes.*
 							</tr>
 							<tr>
 								<td>Start from (OOCKE1) [Default=0]:</td>
-								<td><input type="text" name="kernelStartFromDbObject" id="kernelStartFromDbObject" tabIndex="9020" style="width:5em;" value="<%= kernelStartFromDbObject == null ? "" : kernelStartFromDbObject %>" /></td>
+								<td><input type="text" name="kernelStartFromDbObject" id="kernelStartFromDbObject" tabIndex="9020" style="width:5em;" value="<%=  wc.getFormFields().getKernelStartFromDbObject() == null ? "" :  wc.getFormFields().getKernelStartFromDbObject() %>" /></td>
 							</tr>
 							<tr>
 								<td>End with (OOCKE1) [Default=9999]:</td>
-								<td><input type="text" name="kernelEndWithDbObject" id="kernelEndWithDbObject" tabIndex="9021" style="width:5em;" value="<%= kernelEndWithDbObject == null ? "" : kernelEndWithDbObject %>" /></td>
+								<td><input type="text" name="kernelEndWithDbObject" id="kernelEndWithDbObject" tabIndex="9021" style="width:5em;" value="<%=  wc.getFormFields().getKernelEndWithDbObject() == null ? "" :  wc.getFormFields().getKernelEndWithDbObject() %>" /></td>
 							</tr>
 							<tr>
 								<td>Start from (OOMSE2) [Default=0]:</td>
-								<td><input type="text" name="securityStartFromDbObject" id="securityStartFromDbObject" tabIndex="9022" style="width:5em;" value="<%= securityStartFromDbObject == null ? "" : securityStartFromDbObject %>" /></td>
+								<td><input type="text" name="securityStartFromDbObject" id="securityStartFromDbObject" tabIndex="9022" style="width:5em;" value="<%=  wc.getFormFields().getSecurityStartFromDbObject() == null ? "" :  wc.getFormFields().getSecurityStartFromDbObject() %>" /></td>
 							</tr>
 							<tr>
 								<td>End with (OOMSE2) [Default=9999]:</td>
-								<td><input type="text" name="securityEndWithDbObject" id="securityEndWithDbObject" tabIndex="9023" style="width:5em;" value="<%= securityEndWithDbObject == null ? "" : securityEndWithDbObject %>" /></td>
+								<td><input type="text" name="securityEndWithDbObject" id="securityEndWithDbObject" tabIndex="9023" style="width:5em;" value="<%=  wc.getFormFields().getSecurityEndWithDbObject() == null ? "" :  wc.getFormFields().getSecurityEndWithDbObject() %>" /></td>
 							</tr>
 						</table>
-						<input type="submit" class="abutton" name="Copy" id="Copy.Button" tabindex="9030" value="Copy" onclick="$('Command').value=this.name;" />
-						<input type="submit" class="abutton" name="Cancel" tabindex="9031" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+						<div style="float:left;">															
+							<input type="submit" name="Copy" id="Copy.Button" tabindex="9030" value="Copy" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';setTimeout('javascript:$(\'RefreshReportButton\').click();',2000);$('Command').value=this.name;" />
+							<input type="submit" name="Cancel" tabindex="9031" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
+						</div>
+					</div>
+					<div id="WaitIndicator" style="display:<%= isRefreshReport ? "block" : "none" %>" class="<%= Boolean.FALSE.equals(wc.isRunning()) ? "" : "wait" %>">
+						<br />
 <%
-					}
-					// Copy is running
-					else {						
-%>
-						Copy is running. Refresh to see log output ...
-						<pre>
-<%= copyThread.getReport() %></pre>
-						<input type="submit" class="abutton" name="Refresh" id="Refresh.Button" tabindex="9030" value="Refresh" onclick="$('Command').value=this.name;" />
-<%
-						if(!copyThread.isAlive()) {
+						if(Boolean.TRUE.equals(wc.isRunning())) {
+%>							
+							<div>
+								<br />
+								<b>HINT: </b>Scroll to bottom to see progress...
+							</div>	
+<%											
+						}
 %>						
-							<input type="submit" class="abutton" name="Clear" id="Clear.Button" tabindex="9030" value="Clear" onclick="$('Command').value=this.name;" />
+						<div id="SubmitArea2">
+							<input type="submit" id="RefreshReportButton" name="RefreshReport" style="display:none;" tabindex="9032" value="<%= wc.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
+<%
+							if(Boolean.FALSE.equals(wc.isRunning())) {
+%>						
+								<input type="submit" name="Clear" tabindex="9033" value="Clear" onclick="javascript:$('Command').value=this.name;" />
+								<br />	
+<%
+							}
+%>
+						</div>
+<%
+						if(Boolean.TRUE.equals(wc.isRunning())) {
+%>						
+							<script type="text/javascript">
+								setTimeout('javascript:$(\'RefreshReportButton\').click();',3000);						
+							</script>
 <%
 						}
-					}
+						if(wc.getProgressMeter() != null && wc.getProgressMeter().getReport() != null) {
+%>
+							<div>						
+								<pre><%= new Date() %>
+<%= wc.getProgressMeter().getReport().toString("UTF-8") %></pre>
+							</div>
+<%
+						}
 %>						
-				</div>				
+					</div>
+				</div>
 			</td>
 		</tr>
 	</table>
 </form>
-<script language="javascript" type="text/javascript">
-	Event.observe('<%= formName %>', 'submit', function(event) {
-		$('<%= formName %>').request({
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
 			onFailure: function() { },
 			onSuccess: function(t) {
 				$('UserDialog').update(t.responseText);
@@ -393,8 +234,4 @@ org.opencrx.application.airsync.datatypes.*
 		Event.stop(event);
 	});
 </script>
-<%
-if(pm != null) {
-	pm.close();
-}
-%>
+<t:wizardClose controller="<%= wc %>" />

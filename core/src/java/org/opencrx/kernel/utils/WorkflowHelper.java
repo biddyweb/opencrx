@@ -73,9 +73,14 @@ import org.opencrx.kernel.base.jmi1.UriProperty;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 
+/**
+ * WorkflowHelper
+ *
+ */
 public abstract class WorkflowHelper {
 
     /**
@@ -91,6 +96,29 @@ public abstract class WorkflowHelper {
         String name,
         String description
     ) throws ServiceException  {
+    	createLogEntry(
+    		wfProcessInstance,
+    		name,
+    		description,
+    		null // correlation
+    	);
+    }
+
+    /**
+     * Create log entry for specified workflow instance.
+     * 
+     * @param wfProcessInstance
+     * @param name
+     * @param description
+     * @param correlation
+     * @throws ServiceException
+     */
+    public static void createLogEntry(        
+        WfProcessInstance wfProcessInstance,
+        String name,
+        String description,
+        BasicObject correlation
+    ) throws ServiceException  {
         if(wfProcessInstance == null) return;
         PersistenceManager pm = JDOHelper.getPersistenceManager(wfProcessInstance);
         WfActionLogEntry logEntry = pm.newInstance(WfActionLogEntry.class);        
@@ -105,11 +133,11 @@ public abstract class WorkflowHelper {
             );
             logEntry.setName(name == null ? "N/A" : name);
             logEntry.setDescription(description);
+            logEntry.setCorrelation(correlation);
             if(isTxLocal) {
             	pm.currentTransaction().commit();
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             new ServiceException(e).log();
             try {
                 pm.currentTransaction().rollback();                
@@ -118,7 +146,8 @@ public abstract class WorkflowHelper {
     }
 
 	/**
-	 * Collect workflow parameters
+	 * Collect workflow parameters.
+	 * 
 	 * @param wfProcessInstance
 	 * @return
 	 */
@@ -134,26 +163,19 @@ public abstract class WorkflowHelper {
                 Object val = null;
                 if(property instanceof BooleanProperty) {
                     val = ((BooleanProperty)property).isBooleanValue();
-                }
-                else if(property instanceof IntegerProperty) {
+                } else if(property instanceof IntegerProperty) {
                     val = ((IntegerProperty)property).getIntegerValue();
-                }
-                else if(property instanceof DecimalProperty) {
+                } else if(property instanceof DecimalProperty) {
                     val = ((DecimalProperty)property).getDecimalValue();
-                }
-                else if(property instanceof UriProperty) {
+                } else if(property instanceof UriProperty) {
                     val = ((UriProperty)property).getUriValue();                
-                }
-                else if(property instanceof StringProperty) {
+                } else if(property instanceof StringProperty) {
                     val = ((StringProperty)property).getStringValue();
-                }
-                else if(property instanceof ReferenceProperty) {
+                } else if(property instanceof ReferenceProperty) {
                     val = ((ReferenceProperty)property).getReferenceValue();
-                }
-                else if(property instanceof DateTimeProperty) {
+                } else if(property instanceof DateTimeProperty) {
                     val = ((DateTimeProperty)property).getDateTimeValue();
-                }
-                else if(property instanceof DateProperty) {
+                } else if(property instanceof DateProperty) {
                     val = ((DateProperty)property).getDateValue();
                 }
                 params.put(
@@ -169,33 +191,26 @@ public abstract class WorkflowHelper {
                 Object val = null;
                 if(property instanceof BooleanProperty) {
                     val = ((BooleanProperty)property).isBooleanValue();
-                }
-                else if(property instanceof IntegerProperty) {
+                } else if(property instanceof IntegerProperty) {
                     val = ((IntegerProperty)property).getIntegerValue();
-                }
-                else if(property instanceof DecimalProperty) {
+                } else if(property instanceof DecimalProperty) {
                     val = ((DecimalProperty)property).getDecimalValue();
-                }
-                else if(property instanceof UriProperty) {
+                } else if(property instanceof UriProperty) {
                     val = ((UriProperty)property).getUriValue();                
-                }
-                else if(property instanceof StringProperty) {
+                } else if(property instanceof StringProperty) {
                     val = ((StringProperty)property).getStringValue();
-                }
-                else if(property instanceof ReferenceProperty) {
+                } else if(property instanceof ReferenceProperty) {
                     val = ((ReferenceProperty)property).getReferenceValue();
-                }
-                else if(property instanceof DateTimeProperty) {
+                } else if(property instanceof DateTimeProperty) {
                     val = ((DateTimeProperty)property).getDateTimeValue();
-                }
-                else if(property instanceof DateProperty) {
+                } else if(property instanceof DateProperty) {
                     val = ((DateProperty)property).getDateValue();
                 }                
                 params.put(
                     property.getName(),
                     val
                 );
-            }            	
+            }       	
         }
         // Collect from trigger (override workflow and workflow instance properties)
         if(params.get("triggeredBy") != null) {
@@ -211,26 +226,19 @@ public abstract class WorkflowHelper {
 	                Object val = null;
 	                if(property instanceof BooleanProperty) {
 	                    val = ((BooleanProperty)property).isBooleanValue();
-	                }
-	                else if(property instanceof IntegerProperty) {
+	                } else if(property instanceof IntegerProperty) {
 	                    val = ((IntegerProperty)property).getIntegerValue();
-	                }
-	                else if(property instanceof DecimalProperty) {
+	                } else if(property instanceof DecimalProperty) {
 	                    val = ((DecimalProperty)property).getDecimalValue();
-	                }
-	                else if(property instanceof UriProperty) {
+	                } else if(property instanceof UriProperty) {
 	                    val = ((UriProperty)property).getUriValue();                
-	                }
-	                else if(property instanceof StringProperty) {
+	                } else if(property instanceof StringProperty) {
 	                    val = ((StringProperty)property).getStringValue();
-	                }
-	                else if(property instanceof ReferenceProperty) {
+	                } else if(property instanceof ReferenceProperty) {
 	                    val = ((ReferenceProperty)property).getReferenceValue();
-	                }
-	                else if(property instanceof DateTimeProperty) {
+	                } else if(property instanceof DateTimeProperty) {
 	                    val = ((DateTimeProperty)property).getDateTimeValue();
-	                }
-	                else if(property instanceof DateProperty) {
+	                } else if(property instanceof DateProperty) {
 	                    val = ((DateProperty)property).getDateValue();
 	                }	                
 	                params.put(

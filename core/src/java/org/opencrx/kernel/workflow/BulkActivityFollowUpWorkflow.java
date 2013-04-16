@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -76,9 +76,56 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
+/**
+ * BulkActivityFollowUpWorkflow
+ *
+ */
 public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow {
     
+	/**
+	 * Create log entry.
+	 * 
+	 * @param name
+	 * @param wfProcessInstance
+	 * @param numberOfActivities
+	 * @param countSuccess
+	 * @param countFailed
+	 * @throws ServiceException
+	 */
+	protected void createLogEntry(
+		String name,
+		WfProcessInstance wfProcessInstance,
+		int numberOfActivities,
+		int countSuccess,
+		int countFailed
+	) throws ServiceException {
+	    Map<String,Object> report = new HashMap<String,Object>();
+	    report.put(
+	    	"Total",
+	    	Integer.toString(numberOfActivities)
+	    );
+	    report.put(
+	    	"Success",
+	    	Integer.toString(countSuccess)
+	    );
+	    report.put(
+	    	"Failed",
+	    	Integer.toString(countFailed)
+	    );
+	    report.put(
+	    	"Pending",
+	    	Integer.toString(numberOfActivities - countSuccess - countFailed)
+	    );
+        WorkflowHelper.createLogEntry(
+            wfProcessInstance,
+            name,
+            report.toString()
+        );
+	}
+
     /* (non-Javadoc)
      * @see org.opencrx.kernel.backend.Workflows.AsynchronousWorkflow#execute(org.opencrx.kernel.home1.jmi1.WfProcessInstance)
      */
@@ -93,7 +140,9 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
     	    	null
     	    );
     	    UserObjects.setBulkLoad(pmUser, true);
-            Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance);
+            Map<String,Object> params = WorkflowHelper.getWorkflowParameters(
+            	(WfProcessInstance)pmUser.getObjectById(wfProcessInstance.refGetPath())
+            );
             Activity activity = null;
             if(params.get(OPTION_ACTIVITY) instanceof Activity) {
            		activity = (Activity)pmUser.getObjectById(
@@ -106,19 +155,6 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
             		OPTION_ACTIVITY,
             		"Option >" + OPTION_ACTIVITY + "< must be a ReferenceProperty and reference an Activity"
             	);
-            }
-            ActivityProcessTransition processTransition = null;
-            if(params.get(OPTION_TRANSITION) instanceof ActivityProcessTransition) {
-           		processTransition = (ActivityProcessTransition)pmUser.getObjectById(
-           			((ActivityProcessTransition)params.get(OPTION_TRANSITION)).refGetPath()
-           		);
-            }
-            if(processTransition == null) {
-            	WorkflowHelper.createLogEntry(
-            		wfProcessInstance, 
-            		OPTION_TRANSITION, 
-            		"Option >" + OPTION_TRANSITION + "< must be a ReferenceProperty and reference an ActivityProcessTransition"
-            	);            	
             }
             ActivityGroup activityGroup = null;
             if(wfProcessInstance.getTargetObject() != null) {
@@ -134,54 +170,84 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
             		"Target", 
             		"Target must be of type ActivityGroup"
             	);
+            }			
+            List<ActivityProcessTransition> processTransitions = new ArrayList<ActivityProcessTransition>();
+            List<String> followUpTitles = new ArrayList<String>();
+    	    List<String> followUpTexts = new ArrayList<String>();
+            if(params.get(OPTION_TRANSITION) instanceof ActivityProcessTransition) {
+            	processTransitions.add(
+            		(ActivityProcessTransition)pmUser.getObjectById(
+            			((ActivityProcessTransition)params.get(OPTION_TRANSITION)).refGetPath()
+            		)
+           		);
             }
+    	    if(params.get(OPTION_FOLLOWUP_TITLE) instanceof String) {
+    	    	followUpTitles.add((String)params.get(OPTION_FOLLOWUP_TITLE));
+    	    }
+    	    if(params.get(OPTION_FOLLOWUP_TEXT) instanceof String) {
+    	    	followUpTexts.add((String)params.get(OPTION_FOLLOWUP_TEXT));
+    	    }
+            int idx = 0;
+            while(params.get(OPTION_TRANSITION + idx) instanceof ActivityProcessTransition) {
+            	processTransitions.add(
+            		(ActivityProcessTransition)pmUser.getObjectById(
+            			((ActivityProcessTransition)params.get(OPTION_TRANSITION + idx)).refGetPath()
+            		)
+           		);
+    	    	followUpTitles.add((String)params.get(OPTION_FOLLOWUP_TITLE + idx));
+    	    	followUpTexts.add((String)params.get(OPTION_FOLLOWUP_TEXT + idx));
+    	    	idx++;
+            }
+    	    Contact assignTo = null;
+    	    if(params.get(OPTION_ASSIGN_TO) instanceof Contact) {
+    	    	assignTo = (Contact)pmUser.getObjectById(
+    	    		((Contact)params.get(OPTION_ASSIGN_TO)).refGetPath()
+    	    	);
+    	    }
     	    // Create follow ups
+    		List<Path> activityIdentities = new ArrayList<Path>();
+    	    int countSuccess = 0;
+    	    int countFailed = 0;
     		ActivityProcessState processState = activity == null ? null : activity.getProcessState();
-    	    if(activityGroup != null && processState != null && processTransition != null) {
+    	    if(activityGroup != null && processState != null && !processTransitions.isEmpty()) {
 	    		// Get identity of activities to be updated
 	    		ActivityQuery activityQuery = (ActivityQuery)pmUser.newQuery(Activity.class);
 	    		activityQuery.thereExistsProcessState().equalTo(processState);
-	    		List<Path> activityIdentities = new ArrayList<Path>();
     			Collection<Activity> activities = activityGroup.getFilteredActivity(activityQuery);
     			for(Activity a: activities) {
     				activityIdentities.add(a.refGetPath());
     			}
-	    	    String followUpTitle = null;
-	    	    if(params.get(OPTION_FOLLOWUP_TITLE) instanceof String) {
-	    	    	followUpTitle = (String)params.get(OPTION_FOLLOWUP_TITLE);
-	    	    }
-	    	    String followUpText = null;
-	    	    if(params.get(OPTION_FOLLOWUP_TEXT) instanceof String) {
-	    	    	followUpText = (String)params.get(OPTION_FOLLOWUP_TEXT);
-	    	    }
-	    	    Contact assignTo = null;
-	    	    if(params.get(OPTION_ASSIGN_TO) instanceof Contact) {
-	    	    	assignTo = (Contact)pmUser.getObjectById(
-	    	    		((Contact)params.get(OPTION_ASSIGN_TO)).refGetPath()
-	    	    	);
-	    	    }
-	    	    int countSuccess = 0;
-	    	    int countFailed = 0;
-	    	    for(Path activityIdentity: activityIdentities) {
+    			this.createLogEntry(
+    				"Report @" + new Date(),
+    				wfProcessInstance, 
+    				activityIdentities.size(), 
+    				countSuccess, 
+    				countFailed
+    			);
+    			WfProcessInstance parentProcessInstance = (WfProcessInstance)pmUser.getObjectById(wfProcessInstance.refGetPath());
+    			for(Path activityIdentity: activityIdentities) {
     	    		try {
-						ActivityDoFollowUpParams doFollowUpParams = org.opencrx.kernel.utils.Utils.getActivityPackage(pmUser).createActivityDoFollowUpParams(
-							assignTo,
-							followUpText,
-							followUpTitle,
-							processTransition
-						);
-						pmUser.currentTransaction().begin();
 						Activity a = (Activity)pmUser.getObjectById(activityIdentity);
-						a.doFollowUp(doFollowUpParams);
-						pmUser.currentTransaction().commit();
+    	    			for(int i = 0; i < processTransitions.size();i++) {
+							ActivityDoFollowUpParams doFollowUpParams = Structures.create(
+								ActivityDoFollowUpParams.class, 
+								Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, assignTo),
+								Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, followUpTexts.get(i)),
+								Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, followUpTitles.get(i)),
+								Datatypes.member(ActivityDoFollowUpParams.Member.transition, processTransitions.get(i)),
+								Datatypes.member(ActivityDoFollowUpParams.Member.parentProcessInstance, parentProcessInstance)
+							);
+							pmUser.currentTransaction().begin();
+							a.doFollowUp(doFollowUpParams);
+							pmUser.currentTransaction().commit();
+    	    			}
 						countSuccess++;
 						if(assignTo != null) {
 							pmUser.currentTransaction().begin();
     	          			a.setAssignedTo(assignTo);
     	          			pmUser.currentTransaction().commit();
 						}
-    	    		}
-    	    		catch(Exception e) {
+    	    		} catch(Exception e) {
     	    			countFailed++;
 	    				ServiceException e0 = new ServiceException(e);
 	    				SysLog.detail(e0.getMessage(), e0.getCause());
@@ -190,28 +256,23 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
     	    			} catch(Exception e1) {}
     	    		}
     	    		if((countSuccess + countFailed) % 100 == 0) {
-    	    			System.out.println(new Date() + ": " + BulkActivityFollowUpWorkflow.class.getSimpleName() + " Processed " + (countSuccess + countFailed) + " activities of " + activityIdentities.size() + " (Success=" + countSuccess + ", Failed=" + countFailed + ")");
+    	    			this.createLogEntry(
+    	    				"Report @" + new Date(),
+    	    				wfProcessInstance, 
+    	    				activityIdentities.size(), 
+    	    				countSuccess, 
+    	    				countFailed
+    	    			);
     	    		}
     	    	}
-	    	    Map<String,Object> report = new HashMap<String,Object>();
-	    	    report.put(
-	    	    	"#Processed",
-	    	    	activityIdentities.size()
-	    	    );
-	    	    report.put(
-	    	    	"#Success",
-	    	    	Integer.toString(countSuccess)
-	    	    );
-	    	    report.put(
-	    	    	"#Failed",
-	    	    	Integer.toString(countFailed)
-	    	    );
-	            WorkflowHelper.createLogEntry(
-	                wfProcessInstance,
-	                "Report",
-	                report.toString()
-	            );
             }
+    	    this.createLogEntry(
+    	    	"Report - Complete",
+    	    	wfProcessInstance,
+    	    	activityIdentities.size(),
+    	    	countSuccess,
+    	    	countFailed    	
+    	    );
     	    pmUser.close();
         } catch(Exception e) {
         	SysLog.warning("Can not perform BulkActivityFollowUp (reason=Exception)", e.getMessage());
@@ -236,6 +297,5 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
     public static final String OPTION_ASSIGN_TO = "assignTo";
 
 }
-
 
 //--- End of File -----------------------------------------------------------

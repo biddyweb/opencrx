@@ -63,6 +63,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -79,10 +80,13 @@ import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.aop2.Configuration;
 import org.opencrx.kernel.backend.Admin.PrincipalType;
+import org.opencrx.kernel.backend.ICalendar.ICalClass;
+import org.opencrx.kernel.base.jmi1.SetOwningUserParams;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.AlertQuery;
@@ -97,7 +101,6 @@ import org.opencrx.kernel.home1.jmi1.ObjectFinder;
 import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.exception.ServiceException;
@@ -110,51 +113,86 @@ import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.WebKeys;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
+/**
+ * UserHomes
+ *
+ */
 public class UserHomes extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register this backend.
+	 * 
+	 */
 	public static void register(
 	) {
 		registerImpl(new UserHomes());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get registered UserHomes backend.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static UserHomes getInstance(
 	) throws ServiceException {
 		return getInstance(UserHomes.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 */
 	protected UserHomes(
 	) {
 		
 	}
 	
-    //-------------------------------------------------------------------------
+    /**
+     * Set alert state to ACCEPTED.
+     * 
+     * @param alert
+     * @throws ServiceException
+     */
     public void markAsAccepted(
         org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
         alert.setAlertState(AlertState.ACCEPTED.getValue());
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Set alert state to READ.
+     * 
+     * @param alert
+     * @throws ServiceException
+     */
     public void markAsRead(
         org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
         alert.setAlertState(AlertState.READ.getValue());
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Set alert state to NEW.
+     * 
+     * @param alert
+     * @throws ServiceException
+     */
     public void markAsNew(
         org.opencrx.kernel.home1.jmi1.Alert alert
     ) throws ServiceException {
         alert.setAlertState(AlertState.NEW.getValue());
     }
-    
-    //-----------------------------------------------------------------------
+
     /**
-     * @return Returns the user home segment.
+     * Returns the user home segment.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
      */
     public org.opencrx.kernel.home1.jmi1.Segment getUserHomeSegment(
         PersistenceManager pm,
@@ -166,7 +204,15 @@ public class UserHomes extends AbstractImpl {
         );
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Refresh items on given user home. Currently these are:
+     * <ul>
+     *   <li>alerts
+     * </ul> 
+     * 
+     * @param userHome
+     * @throws ServiceException
+     */
     public void refreshItems(
         org.opencrx.kernel.home1.jmi1.UserHome userHome
     ) throws ServiceException {
@@ -180,24 +226,25 @@ public class UserHomes extends AbstractImpl {
             alertQuery.orderByCreatedAt().descending();
             List<Path> alertIdentities = new ArrayList<Path>();
             List<Alert> alerts = userHome.getAlert(alertQuery);
-            int n = 0;
+            int count = 0;
             for(Alert alert: alerts) {
         		alertIdentities.add(alert.refGetPath());
-        		n++;            	
-        		if(n > 25) break;
+        		count++;
+        		if(count > 200) break;
             }
             // Update state
-            Set<ContextCapable> references = new HashSet<ContextCapable>();
+            Set<Path> references = new HashSet<Path>();
             for(Path alertIdentity: alertIdentities) {
             	Alert alert = (Alert)pm.getObjectById(alertIdentity);
-            	ContextCapable reference = null;
+            	Path reference = null;
             	try {
-            		reference = alert.getReference();
-            	} catch(Exception e) {}
+            		reference = alert.getReference().refGetPath();
+            	} catch(Exception ignore) {}
             	// Set state to expired if 
             	// * if it is accepted and older than three months
             	if(
-            		(alert.getAlertState() == AlertState.ACCEPTED.getValue() && alert.getCreatedAt().compareTo(NOW_MINUS_3M) < 0)
+            		alert.getAlertState() == AlertState.ACCEPTED.getValue() && 
+            		alert.getCreatedAt().compareTo(NOW_MINUS_3M) < 0
             	) {
                 	alert.setAlertState(AlertState.EXPIRED.getValue());
             	}
@@ -218,7 +265,14 @@ public class UserHomes extends AbstractImpl {
         }
     }
        
-    //-------------------------------------------------------------------------
+    /**
+     * Get user home.
+     * 
+     * @param from
+     * @param pm
+     * @return
+     * @throws ServiceException
+     */
     public UserHome getUserHome(
       Path from,
       PersistenceManager pm
@@ -226,7 +280,15 @@ public class UserHomes extends AbstractImpl {
     	return this.getUserHome(from, pm, false);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get user home.
+     * 
+     * @param from
+     * @param pm
+     * @param useRunAsPrincipal
+     * @return
+     * @throws ServiceException
+     */
     public UserHome getUserHome(
       Path from,
       PersistenceManager pm,
@@ -248,7 +310,15 @@ public class UserHomes extends AbstractImpl {
     	);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get user home.
+     * 
+     * @param user
+     * @param from
+     * @param pm
+     * @return
+     * @throws ServiceException
+     */
     public UserHome getUserHome(
         String user,
         Path from,
@@ -257,7 +327,16 @@ public class UserHomes extends AbstractImpl {
     	return this.getUserHome(user, from, pm, false);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get user home.
+     * 
+     * @param user
+     * @param from
+     * @param pm
+     * @param useRunAsPrincipal
+     * @return
+     * @throws ServiceException
+     */
     public UserHome getUserHome(
         String user,
         Path from,
@@ -282,7 +361,13 @@ public class UserHomes extends AbstractImpl {
         return (UserHome)pm.getObjectById(userHomePath);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get password digest.
+     * 
+     * @param password
+     * @param algorithm
+     * @return
+     */
     private byte[] getPasswordDigest(
         String password,
         String algorithm
@@ -299,7 +384,13 @@ public class UserHomes extends AbstractImpl {
         return null;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create a password credential for given subject.
+     *  
+     * @param subject
+     * @param errors
+     * @return
+     */
     public org.openmdx.security.authentication1.jmi1.Password createPasswordCredential(
     	org.openmdx.security.realm1.jmi1.Subject subject,
         List<String> errors
@@ -321,7 +412,14 @@ public class UserHomes extends AbstractImpl {
         return passwordCredential;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Change password.
+     * 
+     * @param passwordCredential
+     * @param oldPassword
+     * @param password
+     * @return
+     */
     public short changePassword(
     	org.openmdx.security.authentication1.jmi1.Password passwordCredential,
         String oldPassword,
@@ -357,8 +455,7 @@ public class UserHomes extends AbstractImpl {
 	    	if(pmRoot != null) {
 	    		pmRoot.currentTransaction().commit();
 	    	}
-    	}
-        catch(Exception e) {
+    	} catch(Exception e) {
         	ServiceException e0 = new ServiceException(e);
         	if(e0.getCause(OpenCrxException.DOMAIN).getExceptionCode() == BasicException.Code.ASSERTION_FAILURE) {
         		return OLD_PASSWORD_VERIFICATION_MISMATCH;
@@ -370,18 +467,28 @@ public class UserHomes extends AbstractImpl {
         }
         return CHANGE_PASSWORD_OK;
     }
-    
-    //-------------------------------------------------------------------------
+   
     /**
      * Default implementation does not enforce a password policy.
+     * 
+     * @param password
+     * @return
      */
     public boolean testPasswordPolicy(
         String password
     ) {
     	return true;
     }
-    
-    //-------------------------------------------------------------------------
+
+    /**
+     * Change password for given user.
+     * 
+     * @param userHome
+     * @param oldPassword
+     * @param newPassword
+     * @param newPasswordVerification
+     * @return
+     */
     public short changePassword(
         UserHome userHome,
         String oldPassword,
@@ -435,8 +542,7 @@ public class UserHomes extends AbstractImpl {
             	),	            	
             	pm
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             SysLog.warning(e0.getMessage(), e0.getCause());
             return CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL;
@@ -448,7 +554,21 @@ public class UserHomes extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Create a new user home.
+     * 
+     * @param realm
+     * @param contact
+     * @param primaryGroup
+     * @param principalName
+     * @param requiredGroups
+     * @param isAdministrator
+     * @param initialPassword
+     * @param initialPasswordVerification
+     * @param errors
+     * @return
+     * @throws ServiceException
+     */
     public UserHome createUserHome(
         org.openmdx.security.realm1.jmi1.Realm realm,
         Contact contact,
@@ -539,8 +659,7 @@ public class UserHomes extends AbstractImpl {
 	            if((loginPrincipal.getCredential() == null)) {
 	                errors.add("No credential specified for principal " + principalName);                
 	            }
-	        }
-	        catch(Exception e) {
+	        } catch(Exception e) {
 	            ServiceException e1 = new ServiceException(e);
 	            SysLog.warning(e1.getMessage(), e1.getCause());
 	            errors.add("can not retrieve principal " + principalName + " in realm " + loginRealmIdentity);
@@ -565,8 +684,7 @@ public class UserHomes extends AbstractImpl {
 	        	groups.add(groupAdministrators);
 	        	groups.add(user);
 	        	groups.add(groupUsers);
-	        }
-	        else {
+	        } else {
 	        	groups.add(groupUsers);
 	        	groups.add(user);
 	        }
@@ -637,8 +755,7 @@ public class UserHomes extends AbstractImpl {
 	        		userHome.setPrimaryGroup(primaryGroup);
 	        	}
 	        	userHomeIdentity = userHome.refGetPath();
-	        }
-	        else {
+	        } else {
 	            userHome = pmAdmin.newInstance(UserHome.class);
 	            userHome.setContact(
 	            	(Contact)pmAdmin.getObjectById(contact.refGetPath())
@@ -686,7 +803,14 @@ public class UserHomes extends AbstractImpl {
         return userHomeIdentity == null ? null : (UserHome)pm.getObjectById(userHomeIdentity);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Find contact matching given aliasName and / or fullName.
+     * 
+     * @param accountSegment
+     * @param aliasName
+     * @param fullName
+     * @return
+     */
     private Contact retrieveContact(
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
         String aliasName,
@@ -697,24 +821,28 @@ public class UserHomes extends AbstractImpl {
         	AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
             if(!"-".equals(aliasName)) {
             	accountQuery.thereExistsAliasName().equalTo(aliasName);
-            }
-            else if(!"-".equals(fullName)) {
+            } else if(!"-".equals(fullName)) {
             	accountQuery.thereExistsFullName().equalTo(fullName);
             }
             List<Account> accounts = accountSegment.getAccount(accountQuery);
             if(!accounts.isEmpty()) {
                 return (Contact)accounts.iterator().next();
-            }
-            else {
+            } else {
                 return null;
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             return null;
         }
     }
         
-    //-------------------------------------------------------------------------
+    /**
+     * Import users from given stream (as byte[]).
+     * 
+     * @param homeSegment
+     * @param item
+     * @return
+     * @throws ServiceException
+     */
     public String importUsers(
         org.opencrx.kernel.home1.jmi1.Segment homeSegment,
         byte[] item
@@ -725,8 +853,7 @@ public class UserHomes extends AbstractImpl {
 	        reader = new BufferedReader(
 	            new InputStreamReader(new ByteArrayInputStream(item), "UTF-8")
 	        );
-        }
-        catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException e) {
         	throw new ServiceException(e);
         }
         String providerName = homeSegment.refGetPath().get(2);
@@ -771,8 +898,7 @@ public class UserHomes extends AbstractImpl {
                                 	if("-".equals(primaryGroupName)) {
                                 		primaryGroup = (PrincipalGroup)realm.getPrincipal(primaryGroupName);
                                 	}
-                                }
-                                catch(Exception e) {}
+                                } catch(Exception e) {}
                                 List<String> errors = new ArrayList<String>();                                    
                                 // Get groups
                                 List<org.openmdx.security.realm1.jmi1.Group> isMemberOf = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
@@ -782,8 +908,7 @@ public class UserHomes extends AbstractImpl {
                                 	try {
                                 		group = (org.openmdx.security.realm1.jmi1.Group)realm.getPrincipal(g.nextToken());
                                 		isMemberOf.add(group);
-                                	}
-                                	catch(Exception e) {}
+                                	} catch(Exception e) {}
                                 }                                    
                                 this.createUserHome(
                                     realm,
@@ -798,26 +923,22 @@ public class UserHomes extends AbstractImpl {
                                 );
                                 if(errors.isEmpty()) {
                                     nCreatedUsers++;
-                                }
-                                else {
+                                } else {
                                     nFailedUsersOther++;
                                 }
-                            }
-                            else {
+                            } else {
                             	SysLog.info("Contact " + accountAlias + "/" + accountFullName + " for user " + principalName + " not found");
                                 nFailedUsersNoContact++;
                             }
-                        }
-                        catch(Exception e) {
+                        } catch(Exception e) {
                             new ServiceException(e).log();
                             nFailedUsersOther++;
                         }
-                    }
-                    else {
+                    } else {
                         nExistingUsers++;
                     }
                 }
-            }       
+            }
         }
         catch(IOException e) {
             new ServiceException(e).log();
@@ -826,7 +947,14 @@ public class UserHomes extends AbstractImpl {
             "Users=(created:" + nCreatedUsers + ",existing:" + nExistingUsers + ",failed no primary group:" + nFailedUsersNoPrimaryGroup + ",failed no contact:" + nFailedUsersNoContact + ",failed other:" + nFailedUsersOther + ");";       
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create object finder according to given basic search criteria.
+     * 
+     * @param userHome
+     * @param searchExpression
+     * @return
+     * @throws ServiceException
+     */
     public ObjectFinder searchBasic(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
         String searchExpression
@@ -841,12 +969,10 @@ public class UserHomes extends AbstractImpl {
                 ((i > 0) && "OR".equals(words[i-1]))                
             ) {
                 atLeastOneOfTheWords.append(" ").append(words[i]);
-            }
-            else if(!"OR".equals(words[i])) {
+            } else if(!"OR".equals(words[i])) {
                 if(words[i].startsWith("-")) {
                     withoutWords.append(" ").append(words[i].substring(1));                    
-                }
-                else {
+                } else {
                     allWords.append(" ").append(words[i]);
                 }
             }
@@ -859,7 +985,16 @@ public class UserHomes extends AbstractImpl {
         );
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create object finder according to given advanced search criteria.
+     * 
+     * @param userHome
+     * @param allWords
+     * @param atLeastOneOfTheWords
+     * @param withoutWords
+     * @return
+     * @throws ServiceException
+     */
     public ObjectFinder searchAdvanced(
         org.opencrx.kernel.home1.jmi1.UserHome userHome,
         String allWords,
@@ -869,11 +1004,11 @@ public class UserHomes extends AbstractImpl {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);    	
         org.opencrx.kernel.home1.jmi1.ObjectFinder objectFinder = pm.newInstance(org.opencrx.kernel.home1.jmi1.ObjectFinder.class);
         objectFinder.setName(
-            (allWords != null) && (allWords.length() > 0) ? 
-                allWords : 
-                (atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0) ? 
-                    atLeastOneOfTheWords : 
-                    withoutWords
+            (allWords != null) && !allWords.isEmpty() 
+            	? allWords 
+            	: (atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0) 
+            		? atLeastOneOfTheWords 
+            		: withoutWords
         );
         if(allWords != null) {
             objectFinder.setAllWords(allWords.toLowerCase());
@@ -885,14 +1020,18 @@ public class UserHomes extends AbstractImpl {
             objectFinder.setWithoutWords(withoutWords.toLowerCase());
         }
         userHome.addObjectFinder(
-            false, 
             this.getUidAsString(), 
             objectFinder
         );
         return objectFinder;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get web access url.
+     * 
+     * @param userHome
+     * @return
+     */
     public String getWebAccessUrl(
         UserHome userHome
     ) {
@@ -902,7 +1041,10 @@ public class UserHomes extends AbstractImpl {
             userHome.getWebAccessUrl() + "/" + WebKeys.SERVLET_NAME;        
     }
 
-    //-------------------------------------------------------------------------    
+    /**
+     * OpenCrxUserSettings
+     *
+     */
     public static class OpenCrxUserSettings {
     	
 		private final String timezone; 
@@ -997,9 +1139,28 @@ public class UserHomes extends AbstractImpl {
 
     }
 
-    //-------------------------------------------------------------------------
     /**
      * Initializes a user's home and settings.
+     * 
+     * @param userHome
+     * @param currentPerspective
+     * @param currentSettings
+     * @param doNotInitUserHome
+     * @param storeSettings
+     * @param primaryGroup
+     * @param settingTimezone
+     * @param settingStoreSettingsOnLogoff
+     * @param settingDefaultEmailAccount
+     * @param settingSendmailSubjectPrefix
+     * @param settingWebAccessUrl
+     * @param settingTopNavigationShowMax
+     * @param settingShowTopNavigationSublevel
+     * @param settingGridDefaultAlignmentIsWide
+     * @param settingHideWorkspaceDashboard
+     * @param settingScrollHeader
+     * @param settingRootObjects
+     * @param settingSubscriptions
+     * @throws ServiceException
      */
     public void applyUserSettings(
     	UserHome userHome,
@@ -1045,11 +1206,19 @@ public class UserHomes extends AbstractImpl {
     	);
     }
     
-    //-------------------------------------------------------------------------
     /**
      * Applies the new settings to the user home. If !noInitUserHome is set then
      * the user home first is initialized, i.e. method {@link #initUserHome(UserHome)}
      * is called before the new settings are applied.
+     * 
+     * @param userHome
+     * @param currentPerspective
+     * @param currentSettings
+     * @param storeSettings
+     * @param primaryGroup
+     * @param newSettings
+     * @param doNotInitUserHome
+     * @throws ServiceException
      */
     public void applyUserSettings(
     	UserHome userHome,
@@ -1176,15 +1345,13 @@ public class UserHomes extends AbstractImpl {
 				this.getUidAsString(),
 				defaultEmailAccount
 			);
-		}
-		else if(
+		} else if(
 			(defaultEmailAccount != null) &&
 			((newSettings.getDefaultEmailAccount() == null) ||
 			(newSettings.getDefaultEmailAccount().length() == 0))
 		) {
 			defaultEmailAccount.refDelete();
-		}
-		else if(defaultEmailAccount != null) {
+		} else if(defaultEmailAccount != null) {
 			defaultEmailAccount.setName(newSettings.getDefaultEmailAccount());
 		}
 		// Root objects
@@ -1193,7 +1360,7 @@ public class UserHomes extends AbstractImpl {
 				newSettings.getRootObjects().get(i) : 
 				"1";
 			currentSettings.setProperty(
-				UserSettings.ROOT_OBJECT_STATE + (currentPerspective == 0 ? "" : "[" + Integer.toString(currentPerspective) + "]") + "." + i + ".State",
+				UserSettings.ROOT_OBJECT_STATE.getName() + (currentPerspective == 0 ? "" : "[" + Integer.toString(currentPerspective) + "]") + "." + i + ".State",
 				state == null ? "0" : state
 			);
 		}
@@ -1286,7 +1453,6 @@ public class UserHomes extends AbstractImpl {
 		}
     }
     
-    //-------------------------------------------------------------------------
     /**
      * Initializes user home. It creates
      * <ul> 
@@ -1345,25 +1511,22 @@ public class UserHomes extends AbstractImpl {
 				privateIncidentsCreator = (ActivityCreator)pm.getObjectById(
 					new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName, "activityCreator", principalName)
 				);
-			}
-			catch(Exception e) {}
+			} catch(Exception e) {}
 			if(privateIncidentsCreator == null) {
-				privateIncidentsCreator = pm.newInstance(ActivityCreator.class);
-				privateIncidentsCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX);
-				privateIncidentsCreator.getActivityGroup().add(privateTracker);
-				privateIncidentsCreator.setActivityType(
-					org.opencrx.kernel.backend.Activities.getInstance().findActivityType(
+				privateIncidentsCreator = pm.newInstance(ActivityCreator.class);				
+				Activities.getInstance().initActivityCreator(
+					privateIncidentsCreator,
+					principalName + Activities.PRIVATE_GROUP_SUFFIX, 
+					Activities.getInstance().findActivityType(
 						"Bugs + Features", 
-						activitySegment, 
-						pm
-					)
+						activitySegment
+					),
+					ICalendar.ICAL_TYPE_VEVENT,
+					ICalClass.PUBLIC,
+					privateTracker == null ? null : Collections.<ActivityGroup>singletonList(privateTracker),
+					privatePrincipalGroup == null ? null : Collections.singletonList(privatePrincipalGroup)
 				);
-				if(privatePrincipalGroup != null) {
-					privateIncidentsCreator.getOwningGroup().clear();
-					privateIncidentsCreator.getOwningGroup().add(privatePrincipalGroup);
-				}
 				activitySegment.addActivityCreator(
-					false,
 					principalName,
 					privateIncidentsCreator
 				);
@@ -1377,26 +1540,22 @@ public class UserHomes extends AbstractImpl {
 				privateEMailsCreator = (ActivityCreator)pm.getObjectById(
 					new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName, "activityCreator", principalName + "~E-Mails")
 				);
-			}
-			catch(Exception e) {}
+			} catch(Exception e) {}
 			if(privateEMailsCreator == null) {
 				privateEMailsCreator = pm.newInstance(ActivityCreator.class);
-				privateEMailsCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX + "~E-Mails");
-				privateEMailsCreator.getActivityGroup().add(privateTracker);
-				privateEMailsCreator.setActivityType(
-					org.opencrx.kernel.backend.Activities.getInstance().findActivityType(
+				Activities.getInstance().initActivityCreator(
+					privateEMailsCreator,
+					principalName + Activities.PRIVATE_GROUP_SUFFIX + "~E-Mails", 
+					Activities.getInstance().findActivityType(
 						"E-Mails", 
-						activitySegment, 
-						pm
-					)
-				);
-				privateEMailsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);
-				if(privatePrincipalGroup != null) {
-					privateEMailsCreator.getOwningGroup().clear();
-					privateEMailsCreator.getOwningGroup().add(privatePrincipalGroup);
-				}
+						activitySegment
+					),
+					ICalendar.ICAL_TYPE_VEVENT,
+					ICalClass.PUBLIC,
+					privateTracker == null ? null : Collections.<ActivityGroup>singletonList(privateTracker),
+					privatePrincipalGroup == null ? null : Collections.singletonList(privatePrincipalGroup)
+				);				
 				activitySegment.addActivityCreator(
-					false,
 					principalName + "~E-Mails",
 					privateEMailsCreator
 				);
@@ -1410,26 +1569,22 @@ public class UserHomes extends AbstractImpl {
 				privateTasksCreator = (ActivityCreator)pm.getObjectById(
 					new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName, "activityCreator", principalName + "~Tasks")
 				);
-			}
-			catch(Exception e) {}
+			} catch(Exception e) {}
 			if(privateTasksCreator == null) {
 				privateTasksCreator = pm.newInstance(ActivityCreator.class);
-				privateTasksCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX + "~Tasks");
-				privateTasksCreator.getActivityGroup().add(privateTracker);
-				privateTasksCreator.setActivityType(
-					org.opencrx.kernel.backend.Activities.getInstance().findActivityType(
+				Activities.getInstance().initActivityCreator(
+					privateTasksCreator,
+					principalName + Activities.PRIVATE_GROUP_SUFFIX + "~Tasks", 
+					Activities.getInstance().findActivityType(
 						"Tasks", 
-						activitySegment, 
-						pm
-					)
-				);
-				privateTasksCreator.setIcalType(ICalendar.ICAL_TYPE_VTODO);
-				if(privatePrincipalGroup != null) {
-					privateTasksCreator.getOwningGroup().clear();
-					privateTasksCreator.getOwningGroup().add(privatePrincipalGroup);
-				}
+						activitySegment
+					),
+					ICalendar.ICAL_TYPE_VTODO,
+					ICalClass.PUBLIC,
+					privateTracker == null ? null : Collections.<ActivityGroup>singletonList(privateTracker),
+					privatePrincipalGroup == null ? null : Collections.singletonList(privatePrincipalGroup)
+				);				
 				activitySegment.addActivityCreator(
-					false,
 					principalName + "~Tasks",
 					privateTasksCreator
 				);
@@ -1443,26 +1598,22 @@ public class UserHomes extends AbstractImpl {
 				privateMeetingsCreator = (ActivityCreator)pm.getObjectById(
 					new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName, "activityCreator", principalName + "~Meetings")
 				);
-			}
-			catch(Exception e) {}
+			} catch(Exception e) {}
 			if(privateMeetingsCreator == null) {
 				privateMeetingsCreator = pm.newInstance(ActivityCreator.class);
-				privateMeetingsCreator.setName(principalName + Activities.PRIVATE_GROUP_SUFFIX + "~Meetings");
-				privateMeetingsCreator.getActivityGroup().add(privateTracker);
-				privateMeetingsCreator.setActivityType(
-					org.opencrx.kernel.backend.Activities.getInstance().findActivityType(
+				Activities.getInstance().initActivityCreator(
+					privateMeetingsCreator,
+					principalName + Activities.PRIVATE_GROUP_SUFFIX + "~Meetings", 
+					Activities.getInstance().findActivityType(
 						"Meetings", 
-						activitySegment, 
-						pm
-					)
-				);
-				privateMeetingsCreator.setIcalType(ICalendar.ICAL_TYPE_VEVENT);
-				if(privatePrincipalGroup != null) {
-					privateMeetingsCreator.getOwningGroup().clear();
-					privateMeetingsCreator.getOwningGroup().add(privatePrincipalGroup);
-				}
+						activitySegment
+					),
+					ICalendar.ICAL_TYPE_VEVENT,
+					ICalClass.PUBLIC,
+					privateTracker == null ? null : Collections.<ActivityGroup>singletonList(privateTracker),
+					privatePrincipalGroup == null ? null : Collections.singletonList(privatePrincipalGroup)
+				);				
 				activitySegment.addActivityCreator(
-					false,
 					principalName + "~Meetings",
 					privateMeetingsCreator
 				);
@@ -1532,10 +1683,11 @@ public class UserHomes extends AbstractImpl {
 				);
 			}
 			// Assert owningUser of Resource
-		    org.opencrx.kernel.base.jmi1.SetOwningUserParams setOwningUserParams = Utils.getBasePackage(pm).createSetOwningUserParams(
-		        (short)SecureObject.MODE_RECURSIVE,
-		        userHome.getOwningUser()
-		    );
+		    SetOwningUserParams setOwningUserParams = Structures.create(
+		    	SetOwningUserParams.class, 
+		    	Datatypes.member(SetOwningUserParams.Member.mode, (short)SecureObject.MODE_RECURSIVE),
+		    	Datatypes.member(SetOwningUserParams.Member.user, userHome.getOwningUser())	
+		    ); 
 			resource.setOwningUser(
 			    setOwningUserParams
 			);
@@ -1647,7 +1799,13 @@ public class UserHomes extends AbstractImpl {
     	}
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get settings of given user.
+     * 
+     * @param userHome
+     * @return
+     * @throws ServiceException
+     */
     public Properties getSettings(
     	UserHome userHome
     ) throws ServiceException {
@@ -1667,14 +1825,25 @@ public class UserHomes extends AbstractImpl {
         return settings;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get timezone property.
+     * 
+     * @param settings
+     * @return
+     * @throws ServiceException
+     */
     public String getUserTimezone(
     	Properties settings
     ) throws ServiceException {
     	return settings.getProperty(UserSettings.TIMEZONE_NAME.getName());
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Update derived attributes of given timer.
+     * 
+     * @param timer
+     * @throws ServiceException
+     */
     public void updateTimer(
     	Timer timer
     ) throws ServiceException {
@@ -1724,7 +1893,10 @@ public class UserHomes extends AbstractImpl {
     public static final short OLD_PASSWORD_VERIFICATION_MISMATCH = 7;
     public static final short PASSWORD_POLICY_VIOLATION = 8;
 
-    //-------------------------------------------------------------------------
+    /**
+     * TimerState
+     *
+     */
     public enum TimerState {
     	
     	NA(0),
@@ -1747,6 +1919,10 @@ public class UserHomes extends AbstractImpl {
     	
     }
 
+	/**
+	 * AlertState
+	 *
+	 */
 	public enum AlertState {
 		
 	    NA((short)0),

@@ -1062,8 +1062,11 @@ public abstract class AbstractTestShopService {
         getCustomerResult = this.getCustomer(
             getCustomerParams
         );
-        this.logResult("getCustomer", getCustomerResult.getStatus());            
-        CustomerT customerT = getCustomerResult.getCustomer();        
+        this.logResult("getCustomer", getCustomerResult.getStatus());
+        if(getCustomerResult.getStatus().getReturnCode() != BasicException.Code.NONE) {
+            return getCustomerResult.getStatus(); 
+        }        
+        CustomerT customerT = getCustomerResult.getCustomer();
         // Get at most existing products
         List<ProductT> productsT = this.getProductsForSalesOrder();
         // Prepare sales order positions
@@ -2454,43 +2457,45 @@ public abstract class AbstractTestShopService {
                 createCustomerParams
             );
             this.logResult("createCustomerAsLegalEntity", createCustomerAsLegalEntityResult.getStatus());
-            customerNumber = createCustomerAsLegalEntityResult.getCustomer().getCustomerNumber();
-            // Update customer
-            UpdateCustomerParams updateCustomerParams =  Datatypes.create(
-                UpdateCustomerParams.class,
-                Datatypes.member(
-                	UpdateCustomerParams.Member.updateMainData,
-                    Boolean.TRUE
-                ),
-                Datatypes.member(
-                	UpdateCustomerParams.Member.customer,
-                	Datatypes.create(
-                		CustomerT.class,
-                        Datatypes.member(
-                        	CustomerT.Member.customerNumber,
-                            customerNumber
-                        ),
-                        Datatypes.member(
-                        	CustomerT.Member.legalEntity,
-                        	Datatypes.create(
-                                LegalEntityT.class,
-                                Datatypes.member(
-                                	LegalEntityT.Member.legalName,
-                                    legalName
-                                ),   
-                                Datatypes.member(
-                                	LegalEntityT.Member.primaryContactNumber,
-                                    primaryContactNumber
-                                )   
-                            )
-                        )                     
-                    )
-                )                
-            );
-            UpdateCustomerResult updateCustomerResult = this.updateCustomer(
-            	updateCustomerParams
-            );
-            this.logResult("updateCustomer", updateCustomerResult.getStatus());
+            if(createCustomerAsLegalEntityResult.getCustomer() != null) {
+	            customerNumber = createCustomerAsLegalEntityResult.getCustomer().getCustomerNumber();
+	            // Update customer
+	            UpdateCustomerParams updateCustomerParams =  Datatypes.create(
+	                UpdateCustomerParams.class,
+	                Datatypes.member(
+	                	UpdateCustomerParams.Member.updateMainData,
+	                    Boolean.TRUE
+	                ),
+	                Datatypes.member(
+	                	UpdateCustomerParams.Member.customer,
+	                	Datatypes.create(
+	                		CustomerT.class,
+	                        Datatypes.member(
+	                        	CustomerT.Member.customerNumber,
+	                            customerNumber
+	                        ),
+	                        Datatypes.member(
+	                        	CustomerT.Member.legalEntity,
+	                        	Datatypes.create(
+	                                LegalEntityT.class,
+	                                Datatypes.member(
+	                                	LegalEntityT.Member.legalName,
+	                                    legalName
+	                                ),   
+	                                Datatypes.member(
+	                                	LegalEntityT.Member.primaryContactNumber,
+	                                    primaryContactNumber
+	                                )   
+	                            )
+	                        )                     
+	                    )
+	                )                
+	            );
+	            UpdateCustomerResult updateCustomerResult = this.updateCustomer(
+	            	updateCustomerParams
+	            );
+	            this.logResult("updateCustomer", updateCustomerResult.getStatus());
+            }
         }
         else {
         	customerNumber = getCustomersByQueryResult.getCustomerNumber().iterator().next();
@@ -2689,7 +2694,10 @@ public abstract class AbstractTestShopService {
         );        
         this.logResult("updateCustomer", updateCustomerResult.getStatus());
         // Create customer contract if customer does not already have one
-        if(getCustomerResult.getCustomer().getCustomerContract() == null) {
+        if(
+        	getCustomerResult.getCustomer() != null && 
+        	getCustomerResult.getCustomer().getCustomerContract() == null
+        ) {
 	        // Create customer contract
 	        CreateCustomerContractParams createCustomerContractParams = Datatypes.create(
 	            CreateCustomerContractParams.class,
@@ -3210,7 +3218,7 @@ public abstract class AbstractTestShopService {
         );
         this.logResult("getCustomer", getCustomerResult.getStatus());
         // Assert that legal entity has a customer contract
-        if(getCustomerResult.getCustomer().getCustomerContract() == null || getCustomerResult.getCustomer().getCustomerContract().isEmpty()) {
+        if(getCustomerResult.getCustomer() == null || getCustomerResult.getCustomer().getCustomerContract() == null || getCustomerResult.getCustomer().getCustomerContract().isEmpty()) {
             return newOperationStatus(BasicException.Code.NOT_FOUND, new String[]{"CustomerContract", Integer.toString(id)});        	
         }
         // Add customer to customer contract

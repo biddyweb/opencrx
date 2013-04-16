@@ -58,10 +58,11 @@ import java.util.List;
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.backend.Admin;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class SegmentImpl
 	<S extends org.opencrx.kernel.admin1.jmi1.Segment,N extends org.opencrx.kernel.admin1.cci2.Segment,C extends Void>
@@ -102,15 +103,14 @@ public class SegmentImpl
 	                (short)1,
 	                errors.toString()
 	            );
+	        } else {
+	            return Structures.create(
+	            	org.opencrx.kernel.admin1.jmi1.CreateAdministratorResult.class, 
+	            	Datatypes.member(org.opencrx.kernel.admin1.jmi1.CreateAdministratorResult.Member.status, (short)0),
+	            	Datatypes.member(org.opencrx.kernel.admin1.jmi1.CreateAdministratorResult.Member.statusMessage, null)
+	            );	        	
 	        }
-	        else {
-	            return Utils.getAdminPackage(this.sameManager()).createCreateAdministratorResult(
-	                (short)0,
-	                null
-	            );
-	        }
-    	}
-    	catch(Exception e) {
+    	} catch(Exception e) {
     		throw new JmiServiceException(e);
     	}
     }
@@ -124,13 +124,13 @@ public class SegmentImpl
                 this.sameObject(),
                 params.getItem()
             );
-            return Utils.getAdminPackage(this.sameManager()).createImportLoginPrincipalsResult(
-                statusMessage
-            );
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.admin1.jmi1.ImportLoginPrincipalsResult.class, 
+            	Datatypes.member(org.opencrx.kernel.admin1.jmi1.ImportLoginPrincipalsResult.Member.statusMessage, statusMessage)
+            );	        	
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
-        }                
+        }               
     }
-        
+
 }

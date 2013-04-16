@@ -53,10 +53,11 @@
 package org.opencrx.kernel.contract1.aop2;
 
 import org.opencrx.kernel.backend.Contracts;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class AbstractFilterContractImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.AbstractFilterContract,N extends org.opencrx.kernel.contract1.cci2.AbstractFilterContract,C extends Void>
@@ -77,11 +78,11 @@ public class AbstractFilterContractImpl
             int count = Contracts.getInstance().countFilteredContract(
                 this.sameObject()
             );
-            return Utils.getBasePackage(this.sameManager()).createCountFilteredObjectsResult(
-                count
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.Member.count, count)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }

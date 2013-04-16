@@ -1,6 +1,6 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: Workflows
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -71,6 +71,8 @@ import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow;
+import org.opencrx.kernel.workflow.BulkCreateActivityWorkflow;
 import org.opencrx.kernel.workflow.PrintConsole;
 import org.opencrx.kernel.workflow.SendAlert;
 import org.opencrx.kernel.workflow1.cci2.TopicQuery;
@@ -87,10 +89,15 @@ import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
 
+/**
+ * Workflows
+ *
+ */
 public class Workflows extends AbstractImpl {
 
 	/**
-	 * Register backend class
+	 * Register backend class.
+	 * 
 	 */
 	public static void register(
 	) {
@@ -98,7 +105,8 @@ public class Workflows extends AbstractImpl {
 	}
 
 	/**
-	 * Get instance of registered backend class
+	 * Get instance of registered backend class.
+	 * 
 	 */
 	public static Workflows getInstance(
 	) throws ServiceException {
@@ -106,7 +114,8 @@ public class Workflows extends AbstractImpl {
 	}
 
 	/**
-	 * Constructor
+	 * Constructor.
+	 * 
 	 */
 	protected Workflows(
 	) {
@@ -114,7 +123,8 @@ public class Workflows extends AbstractImpl {
 	}
 
 	/**
-	 * Abstract class for synchronous workflows.
+	 * Abstract class for synchronous workflows. Synchronous workflows are
+	 * by definition atomic, i.e. the may be run in parallel with other workflows.
 	 */
 	public static abstract class SynchronousWorkflow {
 	    
@@ -139,7 +149,8 @@ public class Workflows extends AbstractImpl {
 	}
 
 	/**
-	 * Abstract class for asynchronous workflows
+	 * Abstract class for asynchronous workflows.
+	 * 
 	 */
 	public static abstract class AsynchronousWorkflow {
 	    
@@ -152,10 +163,25 @@ public class Workflows extends AbstractImpl {
 	        WfProcessInstance wfProcessInstance
 	    ) throws ServiceException;
 
+	    
+	    /**
+	     * Return true if workflow is atomic. Atomic workflows may run in parallel other
+	     * (atomic, non-atomic) workflows, i.e. their execution does not have side-effects 
+	     * on other workflows. The default for asynchronous workflows is false.
+	     * Override this method to change the default value. 
+	     * 
+	     * @return
+	     */
+	    public boolean isAtomic(
+	    ) {
+	    	return false;
+	    }
+	    
 	}
-	
+
     /**
-     * Get workflow segment
+     * Get workflow segment.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -171,12 +197,37 @@ public class Workflows extends AbstractImpl {
         );
     }
     
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.workflow1.jmi1.Topic findTopic(
+    /**
+     * Find topic.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     * 
+     * @deprecated
+     */
+    public Topic findTopic(
         String name,
         org.opencrx.kernel.workflow1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
+    	return this.findTopic(name, segment);
+    }
+
+    /**
+     * Find topic.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     */
+    public Topic findTopic(
+        String name,
+        org.opencrx.kernel.workflow1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         TopicQuery topicQuery = (TopicQuery)pm.newQuery(Topic.class);
         topicQuery.name().equalTo(name);
         List<Topic> topics = segment.getTopic(topicQuery);
@@ -185,12 +236,37 @@ public class Workflows extends AbstractImpl {
         		topics.iterator().next();
     }
 
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.workflow1.jmi1.WfProcess findWfProcess(
+    /**
+     * Find process.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     * 
+     * @deprecated
+     */
+    public WfProcess findWfProcess(
         String name,
         org.opencrx.kernel.workflow1.jmi1.Segment segment,
         javax.jdo.PersistenceManager pm
     ) {
+    	return this.findWfProcess(name, segment);
+    }
+
+    /**
+     * Find process.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     */
+    public WfProcess findWfProcess(
+        String name,
+        org.opencrx.kernel.workflow1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         WfProcessQuery wfProcessQuery = (WfProcessQuery)pm.newQuery(WfProcess.class);
         wfProcessQuery.name().equalTo(name);
         List<WfProcess> wfProcesses = segment.getWfProcess(wfProcessQuery);
@@ -199,8 +275,18 @@ public class Workflows extends AbstractImpl {
         		wfProcesses.iterator().next();
     }
 
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.workflow1.jmi1.Topic initTopic(
+    /**
+     * Init topic.
+     * 
+     * @param workflowSegment
+     * @param id
+     * @param name
+     * @param description
+     * @param topicPathPattern
+     * @param actions
+     * @return
+     */
+    public Topic initTopic(
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
         String id,
         String name,
@@ -236,8 +322,18 @@ public class Workflows extends AbstractImpl {
         return topic;
     }
     
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.workflow1.jmi1.WfProcess initWorkflow(
+     /**
+      * Init workflow.
+      * 
+     * @param workflowSegment
+     * @param id
+     * @param name
+     * @param description
+     * @param isSynchronous
+     * @param properties
+     * @return
+     */
+    public WfProcess initWorkflow(
         org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment,
         String id,
         String name,
@@ -283,7 +379,14 @@ public class Workflows extends AbstractImpl {
         return wfProcess;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Init standard workflows.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @throws ServiceException
+     */
     public void initWorkflows(
         PersistenceManager pm,
         String providerName,
@@ -357,18 +460,46 @@ public class Workflows extends AbstractImpl {
             Boolean.TRUE,
             null
         );
-        // BulkActivityFollowUp
+        // BulkCreateActivityWorkflow
+        @SuppressWarnings("unused")
+        WfProcess bulkCreateActivityWorkflow = this.initWorkflow(
+            workflowSegment,
+            WORKFLOW_BULK_CREATE_ACTIVITY,
+            BulkCreateActivityWorkflow.class.getName(),
+            "Perform bulk create activities. Parameters are:\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_LOCALE + ": Locale used to apply place holders\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_DEFAULT_PLACEHOLDERS + ": Default place holders as properties\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_CREATION_TYPE + ": Creation type (CREATE,CREATE\\_CONFIRMED,CREATE\\_TEST,CREATE\\_TEST\\_CONFIRMED)\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACCOUNTS_SELECTOR + ": Accounts selector (Group,AccountFilter,AddressFilter,AddressGroup)\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_NAME + ": Template activity name\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_DESCRIPTION + ": Template activity description\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_DETAILED_DESCRIPTION + ": Template activity detailed description\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_PRIORITY + ": Template activity priority\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_SCHEDULED_START + ": Template activity scheduled start\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_SCHEDULED_END + ": Template activity scheduled end\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_ACTIVITY_DUE_BY + ": Template activity due by\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_EMAIL_SENDER + ": Template activity email sender\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_EMAIL_MESSAGE_SUBJECT + ": Template activity email subject\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_EMAIL_MESSAGE_BODY + "[0..9]: Template activity message body\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_EMAIL_ADDRESS_USAGE + "[0..9]: Select email addresses with given usage\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_TEST_ACCOUNT + ": Test account when in test mode\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_TEST_EMAIL + "[0..9]: Test email addresses when in test mode\n" +
+            "* " + BulkCreateActivityWorkflow.OPTION_EXCLUDE_NO_BULK_EMAIL + ": Skip accounts with 'no bulk email flag' set",
+            Boolean.FALSE,
+            null
+        );
+        // BulkActivityFollowUpWorkflow
         @SuppressWarnings("unused")
         WfProcess bulkActivityFollowUpWorkflow = this.initWorkflow(
             workflowSegment,
             WORKFLOW_BULK_ACTIVITY_FOLLOWUP,
-            org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow.class.getName(),
+            BulkActivityFollowUpWorkflow.class.getName(),
             "Perform bulk activity follow up. Parameters are:\n" +
-            "* activity: template activity\n" +
-            "* transition: process transition\n" + 
-            "* followUpTitle: follow up title\n" +
-            "* followUpText: follow up text\n" +
-            "* assignTo: assign activity to contact",
+            "* " + BulkActivityFollowUpWorkflow.OPTION_ACTIVITY + ": Template activity\n" +
+            "* " + BulkActivityFollowUpWorkflow.OPTION_TRANSITION + "[0..9]: Process transition\n" + 
+            "* " + BulkActivityFollowUpWorkflow.OPTION_FOLLOWUP_TITLE + "[0..9]: Follow up title\n" +
+            "* " + BulkActivityFollowUpWorkflow.OPTION_FOLLOWUP_TEXT + "[0..9]: Follow up text\n" +
+            "* " + BulkActivityFollowUpWorkflow.OPTION_ASSIGN_TO + ": Assign activity to contact",
             Boolean.FALSE,
             null
         );
@@ -522,14 +653,31 @@ public class Workflows extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Execute the workflow. Create a workflow instance. If the
+     * workflow is synchronous execute it immediately. Asynchronous
+     * workflows are executed by the workflow handler.
+     * 
+     * @param name
+     * @param wfTarget
+     * @param wfProcess
+     * @param targetObject
+     * @param triggeredBy
+     * @param triggeredByEventId
+     * @param triggeredByEventType
+     * @param parentProcessInstance
+     * @return
+     * @throws ServiceException
+     */
     public WfProcessInstance executeWorkflow(
+    	String name,
         WorkflowTarget wfTarget,
         WfProcess wfProcess,
         ContextCapable targetObject,
         ContextCapable triggeredBy,
         String triggeredByEventId,
-        Integer triggeredByEventType
+        Integer triggeredByEventType,
+        WfProcessInstance parentProcessInstance
     ) throws ServiceException {
         if(wfProcess == null) {
             throw new ServiceException(
@@ -561,21 +709,23 @@ public class Workflows extends AbstractImpl {
                     	triggeredByEventId
                 }
             );            
-        WfProcessInstance wfInstance = null;
+        WfProcessInstance processInstance = null;
         // Try to execute workflow in context of existing workflow instance
         try {
-        	wfInstance = (WfProcessInstance)pm.getObjectById(wfInstanceIdentity);
+        	processInstance = (WfProcessInstance)pm.getObjectById(wfInstanceIdentity);
         } catch(Exception e) {}
-        if(wfInstance == null) {
-        	wfInstance = pm.newInstance(WfProcessInstance.class);
-            wfInstance.setStepCounter(new Integer(0));
-            wfInstance.setProcess(wfProcess);
-            wfInstance.setTargetObject(targetObjectIdentity.toXRI());            
-            wfInstance.setFailed(Boolean.FALSE);
+        if(processInstance == null) {
+        	processInstance = pm.newInstance(WfProcessInstance.class);
+        	processInstance.setName(name == null ? wfProcess.getName() : name);
+            processInstance.setStepCounter(new Integer(0));
+            processInstance.setProcess(wfProcess);
+            processInstance.setTargetObject(targetObjectIdentity.toXRI());            
+            processInstance.setFailed(Boolean.FALSE);
+            processInstance.setParent(parentProcessInstance);
             if(wfTarget instanceof UserHome) {
 	            ((UserHome)wfTarget).addWfProcessInstance(
 	            	this.getUidAsString(),
-	            	wfInstance
+	            	processInstance
 	            );
             }
         }
@@ -584,7 +734,7 @@ public class Workflows extends AbstractImpl {
             UriProperty property = pm.newInstance(UriProperty.class);
             property.setName("triggeredBy");
             property.setUriValue(triggeredBy.refGetPath().toXRI());
-            wfInstance.addProperty(
+            processInstance.addProperty(
             	this.getUidAsString(),
             	property
             );
@@ -593,7 +743,7 @@ public class Workflows extends AbstractImpl {
             IntegerProperty property = pm.newInstance(IntegerProperty.class);
             property.setName("triggeredByEventType");
             property.setIntegerValue(triggeredByEventType.intValue());
-            wfInstance.addProperty(
+            processInstance.addProperty(
             	this.getUidAsString(),
             	property
             );
@@ -635,8 +785,7 @@ public class Workflows extends AbstractImpl {
             // Instantiate workflow
             try {
                 workflow = (SynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
-            }
-            catch(InstantiationException e) {
+            } catch(InstantiationException e) {
                 new ServiceException(e).log();
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
@@ -645,8 +794,7 @@ public class Workflows extends AbstractImpl {
                     new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
-            }
-            catch(IllegalAccessException e) {
+            } catch(IllegalAccessException e) {
                 new ServiceException(e).log();
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
@@ -655,8 +803,7 @@ public class Workflows extends AbstractImpl {
                     new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                            
-            }
-            catch(IllegalArgumentException e) {
+            } catch(IllegalArgumentException e) {
                 new ServiceException(e).log();
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
@@ -665,8 +812,7 @@ public class Workflows extends AbstractImpl {
                     new BasicException.Parameter("param0", wfProcess.getName()),
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
-            }
-            catch(InvocationTargetException e) {
+            } catch(InvocationTargetException e) {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.WORKFLOW_CAN_NOT_INVOKE,
@@ -680,14 +826,13 @@ public class Workflows extends AbstractImpl {
                 workflow.execute(
                     wfTarget,
                     targetObject,
-                    wfInstance
+                    processInstance
                 );
                 // Update workflow instance after successful execution
-                wfInstance.setStartedOn(new Date());
-                wfInstance.setLastActivityOn(new Date());
-                wfInstance.setFailed(Boolean.FALSE);
-            }
-            catch(Exception e) {
+                processInstance.setStartedOn(new Date());
+                processInstance.setLastActivityOn(new Date());
+                processInstance.setFailed(Boolean.FALSE);
+            } catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
                 SysLog.warning(e0.getMessage(), e0.getCause());
                 /**
@@ -703,21 +848,21 @@ public class Workflows extends AbstractImpl {
                   * case of an exception has to be rolled back.
                   */   
                 // Update workflow instance. Set timestamp for last activity
-                wfInstance.setLastActivityOn(new Date());
+                processInstance.setLastActivityOn(new Date());
                 Number maxRetries = wfProcess.getMaxRetries();
                 if(
                     (maxRetries == null) ||
                     (maxRetries.intValue() == 0)
                 ) {
-                    wfInstance.setStartedOn(new Date());
-                    wfInstance.setFailed(Boolean.TRUE);
+                    processInstance.setStartedOn(new Date());
+                    processInstance.setFailed(Boolean.TRUE);
                 }
                 // Increment stepCounter
-                Number stepCounter = wfInstance.getStepCounter();
+                Number stepCounter = processInstance.getStepCounter();
                 if(stepCounter == null) {
                     stepCounter = new Integer(0);
                 }
-                wfInstance.setStepCounter(
+                processInstance.setStepCounter(
                     new Integer(stepCounter.intValue() + 1)
                 );
                 // Create log entry
@@ -728,16 +873,20 @@ public class Workflows extends AbstractImpl {
                 		(BasicObject)targetObject :
                 		null
                 );
-                wfInstance.addActionLog(
+                processInstance.addActionLog(
                 	false,
                 	this.getUidAsString(),
                 	logEntry
                 );
             }
         }
-        return wfInstance;
+        return processInstance;
     }
 
+    /**
+     * EventType
+     *
+     */
     public enum EventType {
     	
     	NONE((short)0),
@@ -775,6 +924,7 @@ public class Workflows extends AbstractImpl {
     public static final String WORKFLOW_SEND_DIRECT_MESSAGE_TWITTER = "SendDirectMessage";
     public static final String WORKFLOW_SEND_MESSAGE_JABBER = "SendMessageJabber";
     public static final String WORKFLOW_BULK_ACTIVITY_FOLLOWUP = "BulkActivityFollowUp";
+    public static final String WORKFLOW_BULK_CREATE_ACTIVITY = "BulkCreateActivity";
 
     public static final String TOPIC_NAME_ACCOUNT_MODIFICATIONS = "Account Modifications";
     public static final String TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS = "Activity Follow Up Modifications";
@@ -802,6 +952,7 @@ public class Workflows extends AbstractImpl {
     public static final String WORKFLOW_NAME_SEND_MESSAGE_TWITTER = org.opencrx.application.twitter.SendDirectMessageWorkflow.class.getName();
     public static final String WORKFLOW_NAME_SEND_MESSAGE_JABBER = org.opencrx.application.jabber.SendMessageWorkflow.class.getName();
     public static final String WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP = org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow.class.getName();
+    public static final String WORKFLOW_NAME_BULK_CREATE_ACTIVITY = org.opencrx.kernel.workflow.BulkCreateActivityWorkflow.class.getName();
 
 }
 

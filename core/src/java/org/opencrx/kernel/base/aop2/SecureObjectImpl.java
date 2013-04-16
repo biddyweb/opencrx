@@ -60,10 +60,11 @@ import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.SecureObject;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class SecureObjectImpl
 	<S extends org.opencrx.kernel.base.jmi1.SecureObject,N extends org.opencrx.kernel.base.cci2.SecureObject,C extends Void>
@@ -90,11 +91,11 @@ public class SecureObjectImpl
             	params.getMode(),
             	report
             );
-            return Utils.getBasePackage(this.sameManager()).createModifySecureObjectResult(
-                 Base.getInstance().analyseReport(report)
-            );    
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.Member.statusMessage, Base.getInstance().analyseReport(report))
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }         
     }
@@ -111,11 +112,11 @@ public class SecureObjectImpl
             	params.getMode(),
             	report
             );
-            return Utils.getBasePackage(this.sameManager()).createModifySecureObjectResult(
-                Base.getInstance().analyseReport(report)
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.Member.statusMessage, Base.getInstance().analyseReport(report))
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }
@@ -132,11 +133,11 @@ public class SecureObjectImpl
             	params.getMode(),
             	report
             );
-            return Utils.getBasePackage(this.sameManager()).createModifySecureObjectResult(
-                Base.getInstance().analyseReport(report)
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.Member.statusMessage, Base.getInstance().analyseReport(report))
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }
@@ -152,11 +153,11 @@ public class SecureObjectImpl
             	params.getMode(),
             	report
             );
-            return Utils.getBasePackage(this.sameManager()).createModifySecureObjectResult(
-                Base.getInstance().analyseReport(report)
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.Member.statusMessage, Base.getInstance().analyseReport(report))
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }   
@@ -175,15 +176,15 @@ public class SecureObjectImpl
                 params.getMode(),
                 report
             );
-            return Utils.getBasePackage(this.sameManager()).createModifySecureObjectResult(
-                Base.getInstance().analyseReport(report)
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.Member.statusMessage, Base.getInstance().analyseReport(report))
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
-    }   
-    
+    }
+
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.base.jmi1.ModifySecureObjectResult replaceOwningGroup(
         org.opencrx.kernel.base.jmi1.ModifyOwningGroupsParams params
@@ -197,13 +198,13 @@ public class SecureObjectImpl
             	params.getMode(),
             	report
             );
-            return Utils.getBasePackage(this.sameManager()).createModifySecureObjectResult(
-                Base.getInstance().analyseReport(report)
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ModifySecureObjectResult.Member.statusMessage, Base.getInstance().analyseReport(report))
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
-        }                    
+        }                   
     }
 
     //-----------------------------------------------------------------------

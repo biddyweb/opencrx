@@ -147,7 +147,6 @@ import org.opencrx.kernel.home1.jmi1.SyncData;
 import org.opencrx.kernel.home1.jmi1.SyncFeed;
 import org.opencrx.kernel.home1.jmi1.SyncProfile;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -156,6 +155,8 @@ import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.loading.Factory;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class OpenCrxSyncBackend implements SyncBackend {
 
@@ -504,17 +505,18 @@ public class OpenCrxSyncBackend implements SyncBackend {
 		}
 		Activity activity = null;
 		if(creator != null) {
-			NewActivityParams params = Utils.getActivityPackage(pm).createNewActivityParams(
-				null, // creationContext
-				null, // description 
-				detailedDescription, 
-				null, // dueBy
-				ICalendar.ICAL_TYPE_NA, 
-				name, 
-				Priority.NORMAL.getValue(), 
-				null, // reportingContact 
-				null, // scheduledEnd 
-				scheduledStart
+			NewActivityParams params = Structures.create(
+				NewActivityParams.class, 
+				Datatypes.member(NewActivityParams.Member.creationContext, null),
+				Datatypes.member(NewActivityParams.Member.description, null),			
+				Datatypes.member(NewActivityParams.Member.detailedDescription, detailedDescription),			
+				Datatypes.member(NewActivityParams.Member.dueBy, null),			
+				Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),	
+				Datatypes.member(NewActivityParams.Member.name, name),	
+				Datatypes.member(NewActivityParams.Member.priority, Priority.NORMAL.getValue()),
+				Datatypes.member(NewActivityParams.Member.reportingContact, null),
+				Datatypes.member(NewActivityParams.Member.scheduledEnd, null),
+				Datatypes.member(NewActivityParams.Member.scheduledStart, scheduledStart)
 			);
 			pm.currentTransaction().begin();
 			NewActivityResult result = creator.newActivity(params);

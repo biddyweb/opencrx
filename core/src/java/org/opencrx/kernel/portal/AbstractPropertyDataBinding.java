@@ -111,7 +111,7 @@ public abstract class AbstractPropertyDataBinding extends DataBinding {
                 }
             }
         }  
-        // ProductConfigurationTypeSet
+        // ProductConfigurationSet
         else if(
             (this.type == AbstractPropertyDataBinding.PropertySetHolderType.ProductConfigurationSet) &&
             (object instanceof ProductConfigurationSet) &&

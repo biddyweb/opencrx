@@ -1189,7 +1189,13 @@ public class Depots extends AbstractImpl {
         return !bookings.isEmpty();
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Remove depot entity. Test for existing bookings.
+     * 
+     * @param depotEntity
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeDepotEntity(
         DepotEntity depotEntity,
         boolean preDelete
@@ -1207,7 +1213,13 @@ public class Depots extends AbstractImpl {
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Remove depot holder. Test for existing bookings.
+     * 
+     * @param depotHolder
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeDepotHolder(
         DepotHolder depotHolder,
         boolean preDelete
@@ -1225,7 +1237,13 @@ public class Depots extends AbstractImpl {
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Remove depot. Test for existing bookings.
+     * 
+     * @param depot
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeDepot(
         Depot depot,
         boolean preDelete
@@ -1243,7 +1261,13 @@ public class Depots extends AbstractImpl {
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Remove depot position. Test for existing bookings.
+     * 
+     * @param depotPosition
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeDepotPosition(
         DepotPosition depotPosition,
         boolean preDelete
@@ -1261,6 +1285,22 @@ public class Depots extends AbstractImpl {
         }
     }
     
+    /**
+     * Remove depot group.
+     * 
+     * @param depotGroup
+     * @param preDelete
+     * @throws ServiceException
+     */
+    public void removeDepotGroup(
+        DepotGroup depotGroup,
+        boolean preDelete
+    ) throws ServiceException {
+        if(!preDelete) {
+        	depotGroup.refDelete();
+        }
+    }
+
     //-----------------------------------------------------------------------
     public Depot openDepot(
         DepotHolder depotHolder,

@@ -2,11 +2,8 @@
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
- * Name:        $Id: AccountRelationships.jsp,v 1.22 2012/07/08 13:29:33 wfro Exp $
  * Description: seek relationships between accounts
- * Revision:    $Revision: 1.22 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -74,7 +71,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
 " %><%
@@ -152,9 +148,6 @@ org.openmdx.base.naming.*
 		app,
 		viewsCache.getView(requestId)
 	);
-
-  // Get account1 package
-	org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -423,7 +416,7 @@ org.openmdx.base.naming.*
              );
 
 			// get inbound memberships (i.e. distance == -1)
-			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
+			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
 			membershipQuery.forAllDisabled().isFalse();
 			membershipQuery.distance().equalTo(new Short((short)-1));
 			membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
@@ -436,8 +429,8 @@ org.openmdx.base.naming.*
 	            "v.member IN ( " +
 	            "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
 	            "  where " +
-	            "   ((m.disabled is null) or (m.disabled = false)) and " +
-	            "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
+	            "   ((m.disabled is null) or (m.disabled = '0')) and " +
+	            "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = '0'))) " +
 	            "  ) " +
 	            ") "
 			);
@@ -467,7 +460,7 @@ org.openmdx.base.naming.*
           }
 
 			// get outbound memberships (i.e. distance == 1)
-			membershipQuery = accountPkg.createAccountMembershipQuery();
+			membershipQuery = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
 			membershipQuery.forAllDisabled().isFalse();
       		membershipQuery.distance().equalTo(new Short((short)1));
       		membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL

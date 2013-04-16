@@ -624,6 +624,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Contract type</_item>
+											</toolTip>
+											<label>
+												<_item>Contract type</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:supplier">
 										<_object>
@@ -1108,10 +1125,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Reapply Activity Creator</_item>
+												<_item>Reapply Contract Creator</_item>
 											</toolTip>
 											<label>
-												<_item>Reapply Activity Creator</_item>
+												<_item>Reapply Contract Creator</_item>
 											</label>
 											<order>
 												<_item>500</_item>

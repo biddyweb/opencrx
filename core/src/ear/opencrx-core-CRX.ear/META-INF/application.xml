@@ -70,6 +70,12 @@
 			<context-root>opencrx-airsync-CRX</context-root>
 		</web>
 	</module>
+	<module id="opencrx-bpi-CRX">
+		<web>
+			<web-uri>opencrx-bpi-CRX.war</web-uri>
+			<context-root>opencrx-bpi-CRX</context-root>
+		</web>
+	</module>
 	<security-role id="SecurityRole_OpenCrxUser">
 		<description>openCRX Standard Users</description>
 		<role-name>OpenCrxUser</role-name>

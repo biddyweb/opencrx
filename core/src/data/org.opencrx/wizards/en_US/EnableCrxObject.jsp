@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: EnableCrxObject.jsp,v 1.3 2012/07/08 13:30:30 wfro Exp $
- * Description: disable account, composites like addresses, and members referencing account
- * Revision:    $Revision: 1.3 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Description: Enable CrxObject and its composites
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,108 +53,97 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.text.*,
-java.net.*,
-org.opencrx.kernel.utils.*,
-org.openmdx.base.accessor.jmi.cci.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
+org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.exception.BasicException,
-org.openmdx.kernel.id.*
-" %><%
-  request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
-	String objectXri = request.getParameter("xri");
-	if(app == null || objectXri == null || viewsCache.getView(requestId) == null) {
-	    response.sendRedirect(
-	       request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-	    );
-	    return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	Texts_1_0 texts = app.getTexts();
+org.openmdx.base.naming.*
+" %>
+<%
+	final String FORM_NAME = "EnableCrxObject";
+	EnableCrxObjectController wc = new EnableCrxObjectController();
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<%= texts.getDir() %>">
-<head>
-  <title><%= app.getApplicationName() + " - Enable " + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %></title>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
+		return;
+	}
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
+%>
+<!--
   <meta name="UNUSEDlabel" content="Enable">
   <meta name="UNUSEDtoolTip" content="Enable">
-  <meta name="targetType" content="_self">
+  <meta name="targetType" content="_inplace">
   <meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
   <meta name="order" content="org:opencrx:kernel:generic:CrxObject:enable">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
-</head>
-
-<body>
-<div id="container">
-	<div id="wrap">
-		<div id="header" style="height:90px;">
-      <div id="logoTable">
-        <table id="headerlayout">
-          <tr id="headRow">
-            <td id="head" colspan="2">
-              <table id="info">
-                <tr>
-                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-                  <td id="headerCellSpacerLeft"></td>
-                  <td id="headerCellMiddle">&nbsp;</td>
-                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-
-    <div id="content-wrap">
-    	<div id="content" style="padding:100px 0.5em 0px 0.5em;">
+-->
+<br />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="utf-8" method="post" action="<%= wc.getServletPath() %>">
+	<input type="hidden" class="valueL" name="xri" value="<%= wc.getObjectIdentity().toXRI() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" id="Command" name="Command" value="" />
+	<input type="checkbox" name="disable" checked value="false" style="display:none;" />
 <%
-	try {
-	    // forward to wizard DisableCrxObject with parameter disable=false
-	    String formAction = "DisableCrxObject.jsp";
-	    String disableAction = "wizards/en_US/" + formAction;
-	    // redirect to wizard DisableCrxObject
-	    response.sendRedirect(
-	      request.getContextPath() + "/" + disableAction + "?xri=" + URLEncoder.encode(request.getParameter("xri"), "UTF-8") + "&" + requestIdParam + "&disable=false"
-	    );
-  	}
-  	catch (Exception e) {
-		ServiceException e0 = new ServiceException(e);
-	    e0.log();
-	    out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-	    PrintWriter pw = new PrintWriter(out);
-	    e0.printStackTrace(pw);
-	    out.println("</pre></p>");
-  	} finally {
-  		if(pm != null) {
-  			pm.close();
-  		}
-  	}
+	String objectTitle = new ObjectReference(wc.getObject(), app).getTitle();
+	String objectLabel = new ObjectReference(wc.getObject(), app).getLabel();
+  	if("OK".equals(wc.getCommand())) {
 %>
-  </form>
-
-      </div> <!-- content -->
-    </div> <!-- content-wrap -->
-  </div> <!-- wrap -->
-</div> <!-- container -->
-
-</body>
-</html>
+        <b><%= objectTitle + (objectTitle.isEmpty() ? "" : " - ") + objectLabel %></b> is enabled.<br />
+<%
+		if(wc.getErrorMsg() != null && !wc.getErrorMsg().isEmpty()) {
+%>
+			<br />
+			<br />
+			<div title="<%= wc.getErrorTitle().replace("\"", "'") %>"  style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+				<%= wc.getErrorMsg() %>
+			</div>
+			<br>
+<%
+		}
+  	} else {
+%>
+		<div title="XRI=<%= wc.getObjectIdentity().toXRI() %>">
+        	Enable <b><%= objectTitle + (objectTitle.isEmpty() ? "" : " - ") + objectLabel %></b> and composites?<br>
+		</div>
+		<br />
+		<div id="WaitIndicator" style="width:50px;height:24px;" class="wait">&nbsp;</div>
+		<div id="SubmitArea" style="display:none;">										    	    
+		    <input type="Submit" name="OK" tabindex="1000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;"/>
+		    <input type="Submit" name="Cancel" tabindex="2000" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+		</div>
+<%
+  	}
+%>	    
+</form>
+<br />
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
+			onFailure: function() { },
+			onSuccess: function(t) {
+				$('UserDialog').update(t.responseText);
+			}
+		});
+		Event.stop(event);
+	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';		
+</script>
+<t:wizardClose controller="<%= wc %>" />

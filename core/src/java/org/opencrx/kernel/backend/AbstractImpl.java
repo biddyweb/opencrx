@@ -61,7 +61,6 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
 
 public abstract class AbstractImpl {

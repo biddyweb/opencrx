@@ -5,7 +5,7 @@
  * = Description: openCRX/sql build.xml
  * = Revision:    $Revision: 1.39 $
  * = Date:        $Date: 2012/03/07 16:34:54 $
- * = Copyright:   (c) 2003-2011 CRIXP AG
+ * = Copyright:   (c) 2003-2012 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
@@ -57,10 +57,10 @@
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.9-to-2.10.sql migrate-from-2.9-to-2.10.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.10-to-2.11.sql migrate-from-2.10-to-2.11.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.9-to-2.10.sql drop-from-2.9-to-2.10.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.10-to-2.11.sql drop-from-2.10-to-2.11.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/delete-segment.sql delete-segment.tsql"/>

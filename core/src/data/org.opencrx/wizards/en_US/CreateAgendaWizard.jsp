@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateAgendaWizard.jsp,v 1.24 2012/07/08 13:30:32 wfro Exp $
  * Description: CreateAgendaWizard
- * Revision:    $Revision: 1.24 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:32 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -60,52 +59,18 @@ java.io.*,
 java.text.*,
 org.opencrx.kernel.backend.*,
 org.opencrx.kernel.generic.*,
+org.opencrx.kernel.portal.wizard.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
+org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
-" %><%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
-		return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	String formName = "CreateActivityTrackerForm";
-	String wizardName = "CreateAgendaWizard.jsp";
-
-	// Get Parameters
-	String command = request.getParameter("Command");
-	if(command == null) command = "";
-	boolean actionCreate = "OK".equals(command);
-	boolean actionCancel = "Cancel".equals(command);
-
-	if(actionCancel) {
-	  session.setAttribute(wizardName, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
-%>
+" %>
 <!--
 	<meta name="UNUSEDlabel" content="Create Agenda">
 	<meta name="UNUSEDtoolTip" content="Create Agenda">
@@ -114,185 +79,47 @@ org.openmdx.base.naming.*
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:createAgenda">
 -->
 <%
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-	org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
-	    (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-	        new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-		);
-	org.openmdx.ui1.jmi1.FormDefinition formDefinition = app.getUiFormDefinition(formName);
-	org.openmdx.portal.servlet.control.FormControl form = new org.openmdx.portal.servlet.control.FormControl(
-		formDefinition.refGetPath().getBase(),
-		app.getCurrentLocaleAsString(),
-		app.getCurrentLocaleAsIndex(),
-		app.getUiContext(),
-		formDefinition
-	);
-	Map formValues = new HashMap();
-	form.updateObject(
-		request.getParameterMap(),
-		formValues,
-		app,
-		pm
-	);
-	if(actionCreate) {
-	    String name = (String)formValues.get("org:opencrx:kernel:activity1:ActivityGroup:name");
-	    String description = (String)formValues.get("org:opencrx:kernel:activity1:ActivityGroup:description");
-	    if(
-	        (name != null) &&
-	        (name.length() > 0)
-	    ) {
-			org.opencrx.security.realm1.jmi1.PrincipalGroup usersPrincipalGroup =
-				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-					"Users",
-					org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
-						pm,
-						providerName,
-						segmentName
-					)
-				);
-			org.opencrx.security.realm1.jmi1.PrincipalGroup administratorsPrincipalGroup =
-				(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-					"Administrators",
-					org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
-						pm,
-						providerName,
-						segmentName
-					)
-				);
-			List allUsers = new ArrayList();
-			allUsers.add(usersPrincipalGroup);
-			allUsers.add(administratorsPrincipalGroup);
-	        org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.getInstance().initActivityTracker(
-	            name,
-	            allUsers,
-	            pm,
-	            providerName,
-	            segmentName
-	        );
-	    	// ActivityCreator Meeting
-	    	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_MEETINGS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    Activities.ACTIVITY_TYPE_NAME_MEETINGS,
-		    	    Activities.ActivityClass.MEETING.getValue(),
-		    	    null, // owningGroups
-		    	    SecurityKeys.ACCESS_LEVEL_NA
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers
-	    	);
-	    	// ActivityCreator SalesVisit
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_SALES_VISITS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    Activities.ACTIVITY_TYPE_NAME_SALES_VISITS,
-		    	    Activities.ActivityClass.SALES_VISIT.getValue(),
-		    	    null, // owningGroups
-		    	    SecurityKeys.ACCESS_LEVEL_NA
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers
-	    	);
-	    	// ActivityCreator Absence
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_ABSENCES,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    Activities.ACTIVITY_TYPE_NAME_ABSENCES,
-		    	    Activities.ActivityClass.ABSENCE.getValue(),
-		    	    null, // owningGroups
-		    	    SecurityKeys.ACCESS_LEVEL_NA
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers
-	    	);
-	    	// ActivityCreator Task
-	    	Activities.getInstance().initActivityCreator(
-	    	    name + " - " + Activities.ACTIVITY_CREATOR_NAME_TASKS,
-		    	Activities.getInstance().initActivityType(
-		    	    Activities.getInstance().findActivityProcess(
-		    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-		    	        activitySegment,
-		    	        pm
-		    	    ),
-		    	    Activities.ACTIVITY_TYPE_NAME_TASKS,
-		    	    Activities.ActivityClass.TASK.getValue(),
-		    	    null, // owningGroups
-		    	    SecurityKeys.ACCESS_LEVEL_NA
-		    	),
-	    	    (List)Arrays.asList(new Object[]{activityTracker}),
-	    	    allUsers
-	    	);
-	    	// Update tracker
-	        pm.currentTransaction().begin();
-	    	activityTracker.setDescription(description);
-	    	activityTracker.setDefaultCreator(defaultCreator);
-	    	pm.currentTransaction().commit();
-	    	// Forward to tracker
-		    Action nextAction = new ObjectReference(
-		    	activityTracker,
-		    	app
-		   	).getSelectObjectAction();
-			response.sendRedirect(
-				request.getContextPath() + "/" + nextAction.getEncodedHRef()
-			);
-			return;
-	    }
-	}
-	TransientObjectView view = new TransientObjectView(
-		formValues,
-		app,
-		obj,
-		pm
-	);
-	ViewPort p = ViewPortFactory.openPage(
-		view,
-		request,
-		out
-	);
+	final String FORM_NAME = "CreateActivityTrackerForm";
+	CreateAgendaWizardController wc = new CreateAgendaWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='OK' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();		
+		return;
+	}	
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
+	ViewPort viewPort = wc.getViewPort(out);
 %>
 <br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
-	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
-	<table cellspacing="8" class="tableLayout">
+	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= formName %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
 <%
-					form.paint(
-						p,
-						null, // frame
-						true // forEditing
-					);
-					p.flush();
+					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
+					viewPort.flush();
 %>
 				</div>
-				<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9000" value="Create" onclick="javascript:$('Command').value=this.name;" />
-				<input  type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+				<div id="SubmitArea" style="float:left;display:none;">
+					<input type="submit" name="OK" id="OK.Button" tabindex="9010" value="<%= app.getTexts().getNewText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;this.name='---';" />
+					<input type="submit" name="Cancel" tabindex="9020" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+				</div>
 			</td>
 		</tr>
 	</table>
 </form>
-<script language="javascript" type="text/javascript">
-	Event.observe('<%= formName %>', 'submit', function(event) {
-		$('<%= formName %>').request({
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
 			onFailure: function() { },
 			onSuccess: function(t) {
 				$('UserDialog').update(t.responseText);
@@ -300,10 +127,7 @@ org.openmdx.base.naming.*
 		});
 		Event.stop(event);
 	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';	
 </script>
-<%
-p.close(false);
-if(pm != null) {
-	pm.close();
-}
-%>
+<t:wizardClose controller="<%= wc %>" />

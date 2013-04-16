@@ -69,7 +69,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.opencrx.kernel.backend.Base;
@@ -80,7 +79,6 @@ import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 
 public class VCardServlet extends HttpServlet {
@@ -169,26 +167,23 @@ public class VCardServlet extends HttpServlet {
         AccountQueryHelper accountsHelper,
         String uid
     ) {
-        Account1Package accountPkg = Utils.getAccountPackage(pm);
-        AccountQuery query = accountPkg.createAccountQuery();
+        AccountQuery query = (AccountQuery)pm.newQuery(Account.class);
         query.thereExistsExternalLink().equalTo(VCard.VCARD_SCHEMA + uid);
         List<Account> accounts = accountsHelper.getAccountSegment().getAccount(query);
         if(accounts.isEmpty()) {
-            query = accountPkg.createAccountQuery();
+            query = (AccountQuery)pm.newQuery(Account.class);
             query.thereExistsExternalLink().equalTo(VCard.VCARD_SCHEMA + uid.replace('.', '+'));
             accounts = accountsHelper.getAccountSegment().getAccount(query);
             if(accounts.isEmpty()) {
                 return null;
-            }
-            else {
+            } else {
                 return accounts.iterator().next();
             }
-        }
-        else {
+        } else {
             return accounts.iterator().next();
         }
     }
-        
+
     //-----------------------------------------------------------------------
     @Override
     protected void doGet(
@@ -225,7 +220,7 @@ public class VCardServlet extends HttpServlet {
 	            try {
 	                resp.setCharacterEncoding("UTF-8");
 	                resp.setStatus(HttpServletResponse.SC_OK);
-	                AccountQuery accountQuery = Utils.getAccountPackage(pm).createAccountQuery();
+	                AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
 	                accountQuery.forAllDisabled().isFalse();
 	                accountQuery.vcard().isNonNull();
 	                PrintWriter p = resp.getWriter();

@@ -57,9 +57,10 @@ import javax.jdo.JDOUserException;
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class SalesContractImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.SalesContract,N extends org.opencrx.kernel.contract1.cci2.SalesContract,C extends Void>
@@ -80,11 +81,11 @@ public class SalesContractImpl
             CompoundBooking compoundBooking = Contracts.getInstance().updateInventory(
                 this.sameObject()
             );
-            return Utils.getContractPackage(this.sameManager()).createUpdateInventoryResult(
-                compoundBooking
+            return Structures.create(
+            	org.opencrx.kernel.contract1.jmi1.UpdateInventoryResult.class, 
+            	Datatypes.member(org.opencrx.kernel.contract1.jmi1.UpdateInventoryResult.Member.compoundBooking, compoundBooking)
             );
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }        
     }
@@ -133,11 +134,11 @@ public class SalesContractImpl
 	            params.getPriceUom(),
 	            params.getPricingRule()            
 	        );
-	        return Utils.getContractPackage(this.sameManager()).createCreatePositionResult(
-	            position
-	        );
-    	}
-    	catch(Exception e) {
+            return Structures.create(
+            	org.opencrx.kernel.contract1.jmi1.CreatePositionResult.class, 
+            	Datatypes.member(org.opencrx.kernel.contract1.jmi1.CreatePositionResult.Member.position, position)
+            );    		
+    	} catch(Exception e) {
     		throw new JmiServiceException(e);
     	}
     }

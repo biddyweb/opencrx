@@ -139,7 +139,13 @@ public class Audit_1 extends Indexed_1 {
         return Object_2Facade.getPath(object).size() > 5;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get qualified principal name.
+     * 
+     * @param accessPath
+     * @param principalName
+     * @return
+     */
     protected String getQualifiedPrincipalName(
         Path accessPath,
         String principalName
@@ -147,7 +153,13 @@ public class Audit_1 extends Indexed_1 {
         return accessPath.get(4) + ":" + principalName;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Test whether two attribute values are equal.
+     * 
+     * @param v1
+     * @param v2
+     * @return
+     */
     @SuppressWarnings("unchecked")
     private boolean areEqual(
         Object v1,
@@ -181,7 +193,12 @@ public class Audit_1 extends Indexed_1 {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Set security attributes for given object.
+     * 
+     * @param auditEntry
+     * @throws ServiceException
+     */
     protected void setSecurityAttributes(
     	MappedRecord auditEntry
     ) throws ServiceException {
@@ -215,7 +232,14 @@ public class Audit_1 extends Indexed_1 {
         );        
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Set system attributes for given object.
+     * 
+     * @param header
+     * @param object
+     * @param operation
+     * @throws ServiceException
+     */
     protected void setSystemAttributes(
         ServiceHeader header,
         MappedRecord object,
@@ -260,16 +284,31 @@ public class Audit_1 extends Indexed_1 {
         }        
     }
     
-    // --------------------------------------------------------------------------
+    /**
+     * LayerInteraction
+     *
+     */
     public class LayerInteraction extends Indexed_1.LayerInteraction {
         
+        /**
+         * Constructor.
+         * 
+         * @param connection
+         * @throws ResourceException
+         */
         public LayerInteraction(
             Connection connection
         ) throws ResourceException {
             super(connection);
         }
 
-	    //-------------------------------------------------------------------------
+        /**
+         * Get visitedBy value.
+         * 
+         * @param visitorId
+         * @return
+         * @throws ServiceException
+         */
         private String getVisitedBy(
         	String visitorId
         ) throws ServiceException {
@@ -279,7 +318,14 @@ public class Audit_1 extends Indexed_1 {
         			NOT_VISITED_SUFFIX);
         }
 
-	    //-------------------------------------------------------------------------
+	    /**
+	     * Test whether identity of given object is subject to audit.
+	     * 
+	     * @param header
+	     * @param path
+	     * @return
+	     * @throws ServiceException
+	     */
 	    private boolean isAuditSegment(
 	        ServiceHeader header,
 	        Path path
@@ -314,7 +360,9 @@ public class Audit_1 extends Indexed_1 {
 	        return isAuditSegment.booleanValue();
 	    }
 	    
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.opencrx.kernel.layer.persistence.Indexed_1.LayerInteraction#get(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Query_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @SuppressWarnings("unchecked")
 	    @Override
 	    public boolean get(
@@ -366,7 +414,9 @@ public class Audit_1 extends Indexed_1 {
 	    	}
 	    }
 	    
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.opencrx.kernel.layer.persistence.Indexed_1.LayerInteraction#find(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Query_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @SuppressWarnings("unchecked")
 	    @Override
 	    public boolean find(
@@ -458,7 +508,9 @@ public class Audit_1 extends Indexed_1 {
 	    	}
 	    }
 	    
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.layer.persistence.jdbc.AbstractDatabase_1.LayerInteraction#put(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @SuppressWarnings("unchecked")
 	    @Override
 	    public boolean put(
@@ -479,6 +531,7 @@ public class Audit_1 extends Indexed_1 {
 		            (request.path().size() > 5) ||
 		            ((request.path().size() == 5) && principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) 
 		        ) {
+		        	boolean isTouchOnly = false;
 		            if(this.isAuditSegment(header, request.path())) {    
 		                // Create audit entry
 		            	DataproviderRequest getRequest = new DataproviderRequest(
@@ -529,9 +582,9 @@ public class Audit_1 extends Indexed_1 {
 		                    );
 		                    // --> trivial update
 		                    if(modifiedFeatures.isEmpty()) {
-			                    // do not create audit entry if modifiedAt is only modified attribute	                    	
-		                    }
-		                    else if(
+			                    // Do not create audit entry if modifiedAt is only modified attribute	                    	
+		                    	isTouchOnly = true;
+		                    } else if(
 		                        ((modifiedFeatures.size() > 1) ||
 		                        !modifiedFeatures.contains(SystemAttributes.MODIFIED_AT))
 		                    ) {
@@ -566,19 +619,21 @@ public class Audit_1 extends Indexed_1 {
 		                        catch(ServiceException e) {
 		                            e.log();
 		                        }
+		                    } else {
+		                    	isTouchOnly = true;
 		                    }
 		                }
 		            }
-		            
-		            // Replace object
-		            super.put(		            	
-		                ispec,
-		                input,
-		                output
-		            );
+		            // In case of touch only updates do not propagate PUT
+		            if(!isTouchOnly) {
+			            super.put(		            	
+			                ispec,
+			                input,
+			                output
+			            );
+		            }
 		            return true;
-		        }
-		        else {
+		        } else {
 		        	if(reply.getResult() != null) {
 		        		reply.getResult().add(
 		        			request.object()
@@ -586,13 +641,14 @@ public class Audit_1 extends Indexed_1 {
 		        	}
 		        	return true;
 		        }
-	    	}
-	    	catch(ResourceException e) {
+	    	} catch(ResourceException e) {
 	    		throw new ServiceException(e);
 	    	}
 	    }
 
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.layer.persistence.jdbc.AbstractDatabase_1.LayerInteraction#create(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @SuppressWarnings("deprecation")
 	    @Override
 	    public boolean create(
@@ -662,7 +718,9 @@ public class Audit_1 extends Indexed_1 {
 	    	}
 	    }
 	    
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.opencrx.kernel.layer.persistence.Indexed_1.LayerInteraction#delete(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
+	     */
 	    @Override
 	    public boolean delete(
 	        RestInteractionSpec ispec,
@@ -751,7 +809,9 @@ public class Audit_1 extends Indexed_1 {
 	    	}
 	    }
 	    
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.opencrx.kernel.layer.persistence.Indexed_1.LayerInteraction#otherOperation(org.openmdx.application.dataprovider.cci.ServiceHeader, org.openmdx.application.dataprovider.cci.DataproviderRequest, java.lang.String, org.openmdx.base.naming.Path)
+	     */
 	    @Override
 	    protected MappedRecord otherOperation(
 	        ServiceHeader header,
@@ -886,9 +946,13 @@ public class Audit_1 extends Indexed_1 {
     	return result;
     }
 
-    //-------------------------------------------------------------------------
     /**
      * Return the set of attributes which's values changed in o2 relative to o1.
+     * 
+     * @param o1
+     * @param o2
+     * @return
+     * @throws ServiceException
      */
     @SuppressWarnings("unchecked")
     protected Set<String> getChangedAttributes(

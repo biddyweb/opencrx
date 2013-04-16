@@ -577,6 +577,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:dateOfDeath" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Todesdatum</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Todesdatum (Lokalzeit Todesort!)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
                     <_object>
                       <label>

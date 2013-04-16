@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: openCRX documents default backend implementation.
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,31 +61,54 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
+import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 
+/**
+ * Default documents backend class.
+ *
+ */
 public class Documents extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register Documents backend class.
+	 */
 	public static void register(
 	) {
 		registerImpl(new Documents());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get instance of registered document backend.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Documents getInstance(
 	) throws ServiceException {
 		return getInstance(Documents.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	protected Documents(
 	) {
 		
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Get documents segment.
+	 * 
+	 * @param pm
+	 * @param providerName
+	 * @param segmentName
+	 * @return
+	 * @throws ServiceException
+	 */
 	public org.opencrx.kernel.document1.jmi1.Segment getDocumentSegment(
 		PersistenceManager pm,
 		String providerName,
@@ -96,14 +119,20 @@ public class Documents extends AbstractImpl {
 		);
 	}
 	
-	//-------------------------------------------------------------------------
-	public org.opencrx.kernel.document1.jmi1.DocumentFolder findDocumentFolder(
+	/**
+	 * Find document folder.
+	 * 
+	 * @param documentFolderName
+	 * @param segment
+	 * @return
+	 */
+	public DocumentFolder findDocumentFolder(
 		String documentFolderName,
 		org.opencrx.kernel.document1.jmi1.Segment segment
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
 		org.opencrx.kernel.document1.cci2.DocumentFolderQuery query =
-		    (org.opencrx.kernel.document1.cci2.DocumentFolderQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
+		    (org.opencrx.kernel.document1.cci2.DocumentFolderQuery)pm.newQuery(DocumentFolder.class);
 		query.name().equalTo(documentFolderName);
 		Collection<DocumentFolder> documentFolders = segment.getFolder(query);
 		if(!documentFolders.isEmpty()) {
@@ -112,26 +141,32 @@ public class Documents extends AbstractImpl {
 		return null;
 	}	
 
-	//-------------------------------------------------------------------------
-	public org.opencrx.kernel.document1.jmi1.DocumentFolder initDocumentFolder(
+	/**
+	 * Create / update document folder.
+	 * 
+	 * @param documentFolderName
+	 * @param segment
+	 * @param allUsers
+	 * @return
+	 */
+	public DocumentFolder initDocumentFolder(
 		String documentFolderName,
 		org.opencrx.kernel.document1.jmi1.Segment segment,
 		List<PrincipalGroup> allUsers
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
-		org.opencrx.kernel.document1.jmi1.DocumentFolder documentFolder = findDocumentFolder(
+		DocumentFolder documentFolder = findDocumentFolder(
 			documentFolderName,
 			segment
 		);
 		if(documentFolder != null) return documentFolder;
 		try {
 			pm.currentTransaction().begin();
-	  		documentFolder = pm.newInstance(org.opencrx.kernel.document1.jmi1.DocumentFolder.class);
+	  		documentFolder = pm.newInstance(DocumentFolder.class);
 	  		documentFolder.setName(documentFolderName);
 	  		documentFolder.getOwningGroup().addAll(allUsers);
 	  		segment.addFolder(
-	  			false,
-	  			org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+	  			this.getUidAsString(),
 	  			documentFolder
 	  		);
 			pm.currentTransaction().commit();
@@ -145,26 +180,38 @@ public class Documents extends AbstractImpl {
 		return documentFolder;
 	}
 
-	//-------------------------------------------------------------------------
-	public org.opencrx.kernel.document1.jmi1.Document initDocument(
+	/**
+	 * Create / update document.
+	 * 
+	 * @param documentName
+	 * @param documentTitle
+	 * @param revisionURL
+	 * @param revisionMimeType
+	 * @param revisionName
+	 * @param documentFolder
+	 * @param segment
+	 * @param allUsers
+	 * @return
+	 */
+	public Document initDocument(
 		String documentName,
 		String documentTitle,
 		URL revisionURL,
 		String revisionMimeType,
 		String revisionName,
-		org.opencrx.kernel.document1.jmi1.DocumentFolder documentFolder,
+		DocumentFolder documentFolder,
 		org.opencrx.kernel.document1.jmi1.Segment segment,
 		List<PrincipalGroup> allUsers
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
-		org.opencrx.kernel.document1.jmi1.Document document = findDocument(
+		Document document = findDocument(
 			documentName,
 			segment
 		);
 		if(document != null) return document;
 		try {
 			pm.currentTransaction().begin();
-			document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
+			document = pm.newInstance(Document.class);
 			document.setName(documentName);
 			document.setTitle(documentTitle);
 			document.getOwningGroup().addAll(allUsers);
@@ -173,7 +220,8 @@ public class Documents extends AbstractImpl {
 				org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 				document
 			);
-			org.opencrx.kernel.document1.jmi1.MediaContent documentRevision = pm.newInstance(org.opencrx.kernel.document1.jmi1.MediaContent.class);
+			MediaContent documentRevision = pm.newInstance(MediaContent.class);
+			documentRevision.setName(revisionName);
 			documentRevision.setContentName(revisionName);
 			documentRevision.setContentMimeType(revisionMimeType);
 			documentRevision.setContent(
@@ -181,8 +229,7 @@ public class Documents extends AbstractImpl {
 			);
 			documentRevision.getOwningGroup().addAll(allUsers);
 			document.addRevision(
-				false,
-				org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
+				this.getUidAsString(),
 				documentRevision
 			);
 			document.setHeadRevision(documentRevision);
@@ -200,14 +247,20 @@ public class Documents extends AbstractImpl {
 		return document;
 	}
 		
-	//-------------------------------------------------------------------------
-	public org.opencrx.kernel.document1.jmi1.Document findDocument(
+	/**
+	 * Find document.
+	 * 
+	 * @param documentName
+	 * @param segment
+	 * @return
+	 */
+	public Document findDocument(
 		String documentName,
 		org.opencrx.kernel.document1.jmi1.Segment segment
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
 		org.opencrx.kernel.document1.cci2.DocumentQuery query =
-		    (org.opencrx.kernel.document1.cci2.DocumentQuery)pm.newQuery(org.opencrx.kernel.document1.jmi1.Document.class);
+		    (org.opencrx.kernel.document1.cci2.DocumentQuery)pm.newQuery(Document.class);
 		query.name().equalTo(documentName);
 		Collection<Document> documents = segment.getDocument(query);
 		if(!documents.isEmpty()) {
@@ -216,6 +269,8 @@ public class Documents extends AbstractImpl {
 		return null;
 	}
 
+	//-------------------------------------------------------------------------
+	// Members
 	//-------------------------------------------------------------------------
 	public static final String PRIVATE_DOCUMENTS_FOLDER_SUFFIX = "~Private";
 	

@@ -722,7 +722,7 @@
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedOperation xmi:id="_t6r6ACm0EdyhBqtrvaHm2Q" name="countFilteredProduct">
+            <ownedOperation xmi:id="_t6r6ACm0EdyhBqtrvaHm2Q" name="countFilteredProduct" isQuery="true">
               <ownedParameter xmi:id="_wQSfcCm0EdyhBqtrvaHm2Q" name="ReturnResultParameter1" direction="return">
                 <type xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3CpXICl_EdywXdAHn-NS-w"/>
               </ownedParameter>

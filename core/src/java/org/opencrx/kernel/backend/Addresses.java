@@ -312,12 +312,12 @@ public class Addresses extends AbstractImpl {
     public static final String[] ADDRESS_TYPES = 
         new String[]{
             "org:opencrx:kernel:address1:PostalAddressable",
-            "org:opencrx:kernel:address1:PhoneNumberAdressable",
+            "org:opencrx:kernel:address1:PhoneNumberAddressable",
             "org:opencrx:kernel:address1:EMailAddressable",
             "org:opencrx:kernel:address1:WebAddressable",
             "org:opencrx:kernel:address1:RoomAddressable"
         };
-    
+
     public static final Map<Short,String> POSTAL_COUNTRIES_BY_CODE = new ConcurrentHashMap<Short,String>();
     private static final Map<String,Short> POSTAL_COUNTRIES_BY_TEXT = new ConcurrentHashMap<String,Short>(); 
     public static final Map<Short,Integer> PHONE_COUNTRIES = new HashMap<Short,Integer>();

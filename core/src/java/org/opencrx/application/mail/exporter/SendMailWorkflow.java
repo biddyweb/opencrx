@@ -68,10 +68,15 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 
-public class SendMailWorkflow 
-    extends MailWorkflow {
+/**
+ * SendMailWorkflow
+ *
+ */
+public class SendMailWorkflow extends MailWorkflow {
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.mail.exporter.MailWorkflow#setRecipients(javax.mail.Message, javax.jdo.PersistenceManager, org.openmdx.base.naming.Path, org.opencrx.kernel.home1.jmi1.EMailAccount, java.lang.String)
+     */
     @Override
     protected Address[] setRecipients(
         Message message,
@@ -91,14 +96,15 @@ public class SendMailWorkflow
                     message
                 );
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             throw new ServiceException(e);
         }
         return recipients.toArray(new Address[recipients.size()]);
     }
-    
-    //-----------------------------------------------------------------------
+
+    /* (non-Javadoc)
+     * @see org.opencrx.application.mail.exporter.MailWorkflow#setContent(javax.mail.Message, javax.mail.Session, javax.jdo.PersistenceManager, org.openmdx.base.naming.Path, org.openmdx.base.naming.Path, org.opencrx.kernel.home1.jmi1.UserHome, java.util.Map)
+     */
     @Override
     protected String setContent(
         Message message,
@@ -119,15 +125,17 @@ public class SendMailWorkflow
                     emailActivity,
                     message
                 );
+                text = emailActivity.getMessageBody();
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             throw new ServiceException(e);
         }
         return text;
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.mail.exporter.MailWorkflow#useSendMailSubjectPrefix()
+	 */
 	@Override
     boolean useSendMailSubjectPrefix(
     ) {

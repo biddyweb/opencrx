@@ -74,6 +74,106 @@
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_R6g9UUjbEd-hZsNYMNcVzA" type="5019"/>
     <children xmi:type="notation:BasicCompartment" xmi:id="_R6g9UkjbEd-hZsNYMNcVzA" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_stj1EC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F4C9AE10034"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stj1ES_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stj1Ei_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F4C9AF60355"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stj1Ey_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stkcIC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D4245C79A038C"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stkcIS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stkcIi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D424364C70096"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stkcIy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stkcJC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D424206CB036D"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stkcJS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stkcJi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB756039B"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stkcJy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlDMC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB8AF003A"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlDMS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlDMi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D4272342D0156"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlDMy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlDNC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB8C001A7"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlDNS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlqQC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB8CC0186"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlqQS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlqQi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB8DA01EA"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlqQy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlqRC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB8E00076"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlqRS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stlqRi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FBA6A031C"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stlqRy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stmRUC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F42A48E0098"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stmRUS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stmRUi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F42A494001F"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stmRUy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stmRVC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB99A0219"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stmRVS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stm4YC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D3F3FB72701BD"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stm4YS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stm4Yi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_8_t7MGKmEdyr4ttJkpmGTw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stm4Yy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stm4ZC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_9AZrwHspEd2BAOXTmSCZhA"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stm4ZS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stm4Zi_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D4242C47200FD"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stm4Zy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stnfcC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_YAKowG41Edq2_7SCieKOqA"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stnfcS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stnfci_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_MH08oC0CEduAt9roW31Bvw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stnfcy_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stnfdC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_OJhuoC0CEduAt9roW31Bvw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stnfdS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_stoGgC_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_Pcz7cC0CEduAt9roW31Bvw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_stoGgS_nEeKDkeDTry157A"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_usBF0C_nEeKDkeDTry157A" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_uqeNsC_nEeKDkeDTry157A"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_usBF0S_nEeKDkeDTry157A"/>
+      </children>
       <styles xmi:type="notation:TitleStyle" xmi:id="_R6g9U0jbEd-hZsNYMNcVzA" showTitle="true"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_R6g9VEjbEd-hZsNYMNcVzA"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_R6g9VUjbEd-hZsNYMNcVzA"/>
@@ -193,7 +293,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_kMSrkUjbEd-hZsNYMNcVzA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D4251AE350300"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kMSrkkjbEd-hZsNYMNcVzA" x="263" y="1742"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_kMSrkkjbEd-hZsNYMNcVzA" x="263" y="1770" width="465"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_llpEIEjbEd-hZsNYMNcVzA" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_ll0qUEjbEd-hZsNYMNcVzA" source="Shortcut">
@@ -223,7 +323,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_llpEIUjbEd-hZsNYMNcVzA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_mBuygG6XEdq2_7SCieKOqA"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_llpEIkjbEd-hZsNYMNcVzA" x="265" y="1885"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_llpEIkjbEd-hZsNYMNcVzA" x="265" y="1913"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_oJ2tUEjbEd-hZsNYMNcVzA" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_oKF94EjbEd-hZsNYMNcVzA" source="Shortcut">
@@ -234,6 +334,26 @@
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_oJ2tVEjbEd-hZsNYMNcVzA" type="5019"/>
     <children xmi:type="notation:BasicCompartment" xmi:id="_oJ3UYEjbEd-hZsNYMNcVzA" type="7001">
+      <children xmi:type="notation:Node" xmi:id="_DTCzMGDHEeKD7NYhyGCJLg" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D4256646A02A3"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_DTCzMWDHEeKD7NYhyGCJLg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_DTCzMmDHEeKD7NYhyGCJLg" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D424C6F32025F"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_DTCzM2DHEeKD7NYhyGCJLg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_DTCzNGDHEeKD7NYhyGCJLg" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_uCIuUG45Edq2_7SCieKOqA"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_DTCzNWDHEeKD7NYhyGCJLg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_DTDaQGDHEeKD7NYhyGCJLg" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_RVLcEJKsEduJVp2JdW0YXw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_DTDaQWDHEeKD7NYhyGCJLg"/>
+      </children>
+      <children xmi:type="notation:Node" xmi:id="_JXSNkGDHEeKD7NYhyGCJLg" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_JWgxgGDHEeKD7NYhyGCJLg"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_JXSNkWDHEeKD7NYhyGCJLg"/>
+      </children>
       <styles xmi:type="notation:TitleStyle" xmi:id="_oJ3UYUjbEd-hZsNYMNcVzA" showTitle="true"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_oJ3UYkjbEd-hZsNYMNcVzA"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_oJ3UY0jbEd-hZsNYMNcVzA"/>
@@ -253,7 +373,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_oJ2tUUjbEd-hZsNYMNcVzA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_3C7B8A60016D424C6F2201C6"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_oJ2tUkjbEd-hZsNYMNcVzA" x="787" y="1975"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_oJ2tUkjbEd-hZsNYMNcVzA" x="787" y="2003"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_pVAR0EjbEd-hZsNYMNcVzA" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_pVKC0EjbEd-hZsNYMNcVzA" source="Shortcut">
@@ -283,7 +403,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_pVAR0UjbEd-hZsNYMNcVzA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_6119sJKqEduJVp2JdW0YXw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pVAR0kjbEd-hZsNYMNcVzA" x="787" y="1742"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_pVAR0kjbEd-hZsNYMNcVzA" x="787" y="1770" width="506"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_sNErIEjbEd-hZsNYMNcVzA" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_sNN1EEjbEd-hZsNYMNcVzA" source="Shortcut">
@@ -313,7 +433,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_sNErIUjbEd-hZsNYMNcVzA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_3ZCPcHgBEdqyes--0lU7kw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_sNErIkjbEd-hZsNYMNcVzA" x="267" y="2004"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_sNErIkjbEd-hZsNYMNcVzA" x="267" y="2032" width="463"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_u9ZdsEjbEd-hZsNYMNcVzA" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_u9inoEjbEd-hZsNYMNcVzA" source="Shortcut">
@@ -343,7 +463,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_u9ZdsUjbEd-hZsNYMNcVzA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_JzlsEIBOEdqgDYh_xkgs9w"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_u9ZdskjbEd-hZsNYMNcVzA" x="786" y="1858"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_u9ZdskjbEd-hZsNYMNcVzA" x="786" y="1886" width="509"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_3AO2QEjcEd-hZsNYMNcVzA" type="2001" fontName="Arial" fontHeight="11" fillColor="13369343" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_3AbqkEjcEd-hZsNYMNcVzA" source="Shortcut">
@@ -509,6 +629,10 @@
         <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_F7VpgLziEd-deejz2j0zFw"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_F70KobziEd-deejz2j0zFw"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_QrJcwGDHEeKD7NYhyGCJLg" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.activity1.uml#_QrCvEGDHEeKD7NYhyGCJLg"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_QrJcwWDHEeKD7NYhyGCJLg"/>
+      </children>
       <styles xmi:type="notation:TitleStyle" xmi:id="_cfUbg7zcEd-deejz2j0zFw" showTitle="true"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_cfUbhLzcEd-deejz2j0zFw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_cfUbhbzcEd-deejz2j0zFw"/>
@@ -528,7 +652,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_cfT0cbzcEd-deejz2j0zFw"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#_cejmgLzcEd-deejz2j0zFw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cfT0crzcEd-deejz2j0zFw" x="264" y="2170" width="381" height="126"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_cfT0crzcEd-deejz2j0zFw" x="264" y="2198" width="469" height="166"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="__glS8LzpEd-6TdDVYe-efA" type="2001" fontName="Arial" fontHeight="11" fillColor="16772351" lineColor="2763429">
     <children xmi:type="notation:DecorationNode" xmi:id="__gl6ALzpEd-6TdDVYe-efA" type="5003">
@@ -559,7 +683,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="__glS8bzpEd-6TdDVYe-efA"/>
     <element xmi:type="uml:Class" href="../../org.opencrx.kernel.activity1.uml#__fH6YLzpEd-6TdDVYe-efA"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="__glS8rzpEd-6TdDVYe-efA" x="788" y="2172" width="377"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="__glS8rzpEd-6TdDVYe-efA" x="790" y="2224" width="511"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_vCLzoOW2Ed-XquPOMEGJEw" type="2001" fontName="Arial" fontHeight="11" fillColor="10337791" lineColor="2763429">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_vD1ZcOW2Ed-XquPOMEGJEw" source="Shortcut">

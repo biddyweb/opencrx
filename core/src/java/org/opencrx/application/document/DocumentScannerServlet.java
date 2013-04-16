@@ -90,6 +90,8 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 /**
  * The DocumentScannerServlet scans a directory and its sub-directories. File names
@@ -156,15 +158,14 @@ public class DocumentScannerServlet
     	UserHome userHomeAdmin = (UserHome)pm.getObjectById(
     		new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName, "userHome", SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName)
     	);
-    	SendAlertParams sendAlertParams = Utils.getBasePackage(pm).createSendAlertParams(
-    		DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename + "\n" +
-    		"Reason is:\n" +
-    		message, 
-    		(short)2, // importance 
-    		DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename, 
-    		null, 
-    		60, // resendDelayInSeconds, 
-    		SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName // toUsers
+    	SendAlertParams sendAlertParams = Structures.create(
+    		SendAlertParams.class, 
+    		Datatypes.member(SendAlertParams.Member.description, DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename + "\n" + "Reason is:\n" + message),
+    		Datatypes.member(SendAlertParams.Member.importance, (short)2),    		
+    		Datatypes.member(SendAlertParams.Member.name, DocumentScannerServlet.class.getSimpleName() + ": error importing document " + filename),    		
+    		Datatypes.member(SendAlertParams.Member.resendDelayInSeconds, 60),    		
+    		Datatypes.member(SendAlertParams.Member.toUsers, SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName),	
+    		Datatypes.member(SendAlertParams.Member.reference, null)	
     	);
     	try {
     		pm.currentTransaction().begin();

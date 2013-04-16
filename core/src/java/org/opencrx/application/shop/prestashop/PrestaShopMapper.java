@@ -1138,7 +1138,6 @@ public class PrestaShopMapper {
 			int id_manufacturer = rs.getInt("id_manufacturer");
 			int id_tax_rules_group = rs.getInt("id_tax_rules_group");
 			int id_category_default = rs.getInt("id_category_default");
-			int id_color_default = rs.getInt("id_color_default");
 			int on_sale = rs.getInt("on_sale");
 			int online_only = rs.getInt("online_only");
 			String ean13 = rs.getString("ean13");
@@ -1149,7 +1148,6 @@ public class PrestaShopMapper {
 			BigDecimal price = rs.getBigDecimal("price");
 			BigDecimal wholesale_price = rs.getBigDecimal("wholesale_price");
 			String unity = rs.getString("unity");
-			BigDecimal unit_price = rs.getBigDecimal("unit_price");
 			BigDecimal additional_shipping_cost = rs.getBigDecimal("additional_shipping_cost");
 			String reference = rs.getString("reference");
 			String supplier_reference = rs.getString("supplier_reference");
@@ -1372,7 +1370,6 @@ public class PrestaShopMapper {
 			String passwd = rs.getString("passwd");
 			Timestamp last_passwd_gen = rs.getTimestamp("last_passwd_gen");
 			java.sql.Date birthday = rs.getDate("birthday");
-			String dni = rs.getString("dni");
 			int newsletter = rs.getInt("newsletter");
 			String ip_registration_newsletter = rs.getString("ip_registration_newsletter");
 			Timestamp newsletter_date_add = rs.getTimestamp("newsletter_date_add");

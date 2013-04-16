@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: CreateActivityFollowUpWizard.jsp,v 1.14 2012/07/08 13:30:33 wfro Exp $
  * Description: CreateActivityFollowUpWizard
- * Revision:    $Revision: 1.14 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,11 +53,13 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.text.*,
 org.opencrx.kernel.portal.*,
+org.opencrx.kernel.portal.wizard.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
@@ -67,256 +68,129 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
-" %><%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
+"%>
+<!--
+	<meta name="UNUSEDlabel" content="Create Activity Follow Up">
+	<meta name="UNUSEDtoolTip" content="Create Activity Follow Up">
+	<meta name="targetType" content="_inplace">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:Activity">
+	<meta name="order" content="org:opencrx:kernel:activity1:Activity:createActivityFollowUp">
+-->
+<%
+	final String FORM_NAME = "doFollowUpForm";
+	CreateActivityFollowUpWizardController wc = new CreateActivityFollowUpWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();		
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	final String FORM_NAME_DOFOLLOWUP = "doFollowUpForm";
-	final String wizardName = "CreateActivityFollowUpWizard.jsp";
-	final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
-
-  try {
-    	// Get Parameters
-    	String command = request.getParameter("Command");
-    	if(command == null) command = "";
-    	boolean actionCreate = "OK".equals(command);
-    	boolean actionCancel = "Cancel".equals(command);
-
-    	if(actionCancel || (!(obj instanceof org.opencrx.kernel.activity1.jmi1.Activity))) {
-    		session.setAttribute(wizardName, null);
-    		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-    		response.sendRedirect(
-    			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-    		);
-    		return;
-    	}
-    	org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)obj;
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
+	ViewPort viewPort = wc.getViewPort(out);
 %>
-      <!--
-      	<meta name="UNUSEDlabel" content="Create Activity Follow Up">
-      	<meta name="UNUSEDtoolTip" content="Create Activity Follow Up">
-      	<meta name="targetType" content="_inplace">
-      	<meta name="forClass" content="org:opencrx:kernel:activity1:Activity">
-      	<meta name="order" content="org:opencrx:kernel:activity1:Activity:createActivityFollowUp">
-      -->
+<br />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
+	<input type="hidden" id="Command" name="Command" value="" />
+	<input type="checkbox" style="display:none;" id="isInitialized" name="isInitialized" checked />
 <%
-    	org.openmdx.ui1.jmi1.FormDefinition doFollowUpFormDefinition = app.getUiFormDefinition(FORM_NAME_DOFOLLOWUP);
-    	org.openmdx.portal.servlet.control.FormControl doFollowUpForm = new org.openmdx.portal.servlet.control.FormControl(
-    		doFollowUpFormDefinition.refGetPath().getBase(),
-    		app.getCurrentLocaleAsString(),
-    		app.getCurrentLocaleAsIndex(),
-    		app.getUiContext(),
-    		doFollowUpFormDefinition
-    	);
-
-      Map formValues = new HashMap();
-      doFollowUpForm.updateObject(
-    		request.getParameterMap(),
-    		formValues,
-    		app,
-    		pm
-    	);
-
-		// get additional parameters
-		boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
-		if (isFirstCall) {
-			// populate form fields related to activity with activity's attribute values
-			formValues.put("org:opencrx:kernel:activity1:Activity:assignedTo", activity.getAssignedTo() == null ? null : activity.getAssignedTo().refGetPath());
-			formValues.put("org:opencrx:kernel:activity1:Activity:description", activity.getDescription());
-			formValues.put("org:opencrx:kernel:activity1:Activity:location", activity.getLocation());
-			formValues.put("org:opencrx:kernel:activity1:Activity:priority", activity.getPriority());
-			formValues.put("org:opencrx:kernel:activity1:Activity:dueBy", activity.getDueBy());
-		}
-
-		if(request.getParameter("resourceContact") != null) {
-			org.opencrx.kernel.account1.jmi1.Contact resourceContact = null;
-			try {
-				resourceContact = (org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(new Path(request.getParameter("resourceContact")));
-		 	} catch (Exception e) {}
-		 	if (resourceContact != null && request.getParameter("fetchResourceContact") != null && request.getParameter("fetchResourceContact").length() > 0) {
-				formValues.put("org:opencrx:kernel:activity1:Activity:assignedTo", resourceContact.refGetPath());
-		 	}
-		}
-		 	
- 	    org.opencrx.kernel.account1.jmi1.Contact assignedTo = null;
- 	    try {
- 	    	assignedTo = formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo") != null ?
-	 	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
-	 	    		formValues.get("org:opencrx:kernel:activity1:Activity:assignedTo")
-	 	    	) : null;
- 	    } catch (Exception e) {}
-
-     	if(actionCreate) {
-    	    //
-    	    // doFollowUp
-    	    org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition =
-            	(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition)pm.getObjectById(
-            		formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition")
-            	);
-    	    String followUpTitle = (String)formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpTitle");
-    	    String followUpText = (String)formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:followUpText");
-			org.opencrx.kernel.account1.jmi1.Contact assignTo = formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo") != null ?
-    	    	(org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(
-    	    		formValues.get("org:opencrx:kernel:activity1:ActivityDoFollowUpParams:assignTo")
-    	    	) : null;
-
-            // updateActivity
-    	    String description = (String)formValues.get("org:opencrx:kernel:activity1:Activity:description");
-    	    String location = (String)formValues.get("org:opencrx:kernel:activity1:Activity:location");
-    	    Short priority = (Short)formValues.get("org:opencrx:kernel:activity1:Activity:priority");
-    	    Date dueBy = (Date)formValues.get("org:opencrx:kernel:activity1:Activity:dueBy");
-
-    	    if(transition != null) {
-    			org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
-              assignTo,
-              followUpText,
-              followUpTitle,
-              transition
-    			);
-          pm.refresh(activity);
-          pm.currentTransaction().begin();
-    			org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult result = activity.doFollowUp(params);
-          activity.setAssignedTo(assignedTo);
-          activity.setDescription(description);
-          activity.setLocation(location);
-          activity.setPriority(priority);
-          activity.setDueBy(dueBy);
-    			pm.currentTransaction().commit();
-    			Action nextAction = new ObjectReference(
-    		    	obj,
-    		    	app
-    		   	).getSelectObjectAction();
-    			response.sendRedirect(
-    				request.getContextPath() + "/" + nextAction.getEncodedHRef()
-    			);
-    			return;
-    	    }
-    	}
-
-    	TransientObjectView view = new TransientObjectView(
-    		formValues,
-    		app,
-    		obj,
-    		pm
-    	);
-    	ViewPort p = ViewPortFactory.openPage(
-    		view,
-    		request,
-    		out
-    	);
-
+	if(wc.getNextTransitions() == null || !wc.getNextTransitions().isEmpty()) {
 %>
-      <br />
-      <form id="<%= FORM_NAME_DOFOLLOWUP %>" name="<%= FORM_NAME_DOFOLLOWUP %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
-      	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-      	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-      	<input type="hidden" id="Command" name="Command" value="" />
-        <input type="checkbox" style="display:none;" id="isFirstCall" name="isFirstCall" checked="true" />
-      	<table cellspacing="8" class="tableLayout">
+      		<table class="tableLayout">
       		<tr>
       			<td class="cellObject">
-      				<div class="panel" id="panel<%= FORM_NAME_DOFOLLOWUP %>" style="display: block">
+      				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
 <%
-      					doFollowUpForm.paint(
-      						p,
-      						null, // frame
-      						true // forEditing
-      					);
-      					p.flush();
+						wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
+      					viewPort.flush();
 %>
-								<table class="fieldGroup">
-									<div class="fieldGroupName">&nbsp;</div>
-									<tr>
-										<td class="label">
-											<span class="nw"><%= app.getLabel(RESOURCE_CLASS) %>:</span>
-										</td>
-										<td>
-											<input type="hidden" id="fetchResourceContact" name="fetchResourceContact" value="" /> 
-											<select id="resourceContact" name="resourceContact" class="valueL" onchange="javascript:$('fetchResourceContact').value='override';$('Refresh.Button').click();" >
+						<div class="fieldGroupName">&nbsp;</div>
+						<table class="fieldGroup">
+							<tr>
+								<td class="label">
+									<span class="nw"><%= app.getLabel(CreateActivityFollowUpWizardController.RESOURCE_CLASS) %>:</span>
+								</td>
+								<td>
+									<input type="checkbox" id="reassignActivity" style="display:none;" name="reassignActivity" />
+									<select id="assignToXri" name="assignToXri" class="valueL" onchange="javascript:$('reassignActivity').checked='true';$('Refresh.Button').click();" >
 <%
-				                // get Resources sorted by name(asc)
-												String providerName = obj.refGetPath().get(2);
-												String segmentName = obj.refGetPath().get(4);
-												org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-														new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-													);
-												org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-				                org.opencrx.kernel.activity1.cci2.ResourceQuery recourceFilter = activityPkg.createResourceQuery();
-				                recourceFilter.orderByName().ascending();
-												recourceFilter.forAllDisabled().isFalse();
-												int maxResourceToShow = 200;
-				                for (
-				                  Iterator k = activitySegment.getResource(recourceFilter).iterator();
-				                  k.hasNext() && maxResourceToShow > 0;
-				                  maxResourceToShow--
-				                ) {
-				                	try {
-					                  // get resource
-					            	    org.opencrx.kernel.activity1.jmi1.Resource resource =
-					                    (org.opencrx.kernel.activity1.jmi1.Resource)k.next();
-					            	    org.opencrx.kernel.account1.jmi1.Contact contact = resource.getContact();
-					            	    if (contact != null) {
-						                  String selectedModifier = ((contact != null ) && (assignedTo != null) && (assignedTo.refMofId().compareTo(contact.refMofId()) == 0)) ? "selected" : "";
+										// get Resources sorted by name(asc)
+										org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
+											new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", wc.getProviderName(), "segment", wc.getSegmentName())
+										);
+						                org.opencrx.kernel.activity1.cci2.ResourceQuery recourceFilter = (org.opencrx.kernel.activity1.cci2.ResourceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
+						                recourceFilter.orderByName().ascending();
+										recourceFilter.forAllDisabled().isFalse();
+										int maxResourceToShow = 0;
+						                for(org.opencrx.kernel.activity1.jmi1.Resource resource: activitySegment.getResource(recourceFilter)) {
+						                	try {
+												// get resource
+												org.opencrx.kernel.account1.jmi1.Contact contact = resource.getContact();
+												if (contact != null) {
+													String selectedModifier = ((contact != null ) && (wc.getAssignedTo() != null) && (wc.getAssignedTo().refGetPath().equals(contact.refGetPath()))) ? "selected" : "";
 %>
-						                  <option <%= selectedModifier %> value="<%= contact.refMofId() %>"><%= resource.getName() + (contact != null ? " (" + contact.getFirstName() + " " + contact.getLastName() + ")": "") %></option>
+													<option <%= selectedModifier %> value="<%= contact.refGetPath().toXRI() %>"><%= resource.getName() + (contact != null ? " (" + contact.getFirstName() + " " + contact.getLastName() + ")": "") %></option>
 <%
-					            	    }
-				                	} catch (Exception e) {}
-				                }
+												}
+											} catch (Exception e) {}
+						                	maxResourceToShow++;
+						                	if(maxResourceToShow > 200) break;
+										}
 %>
-				              </select>
-					          </td>
-										<td class="addon"/>
-									</tr>
-								</table>
-
+									</select>
+								</td>
+								<td class="addon"/>
+							</tr>
+						</table>
       				</div>
-
-      				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:$('Command').value=this.name;" />
-      				<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';" />
-      				<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+					<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+					<div id="SubmitArea" style="float:left;display:none;">      				
+	      				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
+	      				<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';" />
+	      				<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+	      			</div>
       			</td>
       		</tr>
       	</table>
-      </form>
-      <br>&nbsp;
-      <script language="javascript" type="text/javascript">
-      	Event.observe('<%= FORM_NAME_DOFOLLOWUP %>', 'submit', function(event) {
-      		$('<%= FORM_NAME_DOFOLLOWUP %>').request({
-      			onFailure: function() { },
-      			onSuccess: function(t) {
-      				$('UserDialog').update(t.responseText);
-      			}
-      		});
-      		Event.stop(event);
-      	});
-      </script>
 <%
-      p.close(false);
-  }
-  catch (Exception e) {
-    new ServiceException(e).log();
-  }
-  finally {
-    if(pm != null) {
-    	pm.close();
-    }
-  }
+	} else {
 %>
+		<div title="Activity FollowUp Error"  style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+			Activity Follow Up Error (maybe the end of the process has been reached?)
+		</div>
+		<br>
+		<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+<%
+	}
+%>
+</form>
+<br />
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('WaitIndicator').style.display='block';
+		$('SubmitArea').style.display='none';
+		$('<%= FORM_NAME %>').request({
+			onFailure: function() { },
+			onSuccess: function(t) {
+				$('UserDialog').update(t.responseText);
+			}
+		});
+		Event.stop(event);
+	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';
+	$('UserDialog').style.zIndex=5000;
+	new Draggable('UserDialog', { revert: false, scroll: window, zindex: 5000,
+		onStart: function() {
+			$('UserDialog').className='dragged';
+		},
+	});
+</script>
+<t:wizardClose controller="<%= wc %>" />

@@ -81,7 +81,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.opencrx.kernel.admin1.jmi1.Admin1Package;
+import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -279,8 +279,6 @@ public class WorkflowControllerServlet
         }
         // Get component configuration
         try {
-            Admin1Package adminPackage = Utils.getAdminPackage(pm);            
-            org.opencrx.kernel.base.jmi1.BasePackage basePackage = Utils.getBasePackage(pm); 
             org.opencrx.kernel.admin1.jmi1.Segment adminSegment = 
                 (org.opencrx.kernel.admin1.jmi1.Segment)pm.getObjectById(
                     new Path("xri://@openmdx*org.opencrx.kernel.admin1").getDescendant("provider", providerName, "segment", "Root")
@@ -292,8 +290,7 @@ public class WorkflowControllerServlet
             }
             catch(Exception e) {}
             if(this.componentConfiguration == null) {
-                org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = 
-                    adminPackage.getComponentConfiguration().createComponentConfiguration();
+                org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = pm.newInstance(ComponentConfiguration.class);
                 componentConfiguration.setName("WorkflowController");
                 pm.currentTransaction().begin();
                 adminSegment.addConfiguration(
@@ -303,7 +300,7 @@ public class WorkflowControllerServlet
                 );
                 // Default serverURL
                 UUIDGenerator uuids = UUIDs.getGenerator();
-                org.opencrx.kernel.base.jmi1.StringProperty sp = basePackage.getStringProperty().createStringProperty();
+                org.opencrx.kernel.base.jmi1.StringProperty sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(WorkflowControllerServlet.OPTION_SERVER_URL);
                 sp.setDescription("Server URL");
                 sp.setStringValue("http://127.0.0.1:8080/opencrx-core-" + providerName);
@@ -312,7 +309,7 @@ public class WorkflowControllerServlet
                     sp
                 );
                 // SubscriptionHandler.<provider>.Standard.autostart
-                sp = basePackage.getStringProperty().createStringProperty();
+                sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER + "." + providerName + ".Standard." + OPTION_AUTOSTART);
                 sp.setDescription(MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER + " autostart");
                 sp.setStringValue("false");
@@ -321,7 +318,7 @@ public class WorkflowControllerServlet
                     sp
                 );
                 // SubscriptionHandler.<provider>.Standard.pingrate
-                sp = basePackage.getStringProperty().createStringProperty();
+                sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER + "." + providerName + ".Standard." + OPTION_PINGRATE);
                 sp.setDescription(MONITORED_WORKFLOW_SUBSCRIPTIONHANDLER + " pingrate");
                 sp.setStringValue("2");
@@ -330,7 +327,7 @@ public class WorkflowControllerServlet
                     sp
                 );
                 // IndexerServlet.<provider>.Standard.autostart
-                sp = basePackage.getStringProperty().createStringProperty();
+                sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(MONITORED_WORKFLOW_INDEXER + "." + providerName + ".Standard." + OPTION_AUTOSTART);
                 sp.setDescription(MONITORED_WORKFLOW_INDEXER + " autostart");
                 sp.setStringValue("false");
@@ -339,7 +336,7 @@ public class WorkflowControllerServlet
                     sp
                 );
                 // IndexerServlet.<provider>.Standard.pingrate
-                sp = basePackage.getStringProperty().createStringProperty();
+                sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(MONITORED_WORKFLOW_INDEXER + "." + providerName + ".Standard." + OPTION_PINGRATE);
                 sp.setDescription(MONITORED_WORKFLOW_INDEXER + " pingrate");
                 sp.setStringValue("2");
@@ -348,7 +345,7 @@ public class WorkflowControllerServlet
                     sp                   
                 );
                 // WorkflowHandler.<provider>.Standard.autostart
-                sp = basePackage.getStringProperty().createStringProperty();
+                sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(MONITORED_WORKFLOW_WORKFLOWHANDLER + "." + providerName + ".Standard." + OPTION_AUTOSTART);
                 sp.setDescription(MONITORED_WORKFLOW_WORKFLOWHANDLER + " autostart");
                 sp.setStringValue("false");
@@ -357,7 +354,7 @@ public class WorkflowControllerServlet
                     sp
                 );
                 // WorkflowHandler.<provider>.Standard.pingrate
-                sp = basePackage.getStringProperty().createStringProperty();
+                sp = pm.newInstance( org.opencrx.kernel.base.jmi1.StringProperty.class);
                 sp.setName(MONITORED_WORKFLOW_WORKFLOWHANDLER + "." + providerName + ".Standard." + OPTION_PINGRATE);
                 sp.setDescription(MONITORED_WORKFLOW_WORKFLOWHANDLER + " pingrate");
                 sp.setStringValue("2");

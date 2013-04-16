@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.468 2012/07/08 11:26:59 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.468 $
- * = Date:        $Date: 2012/07/08 11:26:59 $
- * = Copyright:   (c) 2003-2012 CRIXP AG
+ * = Copyright:   (c) 2003-2013 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -61,7 +58,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.10.0"/>
+	<property name="openmdx.version" value="2.11.0"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -113,6 +110,21 @@
 			</and>
 	  </condition>
 	</fail>
+	<!-- Check existence of openmdx/client -->
+	<available file="../opt/openmdx-${openmdx.version}/client/build.xml" property="openmdx.client.available.option.1"/>
+	<available file="../../openmdx-${openmdx.version}/client/build.xml" property="openmdx.client.available.option.2"/>				
+	<fail message="openmdx-client-${openmdx.version} missing. Download from http://sourceforge.net/projects/openmdx and expand to directory 'opt' as described in README.">
+	  <condition>
+	    <and>
+		    <not>
+		      <isset property="openmdx.client.available.option.1"/>
+		    </not>
+		    <not>
+		      <isset property="openmdx.client.available.option.2"/>
+		    </not>
+			</and>
+	  </condition>
+	</fail>
 	<!-- Slash separated database list, may be overridden by build properties -->
 	<property name="project.database.list" value="hsqldb-1/sql-server-2005/oracle-10/postgresql-8/mysql-5/db2-9"/>
 	<!-- openCRX home -->
@@ -121,16 +133,6 @@
 	<property name="data.home" value="${basedir}"/>
 	<!-- Home of EARs -->
 	<property name="ear.home" value="${basedir}/src/ear"/>
-	<!-- CopyDb parameters -->
-	<property name="format.source" value="openmdx1"/>
-	<property name="format.target" value="openmdx2"/>
-	<property name="start.with.table" value="0"/>
-	<property name="end.with.table" value="9999"/>
-	<property name="kernel.start.with.table" value="0"/>
-	<property name="kernel.end.with.table" value="9999"/>
-	<property name="security.start.with.table" value="0"/>
-	<property name="security.end.with.table" value="9999"/>
-	<property name="start.with.phase" value="0"/>
 	<path id="openmdx.security.lib">
 		<pathelement location="${openmdx.home}/${build.target.platform}/security/lib/openmdx-security.jar"/>
 	</path>
@@ -152,6 +154,7 @@
 		<pathelement location="../pdfbox/${build.target.platform}/pdfbox/lib/FontBox.jar"/>
 		<pathelement location="../twitter4j/${build.target.platform}/twitter4j/lib/twitter4j-core.jar"/>
 		<pathelement location="../jivesoftware/${build.target.platform}/smack/lib/smack.jar"/>
+		<pathelement location="../google/${build.target.platform}/gson/lib/gson.jar"/>
 	</path>
 	<path id="project.bin.classpath">
 		<path refid="project.lib.classpath"/>
@@ -161,7 +164,7 @@
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
 		<pathelement location="../opt/mysql/${build.target.platform}/mysql-5/lib/mysql-connector-java-bin.jar"/>
 		<pathelement location="../opt/microsoft/${build.target.platform}/sql-server-2005/lib/sqljdbc4.jar"/>
-		<pathelement location="../opt/postgresql/${build.target.platform}/postgresql-9/lib/postgresql-9.1.jdbc4.jar"/>
+		<pathelement location="../opt/postgresql/${build.target.platform}/postgresql-9/lib/postgresql-9.2.jdbc4.jar"/>
 		<pathelement location="../opt/oracle/${build.target.platform}/oracle-10/lib/ojdbc14.jar"/>
 		<pathelement location="../opt/ibm/${build.target.platform}/db2-9/lib/db2jcc.jar"/>
 		<pathelement location="../opt/ibm/${build.target.platform}/db2-9/lib/db2jcc_license_cu.jar"/>
@@ -193,6 +196,13 @@
 		<include name="org/opencrx/xmi/**"/>
 		<include name="org/opencrx/xmi1/**"/>
 		<include name="META-INF/orm.xml"/>
+		<include name="META-INF/openmdxmof.properties"/>
+	</patternset>
+	<patternset id="opencrx-client.jar.content">
+		<include name="org/opencrx/**/cci2/**"/>
+		<include name="org/opencrx/**/jmi1/**"/>
+		<include name="org/opencrx/**/xmi1/**"/>
+		<include name="org/opencrx/kernel/utils/**"/>
 		<include name="META-INF/openmdxmof.properties"/>
 	</patternset>
 	<patternset id="opencrx-extension.jar.content">
@@ -233,6 +243,7 @@
 			<replacestring from="opencrx-rest-CRX" to="opencrx-rest-${web.application.name}"/>			
 			<replacestring from="opencrx-ldap-CRX" to="opencrx-ldap-${web.application.name}"/>
 			<replacestring from="opencrx-airsync-CRX" to="opencrx-airsync-${web.application.name}"/>
+			<replacestring from="opencrx-bpi-CRX" to="opencrx-bpi-${web.application.name}"/>
 			<replacestring from="org.opencrx.kernel.aop2.Configuration" to="${configuration.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1" to="${kernel.interception.plugin.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.type.Strict_1" to="${kernel.type.plugin.class.name}"/>
@@ -299,7 +310,12 @@
 	<target 
 		name="deliverables" 
 		description="Populate the project's deliverables directory" 
-		depends="deliverables-init,java-archives,source-archives"/>
+		depends="deliverables-init,java-archives,source-archives">
+		<java classname="org.openmdx.base.mof.spi.Model_1Dumper" fork="true" classpathref="project.bin.classpath">
+			<arg value="${build.dir}/model/openmdxmof.wbxml" />
+			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol" />
+		</java>
+	</target>
 	<!-- ******************************************************************* -->
 	<!-- * distribution -->
 	<!-- ******************************************************************* -->
@@ -337,6 +353,7 @@
 				<include name="lowagie/${build.target.platform}/itext/**"/>
 				<include name="twitter4j/${build.target.platform}/twitter4j/**"/>
 				<include name="jivesoftware/${build.target.platform}/smack/**"/>
+				<include name="google/${build.target.platform}/**"/>
 				<include name="eclipse/${build.target.platform}/${base.dir.name}/**"/>
 			</openmdx:archivefileset>
 			<openmdx:archivefileset 
@@ -392,6 +409,31 @@
 			</openmdx:archivefileset>
 			<openmdx:archivefileset src="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip">
 				<patternset refid="opencrx-kernel.jar.content"/>
+			</openmdx:archivefileset>
+		</openmdx:archive>
+		<!-- opencrx-client.jar -->
+		<openmdx:archive 
+		  destfile="${deliver.dir}/lib/opencrx-client.jar"
+		  format="jar" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} Library Client"/>
+				<attribute name="Implementation-Title" value="opencrx-kernel for ${build.target.platform}"/>
+			</manifest>		
+			<openmdx:archivefileset dir="${build.dir}/bin">
+				<patternset refid="opencrx-client.jar.content"/>
+			</openmdx:archivefileset>
+			<openmdx:archivefileset dir="${build.dir}/src/resource">
+				<patternset refid="opencrx-client.jar.content"/>
+			</openmdx:archivefileset>
+			<openmdx:archivefileset dir="src/resource">
+				<patternset refid="opencrx-client.jar.content"/>
+				<patternset>
+					<include name="org/openmdx/base/**"/>
+				</patternset>
+			</openmdx:archivefileset>
+			<openmdx:archivefileset src="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip">
+				<patternset refid="opencrx-client.jar.content"/>
 			</openmdx:archivefileset>
 		</openmdx:archive>
 		<!-- opencrx-extension.jar -->
@@ -496,6 +538,8 @@
 			<param name="ldap.target.name" value="opencrx-ldap-${web.application.name}"/>
 			<param name="airsync.source.name" value="opencrx-airsync-CRX"/>
 			<param name="airsync.target.name" value="opencrx-airsync-${web.application.name}"/>
+			<param name="bpi.source.name" value="opencrx-bpi-CRX"/>
+			<param name="bpi.target.name" value="opencrx-bpi-${web.application.name}"/>
 		</antcall>
 	</target>
 	<!-- ******************************************************************* -->
@@ -1175,6 +1219,55 @@
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
+		<!-- opencrx-bpi-CRX.war -->
+		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${bpi.target.name}.war" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} BPI WAR"/>
+				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
+			</manifest>
+			<zipfileset dir="${data.home}/src/data/${data.dir}.bpi/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>			
+			<!-- WEB-INF -->
+			<zipfileset dir="src/data/${data.dir.generic}.bpi/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<zipfileset dir="src/ear/${app.source.name}.ear/${bpi.source.name}.war/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="tomcat-6.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- META-INF -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}.bpi/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.bpi/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/${data.dir.generic}.bpi/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/org.opencrx.bpi">
+				<include name="**/*.js"/>
+				<include name="**/*.gif"/>
+				<include name="**/*.png"/>
+				<include name="**/*.css"/>
+			</zipfileset>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>
 		<!-- opencrx-resources.jar -->
 		<openmdx:archive format="jar" destfile="${build.dir}/lib/${app.target.name}/opencrx-resources.jar">
 			<zipfileset src="${opencrx.home}/${build.target.platform}/core/lib/opencrx-resources.jar"/>
@@ -1231,6 +1324,9 @@
 			<zipfileset dir="../jivesoftware/${build.target.platform}/smack/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>
 			</zipfileset>
+			<zipfileset dir="../google/${build.target.platform}/gson/lib" prefix="APP-INF/lib">
+				<include name="*.jar"/>
+			</zipfileset>
 			<zipfileset dir="${openmdx.home}/osgi/${build.target.platform}/extension/lib" prefix="APP-INF/lib">
 				<include name="openjpa.jar"/>
 				<include name="commons-collections.jar"/>
@@ -1241,7 +1337,7 @@
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/codehaus/${build.target.platform}/groovy/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>
-			</zipfileset>						
+			</zipfileset>
 			<zipfileset dir="${openmdx.home}/planetj/${build.target.platform}/compfilter/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>
 			</zipfileset>			
@@ -1390,96 +1486,5 @@ ${build.dir}/doc/api/index.html
 	<!-- ******************************************************************* -->
 	<target name="ui-split" description="split merged ui file by locale">
 		<ant dir="${project.home}/core/etc/ant" antfile="utilities.xml" inheritAll="true" inheritRefs="true" target="-ui-split"/>
-	</target>
-	<!-- ******************************************************************* -->
-	<!-- * CopyDb -->
-	<!-- ******************************************************************* -->
-	<target name="CopyDb" description="Copy openCRX database">
-		<echo>*************************************************************************************************</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT           ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** CopyDb performs the following operations:                                                 ***</echo>
-		<echo>*** - Delete all data on the target database                                                  ***</echo>
-		<echo>*** - Copy all data from the source database to the target database                           ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>***           !!! ALWAYS MAKE A BACKUP OF THE DATABASE BEFORE RUNNING        !!!              ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>***           !!! MAKE SURE THAT YOU SPECIFY SOURCE AND TARGET CORRECTLY     !!!              ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** In case of failure see log for details. The log configuration is located at               ***</echo>
-		<echo>*** etc/log/logging.properties)                                                               ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Specify options with:                                                                     ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Provider name is replaced only if both provider.name.source and .target are specified     ***</echo>
-		<echo>*** -Dprovider.name.source="provider name of source database"                                 ***</echo>
-		<echo>*** -Dprovider.name.target="provider name of target database"                                 ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** -Ddb.jdbc.driver.classpath="class path pointing to jdbc drivers"                          ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** -Dkernel.start.with.table="start with table# for namespace kernel"                        ***</echo>
-		<echo>*** -Dkernel.end.with.table="end with table# for namespace kernel"                            ***</echo>
-		<echo>*** -Dsecurity.start.with.table="start with table# for namespace security"                    ***</echo>
-		<echo>*** -Dsecurity.end.with.table="end with table# for namespace security"                        ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** -Ddb.jdbc.url.source="jdbc url source database"                                           ***</echo>
-		<echo>*** -Ddb.jdbc.driver.source="jdbc driver name source database"                                ***</echo>
-		<echo>*** -Ddb.username.source="user name source database"                                          ***</echo>
-		<echo>*** -Ddb.password.source="password source database"                                           ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** -Ddb.jdbc.url.target="jdbc url target database"                                           ***</echo>
-		<echo>*** -Ddb.jdbc.driver.target="jdbc driver target database"                                     ***</echo>
-		<echo>*** -Ddb.username.target="user name target database"                                          ***</echo>
-		<echo>*** -Ddb.password.target="password target database"                                           ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Sample URLs                                                                               ***</echo>
-		<echo>*** - PostgreSQL: jdbc:postgresql://localhost/CRX                                             ***</echo>
-		<echo>*** - MySQL:      jdbc:mysql://localhost:3306/CRX                                             ***</echo>
-		<echo>*** - Oracle:     jdbc:oracle:thin:@localhost:1521:XE                                         ***</echo>
-		<echo>*** - DB2:        jdbc:db2://localhost:50000/CRX                                              ***</echo>
-		<echo>*** - SQL Server: jdbc:sqlserver://localhost:1433;databaseName=CRX;selectMethod=cursor        ***</echo>
-		<echo>*** - HSQLDB:     jdbc:hsqldb:hsql://localhost:9001/CRX                                       ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Sample driver names                                                                       ***</echo>
-		<echo>*** - PostgreSQL: org.postgresql.Driver                                                       ***</echo>
-		<echo>*** - MySQL:      com.mysql.jdbc.Driver                                                       ***</echo>
-		<echo>*** - Oracle:     oracle.jdbc.driver.OracleDriver                                             ***</echo>
-		<echo>*** - DB2:        com.ibm.db2.jcc.DB2Driver                                                   ***</echo>
-		<echo>*** - SQL Server: com.microsoft.sqlserver.jdbc.SQLServerDriver                                ***</echo>
-		<echo>*** - HSQLDB:     org.hsqldb.jdbcDriver                                                       ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** Sample driver classpath                                                                   ***</echo>
-		<echo>*** - PostgreSQL: ..\opt\postgresql\jre-1.6\postgresql-8\lib\postgreql-8.4.jdbc4.jar          ***</echo>
-		<echo>*** - MySQL:      ..\opt\mysql\jre-1.6\mysql-5\lib\mysql-connector-java-3.1.12-bin.jar        ***</echo>
-		<echo>*** - Oracle:     ..\opt\oracle\jre-1.6\oracle-10\lib\ojdbc14.jar                             ***</echo>
-		<echo>*** - DB2:        ..\opt\ibm\jre-1.6\db2-9\db2jcc.jar;..\jre-1.5\db2-9\db2jcc_license_cu.jar  ***</echo>
-		<echo>*** - SQL Server: ..\opt\microsoft\jre-1.6\sql-server-2005\lib\sqljdbc.jar                    ***</echo>
-		<echo>*** - HSQLDB:     ..\opt\hsqldb\jre-1.6\hsqldb-2\lib\hsqldb.jar                               ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*** IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT IMPORTANT           ***</echo>
-		<echo>***                                                                                           ***</echo>
-		<echo>*************************************************************************************************</echo>
-		<java classname="org.opencrx.kernel.tools.CopyDb" fork="true" maxmemory="1400M" classpath="${db.jdbc.driver.classpath}" classpathref="utilities.bin.classpath">
-			<sysproperty key="user.language" value="en"/>
-			<sysproperty key="user.region" value="US"/>
-			<sysproperty key="file.encoding" value="Cp1252"/>
-			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol"/>
-			<sysproperty key="java.util.logging.config.file" value="etc/log/logging.properties"/>
-			<sysproperty key="kernel.startFromDbObject" value="${kernel.start.with.table}"/>
-			<sysproperty key="kernel.endWithDbObject" value="${kernel.end.with.table}"/>
-			<sysproperty key="security.startFromDbObject" value="${security.start.with.table}"/>
-			<sysproperty key="security.endWithDbObject" value="${security.end.with.table}"/>
-			<sysproperty key="jdbcUrlSource" value="${db.jdbc.url.source}"/>
-			<sysproperty key="jdbcDriverSource" value="${db.jdbc.driver.source}"/>
-			<sysproperty key="usernameSource" value="${db.username.source}"/>
-			<sysproperty key="passwordSource" value="${db.password.source}"/>
-			<sysproperty key="jdbcUrlTarget" value="${db.jdbc.url.target}"/>
-			<sysproperty key="jdbcDriverTarget" value="${db.jdbc.driver.target}"/>
-			<sysproperty key="usernameTarget" value="${db.username.target}"/>
-			<sysproperty key="passwordTarget" value="${db.password.target}"/>
-			<sysproperty key="providerNameSource" value="${provider.name.source}"/>
-			<sysproperty key="providerNameTarget" value="${provider.name.target}"/>
-		</java>
 	</target>
 </project>

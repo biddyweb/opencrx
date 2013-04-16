@@ -85,6 +85,8 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 /**
  * The MailImporterServlet imports E-Mails from a configured Mail server
@@ -149,14 +151,15 @@ public class MailImporterServlet
             try {
                 pm.currentTransaction().begin();
                 message = (message == null || message.length() == 0 ? "" : message + ": ") + Arrays.asList(params);
-                SendAlertParams sendAlertParams = Utils.getBasePackage(pm).createSendAlertParams(
-                    message,
-                    importance,
-                    "Email Importer [" + providerName + "/" + segmentName + "] " + subject,
-                    null,
-                    null,
-                    SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName
-                );
+            	SendAlertParams sendAlertParams = Structures.create(
+            		SendAlertParams.class, 
+            		Datatypes.member(SendAlertParams.Member.description, message),
+            		Datatypes.member(SendAlertParams.Member.importance, importance),
+            		Datatypes.member(SendAlertParams.Member.name, "Email Importer [" + providerName + "/" + segmentName + "] " + subject),
+            		Datatypes.member(SendAlertParams.Member.resendDelayInSeconds, null),
+            		Datatypes.member(SendAlertParams.Member.toUsers, SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName),
+            		Datatypes.member(SendAlertParams.Member.reference, null)
+            	);
                 userHome.sendAlert(sendAlertParams);
                 pm.currentTransaction().commit();
             } catch(Exception e) {

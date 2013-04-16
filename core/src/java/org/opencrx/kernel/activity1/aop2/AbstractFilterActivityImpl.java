@@ -58,10 +58,11 @@ import java.util.List;
 
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class AbstractFilterActivityImpl 
 	<S extends org.opencrx.kernel.activity1.jmi1.AbstractFilterActivity,N extends org.opencrx.kernel.activity1.cci2.AbstractFilterActivity,C extends Void>
@@ -82,11 +83,11 @@ public class AbstractFilterActivityImpl
             int count = Activities.getInstance().countFilteredActivity(
                 this.sameObject()
             );
-            return Utils.getBasePackage(this.sameManager()).createCountFilteredObjectsResult(
-                count
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.Member.count, count)
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }
@@ -106,9 +107,10 @@ public class AbstractFilterActivityImpl
                 totalQuantities,
                 quantityUoms
             );
-            return Utils.getActivityPackage(this.sameManager()).createCalcTotalQuantityResult(
-            	quantityUoms,
-            	totalQuantities
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.Member.quantityUom, quantityUoms),
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.Member.totalQuantity, totalQuantities)
             );            
         }
         catch(ServiceException e) {

@@ -54,10 +54,11 @@ package org.opencrx.kernel.contract1.aop2;
 
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ContractCreatorImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.ContractCreator,N extends org.opencrx.kernel.contract1.cci2.ContractCreator,C extends Void>
@@ -85,11 +86,11 @@ public class ContractCreatorImpl
                 params.getPriority(),
                 params.getBasedOn()
             );
-            return Utils.getContractPackage(this.sameManager()).createCreateContractResult(
-                contract
+            return Structures.create(
+            	org.opencrx.kernel.contract1.jmi1.CreateContractResult.class, 
+            	Datatypes.member(org.opencrx.kernel.contract1.jmi1.CreateContractResult.Member.contract, contract)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }    	
     }

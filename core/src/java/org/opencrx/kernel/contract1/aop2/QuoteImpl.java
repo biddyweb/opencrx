@@ -63,6 +63,8 @@ import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class QuoteImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.Quote,N extends org.opencrx.kernel.contract1.cci2.Quote,C extends Void>
@@ -113,11 +115,11 @@ public class QuoteImpl
             SalesOrder salesOrder = Contracts.getInstance().createSalesOrder(
                 this.sameObject()
             );
-            return Utils.getContractPackage(this.sameManager()).createQuoteCreateSalesOrderResult(
-                salesOrder
-            );        
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.contract1.jmi1.QuoteCreateSalesOrderResult.class, 
+            	Datatypes.member(org.opencrx.kernel.contract1.jmi1.QuoteCreateSalesOrderResult.Member.order, salesOrder)
+            );            
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }

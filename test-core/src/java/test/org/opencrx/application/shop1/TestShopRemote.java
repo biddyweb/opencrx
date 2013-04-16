@@ -53,7 +53,6 @@
 package test.org.opencrx.application.shop1;
 
 import javax.naming.NamingException;
-import javax.servlet.ServletException;
 
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -76,15 +75,37 @@ public class TestShopRemote extends TestShop {
     //-----------------------------------------------------------------------
     @BeforeClass
     public static void initialize(
-    ) throws NamingException, ServiceException, ServletException {
+    ) throws NamingException, ServiceException {
     	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactoryProxy(
     		"http://127.0.0.1:8080/opencrx-rest-CRX/", 
     		"admin-Standard", 
     		"admin-Standard", 
     		"application/vnd.openmdx.wbxml" // text/xml
     	);
+    	// ShopServiceImpl needs some backend classes
+    	// --> ShowServiceImpl is not designed for client use
+		org.opencrx.kernel.backend.Accounts.register();
+		org.opencrx.kernel.backend.Activities.register();
+		org.opencrx.kernel.backend.Addresses.register();
+		org.opencrx.kernel.backend.Buildings.register();
+		org.opencrx.kernel.backend.Admin.register();
+		org.opencrx.kernel.backend.Base.register();
+		org.opencrx.kernel.backend.Cloneable.register();	
+		org.opencrx.kernel.backend.Contracts.register();
+		org.opencrx.kernel.backend.Depots.register();
+		org.opencrx.kernel.backend.Documents.register();
+		org.opencrx.kernel.backend.Exporter.register();
+		org.opencrx.kernel.backend.Forecasts.register();
+		org.opencrx.kernel.backend.ICalendar.register();
+		org.opencrx.kernel.backend.Importer.register();
+		org.opencrx.kernel.backend.Models.register();
+		org.opencrx.kernel.backend.Notifications.register();
+		org.opencrx.kernel.backend.Products.register();
+		org.opencrx.kernel.backend.SecureObject.register();
+		org.opencrx.kernel.backend.UserHomes.register();
+		org.opencrx.kernel.backend.VCard.register();
     }
-    
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

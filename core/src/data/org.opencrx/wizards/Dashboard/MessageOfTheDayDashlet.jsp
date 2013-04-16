@@ -2,11 +2,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: MessageOfTheDayDashlet.jsp,v 1.3 2010/04/27 12:16:11 wfro Exp $
  * Description: MessageOfTheDayDashlet
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2010/04/27 12:16:11 $
  * ====================================================================
  *
  * This software is published under the BSD license

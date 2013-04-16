@@ -58,6 +58,8 @@ import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class CloneableImpl
 	<S extends org.opencrx.kernel.base.jmi1.Cloneable,N extends org.opencrx.kernel.base.cci2.Cloneable,C extends Void>
@@ -91,11 +93,11 @@ public class CloneableImpl
                		((org.opencrx.kernel.base.jmi1.SecureObject)this.sameObject()).getOwningGroup() : 
                		null
             );
-            return Utils.getBasePackage(this.sameManager()).createCloneResult(
-                clonedObject
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.CloneResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.CloneResult.Member.clonedObject, clonedObject)
             );
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }

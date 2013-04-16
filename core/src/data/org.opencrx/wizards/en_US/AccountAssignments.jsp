@@ -2,11 +2,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountAssignments.jsp,v 1.21 2012/07/08 13:29:33 wfro Exp $
  * Description: list account assignments
- * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,7 +66,6 @@ org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.action.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*
@@ -126,9 +122,6 @@ org.openmdx.base.query.*
       Path objectPath = new Path(objectXri);
       String providerName = objectPath.get(2); // e.g. CRX
       String segmentName = objectPath.get(4);  // e.g. Standard
-
-      // Get building1 package
-      org.opencrx.kernel.building1.jmi1.Building1Package buildingPkg = org.opencrx.kernel.utils.Utils.getBuildingPackage(pm);
 
       // Get building segment
       org.opencrx.kernel.building1.jmi1.Segment buildingSegment =

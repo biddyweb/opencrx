@@ -2,11 +2,8 @@
 /*
  * ====================================================================
  * Project:     openCRX/Sample, http://www.opencrx.org/
- * Name:        $Id: UploadDocument.jsp,v 1.37 2012/07/08 13:30:30 wfro Exp $
  * Description: UploadDocument
- * Revision:    $Revision: 1.37 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -68,7 +65,6 @@ org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.kernel.log.*,
@@ -265,7 +261,6 @@ org.openmdx.kernel.id.*
 					String providerName = objectPath.get(2);
 					String segmentName = objectPath.get(4);
 
-					org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
 					String[] names = (String[])parameterMap.get("name");
 					String name = (names == null) || (names.length == 0) ? "" : names[0];
 					String[] descriptions = (String[])parameterMap.get("description");
@@ -392,10 +387,11 @@ org.openmdx.kernel.id.*
       								pm.currentTransaction().begin();
       								for(String owningGroupXri: owningGroupXris) {
 										org.opencrx.security.realm1.jmi1.PrincipalGroup owningGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(new Path(owningGroupXri));
-										org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = basePkg.createModifyOwningGroupParams(
-											owningGroup,
-											(short)1
-										);
+										org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = org.w3c.spi2.Structures.create(
+											org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams.class, 
+											org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams.Member.group, owningGroup),
+											org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams.Member.mode, (short)1)
+										); 
 										document.removeOwningGroup(modifyOwningGroupParams);
 									}
       								pm.currentTransaction().commit();
@@ -411,10 +407,11 @@ org.openmdx.kernel.id.*
 	      								try {
 	      									pm.currentTransaction().begin();	      									
 	      									org.opencrx.security.realm1.jmi1.PrincipalGroup group = (org.opencrx.security.realm1.jmi1.PrincipalGroup)pm.getObjectById(new Path(owningGroupXri));
-	      									org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = basePkg.createModifyOwningGroupParams(
-	      										group,
-	      										(short)1 // recursive
-	      									);
+	      									org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams modifyOwningGroupParams = org.w3c.spi2.Structures.create(
+    											org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams.class, 
+    											org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams.Member.group, group),
+    											org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ModifyOwningGroupParams.Member.mode, (short)1)
+    										); 
 	      									document.addOwningGroup(modifyOwningGroupParams);
 	      									pm.currentTransaction().commit();
 	      								} catch (Exception e) {
@@ -643,7 +640,7 @@ org.openmdx.kernel.id.*
 					<tr>
 						<td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td>
-							<input type="file" class="valueL" size=50 name="uploadFile" tabindex="600" " />
+							<input type="file" class="valueL" size=50 name="uploadFile" tabindex="1500" " />
 						</td>
 						<td class="addon"></td>
 						<td class="label"></td>
@@ -653,8 +650,8 @@ org.openmdx.kernel.id.*
 					<tr>
 						<td colspan="3" >
 							<br>
-							<INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
-							<INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
+							<INPUT type="Submit" name="OK.Button" tabindex="2000" value="<%= app.getTexts().getSaveTitle() %>" />
+							<INPUT type="Submit" name="Cancel.Button" tabindex="2010" value="<%= app.getTexts().getCancelTitle() %>" />
 						</td>
 						<td colspan="3"></td>
 					</tr>

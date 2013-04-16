@@ -54,17 +54,15 @@ DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_TO COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_FR COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -123,6 +121,10 @@ DROP VIEW OOCKE1_JOIN_ACTCONTAINSWRE COMMAND_TERMINATOR
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSWRE COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSWRE COMMAND_TERMINATOR
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_JOIN_WFPROCHASPROCINST COMMAND_TERMINATOR
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_JOIN_WFPROCINSTHASCHILD COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSACT AS
@@ -791,6 +793,22 @@ ON
   (wr.P_PARENT = ra.object_id) COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
+CREATE VIEW OOCKE1_JOIN_WFPROCHASPROCINST AS
+SELECT
+  wfp.process AS wf_process,
+  wfp.object_id AS wf_process_instance
+FROM
+  OOCKE1_WFPROCESSINSTANCE wfp COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_JOIN_WFPROCINSTHASCHILD AS
+SELECT
+  wfp.parent AS parent_process_instance,
+  wfp.object_id AS child_process_instance
+FROM
+  OOCKE1_WFPROCESSINSTANCE wfp COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
 SELECT
 #if defined(DB2_8)
@@ -1141,94 +1159,6 @@ FROM
     OOCKE1_DOCUMENTFOLDERASS_ dfa_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 AS
-SELECT 
-    ass.account AS account, 
-    ass.P_PARENT AS P_PARENT 
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass
-
-UNION
-
-SELECT 
-    (ass.P_PARENT) AS account, 
-    ass.account AS P_PARENT 
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 AS
-SELECT
-    (ass0.P_PARENT) AS account,
-    ass.P_PARENT AS P_PARENT
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
-ON
-    (ass0.account = ass.account)
-
-UNION
-
-SELECT
-    (ass0.account) AS account,
-    ass.P_PARENT AS P_PARENT
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
-ON
-    (ass0.P_PARENT = ass.account) COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 AS
-SELECT
-    (ass0.P_PARENT) AS account,
-    ass.P_PARENT AS P_PARENT
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    (ass0.account = ass.account)
-
-UNION
-
-SELECT
-    ass0.account AS account,
-    ass.P_PARENT AS P_PARENT
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    (ass0.P_PARENT = ass.account) COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 AS
-SELECT
-    (ass0.P_PARENT) AS account,
-    ass.P_PARENT AS P_PARENT
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
-ON
-    (ass0.account = ass.account)
-
-UNION
-
-SELECT
-    ass0.account AS account,
-    ass.P_PARENT AS P_PARENT
-FROM 
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
-ON
-    (ass0.P_PARENT = ass.account) COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
-
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
 #if defined(DB2_8)
@@ -1393,12 +1323,463 @@ WHERE
     ass0.object_id LIKE 'accountMember%' COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
-SELECT DISTINCT
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_TO AS
+WITH RECURSIVE TEMP (
+    object_id,
+    P_PARENT,
+    account_from,
+    account_from_id,
+    account_to,
+    account_to_id,
+    created_at,
+    created_by_,
+    modified_at,
+    modified_by_,
+    dtype,
+    access_level_browse,
+    access_level_update,
+    access_level_delete,
+    owner_,
+    name,
+    description,
+    quality,
+    for_use_by_,
+    valid_from,
+    valid_to,
+    member,
+    disabled,
+    member_role_0,
+    member_role_1,
+    member_role_2,
+    member_role_3,
+    member_role_4,
+    user_boolean0,
+    user_boolean1,
+    user_boolean2,
+    user_boolean3,
+    user_boolean4_,
+    user_code0,
+    user_code1,
+    user_code2,
+    user_code3,
+    user_code4_,
+    user_date0,
+    user_date1,
+    user_date2,
+    user_date3,
+    user_date4_,
+    user_date_time0,
+    user_date_time1,
+    user_date_time2,
+    user_date_time3,
+    user_date_time4_,
+    user_number0,
+    user_number1,
+    user_number2,
+    user_number3,
+    user_number4_,
+    user_string0,
+    user_string1,
+    user_string2,
+    user_string3,
+    user_string4_,
+    distance
+) AS (
+SELECT
 #if defined(DB2_8)
     CAST(
 #endif
-    STRCAT_PREFIX (ass0.P_PARENT) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*1' STRCAT_SUFFIX
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*+1' STRCAT_SUFFIX
+#if defined(DB2_8)
+    AS VARCHAR(250))
+#endif
+    AS object_id,
+    ass0.P_PARENT AS P_PARENT,
+    ass0.P_PARENT AS account_from,
+    ass0.P_PARENT AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+#if defined(POSTGRESQL_8)
+    ::text
+#endif     
+    AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0,
+    ass0.user_boolean1,
+    ass0.user_boolean2,
+    ass0.user_boolean3,
+    ass0.user_boolean4_,
+    ass0.user_code0,
+    ass0.user_code1,
+    ass0.user_code2,
+    ass0.user_code3,
+    ass0.user_code4_,
+    ass0.user_date0,
+    ass0.user_date1,
+    ass0.user_date2,
+    ass0.user_date3,
+    ass0.user_date4_,
+    ass0.user_date_time0,
+    ass0.user_date_time1,
+    ass0.user_date_time2,
+    ass0.user_date_time3,
+    ass0.user_date_time4_,
+    ass0.user_number0,
+    ass0.user_number1,
+    ass0.user_number2,
+    ass0.user_number3,
+    ass0.user_number4_,
+    ass0.user_string0,
+    ass0.user_string1,
+    ass0.user_string2,
+    ass0.user_string3,
+    ass0.user_string4_,
+    1 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+WHERE
+    ass0.object_id LIKE 'accountMember%'
+
+UNION ALL
+
+SELECT
+#if defined(DB2_8)
+    CAST(
+#endif
+    STRCAT_PREFIX (ass1.object_id) STRCAT_INFIX '*+' STRCAT_INFIX (TEMP.distance + 1) STRCAT_SUFFIX
+#if defined(DB2_8)
+    AS VARCHAR(250))
+#endif
+    AS object_id,
+    TEMP.P_PARENT AS P_PARENT,
+    ass1.P_PARENT AS account_from,
+    ass1.P_PARENT AS account_from_id,
+    ass1.account AS account_to,
+    ass1.account AS account_to_id,
+    ass1.created_at,
+    ass1.created_by_,
+    ass1.modified_at,
+    ass1.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+#if defined(POSTGRESQL_8)
+    ::text
+#endif     
+    AS dtype,
+    ass1.access_level_browse,
+    ass1.access_level_update,
+    ass1.access_level_delete,
+    ass1.owner_,
+    ass1.name,
+    ass1.description,
+    ass1.quality,
+    ass1.for_use_by_,
+    ass1.valid_from,
+    ass1.valid_to,
+    ass1.object_id AS member,
+    ass1.disabled,
+    ass1.member_role_0,
+    ass1.member_role_1,
+    ass1.member_role_2,
+    ass1.member_role_3,
+    ass1.member_role_4,
+    ass1.user_boolean0,
+    ass1.user_boolean1,
+    ass1.user_boolean2,
+    ass1.user_boolean3,
+    ass1.user_boolean4_,
+    ass1.user_code0,
+    ass1.user_code1,
+    ass1.user_code2,
+    ass1.user_code3,
+    ass1.user_code4_,
+    ass1.user_date0,
+    ass1.user_date1,
+    ass1.user_date2,
+    ass1.user_date3,
+    ass1.user_date4_,
+    ass1.user_date_time0,
+    ass1.user_date_time1,
+    ass1.user_date_time2,
+    ass1.user_date_time3,
+    ass1.user_date_time4_,
+    ass1.user_number0,
+    ass1.user_number1,
+    ass1.user_number2,
+    ass1.user_number3,
+    ass1.user_number4_,
+    ass1.user_string0,
+    ass1.user_string1,
+    ass1.user_string2,
+    ass1.user_string3,
+    ass1.user_string4_,
+    TEMP.distance + 1
+FROM
+    TEMP
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    TEMP.account_to = ass1.P_PARENT
+WHERE 
+    TEMP.distance < 5
+) SELECT * FROM TEMP COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_FR AS
+WITH RECURSIVE TEMP (
+    object_id,
+    P_PARENT,
+    account_from,
+    account_from_id,
+    account_to,
+    account_to_id,
+    created_at,
+    created_by_,
+    modified_at,
+    modified_by_,
+    dtype,
+    access_level_browse,
+    access_level_update,
+    access_level_delete,
+    owner_,
+    name,
+    description,
+    quality,
+    for_use_by_,
+    valid_from,
+    valid_to,
+    member,
+    disabled,
+    member_role_0,
+    member_role_1,
+    member_role_2,
+    member_role_3,
+    member_role_4,
+    user_boolean0,
+    user_boolean1,
+    user_boolean2,
+    user_boolean3,
+    user_boolean4_,
+    user_code0,
+    user_code1,
+    user_code2,
+    user_code3,
+    user_code4_,
+    user_date0,
+    user_date1,
+    user_date2,
+    user_date3,
+    user_date4_,
+    user_date_time0,
+    user_date_time1,
+    user_date_time2,
+    user_date_time3,
+    user_date_time4_,
+    user_number0,
+    user_number1,
+    user_number2,
+    user_number3,
+    user_number4_,
+    user_string0,
+    user_string1,
+    user_string2,
+    user_string3,
+    user_string4_,
+    distance
+) AS (
+SELECT
+#if defined(DB2_8)
+    CAST(
+#endif
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX
+#if defined(DB2_8)
+    AS VARCHAR(250))
+#endif
+    AS object_id,
+    ass0.account AS P_PARENT,
+    ass0.P_PARENT AS account_from,
+    ass0.P_PARENT AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+#if defined(POSTGRESQL_8)
+    ::text
+#endif
+    AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0,
+    ass0.user_boolean1,
+    ass0.user_boolean2,
+    ass0.user_boolean3,
+    ass0.user_boolean4_,
+    ass0.user_code0,
+    ass0.user_code1,
+    ass0.user_code2,
+    ass0.user_code3,
+    ass0.user_code4_,
+    ass0.user_date0,
+    ass0.user_date1,
+    ass0.user_date2,
+    ass0.user_date3,
+    ass0.user_date4_,
+    ass0.user_date_time0,
+    ass0.user_date_time1,
+    ass0.user_date_time2,
+    ass0.user_date_time3,
+    ass0.user_date_time4_,
+    ass0.user_number0,
+    ass0.user_number1,
+    ass0.user_number2,
+    ass0.user_number3,
+    ass0.user_number4_,
+    ass0.user_string0,
+    ass0.user_string1,
+    ass0.user_string2,
+    ass0.user_string3,
+    ass0.user_string4_,
+    -1 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+WHERE
+    ass0.object_id LIKE 'accountMember%'
+
+UNION ALL
+
+SELECT
+#if defined(DB2_8)
+    CAST(
+#endif
+    STRCAT_PREFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (TEMP.distance - 1) STRCAT_SUFFIX
+#if defined(DB2_8)
+    AS VARCHAR(250))
+#endif
+    AS object_id,
+    TEMP.P_PARENT AS P_PARENT,
+    ass1.P_PARENT AS account_from,
+    ass1.P_PARENT AS account_from_id,
+    ass1.account AS account_to,
+    ass1.account AS account_to_id,
+    ass1.created_at,
+    ass1.created_by_,
+    ass1.modified_at,
+    ass1.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+#if defined(POSTGRESQL_8)
+    ::text
+#endif
+    AS dtype,
+    ass1.access_level_browse,
+    ass1.access_level_update,
+    ass1.access_level_delete,
+    ass1.owner_,
+    ass1.name,
+    ass1.description,
+    ass1.quality,
+    ass1.for_use_by_,
+    ass1.valid_from,
+    ass1.valid_to,
+    ass1.object_id AS member,
+    ass1.disabled,
+    ass1.member_role_0,
+    ass1.member_role_1,
+    ass1.member_role_2,
+    ass1.member_role_3,
+    ass1.member_role_4,
+    ass1.user_boolean0,
+    ass1.user_boolean1,
+    ass1.user_boolean2,
+    ass1.user_boolean3,
+    ass1.user_boolean4_,
+    ass1.user_code0,
+    ass1.user_code1,
+    ass1.user_code2,
+    ass1.user_code3,
+    ass1.user_code4_,
+    ass1.user_date0,
+    ass1.user_date1,
+    ass1.user_date2,
+    ass1.user_date3,
+    ass1.user_date4_,
+    ass1.user_date_time0,
+    ass1.user_date_time1,
+    ass1.user_date_time2,
+    ass1.user_date_time3,
+    ass1.user_date_time4_,
+    ass1.user_number0,
+    ass1.user_number1,
+    ass1.user_number2,
+    ass1.user_number3,
+    ass1.user_number4_,
+    ass1.user_string0,
+    ass1.user_string1,
+    ass1.user_string2,
+    ass1.user_string3,
+    ass1.user_string4_,
+    TEMP.distance - 1
+FROM
+    TEMP
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    TEMP.account_from = ass1.account
+WHERE 
+    TEMP.distance > -5
+)
+SELECT * FROM TEMP COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
+SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_TO
+UNION ALL
+SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_FR COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT AS
+SELECT
+#if defined(DB2_8)
+    CAST(
+#endif
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*1' STRCAT_SUFFIX
 #if defined(DB2_8)
     AS VARCHAR(250))
 #endif
@@ -1472,11 +1853,11 @@ WHERE
 
 UNION ALL
 
-SELECT DISTINCT
+SELECT
 #if defined(DB2_8)
     CAST(
 #endif
-    STRCAT_PREFIX (ass0.account) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX
 #if defined(DB2_8)
     AS VARCHAR(250))
 #endif
@@ -1547,19 +1928,19 @@ FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 WHERE
     ass0.object_id LIKE 'accountMember%'
-    
+
 UNION ALL
 
-SELECT DISTINCT
+SELECT
 #if defined(DB2_8)
     CAST(
 #endif
-    STRCAT_PREFIX (ass.P_PARENT) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*2' STRCAT_SUFFIX
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*2A' STRCAT_SUFFIX
 #if defined(DB2_8)
     AS VARCHAR(250))
 #endif
     AS object_id,
-    ass.P_PARENT AS P_PARENT,
+    ass1.P_PARENT AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT As account_from_id,
     ass0.account AS account_to,
@@ -1624,25 +2005,110 @@ SELECT DISTINCT
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
+    OOCKE1_ACCOUNTASSIGNMENT ass1
 ON
-    (ass0.P_PARENT = ass.P_PARENT) OR
-    (ass0.account = ass.P_PARENT)
+    ass0.P_PARENT = ass1.account
 WHERE
     ass0.object_id LIKE 'accountMember%'
 
 UNION ALL
 
-SELECT DISTINCT
+SELECT
 #if defined(DB2_8)
     CAST(
 #endif
-    STRCAT_PREFIX (ass.P_PARENT) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*-2' STRCAT_SUFFIX
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass2.object_id) STRCAT_INFIX '*2B' STRCAT_SUFFIX
 #if defined(DB2_8)
     AS VARCHAR(250))
 #endif
     AS object_id,
-    ass.P_PARENT AS P_PARENT,
+    ass2.P_PARENT AS P_PARENT,
+    ass0.P_PARENT AS account_from,
+    ass0.P_PARENT As account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at, 
+    ass0.created_by_,
+    ass0.modified_at, 
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+#if defined(POSTGRESQL_8)
+    ::text
+#endif 
+    AS dtype,
+    ass0.access_level_browse, 
+    ass0.access_level_update, 
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name, 
+    ass0.description, 
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from, 
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,    
+    2 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    ass0.account = ass1.P_PARENT
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass2
+ON
+    ass2.account = ass1.P_PARENT
+WHERE
+    ass0.object_id LIKE 'accountMember%'
+
+UNION ALL
+
+SELECT
+#if defined(DB2_8)
+    CAST(
+#endif
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*-2A' STRCAT_SUFFIX
+#if defined(DB2_8)
+    AS VARCHAR(250))
+#endif
+    AS object_id,
+    ass1.account AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
     ass0.account AS account_to,
@@ -1707,14 +2173,98 @@ SELECT DISTINCT
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
+    OOCKE1_ACCOUNTASSIGNMENT ass1
 ON
-    (ass0.P_PARENT = ass.account) OR
-    (ass0.account = ass.account)
+    ass0.account = ass1.P_PARENT
 WHERE
     ass0.object_id LIKE 'accountMember%'
 
-COMMAND_TERMINATOR 
+UNION ALL
+
+SELECT
+#if defined(DB2_8)
+    CAST(
+#endif
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass2.object_id) STRCAT_INFIX '*-2B' STRCAT_SUFFIX
+#if defined(DB2_8)
+    AS VARCHAR(250))
+#endif
+    AS object_id,
+    ass1.account AS P_PARENT,
+    ass1.P_PARENT AS account_from,
+    ass1.P_PARENT AS account_from_id,
+    ass1.account AS account_to,
+    ass1.account AS account_to_id,
+    ass0.created_at, 
+    ass0.created_by_,
+    ass0.modified_at, 
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+#if defined(POSTGRESQL_8)
+    ::text
+#endif     
+    AS dtype,
+    ass0.access_level_browse, 
+    ass0.access_level_update, 
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name, 
+    ass0.description, 
+    
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from, 
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0, 
+    ass0.user_boolean1, 
+    ass0.user_boolean2, 
+    ass0.user_boolean3, 
+    ass0.user_boolean4_, 
+    ass0.user_code0, 
+    ass0.user_code1, 
+    ass0.user_code2, 
+    ass0.user_code3, 
+    ass0.user_code4_, 
+    ass0.user_date0, 
+    ass0.user_date1, 
+    ass0.user_date2, 
+    ass0.user_date3, 
+    ass0.user_date4_, 
+    ass0.user_date_time0, 
+    ass0.user_date_time1, 
+    ass0.user_date_time2, 
+    ass0.user_date_time3, 
+    ass0.user_date_time4_, 
+    ass0.user_number0, 
+    ass0.user_number1, 
+    ass0.user_number2, 
+    ass0.user_number3, 
+    ass0.user_number4_, 
+    ass0.user_string0, 
+    ass0.user_string1, 
+    ass0.user_string2, 
+    ass0.user_string3, 
+    ass0.user_string4_,    
+    -2 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    ass0.P_PARENT = ass1.account
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass2
+ON
+    ass1.account = ass2.P_PARENT
+WHERE
+    ass0.object_id LIKE 'accountMember%' COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ AS

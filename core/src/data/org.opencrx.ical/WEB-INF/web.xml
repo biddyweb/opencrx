@@ -23,6 +23,14 @@
 		<url-pattern>/bdays</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>ICalServlet</servlet-name>
+		<url-pattern>/anniversaries</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>ICalServlet</servlet-name>
+		<url-pattern>/datesofdeath</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>FreeBusyServlet</servlet-name>
 		<url-pattern>/freebusy</url-pattern>
 	</servlet-mapping>
@@ -41,6 +49,8 @@
 			<url-pattern>/ical</url-pattern>
 			<url-pattern>/activities</url-pattern>
 			<url-pattern>/bdays</url-pattern>
+			<url-pattern>/anniversaries</url-pattern>
+			<url-pattern>/datesofdeath</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>*</role-name>

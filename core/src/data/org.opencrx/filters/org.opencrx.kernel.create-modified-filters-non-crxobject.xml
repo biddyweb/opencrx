@@ -2,7 +2,7 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="25">
+			<array class="java.lang.String" length="29">
 
 				<void index="0">
 					<string>org:opencrx:kernel:code1:Segment:valueContainer</string>
@@ -83,6 +83,19 @@
 				</void>
 				<void index="24">
 					<string>org:opencrx:kernel:home1:UserHome:reminder</string>
+				</void>
+
+				<void index="25">
+					<string>org:opencrx:kernel:home1:UserHome:wfProcessInstance</string>
+				</void>
+				<void index="26">
+					<string>org:opencrx:kernel:workflow1:WfProcess:wfProcessInstance</string>
+				</void>
+				<void index="27">
+					<string>org:opencrx:kernel:home1:WfProcessInstance:childProcessInstance</string>
+				</void>
+				<void index="28">
+					<string>org:opencrx:kernel:home1:WfProcessInstance:actionLog</string>
 				</void>
 
 			</array>

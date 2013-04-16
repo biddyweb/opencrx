@@ -54,8 +54,16 @@ package org.opencrx.kernel.portal.wizard;
 
 import org.opencrx.kernel.account1.jmi1.Contact;
 
+/**
+ * CreateContactWizardExtension
+ *
+ */
 public class CreateContactWizardExtension {
 
+	/**
+	 * Constructor.
+	 * 
+	 */
 	public CreateContactWizardExtension(
 	) {
 		

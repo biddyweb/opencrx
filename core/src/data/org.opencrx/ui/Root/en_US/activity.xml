@@ -1149,6 +1149,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalClass">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>iCal class</_item>
+											</toolTip>
+											<label>
+												<_item>iCal class</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>30</_item>
+												<_item>15</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical">
 										<_object>
 											<active>true</active>
@@ -1733,6 +1750,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpParams:parentProcessInstance">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>Parent workflow process</_item>
+											</toolTip>
+											<label>
+												<_item>Parent workflow process</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:doFollowUp:Group:result">
 										<_object>
 											<active>true</active>
@@ -1747,7 +1781,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityDoFollowUpResult:followUp">
 										<_object>
-											<active>true</active>
+											<active>false</active> <!-- force GUI to reload parent activity and show new followup -->
 											<toolTip>
 												<_item>Follow up</_item>
 											</toolTip>
@@ -1827,6 +1861,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpParams:parentProcessInstance">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>Parent workflow process</_item>
+											</toolTip>
+											<label>
+												<_item>Parent workflow process</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:linkToAndFollowUp:Group:result">
 										<_object>
 											<active>true</active>
@@ -1859,7 +1910,7 @@
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo">
 										<_object>
-											<active>true</active>
+											<active>false</active>
 											<toolTip>
 												<_item>Assign to Resource</_item>
 											</toolTip>
@@ -3102,6 +3153,23 @@
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalClass">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>iCal class</_item>
+											</toolTip>
+											<label>
+												<_item>iCal class</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
 											</order>
 										</_object>
 										<_content/>

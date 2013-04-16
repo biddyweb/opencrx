@@ -63,6 +63,8 @@ import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class OpportunityImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.Opportunity,N extends org.opencrx.kernel.contract1.cci2.Opportunity,C extends Void>
@@ -113,11 +115,11 @@ public class OpportunityImpl
             Quote quote = Contracts.getInstance().createQuote(
                 this.sameObject()
             );
-            return Utils.getContractPackage(this.sameManager()).createOpportunityCreateQuoteResult(
-                quote
-            );        
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.contract1.jmi1.OpportunityCreateQuoteResult.class, 
+            	Datatypes.member(org.opencrx.kernel.contract1.jmi1.OpportunityCreateQuoteResult.Member.quote, quote)
+            );            
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }

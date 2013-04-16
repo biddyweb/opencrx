@@ -54,16 +54,10 @@ package test.org.opencrx.application.shop1;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
 import javax.naming.spi.NamingManager;
-import javax.resource.cci.ConnectionFactory;
-import javax.servlet.ServletException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -72,18 +66,11 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.opencrx.application.shop1.service.ShopServiceImpl;
 import org.opencrx.application.shop1.test.TestShopService;
-import org.openmdx.application.rest.spi.EntityManagerProxyFactory_2;
-import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.persistence.cci.ConfigurableProperty;
-import org.openmdx.base.resource.spi.Port;
-import org.openmdx.base.rest.spi.ConnectionFactoryAdapter;
-import org.openmdx.base.transaction.TransactionAttributeType;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 
 import test.org.opencrx.generic.AbstractTest;
-import test.org.opencrx.generic.ServletPort;
 
 @RunWith(Suite.class)
 @SuiteClasses(
@@ -97,60 +84,19 @@ import test.org.opencrx.generic.ServletPort;
  */
 public class TestShop {
 
-    //-----------------------------------------------------------------------
     @BeforeClass
     public static void initialize(
-    ) throws NamingException, ServiceException, ServletException {
+    ) throws NamingException, ServiceException {
         if(!NamingManager.hasInitialContextFactoryBuilder()) {
             NonManagedInitialContextFactoryBuilder.install(null);
-        }
-        if(USE_PROXY) {
-	        // Configure a proxy entity manager factory. The proxy acts as a
-	        // REST/Http client which delegates to the in-process servlet (ServletPort) 
-	        // which itself delegates to the entity manager specified by entity-manager-factory-name.
-	        Port port =  new ServletPort(
-	            Collections.singletonMap(
-	                    "entity-manager-factory-name",
-	                    "EntityManagerFactory"
-	                )
-	            );
-	        ConnectionFactory connectionFactory = new ConnectionFactoryAdapter(
-	        	port,
-	            true, // supportsLocalTransactionDemarcation
-	            TransactionAttributeType.NEVER
-	        );
-	        Map<String,Object> dataManagerProxyConfiguration = new HashMap<String,Object>();
-	        dataManagerProxyConfiguration.put(
-	            ConfigurableProperty.ConnectionFactory.qualifiedName(),
-	            connectionFactory
-	        );
-	        dataManagerProxyConfiguration.put(
-	            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-	            EntityManagerProxyFactory_2.class.getName()
-	        );    
-	        PersistenceManagerFactory outboundConnectionFactory = JDOHelper.getPersistenceManagerFactory(
-	            dataManagerProxyConfiguration
-	        );
-	
-	        Map<String,Object> entityManagerConfiguration = new HashMap<String,Object>();
-	        entityManagerConfiguration.put(
-	            ConfigurableProperty.ConnectionFactory.qualifiedName(),
-	            outboundConnectionFactory
-	        );
-	        entityManagerConfiguration.put(
-	            ConfigurableProperty.PersistenceManagerFactoryClass.qualifiedName(),
-	            EntityManagerFactory_1.class.getName()
-	        );    
-	        entityManagerFactory = JDOHelper.getPersistenceManagerFactory(
-	            entityManagerConfiguration
-	        );
-        }
-        else {
-        	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
-        }        
+        }    	
+       	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * TestAll
+     *
+     */
     public static class TestAll extends AbstractTest {
     	
 		public TestAll(
@@ -158,11 +104,19 @@ public class TestShop {
 			super(TestShop.entityManagerFactory);
 		}
 	
+        /**
+         * @throws ServiceException
+         * @throws IOException
+         * @throws ParseException
+         */
         @Test
         public void run(
         ) throws ServiceException, IOException, ParseException{
         	// Initialize Configuration
-        	new org.opencrx.kernel.aop2.Configuration();        	
+        	try{
+        		Class<?> clazz = Class.forName("org.opencrx.kernel.aop2.Configuration");
+        		clazz.newInstance();
+        	} catch(Exception ignore) {}
             org.opencrx.application.shop1.cci2.ShopService shopService =
 		        new ShopServiceImpl(
 		    		pm,
@@ -172,7 +126,7 @@ public class TestShop {
 		    		false,
 		    		false,
 		    		new org.opencrx.application.shop1.datatypes.DatatypeMappers()
-		        );            
+		        );
             TestShopService shopServiceTester = new TestShopService(shopService);
             org.opencrx.application.shop1.cci2.ReturnStatusT returnStatus = null;
     		returnStatus = shopServiceTester.testProducts();
@@ -202,8 +156,6 @@ public class TestShop {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static final boolean USE_PROXY = true;
-    
     protected static PersistenceManagerFactory entityManagerFactory = null;
 	protected static String providerName = "CRX";
 	protected static String segmentName = "Standard";

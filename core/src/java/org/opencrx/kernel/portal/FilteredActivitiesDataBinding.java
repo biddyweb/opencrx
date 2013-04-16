@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -64,22 +64,38 @@ import org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityFilterGroupQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery;
+import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
-import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.naming.Path;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
 
+/**
+ * FilteredActivitiesDataBinding
+ *
+ */
 public class FilteredActivitiesDataBinding extends DefaultDataBinding {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     */
     public FilteredActivitiesDataBinding(
     ) {
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get principal name.
+     * 
+     * @param app
+     * @return
+     */
     protected String getPrincipalName(
     	ApplicationContext app
     ) {
@@ -90,7 +106,9 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
     	   	
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.portal.servlet.DefaultDataBinding#getValue(javax.jmi.reflect.RefObject, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
+     */
     @Override
     public Object getValue(
         RefObject object, 
@@ -100,15 +118,17 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
         if(qualifiedFeatureName.endsWith("!filteredActivity")) {
             String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
             featureName = featureName.replace("${USER}", this.getPrincipalName(app));
+            if(object instanceof UserHome) {
+            	featureName = featureName.replace("${HOME}", ((UserHome)object).refGetPath().getBase());
+            }
             String[] c = featureName.split("!");
             String providerName = ((RefObject_1_0)object).refGetPath().get(2);
             String segmentName = ((RefObject_1_0)object).refGetPath().get(4);
             PersistenceManager pm = JDOHelper.getPersistenceManager(object);
-            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-                    "xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName
-                );                
+                    new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName)
+                );
             if(
                 "tracker".equals(c[0]) ||
                 "milestone".equals(c[0]) ||
@@ -116,19 +136,19 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
             ) {
                 List<? extends ActivityGroup> groups = null;
                 if("tracker".equals(c[0])) {
-                    ActivityTrackerQuery query = activityPkg.createActivityTrackerQuery();
+                    ActivityTrackerQuery query = (ActivityTrackerQuery)pm.newQuery(ActivityTracker.class);
                     query.name().equalTo(c[1]);
                     List<org.opencrx.kernel.activity1.jmi1.ActivityTracker> trackers = activitySegment.getActivityTracker(query);
                     groups = trackers;
                 }
                 else if("milestone".equals(c[0])) {
-                    ActivityMilestoneQuery query = activityPkg.createActivityMilestoneQuery();
+                    ActivityMilestoneQuery query = (ActivityMilestoneQuery)pm.newQuery(ActivityMilestone.class);
                     query.name().equalTo(c[1]);
                     List<org.opencrx.kernel.activity1.jmi1.ActivityMilestone> milestones = activitySegment.getActivityMilestone(query);
                     groups = milestones;
                 }
                 else if("category".equals(c[0])) {
-                    ActivityCategoryQuery query = activityPkg.createActivityCategoryQuery();
+                    ActivityCategoryQuery query = (ActivityCategoryQuery)pm.newQuery(ActivityCategory.class);
                     query.name().equalTo(c[1]);
                     List<org.opencrx.kernel.activity1.jmi1.ActivityCategory> categories = activitySegment.getActivityCategory(query);
                     groups = categories;
@@ -136,7 +156,7 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
                 if(!groups.isEmpty()) {
                     ActivityGroup group = groups.iterator().next(); 
                     if("filter".equals(c[2])) {
-                        ActivityFilterGroupQuery query = activityPkg.createActivityFilterGroupQuery();
+                        ActivityFilterGroupQuery query = (ActivityFilterGroupQuery)pm.newQuery(ActivityFilterGroup.class);
                         query.name().equalTo(c[3]);
                         List<ActivityFilterGroup> filters = group.getActivityFilter(query);
                         if(!filters.isEmpty()) {
@@ -157,7 +177,7 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
                 }
             }
             else if("globalfilter".equals(c[0])) {
-                ActivityFilterGlobalQuery query = activityPkg.createActivityFilterGlobalQuery();
+                ActivityFilterGlobalQuery query = (ActivityFilterGlobalQuery)pm.newQuery(ActivityFilterGlobal.class);
                 query.name().equalTo(c[1]);
                 List<ActivityFilterGlobal> filters = activitySegment.getActivityFilter(query);
                 if(!filters.isEmpty()) {
@@ -179,6 +199,4 @@ public class FilteredActivitiesDataBinding extends DefaultDataBinding {
         }
     }
     
-    //-----------------------------------------------------------------------
-
 }

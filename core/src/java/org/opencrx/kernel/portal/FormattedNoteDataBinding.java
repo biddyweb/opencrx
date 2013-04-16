@@ -55,9 +55,9 @@ package org.opencrx.kernel.portal;
 import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.base.jmi1.Note;
+import org.openmdx.base.text.conversion.HtmlEncoder;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DefaultDataBinding;
-import org.openmdx.portal.servlet.attribute.AttributeValue;
 
 public class FormattedNoteDataBinding extends DefaultDataBinding {
 
@@ -84,18 +84,18 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
                 int titleLength = title.length();
                 int indexBol = 0;
                 int indexEol = 0;
-                boolean isWikiText = false;
-                boolean isHtmlText = false;
+                boolean containsWiki = false;
+                boolean containsHtml = false;
                 if(text != null) {
                     while((indexEol = text.indexOf('\n', indexBol)) > 0) {
                         titleLength = Math.max(titleLength, indexEol - indexBol);
                         indexBol = indexEol + 1;                    
                     }
-                    isWikiText = AttributeValue.isWikiText(text);
-                    isHtmlText = AttributeValue.isHtmlText(text);
+                    containsWiki = HtmlEncoder.containsWiki(text);
+                    containsHtml = HtmlEncoder.containsHtml(text);
                 }
                 titleLength = Math.min(140, titleLength);                
-                StringBuilder formattedText = new StringBuilder(isWikiText ? "*" : "<b>");
+                StringBuilder formattedText = new StringBuilder(containsWiki ? "*" : "<b>");
                 formattedText.append(title.replace(" ", "&nbsp;"));
                 boolean isFirst = true;
                 for(int i = title.length(); i < titleLength; i++) {
@@ -104,8 +104,8 @@ public class FormattedNoteDataBinding extends DefaultDataBinding {
                     isFirst = false;
                 }
                 formattedText
-                    .append(isWikiText ? "*\\\\ " : "</b><br />")
-                    .append(text == null ? "" : isWikiText || isHtmlText ? text : text.replaceAll("\n", "<br />"));
+                    .append(containsWiki ? "*\\\\ " : "</b><br />")
+                    .append(text == null ? "" : containsWiki || containsHtml ? text : text.replaceAll("\n", "<br />"));
                 return formattedText.toString();
             }
         }

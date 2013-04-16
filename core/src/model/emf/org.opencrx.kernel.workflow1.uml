@@ -119,6 +119,20 @@
           <packagedElement xmi:type="uml:Class" xmi:id="_bEEt4JGQEdqMLoewFDFMBQ" name="ExternalTask">
             <generalization xmi:id="_cP5n0JGQEdqMLoewFDFMBQ" general="_V-mB0JGQEdqMLoewFDFMBQ"/>
           </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_s0OGgF_mEeKop88i7Ghj2g" name="WfProcessHasInstances" memberEnd="_s0OtkF_mEeKop88i7Ghj2g _s0PUol_mEeKop88i7Ghj2g" navigableOwnedEnd="_s0PUol_mEeKop88i7Ghj2g">
+            <ownedEnd xmi:id="_s0OtkF_mEeKop88i7Ghj2g" name="wfProcess" type="_3C7B8A60016D3F3EC01F0129" association="_s0OGgF_mEeKop88i7Ghj2g">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_s0PUoV_mEeKop88i7Ghj2g" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_s0PUoF_mEeKop88i7Ghj2g" value="1"/>
+            </ownedEnd>
+            <ownedEnd xmi:id="_s0PUol_mEeKop88i7Ghj2g" name="wfProcessInstance" aggregation="shared" association="_s0OGgF_mEeKop88i7Ghj2g">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.home1.uml#_3C7B8A60016D3F3EC02C0286"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_AytG0F_qEeKop88i7Ghj2g" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Aytt4F_qEeKop88i7Ghj2g"/>
+              <qualifier xmi:id="_SxHUgF_nEeKop88i7Ghj2g" name="id">
+                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              </qualifier>
+            </ownedEnd>
+          </packagedElement>
         </packagedElement>
       </packagedElement>
     </packagedElement>

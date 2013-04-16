@@ -54,8 +54,16 @@ package org.opencrx.kernel.portal.wizard;
 
 import org.openmdx.portal.servlet.ApplicationContext;
 
+/**
+ * ChangePasswordWizardExtension
+ *
+ */
 public class ChangePasswordWizardExtension {
 
+	/**
+	 * ValidationException
+	 *
+	 */
 	public static class ValidationException extends Exception {
 
 		public ValidationException(
@@ -68,11 +76,22 @@ public class ChangePasswordWizardExtension {
 		
 	}
 	
+	/**
+	 * Constructor.
+	 * 
+	 */
 	public ChangePasswordWizardExtension(
 	) {
 		
 	}
 	
+	/**
+	 * Contains given characters only.
+	 * 
+	 * @param password
+	 * @param choiceStr
+	 * @return
+	 */
 	boolean containsOnlyCharsOf (
 		String password,
 		String choiceStr
@@ -86,6 +105,13 @@ public class ChangePasswordWizardExtension {
 		return isOk;
 	}
 
+	/**
+	 * Contains given characters.
+	 * 
+	 * @param password
+	 * @param choiceStr
+	 * @return
+	 */
 	public boolean containsCharOf (
 		String password,
 		String choiceStr
@@ -99,6 +125,13 @@ public class ChangePasswordWizardExtension {
 		return isOk;
 	}
 	
+	/**
+	 * Validate password length.
+	 * 
+	 * @param password
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validatePasswordLength(
 		String password,
 		ApplicationContext app		
@@ -108,6 +141,14 @@ public class ChangePasswordWizardExtension {
 //		}
 	}
 	
+	/**
+	 * Contains user name.
+	 * 
+	 * @param password
+	 * @param username
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validateContainsUsername(
 		String password,
 		String username,
@@ -118,6 +159,13 @@ public class ChangePasswordWizardExtension {
 //		}
 	}
 
+	/**
+	 * Validate for at least one upper character.
+	 * 
+	 * @param password
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validateAtLeastOneUpperChar(
 		String password,
 		ApplicationContext app		
@@ -127,6 +175,13 @@ public class ChangePasswordWizardExtension {
 //		}
 	}
 
+	/**
+	 * Validate for at least one lower character.
+	 * 
+	 * @param password
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validateAtLeastOneLowerChar(
 		String password,
 		ApplicationContext app		
@@ -136,6 +191,13 @@ public class ChangePasswordWizardExtension {
 //		}
 	}
 
+	/**
+	 * Validate for at least one digit.
+	 * 
+	 * @param password
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validateAtLeastOneDigit(
 		String password,
 		ApplicationContext app		
@@ -145,6 +207,13 @@ public class ChangePasswordWizardExtension {
 //		}
 	}
 
+	/**
+	 * Validate for at least one special character.
+	 * 
+	 * @param password
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validateAtLeastOneSpecialChar(
 		String password,
 		ApplicationContext app		
@@ -154,6 +223,13 @@ public class ChangePasswordWizardExtension {
 //		}
 	}
 
+	/**
+	 * Contains valid characters only.
+	 * 
+	 * @param password
+	 * @param app
+	 * @throws ValidationException
+	 */
 	protected void validateValidCharsOnly(
 		String password,
 		ApplicationContext app		
@@ -163,6 +239,14 @@ public class ChangePasswordWizardExtension {
 		}
 	}
 	
+	/**
+	 * Validate password.
+	 * 
+	 * @param password
+	 * @param username
+	 * @param app
+	 * @throws ValidationException
+	 */
 	public void validatePassword(
 		String password,
 		String username,

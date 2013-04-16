@@ -37,17 +37,16 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Workflow Processes</_item>
+												<_item>Workflows</_item>
 											</toolTip>
 											<label>
-												<_item>Workflow Processes</_item>
+												<_item>Workflows</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>20</_item>
 											</order>
-											<iconKey>Wf</iconKey>
 											<maxMember>5</maxMember>
 										</_object>
 										<_content/>
@@ -118,10 +117,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Workflow Process</_item>
+												<_item>Workflow</_item>
 											</toolTip>
 											<label>
-												<_item>Workflow Process</_item>
+												<_item>Workflow</_item>
 											</label>
 											<iconKey>Wf</iconKey>
 										</_object>
@@ -164,6 +163,28 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<!--Tab Definitions Pane1-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:WfProcess:wfProcessInstance">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Pending / Completed Workflows</_item>
+											</toolTip>
+											<label>
+												<_item>Pending / Completed Workflows</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>8</maxMember>
+											<showMaxMember>7</showMaxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+
 									<!--ExternalTask -->
 									<!--Tab Definitions Pane2-->
 									<!--Inspector Definitions-->
@@ -197,7 +218,6 @@
 												<_item>0</_item>
 												<_item>20</_item>
 											</order>
-											<iconKey>Topic</iconKey>
 											<maxMember>4</maxMember>
 										</_object>
 										<_content/>

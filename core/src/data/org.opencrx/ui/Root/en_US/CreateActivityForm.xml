@@ -152,7 +152,7 @@
 									<org.openmdx.ui1.FormFieldGroupDefinition name="ActivityDescription">
 										<_object>
 											<label>
-												<_item>Description</_item>
+												<_item>&amp;nbsp;</_item>
 											</label>
 											<order>30</order>
 											<columnBreakAtElement>
@@ -182,6 +182,31 @@
 											</formFieldDefinition>
 										</_content>
 									</org.openmdx.ui1.FormFieldGroupDefinition>																					
+
+									<org.openmdx.ui1.FormFieldGroupDefinition name="ActivityGroupAssignments">
+										<_object>
+											<label>
+												<_item>Group Assignments</_item>
+											</label>
+											<order>40</order>
+											<columnBreakAtElement>
+												<_item>2</_item>
+											</columnBreakAtElement>
+										</_object>
+										<_content>
+											<formFieldDefinition>
+												<org.openmdx.ui1.FormFieldDefinition id="activityGroup">
+													<_object>
+														<forClass>org:opencrx:kernel:activity1:ActivityGroupAssignment</forClass>
+														<featureName>activityGroup</featureName>
+														<order>100</order>														
+													</_object>
+													<_content />
+												</org.openmdx.ui1.FormFieldDefinition>		
+											</formFieldDefinition>
+										</_content>
+									</org.openmdx.ui1.FormFieldGroupDefinition>																					
+
 								</formFieldGroupDefinition>
 							</_content>
 						</org.openmdx.ui1.FormDefinition>

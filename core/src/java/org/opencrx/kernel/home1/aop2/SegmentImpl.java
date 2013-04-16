@@ -59,10 +59,11 @@ import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.home1.jmi1.UserHome;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class SegmentImpl
 	<S extends org.opencrx.kernel.home1.jmi1.Segment,N extends org.opencrx.kernel.home1.cci2.Segment,C extends Void>
@@ -108,21 +109,21 @@ public class SegmentImpl
 	            errors
 	        );
 	        if((userHome == null) || !errors.isEmpty()) {
-	            return Utils.getHomePackage(this.sameManager()).createCreateUserResult(
-	                null,
-	                (short)1,
-	                errors.toString()
-	            );
+	            return Structures.create(
+	            	org.opencrx.kernel.home1.jmi1.CreateUserResult.class, 
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.createdUserHome, null),
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.status, (short)1),               	
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.statusMessage, errors.toString())                	
+	            );	        	
+	        } else {
+	            return Structures.create(
+	            	org.opencrx.kernel.home1.jmi1.CreateUserResult.class, 
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.createdUserHome, userHome),
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.status, (short)0),               	
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.statusMessage, null)                	
+	            );	        	
 	        }
-	        else {
-	            return Utils.getHomePackage(this.sameManager()).createCreateUserResult(
-	                userHome,
-	                (short)0,
-	                null
-	            );
-	        }
-    	}
-    	catch(Exception e) {
+    	} catch(Exception e) {
     		throw new JmiServiceException(e);
     	}
     }
@@ -135,12 +136,12 @@ public class SegmentImpl
             String statusMessage = UserHomes.getInstance().importUsers(
                 this.sameObject(),
                 params.getItem()
+            );          
+            return Structures.create(
+            	org.opencrx.kernel.home1.jmi1.ImportUsersResult.class, 
+            	Datatypes.member(org.opencrx.kernel.home1.jmi1.ImportUsersResult.Member.statusMessage, statusMessage)                	
             );            
-            return Utils.getHomePackage(this.sameManager()).createImportUsersResult(
-                statusMessage
-            );
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                
     }

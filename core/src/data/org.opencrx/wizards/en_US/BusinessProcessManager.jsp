@@ -1,19 +1,17 @@
-﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
+﻿<%@page import="java.util.regex.Pattern"%>
+<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BusinessProcessManager.jsp,v 1.23 2012/07/08 13:31:39 wfro Exp $
  * Description: Manage Activities of a Business Process
- * Revision:    $Revision: 1.23 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:31:39 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +67,6 @@ org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
@@ -97,12 +94,16 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 		SET_FAVORITEACTIVITY,
 		FILE_UPLOAD,
 		EMAIL_UPLOAD,
+		LIST_ALL_DOCS,
+		LIST_ALL_EMAILS,
 		RELOAD
 	}
 
 	final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
 	final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
 	final String ACTIVITY_CLASS = "org:opencrx:kernel:activity1:Activity";
+	final String EMAIL_CLASS = "org:opencrx:kernel:activity1:EMail";
+	final String MEDIA_CLASS = "org:opencrx:kernel:document1:Media";
 	final String ACTIVITYFOLLOWUP_CLASS = "org:opencrx:kernel:activity1:ActivityFollowUp";
 	final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
 
@@ -122,8 +123,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	
 	private static boolean completeActivity(
 		org.opencrx.kernel.activity1.jmi1.Activity activity,
-		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg
+		javax.jdo.PersistenceManager pm
 	) {
 		// try to complete activity by executing doFollowUp operations until percentComplete==100
 		boolean isComplete = (activity.getActivityState() == (short)20);
@@ -144,7 +144,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
   		  } catch (Exception et) {}
   		  while ((process != null) && (!isComplete) && (madeProgress)) {
   		    madeProgress = false;
-          org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery transitionFilter = activityPkg.createActivityProcessTransitionQuery();
+          org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery transitionFilter = (org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition.class);
           transitionFilter.orderByNewPercentComplete().ascending();
           transitionFilter.thereExistsPrevState().equalTo(
               activity.getProcessState()
@@ -161,12 +161,14 @@ org.openmdx.uses.org.apache.commons.fileupload.*
             //System.out.println("transition: " + nextTransition.getName());
             // doFollowUp
             pm.currentTransaction().begin();
-            org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = activityPkg.createActivityDoFollowUpParams(
-              null,           // Contact,
-              "Wizard",       // String Text,
-              null,           // String Title,
-              nextTransition  // Transition
-            );
+            org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = org.w3c.spi2.Structures.create(
+				org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.class, 
+				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.assignTo, null),
+				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.followUpText, "Wizard"),
+				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.followUpTitle, null),
+				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.parentProcessInstance, null),
+				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.transition, nextTransition)
+			);  
             org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult result = activity.doFollowUp(params);
             pm.currentTransaction().commit();
             madeProgress = true;
@@ -218,8 +220,9 @@ org.openmdx.uses.org.apache.commons.fileupload.*
             pm.currentTransaction().begin();
             org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = activityPkg.createActivityDoFollowUpParams(
               null,           // Contact,
-              "Wizard",       // String Text,
-              null,           // String Title,
+              "Wizard",       // String Text
+              null,           // String Title
+              null,           // parentProcessInstance
               nextTransition  // Transition
             );
             org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult result = activity.doFollowUp(params);
@@ -261,12 +264,11 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	) {
 			if (node == null || node.nodeActivity == null) {return node;}
 
-			org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 			org.opencrx.kernel.activity1.jmi1.Activity nodeActivity = node.nodeActivity;
 			if (nodeActivity != null) {
 					//System.out.println("node activity #" + nodeActivity.getActivityNumber());
 					// try to determine dependent activities by following linkedFrom with type "isParentOf" (i.e. 100 - "isChildOf")
-					org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery linkFromQuery = activityPkg.createActivityLinkFromQuery();
+					org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery linkFromQuery = (org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom.class);
 					linkFromQuery.activityLinkType().equalTo(new Short((short)(100 - Activities.ActivityLinkType.IS_CHILD_OF.getValue())));
 					for (Iterator linkFrom = nodeActivity.getActivityLinkFrom(linkFromQuery).iterator(); linkFrom.hasNext();) {
 							try {
@@ -375,9 +377,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 					new ServiceException(e).log();
 			}
 			if (processState != null) {
-					org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 					if (onlySubActivityTransitions) {
-							org.opencrx.kernel.activity1.cci2.SubActivityTransitionQuery subActivityTransitionQuery = activityPkg.createSubActivityTransitionQuery();
+							org.opencrx.kernel.activity1.cci2.SubActivityTransitionQuery subActivityTransitionQuery = (org.opencrx.kernel.activity1.cci2.SubActivityTransitionQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.SubActivityTransition.class);
 							subActivityTransitionQuery.thereExistsPrevState().equalTo(processState);
 							if (orderPercentCompleteIncreasing) {
 									subActivityTransitionQuery.orderByNewPercentComplete().ascending();
@@ -389,7 +390,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 									transitions.add((org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition)t.next());
 							}
 					} else {
-							org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery activityProcessTransitionQuery = activityPkg.createActivityProcessTransitionQuery();
+							org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery activityProcessTransitionQuery = (org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition.class);
 							activityProcessTransitionQuery.thereExistsPrevState().equalTo(processState);
 							if (orderPercentCompleteIncreasing) {
 									activityProcessTransitionQuery.orderByNewPercentComplete().ascending();
@@ -411,12 +412,11 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 			org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess,
 			javax.jdo.PersistenceManager pm
 	) {
-			org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 			if (activityProcess != null) {
 					processNode.subProcessNodes = new ArrayList();
 					
 					// try to determine subNodes based on SubActivityTransitions
-					org.opencrx.kernel.activity1.cci2.SubActivityTransitionQuery subActivityTransitionQuery = activityPkg.createSubActivityTransitionQuery();
+					org.opencrx.kernel.activity1.cci2.SubActivityTransitionQuery subActivityTransitionQuery = (org.opencrx.kernel.activity1.cci2.SubActivityTransitionQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.SubActivityTransition.class);
 					subActivityTransitionQuery.orderByNewPercentComplete().ascending();
 					subActivityTransitionQuery.orderByName().ascending();
 					for (Iterator t = activityProcess.getTransition(subActivityTransitionQuery).iterator(); t.hasNext();) {
@@ -467,11 +467,10 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 			org.opencrx.kernel.activity1.jmi1.Activity activity, // any activity belonging to the process
 			javax.jdo.PersistenceManager pm
 	) {
-			org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 			org.opencrx.kernel.activity1.jmi1.Activity topLevelActivity = activity;
 			if (activity != null) {
 					// try to determine top-level controlling activity by following linkedTo with type "isChildOf"
-					org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery linkToQuery = activityPkg.createActivityLinkToQuery();
+					org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery linkToQuery = (org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityLinkTo.class);
 					linkToQuery.activityLinkType().equalTo(new Short(Activities.ActivityLinkType.IS_CHILD_OF.getValue()));
 					boolean abort = false;
 					Collection linkTo = topLevelActivity.getActivityLinkTo(linkToQuery);
@@ -531,12 +530,14 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 	) {
 			boolean success = false;
 			if(activity != null && transition != null) {
-					org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
-							assignTo, // assignTo
-							text == null ? null : text.replace("\r\n", "\n"),
-							title,
-							transition
-					);
+					org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = org.w3c.spi2.Structures.create(
+						org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.class, 
+						org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.assignTo, assignTo),
+						org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.followUpText, text == null ? null : text.replace("\r\n", "\n")),
+						org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.followUpTitle, title),
+						org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.parentProcessInstance, null),
+						org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.transition, transition)
+					);  
 					try {
 							pm.currentTransaction().begin();
 							org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult activityDoFollowUpResult = activity.doFollowUp(params);
@@ -752,6 +753,104 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 			return result;
 	}
 	
+	public List<org.opencrx.kernel.activity1.jmi1.Activity> getActivities(
+		ProcessNode processNode
+	) {
+		List<org.opencrx.kernel.activity1.jmi1.Activity> result = new ArrayList<org.opencrx.kernel.activity1.jmi1.Activity>();
+		if (processNode != null) {
+			try {
+				if (processNode.nodeActivity != null) {
+					result.add(processNode.nodeActivity);
+				}
+				if (processNode.subProcessNodes != null && processNode.subProcessNodes.size() > 0) {
+					for (int r=0; r < processNode.subProcessNodes.size(); r++) {
+						ProcessNode currentNode = (ProcessNode)processNode.subProcessNodes.get(r);
+						if (currentNode.nodeActivity != null) {
+							result.addAll(getActivities(currentNode));
+						}
+					}
+				}
+			} catch (Exception e) {
+					new ServiceException(e).log();
+			}
+		}
+		return result;
+	}
+
+	public List<org.opencrx.kernel.generic.jmi1.Media> getDocuments(
+		ProcessNode processNode
+	) {
+		List<org.opencrx.kernel.generic.jmi1.Media> result = new ArrayList<org.opencrx.kernel.generic.jmi1.Media>();
+		if (processNode != null) {
+			try {
+				if (processNode.nodeActivity != null) {
+					for(Iterator d = processNode.nodeActivity.getMedia().iterator(); d.hasNext();) {
+						try {
+							result.add((org.opencrx.kernel.generic.jmi1.Media)d.next());
+						} catch (Exception e) {
+							new ServiceException(e).log();
+						}
+					}
+				}
+				if (processNode.subProcessNodes != null && processNode.subProcessNodes.size() > 0) {
+					for (int r=0; r < processNode.subProcessNodes.size(); r++) {
+						ProcessNode currentNode = (ProcessNode)processNode.subProcessNodes.get(r);
+						if (currentNode.nodeActivity != null) {
+							result.addAll(getDocuments(currentNode));
+						}
+					}
+				}
+			} catch (Exception e) {
+					new ServiceException(e).log();
+			}
+		}
+		return result;
+	}
+
+	public List<org.opencrx.kernel.activity1.jmi1.EMail> getLinkedEMailsOfActivity(
+		org.opencrx.kernel.activity1.jmi1.Activity activity,
+		javax.jdo.PersistenceManager pm
+	) {
+		List<org.opencrx.kernel.activity1.jmi1.EMail> result = new ArrayList<org.opencrx.kernel.activity1.jmi1.EMail>();
+		try {
+			org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery linkFromQuery = (org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom.class);
+			linkFromQuery.activityLinkType().equalTo(new Short((short)(100 - Activities.ActivityLinkType.RELATES_TO.getValue())));
+			for (Iterator linkFrom = activity.getActivityLinkFrom(linkFromQuery).iterator(); linkFrom.hasNext();) {
+				try {
+					org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom activityLinkFrom = (org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom)linkFrom.next();
+					if (activityLinkFrom.getLinkFrom() != null && activityLinkFrom.getLinkFrom() instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
+						result.add((org.opencrx.kernel.activity1.jmi1.EMail)activityLinkFrom.getLinkFrom());
+					}
+				} catch (Exception e) {}
+			}
+		} catch (Exception e) {}
+		return result;
+	}
+
+	public List<org.opencrx.kernel.activity1.jmi1.EMail> getEMails(
+		ProcessNode processNode,
+		javax.jdo.PersistenceManager pm
+	) {
+		List<org.opencrx.kernel.activity1.jmi1.EMail> result = new ArrayList<org.opencrx.kernel.activity1.jmi1.EMail>();
+		if (processNode != null) {
+			try {
+				if (processNode.nodeActivity != null) {
+					result.addAll(getLinkedEMailsOfActivity(processNode.nodeActivity, pm));
+				}
+				if (processNode.subProcessNodes != null && processNode.subProcessNodes.size() > 0) {
+					for (int r=0; r < processNode.subProcessNodes.size(); r++) {
+						ProcessNode currentNode = (ProcessNode)processNode.subProcessNodes.get(r);
+						if (currentNode.nodeActivity != null) {
+							result.addAll(getEMails(currentNode, pm));
+						}
+					}
+				}
+			} catch (Exception e) {
+					new ServiceException(e).log();
+			}
+		}
+		return result;
+	}
 %>
 
 <%
@@ -992,8 +1091,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 		}
 		boolean isOk = activity != null && completeActivity(
 				activity,
-				pm,
-				org.opencrx.kernel.utils.Utils.getActivityPackage(pm)
+				pm
 		);
 	}	
 
@@ -1057,6 +1155,36 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 .noact {
 	background-color: #849996;
 	color: #eee;
+}
+
+.drop {
+	background-color: #849996;
+}
+
+DIV .processHeader {
+	background-color: #849996;
+	width: 100%;
+	padding: 3px 1px 1px 3px;
+	overflow:hidden;
+}
+
+DIV .processHeader a {
+	font-weight: bold;
+	font-size:150%;
+	color: #eee;
+	margin-bottom:3px;
+}
+
+DIV .processHeader a:hover {
+	color: black;
+}
+
+DIV .processHeader DIV{
+	display:inline;
+	font-weight: bold;
+	font-size:150%;
+	color: #eee;
+	cursor: pointer;
 }
 
 .processNode {
@@ -1186,7 +1314,7 @@ DIV.actclosed TD.noact {
 	border-collapse: separate;
 	table-layout: fixed;
 	overflow: hidden;
-	width: 150px;
+	width: 250px;
 }
 
 .fileDropTable caption {
@@ -1195,7 +1323,7 @@ DIV.actclosed TD.noact {
 	font-weight: bold;
 	text-align: left;
 	white-space: nowrap;
-	width: 150px;
+	width: 250px;
 }
 
 .fileDropTable tbody {
@@ -1227,7 +1355,7 @@ DIV.actclosed TD.noact {
 	border-collapse: separate;
 	table-layout: fixed;
 	overflow: hidden;
-	width: 150px;
+	width: 250px;
 }
 
 .emailDropTable caption {
@@ -1236,7 +1364,7 @@ DIV.actclosed TD.noact {
 	font-weight: bold;
 	text-align: left;
 	white-space: nowrap;
-	width: 150px;
+	width: 250px;
 }
 
 .emailDropTable tbody {
@@ -1468,12 +1596,14 @@ input.button {
     	    java.util.Date dueBy = (java.util.Date)formValues.get("org:opencrx:kernel:activity1:Activity:dueBy");
 
     	    if(transition != null) {
-		    			org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
-		              assignTo,
-		              followUpText,
-		              followUpTitle,
-		              transition
-		    			);
+				org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams params = org.w3c.spi2.Structures.create(
+					org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.class, 
+					org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.assignTo, assignTo),
+					org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.followUpText, followUpText),
+					org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.followUpTitle, followUpTitle),
+					org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.parentProcessInstance, null),
+					org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams.Member.transition, transition)
+				); 
 		          pm.refresh(activity);
 		          pm.currentTransaction().begin();
 		    			org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult result = activity.doFollowUp(params);
@@ -1539,11 +1669,10 @@ input.button {
 								<select	id="resourceContact" name="resourceContact" class="valueL" tabindex="<%= tabIndex++ %>"	onchange="javascript:$('fetchResourceContact').value='override';$('Refresh.Button').click();">
 <%
 		               // get Resources sorted by name(asc)
-						org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-		               org.opencrx.kernel.activity1.cci2.ResourceQuery recourceFilter = activityPkg.createResourceQuery();
+		               org.opencrx.kernel.activity1.cci2.ResourceQuery recourceFilter = (org.opencrx.kernel.activity1.cci2.ResourceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
 		               recourceFilter.orderByName().ascending();
-									recourceFilter.forAllDisabled().isFalse();
-									int maxResourceToShow = 200;
+						recourceFilter.forAllDisabled().isFalse();
+						int maxResourceToShow = 200;
 		              for (
 		                 Iterator k = activitySegment.getResource(recourceFilter).iterator();
 		                 k.hasNext() && maxResourceToShow > 0;
@@ -1646,9 +1775,7 @@ input.button {
 							(org.opencrx.kernel.generic.jmi1.CrxObject)actobj;
 						org.opencrx.kernel.generic.jmi1.Media media = null;
 						if(media == null) {
-							org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = org.opencrx.kernel.utils.Utils.getGenericPackage(pm);
-							media = genericPkg.getMedia().createMedia();
-							media.refInitialize(false, false);
+							media = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
 						}
 						//media.setDescription(description.length() > 0 ? description : contentName);
 						media.setContentName(contentName);
@@ -1657,7 +1784,6 @@ input.button {
 							org.w3c.cci2.BinaryLargeObjects.valueOf(new File(location))
 						);
 						crxObject.addMedia(
-							false,
 							org.opencrx.kernel.backend.Activities.getInstance().getUidAsString(),
 							media
 						);
@@ -1798,11 +1924,12 @@ input.button {
 						
 						//System.out.println("calling importMimeMessage done");
 						//System.out.println("emails = " + emails);
+						//System.out.println("sendDate = " + msg.getSentDate());
 						if (emails != null && !emails.isEmpty()) {
 							try {	
 								org.opencrx.kernel.activity1.jmi1.EMail importedEMail = (org.opencrx.kernel.activity1.jmi1.EMail)emails.iterator().next();
 								// link e-mail to favoriteActivity (if link does not yet exist)
-								org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery activityLinkToFilter = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityLinkToQuery();
+								org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery activityLinkToFilter = (org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityLinkTo.class);
 								activityLinkToFilter.activityLinkType().equalTo(
 								    new Short(Activities.ActivityLinkType.RELATES_TO.getValue())
 								);
@@ -1811,7 +1938,7 @@ input.button {
 								if (linkTos == null || linkTos.isEmpty()) {
 									// add link
 									pm.currentTransaction().begin();
-									org.opencrx.kernel.activity1.jmi1.ActivityLinkTo activityLinkTo = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).getActivityLinkTo().createActivityLinkTo();
+									org.opencrx.kernel.activity1.jmi1.ActivityLinkTo activityLinkTo = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityLinkTo.class);
 									activityLinkTo.refInitialize(false, false);
 									activityLinkTo.setLinkTo(favoriteActivity);
 									activityLinkTo.setName("activity:" + favoriteActivity.getActivityNumber());
@@ -1849,7 +1976,7 @@ input.button {
 	int numOfEmails = 0;
 	if (favoriteActivity != null) {
 		try {
-			org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery linkFromQuery = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityLinkFromQuery();
+			org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery linkFromQuery = (org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom.class);
 			linkFromQuery.activityLinkType().equalTo(new Short((short)(100 - Activities.ActivityLinkType.RELATES_TO.getValue())));
 			for (Iterator linkFrom = favoriteActivity.getActivityLinkFrom(linkFromQuery).iterator(); linkFrom.hasNext();) {
 					try {
@@ -1862,6 +1989,27 @@ input.button {
 		} catch (Exception e) {}
 	}
 
+	// render header
+	String activityHref = null;
+	if (processNode.nodeActivity != null) {
+		Action action = new Action(
+				SelectObjectAction.EVENT_ID,
+				new Action.Parameter[]{
+						new Action.Parameter(Action.PARAMETER_OBJECTXRI, processNode.nodeActivity.refMofId())
+				},
+				"",
+				true // enabled
+			);
+		activityHref = "../../" + action.getEncodedHRef();
+	}
+%>
+	<div class="processHeader">
+		<a href='<%= activityHref %>' target='_blank'><%= processNode.nodeActivity != null ? "#" + app.getHtmlEncoder().encode(new ObjectReference(processNode.nodeActivity, app).getTitle(), false) : "--" %></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<div onclick="javascript:$('command').value='LIST_ALL_DOCS';<%= CLICK_RELOAD %>"><img	src='../../images/Media.gif' /> <%= app.getLabel("org:opencrx:kernel:generic:DocumentAttachment") %> </div>&nbsp;
+		<div onclick="javascript:$('command').value='LIST_ALL_EMAILS';<%= CLICK_RELOAD %>"><img src='../../images/EMail.gif' /> <%= app.getLabel("org:opencrx:kernel:activity1:EMail") %>s </div>
+		<input type="button" value="<%= app.getTexts().getCloseText() %>"	tabindex="<%= tabIndex++ %>" style="float:right;" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=CANCEL" %>';" />
+	</div>
+<%
 	// render overview
 	org.opencrx.kernel.account1.jmi1.Account customer = null;
 	org.opencrx.kernel.account1.jmi1.Account customerContact = null;
@@ -1906,7 +2054,7 @@ input.button {
 				List<org.opencrx.kernel.activity1.jmi1.TaskParty> taskParties = null;
 				try {
 						if (topLevelActivity instanceof org.opencrx.kernel.activity1.jmi1.Task) {
-								org.opencrx.kernel.activity1.cci2.TaskPartyQuery taskPartyFilter = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createTaskPartyQuery();
+								org.opencrx.kernel.activity1.cci2.TaskPartyQuery taskPartyFilter = (org.opencrx.kernel.activity1.cci2.TaskPartyQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.TaskParty.class);
 								taskPartyFilter.orderByCreatedAt().ascending();
 								taskPartyFilter.partyType().notEqualTo(new Short((short)460)); // exclude organizer
 								taskParties = ((org.opencrx.kernel.activity1.jmi1.Task)topLevelActivity).getTaskParty(taskPartyFilter);
@@ -1922,13 +2070,45 @@ input.button {
 										role = (String)(codes.getLongText("org:opencrx:kernel:activity1:TaskParty:partyType", app.getCurrentLocaleAsIndex(), true, true).get(new Short(taskParty.getPartyType())));
 								} catch (Exception e) {}
 								if (taskParty.getParty() != null) {
-%>                <%= getAccountEntry(
+%>									<%= getAccountEntry(
 												taskParty.getParty(), 
 												role,
 												app.getLabel(taskParty.getParty() != null ? taskParty.getParty().refClass().refMofId().toString() : CONTACT_CLASS), 
 												userView,
 												app
-										) %> <%
+										) %>
+<%
+								}
+						}
+				}
+				// get Incident Parties
+				List<org.opencrx.kernel.activity1.jmi1.IncidentParty> incidentParties = null;
+				try {
+						if (topLevelActivity instanceof org.opencrx.kernel.activity1.jmi1.Incident) {
+								org.opencrx.kernel.activity1.cci2.IncidentPartyQuery incidentPartyFilter = (org.opencrx.kernel.activity1.cci2.IncidentPartyQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.IncidentParty.class);
+								incidentPartyFilter.orderByCreatedAt().ascending();
+								incidentPartyFilter.partyType().notEqualTo(new Short((short)460)); // exclude organizer
+								incidentParties = ((org.opencrx.kernel.activity1.jmi1.Incident)topLevelActivity).getIncidentParty(incidentPartyFilter);
+						}
+				} catch (Exception e) {
+						new ServiceException(e).log();
+				}
+				if (incidentParties != null && !incidentParties.isEmpty()) {
+						for (Iterator tp = incidentParties.iterator(); tp.hasNext();) {
+								org.opencrx.kernel.activity1.jmi1.IncidentParty incidentParty = (org.opencrx.kernel.activity1.jmi1.IncidentParty)tp.next();
+								String role = "--";
+								try {
+										role = (String)(codes.getLongText("org:opencrx:kernel:activity1:IncidentParty:partyType", app.getCurrentLocaleAsIndex(), true, true).get(new Short(incidentParty.getPartyType())));
+								} catch (Exception e) {}
+								if (incidentParty.getParty() != null) {
+%>									<%= getAccountEntry(
+												incidentParty.getParty(), 
+												role,
+												app.getLabel(incidentParty.getParty() != null ? incidentParty.getParty().refClass().refMofId().toString() : CONTACT_CLASS), 
+												userView,
+												app
+										) %>
+<%
 								}
 						}
 				}
@@ -1940,158 +2120,343 @@ input.button {
 						app
 				) %>
 
-<table class='fileDropTable'>
-	<caption>
-		<input type="submit" name="UploadDocs"	id="UploadDocs" style="float: right; visibility: hidden;"	value="<%= app.getTexts().getSaveTitle() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:$('DOCcommand').value='FILE_UPLOAD';this.name='--';document.forms['DOCS<%= WIZARD_NAME %>'].submit();" />
-		<a href='<%= favoriteActivityHref %>' target='_blank'> <img	src='../../images/Media.gif' /> <%= app.getLabel("org:opencrx:kernel:generic:DocumentAttachment") %> (<%= numOfDocuments %>) </a>
-	</caption>
+<div style="clear: both; height: 3px;"></div>
 <%
-		if (favoriteActivity != null) {
-%>
-		<tr>
-			<td style="overflow: hidden;"	title=" <%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>">
-				<img src='../../images/favorites.gif'/><%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>
-			</td>
-		</tr>
-<%				
-		}
-%>
-	<tr>
-		<td>
-			<form id="DOCS<%= WIZARD_NAME %>" name="DOCS<%= WIZARD_NAME %>"	enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
-				<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-				<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>"	value="<%= objectXri %>" /> <input type="hidden" name="DOCcommand"	id="DOCcommand" value="NA" /> 
-				<input type="hidden" name="FAVORITEACTIVITY_XRI" id="DOCSFAVORITEACTIVITY_XRI" value="<%= FAVORITEACTIVITY_XRI %>" /> 
-				<input name="<%= UPLOAD_FILE_FIELD_NAME %>"	id="<%= UPLOAD_FILE_FIELD_NAME %>" size="3" class="fileDrop" title="drop files here" type="file" multiple="multiple" onChange="javascript:$('UploadDocs').style.visibility='visible' ; makeFileList();" />
-				<div id="fileList"></div>
-				<script type="text/javascript">
-							$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='60px';
-						
-							function makeFileList() {
-								$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='';
-								var input = $("<%= UPLOAD_FILE_FIELD_NAME %>");
-								var outerdiv = $("fileList");
-								while (outerdiv.hasChildNodes()) {
-									outerdiv.removeChild(outerdiv.firstChild);
-								}
-								for (var i = 0; i < input.files.length; i++) {
-									var div = document.createElement("div");
-									var cb = document.createElement("input");
-									cb.type = "checkbox";
-									cb.name = "filecb"+(i+1);
-					        cb.id = "filecb"+(i+1);
-					        cb.value = input.files[i].name;
-					        cb.checked = true;
-					        var text = document.createTextNode(input.files[i].name);
-									div.appendChild(cb);
-									div.appendChild(text);
-									outerdiv.appendChild(div);
-								}
-								if(!outerdiv.hasChildNodes()) {
-									outerdiv.innerHTML = '--';
-									$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='60px';
-								}
-							}
-				</script>
-			</form>
-		</td>
-	</tr>
-</table>
-
-<form id="EMAILS<%= WIZARD_NAME %>" name="EMAILS<%= WIZARD_NAME %>"	enctype="multipart/form-data" accept-charset="UTF-8" method="POST"	action="<%= WIZARD_NAME %>">
-<table class='emailDropTable'>
-	<caption>
-		<input type="submit" name="UploadEmails" id="UploadEmails" style="float: right; visibility: hidden;" value="<%= app.getTexts().getSaveTitle() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:$('EMAILcommand').value='EMAIL_UPLOAD';this.name='--';document.forms['EMAILS<%= WIZARD_NAME %>'].submit();" />
-		<a href='<%= favoriteActivityHref %>' target='_blank'> <img src='../../images/EMail.gif' /> <%= app.getLabel("org:opencrx:kernel:activity1:EMail") %>	(<%= numOfEmails %>) </a>
-	</caption>
-<%
-	if (favoriteActivity != null) {
-%>
-		<tr>
-			<td style="overflow: hidden;"	title=" <%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>">
-				<img src='../../images/favorites.gif'/><%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %>
-			</td>
-		</tr>
-<%				
+/*
+List<org.opencrx.kernel.activity1.jmi1.Activity> activities = getActivities(processNode);
+if (activities.size() > 0) {
+	for(Iterator a = activities.iterator(); a.hasNext();) {
+		System.out.println(((org.opencrx.kernel.activity1.jmi1.Activity)a.next()).getActivityNumber());
 	}
+}
+*/
+if(command == Command.LIST_ALL_DOCS) {
+	try {
+		List<org.opencrx.kernel.generic.jmi1.Media> documents = getDocuments(processNode);
+		if (documents.size() == 0) {
+			command = Command.RELOAD;
+		} else {
 %>
-
-	<tr>
-		<td>
-				<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-				<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>"	value="<%= objectXri %>" />
-				<input type="hidden" name="DOCcommand" id="EMAILcommand" value="NA" /> 
-				<input type="hidden" name="FAVORITEACTIVITY_XRI" id="EMAILFAVORITEACTIVITY_XRI"	value="<%= FAVORITEACTIVITY_XRI %>" /> 
-				<input name="<%= UPLOAD_EMAIL_FIELD_NAME %>" id="<%= UPLOAD_EMAIL_FIELD_NAME %>" size="3" class="fileDrop"	title="drop files here" type="file" multiple="multiple"	onChange="javascript:$('UploadEmails').style.visibility='visible' ; makeEmailList();" />
-				<div id="emailList"></div>
-				<script type="text/javascript">
-							$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='60px';
-						
-							function makeEmailList() {
-								$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='';
-								var input = $("<%= UPLOAD_EMAIL_FIELD_NAME %>");
-								var outerdiv = $("emailList");
-								while (outerdiv.hasChildNodes()) {
-									outerdiv.removeChild(outerdiv.firstChild);
-								}
-								for (var i = 0; i < input.files.length; i++) {
-									var div = document.createElement("div");
-									var cbtn = document.createElement("input");
-									cbtn.type = "checkbox";
-									cbtn.name = "filecb"+(i+1);
-					        cbtn.id = "filecb"+(i+1);
-					        cbtn.value = input.files[i].name;
-					        cbtn.checked = true;
-					        var text = document.createTextNode(input.files[i].name);
-									div.appendChild(cbtn);
-									div.appendChild(text);
-									outerdiv.appendChild(div);
-								}
-								if(!outerdiv.hasChildNodes()) {
-									outerdiv.innerHTML = '--';
-									$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='60px';
-								}
-							}
-				</script>
-		</td>
-	</tr>
-</table>
-
+			<table><tr><td>
+			<table id="resultTable" class="gridTableFull">
+				<tr class="gridTableHeaderFull"><!-- 6 columns -->
+					<td align=left>&nbsp;<%= app.getLabel("org:opencrx:kernel:document1:Document") %></td>
+					<td align=left>&nbsp;<%= userView.getFieldLabel(MEDIA_CLASS, "description", app.getCurrentLocaleAsIndex()) %></td>
+				</tr>
 <%
-if (hasErrors) {
+				Map docsSorted = new TreeMap();
+				final String SEPARATOR = "~";
+				SimpleDateFormat createdAtDateFormat = new SimpleDateFormat("yyyyMMddHHmm", app.getCurrentLocale());
+				
+				int counter = 0;
+				for(
+				    Iterator i = documents.iterator();
+				    i.hasNext();
+				    counter++
+				) {
+					org.opencrx.kernel.generic.jmi1.Media media =
+						(org.opencrx.kernel.generic.jmi1.Media)i.next();
+					docsSorted.put(createdAtDateFormat.format(media.getCreatedAt()), media.refMofId());
+				}
+				for (
+					Iterator i = docsSorted.values().iterator();
+					i.hasNext();
+				) {
+					// get media
+					org.opencrx.kernel.generic.jmi1.Media media =
+						(org.opencrx.kernel.generic.jmi1.Media)pm.getObjectById(new Path((String)i.next()));;
+					ObjectReference mediaRef  = new ObjectReference(media, app);
+					String mediaHref = "";
+					Action action = new Action(
+						SelectObjectAction.EVENT_ID,
+						new Action.Parameter[]{
+							new Action.Parameter(Action.PARAMETER_OBJECTXRI, media.refMofId())
+						},
+						"",
+						true // enabled
+					);
+					mediaHref = "../../" + action.getEncodedHRef();
 %>
-	<table class="emailX500Table">
-		<caption>
-			<input type="submit" name="UploadEmailsX500" id="UploadEmails" style="float: right;"" value="<%= app.getTexts().getSaveTitle() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:$('EMAILcommand').value='EMAIL_UPLOAD';this.name='--';document.forms['EMAILS<%= WIZARD_NAME %>'].submit();" />
-			<div style="float:left;padding-top:5px;" >SMTP &lt;--&gt; X.500 </div>
-		</caption>
+					<tr class="gridTableRow">
+					  	<td align=left>
+					  		<b><a href="<%= mediaHref %>" target="_blank"><img class="popUpButton" border="1" alt="lookup" title="<%= mediaRef.getLabel() %>" src="../../images/<%= mediaRef.getIconKey() %>" />
+					  			<%= media.getContentName() == null ? "--" : media.getContentName() %>
+					  		</a></b>
+					  	</td>
+					  	<td align=left><%= media.getDescription() == null  ? "--" : media.getDescription() %></td>
+					</tr>
 <%
-		for (int idx = 0; idx < errors.size(); idx++) {
+	    		}
 %>
-			<tr>
-				<td class="col1"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:activity1:EMailRecipient", "party", app.getCurrentLocaleAsIndex()) %>:</span></td>
-				<td class="col2">
-					<input type="text" name="email-<%= idx %>" style="width:200px;" size="20" value="" />
-					<input type="hidden" name="unmatched-<%= idx %>" value="<%= errors.get(idx) %>" /> 
-	 				<span style="white-space:nowrap;overflow:hidden;" title="<%= errors.get(idx) %>"><%= errors.get(idx) %></span>
-				</td>
-			</tr>
+			</table>
+			</td></tr></table>
 <%
 		}
+	} catch (Exception e) {
+		new ServiceException(e).log();
+	}
+} else if (command == Command.LIST_ALL_EMAILS) {
+	try {
+		List<org.opencrx.kernel.activity1.jmi1.EMail> emails = getEMails(processNode, pm);
+		if (emails.size() == 0) {
+			command = Command.RELOAD;
+		} else {
 %>
-	</table>
-	<br>
+			<table><tr><td>
+			<table id="resultTable" class="gridTableFull">
+				<tr class="gridTableHeaderFull"><!-- 6 columns -->
+					<td align=left>&nbsp;<%= app.getLabel("org:opencrx:kernel:activity1:EMail") %></td>
+					<td align=left>&nbsp;<%= userView.getFieldLabel(EMAIL_CLASS, "messageSubject", app.getCurrentLocaleAsIndex()) %></td>
+					<td align=left>&nbsp;<%= userView.getFieldLabel(ACTIVITY_CLASS, "assignedTo", app.getCurrentLocaleAsIndex()) %></td>
+					<td align=left>&nbsp;<%= userView.getFieldLabel(EMAIL_CLASS, "sendDate", app.getCurrentLocaleAsIndex()) %></td>
+				</tr>
 <%
-	// preserve paths and names of existing files for roundtrip
-	for (int idx = 0; idx < existingFilesPath.size(); idx++) {
+				Map emailsSorted = new TreeMap();
+				final String SEPARATOR = "~";
+				SimpleDateFormat activityDateFormat = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());
+				
+				int counter = 0;
+				for(
+				    Iterator i = emails.iterator();
+				    i.hasNext();
+				    counter++
+				) {
+					org.opencrx.kernel.activity1.jmi1.EMail email =
+						(org.opencrx.kernel.activity1.jmi1.EMail)i.next();
+					emailsSorted.put(email.getActivityNumber(), email.refMofId());
+				}
+				for (
+					Iterator i = emailsSorted.values().iterator();
+					i.hasNext();
+				) {
+					// get email
+					org.opencrx.kernel.activity1.jmi1.EMail email =
+						(org.opencrx.kernel.activity1.jmi1.EMail)pm.getObjectById(new Path((String)i.next()));;
+					ObjectReference emailRef  = new ObjectReference(email, app);
+					String emailHref = "";
+					Action action = new Action(
+						SelectObjectAction.EVENT_ID,
+						new Action.Parameter[]{
+							new Action.Parameter(Action.PARAMETER_OBJECTXRI, email.refMofId())
+						},
+						"",
+						true // enabled
+					);
+					emailHref = "../../" + action.getEncodedHRef();
+					String body = email.getMessageBody() == null ? "<>" : email.getMessageBody().replace("\"", "'").replace("\n\r", "\n");
+					for (Integer k = 0; k<5; k++) {
+						body = body.replace("\n\n", "\n");
+					}
 %>
-		<input type="hidden" name="filepath-<%= idx %>" value="<%= existingFilesPath.get(idx) %>" />
-		<input type="hidden" name="filename-<%= idx %>" value="<%= existingFilesName.get(idx) %>" />
+					<tr class="gridTableRow" title="<%= body %>">
+					  	<td align=left><b><a href="<%= emailHref %>" target="_blank"><img class="popUpButton" border="1" alt="lookup" title="<%= emailRef.getLabel() %>" src="../../images/<%= emailRef.getIconKey() %>" /> #<%= email.getActivityNumber() == null ? "--" : email.getActivityNumber() %></a></b></td>
+					  	<td align=left><%= email.getMessageSubject() == null ? "--" : email.getMessageSubject() %></td>
+					  	<td align=left><%= email.getAssignedTo() == null  ? "--" : (email.getAssignedTo().getFullName() == null ? "--" : email.getAssignedTo().getFullName()) %></td>
+					  	<td align=right><%= email.getSendDate() == null  ? "--" : activityDateFormat.format(email.getSendDate()) %></td>
+					</tr>
 <%
+	    		}
+%>
+			</table>
+			</td></tr></table>
+<%
+		}
+	} catch (Exception e) {
+		new ServiceException(e).log();
 	}
 }
 %>
-</form>
+
+<div class="drop" style="padding:2px;">
+<%
+	if (favoriteActivity != null) {
+%>
+		&nbsp;&nbsp;<img src='../../images/favorites.gif'/><span class='noact'><%= app.getHtmlEncoder().encode(new ObjectReference(favoriteActivity, app).getTitle(), false) %></span><br>
+<%				
+	}
+%>
+
+	<table class='fileDropTable'>
+		<caption>
+			<div style='float:right;' onclick="javascript:$('docDrop').style.display='block';this.style.display='none';"><img	src='../../images/filter_down_time.gif' /></div>
+			<input type="submit" name="UploadDocs"	id="UploadDocs" style="float: right; visibility: hidden;"	value="<%= app.getTexts().getSaveTitle() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:$('DOCcommand').value='FILE_UPLOAD';this.name='--';document.forms['DOCS<%= WIZARD_NAME %>'].submit();" />
+			<a href='<%= favoriteActivityHref %>' target='_blank'> <img	src='../../images/Media.gif' /> <%= app.getLabel("org:opencrx:kernel:generic:DocumentAttachment") %> (<%= numOfDocuments %>) </a>
+		</caption>
+		<tr id="docDrop" style="display:none;">
+			<td>
+				<form id="DOCS<%= WIZARD_NAME %>" name="DOCS<%= WIZARD_NAME %>"	enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
+					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>"	value="<%= objectXri %>" /> <input type="hidden" name="DOCcommand"	id="DOCcommand" value="NA" /> 
+					<input type="hidden" name="FAVORITEACTIVITY_XRI" id="DOCSFAVORITEACTIVITY_XRI" value="<%= FAVORITEACTIVITY_XRI %>" /> 
+					<input name="<%= UPLOAD_FILE_FIELD_NAME %>"	id="<%= UPLOAD_FILE_FIELD_NAME %>" size="3" class="fileDrop" title="drop files here" type="file" multiple="multiple" onChange="javascript:$('UploadDocs').style.visibility='visible' ; makeFileList();" />
+					<div id="fileList"></div>
+					<script type="text/javascript">
+								$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='60px';
+							
+								function makeFileList() {
+									$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='';
+									var input = $("<%= UPLOAD_FILE_FIELD_NAME %>");
+									var outerdiv = $("fileList");
+									while (outerdiv.hasChildNodes()) {
+										outerdiv.removeChild(outerdiv.firstChild);
+									}
+									for (var i = 0; i < input.files.length; i++) {
+										var div = document.createElement("div");
+										var cb = document.createElement("input");
+										cb.type = "checkbox";
+										cb.name = "filecb"+(i+1);
+						        cb.id = "filecb"+(i+1);
+						        cb.value = input.files[i].name;
+						        cb.checked = true;
+						        var text = document.createTextNode(input.files[i].name);
+										div.appendChild(cb);
+										div.appendChild(text);
+										outerdiv.appendChild(div);
+									}
+									if(!outerdiv.hasChildNodes()) {
+										outerdiv.innerHTML = '--';
+										$('<%= UPLOAD_FILE_FIELD_NAME %>').style.height='60px';
+									}
+								}
+					</script>
+				</form>
+			</td>
+		</tr>
+	</table>
+	
+	<form id="EMAILS<%= WIZARD_NAME %>" name="EMAILS<%= WIZARD_NAME %>"	enctype="multipart/form-data" accept-charset="UTF-8" method="POST"	action="<%= WIZARD_NAME %>">
+		<table class='emailDropTable'>
+			<caption>
+				<div style='float:right;' onclick="javascript:$('emailDrop').style.display='block';this.style.display='none';"><img	src='../../images/filter_down_time.gif' /></div>
+				<input type="submit" name="UploadEmails" id="UploadEmails" style="float: right; visibility: hidden;" value="<%= app.getTexts().getSaveTitle() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:$('EMAILcommand').value='EMAIL_UPLOAD';this.name='--';document.forms['EMAILS<%= WIZARD_NAME %>'].submit();" />
+				<a href='<%= favoriteActivityHref %>' target='_blank'> <img src='../../images/EMail.gif' /> <%= app.getLabel("org:opencrx:kernel:activity1:EMail") %>	(<%= numOfEmails %>)</a>
+			</caption>
+			<tr id="emailDrop" style="display:none;">
+				<td>
+						<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+						<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>"	value="<%= objectXri %>" />
+						<input type="hidden" name="DOCcommand" id="EMAILcommand" value="NA" /> 
+						<input type="hidden" name="FAVORITEACTIVITY_XRI" id="EMAILFAVORITEACTIVITY_XRI"	value="<%= FAVORITEACTIVITY_XRI %>" /> 
+						<input name="<%= UPLOAD_EMAIL_FIELD_NAME %>" id="<%= UPLOAD_EMAIL_FIELD_NAME %>" size="3" class="fileDrop"	title="drop files here" type="file" multiple="multiple"	onChange="javascript:$('UploadEmails').style.visibility='visible' ; makeEmailList();" />
+						<div id="emailList"></div>
+						<script type="text/javascript">
+									$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='60px';
+								
+									function makeEmailList() {
+										$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='';
+										var input = $("<%= UPLOAD_EMAIL_FIELD_NAME %>");
+										var outerdiv = $("emailList");
+										while (outerdiv.hasChildNodes()) {
+											outerdiv.removeChild(outerdiv.firstChild);
+										}
+										for (var i = 0; i < input.files.length; i++) {
+											var div = document.createElement("div");
+											var cbtn = document.createElement("input");
+											cbtn.type = "checkbox";
+											cbtn.name = "filecb"+(i+1);
+							        cbtn.id = "filecb"+(i+1);
+							        cbtn.value = input.files[i].name;
+							        cbtn.checked = true;
+							        var text = document.createTextNode(input.files[i].name);
+											div.appendChild(cbtn);
+											div.appendChild(text);
+											outerdiv.appendChild(div);
+										}
+										if(!outerdiv.hasChildNodes()) {
+											outerdiv.innerHTML = '--';
+											$('<%= UPLOAD_EMAIL_FIELD_NAME %>').style.height='60px';
+										}
+									}
+						</script>
+				</td>
+			</tr>
+		</table>
+<%
+		if (hasErrors) {
+%>
+			<table class="emailX500Table">
+				<caption>
+					<input type="submit" name="UploadEmailsX500" id="UploadEmails" style="float: right;"" value="<%= app.getTexts().getSaveTitle() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:$('EMAILcommand').value='EMAIL_UPLOAD';this.name='--';document.forms['EMAILS<%= WIZARD_NAME %>'].submit();" />
+					<div style="float:left;padding-top:5px;" >SMTP &lt;--&gt; SMTP / SMTP &lt;--&gt; X.500 </div>
+				</caption>
+<%
+				for (int idx = 0; idx < errors.size(); idx++) {
+%>
+					<tr>
+						<td class="col1"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:activity1:EMailRecipient", "party", app.getCurrentLocaleAsIndex()) %>:</span></td>
+						<td class="col2">
+<%
+							// try to find contacts with machting e-mail
+							String locatedEmailAddress = null;
+							try {
+								org.opencrx.kernel.account1.cci2.EMailAddressQuery emailQuery = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
+								emailQuery.thereExistsEmailAddress().like("(?i)" + errors.get(idx).replace(".", "\\."));
+								emailQuery.forAllDisabled().isFalse();
+								Collection<org.opencrx.kernel.account1.jmi1.EMailAddress> emailAddresses = accountSegment.getAddress(emailQuery);
+								for (Iterator i = emailAddresses.iterator(); i.hasNext() && locatedEmailAddress == null;) {
+									try {
+										org.opencrx.kernel.account1.jmi1.EMailAddress emailAddress = (org.opencrx.kernel.account1.jmi1.EMailAddress)i.next();
+										org.opencrx.kernel.account1.jmi1.Account account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(emailAddress.refMofId()).getParent().getParent());
+										org.opencrx.kernel.account1.jmi1.AccountAddress[] mainAddresses = Accounts.getInstance().getMainAddresses(account);
+									    org.opencrx.kernel.account1.jmi1.AccountAddress[] addressesNotMain = Accounts.getInstance().getAccountAddresses(
+									    		account,
+									    		new Accounts.AddressFilter(){
+									    			@Override
+									    			public boolean matches(
+									    					org.opencrx.kernel.account1.jmi1.AccountAddress address
+									    			) {
+									    				boolean isMain = false;
+									    				try {
+									    					isMain = address.isMain();
+									    				} catch(Exception e) {}
+									    				return !isMain;
+									    			}
+									    		},
+									    		true // strict
+									    );
+										
+									    if(mainAddresses[Accounts.MAIL_BUSINESS] != null) {
+									    	locatedEmailAddress = ((org.opencrx.kernel.account1.jmi1.EMailAddress)mainAddresses[Accounts.MAIL_BUSINESS]).getEmailAddress();
+									    }
+									    if((locatedEmailAddress == null || locatedEmailAddress.length() == 0) && addressesNotMain[Accounts.MAIL_BUSINESS] != null) {
+									    	((org.opencrx.kernel.account1.jmi1.EMailAddress)addressesNotMain[Accounts.MAIL_BUSINESS]).getEmailAddress();
+									    }
+									    if((locatedEmailAddress == null || locatedEmailAddress.length() == 0) && mainAddresses[Accounts.MAIL_HOME] != null) {
+									    	((org.opencrx.kernel.account1.jmi1.EMailAddress)mainAddresses[Accounts.MAIL_HOME]).getEmailAddress();
+									    }
+									    if((locatedEmailAddress == null || locatedEmailAddress.length() == 0) && addressesNotMain[Accounts.MAIL_HOME] != null) {
+									    	((org.opencrx.kernel.account1.jmi1.EMailAddress)addressesNotMain[Accounts.MAIL_HOME]).getEmailAddress();
+									    }
+									} catch (Exception e) {
+										new ServiceException(e).log();
+									}
+								}
+							} catch (Exception e) {
+								new ServiceException(e).log();
+							}
+%>
+							<input type="text" name="email-<%= idx %>" style="width:200px;" size="20" value="<%= locatedEmailAddress == null ? "" : locatedEmailAddress %>" />
+							<input type="hidden" name="unmatched-<%= idx %>" value="<%= errors.get(idx) %>" /> 
+			 				<span style="white-space:nowrap;overflow:hidden;" title="<%= errors.get(idx) %>"><%= errors.get(idx) %></span>
+						</td>
+					</tr>
+<%
+				}
+%>
+			</table>
+			<br>
+<%
+			// preserve paths and names of existing files for roundtrip
+			for (int idx = 0; idx < existingFilesPath.size(); idx++) {
+%>
+				<input type="hidden" name="filepath-<%= idx %>" value="<%= existingFilesPath.get(idx) %>" />
+				<input type="hidden" name="filename-<%= idx %>" value="<%= existingFilesName.get(idx) %>" />
+<%
+			}
+		}
+%>
+	</form>
+</div>
 
 <div style="clear: both; height: 3px;"></div>
 
@@ -2113,24 +2478,7 @@ if (hasErrors) {
 		<fieldset>
 <%
 			if (processNode != null) {
-				String activityHref = null;
-				if (processNode.nodeActivity != null) {
-					Action action = new Action(
-							SelectObjectAction.EVENT_ID,
-							new Action.Parameter[]{
-									new Action.Parameter(Action.PARAMETER_OBJECTXRI, processNode.nodeActivity.refMofId())
-							},
-							"",
-							true // enabled
-						);
-					activityHref = "../../" + action.getEncodedHRef();
-				}
-
-
 %>
-				<legend>
-					<a href='<%= activityHref %>' target='_blank'><%= processNode.nodeActivity != null ? "#" + app.getHtmlEncoder().encode(new ObjectReference(processNode.nodeActivity, app).getTitle(), false) : "--" %></a>
-				</legend>
 				<%= produceTable(processNode, showCompleteProcess, userView, pm, app) %>
 <%
 			} else {

@@ -2,11 +2,8 @@
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: AccountRelationshipsGraph.jsp,v 1.21 2012/07/08 13:29:33 wfro Exp $
  * Description: Draw membership graph for an account
- * Revision:    $Revision: 1.21 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
@@ -69,7 +66,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*
@@ -330,11 +326,10 @@ org.openmdx.base.query.*
 		javax.jdo.PersistenceManager pm
 	) {
 		if(level >= 0) {
-			org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
 			int[] maxCounts = new int[]{5, 5, 25};
 			int maxCount = maxCounts[level];
 
- 			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = accountPkg.createAccountMembershipQuery();
+ 			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
  			org.openmdx.base.query.Extension queryFilter = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
 			Collection memberships = null;
  			int count = 0;
@@ -352,8 +347,8 @@ org.openmdx.base.query.*
 		          "v.member IN ( " +
 		          "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
 		          "  where " +
-		          "   ((m.disabled is null) or (m.disabled = false)) and " +
-		          "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = false))) " +
+		          "   ((m.disabled is null) or (m.disabled = '0')) and " +
+		          "   ((m.account_to   = a.object_id) and ((a.disabled is null) or (a.disabled = '0'))) " +
 		          "  ) " +
 		          ") "
 		        );
@@ -386,7 +381,7 @@ org.openmdx.base.query.*
   	  }
 
 			// acountTo=account
-			membershipQuery = accountPkg.createAccountMembershipQuery();
+			membershipQuery = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
 			membershipQuery.forAllDisabled().isFalse();
 			membershipQuery.distance().greaterThanOrEqualTo(new Integer(-1));
 			membershipQuery.distance().lessThanOrEqualTo(new Integer(1));

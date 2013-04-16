@@ -4,10 +4,10 @@
 >
 	<property name="install.path" value="$INSTALL_PATH" />
 	<target name="expand-native">
-		<exec command="unzip ${install.path}/installer/files/apache-tomee-webprofile-1.0.0.zip -d ${install.path}" />
+		<exec command="unzip ${install.path}/installer/files/apache-tomee-webprofile-1.6.1.zip -d ${install.path}" />
 	</target>
 	<target name="expand-ant">
-		<unzip src="${install.path}/installer/files/apache-tomee-webprofile-1.0.0.zip" dest="${install.path}" />
+		<unzip src="${install.path}/installer/files/apache-tomee-webprofile-1.6.1.zip" dest="${install.path}" />
 	</target>
 	<target name="postinstall">
 		<antcall inheritAll="true" target="${expand.target}"/>
@@ -21,7 +21,6 @@
 		<move file="${install.path}/$TOMEE_BASEDIR/conf/server.xml" tofile="${install.path}/$TOMEE_BASEDIR/conf/server.orig"/>
 		<copy file="${install.path}/installer/files/server.xml" todir="${install.path}/$TOMEE_BASEDIR/conf"/>
 		<!-- Update lib -->
-		<copy file="${install.path}/installer/files/hsqldb.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
 		<copy file="${install.path}/installer/files/catalina-openmdx.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
 		<!-- Update bin -->
 		<copy file="${install.path}/installer/files/openmdx-system.jar" todir="${install.path}/$TOMEE_BASEDIR/bin"/>

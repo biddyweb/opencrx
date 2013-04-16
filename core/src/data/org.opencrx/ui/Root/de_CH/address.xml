@@ -1070,6 +1070,72 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:region1" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Region 1</_item>
+											</toolTip>
+											<label>
+												<_item>Region 1</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:region2" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Region 2</_item>
+											</toolTip>
+											<label>
+												<_item>Region 2</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:region3" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Region 3</_item>
+											</toolTip>
+											<label>
+												<_item>Region 3</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:regionType1" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Regionentyp 1</_item>
+											</toolTip>
+											<label>
+												<_item>Regionentyp 1</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:regionType2" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Regionentyp 2</_item>
+											</toolTip>
+											<label>
+												<_item>Regionentyp 2</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:regionType3" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Regionentyp 3</_item>
+											</toolTip>
+											<label>
+												<_item>Regionentyp 3</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductAddress:validFrom" _operation="create">
                     <_object>
                       <label>

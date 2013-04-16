@@ -54,10 +54,13 @@ package org.opencrx.kernel.activity1.aop2;
 
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.ICalendar.ICalClass;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ActivityCreatorImpl 
 	<S extends org.opencrx.kernel.activity1.jmi1.ActivityCreator,N extends org.opencrx.kernel.activity1.cci2.ActivityCreator,C extends Void>
@@ -86,16 +89,17 @@ public class ActivityCreatorImpl
                 params.getDueBy(),
                 params.getPriority(),
                 params.getIcalType(),
+                ICalClass.NA,
                 params.getReportingContact(),
                 params.getCreationContext()
             );
-            return Utils.getActivityPackage(this.sameManager()).createNewActivityResult(
-                activity
-            ); 
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.NewActivityResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityResult.Member.activity, activity)
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
-        }        
+        }       
     }
-        
+
 }

@@ -77,6 +77,8 @@ import org.opencrx.kernel.contract1.cci2.AbstractOpportunityPositionQuery;
 import org.opencrx.kernel.contract1.cci2.AbstractQuotePositionQuery;
 import org.opencrx.kernel.contract1.cci2.AbstractSalesOrderPositionQuery;
 import org.opencrx.kernel.contract1.cci2.CalculationRuleQuery;
+import org.opencrx.kernel.contract1.cci2.ContractCreatorQuery;
+import org.opencrx.kernel.contract1.cci2.ContractTypeQuery;
 import org.opencrx.kernel.contract1.cci2.PositionModificationQuery;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
 import org.opencrx.kernel.contract1.jmi1.AbstractFilterContract;
@@ -85,7 +87,9 @@ import org.opencrx.kernel.contract1.jmi1.AbstractOpportunityPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractQuotePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractRemovedPosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
+import org.opencrx.kernel.contract1.jmi1.AccountAssignmentContract;
 import org.opencrx.kernel.contract1.jmi1.CalculationRule;
+import org.opencrx.kernel.contract1.jmi1.Contract1Package;
 import org.opencrx.kernel.contract1.jmi1.ContractCreator;
 import org.opencrx.kernel.contract1.jmi1.ContractGroup;
 import org.opencrx.kernel.contract1.jmi1.ContractGroupAssignment;
@@ -139,41 +143,63 @@ import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_At
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.RuntimeServiceException;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
+/**
+ * Default Contracts backend.
+ *
+ */
 public class Contracts extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register Contracts backend.
+	 */
 	public static void register(
 	) {
 		registerImpl(new Contracts());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get registered Contracts backend.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Contracts getInstance(
 	) throws ServiceException {
 		return getInstance(Contracts.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor
+	 */
 	protected Contracts(
 	) {
 		
 	}
 	
-    //-------------------------------------------------------------------------
+    /**
+     * Find calculation rule with given name.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     */
     public CalculationRule findCalculationRule(
         String name,
-        org.opencrx.kernel.contract1.jmi1.Segment segment,
-        javax.jdo.PersistenceManager pm
+        org.opencrx.kernel.contract1.jmi1.Segment segment
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         CalculationRuleQuery calculationRuleQuery = (CalculationRuleQuery)pm.newQuery(CalculationRule.class);
         calculationRuleQuery.name().equalTo(name);
         List<CalculationRule> calculationRules = segment.getCalculationRule(calculationRuleQuery);
@@ -182,9 +208,33 @@ public class Contracts extends AbstractImpl {
             calculationRules.iterator().next();
     }
     
-    //-----------------------------------------------------------------------
     /**
-     * @return Returns the contract segment.
+     * Find contract creator with given name.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     */
+    public ContractCreator findContractCreator(
+        String name,
+        org.opencrx.kernel.contract1.jmi1.Segment segment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
+        ContractCreatorQuery contractCreatorQuery = (ContractCreatorQuery)pm.newQuery(ContractCreator.class);
+        contractCreatorQuery.name().equalTo(name);
+        List<ContractCreator> contractCreators = segment.getContractCreator(contractCreatorQuery);
+        return contractCreators.isEmpty() ? null : 
+            contractCreators.iterator().next();
+    }
+
+    /**
+     * Get contracts segment.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
      */
     public org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
         PersistenceManager pm,
@@ -196,7 +246,18 @@ public class Contracts extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Create / update calculation rule.
+     * 
+     * @param calculationRuleName
+     * @param description
+     * @param getPositionAmountsScript
+     * @param getContractAmountsScript
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public CalculationRule initCalculationRule(
         String calculationRuleName,
         String description,
@@ -212,7 +273,7 @@ public class Contracts extends AbstractImpl {
             segmentName
         );
         CalculationRule calculationRule = null;
-        if((calculationRule = this.findCalculationRule(calculationRuleName, contractSegment, pm)) != null) {
+        if((calculationRule = this.findCalculationRule(calculationRuleName, contractSegment)) != null) {
             return calculationRule;            
         }                
         pm.currentTransaction().begin();
@@ -233,152 +294,176 @@ public class Contracts extends AbstractImpl {
         return calculationRule;
     }
         
-    //-------------------------------------------------------------------------
+    /**
+     * Copy contract specific attributes from source to target.
+     * 
+     * @param source
+     * @param target
+     */
     protected void copyCrxObject(
-    	CrxObject from,
-    	CrxObject to
+    	CrxObject source,
+    	CrxObject target
     ) {
         // Index 0
-        to.setUserBoolean0(from.isUserBoolean0());
-        to.setUserNumber0(from.getUserNumber0());
-        to.setUserString0(from.getUserString0());
-        to.setUserDateTime0(from.getUserDateTime0());
-        to.setUserDate0(from.getUserDate0());
-        to.setUserCode0(from.getUserCode0());            
+        target.setUserBoolean0(source.isUserBoolean0());
+        target.setUserNumber0(source.getUserNumber0());
+        target.setUserString0(source.getUserString0());
+        target.setUserDateTime0(source.getUserDateTime0());
+        target.setUserDate0(source.getUserDate0());
+        target.setUserCode0(source.getUserCode0());            
         // Index 1
-        to.setUserBoolean1(from.isUserBoolean1());
-        to.setUserNumber1(from.getUserNumber1());
-        to.setUserString1(from.getUserString1());
-        to.setUserDateTime1(from.getUserDateTime1());
-        to.setUserDate1(from.getUserDate1());
-        to.setUserCode1(from.getUserCode1());            
+        target.setUserBoolean1(source.isUserBoolean1());
+        target.setUserNumber1(source.getUserNumber1());
+        target.setUserString1(source.getUserString1());
+        target.setUserDateTime1(source.getUserDateTime1());
+        target.setUserDate1(source.getUserDate1());
+        target.setUserCode1(source.getUserCode1());            
         // Index 2
-        to.setUserBoolean2(from.isUserBoolean2());
-        to.setUserNumber2(from.getUserNumber2());
-        to.setUserString2(from.getUserString2());
-        to.setUserDateTime2(from.getUserDateTime2());
-        to.setUserDate2(from.getUserDate2());
-        to.setUserCode2(from.getUserCode2());            
+        target.setUserBoolean2(source.isUserBoolean2());
+        target.setUserNumber2(source.getUserNumber2());
+        target.setUserString2(source.getUserString2());
+        target.setUserDateTime2(source.getUserDateTime2());
+        target.setUserDate2(source.getUserDate2());
+        target.setUserCode2(source.getUserCode2());            
         // Index 3
-        to.setUserBoolean3(from.isUserBoolean3());
-        to.setUserNumber3(from.getUserNumber3());
-        to.setUserString3(from.getUserString3());
-        to.setUserDateTime3(from.getUserDateTime3());
-        to.setUserDate3(from.getUserDate3());
-        to.setUserCode3(from.getUserCode3());            
+        target.setUserBoolean3(source.isUserBoolean3());
+        target.setUserNumber3(source.getUserNumber3());
+        target.setUserString3(source.getUserString3());
+        target.setUserDateTime3(source.getUserDateTime3());
+        target.setUserDate3(source.getUserDate3());
+        target.setUserCode3(source.getUserCode3());            
         // Index 4
-        to.setUserBoolean4(from.getUserBoolean4());
-        to.setUserNumber4(from.getUserNumber4());
-        to.setUserString4(from.getUserString4());
-        to.setUserDateTime4(from.getUserDateTime4());
-        to.setUserDate4(from.getUserDate4());
-        to.setUserCode4(from.getUserCode4());                	
+        target.setUserBoolean4(source.getUserBoolean4());
+        target.setUserNumber4(source.getUserNumber4());
+        target.setUserString4(source.getUserString4());
+        target.setUserDateTime4(source.getUserDateTime4());
+        target.setUserDate4(source.getUserDate4());
+        target.setUserCode4(source.getUserCode4());                	
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Copy sales contract specific attributes from source to target.
+     * 
+     * @param source
+     * @param target
+     * @throws ServiceException
+     */
     protected void copySalesContract(
-        SalesContract from,
-        SalesContract to
+        SalesContract source,
+        SalesContract target
     ) throws ServiceException {
-        to.setName(from.getName());
-        to.setDescription(from.getDescription());
-        to.setPriority(from.getPriority());
-        to.setActiveOn(from.getActiveOn());
-        to.setExpiresOn(from.getExpiresOn());
-        to.setCancelOn(from.getCancelOn());
-        to.setClosedOn(from.getClosedOn());
-        to.setContractNumber(from.getContractNumber());
-        to.setContractCurrency(from.getContractCurrency());
-        to.setPaymentTerms(from.getPaymentTerms());
-        to.setContractLanguage(from.getContractLanguage());
-        to.setContractState(from.getContractState());
-        to.setPricingDate(from.getPricingDate());
-        to.getCompetitor().clear();
-        to.getCompetitor().addAll(from.getCompetitor());
-        to.getContact().clear();
-        to.getContact().addAll(from.getContact());
-        to.setBroker(from.getBroker());
-        to.setCustomer(from.getCustomer());
-        to.setSalesRep(from.getSalesRep());
-        to.setSupplier(from.getSupplier());
-        to.getActivity().clear();
-        to.getActivity().addAll(from.getActivity());
-        to.setOrigin(from.getOrigin());
-        to.getInventoryCb().clear();
-        to.getInventoryCb().addAll(from.getInventoryCb());
-        to.setPricingRule(from.getPricingRule());
-        to.setCalcRule(from.getCalcRule());
-        to.setShippingMethod(from.getShippingMethod());
-        to.setShippingTrackingNumber(from.getShippingTrackingNumber());
-        to.setShippingInstructions(from.getShippingInstructions());
-        to.setGift(from.isGift());
-        to.setGiftMessage(from.getGiftMessage());
-        to.getOwningGroup().clear();
-        to.getOwningGroup().addAll(from.getOwningGroup());
-        to.setOwningUser(from.getOwningUser());
-        to.setDisabled(from.isDisabled());
-        to.setDisabledReason(from.getDisabledReason());
-        to.getExternalLink().clear();
-        to.getExternalLink().addAll(from.getExternalLink());
-        to.getCategory().clear();
-        to.getCategory().addAll(from.getCategory());
+        target.setName(source.getName());
+        target.setDescription(source.getDescription());
+        target.setPriority(source.getPriority());
+        target.setActiveOn(source.getActiveOn());
+        target.setExpiresOn(source.getExpiresOn());
+        target.setCancelOn(source.getCancelOn());
+        target.setClosedOn(source.getClosedOn());
+        target.setContractNumber(source.getContractNumber());
+        target.setContractCurrency(source.getContractCurrency());
+        target.setPaymentTerms(source.getPaymentTerms());
+        target.setContractLanguage(source.getContractLanguage());
+        target.setContractState(source.getContractState());
+        target.setPricingDate(source.getPricingDate());
+        target.getCompetitor().clear();
+        target.getCompetitor().addAll(source.getCompetitor());
+        target.getContact().clear();
+        target.getContact().addAll(source.getContact());
+        target.setBroker(source.getBroker());
+        target.setCustomer(source.getCustomer());
+        target.setSalesRep(source.getSalesRep());
+        target.setSupplier(source.getSupplier());
+        target.getActivity().clear();
+        target.getActivity().addAll(source.getActivity());
+        target.setOrigin(source.getOrigin());
+        target.getInventoryCb().clear();
+        target.getInventoryCb().addAll(source.getInventoryCb());
+        target.setPricingRule(source.getPricingRule());
+        target.setCalcRule(source.getCalcRule());
+        target.setShippingMethod(source.getShippingMethod());
+        target.setShippingTrackingNumber(source.getShippingTrackingNumber());
+        target.setShippingInstructions(source.getShippingInstructions());
+        target.setGift(source.isGift());
+        target.setGiftMessage(source.getGiftMessage());
+        target.getOwningGroup().clear();
+        target.getOwningGroup().addAll(source.getOwningGroup());
+        target.setOwningUser(source.getOwningUser());
+        target.setDisabled(source.isDisabled());
+        target.setDisabledReason(source.getDisabledReason());
+        target.getExternalLink().clear();
+        target.getExternalLink().addAll(source.getExternalLink());
+        target.getCategory().clear();
+        target.getCategory().addAll(source.getCategory());
     	copyCrxObject(
-    		from,
-    		to
+    		source,
+    		target
     	);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Copy sales contract position specific attributes from source to target.
+     * 
+     * @param source
+     * @param target
+     * @throws ServiceException
+     */
     protected void copySalesContractPosition(
-        SalesContractPosition from,
-        SalesContractPosition to
+        SalesContractPosition source,
+        SalesContractPosition target
     ) throws ServiceException {
-    	to.setLineItemNumber(from.getLineItemNumber());
-    	to.setName(from.getName());
-    	to.setDescription(from.getDescription());
-    	to.setPositionNumber(from.getPositionNumber());
-    	to.setContractPositionState(from.getContractPositionState());
-    	to.setQuantity(from.getQuantity());
-    	to.setMinQuantity(from.getMinQuantity());
-    	to.setMaxQuantity(from.getMaxQuantity());
-    	to.setOffsetQuantity(from.getOffsetQuantity());    	
-    	try { to.setMinMaxQuantityHandling(from.getMinMaxQuantityHandling()); } catch(Exception e) {}
-    	to.setPricePerUnit(from.getPricePerUnit());
-    	try { to.setPricingState(from.getPricingState()); } catch(Exception e) {}
-    	to.setDiscount(from.getDiscount());
-    	to.setDiscountDescription(from.getDiscountDescription());
-    	to.setDiscountIsPercentage(from.isDiscountIsPercentage());
-    	to.setSalesCommission(from.getSalesCommission());
-    	to.setSalesCommissionIsPercentage(from.isSalesCommissionIsPercentage());
-    	to.getContact().clear();
-    	to.getContact().addAll(from.getContact());
-    	to.setPriceUom(from.getPriceUom());
-    	to.setUom(from.getUom());
-    	to.setSalesTaxType(from.getSalesTaxType());    	
-    	try { to.setListPrice(from.getListPrice()); } catch(Exception e) {}
-    	to.setPricingRule(from.getPricingRule());
-    	to.setPriceLevel(from.getPriceLevel());
-    	to.setCalcRule(from.getCalcRule());
-    	try { to.setShippingMethod(from.getShippingMethod()); } catch(Exception e) {}
-    	to.setShippingTrackingNumber(from.getShippingTrackingNumber());
-    	to.setShippingInstructions(from.getShippingInstructions());
-    	try { to.setGift(from.isGift()); } catch(Exception e) {}
-    	to.setGiftMessage(from.getGiftMessage());
-    	to.setCarrier(from.getCarrier());
-    	if(from instanceof ConfiguredProduct && to instanceof ConfiguredProduct) {
-    		((ConfiguredProduct)to).setProduct(((ConfiguredProduct)from).getProduct());
-    		((ConfiguredProduct)to).setProductSerialNumber(((ConfiguredProduct)from).getProductSerialNumber());
-    		((ConfiguredProduct)to).setConfigType(((ConfiguredProduct)from).getConfigType());
+    	target.setLineItemNumber(source.getLineItemNumber());
+    	target.setName(source.getName());
+    	target.setDescription(source.getDescription());
+    	target.setPositionNumber(source.getPositionNumber());
+    	target.setContractPositionState(source.getContractPositionState());
+    	target.setQuantity(source.getQuantity());
+    	target.setMinQuantity(source.getMinQuantity());
+    	target.setMaxQuantity(source.getMaxQuantity());
+    	target.setOffsetQuantity(source.getOffsetQuantity());    	
+    	try { target.setMinMaxQuantityHandling(source.getMinMaxQuantityHandling()); } catch(Exception e) {}
+    	target.setPricePerUnit(source.getPricePerUnit());
+    	try { target.setPricingState(source.getPricingState()); } catch(Exception e) {}
+    	target.setDiscount(source.getDiscount());
+    	target.setDiscountDescription(source.getDiscountDescription());
+    	target.setDiscountIsPercentage(source.isDiscountIsPercentage());
+    	target.setSalesCommission(source.getSalesCommission());
+    	target.setSalesCommissionIsPercentage(source.isSalesCommissionIsPercentage());
+    	target.getContact().clear();
+    	target.getContact().addAll(source.getContact());
+    	target.setPriceUom(source.getPriceUom());
+    	target.setUom(source.getUom());
+    	target.setSalesTaxType(source.getSalesTaxType());    	
+    	try { target.setListPrice(source.getListPrice()); } catch(Exception e) {}
+    	target.setPricingRule(source.getPricingRule());
+    	target.setPriceLevel(source.getPriceLevel());
+    	target.setCalcRule(source.getCalcRule());
+    	try { target.setShippingMethod(source.getShippingMethod()); } catch(Exception e) {}
+    	target.setShippingTrackingNumber(source.getShippingTrackingNumber());
+    	target.setShippingInstructions(source.getShippingInstructions());
+    	try { target.setGift(source.isGift()); } catch(Exception e) {}
+    	target.setGiftMessage(source.getGiftMessage());
+    	target.setCarrier(source.getCarrier());
+    	if(source instanceof ConfiguredProduct && target instanceof ConfiguredProduct) {
+    		((ConfiguredProduct)target).setProduct(((ConfiguredProduct)source).getProduct());
+    		((ConfiguredProduct)target).setProductSerialNumber(((ConfiguredProduct)source).getProductSerialNumber());
+    		((ConfiguredProduct)target).setConfigType(((ConfiguredProduct)source).getConfigType());
     	}
-    	if(from instanceof CrxObject && to instanceof CrxObject) {
+    	if(source instanceof CrxObject && target instanceof CrxObject) {
 	    	copyCrxObject(
-	    		(CrxObject)from,
-	    		(CrxObject)to
+	    		(CrxObject)source,
+	    		(CrxObject)target
 	    	);
     	}
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get additional description matching the given language.
+     * 
+     * @param container
+     * @param language
+     * @return
+     * @throws ServiceException
+     */
     protected Description getAdditionalDescription(
         DescriptionContainer container,
         short language
@@ -392,7 +477,13 @@ public class Contracts extends AbstractImpl {
         return null;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get default calculation rule.
+     * 
+     * @param contractSegment
+     * @return
+     * @throws ServiceException
+     */
     protected CalculationRule getDefaultCalculationRule(
         org.opencrx.kernel.contract1.jmi1.Segment contractSegment
     ) throws ServiceException {
@@ -405,7 +496,13 @@ public class Contracts extends AbstractImpl {
     		calculationRules.iterator().next();
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Mark contract as closed.
+     * 
+     * @param contract
+     * @param newContractState
+     * @throws ServiceException
+     */
     public void markAsClosed(
         AbstractContract contract,
         short newContractState
@@ -443,6 +540,28 @@ public class Contracts extends AbstractImpl {
         return salesTaxRate;        
     }    
 
+    //-----------------------------------------------------------------------
+    protected javax.jmi.reflect.RefPackage getJmiPackage(
+        PersistenceManager pm,
+        String authorityXri
+    ) {
+    	Authority obj = pm.getObjectById(
+            Authority.class,
+            authorityXri
+        );  
+    	return obj.refOutermostPackage().refPackage(obj.refGetPath().getBase());
+    }
+
+    //-----------------------------------------------------------------------
+    protected Contract1Package getContractPackage(
+        PersistenceManager pm
+    ) {
+    	return (Contract1Package)getJmiPackage(
+    		pm,
+    		Contract1Package.AUTHORITY_XRI
+    	);            
+    }
+    
     //-------------------------------------------------------------------------
     protected BigDecimal getMinMaxAdjustedQuantity(
         SalesContractPosition position
@@ -530,13 +649,14 @@ public class Contracts extends AbstractImpl {
         );    
         // amount
         BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
-        GetPositionAmountsResult result = Utils.getContractPackage(pm).createGetPositionAmountsResult(
-            amount, 
-            baseAmount, 
-            discountAmount,
-            (short)0, // statusCode
-            null, // statusMessage
-            taxAmount
+        GetPositionAmountsResult result = Structures.create(
+        	GetPositionAmountsResult.class, 
+        	Datatypes.member(GetPositionAmountsResult.Member.amount, amount),
+        	Datatypes.member(GetPositionAmountsResult.Member.baseAmount, baseAmount),
+        	Datatypes.member(GetPositionAmountsResult.Member.discountAmount, discountAmount),
+        	Datatypes.member(GetPositionAmountsResult.Member.statusCode, (short)0),
+        	Datatypes.member(GetPositionAmountsResult.Member.statusMessage, null),
+        	Datatypes.member(GetPositionAmountsResult.Member.taxAmount, taxAmount)        	
         );
         return result;
     }
@@ -550,7 +670,7 @@ public class Contracts extends AbstractImpl {
         String script = (calculationRule.getGetPositionAmountsScript() == null) || (calculationRule.getGetPositionAmountsScript().length() == 0) ? 
             DEFAULT_GET_POSITION_AMOUNTS_SCRIPT : 
             calculationRule.getGetPositionAmountsScript();
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm); 
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = this.getContractPackage(pm); 
         try {
         	Class<?> clazz = ScriptUtils.getClass(script);
             Method getPositionAmountMethod = clazz.getMethod(
@@ -629,7 +749,7 @@ public class Contracts extends AbstractImpl {
         String script = (calculationRule.getGetContractAmountsScript() == null) || (calculationRule.getGetContractAmountsScript().length() == 0) ? 
             DEFAULT_GET_CONTRACT_AMOUNTS_SCRIPT : 
             calculationRule.getGetContractAmountsScript();
-        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = Utils.getContractPackage(pm); 
+        org.opencrx.kernel.contract1.jmi1.Contract1Package contractPkg = this.getContractPackage(pm); 
         try {
         	Class<?> clazz = ScriptUtils.getClass(script);
             Method getContractAmountMethod = clazz.getMethod(
@@ -1913,10 +2033,13 @@ public class Contracts extends AbstractImpl {
     ) throws ServiceException {
     }
     
-    //-------------------------------------------------------------------------
     /**
      * Remove all pending inventory bookings of contract. Return last
-     * final booking or null if no inventory booking is set on the contract
+     * final booking or null if no inventory booking is set on the contract.
+     * 
+     * @param contract
+     * @return
+     * @throws ServiceException
      */
     public CompoundBooking removePendingInventoryBookings(
         SalesContract contract
@@ -2310,7 +2433,12 @@ public class Contracts extends AbstractImpl {
         return pricingState;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Re-price the given sales contract.
+     * 
+     * @param contract
+     * @throws ServiceException
+     */
     public void repriceSalesContract(
     	SalesContract contract
     ) throws ServiceException {
@@ -2345,7 +2473,13 @@ public class Contracts extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Count contracts matching the given contract filter.
+     * 
+     * @param contractFilter
+     * @return
+     * @throws ServiceException
+     */
     public int countFilteredContract(
         AbstractFilterContract contractFilter
     ) throws ServiceException {
@@ -2359,7 +2493,17 @@ public class Contracts extends AbstractImpl {
         return contracts.size();
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get contract amounts for sales contract permissions.
+     * 
+     * @param rootPkg
+     * @param calculationRule
+     * @param position
+     * @param minMaxAdjustedQuantity
+     * @param uomScaleFactor
+     * @param salesTaxRate
+     * @return
+     */
     public static GetPositionAmountsResult getSalesContractPositionAmounts(
         RefPackage_1_0 rootPkg,
         CalculationRule calculationRule,
@@ -2381,7 +2525,16 @@ public class Contracts extends AbstractImpl {
     	}
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get amounts for contract positions.
+     * 
+     * @param calculationRule
+     * @param position
+     * @param minMaxAdjustedQuantity
+     * @param uomScaleFactor
+     * @param salesTaxRate
+     * @return
+     */
     public GetPositionAmountsResult getSalesContractPositionAmounts(
         CalculationRule calculationRule,
         SalesContractPosition position,
@@ -2411,18 +2564,33 @@ public class Contracts extends AbstractImpl {
         );    
         // amount
         BigDecimal amount = baseAmount.subtract(discountAmount).add(taxAmount);      
-        GetPositionAmountsResult result = Utils.getContractPackage(pm).createGetPositionAmountsResult(
-            amount, 
-            baseAmount, 
-            discountAmount,
-            (short)0, // statusCode
-            null, // statusMessage
-            taxAmount
+        GetPositionAmountsResult result = Structures.create(
+        	GetPositionAmountsResult.class, 
+        	Datatypes.member(GetPositionAmountsResult.Member.amount, amount),
+        	Datatypes.member(GetPositionAmountsResult.Member.baseAmount, baseAmount),
+        	Datatypes.member(GetPositionAmountsResult.Member.discountAmount, discountAmount),
+        	Datatypes.member(GetPositionAmountsResult.Member.statusCode, (short)0),
+        	Datatypes.member(GetPositionAmountsResult.Member.statusMessage, null),
+        	Datatypes.member(GetPositionAmountsResult.Member.taxAmount, taxAmount)        	
         );
         return result;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get contract amounts.
+     * 
+     * @param rootPkg
+     * @param calculationRule
+     * @param contract
+     * @param lineItemNumbers
+     * @param positionBaseAmounts
+     * @param positionDiscountAmounts
+     * @param positionTaxAmounts
+     * @param positionAmounts
+     * @param salesCommissions
+     * @param salesCommissionIsPercentages
+     * @return
+     */
     public static GetContractAmountsResult getContractAmounts(
         RefPackage_1_0 rootPkg,
         CalculationRule calculationRule,
@@ -2464,23 +2632,29 @@ public class Contracts extends AbstractImpl {
         }
         BigDecimal totalAmount = totalBaseAmount.subtract(totalDiscountAmount);
         BigDecimal totalAmountIncludingTax = totalAmount.add(totalTaxAmount);
-        GetContractAmountsResult result = org.opencrx.kernel.utils.Utils.getContractPackage(pm).createGetContractAmountsResult(
-            (short)0,
-            null,
-            totalAmount, 
-            totalAmountIncludingTax, 
-            totalBaseAmount, 
-            totalDiscountAmount, 
-            totalSalesCommission, 
-            totalTaxAmount
+        GetContractAmountsResult result = Structures.create(
+        	GetContractAmountsResult.class, 
+        	Datatypes.member(GetContractAmountsResult.Member.statusCode, (short)0),
+        	Datatypes.member(GetContractAmountsResult.Member.statusMessage, null),
+        	Datatypes.member(GetContractAmountsResult.Member.totalAmount, totalAmount),
+        	Datatypes.member(GetContractAmountsResult.Member.totalAmountIncludingTax, totalAmountIncludingTax),
+        	Datatypes.member(GetContractAmountsResult.Member.totalBaseAmount, totalBaseAmount),
+        	Datatypes.member(GetContractAmountsResult.Member.totalDiscountAmount, totalDiscountAmount),
+        	Datatypes.member(GetContractAmountsResult.Member.totalSalesCommission, totalSalesCommission),
+        	Datatypes.member(GetContractAmountsResult.Member.totalTaxAmount, totalTaxAmount)        	
         );
         return result;
     }
     
-    //-------------------------------------------------------------------------
     /**
      * Creates a contract for the given contractType. Override this method to 
      * support custom-specific contract types.
+     * 
+     * @param contractSegment
+     * @param contractType
+     * @param basedOn
+     * @return
+     * @throws ServiceException
      */
     public AbstractContract createContract(
     	org.opencrx.kernel.contract1.jmi1.Segment contractSegment,
@@ -2489,6 +2663,11 @@ public class Contracts extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(contractSegment);
     	AbstractContract contract = null;
+    	ContractTypeQuery contractTypeQuery = (ContractTypeQuery)pm.newQuery(ContractType.class);
+    	contractTypeQuery.contractType().equalTo(contractType);
+    	List<ContractType> contractTypes = contractSegment.getContractType(contractTypeQuery);
+    	ContractType defaultContractType = contractTypes.isEmpty() ? null :
+    		contractTypes.iterator().next();
     	// Lead
     	if(contractType == CONTRACT_TYPE_LEAD) {
     		contract = pm.newInstance(Lead.class);
@@ -2615,10 +2794,25 @@ public class Contracts extends AbstractImpl {
     	        );
     		}
     	}
+    	if(contract != null) {
+    		contract.setContractType(defaultContractType);
+    	}
     	return contract;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create contract based on given contract creator.
+     * 
+     * @param contractCreator
+     * @param name
+     * @param description
+     * @param contractType
+     * @param activeOn
+     * @param priority
+     * @param basedOn
+     * @return
+     * @throws ServiceException
+     */
     public AbstractContract createContract(
         ContractCreator contractCreator,
         String name,
@@ -2668,6 +2862,7 @@ public class Contracts extends AbstractImpl {
     			if(priority != null) {
     				contract.setPriority(priority);
     			}
+    			contract.setContractType(contractType);
     			Base.getInstance().assignToMe(
     				contract, 
     				true, // overwrite 
@@ -2682,7 +2877,25 @@ public class Contracts extends AbstractImpl {
     	return contract;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Create sales contract based on given contract creator.
+     * 
+     * @param contractCreator
+     * @param name
+     * @param description
+     * @param contractType
+     * @param activeOn
+     * @param priority
+     * @param pricingDate
+     * @param contractCurrency
+     * @param customer
+     * @param salesRep
+     * @param broker
+     * @param supplier
+     * @param basedOn
+     * @return
+     * @throws ServiceException
+     */
     public AbstractContract createSalesContract(
     	SalesContractCreator contractCreator,
         String name,
@@ -2764,7 +2977,13 @@ public class Contracts extends AbstractImpl {
     	return contract;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Re-apply contract creator on given contract.
+     * 
+     * @param contract
+     * @param contractCreator
+     * @throws ServiceException
+     */
     public void reapplyContractCreator(
     	AbstractContract contract,
     	ContractCreator contractCreator
@@ -2842,7 +3061,33 @@ public class Contracts extends AbstractImpl {
 	        contract.setLastAppliedCreator(contractCreator);
     	}
     }
-    
+   
+    /**
+     * Store callback for account assignments.
+     * 
+     * @param contract
+     * @throws ServiceException
+     */
+    public void updateAccountAssignmentContract(
+    	AccountAssignmentContract accountAssignment
+    ) throws ServiceException {
+    }
+
+    /**
+     * Delete callback for account assignments.
+     * 
+     * @param contract
+     * @throws ServiceException
+     */
+    public void removeAccountAssignmentContract(
+    	AccountAssignmentContract accountAssignment,
+    	boolean preDelete
+    ) throws ServiceException {
+        if(!preDelete) {
+        	accountAssignment.refDelete();
+        }    	
+    }
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

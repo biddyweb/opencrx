@@ -61,12 +61,12 @@ import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.backend.Importer;
 import org.opencrx.kernel.backend.VCard;
-import org.opencrx.kernel.base.jmi1.BasePackage;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ImporterImpl
 	<S extends org.opencrx.kernel.base.jmi1.Importer,N extends org.opencrx.kernel.base.cci2.Importer,C extends Void>
@@ -102,8 +102,7 @@ public class ImporterImpl
 	                	report
 	                );
             	}
-            }
-            else if(ICalendar.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(ICalendar.FILE_EXTENSION)) {
+            } else if(ICalendar.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(ICalendar.FILE_EXTENSION)) {
             	if(this.sameObject() instanceof Activity) {
 	            	importedObject = ICalendar.getInstance().importItem(
 	            		item, 
@@ -113,8 +112,7 @@ public class ImporterImpl
 	            		report
 	            	);
             	}
-            }
-            else if(Importer.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(Importer.FILE_EXTENSION)) {
+            } else if(Importer.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(Importer.FILE_EXTENSION)) {
                 importedObject = (BasicObject)Importer.getInstance().importItem(
                 	item,
                 	locale,
@@ -122,30 +120,30 @@ public class ImporterImpl
                 	errors,
                 	report
                 );
-            }            
-            else {
-                return ((BasePackage)this.sameObject().refOutermostPackage().refPackage(BasePackage.class.getName())).createImportResult(
-                    null,
-                    Base.IMPORT_EXPORT_FORMAT_NOT_SUPPORTED,
-                    null                        
-                );
+            } else {
+            	return Structures.create(
+            		org.opencrx.kernel.base.jmi1.ImportResult.class, 
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.importedObject, null),
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.status, Base.IMPORT_EXPORT_FORMAT_NOT_SUPPORTED),
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.statusMessage, null)            		
+            	);
             }
             if(importedObject != null) {
-                return Utils.getBasePackage(this.sameManager()).createImportResult(
-                    importedObject,
-                    Base.IMPORT_EXPORT_OK,
-                    Base.getInstance().analyseReport(report)                        
-                );                            
+            	return Structures.create(
+            		org.opencrx.kernel.base.jmi1.ImportResult.class, 
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.importedObject, importedObject),
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.status, Base.IMPORT_EXPORT_OK),
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.statusMessage, Base.getInstance().analyseReport(report))            		
+            	);
+            } else {
+            	return Structures.create(
+            		org.opencrx.kernel.base.jmi1.ImportResult.class, 
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.importedObject, null),
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.status, Base.IMPORT_EXPORT_ITEM_NOT_VALID),
+            		Datatypes.member(org.opencrx.kernel.base.jmi1.ImportResult.Member.statusMessage, Base.getInstance().analyseReport(errors))            		
+            	);
             }
-            else {
-                return Utils.getBasePackage(this.sameManager()).createImportResult(
-                    null,
-                    Base.IMPORT_EXPORT_ITEM_NOT_VALID,
-                    Base.getInstance().analyseReport(errors)                        
-                );                            
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                
     }

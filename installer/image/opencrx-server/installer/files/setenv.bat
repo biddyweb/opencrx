@@ -1,6 +1,7 @@
 REM [openCRX]
 set JAVA_OPTS=%JAVA_OPTS% -Xmx800M 
 set JAVA_OPTS=%JAVA_OPTS% -XX:MaxPermSize=256m
+set JAVA_OPTS=%JAVA_OPTS% -Dfile.encoding=UTF-8
 set JAVA_OPTS=%JAVA_OPTS% -Djava.protocol.handler.pkgs=org.openmdx.kernel.url.protocol
 set JAVA_OPTS=%JAVA_OPTS% -Dorg.opencrx.maildir="%CATALINA_BASE%\maildir"
 set JAVA_OPTS=%JAVA_OPTS% -Dorg.opencrx.airsyncdir="%CATALINA_BASE%\airsyncdir"

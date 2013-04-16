@@ -115,8 +115,9 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 /**
  * The SubscriptionHandlerServlet handles two use cases:
@@ -486,13 +487,13 @@ public class SubscriptionHandlerServlet
 		                MessageDigest md = MessageDigest.getInstance("MD5");
 		                md.update(targetObjectIdentity.toXRI().getBytes("UTF-8"));
 		                md.update(wfProcess.refMofId().getBytes("UTF-8"));                                        
-		                ExecuteWorkflowParams params = Utils.getBasePackage(pmUser).createExecuteWorkflowParams(
-		                    null, // startedAt
-		                    (BasicObject)targetObject, // targetObject
-		                    (BasicObject)pmUser.getObjectById(triggeredBy.refGetPath()), // triggeredBy
-		                    Base64.encode(md.digest()).replace('/', '-'), // triggeredByEventId
-		                    new Integer(triggeredByEventType.getValue()), // triggeredByEventType
-		                    (WfProcess)pmUser.getObjectById(wfProcess.refGetPath())
+		                ExecuteWorkflowParams params = Structures.create(
+		                	ExecuteWorkflowParams.class,
+		                	Datatypes.member(ExecuteWorkflowParams.Member.targetObject, targetObject),
+		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredBy, pmUser.getObjectById(triggeredBy.refGetPath())),
+		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredByEventId, Base64.encode(md.digest()).replace('/', '-')),
+		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredByEventType, new Integer(triggeredByEventType.getValue())),
+		                	Datatypes.member(ExecuteWorkflowParams.Member.workflow, pmUser.getObjectById(wfProcess.refGetPath()))
 		                );
 		                try {
 		                    pmUser.currentTransaction().begin();
@@ -566,12 +567,12 @@ public class SubscriptionHandlerServlet
             if(auditEntry != null) {
                 TestAndSetVisitedByResult markAsVisistedReply = null;
                 try {
-                    TestAndSetVisitedByParams params = Utils.getBasePackage(pm).createTestAndSetVisitedByParams(
-                        VISITOR_ID
-                    );
+                    TestAndSetVisitedByParams params = Structures.create(
+                    	TestAndSetVisitedByParams.class, 
+                    	Datatypes.member(TestAndSetVisitedByParams.Member.visitorId, VISITOR_ID)
+                    ); 
                     markAsVisistedReply = auditEntry.testAndSetVisitedBy(params);
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                 	SysLog.error("Can not invoke markAsVisited", e.getMessage());
                     ServiceException e0 = new ServiceException(e);
                     SysLog.error(e0.getMessage(), e0.getCause());

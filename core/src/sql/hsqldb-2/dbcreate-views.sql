@@ -1,7 +1,7 @@
 -- This software is published under the BSD license
 -- as listed below.
 --
--- Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+-- Copyright (c) 2004-2012, CRIXP Corp., Switzerland
 -- All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -68,12 +68,11 @@ DROP VIEW OOCKE1_TOBJ_CONTRACTROLE ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE_ ;
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY ;
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY_ ;
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_TO ;
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_FR ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP ;
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 ;
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 ;
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ;
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ;
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM_ ;
@@ -83,48 +82,28 @@ DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY ;
 DROP VIEW OOCKE1_TOBJ_PRICELISTENTRY_ ;
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY ;
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_ ;
-
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY ;
-
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ ;
-
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR ;
-
 DROP VIEW OOCKE1_JOIN_ACCTHASASSCONTR ;
-
 DROP VIEW OOCKE1_JOIN_ACCTHASASSBUDGET ;
-
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSBU ;
-
 DROP VIEW OOCKE1_JOIN_BUHASADR ;
-
 DROP VIEW OOCKE1_JOIN_IITEMHASBOOKING ;
-
 DROP VIEW OOCKE1_JOIN_RESHASASSIGNEDACT ;
-
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSADR ;
-
 DROP VIEW OOCKE1_JOIN_ACTGISCREATEDBY ;
-
 DROP VIEW OOMSE2_TOBJ_USERS ;
-
 DROP VIEW OOMSE2_TOBJ_ROLES ;
-
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASBK ;
-
 DROP VIEW OOCKE1_JOIN_DEPREPITMHASSBK ;
-
 DROP VIEW OOCKE1_JOIN_FILTERINCLDESCONTR ;
-
 DROP VIEW OOCKE1_JOIN_RESCONTAINSWRE ;
-
 DROP VIEW OOCKE1_JOIN_ACTCONTAINSWRE ;
-
 DROP VIEW OOCKE1_JOIN_ACTGCONTAINSWRE ;
-
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSWRE ;
-
-
+DROP VIEW OOCKE1_JOIN_WFPROCHASPROCINST ;
+DROP VIEW OOCKE1_JOIN_WFPROCINSTHASCHILD ;
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSACT AS
 SELECT
     act.object_id AS assigned_activity,
@@ -137,9 +116,7 @@ ON
     (act.assigned_to = acc.object_id) OR
     (act.rep_contact = acc.object_id) OR
     (act.rep_acct = acc.object_id)
-
 UNION
-
 SELECT
     act.object_id AS assigned_activity,
     adr."P$$PARENT" AS account
@@ -149,9 +126,7 @@ INNER JOIN
     OOCKE1_ADDRESS adr
 ON
     (adr.object_id = act.sender)
-
 UNION
-
 SELECT
     (p0."P$$PARENT") AS assigned_activity,
     acc.object_id AS account
@@ -161,9 +136,7 @@ INNER JOIN
     OOCKE1_ACCOUNT acc
 ON
     (acc.object_id = p0.party)
-
 UNION
-
 SELECT
     (p0."P$$PARENT") AS assigned_activity,
     adr."P$$PARENT" AS account
@@ -173,9 +146,7 @@ INNER JOIN
     OOCKE1_ADDRESS adr
 ON
     (adr.object_id = p0.party)
-
 UNION
-
 SELECT
     act.object_id AS assigned_activity,
     c0.customer AS account
@@ -185,16 +156,12 @@ INNER JOIN
     OOCKE1_CONTRACT c0
 ON
     (act.contract = c0.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSADDRESS AS
 SELECT
     addr.object_id AS assigned_address,
     addr.authority AS account
 FROM
     OOCKE1_ADDRESS addr ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACCTHASPROD AS
 SELECT DISTINCT
     p.object_id AS product,
@@ -205,16 +172,12 @@ WHERE
     (cp.product = p.object_id) AND
     (cp."P$$PARENT" = c.object_id) AND
     (c.customer = a.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSACT AS
 SELECT DISTINCT
     (ga."P$$PARENT") AS filtered_activity,
     ga.activity_group AS activity_group
 FROM
     OOCKE1_ACTIVITYGROUPASS ga ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSFLUP AS
 SELECT DiSTINCT
     f.object_id AS follow_up,
@@ -229,8 +192,6 @@ INNER JOIN
     OOCKE1_ACTIVITYGROUP g
 ON
     (ga.activity_group = g.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSNOTE AS
 SELECT DISTINCT
     n.object_id AS activity_note,
@@ -245,8 +206,6 @@ INNER JOIN
     OOCKE1_ACTIVITYGROUP g
 ON
     (ga.activity_group = g.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_CBHASBK AS
 SELECT
     b.object_id AS booking,
@@ -257,8 +216,6 @@ INNER JOIN
     OOCKE1_COMPOUNDBOOKING cb
 ON
     (b.cb = cb.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_CLFCLASSIFIESTELT AS
 SELECT
     c.object_id AS classifier,
@@ -269,16 +226,12 @@ INNER JOIN
     OOCKE1_MODELELEMENT e
 ON
     (c.object_id = e.type) ;
-
-
 CREATE VIEW OOCKE1_JOIN_CONTACTISMEMBEROF AS
 SELECT
     cm.contact AS contact,
     cm."P$$PARENT" AS ou_membership
 FROM
     OOCKE1_CONTACTMEMBERSHIP cm ;
-
-
 CREATE VIEW OOCKE1_JOIN_CPOSHASPOSMOD AS
 SELECT
     p.object_id AS "position",
@@ -289,8 +242,6 @@ INNER JOIN
     OOCKE1_CONTRACTPOSMOD pm
 ON
     (p.object_id = pm.involved) ;
-
-
 CREATE VIEW OOCKE1_JOIN_DEPGCONTAINSDEP AS
 SELECT
     d.object_id AS depot,
@@ -301,8 +252,6 @@ INNER JOIN
     OOCKE1_DEPOTGROUP dg
 ON
     (d.depot_group = dg.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_DEPGCONTAINSDEPG AS
 SELECT
     dg.object_id AS depot_group,
@@ -313,24 +262,18 @@ INNER JOIN
     OOCKE1_DEPOTGROUP dgp
 ON
     (dg."P$$PARENT" = dgp.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_DEPPOSHASBK AS
 SELECT
     b.object_id AS booking,
     b.position AS depot_position
 FROM
     OOCKE1_BOOKING b ;
-
-
 CREATE VIEW OOCKE1_JOIN_DEPPOSHASSBK AS
 SELECT
     b.object_id AS simple_booking,
     b.position AS depot_position
 FROM
     OOCKE1_SIMPLEBOOKING b ;
-
-
 CREATE VIEW OOCKE1_JOIN_ENTITYCONTAINSDEP AS
 SELECT
     (dh."P$$PARENT") AS entity,
@@ -341,8 +284,6 @@ INNER JOIN
     OOCKE1_DEPOTHOLDER dh
 ON
     (d."P$$PARENT" = dh.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_FLDCONTAINSFLD AS
 SELECT
     f.object_id AS folder,
@@ -353,8 +294,6 @@ INNER JOIN
     OOCKE1_DOCUMENTFOLDER fp
 ON
     (f.parent = fp.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_HOMEHASASSACT AS
 SELECT
     a.object_id AS assigned_activity,
@@ -367,9 +306,7 @@ ON
     (a.assigned_to = h0.contact) OR
     (a.rep_contact = h0.contact) OR
     (a.rep_acct = h0.contact)
-
 UNION
-
 SELECT
     a.object_id AS assigned_activity,
     h0.object_id AS user_home
@@ -383,9 +320,7 @@ INNER JOIN
     OOCKE1_USERHOME h0
 ON
     (adr."P$$PARENT" = h0.contact)
-
 UNION
-
 SELECT
     a.object_id AS assigned_activity,
     h0.object_id AS user_home
@@ -399,9 +334,7 @@ INNER JOIN
     OOCKE1_ACTIVITY a
 ON
     (p0."P$$PARENT" = a.object_id)
-
 UNION
-
 SELECT
     a.object_id AS assigned_activity,
     h0.object_id AS user_home
@@ -419,8 +352,6 @@ INNER JOIN
     OOCKE1_USERHOME h0
 ON
     (adr."P$$PARENT" = h0.contact) ;
-
-
 CREATE VIEW OOCKE1_JOIN_IITEMHASBOOKING AS
 SELECT
     b.object_id AS booking,
@@ -431,8 +362,6 @@ INNER JOIN
     OOCKE1_BOOKING b
 ON
     (b.origin = i.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_NSCONTAINSELT AS
 SELECT
     n.object_id AS namespace,
@@ -443,16 +372,12 @@ INNER JOIN
     OOCKE1_MODELELEMENT e
 ON
     (e.container = n.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_OBJHASASSTIMER AS
 SELECT
     t.target AS crx_object,
     t.object_id AS assigned_timer
 FROM
     OOCKE1_TIMER t ;
-
-
 CREATE VIEW OOCKE1_JOIN_RESHASASSIGNEDACT AS
 SELECT
     a.object_id AS assigned_activity,
@@ -467,8 +392,6 @@ INNER JOIN
     OOCKE1_RESOURCE r
 ON
     (ra.resrc = r.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSADR AS
 SELECT
     adr.object_id AS address,
@@ -479,8 +402,6 @@ INNER JOIN
     OOCKE1_ACCOUNT act
 ON
     (adr."P$$PARENT" = act.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSFAC AS
 SELECT
     f.object_id AS facility,
@@ -491,9 +412,7 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT b
 ON
     (f."P$$PARENT" = b.object_id)
-
 UNION
-
 SELECT
     f.object_id AS facility,
     bu1."P$$PARENT" AS segment
@@ -507,8 +426,6 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bu1
 ON
    (bu2."P$$PARENT" = bu1.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_HOMEHASASSCONTR AS
 SELECT
     c.object_id AS assigned_contract,
@@ -519,9 +436,7 @@ INNER JOIN
     OOCKE1_USERHOME h
 ON
     (c.sales_rep = h.contact)
-
 UNION
-
 SELECT
     c.object_id AS assigned_contract,
     h.object_id AS user_home
@@ -531,9 +446,7 @@ INNER JOIN
     OOCKE1_USERHOME h
 ON
     (c.customer = h.contact)
-
 UNION
-
 SELECT
    c.object_id AS assigned_contract,
    h.object_id AS user_home
@@ -547,8 +460,6 @@ INNER JOIN
     OOCKE1_USERHOME h
 ON
     (ass.account = h.contact) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSCONTR AS
 SELECT
     c.object_id AS assigned_contract,
@@ -559,9 +470,7 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.customer = a.object_id)
-
 UNION
-
 SELECT
     c.object_id AS assigned_contract,
     a.object_id AS account
@@ -571,9 +480,7 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.sales_rep = a.object_id)
-
 UNION
-
 SELECT
     c.object_id AS assigned_contract,
     a.object_id AS account
@@ -583,9 +490,7 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.supplier = a.object_id)
-
 UNION
-
 SELECT
    c.object_id AS assigned_contract,
    ass.account AS account
@@ -595,8 +500,6 @@ INNER JOIN
     OOCKE1_ACCOUNTASSIGNMENT ass
 ON
     (ass."P$$PARENT" = c.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACCTHASASSBUDGET AS
 SELECT
     b.object_id AS assigned_budget,
@@ -607,9 +510,7 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     b.account = a.object_id
-
 UNION
-
 SELECT
     b.object_id AS assigned_budget,
     ass.account AS account
@@ -619,8 +520,6 @@ INNER JOIN
     OOCKE1_ACCOUNTASSIGNMENT ass
 ON
     ass."P$$PARENT" = b.object_id ;
-
-
 CREATE VIEW OOCKE1_JOIN_BUHASADR AS
 SELECT
     adr.object_id AS assigned_address,
@@ -631,8 +530,6 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bu
 ON
     (adr.building = bu.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_CONTGCONTAINSCONTR AS
 SELECT
    ga.contract_group AS contract_group,
@@ -643,8 +540,6 @@ INNER JOIN
    OOCKE1_CONTRACTGROUPASS ga
 ON
    (ga.contract_group = g.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSBU AS
 SELECT
     b.object_id AS building_unit,
@@ -655,9 +550,7 @@ INNER JOIN
     OOCKE1_SEGMENT s
 ON
     (b."P$$PARENT" = s.object_id)
-
 UNION
-
 SELECT
     b.object_id AS building_unit,
     bp."P$$PARENT" AS segment
@@ -667,16 +560,12 @@ INNER JOIN
     OOCKE1_BUILDINGUNIT bp
 ON
     (b."P$$PARENT" = bp.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACTGISCREATEDBY AS
 SELECT
     ac.activity_group AS activity_group,
     ac.object_id AS activity_creator
 FROM
     OOCKE1_ACTIVITYCREATOR_ ac ;
-
-
 CREATE VIEW OOCKE1_JOIN_DEPREPITMHASBK AS
 SELECT
     ip.object_id AS item_position,
@@ -698,8 +587,6 @@ ON
     (b.value_date >= bp.period_starts_at) AND
     ((b.value_date < bp.period_ends_at_exclusive) OR (bp.period_ends_at_exclusive IS NULL)) AND
     ((b.booking_status >= r.booking_status_threshold) OR (r.booking_status_threshold = 0) OR (r.booking_status_threshold IS NULL)) ;
-
-
 CREATE VIEW OOCKE1_JOIN_DEPREPITMHASSBK AS
 SELECT
     ip.object_id AS item_position,
@@ -721,8 +608,6 @@ ON
     (b.value_date >= bp.period_starts_at) AND
     ((b.value_date < bp.period_ends_at_exclusive) OR (bp.period_ends_at_exclusive IS NULL)) AND
     ((b.booking_status >= r.booking_status_threshold) OR (r.booking_status_threshold = 0) OR (r.booking_status_threshold IS NULL)) ;
-
-
 CREATE VIEW OOCKE1_JOIN_FILTERINCLDESCONTR AS
 SELECT
     f.object_id AS contract_filter,
@@ -733,8 +618,6 @@ INNER JOIN
     OOCKE1_CONTRACT c
 ON
     (1=1) ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACTGCONTAINSWRE AS
 SELECT
   ga.activity_group AS activity_group,
@@ -749,8 +632,6 @@ INNER JOIN
   OOCKE1_ACTIVITYGROUPASS ga
 ON
   (ga."P$$PARENT" = ra."P$$PARENT") ;
-
-
 CREATE VIEW OOCKE1_JOIN_ACTCONTAINSWRE AS
 SELECT
   (ra."P$$PARENT") AS activity,
@@ -761,8 +642,6 @@ INNER JOIN
   OOCKE1_RESOURCEASSIGNMENT ra
 ON
   (wr."P$$PARENT" = ra.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_SEGCONTAINSWRE AS
 SELECT
   (a."P$$PARENT") AS segment,
@@ -777,8 +656,6 @@ INNER JOIN
   OOCKE1_ACTIVITY a
 ON
   (ra."P$$PARENT" = a.object_id) ;
-
-
 CREATE VIEW OOCKE1_JOIN_RESCONTAINSWRE AS
 SELECT
   ra.resrc AS resource,
@@ -789,23 +666,24 @@ INNER JOIN
   OOCKE1_RESOURCEASSIGNMENT ra
 ON
   (wr."P$$PARENT" = ra.object_id) ;
-
-
+CREATE VIEW OOCKE1_JOIN_WFPROCHASPROCINST AS
+SELECT
+  wfp.process AS wf_process,
+  wfp.object_id AS wf_process_instance
+FROM
+  OOCKE1_WFPROCESSINSTANCE wfp ;
+CREATE VIEW OOCKE1_JOIN_WFPROCINSTHASCHILD AS
+SELECT
+  wfp.parent AS parent_process_instance,
+  wfp.object_id AS child_process_instance
+FROM
+  OOCKE1_WFPROCESSINSTANCE wfp ;
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
 SELECT
-
-
-
     REPLACE(a.object_id, 'activity/', 'activityLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':')
-
-
-
     AS object_id,
     a.object_id AS "P$$PARENT",
     'org:opencrx:kernel:activity1:ActivityLinkFrom'
-
-
-
     AS dtype,
     l.modified_at,
     l.created_at,
@@ -826,8 +704,6 @@ FROM
 WHERE
     l.link_to = a.object_id AND
     l.object_id = l.object_id ;
-
-
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ AS
 SELECT
     object_id,
@@ -838,13 +714,8 @@ SELECT
     dtype
 FROM
     OOCKE1_ACTIVITYLINK_ ;
-
-
 CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM AS
 SELECT
-
-
-
     CASE
         WHEN (SUBSTRING(c.object_id,1,5) = 'lead/') THEN REPLACE(c.object_id, 'lead/', 'linkFromLead/')
         WHEN (SUBSTRING(c.object_id,1,12) = 'opportunity/') THEN REPLACE(c.object_id, 'opportunity/', 'linkFromOpportunity/')
@@ -852,15 +723,9 @@ SELECT
         WHEN (SUBSTRING(c.object_id,1,11) = 'salesOrder/') THEN REPLACE(c.object_id, 'salesOrder/', 'linkFromSalesOrder/')
         WHEN (SUBSTRING(c.object_id,1,8) = 'invoice/') THEN REPLACE(c.object_id, 'invoice/', 'linkFromInvoice/')
     END || '/' || REPLACE(l.object_id, '/', ':')
-
-
-
     AS object_id,
     c.object_id AS "P$$PARENT",
     'org:opencrx:kernel:contract1:ContractLinkFrom'
-
-
-
     AS dtype,
     l.modified_at,
     l.created_at,
@@ -883,8 +748,6 @@ FROM
 WHERE
     l.link_to = c.object_id AND
     l.object_id = l.object_id ;
-
-
 CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM_ AS
 SELECT
     object_id,
@@ -895,23 +758,12 @@ SELECT
     dtype
 FROM
     OOCKE1_CONTRACTLINK_ ;
-
-
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE AS
 SELECT
-
-
-
     REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dhn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
-
-
-
     AS object_id,
     c."P$$PARENT" AS "P$$PARENT",
     'org:opencrx:kernel:contract1:CustomerContractRole'
-
-
-
     AS dtype,
     c.modified_at,
     c.modified_by_,
@@ -934,23 +786,12 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.customer = a.object_id)
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dgn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
-
-
-
     AS object_id,
     c."P$$PARENT" AS "P$$PARENT",
     'org:opencrx:kernel:contract1:CustomerContractRole'
-
-
-
     AS dtype,
     c.modified_at,
     c.modified_by_,
@@ -973,23 +814,12 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.customer = a.object_id)
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
-
-
-
     AS object_id,
     c."P$$PARENT" AS "P$$PARENT",
     'org:opencrx:kernel:contract1:CustomerContractRole'
-
-
-
     AS dtype,
     c.modified_at,
     c.modified_by_,
@@ -1012,8 +842,6 @@ INNER JOIN
     OOCKE1_ACCOUNT a
 ON
     (c.customer = a.object_id) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE_ AS
 SELECT
     object_id,
@@ -1022,29 +850,15 @@ SELECT
     modified_by,
     owner,
     'org:opencrx:kernel:contract1:CustomerContractRole'
-
-
-
     AS dtype
 FROM
     OOCKE1_CONTRACT_ ;
-
-
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY AS
 SELECT
-
-
-
     REPLACE(d_.folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(d.object_id, '/', ':')
-
-
-
     AS object_id,
     d_.folder AS "P$$PARENT",
     'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
-
-
-
     AS dtype,
     d.modified_at,
     d.modified_by_,
@@ -1069,23 +883,12 @@ INNER JOIN
 ON
     (d_.object_id = d.object_id) AND
     (d_.folder IS NOT NULL)
-
 UNION
-
 SELECT
-
-
-
     REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(dfa.object_id, '/', ':')
-
-
-
     AS object_id,
     dfa.document_folder AS "P$$PARENT",
     'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
-
-
-
     AS dtype,
     dfa.modified_at,
     dfa.modified_by_,
@@ -1107,8 +910,6 @@ FROM
     OOCKE1_DOCUMENTFOLDERASS dfa
 WHERE
     dfa.document_folder IS NOT NULL ;
-
-
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY_ AS
 SELECT
     object_id,
@@ -1117,15 +918,10 @@ SELECT
     modified_by,
     owner,
     'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
-
-
-
     AS dtype
 FROM
     OOCKE1_DOCUMENT_ d_
-
 UNION
-
 SELECT
     object_id,
     idx,
@@ -1133,111 +929,12 @@ SELECT
     modified_by,
     owner,
     'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
-
-
-
     AS dtype
 FROM
     OOCKE1_DOCUMENTFOLDERASS_ dfa_ ;
-
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 AS
-SELECT
-    ass.account AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass
-
-UNION
-
-SELECT
-    (ass."P$$PARENT") AS account,
-    ass.account AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass ;
-
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 AS
-SELECT
-    (ass0."P$$PARENT") AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
-ON
-    (ass0.account = ass.account)
-
-UNION
-
-SELECT
-    (ass0.account) AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
-ON
-    (ass0."P$$PARENT" = ass.account) ;
-
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 AS
-SELECT
-    (ass0."P$$PARENT") AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    (ass0.account = ass.account)
-
-UNION
-
-SELECT
-    ass0.account AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D2 ass
-ON
-    (ass0."P$$PARENT" = ass.account) ;
-
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_D4 AS
-SELECT
-    (ass0."P$$PARENT") AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
-ON
-    (ass0.account = ass.account)
-
-UNION
-
-SELECT
-    ass0.account AS account,
-    ass."P$$PARENT" AS "P$$PARENT"
-FROM
-    OOCKE1_ACCOUNTASSIGNMENT ass0
-INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D3 ass
-ON
-    (ass0."P$$PARENT" = ass.account) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
-
-
-
     (ass0."P$$PARENT") || '*' || (ass0.object_id) || '*1'
-
-
-
     AS object_id,
     ass0."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
@@ -1249,9 +946,6 @@ SELECT DISTINCT
     CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
-
-
-
     AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
@@ -1309,17 +1003,9 @@ ON
     ass0.account = acct.object_id
 WHERE
     ass0.object_id LIKE 'accountMember%'
-
 UNION ALL
-
 SELECT DISTINCT
-
-
-
     (ass0.account) || '*' || (ass0.object_id) || '*-1'
-
-
-
     AS object_id,
     ass0.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
@@ -1331,9 +1017,6 @@ SELECT DISTINCT
     CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
-
-
-
     AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
@@ -1391,17 +1074,70 @@ ON
    ass0.account = acct.object_id
 WHERE
     ass0.object_id LIKE 'accountMember%' ;
-
-
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
-SELECT DISTINCT
-
-
-
-    (ass0."P$$PARENT") || '*' || (ass0.object_id) || '*1'
-
-
-
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_TO AS
+WITH RECURSIVE TEMP (
+    object_id,
+    "P$$PARENT",
+    account_from,
+    account_from_id,
+    account_to,
+    account_to_id,
+    created_at,
+    created_by_,
+    modified_at,
+    modified_by_,
+    dtype,
+    access_level_browse,
+    access_level_update,
+    access_level_delete,
+    owner_,
+    name,
+    description,
+    quality,
+    for_use_by_,
+    valid_from,
+    valid_to,
+    member,
+    disabled,
+    member_role_0,
+    member_role_1,
+    member_role_2,
+    member_role_3,
+    member_role_4,
+    user_boolean0,
+    user_boolean1,
+    user_boolean2,
+    user_boolean3,
+    user_boolean4_,
+    user_code0,
+    user_code1,
+    user_code2,
+    user_code3,
+    user_code4_,
+    user_date0,
+    user_date1,
+    user_date2,
+    user_date3,
+    user_date4_,
+    user_date_time0,
+    user_date_time1,
+    user_date_time2,
+    user_date_time3,
+    user_date_time4_,
+    user_number0,
+    user_number1,
+    user_number2,
+    user_number3,
+    user_number4_,
+    user_string0,
+    user_string1,
+    user_string2,
+    user_string3,
+    user_string4_,
+    distance
+) AS (
+SELECT
+    (ass0.object_id) || '*+1'
     AS object_id,
     ass0."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
@@ -1413,9 +1149,6 @@ SELECT DISTINCT
     ass0.modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
-
-
-
     AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
@@ -1469,17 +1202,142 @@ FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 WHERE
     ass0.object_id LIKE 'accountMember%'
-
 UNION ALL
-
-SELECT DISTINCT
-
-
-
-    (ass0.account) || '*' || (ass0.object_id) || '*-1'
-
-
-
+SELECT
+    (ass1.object_id) || '*+' || (TEMP.distance + 1)
+    AS object_id,
+    TEMP."P$$PARENT" AS "P$$PARENT",
+    ass1."P$$PARENT" AS account_from,
+    ass1."P$$PARENT" AS account_from_id,
+    ass1.account AS account_to,
+    ass1.account AS account_to_id,
+    ass1.created_at,
+    ass1.created_by_,
+    ass1.modified_at,
+    ass1.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+    AS dtype,
+    ass1.access_level_browse,
+    ass1.access_level_update,
+    ass1.access_level_delete,
+    ass1.owner_,
+    ass1.name,
+    ass1.description,
+    ass1.quality,
+    ass1.for_use_by_,
+    ass1.valid_from,
+    ass1.valid_to,
+    ass1.object_id AS member,
+    ass1.disabled,
+    ass1.member_role_0,
+    ass1.member_role_1,
+    ass1.member_role_2,
+    ass1.member_role_3,
+    ass1.member_role_4,
+    ass1.user_boolean0,
+    ass1.user_boolean1,
+    ass1.user_boolean2,
+    ass1.user_boolean3,
+    ass1.user_boolean4_,
+    ass1.user_code0,
+    ass1.user_code1,
+    ass1.user_code2,
+    ass1.user_code3,
+    ass1.user_code4_,
+    ass1.user_date0,
+    ass1.user_date1,
+    ass1.user_date2,
+    ass1.user_date3,
+    ass1.user_date4_,
+    ass1.user_date_time0,
+    ass1.user_date_time1,
+    ass1.user_date_time2,
+    ass1.user_date_time3,
+    ass1.user_date_time4_,
+    ass1.user_number0,
+    ass1.user_number1,
+    ass1.user_number2,
+    ass1.user_number3,
+    ass1.user_number4_,
+    ass1.user_string0,
+    ass1.user_string1,
+    ass1.user_string2,
+    ass1.user_string3,
+    ass1.user_string4_,
+    TEMP.distance + 1
+FROM
+    TEMP
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    TEMP.account_to = ass1."P$$PARENT"
+WHERE
+    TEMP.distance < 5
+) SELECT * FROM TEMP ;
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_FR AS
+WITH RECURSIVE TEMP (
+    object_id,
+    "P$$PARENT",
+    account_from,
+    account_from_id,
+    account_to,
+    account_to_id,
+    created_at,
+    created_by_,
+    modified_at,
+    modified_by_,
+    dtype,
+    access_level_browse,
+    access_level_update,
+    access_level_delete,
+    owner_,
+    name,
+    description,
+    quality,
+    for_use_by_,
+    valid_from,
+    valid_to,
+    member,
+    disabled,
+    member_role_0,
+    member_role_1,
+    member_role_2,
+    member_role_3,
+    member_role_4,
+    user_boolean0,
+    user_boolean1,
+    user_boolean2,
+    user_boolean3,
+    user_boolean4_,
+    user_code0,
+    user_code1,
+    user_code2,
+    user_code3,
+    user_code4_,
+    user_date0,
+    user_date1,
+    user_date2,
+    user_date3,
+    user_date4_,
+    user_date_time0,
+    user_date_time1,
+    user_date_time2,
+    user_date_time3,
+    user_date_time4_,
+    user_number0,
+    user_number1,
+    user_number2,
+    user_number3,
+    user_number4_,
+    user_string0,
+    user_string1,
+    user_string2,
+    user_string3,
+    user_string4_,
+    distance
+) AS (
+SELECT
+    (ass0.object_id) || '*-1'
     AS object_id,
     ass0.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
@@ -1491,9 +1349,6 @@ SELECT DISTINCT
     ass0.modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
-
-
-
     AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
@@ -1547,19 +1402,222 @@ FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 WHERE
     ass0.object_id LIKE 'accountMember%'
-
 UNION ALL
-
-SELECT DISTINCT
-
-
-
-    (ass."P$$PARENT") || '*' || (ass0.object_id) || '*2'
-
-
-
+SELECT
+    (ass1.object_id) || '*' || (TEMP.distance - 1)
     AS object_id,
-    ass."P$$PARENT" AS "P$$PARENT",
+    TEMP."P$$PARENT" AS "P$$PARENT",
+    ass1."P$$PARENT" AS account_from,
+    ass1."P$$PARENT" AS account_from_id,
+    ass1.account AS account_to,
+    ass1.account AS account_to_id,
+    ass1.created_at,
+    ass1.created_by_,
+    ass1.modified_at,
+    ass1.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+    AS dtype,
+    ass1.access_level_browse,
+    ass1.access_level_update,
+    ass1.access_level_delete,
+    ass1.owner_,
+    ass1.name,
+    ass1.description,
+    ass1.quality,
+    ass1.for_use_by_,
+    ass1.valid_from,
+    ass1.valid_to,
+    ass1.object_id AS member,
+    ass1.disabled,
+    ass1.member_role_0,
+    ass1.member_role_1,
+    ass1.member_role_2,
+    ass1.member_role_3,
+    ass1.member_role_4,
+    ass1.user_boolean0,
+    ass1.user_boolean1,
+    ass1.user_boolean2,
+    ass1.user_boolean3,
+    ass1.user_boolean4_,
+    ass1.user_code0,
+    ass1.user_code1,
+    ass1.user_code2,
+    ass1.user_code3,
+    ass1.user_code4_,
+    ass1.user_date0,
+    ass1.user_date1,
+    ass1.user_date2,
+    ass1.user_date3,
+    ass1.user_date4_,
+    ass1.user_date_time0,
+    ass1.user_date_time1,
+    ass1.user_date_time2,
+    ass1.user_date_time3,
+    ass1.user_date_time4_,
+    ass1.user_number0,
+    ass1.user_number1,
+    ass1.user_number2,
+    ass1.user_number3,
+    ass1.user_number4_,
+    ass1.user_string0,
+    ass1.user_string1,
+    ass1.user_string2,
+    ass1.user_string3,
+    ass1.user_string4_,
+    TEMP.distance - 1
+FROM
+    TEMP
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    TEMP.account_from = ass1.account
+WHERE
+    TEMP.distance > -5
+)
+SELECT * FROM TEMP ;
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
+SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_TO
+UNION ALL
+SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_FR ;
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT AS
+SELECT
+    (ass0.object_id) || '*1'
+    AS object_id,
+    ass0."P$$PARENT" AS "P$$PARENT",
+    ass0."P$$PARENT" AS account_from,
+    ass0."P$$PARENT" AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+    AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0,
+    ass0.user_boolean1,
+    ass0.user_boolean2,
+    ass0.user_boolean3,
+    ass0.user_boolean4_,
+    ass0.user_code0,
+    ass0.user_code1,
+    ass0.user_code2,
+    ass0.user_code3,
+    ass0.user_code4_,
+    ass0.user_date0,
+    ass0.user_date1,
+    ass0.user_date2,
+    ass0.user_date3,
+    ass0.user_date4_,
+    ass0.user_date_time0,
+    ass0.user_date_time1,
+    ass0.user_date_time2,
+    ass0.user_date_time3,
+    ass0.user_date_time4_,
+    ass0.user_number0,
+    ass0.user_number1,
+    ass0.user_number2,
+    ass0.user_number3,
+    ass0.user_number4_,
+    ass0.user_string0,
+    ass0.user_string1,
+    ass0.user_string2,
+    ass0.user_string3,
+    ass0.user_string4_,
+    1 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+WHERE
+    ass0.object_id LIKE 'accountMember%'
+UNION ALL
+SELECT
+    (ass0.object_id) || '*-1'
+    AS object_id,
+    ass0.account AS "P$$PARENT",
+    ass0."P$$PARENT" AS account_from,
+    ass0."P$$PARENT" AS account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+    AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0,
+    ass0.user_boolean1,
+    ass0.user_boolean2,
+    ass0.user_boolean3,
+    ass0.user_boolean4_,
+    ass0.user_code0,
+    ass0.user_code1,
+    ass0.user_code2,
+    ass0.user_code3,
+    ass0.user_code4_,
+    ass0.user_date0,
+    ass0.user_date1,
+    ass0.user_date2,
+    ass0.user_date3,
+    ass0.user_date4_,
+    ass0.user_date_time0,
+    ass0.user_date_time1,
+    ass0.user_date_time2,
+    ass0.user_date_time3,
+    ass0.user_date_time4_,
+    ass0.user_number0,
+    ass0.user_number1,
+    ass0.user_number2,
+    ass0.user_number3,
+    ass0.user_number4_,
+    ass0.user_string0,
+    ass0.user_string1,
+    ass0.user_string2,
+    ass0.user_string3,
+    ass0.user_string4_,
+    -1 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+WHERE
+    ass0.object_id LIKE 'accountMember%'
+UNION ALL
+SELECT
+    (ass0.object_id) || '*' || (ass1.object_id) || '*2A'
+    AS object_id,
+    ass1."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" As account_from_id,
     ass0.account AS account_to,
@@ -1569,9 +1627,6 @@ SELECT DISTINCT
     ass0.modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
-
-
-
     AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
@@ -1624,25 +1679,91 @@ SELECT DISTINCT
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
+    OOCKE1_ACCOUNTASSIGNMENT ass1
 ON
-    (ass0."P$$PARENT" = ass."P$$PARENT") OR
-    (ass0.account = ass."P$$PARENT")
+    ass0."P$$PARENT" = ass1.account
 WHERE
     ass0.object_id LIKE 'accountMember%'
-
 UNION ALL
-
-SELECT DISTINCT
-
-
-
-    (ass."P$$PARENT") || '*' || (ass0.object_id) || '*-2'
-
-
-
+SELECT
+    (ass0.object_id) || '*' || (ass1.object_id) || '*' || (ass2.object_id) || '*2B'
     AS object_id,
-    ass."P$$PARENT" AS "P$$PARENT",
+    ass2."P$$PARENT" AS "P$$PARENT",
+    ass0."P$$PARENT" AS account_from,
+    ass0."P$$PARENT" As account_from_id,
+    ass0.account AS account_to,
+    ass0.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+    AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0,
+    ass0.user_boolean1,
+    ass0.user_boolean2,
+    ass0.user_boolean3,
+    ass0.user_boolean4_,
+    ass0.user_code0,
+    ass0.user_code1,
+    ass0.user_code2,
+    ass0.user_code3,
+    ass0.user_code4_,
+    ass0.user_date0,
+    ass0.user_date1,
+    ass0.user_date2,
+    ass0.user_date3,
+    ass0.user_date4_,
+    ass0.user_date_time0,
+    ass0.user_date_time1,
+    ass0.user_date_time2,
+    ass0.user_date_time3,
+    ass0.user_date_time4_,
+    ass0.user_number0,
+    ass0.user_number1,
+    ass0.user_number2,
+    ass0.user_number3,
+    ass0.user_number4_,
+    ass0.user_string0,
+    ass0.user_string1,
+    ass0.user_string2,
+    ass0.user_string3,
+    ass0.user_string4_,
+    2 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    ass0.account = ass1."P$$PARENT"
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass2
+ON
+    ass2.account = ass1."P$$PARENT"
+WHERE
+    ass0.object_id LIKE 'accountMember%'
+UNION ALL
+SELECT
+    (ass0.object_id) || '*' || (ass1.object_id) || '*-2A'
+    AS object_id,
+    ass1.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
     ass0.account AS account_to,
@@ -1652,9 +1773,6 @@ SELECT DISTINCT
     ass0.modified_at,
     ass0.modified_by_,
     'org:opencrx:kernel:account1:AccountMembership'
-
-
-
     AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
@@ -1707,16 +1825,86 @@ SELECT DISTINCT
 FROM
     OOCKE1_ACCOUNTASSIGNMENT ass0
 INNER JOIN
-    OOCKE1_TOBJ_ACCTMEMBERSHIP_D1 ass
+    OOCKE1_ACCOUNTASSIGNMENT ass1
 ON
-    (ass0."P$$PARENT" = ass.account) OR
-    (ass0.account = ass.account)
+    ass0.account = ass1."P$$PARENT"
 WHERE
     ass0.object_id LIKE 'accountMember%'
-
-;
-
-
+UNION ALL
+SELECT
+    (ass0.object_id) || '*' || (ass1.object_id) || '*' || (ass2.object_id) || '*-2B'
+    AS object_id,
+    ass1.account AS "P$$PARENT",
+    ass1."P$$PARENT" AS account_from,
+    ass1."P$$PARENT" AS account_from_id,
+    ass1.account AS account_to,
+    ass1.account AS account_to_id,
+    ass0.created_at,
+    ass0.created_by_,
+    ass0.modified_at,
+    ass0.modified_by_,
+    'org:opencrx:kernel:account1:AccountMembership'
+    AS dtype,
+    ass0.access_level_browse,
+    ass0.access_level_update,
+    ass0.access_level_delete,
+    ass0.owner_,
+    ass0.name,
+    ass0.description,
+    ass0.quality,
+    ass0.for_use_by_,
+    ass0.valid_from,
+    ass0.valid_to,
+    ass0.object_id AS member,
+    ass0.disabled,
+    ass0.member_role_0,
+    ass0.member_role_1,
+    ass0.member_role_2,
+    ass0.member_role_3,
+    ass0.member_role_4,
+    ass0.user_boolean0,
+    ass0.user_boolean1,
+    ass0.user_boolean2,
+    ass0.user_boolean3,
+    ass0.user_boolean4_,
+    ass0.user_code0,
+    ass0.user_code1,
+    ass0.user_code2,
+    ass0.user_code3,
+    ass0.user_code4_,
+    ass0.user_date0,
+    ass0.user_date1,
+    ass0.user_date2,
+    ass0.user_date3,
+    ass0.user_date4_,
+    ass0.user_date_time0,
+    ass0.user_date_time1,
+    ass0.user_date_time2,
+    ass0.user_date_time3,
+    ass0.user_date_time4_,
+    ass0.user_number0,
+    ass0.user_number1,
+    ass0.user_number2,
+    ass0.user_number3,
+    ass0.user_number4_,
+    ass0.user_string0,
+    ass0.user_string1,
+    ass0.user_string2,
+    ass0.user_string3,
+    ass0.user_string4_,
+    -2 AS distance
+FROM
+    OOCKE1_ACCOUNTASSIGNMENT ass0
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass1
+ON
+    ass0."P$$PARENT" = ass1.account
+INNER JOIN
+    OOCKE1_ACCOUNTASSIGNMENT ass2
+ON
+    ass1.account = ass2."P$$PARENT"
+WHERE
+    ass0.object_id LIKE 'accountMember%' ;
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ AS
 SELECT
     ass_.object_id,
@@ -1739,17 +1927,9 @@ INNER JOIN
     OOCKE1_ACCOUNTASSIGNMENT ass
 ON
    (ass_.object_id = ass.object_id) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM AS
 SELECT
-
-
-
     REPLACE(l.link_to, 'facility/', 'itemLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':')
-
-
-
     AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
@@ -1757,9 +1937,6 @@ SELECT
     l.modified_at,
     l.modified_by_,
     'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-
-
-
     AS dtype,
     l.access_level_browse,
     l.access_level_update,
@@ -1778,17 +1955,9 @@ FROM
     OOCKE1_LINKABLEITEMLINK l
 WHERE
     l.link_to LIKE 'facility/%'
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(l.link_to, 'facility1/', 'itemLinkFrom1/') || '/' || REPLACE(l.object_id, '/', ':')
-
-
-
     AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
@@ -1796,9 +1965,6 @@ SELECT
     l.modified_at,
     l.modified_by_,
     'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-
-
-
     AS dtype,
     l.access_level_browse,
     l.access_level_update,
@@ -1817,17 +1983,9 @@ FROM
     OOCKE1_LINKABLEITEMLINK l
 WHERE
     l.link_to LIKE 'facility1/%'
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(l.link_to, 'facility2/', 'itemLinkFrom2/') || '/' || REPLACE(l.object_id, '/', ':')
-
-
-
     AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
@@ -1835,9 +1993,6 @@ SELECT
     l.modified_at,
     l.modified_by_,
     'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-
-
-
     AS dtype,
     l.access_level_browse,
     l.access_level_update,
@@ -1856,17 +2011,9 @@ FROM
     OOCKE1_LINKABLEITEMLINK l
 WHERE
     l.link_to LIKE 'facility2/%'
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(l.link_to, 'inventoryItem/', 'itemLinkFrom3/') || '/' || REPLACE(l.object_id, '/', ':')
-
-
-
     AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
@@ -1874,9 +2021,6 @@ SELECT
     l.modified_at,
     l.modified_by_,
     'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-
-
-
     AS dtype,
     l.access_level_browse,
     l.access_level_update,
@@ -1895,8 +2039,6 @@ FROM
     OOCKE1_LINKABLEITEMLINK l
 WHERE
     l.link_to LIKE 'inventoryItem/%' ;
-
-
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM_ AS
 SELECT
     object_id,
@@ -1907,16 +2049,11 @@ SELECT
     dtype
 FROM
     OOCKE1_LINKABLEITEMLINK_ ;
-
-
 CREATE VIEW OOCKE1_TOBJ_PRICELISTENTRY AS
 SELECT
     bp.object_id AS object_id,
     p."P$$PARENT" AS "P$$PARENT",
     'org:opencrx:kernel:product1:PriceListEntry'
-
-
-
     AS dtype,
     bp.modified_at,
     bp.modified_by_,
@@ -1948,8 +2085,6 @@ INNER JOIN
     OOCKE1_PRODUCT p
 ON
     (bp."P$$PARENT" = p.object_id) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_PRICELISTENTRY_ AS
 SELECT
     bp_.object_id,
@@ -1967,30 +2102,16 @@ INNER JOIN
     OOCKE1_PRODUCTBASEPRICE bp
 ON
     (bp_.object_id = bp.object_id) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY AS
 SELECT
-
-
-
     REPLACE(p.object_id, 'p2/', 'propertySetEntry1/')
-
-
-
     AS object_id,
     ps."P$$PARENT" AS "P$$PARENT",
     p.created_at,
     p.created_by_,
     p.modified_at,
     p.modified_by_,
-
-
-
     REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
-
-
-
     AS dtype,
     p.access_level_browse,
     p.access_level_update,
@@ -2015,30 +2136,16 @@ INNER JOIN
     OOCKE1_PROPERTYSET ps
 ON
     (p."P$$PARENT" = ps.object_id)
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(p.object_id, 'p3/', 'propertySetEntry2/')
-
-
-
     AS object_id,
     ps."P$$PARENT" AS "P$$PARENT",
     p.created_at,
     p.created_by_,
     p.modified_at,
     p.modified_by_,
-
-
-
     REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
-
-
-
     AS dtype,
     p.access_level_browse,
     p.access_level_update,
@@ -2063,8 +2170,6 @@ INNER JOIN
     OOCKE1_PROPERTYSET ps
 ON
     (p."P$$PARENT" = ps.object_id) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_ AS
 SELECT
     object_id,
@@ -2075,23 +2180,12 @@ SELECT
     dtype
 FROM
     OOCKE1_PROPERTY_ ;
-
-
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY AS
 SELECT
-
-
-
     REPLACE(act."P$$PARENT", 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(act.object_id, '/', ':')
-
-
-
     AS object_id,
     act."P$$PARENT" AS "P$$PARENT",
     'org:opencrx:kernel:account1:SearchIndexEntry'
-
-
-
     AS dtype,
     act.modified_at,
     act.modified_by_,
@@ -2106,23 +2200,12 @@ SELECT
     act.object_id AS account
 FROM
     OOCKE1_ACCOUNT act
-
 UNION ALL
-
 SELECT
-
-
-
     REPLACE(act."P$$PARENT", 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(adr.object_id, '/', ':')
-
-
-
     AS object_id,
     act."P$$PARENT" AS "P$$PARENT",
     'org:opencrx:kernel:account1:SearchIndexEntry'
-
-
-
     AS dtype,
     act.modified_at,
     act.modified_by_,
@@ -2147,8 +2230,6 @@ INNER JOIN
     OOCKE1_ADDRESS adr
 ON
     (adr."P$$PARENT" = act.object_id) ;
-
-
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ AS
 SELECT
     object_id,
@@ -2159,8 +2240,6 @@ SELECT
     dtype
 FROM
     OOCKE1_ACCOUNT_ ;
-
-
 CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
     p.name AS principal_name,
@@ -2171,8 +2250,6 @@ INNER JOIN
     OOMSE2_CREDENTIAL c
 ON
     (p.credential = c.object_id) ;
-
-
 CREATE VIEW OOMSE2_TOBJ_ROLES AS
 SELECT
     p.name AS principal_name,

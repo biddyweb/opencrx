@@ -161,6 +161,10 @@
 			<param-name>locale[9]</param-name>
 			<param-value>nl_NL</param-value>
 		</init-param>
+		<init-param>
+			<param-name>locale[10]</param-name>
+			<param-value>no_NO</param-value>
+		</init-param>
 		-->
 		<init-param>
 			<param-name>locale[11]</param-name>
@@ -182,6 +186,20 @@
 			<param-name>locale[15]</param-name>
 			<param-value>cs_CZ</param-value>
 		</init-param>
+<!--
+		<init-param>
+			<param-name>locale[17]</param-name>
+			<param-value>ar_SA</param-value>
+		</init-param>
+		<init-param>
+			<param-name>locale[18]</param-name>
+			<param-value>el_GR</param-value>
+		</init-param>
+		<init-param>
+			<param-name>locale[19]</param-name>
+			<param-value>ko_KR</param-value>
+		</init-param>
+-->		
 		<init-param>
 			<param-name>locale[22]</param-name>
 			<param-value>es_CO</param-value>
@@ -194,6 +212,20 @@
 			<param-name>locale[24]</param-name>
 			<param-value>ro_RO</param-value>
 		</init-param>
+<!--
+		<init-param>
+			<param-name>locale[25]</param-name>
+			<param-value>bg_BG</param-value>
+		</init-param>
+		<init-param>
+			<param-name>locale[26]</param-name>
+			<param-value>hu_HU</param-value>
+		</init-param>
+		<init-param>
+			<param-name>locale[27]</param-name>
+			<param-value>fi_FI</param-value>
+		</init-param>
+-->
 		<!-- mimeTypes -->
 		<init-param>
 			<param-name>mimeType[0]</param-name>
@@ -274,7 +306,7 @@
 		<!-- requestSizeMax -->
 		<init-param>
 			<param-name>requestSizeMax</param-name>
-			<param-value>10000000</param-value>
+			<param-value>50000000</param-value>
 		</init-param>
 		<!-- Admin -->
 		<init-param>

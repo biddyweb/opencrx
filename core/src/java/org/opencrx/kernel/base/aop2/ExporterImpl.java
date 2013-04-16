@@ -54,10 +54,11 @@ package org.opencrx.kernel.base.aop2;
 
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.Exporter;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ExporterImpl
 	<S extends org.opencrx.kernel.base.jmi1.Exporter,N extends org.opencrx.kernel.base.cci2.Exporter,C extends Void>
@@ -82,15 +83,15 @@ public class ExporterImpl
             	null,
             	null
             );
-            return Utils.getBasePackage(this.sameManager()).createExportItemResult(
-                (byte[])exportedItem[2],
-                (String)exportedItem[1],
-                (String)exportedItem[0],
-                Base.IMPORT_EXPORT_OK,
-                null
-            );
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ExportItemResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.item, (byte[])exportedItem[2]),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.itemMimeType, (String)exportedItem[1]),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.itemName, (String)exportedItem[0]),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.status, Base.IMPORT_EXPORT_OK),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.statusMessage, null)            	
+            );            
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                
     }
@@ -106,17 +107,17 @@ public class ExporterImpl
             	params.getReferenceFilter() == null ? "" : params.getReferenceFilter(),
             	params.getItemMimeType()
             );
-            return Utils.getBasePackage(this.sameManager()).createExportItemResult(
-                (byte[])exportedItem[2],
-                (String)exportedItem[1],
-                (String)exportedItem[0],
-                Base.IMPORT_EXPORT_OK,
-                null
-            );
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ExportItemResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.item, (byte[])exportedItem[2]),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.itemMimeType, (String)exportedItem[1]),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.itemName, (String)exportedItem[0]),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.status, Base.IMPORT_EXPORT_OK),
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExportItemResult.Member.statusMessage, null)            	
+            );            
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                
     }
-        
+
 }

@@ -60,10 +60,11 @@ import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class DepotEntityImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.DepotEntity,N extends org.opencrx.kernel.depot1.cci2.DepotEntity,C extends Void>
@@ -99,21 +100,21 @@ public class DepotEntityImpl
                     errors
                 );
             if(compoundBooking == null) {
-                return Utils.getDepotPackage(this.sameManager()).createCreateBookingResult(
-                    null,
-                    (short)1, 
-                    errors.toString()
-                );
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CreateBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.compoundBooking, null),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.status, (short)1),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.statusMessage, errors.toString())                	
+                );            	
+            } else {
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CreateBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.compoundBooking, compoundBooking),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.status, (short)0),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.statusMessage, null)                	
+                );            	
             }
-            else {
-                return Utils.getDepotPackage(this.sameManager()).createCreateBookingResult(
-                    compoundBooking,
-                    (short)0, 
-                    null
-                );
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
@@ -142,21 +143,21 @@ public class DepotEntityImpl
                     errors
                 );
             if(compoundBooking == null) {
-                return Utils.getDepotPackage(this.sameManager()).createCreateBookingResult(
-                    null,
-                    (short)1, 
-                    errors.toString()
-                );
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CreateBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.compoundBooking, null),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.status, (short)1),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.statusMessage, errors.toString())                	
+                );            	
+            } else {
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CreateBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.compoundBooking, compoundBooking),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.status, (short)0),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.statusMessage, null)                	
+                );            	
             }
-            else {
-                return Utils.getDepotPackage(this.sameManager()).createCreateBookingResult(
-                    compoundBooking,
-                    (short)0, 
-                    null
-                );
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
@@ -185,21 +186,21 @@ public class DepotEntityImpl
                     errors
                 );
             if(compoundBooking == null) {
-                return Utils.getDepotPackage(this.sameManager()).createCreateBookingResult(
-                    null,
-                    (short)1, 
-                    errors.toString()
-                );
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CreateBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.compoundBooking, null),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.status, (short)1),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.statusMessage, errors.toString())                	
+                );            	
+            } else {
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CreateBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.compoundBooking, compoundBooking),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.status, (short)0),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CreateBookingResult.Member.statusMessage, null)                	
+                );            	
             }
-            else {
-                return Utils.getDepotPackage(this.sameManager()).createCreateBookingResult(
-                    compoundBooking,
-                    (short)0, 
-                    null
-                );
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }        
     }

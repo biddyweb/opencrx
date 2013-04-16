@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
- * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: SetTimerOnCrxObject.jsp,v 1.5 2012/07/08 13:30:33 wfro Exp $
+ * Project:	    openCRX/Core, http://www.opencrx.org/
  * Description: Set timer on CrxObject
- * Revision:	$Revision: 1.5 $
- * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/07/08 13:30:33 $
+ * Owner:	    CRIXP Corp., Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,346 +53,179 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.text.*,
-org.opencrx.kernel.utils.*,
-org.openmdx.base.accessor.jmi.cci.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
+org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.exception.BasicException,
-org.openmdx.kernel.id.*
+org.openmdx.base.naming.*
 " %>
-<%!
-
-	public static java.util.Date incDate(
-		java.util.Date date,
-		int numberOfMinutes,
-		ApplicationContext app
-	) {
-		GregorianCalendar cal = new GregorianCalendar(app.getCurrentLocale());
-		cal.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-		cal.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-		cal.setFirstDayOfWeek(GregorianCalendar.MONDAY);
-		cal.setTime(date);
-		cal.add(GregorianCalendar.MINUTE, numberOfMinutes);
-		return cal.getTime();
-	}
-
-%>
 <%
-	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
-	String objectXri = request.getParameter("xri");
-	if(app == null || objectXri == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
+	final String FORM_NAME = "SetTimerOnCrxObject";	
+	SetTimerOnCrxObjectController wc = new SetTimerOnCrxObjectController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	Texts_1_0 texts = app.getTexts();
-	
-	final String TIMER_CLASS = "org:opencrx:kernel:home1:Timer";
+	org.openmdx.portal.servlet.ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();	
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<%= texts.getDir() %>">
-<head>
-	<title><%= app.getApplicationName() + " - Set Timer " + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %></title>
+<!-- 
 	<meta name="UNUSEDlabel" content="Set Timer">
 	<meta name="UNUSEDtoolTip" content="Set Timer">
-	<meta name="targetType" content="_self">
+	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
 	<meta name="order" content="org:opencrx:kernel:generic:CrxObject:setTimer">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
-	<script type="text/javascript" src="../../javascript/portal-all.js"></script>
-	<!--[if lt IE 7]><script type="text/javascript" src="../../javascript/iehover-fix.js"></script><![endif]-->
-	<script type="text/javascript" src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script>
-	<link rel='shortcut icon' href='../../images/favicon.ico' />
-	<script language="javascript" type="text/javascript">
-		function timeTick(dd_mm_yyyy_hh_dd, upMins) {
-			var right_now = new Date();
-	  		var dateTime = dd_mm_yyyy_hh_dd.split(" ");
-	  		var hrs = right_now.getHours();
-	  		var mins = right_now.getMinutes();
-	  		try {
-				dateStr = dateTime[0];
-				timeStr = dateTime[1].split(":");
-				hrsStr = timeStr[0];
-				minsStr = timeStr[1];
-	  		} catch (e) {}
-	  		try {
-				hrs = parseInt(hrsStr, 10);
-	  		} catch (e) {}
-	  		if (isNaN(hrs)) {hrs=12;}
-	  		try {
-				mins = parseInt(minsStr, 10);
-				mins = parseInt(mins/15, 10)*15;
-	  		} catch (e) {}
-	  		if (isNaN(mins)) {mins=00;}
-	  		mins = hrs*60 + mins + upMins;
-	  		while (mins < 0) {mins += 24*60;}
-	  		while (mins >= 24*60) {mins -= 24*60;}
-	  		hrs = parseInt(mins/60, 10);
-	  		if (hrs < 10) {
-				hrsStr = "0" + hrs;
-	  		} else {
-				hrsStr = hrs;
-	  		}
-	  		mins -= hrs*60;
-	  		if (mins < 10) {
-				minsStr = "0" + mins;
-	  		} else {
-				minsStr = mins;
-	  		}
-	  		if (dateStr.length < 10) {
-				dateStr = ((right_now.getDate() < 10) ? "0" : "") + right_now.getDate() + "-" + ((right_now.getMonth() < 9) ? "0" : "") + (right_now.getMonth()+1) + "-" + right_now.getFullYear();
-	  		}
-			return dateStr + " " + hrsStr + ":" + minsStr;
-		}
-	</script>
-</head>
-<body>
-<div id="container">
-	<div id="wrap">
-		<div id="header" style="height:150px;">
-	  		<div id="logoTable">
-				<table id="headerlayout">
-		  			<tr id="headRow">
-						<td id="head" colspan="2">
-							<table id="info">
-								<tr>
-								  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-								  <td id="headerCellSpacerLeft"></td>
-								  <td id="headerCellMiddle">&nbsp;</td>
-								  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-								</tr>
-							</table>
-						</td>
-					</tr>
-				</table>
-	  		</div>
-			<div id="etitle" style="height:20px;padding-left:12px;">
-			   <%= app.getLabel(TIMER_CLASS) %>
-			</div>
-		</div>
-		<div id="content-wrap">
-			<div id="content" style="padding:150px 0.5em 0px 0.5em;">
+-->
+<br />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="post" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="Command" id="Command" value="" />
 <%
-				try {
-					Path objectPath = new Path(objectXri);
-					RefObject_1_0 refObj = (RefObject_1_0)pm.getObjectById(objectPath);
-					final String providerName = objectPath.get(2);
-					final String segmentName = objectPath.get(4);
-					UserDefinedView userView = new UserDefinedView(
-						pm.getObjectById(new Path(objectXri)),
-						app,
-						viewsCache.getView(requestId)
-					);
-					boolean actionOk = request.getParameter("OK.Button") != null;
-					boolean actionCancel = request.getParameter("Cancel.Button") != null;
-					boolean actionContinue = request.getParameter("Continue.Button") != null;		
-					String name = request.getParameter("name") == null ? app.getLabel(TIMER_CLASS) + " (" + app.getLoginPrincipal() + ")" : request.getParameter("name");
-					// parse Date triggerAtDate DD-MM-YYYY HH:MM
-					boolean triggerAtDateOk = false;
-					SimpleDateFormat activityDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm", app.getCurrentLocale());
-					java.util.Date proposedTriggerAt = incDate(new java.util.Date(), 15, app);
-					if(refObj instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
-						org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)refObj;
-						if (activity.getScheduledStart() != null) {
-							proposedTriggerAt = incDate(activity.getScheduledStart(), -15, app);
-							if (proposedTriggerAt.compareTo(new java.util.Date()) < 0) {
-								incDate(new java.util.Date(), 15, app);
-							}
-						}
+	if(wc.hasPermission()) {
+%>
+		<table class="tableLayout">
+			<tr>
+				<td class="cellObject">
+<%
+					if (!wc.isTriggerAtIsInTheFuture()) {
+%>
+						<div style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+							Timer is in the past
+						</div>
+<%
 					}
-					String triggerAt = request.getParameter("triggerAt") == null ? activityDateFormat.format(proposedTriggerAt)	: request.getParameter("triggerAt");
-					java.util.Date triggerAtDate = null;
-					try {
-				  		if ((triggerAt != null) && (triggerAt.length() == 16)) {
-							triggerAtDate = new java.util.Date();
-							triggerAtDate.setYear(Integer.parseInt(triggerAt.substring(6,10))-1900);
-							triggerAtDate.setMonth(Integer.parseInt(triggerAt.substring(3,5))-1);
-							triggerAtDate.setDate(Integer.parseInt(triggerAt.substring(0,2)));
-							triggerAtDate.setHours(Integer.parseInt(triggerAt.substring(11,13)));
-							triggerAtDate.setMinutes(Integer.parseInt(triggerAt.substring(14,16)));
-							triggerAtDate.setSeconds(0);
-							triggerAtDateOk = true;
-						}
-					} catch (Exception e) {}		
-			  		boolean currentUserIsAdmin =
-			  			app.getCurrentUserRole().equals(org.opencrx.kernel.generic.SecurityKeys.ADMIN_PRINCIPAL + org.opencrx.kernel.generic.SecurityKeys.ID_SEPARATOR + segmentName + "@" + segmentName);
-					final String currentUserRole = app.getCurrentUserRole();
-					boolean permissionOk = true; //currentUserIsAdmin;
-					boolean triggerAtIsInTheFuture = triggerAtDateOk && triggerAtDate.compareTo(new java.util.Date()) > 0;
 %>
-					<form name="setTimer" accept-charset="utf-8" method="post" action="SetTimerOnCrxObject.jsp">
-			  			<input type="hidden" class="valueL" name="xri" value="<%= objectXri %>" />
-			  			<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+			  		<table class="fieldGroup">
+						<tr>
+				  			<td class="label">
+								<span class="nw"><%= wc.getFieldLabel(SetTimerOnCrxObjectController.TIMER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
+							</td>
+							<td>
+								<input type="text" class="valueL lightUp" name="name" id="name" maxlength="50" tabindex="200" value="<%= wc.getName().replaceAll("\"", "&quot;") %>" />
+							</td>
+							<td class="addon"></td>
+						</tr>
+						<tr>
+							<td class="label">
+								<span class="nw"><%= wc.getFieldLabel(SetTimerOnCrxObjectController.TIMER_CLASS, "timerStartAt", app.getCurrentLocaleAsIndex()) %>:</span>
+							</td>
+							<td style="padding-top:2px;">
+								<input type="text" class="valueL <%= wc.isTriggerAtDateOk() ? "lightUp" : "valueError" %>" name="triggerAt" id="triggerAt" maxlength="16" tabindex="800" value="<%= wc.getTriggerAt() %>" />
+							</td>
+							<td class="addon">
+								<a><img class="popUpButton" id="cal_trigger_triggerAt" border="0" alt="Click to open Calendar" src="./images/cal.gif" /></a>
+								<script type="text/javascript">
+									  Calendar.setup({
+										inputField: "triggerAt",
+										ifFormat: "%d-%m-%Y %H:%M",
+										timeFormat: "24",
+										button: "cal_trigger_triggerAt",
+										align: "Tr",
+										singleClick: true,
+										showsTime: true
+									  });
+								</script>
+								<img class="popUpButton" border="0" title="-15 Min. / aktuelle Zeit" alt="" src="./images/arrow_smallleft.gif" onclick="javascript:$('triggerAt').value = timeTick($('triggerAt').value, -15);$('triggerAt').className='valueL lightUp';" /><img class="popUpButton" border="0"  title="+15 Min. / aktuelle Zeit" alt="" src="./images/arrow_smallright.gif" onclick="javascript:$('triggerAt').value = timeTick($('triggerAt').value, 15);$('triggerAt').className='valueL lightUp';" />
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
 <%
-	  					if(
-	  						permissionOk && 
-	  						actionOk && 
-	  						triggerAtDateOk &&
-	  						name != null && !name.isEmpty() && 
-	  						triggerAtIsInTheFuture
-	  					) {
-							try {
-				  				pm.currentTransaction().begin();
-				  				org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(objectPath, pm, true);		  
-									org.opencrx.kernel.home1.jmi1.Timer timer = org.opencrx.kernel.utils.Utils.getHomePackage(pm).getTimer().createTimer();
-									timer.refInitialize(false, false);
-									timer.setName(name);
-									timer.setTimerStartAt(triggerAtDate);
-									//timer.setAction(new Short((short)20)); // display
-									timer.setTriggerRepeat(1);
-									timer.setTriggerIntervalMinutes(1);
-									timer.setDisabled(false);
-									timer.setTimerState(new Short((short)10)); // open
-									//timer.setAutocalcTriggerAt((refObj instanceof org.opencrx.kernel.activity1.jmi1.Activity));
-									//timer.setAutocalcTriggerAt(false);
-									timer.setTimerEndAt(incDate(triggerAtDate, 60, app));
-									timer.setTarget((org.openmdx.base.jmi1.BasicObject)refObj);
-									currentUserHome.addTimer(
-										false,
-										org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-										timer
-									);
-					  			pm.currentTransaction().commit();
-					  			
-									// Go back to previous view
-									Action action = new ObjectReference(refObj, app).getSelectObjectAction();
-									response.sendRedirect(
-										request.getContextPath() + "/" + action.getEncodedHRef()
-									);
-							}
-							catch(Exception e) {
+	}
 %>
-								<br><br>
-								<input type="Submit" name="Cancel.Button" tabindex="2010" value=">>" />
+	<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+	<div id="SubmitArea" style="float:left;display:none;">
 <%
-								try {
-									pm.currentTransaction().rollback();
-								} catch(Exception e1) {}
-								new ServiceException(e).log();
-							}
-						}
-			  			else {
-							if (actionContinue || actionCancel) {
-								// Go back to previous view
-								Action nextAction = new ObjectReference(refObj, app).getSelectObjectAction();
-								response.sendRedirect(
-									request.getContextPath() + "/" + nextAction.getEncodedHRef()
-								);
-								return;
-							}
-							else {
-								if (permissionOk) {
-									try {
-%>
-										<table cellspacing="8" class="tableLayout">
-											<tr>
-												<td class="cellObject">
-											  		<fieldset>
+	if(!wc.hasPermission()) {
+%>		
+		<h1><font color="red">No Permission</font></h1>
+<%		
+	} 
+	else {
+%>	
+		<input type="Submit" name="OK" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
 <%
-														if (!triggerAtIsInTheFuture) {
-%>
-															<div style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
-																Timer is in the past
-															</div>
-<%
-														}
-%>
-												  		<table class="fieldGroup">
-															<tr>
-													  			<td class="label">
-																	<span class="nw"><%= userView.getFieldLabel(TIMER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
-																</td>
-																<td>
-																	<input type="text" class="valueL lightUp" name="name" id="name" maxlength="50" tabindex="200" value="<%= name.replaceAll("\"", "&quot;") %>" />
-																</td>
-																<td class="addon"></td>
-															</tr>
-															<tr>
-																<td class="label">
-																	<span class="nw"><%= userView.getFieldLabel(TIMER_CLASS, "timerStartAt", app.getCurrentLocaleAsIndex()) %>:</span>
-																</td>
-																<td style="padding-top:2px;">
-																	<input type="text" class="valueL <%= triggerAtDateOk ? "lightUp" : "valueError" %>" name="triggerAt" id="triggerAt" maxlength="16" tabindex="800" value="<%= triggerAt %>" />
-																</td>
-																<td class="addon">
-																	<a><img class="popUpButton" id="cal_trigger_triggerAt" border="0" alt="Click to open Calendar" src="../../images/cal.gif" /></a>
-																	<script language="javascript" type="text/javascript">
-																		  Calendar.setup({
-																			inputField   : "triggerAt",
-																			ifFormat	 : "%d-%m-%Y %H:%M",
-																			timeFormat   : "24",
-																			button	   : "cal_trigger_triggerAt",
-																			align		: "Tr",
-																			singleClick  : true,
-																			showsTime	: true
-																		  });
-																	</script>
-																	<img class="popUpButton" border="0" title="-15 Min. / aktuelle Zeit" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:$('triggerAt').value = timeTick($('triggerAt').value, -15);$('triggerAt').className='valueL lightUp';" /><img class="popUpButton" border="0"  title="+15 Min. / aktuelle Zeit" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:$('triggerAt').value = timeTick($('triggerAt').value, 15);$('triggerAt').className='valueL lightUp';" />
-																</td>
-															</tr>
-														</table>
-													</fieldset>
-												</td>
-											</tr>
-										</table>
-										<input type="Submit" name="OK.Button" tabindex="2000" value="<%= app.getTexts().getOkTitle() %>" />
-										<input type="Submit" name="Cancel.Button" tabindex="2000" value="<%= app.getTexts().getCancelTitle() %>" />
-<%
-									} catch (Exception e) {
-										new ServiceException(e).log();
-									}
-								}
-								else {
-%>
-									<h1><font color="red">No Permission</font></h1>
-									<br />
-									<br />
-									<input type="Submit" name="Cancel.Button" tabindex="2010" value="<%= app.getTexts().getCancelTitle() %>" />
-<%
-								}
-							}
-						}
-%>
-					</form>
-<%
-				}
-				catch (Exception e) {
-					ServiceException e0 = new ServiceException(e);
-					e0.log();
-					out.println("<p><b>!! Failed !!<br><br>The following exception(s) occured:</b><br><br><pre>");
-					PrintWriter pw = new PrintWriter(out);
-					e0.printStackTrace(pw);
-					out.println("</pre></p>");
-				}
-%>
-			</div> <!-- content -->
-		</div> <!-- content-wrap -->
-	</div> <!-- wrap -->
-</div> <!-- container -->
-</body>
-</html>
-<%
-if(pm != null) {
-	pm.close();
-}
-%>
+	}
+%>		
+		<input type="Submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />		
+	</div>
+	<br />
+</form>
+<br />
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
+			onFailure: function() { },
+			onSuccess: function(t) {
+				$('UserDialog').update(t.responseText);
+			}
+		});
+		Event.stop(event);
+	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';
+	
+	timeTick = function (dd_mm_yyyy_hh_dd, upMins) {
+		var right_now = new Date();
+  		var dateTime = dd_mm_yyyy_hh_dd.split(" ");
+  		var hrs = right_now.getHours();
+  		var mins = right_now.getMinutes();
+  		try {
+			dateStr = dateTime[0];
+			timeStr = dateTime[1].split(":");
+			hrsStr = timeStr[0];
+			minsStr = timeStr[1];
+  		} catch (e) {}
+  		try {
+			hrs = parseInt(hrsStr, 10);
+  		} catch (e) {}
+  		if (isNaN(hrs)) {hrs=12;}
+  		try {
+			mins = parseInt(minsStr, 10);
+			mins = parseInt(mins/15, 10)*15;
+  		} catch (e) {}
+  		if (isNaN(mins)) {mins=00;}
+  		mins = hrs*60 + mins + upMins;
+  		while (mins < 0) {mins += 24*60;}
+  		while (mins >= 24*60) {mins -= 24*60;}
+  		hrs = parseInt(mins/60, 10);
+  		if (hrs < 10) {
+			hrsStr = "0" + hrs;
+  		} else {
+			hrsStr = hrs;
+  		}
+  		mins -= hrs*60;
+  		if (mins < 10) {
+			minsStr = "0" + mins;
+  		} else {
+			minsStr = mins;
+  		}
+  		if (dateStr.length < 10) {
+			dateStr = ((right_now.getDate() < 10) ? "0" : "") + right_now.getDate() + "-" + ((right_now.getMonth() < 9) ? "0" : "") + (right_now.getMonth()+1) + "-" + right_now.getFullYear();
+  		}
+		return dateStr + " " + hrsStr + ":" + minsStr;
+	}
+	
+</script>
+<t:wizardClose controller="<%= wc %>" />
+

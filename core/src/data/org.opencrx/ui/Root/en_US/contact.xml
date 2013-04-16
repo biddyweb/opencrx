@@ -131,12 +131,12 @@
 												<_item>Accounts</_item>
 											</toolTip>
 											<label>
-												<_item>Accounts</_item>
+												<_item>»Accounts</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>30</_item>
 											</order>
 											<orderObjectContainer>
 												<_item>99</_item>
@@ -969,7 +969,7 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:childrenNames">
 										<_object>
 											<active>true</active>
-											<spanRow>3</spanRow>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Names of children</_item>
 											</toolTip>
@@ -1067,6 +1067,23 @@
 												<_item>10</_item>
 												<_item>0</_item>
 												<_item>110</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:dateOfDeath">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Person's death date/time (local time place of death!)</_item>
+											</toolTip>
+											<label>
+												<_item>Death Date</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>115</_item>
 											</order>
 										</_object>
 										<_content/>

@@ -1,18 +1,15 @@
 ﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
- * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ScheduleEventWizard.jsp,v 1.69 2012/07/08 13:30:32 wfro Exp $
+ * Project:	    openCRX/Core, http://www.opencrx.org/
  * Description: ScheduleEventWizard
- * Revision:	$Revision: 1.69 $
- * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/07/08 13:30:32 $
+ * Owner:	    CRIXP Corp., Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +65,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.kernel.log.*
@@ -371,7 +367,7 @@ org.openmdx.kernel.log.*
 			org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
 			if (userHome.getContact() != null) {
 				// check whether any of the EMailAddresses match
-				org.opencrx.kernel.account1.cci2.EMailAddressQuery emailAddressFilter = org.opencrx.kernel.utils.Utils.getAccountPackage(pm).createEMailAddressQuery();
+				org.opencrx.kernel.account1.cci2.EMailAddressQuery emailAddressFilter = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
 				emailAddressFilter.forAllDisabled().isFalse();
 				for (
 					Iterator j = userHome.getContact().getAddress(emailAddressFilter).iterator();
@@ -850,14 +846,15 @@ org.openmdx.kernel.log.*
 			//System.out.println("notify: " + notifyVoterUsername);
 			pm.currentTransaction().begin();
 			org.openmdx.base.jmi1.BasicObject reference = null;
-			org.opencrx.kernel.base.jmi1.SendAlertParams sendAlertParams = org.opencrx.kernel.utils.Utils.getBasePackage(pm).createSendAlertParams(
-				body,			// description
-				IMPORTANCE_HIGH,// importance (3=HIGH)
-				subject,	// name
-				reference,// reference
-				null,			// resend delay
-				notifyVoterUsername   // toUsers
-			);
+			org.opencrx.kernel.base.jmi1.SendAlertParams sendAlertParams = org.w3c.spi2.Structures.create(
+				org.opencrx.kernel.base.jmi1.SendAlertParams.class, 
+           		org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.SendAlertParams.Member.description, body),
+           		org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.SendAlertParams.Member.importance, IMPORTANCE_HIGH),    		
+           		org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.SendAlertParams.Member.name, subject),    		
+           		org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.SendAlertParams.Member.resendDelayInSeconds, null),    		
+           		org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.SendAlertParams.Member.toUsers, notifyVoterUsername),	
+           		org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.SendAlertParams.Member.reference, reference)	
+           	);
 			// get current user's UserHome and send alert
 			org.opencrx.kernel.home1.jmi1.UserHome currentUserHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
 			currentUserHome.sendAlert(sendAlertParams);
@@ -1045,18 +1042,19 @@ org.openmdx.kernel.log.*
 			Date scheduledStart = dateFormat.parse(newEvent.substring(0, 20));
 			Date scheduledEnd = newEvent.length() < 41 ? dateFormat.parse(newEvent.substring(0, 20)) : dateFormat.parse(newEvent.substring(21, 41));
 			String location = newEvent.length() < 41 ? newEvent.substring(20) : (newEvent.length() >= 42 ? newEvent.substring(42) : null);
-			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
-				null, // creationContext
-		 		description,
-		 		detailedDescription,
-		 		null,
-		 		(short)0,
-		 		name,
-		 	   	(short)0,
-		 		null,
-		 		scheduledEnd,
-		 		scheduledStart
-			);
+			org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.w3c.spi2.Structures.create(
+				org.opencrx.kernel.activity1.jmi1.NewActivityParams.class, 
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.creationContext, null),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.description, description),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.detailedDescription, detailedDescription),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.dueBy, null),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.name, name),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.priority, (short)0),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.reportingContact, null),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.scheduledEnd, scheduledEnd),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.scheduledStart, scheduledStart)
+   			); 
 			pm.currentTransaction().begin();
 			org.opencrx.kernel.activity1.jmi1.NewActivityResult result = eventTracker.getDefaultCreator().newActivity(params);
 			try {
@@ -1076,13 +1074,11 @@ org.openmdx.kernel.log.*
 					} catch(Exception e1) {}
 				}
 				pm.currentTransaction().begin();
-				org.opencrx.kernel.activity1.jmi1.ActivityLinkTo activityLinkTo = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).getActivityLinkTo().createActivityLinkTo();
-				activityLinkTo.refInitialize(false, false);
+				org.opencrx.kernel.activity1.jmi1.ActivityLinkTo activityLinkTo = pm.newInstance(org.opencrx.kernel.activity1.jmi1.ActivityLinkTo.class);
 				activityLinkTo.setLinkTo((org.opencrx.kernel.activity1.jmi1.Activity)obj);
 				activityLinkTo.setName("TEST");
 				activityLinkTo.setActivityLinkType(new Short(CODE_ACTIVITYLINKTYPE_RELATESTO)); // relates to
 				activity.addActivityLinkTo(
-					false,
 					org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
 					activityLinkTo
 				);
@@ -1146,18 +1142,19 @@ org.openmdx.kernel.log.*
 			}
 			else {
 				// Create EMail activity
-				org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createNewActivityParams(
-					null, // creationContext
-			 		description,
-			 		null,
-			 		null,
-			 		(short)0,
-			 		name,
-			 	   	(short)0,
-			 		null,
-			 		null,
-			 		null
-				);
+				org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.w3c.spi2.Structures.create(
+					org.opencrx.kernel.activity1.jmi1.NewActivityParams.class, 
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.creationContext, null),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.description, description),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.detailedDescription, null),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.dueBy, null),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.name, name),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.priority, (short)0),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.reportingContact, null),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.scheduledEnd, null),
+	   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.scheduledStart, null)
+	   			); 
 				pm.currentTransaction().begin();
 				org.opencrx.kernel.activity1.jmi1.NewActivityResult result = null;
         try {
@@ -1613,7 +1610,6 @@ org.openmdx.kernel.log.*
 				calendar.set(GregorianCalendar.DAY_OF_MONTH, 1);
 				SimpleDateFormat monthFormat = new java.text.SimpleDateFormat("MMMM", app.getCurrentLocale());
 				SimpleDateFormat dayInWeekFormat = new java.text.SimpleDateFormat("E", app.getCurrentLocale());
-
 				org.opencrx.kernel.activity1.jmi1.ActivityCreator tentativeCreator = null;
 %>
 
@@ -1623,7 +1619,6 @@ org.openmdx.kernel.log.*
 					<div>&nbsp;</div>
 					<%= bundle.get("EventTrackerLabel") %>:
 					<select id="eventTracker" name="eventTracker" onchange="javascript:$('RefreshCal.Button').click();">
-%>
 						<option value=""><%= bundle.get("PleaseSelect") %></option>
 <%
 						org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery eventTrackerQuery =
@@ -1631,26 +1626,20 @@ org.openmdx.kernel.log.*
 						eventTrackerQuery.orderByName().ascending();
 						for(Iterator i = activitySegment.getActivityTracker(eventTrackerQuery).iterator(); i.hasNext(); ) {
 							org.opencrx.kernel.activity1.jmi1.ActivityTracker eventTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
-							if (eventTracker.refGetPath().equals(formValues.get("eventTracker"))) {
+							boolean isSelectedTracker = eventTracker.refGetPath().equals(formValues.get("eventTracker"));
+							if(isSelectedTracker) {
 								try {
 									tentativeCreator = eventTracker.getDefaultCreator();
 								} catch (Exception e) {}
-%>
-									<option selected
-<%
-							} else {
-%>
-								<option
-<%
 							}
 %>
-								value="<%= eventTracker.refMofId() %>"><%= new ObjectReference(eventTracker, app).getTitle() %></option>
+							<option <%= isSelectedTracker ? "selected" : "none" %> value="<%= eventTracker.refGetPath().toXRI() %>"><%= new ObjectReference(eventTracker, app).getTitle() %></option>
 <%
 						}
 %>
 					</select>
 <%
-					if (tentativeCreator != null) {
+					if(tentativeCreator != null) {
 %>
 						(<%= bundle.get("TentativeEventCreatorLabel") %>: <%= tentativeCreator.getName() != null ? tentativeCreator.getName() : "?" %>)
 <%

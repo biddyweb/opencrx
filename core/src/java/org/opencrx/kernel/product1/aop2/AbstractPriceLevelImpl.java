@@ -4,10 +4,11 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Products;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class AbstractPriceLevelImpl
 	<S extends org.opencrx.kernel.product1.jmi1.AbstractPriceLevel,N extends org.opencrx.kernel.product1.cci2.AbstractPriceLevel,C extends Void>
@@ -32,11 +33,11 @@ public class AbstractPriceLevelImpl
                 params.getProcessingMode(),
                 params.getIncludeProductsModifiedSince()
             );
-            return Utils.getProductPackage(this.sameManager()).createProcessPricesResult(
-                numberProcessed                    
+            return Structures.create(
+            	org.opencrx.kernel.product1.jmi1.ProcessPricesResult.class, 
+            	Datatypes.member(org.opencrx.kernel.product1.jmi1.ProcessPricesResult.Member.numberProcessed, numberProcessed)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }             
     }
@@ -50,11 +51,11 @@ public class AbstractPriceLevelImpl
                 this.sameObject(),
                 params.getProcessingMode()
             );
-            return Utils.getProductPackage(this.sameManager()).createProcessPricesResult(
-                numberProcessed                    
-            );            
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.product1.jmi1.ProcessPricesResult.class, 
+            	Datatypes.member(org.opencrx.kernel.product1.jmi1.ProcessPricesResult.Member.numberProcessed, numberProcessed)
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }             
     }
@@ -69,11 +70,11 @@ public class AbstractPriceLevelImpl
                 params.getProcessingMode(),
                 false
             );
-            return Utils.getProductPackage(this.sameManager()).createProcessPricesResult(
-                numberProcessed                    
+            return Structures.create(
+            	org.opencrx.kernel.product1.jmi1.ProcessPricesResult.class, 
+            	Datatypes.member(org.opencrx.kernel.product1.jmi1.ProcessPricesResult.Member.numberProcessed, numberProcessed)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                     
     }
@@ -89,11 +90,11 @@ public class AbstractPriceLevelImpl
                 params.getPriceUom(),
                 params.getIncludeProductsModifiedSince()
             );
-            return Utils.getProductPackage(this.sameManager()).createProcessPricesResult(
-                numberProcessed                    
+            return Structures.create(
+            	org.opencrx.kernel.product1.jmi1.ProcessPricesResult.class, 
+            	Datatypes.member(org.opencrx.kernel.product1.jmi1.ProcessPricesResult.Member.numberProcessed, numberProcessed)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                     
     }

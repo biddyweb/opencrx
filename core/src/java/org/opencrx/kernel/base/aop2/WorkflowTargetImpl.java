@@ -54,10 +54,12 @@ package org.opencrx.kernel.base.aop2;
 
 import org.opencrx.kernel.backend.Workflows;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
-import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class WorkflowTargetImpl
 	<S extends org.opencrx.kernel.base.jmi1.WorkflowTarget,N extends org.opencrx.kernel.base.cci2.WorkflowTarget,C extends Void>
@@ -77,18 +79,20 @@ public class WorkflowTargetImpl
     ) {
         try {
             WfProcessInstance wfInstance = Workflows.getInstance().executeWorkflow(
-                 this.sameObject(),
-                 (org.opencrx.kernel.workflow1.jmi1.WfProcess)params.getWorkflow(),
-                 params.getTargetObject(),
-                 params.getTriggeredBy(),
-                 params.getTriggeredByEventId(),
-                 params.getTriggeredByEventType()
+            	params.getName(),
+            	this.sameObject(),
+                (WfProcess)params.getWorkflow(),
+                params.getTargetObject(),
+                params.getTriggeredBy(),
+                params.getTriggeredByEventId(),
+                params.getTriggeredByEventType(),
+                params.getParentProcessInstance()                 
             );
-            return Utils.getBasePackage(this.sameManager()).createExecuteWorkflowResult(
-                wfInstance
-            ); 
-        }
-        catch(ServiceException e) {
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult.Member.workflowInstance, wfInstance)
+            );
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }

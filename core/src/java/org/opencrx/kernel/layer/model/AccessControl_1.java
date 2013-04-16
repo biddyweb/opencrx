@@ -774,7 +774,7 @@ public class AccessControl_1 extends Standard_1 {
                         				activity = secureObject;
                         			} else {
                         				try {
-                        					activity = Facades.asObject(interaction.retrieveObject(secureObject.getPath().getPrefix(7)));
+                        					activity = Facades.asObject(interaction.retrieveObject(secureObject.getPath().getPrefix(7), false));
                         				} catch(Exception e) {}
                         			}
                         			if(
@@ -802,7 +802,7 @@ public class AccessControl_1 extends Standard_1 {
 	                				}
 	                				Object_2Facade group = null;
 	                				try {
-	                					group = Facades.asObject(interaction.retrieveObject(groupIdentity));
+	                					group = Facades.asObject(interaction.retrieveObject(groupIdentity, false));
 	                				} catch(Exception e) {}
 	                				if(group != null) {
 	            						Path activityIdentity = request.path().getPrefix(7);
@@ -1010,9 +1010,17 @@ public class AccessControl_1 extends Standard_1 {
             super(connection);
         }
             
-	    //-------------------------------------------------------------------------
+	    /**
+	     * Retrieve object with given identity. 
+	     * 
+	     * @param identity
+	     * @param preferringNotFoundException
+	     * @return
+	     * @throws ServiceException
+	     */
 	    protected MappedRecord retrieveObject(
-	        Path identity
+	        Path identity,
+	        boolean preferringNotFoundException
 	    ) throws ServiceException {
 	        try {
 	        	DataproviderRequest getRequest = new DataproviderRequest(
@@ -1026,12 +1034,11 @@ public class AccessControl_1 extends Standard_1 {
 	        	DataproviderReply getReply = this.newDataproviderReply();
 		        super.get(  
 		            getRequest.getInteractionSpec(),
-		            Query_2Facade.newInstance(getRequest.object()),
+		            Query_2Facade.newInstance(getRequest.object(), preferringNotFoundException),
 		            getReply.getResult()
 		        );
-		        return getReply.getObject();
-	        }
-	        catch (Exception e) {
+		        return getReply.getResult().isEmpty() ? null : getReply.getObject();
+	        } catch (Exception e) {
 	        	throw new ServiceException(e);
 	        }
 	    }
@@ -1148,7 +1155,14 @@ public class AccessControl_1 extends Standard_1 {
 	        return owningGroup;
 	    }
 	    
-	    //-------------------------------------------------------------------------
+	    /**
+	     * Get object from cache. If not in cached, retrieve it and add it to cache
+	     * 
+	     * @param header
+	     * @param path
+	     * @return
+	     * @throws ServiceException
+	     */
 	    private MappedRecord getCachedObject(
 	        ServiceHeader header,
 	        Path path
@@ -1169,8 +1183,7 @@ public class AccessControl_1 extends Standard_1 {
 	                        }
 	                    }
 	                }
-	            } 
-	            catch(Exception e) {}
+	            } catch(Exception e) {}
 	        }
 	        // Get cached parent
 	        Path reference = path;
@@ -1182,18 +1195,20 @@ public class AccessControl_1 extends Standard_1 {
 	        Object[] entry = objectCache.get(parentPath);
 	        MappedRecord parent = null;
 	        if(entry == null) {
-	            parent = this.retrieveObject(
-	                parentPath
-	            );
+	            parent = this.retrieveObject(parentPath, true);
 	            this.addToObjectCache(parent);
-	        }
-	        else {
+	        } else {
 	            parent = (MappedRecord)entry[0];
 	        }
 	        return parent;
 	    }
 	    
-	    //-------------------------------------------------------------------------
+	    /**
+	     * Add object to cache.
+	     * 
+	     * @param object
+	     * @throws ServiceException
+	     */
 	    private void addToObjectCache(
 	    	MappedRecord object
 	    ) throws ServiceException {
@@ -1212,7 +1227,6 @@ public class AccessControl_1 extends Standard_1 {
 	        }
 	    }
 	    	    
-	    //-------------------------------------------------------------------------
 	    /* (non-Javadoc)
 	     * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#create(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest)
 	     */
@@ -1315,13 +1329,11 @@ public class AccessControl_1 extends Standard_1 {
 	        }
 	        AccessControl_1.this.completeReply(
 	            header,
-	            reply,
-	            parent
+	            reply
 	        );
 	        return true;
 	    }
 	    
-	    //-------------------------------------------------------------------------
 	    /* (non-Javadoc)
 	     * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#find(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest)
 	     */
@@ -1414,13 +1426,11 @@ public class AccessControl_1 extends Standard_1 {
 	        }
 	        AccessControl_1.this.completeReply(
 	            header,
-	            reply,
-	            parent
+	            reply
 	        );
 	        return true;
 	    }
 
-	    //-------------------------------------------------------------------------
 	    /* (non-Javadoc)
 	     * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#get(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest)
 	     */
@@ -1454,56 +1464,57 @@ public class AccessControl_1 extends Standard_1 {
 	            input,
 	            output
 	        );
-	        MappedRecord parent = null;
-	        if(request.path().size() >= 7) {
-		        parent = this.getCachedObject(
-	                header,
-	                request.path()
-	            );
-		        Object_2Facade parentFacade = Facades.asObject(parent);
-		        ModelElement_1_0 referencedType = this.getModel().getTypes(request.path())[2];
-		        if(AccessControl_1.this.isSecureObject(referencedType) && AccessControl_1.this.isSecureObject(parent)) {
-		        	Object_2Facade objectFacade = Facades.asObject(reply.getObject());
-		        	boolean hasPermission = realm.hasPermission(
-		        		request,
-		        		objectFacade, 
-		        		parentFacade, 
-		        		principal, 
-		        		userIdentity,
-		        		Action.READ,
-		        		null, // grantedPermissions
-		        		this
-		        	);
-		        	if(hasPermission) {
-		            	AccessControl_1.this.completeReply(
-		                    header,
-		                    reply,
-                            parent
-		                );
-		                return true;
-		            }
-		            else {
-                        throw new ServiceException(
-                            BasicException.Code.DEFAULT_DOMAIN,
-                            BasicException.Code.AUTHORIZATION_FAILURE, 
-                            "No permission to access requested object.",
-                            new BasicException.Parameter("path", request.path()),
-                            new BasicException.Parameter("param0", request.path().toXRI()),                                
-                            new BasicException.Parameter("param1", principal.getIdentity().get(6) + ":" +  principal.getIdentity().getBase()), 
-                            new BasicException.Parameter("param2", userIdentity.toXRI()) 
-                        );
-		            }
+	        if(reply.getResult().isEmpty()) {
+	        	return true;
+	        } else {
+		        MappedRecord parent = null;
+		        if(request.path().size() >= 7) {
+			        parent = this.getCachedObject(
+		                header,
+		                request.path()
+		            );
+			        Object_2Facade parentFacade = Facades.asObject(parent);
+			        ModelElement_1_0 referencedType = this.getModel().getTypes(request.path())[2];
+			        if(AccessControl_1.this.isSecureObject(referencedType) && AccessControl_1.this.isSecureObject(parent)) {
+			        	Object_2Facade objectFacade = Facades.asObject(reply.getObject());
+			        	boolean hasPermission = realm.hasPermission(
+			        		request,
+			        		objectFacade, 
+			        		parentFacade, 
+			        		principal, 
+			        		userIdentity,
+			        		Action.READ,
+			        		null, // grantedPermissions
+			        		this
+			        	);
+			        	if(hasPermission) {
+			            	AccessControl_1.this.completeReply(
+			                    header,
+			                    reply
+			                );
+			                return true;
+			            }
+			            else {
+	                        throw new ServiceException(
+	                            BasicException.Code.DEFAULT_DOMAIN,
+	                            BasicException.Code.AUTHORIZATION_FAILURE, 
+	                            "No permission to access requested object.",
+	                            new BasicException.Parameter("path", request.path()),
+	                            new BasicException.Parameter("param0", request.path().toXRI()),                                
+	                            new BasicException.Parameter("param1", principal.getIdentity().get(6) + ":" +  principal.getIdentity().getBase()), 
+	                            new BasicException.Parameter("param2", userIdentity.toXRI()) 
+	                        );
+			            }
+			        }
 		        }
+		        AccessControl_1.this.completeReply(
+		            header,
+		            reply
+		        );
+		        return true;
 	        }
-	        AccessControl_1.this.completeReply(
-	            header,
-	            reply,
-	            parent
-	        );
-	        return true;
 	    }
 
-	    //-------------------------------------------------------------------------
 	    /* (non-Javadoc)
 	     * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#remove(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest)
 	     */
@@ -1527,15 +1538,8 @@ public class AccessControl_1 extends Standard_1 {
 	        );
 	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
 	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
-	        MappedRecord object = this.retrieveObject(            
-	            request.path()
-	        );
-	        MappedRecord parent = null;
+	        MappedRecord object = this.retrieveObject(request.path(), true);
 	        if(AccessControl_1.this.isSecureObject(object)) {   	        	
-	            parent = this.getCachedObject(
-	                header,
-	                request.path()
-	            );
 	            Object_2Facade objectFacade = Facades.asObject(object);
 	            boolean hasPermission = realm.hasPermission(
 	            	request, 
@@ -1569,13 +1573,11 @@ public class AccessControl_1 extends Standard_1 {
 	        );
 	        AccessControl_1.this.completeReply(
 	            header,
-	            reply,
-	            parent
+	            reply
 	        );
 	        return true;
 	    }
 
-	    //-------------------------------------------------------------------------
 	    /* (non-Javadoc)
 	     * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#replace(org.openmdx.compatibility.base.dataprovider.cci.ServiceHeader, org.openmdx.compatibility.base.dataprovider.cci.DataproviderRequest)
 	     */
@@ -1601,9 +1603,7 @@ public class AccessControl_1 extends Standard_1 {
 	        );
 	        CachedPrincipal principal = getRunAsPrincipalResult.getPrincipal();
 	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
-	        MappedRecord object = this.retrieveObject(
-	            request.path()
-	        );
+	        MappedRecord object = this.retrieveObject(request.path(), true);
 	        if(AccessControl_1.this.isSecureObject(object)) {
 	            Object_2Facade objectFacade = Facades.asObject(object);
 	            boolean hasPermission = 
@@ -1683,13 +1683,14 @@ public class AccessControl_1 extends Standard_1 {
 	        );
 	        AccessControl_1.this.completeReply(
 	            header,
-	            reply,
-	            null
+	            reply
 	        );
 	        return true;
 	    }
 
-	    //-----------------------------------------------------------------------
+	    /* (non-Javadoc)
+	     * @see org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction#invoke(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.cci.MessageRecord, org.openmdx.base.rest.cci.MessageRecord)
+	     */
 	    @Override
 	    public boolean invoke(
 	        RestInteractionSpec ispec, 
@@ -1711,7 +1712,10 @@ public class AccessControl_1 extends Standard_1 {
 	                request
 	            );
 	            String principalName = (String)Facades.asObject(request.object()).attributeValue("principalName");
-	            CachedPrincipal principal = realm.getPrincipal(principalName);    
+	            CachedPrincipal principal = null;
+	            if(principalName != null) {
+	            	principal = realm.getPrincipal(principalName);
+	            }
 	            if(principal == null) {
 	                throw new ServiceException(
 	                    OpenCrxException.DOMAIN,
@@ -1731,9 +1735,7 @@ public class AccessControl_1 extends Standard_1 {
 		                objectIdentity
 		            );            
 	            Object_2Facade parentFacade = parent == null ? null : Facades.asObject(parent);
-	            MappedRecord object = this.retrieveObject(            
-	                objectIdentity
-	            );
+	            MappedRecord object = this.retrieveObject(objectIdentity, true);
 	            Object_2Facade objectFacade = Facades.asObject(object);
 	            MappedRecord result = AccessControl_1.this.createResult(
 	                request,
@@ -1825,8 +1827,7 @@ public class AccessControl_1 extends Standard_1 {
     //-------------------------------------------------------------------------
     protected void completeObject(
       ServiceHeader header,
-      MappedRecord object,
-      MappedRecord parent
+      MappedRecord object
     ) throws ServiceException {
         this.completeOwningUserAndGroup(
             header,
@@ -1837,16 +1838,14 @@ public class AccessControl_1 extends Standard_1 {
     //-------------------------------------------------------------------------
     protected DataproviderReply completeReply(
       ServiceHeader header,
-      DataproviderReply reply,
-      MappedRecord parent
+      DataproviderReply reply
     ) throws ServiceException {
     	if(reply.getResult() != null) {
 	      for(int i = 0; i < reply.getObjects().length; i++) {
 	    	  MappedRecord object = reply.getObjects()[i];
 	          this.completeObject(
 	              header,
-	              object,
-	              parent
+	              object
 	          );
 	      }
     	}

@@ -57,8 +57,16 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * FileBrowserWizardExtension
+ *
+ */
 public class FileBrowserWizardExtension {
 
+	/**
+	 * Constructor.
+	 * 
+	 */
 	public FileBrowserWizardExtension() {		
 	}
 	

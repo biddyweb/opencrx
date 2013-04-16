@@ -1,18 +1,15 @@
 ﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
- * Project:				openCRX/Core, http://www.opencrx.org/
- * Name:				$Id: WorkAndExpenseReport.jsp,v 1.66 2012/07/13 10:08:08 wfro Exp $
- * Description:			Create Work And Expense Report
- * Revision:			$Revision: 1.66 $
- * Owner:				CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:				$Date: 2012/07/13 10:08:08 $
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Description: Create Work And Expense Report
+ * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -68,7 +65,6 @@ org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
@@ -346,7 +342,6 @@ org.apache.poi.hssf.util.*
 	NumberFormat formatter0 = new DecimalFormat("0");
 	DecimalFormat decimalFormat = (DecimalFormat)DecimalFormat.getInstance(app.getCurrentLocale());
 
-	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
 	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
 			new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
 		);
@@ -564,7 +559,7 @@ org.apache.poi.hssf.util.*
 		if (activityFilter == null) {activityFilter = ACTIVITY_FILTER_SEGMENT;}
 
 		// determine wheter there are ActivityTrackers with userString0 != null
-		org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
+		org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = (org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
 		trackerFilter.forAllDisabled().isFalse();
 		trackerFilter.thereExistsUserBoolean0().isTrue();
 		hasProjects = !activitySegment.getActivityTracker(trackerFilter).isEmpty();
@@ -1079,7 +1074,7 @@ org.apache.poi.hssf.util.*
 										<td>
 <%
 											boolean noResourcesFound = false;
-											org.opencrx.kernel.activity1.cci2.ResourceQuery resourceFilter = activityPkg.createResourceQuery();
+											org.opencrx.kernel.activity1.cci2.ResourceQuery resourceFilter = (org.opencrx.kernel.activity1.cci2.ResourceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
 											if (!showAllResources) {
 													resourceFilter.thereExistsContact().equalTo(contact);
 											}
@@ -1141,7 +1136,7 @@ org.apache.poi.hssf.util.*
 
 											List activitiesList = null;
 											boolean openOnly = (excludeClosedActivities != null) && (excludeClosedActivities.length() > 0);
-											org.opencrx.kernel.activity1.cci2.ActivityQuery activityQuery = activityPkg.createActivityQuery();
+											org.opencrx.kernel.activity1.cci2.ActivityQuery activityQuery = (org.opencrx.kernel.activity1.cci2.ActivityQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Activity.class);
 											activityQuery.forAllDisabled().isFalse();
 											/*
 											if (openOnly) {
@@ -1167,7 +1162,7 @@ org.apache.poi.hssf.util.*
 													int gCounter = 0;
 													if (ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter) == 0) {
 														// get ActivityTrackers
-														org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = (org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
 														trackerFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
@@ -1177,7 +1172,7 @@ org.apache.poi.hssf.util.*
 																);
 														}
 														// get ActivityCategories
-														org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = (org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCategory.class);
 														categoryFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
@@ -1187,7 +1182,7 @@ org.apache.poi.hssf.util.*
 																);
 														}
 														// get ActivityMilestones
-														org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = (org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityMilestone.class);
 														milestoneFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
 															org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
@@ -1199,7 +1194,7 @@ org.apache.poi.hssf.util.*
 														activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0) {
 														// get projects, i.e. ActivityTrackers with userBoolean0 == true and userString0 != null
-														org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = (org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
 														trackerFilter.forAllDisabled().isFalse();
 														trackerFilter.thereExistsUserBoolean0().isTrue();
 														trackerFilter.orderByUserString0().ascending();
@@ -1218,7 +1213,7 @@ org.apache.poi.hssf.util.*
 														}
 														projectMainIterator = projectNames.values().iterator(); // all distinct project names
 
-														trackerFilter = activityPkg.createActivityTrackerQuery();
+														trackerFilter = (org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
 														trackerFilter.forAllDisabled().isFalse();
 														trackerFilter.userString1().isNonNull();
 														trackerFilter.thereExistsUserString0().equalTo(projectMain);
@@ -1234,7 +1229,7 @@ org.apache.poi.hssf.util.*
 														activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_FILTERGLOBAL.compareTo(activityFilter) == 0) {
 														// get ActivityFilterGlobals
-														org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery filterGlobalFilter = activityPkg.createActivityFilterGlobalQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery filterGlobalFilter = (org.opencrx.kernel.activity1.cci2.ActivityFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal.class);
 														filterGlobalFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityFilter(filterGlobalFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal afg = (org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal)i.next();
@@ -1246,7 +1241,7 @@ org.apache.poi.hssf.util.*
 														activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_TRACKER.compareTo(activityFilter) == 0) {
 														// get ActivityTrackers
-														org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = (org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
 														trackerFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
@@ -1258,7 +1253,7 @@ org.apache.poi.hssf.util.*
 														activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter) == 0) {
 														// get ActivityCategories
-														org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = (org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCategory.class);
 														categoryFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
@@ -1270,7 +1265,7 @@ org.apache.poi.hssf.util.*
 														activityFilterIterator = orderedActivityGroups.values().iterator();
 													} else if (ACTIVITY_FILTER_MILESTONE.compareTo(activityFilter) == 0) {
 														// get ActivityMilestones
-														org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
+														org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = (org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityMilestone.class);
 														milestoneFilter.forAllDisabled().isFalse();
 														for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
 																org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
@@ -1642,7 +1637,7 @@ org.apache.poi.hssf.util.*
 						contact != null
 					) {
 							selectedResources = new TreeMap();
-							org.opencrx.kernel.activity1.cci2.ResourceQuery resFilter = activityPkg.createResourceQuery();
+							org.opencrx.kernel.activity1.cci2.ResourceQuery resFilter = (org.opencrx.kernel.activity1.cci2.ResourceQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
 							resFilter.thereExistsContact().equalTo(contact);
 							resFilter.forAllDisabled().isFalse();
 							for (
@@ -1662,7 +1657,7 @@ org.apache.poi.hssf.util.*
 					//System.out.println("selectedRes = " + selectedResources);
 
 					boolean doReportCalculation = true;
-					org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery workAndExpenseRecordQuery = activityPkg.createWorkAndExpenseRecordQuery();
+					org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery workAndExpenseRecordQuery = (org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord.class);
 					if (reportBeginOfPeriod == null && reportEndOfPeriod == null) {
 						doReportCalculation = false; // do NOT calculate work/expense report
 					} else {
@@ -1732,7 +1727,7 @@ org.apache.poi.hssf.util.*
 							projectTracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)projectNames.get(projectMain);
 							if (projectTracker.getUserString0() != null) {
 								// get phases of project
-								org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
+								org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = (org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityTracker.class);
 								trackerFilter.forAllDisabled().isFalse();
 								trackerFilter.userString1().isNonNull();
 								trackerFilter.thereExistsUserString0().equalTo(projectMain);
@@ -1894,7 +1889,7 @@ org.apache.poi.hssf.util.*
 								}
 								String activityGroupKey = "?_" + currency; // name_XRI
 								String activityGroupTimeKey = "?_" + timeKey;
-								org.opencrx.kernel.activity1.cci2.ActivityGroupAssignmentQuery activityGroupAssignmentFilter = activityPkg.createActivityGroupAssignmentQuery();
+								org.opencrx.kernel.activity1.cci2.ActivityGroupAssignmentQuery activityGroupAssignmentFilter = (org.opencrx.kernel.activity1.cci2.ActivityGroupAssignmentQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment.class);
 								activityGroupAssignmentFilter.orderByCreatedAt().ascending();
 								for(Iterator i = activity.getAssignedGroup(activityGroupAssignmentFilter).iterator(); i.hasNext(); ) {
 									org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment agas = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)i.next();
@@ -2219,22 +2214,24 @@ org.apache.poi.hssf.util.*
 							HSSFSheet sheetWeeks = null;
 							HSSFSheet sheetActivityGroups = null;
 							HSSFSheet sheetResources = null;
-							HSSFSheet sheetRecords					= addSheet(wb, "Records",				true,	labels, values, 1);
+							HSSFSheet sheetRecords	  = addSheet(wb, "Records",		true,	labels, values, 1);
 							if (!isWorkRecordInPercent) {
-													sheetWeeks					= addSheet(wb, "Calendar",			 false, labels, values, 0);
+								sheetWeeks			  = addSheet(wb, "Calendar",		false, labels, values, 0);
 							}
-							HSSFSheet sheetActivities				= addSheet(wb, "Activities",		 false, labels, values, 0);
+							HSSFSheet sheetActivities = addSheet(wb, "Activities",		 false, labels, values, 0);
 							if (isWorkRecordInPercent && hasMultipleResources) {
-													sheetResources			= addSheet(wb, "Resources",			false, labels, values, 0);
+								sheetResources		  = addSheet(wb, "Resources",		false, labels, values, 0);
 							}
 							if (!isWorkRecordInPercent) {
-													sheetActivityGroups = addSheet(wb, "ActivityGroups", false, labels, values, 0);
+								sheetActivityGroups   = addSheet(wb, "ActivityGroups", false, labels, values, 0);
 							}
 
 							HSSFRow row = null;
 							HSSFCell cell = null;
 							HSSFCell lastSumCell = null;
 							HSSFCell preLastSumCell = null;
+							HSSFCell lastNumDayCell = null;
+							HSSFCell preLastNumDayCell = null;
 							HSSFCell resourceLineCell = null;
 							short nRow = 0;
 							short nCell = 0;
@@ -2250,8 +2247,8 @@ org.apache.poi.hssf.util.*
 							sheetRecords.setColumnWidth((short)6, (short)3000); //G - name
 							sheetRecords.setColumnWidth((short)7, (short)4000); //H - description
 							sheetRecords.setColumnWidth((short)8, (short)4000); //I - resource
-							sheetRecords.setColumnWidth((short)9, (short)4000); //J - reportingAccount
-							sheetRecords.setColumnWidth((short)10, (short)4000); //K
+							sheetRecords.setColumnWidth((short)9, (short)0);    //J - reportingAccount
+							sheetRecords.setColumnWidth((short)10, (short)4000);//K
 
 							nRow = REPORT_STARTING_ROW;
 							row = sheetRecords.createRow(nRow++);
@@ -2270,27 +2267,28 @@ org.apache.poi.hssf.util.*
 									if (isWorkRecordInPercent) {
 											cell = row.createCell(nCell++);	cell.setCellValue("%"); cell.setCellStyle(quantityStyle);
 											sheetRecords.setColumnWidth((short) 3, (short)0);
-											sheetRecords.setColumnWidth((short)10, (short)1800);
-											sheetRecords.setColumnWidth((short)11, (short)0);
-											sheetRecords.setColumnWidth((short)12, (short)0);
-											sheetRecords.setColumnWidth((short)13, (short)0);
-											sheetRecords.setColumnWidth((short)14, (short)0);
-											sheetRecords.setColumnWidth((short)15, (short)0);
-											sheetRecords.setColumnWidth((short)16, (short)0);
-											sheetRecords.setColumnWidth((short)17, (short)0);
-											sheetRecords.setColumnWidth((short)18, (short)3000);
-											sheetRecords.setColumnWidth((short)19, (short)3000);
+											sheetRecords.setColumnWidth((short)10, (short)1800);// K
+											sheetRecords.setColumnWidth((short)11, (short)0);   // L
+											sheetRecords.setColumnWidth((short)12, (short)0);   // M
+											sheetRecords.setColumnWidth((short)13, (short)0);   // N
+											sheetRecords.setColumnWidth((short)14, (short)0);   // O
+											sheetRecords.setColumnWidth((short)15, (short)0);   // P
+											sheetRecords.setColumnWidth((short)16, (short)0);   // Q
+											sheetRecords.setColumnWidth((short)17, (short)0);   // R
+											sheetRecords.setColumnWidth((short)18, (short)3000);// S
+											sheetRecords.setColumnWidth((short)19, (short)3000);// T
+											sheetRecords.setColumnWidth((short)20, (short)3000);// U
 									} else {
 											cell = row.createCell(nCell++);	cell.setCellValue("hh:mm"); cell.setCellStyle(timeStyle);
-											sheetRecords.setColumnWidth((short)10, (short)1800);
-											sheetRecords.setColumnWidth((short)11, (short)1800);
-											sheetRecords.setColumnWidth((short)12, (short)1200);
-											sheetRecords.setColumnWidth((short)13, (short)3000);
-											sheetRecords.setColumnWidth((short)14, (short)3000);
-											sheetRecords.setColumnWidth((short)15, (short)3000);
-											sheetRecords.setColumnWidth((short)16, (short)1000);
-											sheetRecords.setColumnWidth((short)17, (short)4000);
-											sheetRecords.setColumnWidth((short)18, (short)6000);
+											sheetRecords.setColumnWidth((short)10, (short)1800);// K
+											sheetRecords.setColumnWidth((short)11, (short)1800);// L
+											sheetRecords.setColumnWidth((short)12, (short)1200);// M
+											sheetRecords.setColumnWidth((short)13, (short)3000);// N
+											sheetRecords.setColumnWidth((short)14, (short)3000);// O
+											sheetRecords.setColumnWidth((short)15, (short)3000);// P
+											sheetRecords.setColumnWidth((short)16, (short)1000);// Q
+											sheetRecords.setColumnWidth((short)17, (short)4000);// R
+											sheetRecords.setColumnWidth((short)18, (short)6000);// S
 									}
 							} else {
 									cell = row.createCell(nCell++);	cell.setCellValue(userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())); cell.setCellStyle(rightAlignStyle);
@@ -2328,7 +2326,8 @@ org.apache.poi.hssf.util.*
 							if (isWorkRecordInPercent) {
 									cell = row.createCell(nCell++);	cell.setCellValue("Day Load"); cell.setCellStyle(rightAlignStyle);
 									if (!hasMultipleResources) {
-											cell = row.createCell(nCell++);	cell.setCellValue("SUM"); cell.setCellStyle(rightAlignStyle);
+											cell = row.createCell(nCell++);	cell.setCellValue("SUM %"); cell.setCellStyle(rightAlignStyle);
+											cell = row.createCell(nCell++);	cell.setCellValue("#Days"); cell.setCellStyle(rightAlignStyle);
 									}
 							}
 
@@ -2369,7 +2368,8 @@ org.apache.poi.hssf.util.*
 									<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 									<td class="smallheader"><%= userView.getFieldLabel(ACTIVITY_CLASS, "reportingAccount", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
 									<td class="smallheaderR"><%= isWorkRecordInPercent ? "Day Load" : "" %></td>
-									<td class="smallheaderR"><%= isWorkRecordInPercent && !hasMultipleResources ? "&sum;" : "" %></td>
+									<td class="smallheaderR"><%= isWorkRecordInPercent && !hasMultipleResources ? "&sum; [%]" : "" %></td>
+									<td class="smallheaderR"><%= isWorkRecordInPercent && !hasMultipleResources ? "#days" : "" %></td>
 								</tr>
 <%
 								boolean isEvenRow = false;
@@ -2615,7 +2615,7 @@ org.apache.poi.hssf.util.*
 										}
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getName());
 										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getDescription() != null ? workAndExpenseRecord.getDescription() : "");
-										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getResource() != null ? (new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle() : "");
+										cell = row.createCell(nCell++);	cell.setCellValue(workAndExpenseRecord.getResource() != null ? /*(new ObjectReference(workAndExpenseRecord.getResource(), app)).getTitle()*/ (workAndExpenseRecord.getResource().getName() != null ? workAndExpenseRecord.getResource().getName() : "?") : "");
 										String reportingAccount = "";
 										try {
 												if (activity.getReportingAccount() != null) {
@@ -2678,6 +2678,15 @@ org.apache.poi.hssf.util.*
 															preLastSumCell = lastSumCell;
 															lastSumCell = cell;
 															cell.setCellValue(formatter0.format(dailySum.doubleValue())); cell.setCellStyle(quantityStyle);
+
+															cell = row.createCell(nCell++);
+															preLastNumDayCell = lastNumDayCell;
+															lastNumDayCell = cell;
+															if (calDayLoad == null) {
+																cell.setCellValue("undef --> " + ratesepf.format(dayLoad * dailySum.doubleValue() / 10000.0));
+															} else {
+																cell.setCellValue(dayLoad * dailySum.doubleValue() / 10000.0); cell.setCellStyle(amountStyle);
+															}
 														}
 												}
 										}
@@ -2721,18 +2730,26 @@ org.apache.poi.hssf.util.*
 <%
 													if (!hasMultipleResources) {
 %>
-														<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter++ %>">
+														<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter %>">
 															<%= formatter0.format(dailySum.doubleValue()) %>&nbsp;
+														</td>
+														<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumDay<%= rowCounter++ %>">
+															<%= ratesepf.format(dayLoad * dailySum.doubleValue() / 10000.0) %>&nbsp;
 <%
 																if (!isDayBreak) {
 																		if (preLastSumCell != null) {
 																				preLastSumCell.setCellValue("");
 																				preLastSumCell = null;
 																		}
+																		if (preLastNumDayCell != null) {
+																				preLastNumDayCell.setCellValue("");
+																				preLastNumDayCell = null;
+																		}
 %>
 																		<script language="javascript" type="text/javascript">
 																				try {
 																						$('cumSum<%= rowCounter-2 %>').innerHTML = '';
+																						$('cumDay<%= rowCounter-2 %>').innerHTML = '';
 																				} catch (e) {}
 																		</script>
 <%

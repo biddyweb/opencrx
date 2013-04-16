@@ -1,18 +1,16 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: Search.jsp,v 1.18 2012/07/08 13:29:17 wfro Exp $
  * Description: Search.jsp
- * Revision:    $Revision: 1.18 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:17 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2007-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,7 +52,8 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@ page session="true" import="
 java.net.*,
 java.util.*,
 java.io.*,
@@ -67,9 +66,9 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*
-" %><%
+" %>
+<%
 	request.setCharacterEncoding("UTF-8");
 	ApplicationContext app = (ApplicationContext)session.getValue("ObjectInspectorServlet.ApplicationContext");
 	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
@@ -115,12 +114,10 @@ org.openmdx.portal.servlet.wizards.*
 		// Search by expression
 		else {
 			// Get home1 package
-			org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
 			org.opencrx.kernel.home1.jmi1.UserHome userHome = null;
 			try {
-  			userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
-			}
-			catch(Exception e) {
+				userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(app.getUserHomeIdentityAsPath());
+			} catch(Exception e) {
 			  // no or broken userhome --> would not be able to build ObjectFinder
     		response.sendRedirect(
     			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
@@ -130,11 +127,13 @@ org.openmdx.portal.servlet.wizards.*
 			org.opencrx.kernel.home1.jmi1.SearchResult searchResult = null;
 			try {
 				pm.currentTransaction().begin();
-				org.opencrx.kernel.home1.jmi1.SearchBasicParams params = homePkg.createSearchBasicParams(searchExpression);
+				org.opencrx.kernel.home1.jmi1.SearchBasicParams params = org.w3c.spi2.Structures.create(
+						org.opencrx.kernel.home1.jmi1.SearchBasicParams.class, 
+					org.w3c.spi2.Datatypes.member(org.opencrx.kernel.home1.jmi1.SearchBasicParams.Member.searchExpression, searchExpression)
+				);
 				searchResult = userHome.searchBasic(params);
 				pm.currentTransaction().commit();
-			}
-			catch(Exception e) {
+			} catch(Exception e) {
 				System.out.println(e.getCause());
 				try {
 					pm.currentTransaction().rollback();

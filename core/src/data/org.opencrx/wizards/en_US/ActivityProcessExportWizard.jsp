@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ActivityProcessExportWizard.jsp,v 1.3 2012/07/08 13:29:33 wfro Exp $
  * Description: ExportActivityProcess
- * Revision:    $Revision: 1.3 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:29:33 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -62,54 +61,14 @@ java.net.*,
 java.math.*,
 java.sql.*,
 java.text.*,
-javax.net.ssl.*,
-javax.naming.Context,
-javax.naming.InitialContext,
 javax.xml.transform.stream.*,
-org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.base.exception.*,
-org.openmdx.kernel.id.cci.*,
-org.openmdx.portal.servlet.*,
-org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
-org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.id.*,
-org.openmdx.kernel.exception.*,
-org.openmdx.base.text.conversion.*,
+org.opencrx.kernel.portal.wizard.*,
 org.opencrx.kernel.backend.*,
-org.opencrx.application.airsync.utils.*,
-org.opencrx.application.airsync.datatypes.*
+org.openmdx.base.exception.*,
+org.openmdx.portal.servlet.*,
+org.openmdx.kernel.id.*,
+org.openmdx.kernel.exception.*
 "%>
-<%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	// ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	// String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	// requestId is optional and may not be provided be external invokers
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null /* || viewsCache.getView(requestId) == null */) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
-		return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	if(!(obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityProcess)) {
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
-	org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = (org.opencrx.kernel.activity1.jmi1.ActivityProcess)obj;
-%>
 <!--
 	<meta name="label" content="State Chart XML - Export Activity Process">
 	<meta name="toolTip" content="State Chart XML - Export Activity Process">
@@ -118,17 +77,29 @@ org.opencrx.application.airsync.datatypes.*
 	<meta name="order" content="20">
 -->
 <%
-	String xml = Activities.getInstance().exportActivityProcessToScXml(activityProcess);
-    response.setContentType("text/xml");
-    response.setHeader("Content-disposition", "attachment;filename=" + activityProcess.getName() + ".scxml");            
-    OutputStream os = response.getOutputStream();
-    byte[] xmlBytes = xml.getBytes("UTF-8");
-    for(int i = 0; i < xmlBytes.length; i++) {
-        os.write(xmlBytes[i]);
-    }
-    response.setContentLength(xmlBytes.length);
-    os.close();
-   	if(pm != null) {
-   		pm.close();
-   	}
+	ActivityProcessExportWizardController wc = new ActivityProcessExportWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='OK' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
+		return;
+	}
+	try {
+		// Response
+		if(wc.getScxmlName() != null) {
+		    response.setContentType("text/xml");
+		    response.setHeader("Content-disposition", "attachment;filename=" + wc.getScxmlName() + ".scxml");            
+		    OutputStream os = response.getOutputStream();
+		    byte[] xmlBytes = wc.getScxml().getBytes("UTF-8");
+		    for(int i = 0; i < xmlBytes.length; i++) {
+		        os.write(xmlBytes[i]);
+		    }
+		    response.setContentLength(xmlBytes.length);
+		    os.close();
+		    return;
+		}
+	} finally {
+		wc.close();
+	}
 %>

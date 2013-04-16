@@ -88,7 +88,6 @@ import org.opencrx.kernel.utils.ComponentConfigHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
-import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.format.DateTimeFormat;
 
@@ -336,7 +335,7 @@ public class FreeBusyServlet extends HttpServlet {
             resp.setCharacterEncoding("UTF-8");    
             resp.setContentType("text/plain");
             PrintWriter p = resp.getWriter();
-            boolean isTypeICS = RESOURCE_TYPE_ICS.equals(req.getParameter(PARAMETER_NAME_TYPE));
+            boolean isTypeICS = RESOURCE_FORMAT_ICS.equals(req.getParameter(PARAMETER_NAME_TYPE));
             Date dtStart = new Date(System.currentTimeMillis() - 7*86400000L);
             Date dtEnd = new Date(System.currentTimeMillis() + 60*86400000L);
             p.write("BEGIN:VCALENDAR\n");
@@ -464,9 +463,9 @@ public class FreeBusyServlet extends HttpServlet {
     protected final static String PARAMETER_NAME_RESOURCE = "resource";
     protected final static String PARAMETER_NAME_HEIGHT = "height";
 
-    protected final static String RESOURCE_TYPE_ICS = "ics";
-    protected final static String RESOURCE_TYPE_HTML = "html";
-    protected final static String RESOURCE_TYPE_XML = "xml";
+    protected final static String RESOURCE_FORMAT_ICS = "ics";
+    protected final static String RESOURCE_FORMAT_HTML = "html";
+    protected final static String RESOURCE_FORMAT_XML = "xml";
 
     protected static final String PROPERTY_MAX_ACTIVITIES = "maxActivities";
     protected static final int DEFAULT_MAX_ACTIVITIES = 500;

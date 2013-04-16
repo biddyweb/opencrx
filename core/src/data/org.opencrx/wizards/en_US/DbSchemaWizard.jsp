@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: DbSchemaWizard.jsp,v 1.8 2012/07/08 13:30:30 wfro Exp $
  * Description: DbSchemaWizard
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -58,71 +57,36 @@
 <%@ page session="true" import="
 java.util.*,
 java.io.*,
-java.net.*,
-java.math.*,
-java.sql.*,
 java.text.*,
-javax.net.ssl.*,
-javax.naming.Context,
-javax.naming.InitialContext,
-javax.xml.transform.stream.*,
-org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.base.exception.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
+org.openmdx.kernel.id.*,
+org.openmdx.base.exception.*,
+org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*,
-org.openmdx.kernel.id.*,
-org.openmdx.kernel.exception.*,
-org.openmdx.base.text.conversion.*,
-org.opencrx.kernel.backend.*,
-org.opencrx.application.airsync.utils.*,
-org.opencrx.application.airsync.datatypes.*
+org.openmdx.base.naming.*
 "%>
 <%
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
-		return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	String formName = "DbSchemaForm";
-	String wizardName = "DbSchemaWizard.jsp";
-
-	// Get Parameters
-	String command = request.getParameter("Command");
-	if(command == null) command = "";
-	boolean actionValidate = "Validate".equals(command);
-	boolean actionValidateAndFix = "ValidateAndFix".equals(command);
-	boolean actionCancel = "Cancel".equals(command);
-	String connectionUrl = request.getParameter("connectionUrl");
-	String userName = request.getParameter("userName");
-	String password = request.getParameter("password");
+	final String FORM_NAME = "DbSchemaForm";
+	final String WIZARD_NAME = "DbSchemaWizard.jsp";
 	
-	if(actionCancel) {
-	  session.setAttribute(wizardName, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
+	DbSchemaWizardController wc = new DbSchemaWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();		
 		return;
 	}
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
 %>
 <!--
 	<meta name="label" content="Database schema wizard">
@@ -131,98 +95,25 @@ org.opencrx.application.airsync.datatypes.*
 	<meta name="forClass" content="org:opencrx:kernel:admin1:Segment">
 	<meta name="order" content="9999">
 -->
-<%
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-	List<String> report = new ArrayList<String>();
-	// HSQLDB always required for reading reference schema
-	Class.forName(
-		org.opencrx.kernel.utils.DbSchemaUtils.getJdbcDriverName("jdbc:hsqldb:")
-	);
-	if(actionValidate || actionValidateAndFix) {
-		// Get connection to running db
-		Connection connT = null;
-		try {
-			if(connectionUrl != null && connectionUrl.startsWith("java:")) {
-				Context initialContext = new InitialContext();
-				javax.sql.DataSource dsT = (javax.sql.DataSource)initialContext.lookup(connectionUrl);
-				connT = dsT.getConnection();
-			} else {
-				try {
-					String driverName = org.opencrx.kernel.utils.DbSchemaUtils.getJdbcDriverName(connectionUrl);
-					Class.forName(driverName);
-				} catch (Exception e) {
-					report.add("ERROR: Unable to load database driver (message=" + e.getMessage() + ")");					
-				}
-				connT = DriverManager.getConnection(connectionUrl, userName, password);				
-			}
-		} catch(Exception e) {
-			report.add("ERROR: unable to get connection to database (message=" + e.getMessage() + ")");
-		}
-		if(connT != null) {
-			String databaseProductName = connT.getMetaData().getDatabaseProductName();
-			// Validate
-			report.addAll(
-				org.opencrx.kernel.utils.DbSchemaUtils.validateTables(
-					connT,
-					actionValidateAndFix
-				)
-			);
-			report.addAll(
-				org.opencrx.kernel.utils.DbSchemaUtils.validateTableColumns(
-					connT,
-					actionValidateAndFix
-				)
-			);
-			report.addAll(
-				org.opencrx.kernel.utils.DbSchemaUtils.migrateData(
-					connT,
-					true // migrate by default
-				)
-			);
-			report.addAll(
-				org.opencrx.kernel.utils.DbSchemaUtils.validateViews(
-					connT,
-					actionValidateAndFix
-				)
-			);
-			report.addAll(
-				org.opencrx.kernel.utils.DbSchemaUtils.validateIndexes(
-					connT,
-					actionValidateAndFix
-				)
-			);
-			report.addAll(
-				org.opencrx.kernel.utils.DbSchemaUtils.validateSequences(
-					connT,
-					actionValidateAndFix
-				)
-			);
-		}
-	}
-%>
 <br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
-	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
-	<table cellspacing="8" class="tableLayout">
+	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
 				<div>
-					<h1>openCRX database validation and upgrade wizard</h1>
 					The wizard does NOT drop or remove any tables, columns and rows.
 				</div>
 				<br />
-				<div id="waitArea" style="display:none;">
-					Validating schema. Please wait...
-				</div>
 				<div id="contentArea">
 					<table>
 						<tr>
 							<td>Connection URL:</td>
 							<td>
-								<input type="text" name="connectionUrl" id="connectionUrl" tabIndex="9000" style="width:50em;" value="<%= connectionUrl == null ? "java:comp/env/jdbc_opencrx_" + providerName : connectionUrl %>" />
+								<input type="text" name="connectionUrl" id="connectionUrl" tabIndex="9000" style="width:50em;" value="<%= wc.getFormFields().getConnectionUrl() == null ? "java:comp/env/jdbc_opencrx_" + wc.getProviderName() : wc.getFormFields().getConnectionUrl() %>" />
 <pre>Examples:
 * java:comp/env/jdbc_opencrx_CRX
 * jdbc:postgresql://127.0.0.1/CRX
@@ -235,45 +126,51 @@ org.opencrx.application.airsync.datatypes.*
 						</tr>
 						<tr>	
 							<td>User (for jdbc: URLs only):</td>
-							<td><input type="text" name="userName" id="userName" tabIndex="9001" style="width:20em;" value="<%= userName == null ? "" : userName %>" /></td>
+							<td><input type="text" name="userName" id="userName" tabIndex="9001" style="width:20em;" value="<%= wc.getFormFields().getUserName() == null ? "" : wc.getFormFields().getUserName() %>" /></td>
 						</tr>
 						<tr>
 							<td>Password (for jdbc: URLs only):</td>
-							<td><input type="password" name="password" id="password" tabIndex="9002" style="width:20em;" value="<%= password == null ? "" : password %>" /></td>
+							<td><input type="password" name="password" id="password" tabIndex="9002" style="width:20em;" value="<%= wc.getFormFields().getPassword() == null ? "" : wc.getFormFields().getPassword() %>" /></td>
 						</tr>
 					</table>
-					<input type="submit" class="abutton" name="Validate" id="Validate.Button" tabindex="9010" value="Validate" onclick="javascript:$('contentArea').style.display='none';$('waitArea').style.display='block';$('Command').value=this.name;" />
-					<input type="submit" class="abutton" name="ValidateAndFix" id="ValidateAndFix.Button" tabindex="9020" value="Validate & Fix" onclick="javascript:$('contentArea').style.display='none';$('waitArea').style.display='block';$('Command').value=this.name;" />
-					<input type="submit" class="abutton" name="Cancel" tabindex="9030" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+					<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+					<div id="SubmitArea" style="float:left;display:none;">									
+						<input type="submit" name="Validate" id="Validate.Button" tabindex="9010" value="Validate" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('ReportArea').style.display='none';$('Command').value=this.name;" />
+						<input type="submit" name="ValidateAndFix" id="ValidateAndFix.Button" tabindex="9020" value="Validate & Fix" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('ReportArea').style.display='none';$('Command').value=this.name;" />
+						<input type="submit" name="Cancel" tabindex="9030" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+					</div>
+					<div id="ReportArea">
 <%
-				if(!report.isEmpty()) {
+						if(!wc.getReport().isEmpty()) {
 %>				
-					<pre>Report + <%= new java.util.Date() %>:</pre>
-					<table>
+							<br />
+							<pre>Report + <%= new java.util.Date() %>:</pre>
+							<table>
 <%
-					int n = 0;
-					for(String reportLine: report) {
+								int n = 0;
+								for(String reportLine: wc.getReport()) {
 %>
-						<tr>
-							<td style="text-align:center;background-color:<%= reportLine.startsWith("OK") ? "lightgreen;" : reportLine.startsWith("ERROR") ? "red;" : "yellow;" %>"><%= n %></td>
-							<td><pre style="display:inline"><%= reportLine %></pre></td>
-						</tr>
+									<tr>
+										<td style="text-align:center;background-color:<%= reportLine.startsWith("OK") ? "lightgreen;" : reportLine.startsWith("ERROR") ? "red;" : "yellow;" %>"><%= n %></td>
+										<td><pre style="display:inline"><%= reportLine %></pre></td>
+									</tr>
 <%						
-						n++;
-					}
+									n++;
+								}
 %>
-					</table>
+							</table>
 <%
-				}
+						}
 %>
+					</div>
 				</div>				
 			</td>
 		</tr>
 	</table>
 </form>
-<script language="javascript" type="text/javascript">
-	Event.observe('<%= formName %>', 'submit', function(event) {
-		$('<%= formName %>').request({
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
 			onFailure: function() { },
 			onSuccess: function(t) {
 				$('UserDialog').update(t.responseText);
@@ -281,9 +178,8 @@ org.opencrx.application.airsync.datatypes.*
 		});
 		Event.stop(event);
 	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';		
 </script>
-<%
-if(pm != null) {
-	pm.close();
-}
-%>
+<t:wizardClose controller="<%= wc %>" />
+

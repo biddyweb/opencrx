@@ -176,6 +176,10 @@
         <element xmi:type="uml:Property" href="../../org.opencrx.kernel.account1.uml#_rXCMIGhnEeGeXMwL52ae1A"/>
         <layoutConstraint xmi:type="notation:Location" xmi:id="_rXamoWhnEeGeXMwL52ae1A"/>
       </children>
+      <children xmi:type="notation:Node" xmi:id="_yoHqICTSEeKWSJ9fk63BEw" type="3001">
+        <element xmi:type="uml:Property" href="../../org.opencrx.kernel.account1.uml#_ymD0oCTSEeKWSJ9fk63BEw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_yoHqISTSEeKWSJ9fk63BEw"/>
+      </children>
       <styles xmi:type="notation:TitleStyle" xmi:id="_xcm2Q0iHEd-iy9UYIz4FDQ" showTitle="true"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_xcm2REiHEd-iy9UYIz4FDQ"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_xcm2RUiHEd-iy9UYIz4FDQ"/>

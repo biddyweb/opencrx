@@ -145,16 +145,15 @@ public class SendMessageWorkflow extends Workflows.SynchronousWorkflow {
                 }
                 // Send message                
                 String hostname = jabberAccount.getHostname();
-                hostname = hostname == null ? "jabber.org" : hostname;
                 int port = 5222;
-                if(hostname.indexOf(":") > 0) {
+                if(hostname != null && hostname.indexOf(":") > 0) {
                 	hostname = hostname.substring(0, hostname.indexOf(":"));
-                	port = Integer.valueOf(hostname.substring(hostname.indexOf(":") + 1));
+                	port = Integer.valueOf(hostname.substring(hostname.indexOf(":") + 1));                	
                 }
-                Connection connection = new XMPPConnection(
-		    		new ConnectionConfiguration(hostname, port, jabberAccount.getServicename())
-		    	);
-		    	SASLAuthentication.supportSASLMechanism("PLAIN", 0);		    	
+                Connection connection = hostname == null || hostname.isEmpty() ?
+                	new XMPPConnection(jabberAccount.getServicename()) :
+                		new XMPPConnection(new ConnectionConfiguration(hostname, port, jabberAccount.getServicename()));
+    		    SASLAuthentication.supportSASLMechanism("PLAIN", 0);                	
 		    	connection.connect();
 		    	connection.login(jabberAccount.getUsername(), jabberAccount.getPassword());
 		    	Chat chat = connection.getChatManager().createChat(

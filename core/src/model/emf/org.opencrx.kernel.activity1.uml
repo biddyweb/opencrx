@@ -125,6 +125,10 @@
             <ownedAttribute xmi:id="_9AZrwHspEd2BAOXTmSCZhA" name="icalType">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_uqeNsC_nEeKDkeDTry157A" name="icalClass" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_yeggAC_nEeKDkeDTry157A" value="1"/>
+            </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D4241AF040078" name="activityLinkTo" type="_3C7B8A60016D4241AEED0396" isUnique="false" aggregation="composite" association="_3C7B8A60016D4241AF0302DA">
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IC7y-97NEdmKapscEl8OLg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IC7y-t7NEdmKapscEl8OLg"/>
@@ -647,6 +651,9 @@
             <generalization xmi:id="_MO28gKCHEd-sfamC1W0IlA">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.generic.uml#_3C7B8A60016D3F3FB4530021"/>
             </generalization>
+            <generalization xmi:id="_nqXiYAvUEeKmPfUUg_BAvA">
+              <general xmi:type="uml:Class" href="org.opencrx.kernel.product1.uml#_kpFuUOryEdm0QOOG5_-fRw"/>
+            </generalization>
             <ownedAttribute xmi:id="_3C7B8A60016D42429463026F" name="name">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
             </ownedAttribute>
@@ -1029,6 +1036,10 @@
               <type xmi:type="uml:Class" href="org.opencrx.kernel.account1.uml#_3C7B8A60016D3F3EBCD203AF"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_VwmegZKsEduJVp2JdW0YXw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_VwmegJKsEduJVp2JdW0YXw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_JWgxgGDHEeKD7NYhyGCJLg" name="parentProcessInstance" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.home1.uml#_3C7B8A60016D3F3EC02C0286"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NghT0GDHEeKD7NYhyGCJLg"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D424D8474010E" name="ActivityGroupAssignment">
@@ -1492,12 +1503,12 @@
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedOperation xmi:id="_IuODYCm0EdyhBqtrvaHm2Q" name="countFilteredActivity">
+            <ownedOperation xmi:id="_IuODYCm0EdyhBqtrvaHm2Q" name="countFilteredActivity" isQuery="true">
               <ownedParameter xmi:id="_OW_CsCm0EdyhBqtrvaHm2Q" name="ReturnResultParameter1" direction="return">
                 <type xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3CpXICl_EdywXdAHn-NS-w"/>
               </ownedParameter>
             </ownedOperation>
-            <ownedOperation xmi:id="_O0lCwLN3Ed2ruvFVnIDKIQ" name="calcTotalQuantity">
+            <ownedOperation xmi:id="_O0lCwLN3Ed2ruvFVnIDKIQ" name="calcTotalQuantity" isQuery="true">
               <ownedParameter xmi:id="_2RV7QDMfEd6rDqvK-um4sQ" name="in" type="_UFU94DMfEd6rDqvK-um4sQ"/>
               <ownedParameter xmi:id="_XUxiMLN3Ed2ruvFVnIDKIQ" name="ReturnResultParameter1" type="_rCm8IIeXEdy5T_8kd3c3Iw" direction="return"/>
             </ownedOperation>
@@ -2015,6 +2026,9 @@
               </qualifier>
             </ownedAttribute>
             <ownedAttribute xmi:id="_jFfMcHsqEd2BAOXTmSCZhA" name="icalType">
+              <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_T_fegCTTEeKWSJ9fk63BEw" name="icalClass" aggregation="composite">
               <type xmi:type="uml:Class" href="org.opencrx.uml#_3C7B8A60016D40747CF6015D"/>
             </ownedAttribute>
             <ownedOperation xmi:id="_zPdPcG9EEdq2_7SCieKOqA" name="newActivity">
@@ -2807,6 +2821,10 @@
             </ownedAttribute>
             <ownedAttribute xmi:id="_F7VpgLziEd-deejz2j0zFw" name="transition" type="_VyurYG42Edq2_7SCieKOqA" aggregation="composite">
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Mez9kLziEd-deejz2j0zFw"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_QrCvEGDHEeKD7NYhyGCJLg" name="parentProcessInstance" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.home1.uml#_3C7B8A60016D3F3EC02C0286"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_S0XMAGDHEeKD7NYhyGCJLg"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="__fH6YLzpEd-6TdDVYe-efA" name="LinkToAndFollowUpResult">

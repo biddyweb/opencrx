@@ -52,11 +52,14 @@
  */
 package org.opencrx.kernel.backend;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -65,7 +68,6 @@ import org.opencrx.kernel.account1.cci2.AccountAddressQuery;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.cci2.PhoneNumberQuery;
-import org.opencrx.kernel.account1.cci2.PostalAddressQuery;
 import org.opencrx.kernel.account1.cci2.RoomQuery;
 import org.opencrx.kernel.account1.cci2.WebAddressQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
@@ -73,14 +75,6 @@ import org.opencrx.kernel.account1.jmi1.AbstractFilterAddress;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
-import org.opencrx.kernel.account1.jmi1.AddressAccountMembershipFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressCategoryFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressDisabledFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressMainFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressQueryFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressTypeFilterProperty;
-import org.opencrx.kernel.account1.jmi1.AddressUsageFilterProperty;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.Member;
@@ -100,7 +94,6 @@ import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.IncidentParty;
 import org.opencrx.kernel.activity1.jmi1.MeetingParty;
 import org.opencrx.kernel.activity1.jmi1.TaskParty;
-import org.opencrx.kernel.base.jmi1.AttributeFilterProperty;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.Lead;
 import org.opencrx.kernel.contract1.jmi1.Opportunity;
@@ -112,39 +105,61 @@ import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_At
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
-import org.openmdx.base.query.ConditionType;
-import org.openmdx.base.query.Quantifier;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 
+/**
+ * Accounts backend class.
+ *
+ */
 public class Accounts extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register Accounts backend instance.
+	 */
 	public static void register(
 	) {
 		registerImpl(new Accounts());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get Accounts backend instance.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Accounts getInstance(
 	) throws ServiceException {
 		return getInstance(Accounts.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 */
 	protected Accounts(
 	) {		
 	}
 	
-    //-------------------------------------------------------------------------
+    /**
+     * Touch account. This way jdoPreStore() will be invoked.
+     * 
+     * @param account
+     * @throws ServiceException
+     */
     public void markAccountAsDirty(
         Account account
     ) throws ServiceException {
     	account.setAccountRating(account.getAccountRating());
     }
     	
-    //-------------------------------------------------------------------------
     /**
+     * Init contract with given values.
+     * 
+     * @param contract
+     * @param account
+     * @param name
+     * @param description
+     * @throws ServiceException
      * @deprecated use contract creators instead.
      */
     public void initContract(
@@ -170,8 +185,16 @@ public class Accounts extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
     /**
+     * Create lead for given account.
+     * 
+     * @param account
+     * @param name
+     * @param description
+     * @param nextStep
+     * @param basedOn
+     * @return
+     * @throws ServiceException
      * @deprecated use contract creators instead
      */
     public Lead createLead(
@@ -204,8 +227,16 @@ public class Accounts extends AbstractImpl {
         return contract;
     }
     
-    //-------------------------------------------------------------------------
     /**
+     * Create opportunity for given account.
+     * 
+     * @param account
+     * @param name
+     * @param description
+     * @param nextStep
+     * @param basedOn
+     * @return
+     * @throws ServiceException
      * @deprecated use contract creators instead
      */
     public Opportunity createOpportunity(
@@ -238,8 +269,15 @@ public class Accounts extends AbstractImpl {
         return contract;
     }
     
-    //-------------------------------------------------------------------------
     /**
+     * Create quote for given account.
+     * 
+     * @param account
+     * @param name
+     * @param description
+     * @param basedOn
+     * @return
+     * @throws ServiceException
      * @deprecated use contract creators instead
      */
     public Quote createQuote(
@@ -270,8 +308,15 @@ public class Accounts extends AbstractImpl {
         return contract;
     }
     
-    //-------------------------------------------------------------------------
     /**
+     * Create sales order for given account.
+     * 
+     * @param account
+     * @param name
+     * @param description
+     * @param basedOn
+     * @return
+     * @throws ServiceException
      * @deprecated use contract creators instead
      */
     public SalesOrder createSalesOrder(
@@ -302,8 +347,15 @@ public class Accounts extends AbstractImpl {
         return contract;
     }
     
-    //-------------------------------------------------------------------------
     /**
+     * Create invoice for given account.
+     * 
+     * @param account
+     * @param name
+     * @param description
+     * @param basedOn
+     * @return
+     * @throws ServiceException
      * @deprecated use contract creators instead
      */
     public Invoice createInvoice(
@@ -334,7 +386,12 @@ public class Accounts extends AbstractImpl {
         return contract;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Update derived attribute full name of given account.
+     * 
+     * @param account
+     * @throws ServiceException
+     */
     public void updateFullName(
         Account account
     ) throws ServiceException {
@@ -356,7 +413,12 @@ public class Accounts extends AbstractImpl {
         }
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Update derived attributes of given account. E.g. invoked by jdoPreStore().
+     * 
+     * @param account
+     * @throws ServiceException
+     */
     public void updateAccount(
         Account account
     ) throws ServiceException {
@@ -364,16 +426,45 @@ public class Accounts extends AbstractImpl {
             account 
         );
         List<String> statusMessage = new ArrayList<String>();
-        String vcard = VCard.getInstance().mergeVcard(
+        String oldVCardAsString = account.getVcard();
+        String newVCardAsString = VCard.getInstance().mergeVcard(
             account,
-            account.getVcard(),
+            oldVCardAsString,
             statusMessage
         );
-        account.setVcard(
-            vcard == null ? "" : vcard
-        );
+        if(newVCardAsString == null) {
+        	newVCardAsString = "";
+        }
+        // Compare old and new VCARD. Only update if a field other than REV changes
+        try {
+	        Map<String,VCard.VCardField> oldFields = VCard.getInstance().parseVCard(
+	        	new BufferedReader(new StringReader(oldVCardAsString == null ? "" : oldVCardAsString)), new StringBuilder()
+	        );
+	        Map<String,VCard.VCardField> newFields = VCard.getInstance().parseVCard(
+	        	new BufferedReader(new StringReader(newVCardAsString)), new StringBuilder()
+	        );
+	        oldFields.remove("REV");
+	        newFields.remove("REV");
+	        if(!newFields.equals(oldFields)) {
+		        account.setVcard(newVCardAsString);
+	        }
+        } catch(Exception e) {
+        	throw new ServiceException(e);
+        }
         // Assertion externalLink().contains(vcard uid)
-        String uid = VCard.getInstance().getVCardUid(vcard);
+        String uid = VCard.getInstance().getVCardUid(newVCardAsString);
+        if(uid == null) {
+        	ServiceException e = new ServiceException(
+        		BasicException.Code.DEFAULT_DOMAIN,
+        		BasicException.Code.ASSERTION_FAILURE,
+        		"Missing UID in accounts's vcard",
+        		new BasicException.Parameter("activity", account),
+        		new BasicException.Parameter("externalLink", account.getExternalLink()),
+        		new BasicException.Parameter("vcard", newVCardAsString)
+        	);
+        	SysLog.warning("Missing UID in accounts's vcard", account.refGetPath());
+        	SysLog.detail(e.getMessage(), e.getCause());        	
+        }
         boolean vcardLinkMatches = false;
         boolean hasVCardLink = false;
         for(String externalLink: account.getExternalLink()) {
@@ -389,22 +480,26 @@ public class Accounts extends AbstractImpl {
         	account.getExternalLink().add(
         		VCard.VCARD_SCHEMA + uid
         	);
-        }
-        else if(!vcardLinkMatches) {
+        } else if(!vcardLinkMatches) {
         	ServiceException e = new ServiceException(
         		BasicException.Code.DEFAULT_DOMAIN,
         		BasicException.Code.ASSERTION_FAILURE,
         		"Accounts's external link does not contain vcard UID",
         		new BasicException.Parameter("activity", account),
         		new BasicException.Parameter("externalLink", account.getExternalLink()),
-        		new BasicException.Parameter("vcard", vcard)
+        		new BasicException.Parameter("vcard", newVCardAsString)
         	);
         	SysLog.warning("Accounts's external link does not contain vcard UID", account.refGetPath());
         	SysLog.detail(e.getMessage(), e.getCause());
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update derived attributes of given address.
+     * 
+     * @param address
+     * @throws ServiceException
+     */
     public void updateAddress(
     	AccountAddress address
     ) throws ServiceException {
@@ -422,7 +517,13 @@ public class Accounts extends AbstractImpl {
 		);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Callback when address is removed, e.g. jdoPreDelete.
+     * 
+     * @param address
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeAddress(
     	AccountAddress address,
     	boolean preDelete
@@ -436,7 +537,13 @@ public class Accounts extends AbstractImpl {
 		);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Count accounts matching the account filter.
+     * 
+     * @param accountFilter
+     * @return
+     * @throws ServiceException
+     */
     public int countFilteredAccount(
     	AbstractFilterAccount accountFilter
     ) throws ServiceException {
@@ -450,9 +557,13 @@ public class Accounts extends AbstractImpl {
         return accounts.size();
     }
 
-    //-----------------------------------------------------------------------
     /**
-     * @return Returns the account segment.
+     * Get account segment.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
      */
     public org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
         PersistenceManager pm,
@@ -464,9 +575,14 @@ public class Accounts extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
     /**
-     * Search accounts containing the given email address.
+     * Find email addresses matching the given pattern.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @param emailAddress
+     * @return
      */
     public List<EMailAddress> lookupEmailAddress(
         PersistenceManager pm,
@@ -474,12 +590,39 @@ public class Accounts extends AbstractImpl {
         String segmentName,
         String emailAddress
     ) {
+    	return this.lookupEmailAddress(
+    		pm, 
+    		providerName, 
+    		segmentName, 
+    		emailAddress, 
+    		false // exactCaseInsensitiveOnly
+    	);
+    }
+
+    /**
+     * Find email addresses matching the given pattern.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @param emailAddress
+     * @param exactCaseInsensitiveOnly
+     * @return
+     */
+    public List<EMailAddress> lookupEmailAddress(
+        PersistenceManager pm,
+        String providerName,
+        String segmentName,
+        String emailAddress,
+        boolean exactCaseInsensitiveOnly
+    ) {
         org.opencrx.kernel.account1.jmi1.Segment accountSegment =
             this.getAccountSegment(
                 pm,
                 providerName,
                 segmentName
             );
+        emailAddress = emailAddress.trim();
         List<EMailAddress> addresses = Collections.emptyList();
         // Phase 1: exact match, case-sensitive
         {
@@ -488,7 +631,7 @@ public class Accounts extends AbstractImpl {
             query.thereExistsEmailAddress().equalTo(emailAddress);
            	query.forAllDisabled().isFalse();
            	addresses = accountSegment.getAddress(query);
-        }        
+        }
         // Phase 2: exact match, case-insensitive
         if(addresses.isEmpty()) { 
             EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
@@ -499,15 +642,17 @@ public class Accounts extends AbstractImpl {
            	query.forAllDisabled().isFalse();
            	addresses = accountSegment.getAddress(query);
         }
-        // Phase 3: Search email address with wildcard pattern        
-        if(addresses.isEmpty()) { 
-	        EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
-	        query.orderByModifiedAt().descending();
-	        query.thereExistsEmailAddress().like(
-	           "(?i).*" + emailAddress.replace(".", "\\.") + ".*" 
-	        );
-	       	query.forAllDisabled().isFalse();
-	       	addresses = accountSegment.getAddress(query);
+        // Phase 3: Search email address with wildcard pattern
+        if(!exactCaseInsensitiveOnly) {
+	        if(addresses.isEmpty()) { 
+		        EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+		        query.orderByModifiedAt().descending();
+		        query.thereExistsEmailAddress().like(
+		           "(?i).*" + emailAddress.replace(".", "\\.") + ".*" 
+		        );
+		       	query.forAllDisabled().isFalse();
+		       	addresses = accountSegment.getAddress(query);
+	        }
         }
         // Active addresses ordered by length. The best match should
         // be the first element in the returned list
@@ -528,38 +673,68 @@ public class Accounts extends AbstractImpl {
    		return activeAddresses;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get holder for new addresses which can not be automatically be assigned to an account.
+     * 
+     * @param accountSegment
+     * @return
+     * @throws ServiceException
+     */
+    public Account getUnassignableAddressesHolder(
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+    	String providerName = accountSegment.refGetPath().get(2);
+    	String segmentName = accountSegment.refGetPath().get(4);
+    	return (Account)pm.getObjectById(
+    		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", (SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName))
+    	);
+    }
+
+    /**
+     * Find email addresses matching the given pattern. Create the address if it does not exist.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @param email
+     * @param exactCaseInsensitiveOnly
+     * @param forceCreate
+     * @return
+     * @throws ServiceException
+     */
     public List<EMailAddress> lookupEmailAddress(
         PersistenceManager pm,
         String providerName,
         String segmentName,
         String email,
+        boolean exactCaseInsensitiveOnly,
         boolean forceCreate
     ) throws ServiceException {
-    	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
+    	List<EMailAddress> emailAddresses = this.lookupEmailAddress(
     		pm, 
     		providerName, 
     		segmentName, 
-    		email
+    		email,
+    		exactCaseInsensitiveOnly
     	);
     	if(forceCreate && emailAddresses.isEmpty()) {
     		PersistenceManager pmAdmin = pm.getPersistenceManagerFactory().getPersistenceManager(
     			SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
     			null
     		);
-        	Account segmentAdmin = (Account)pmAdmin.getObjectById(
-        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName, "account", (SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName))
-        	);
-        	if(segmentAdmin != null) {
+    		org.opencrx.kernel.account1.jmi1.Segment accountSegment = this.getAccountSegment(pmAdmin, providerName, segmentName);
+        	Account addressHolder = this.getUnassignableAddressesHolder(accountSegment);
+        	if(addressHolder != null) {
             	EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
             	query.thereExistsEmailAddress().equalTo(email);
-            	List<EMailAddress> existingAddresses = segmentAdmin.getAddress(query);
+            	List<EMailAddress> existingAddresses = addressHolder.getAddress(query);
             	if(existingAddresses.isEmpty()) {
 	        		pmAdmin.currentTransaction().begin();
 	        		EMailAddress emailAddress = pmAdmin.newInstance(EMailAddress.class);
 	        		emailAddress.setEmailAddress(email);
 	        		emailAddress.setEmailType((short)1);
-	        		segmentAdmin.addAddress(
+	        		addressHolder.addAddress(
 	        			this.getUidAsString(),
 	        			emailAddress
 	        		);
@@ -578,29 +753,45 @@ public class Accounts extends AbstractImpl {
     	return emailAddresses;
     }
 
-    //-------------------------------------------------------------------------
-    public List<org.opencrx.kernel.account1.jmi1.AccountAddress> getAccountAddresses(
+    /**
+     * Get addresses of given account.
+     * 
+     * @param account
+     * @param usage
+     * @return
+     */
+    public List<AccountAddress> getAccountAddresses(
         Account account,
         short usage
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-        org.opencrx.kernel.account1.cci2.AccountAddressQuery query = 
-        	(org.opencrx.kernel.account1.cci2.AccountAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountAddress.class); 
+        AccountAddressQuery query = (AccountAddressQuery)pm.newQuery(AccountAddress.class); 
         query.thereExistsUsage().equalTo(usage);
         query.forAllDisabled().isFalse();
         query.orderByCreatedAt().ascending();
         return account.getAddress(query); 
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get primary business email address.
+     * 
+     * @param account
+     * @param hint
+     * @return
+     * @throws ServiceException
+     */
     public String getPrimaryBusinessEMail(
         Account account,
         String hint
     ) throws ServiceException {
-        Collection<AccountAddress> addresses = account.getAddress();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
         String emailAddress = null;
-        for(AccountAddress address: addresses) {
-            if(address instanceof EMailAddress) {
+    	for(boolean ignoreDisabled: Arrays.asList(true, false)) {
+    		EMailAddressQuery emailAddressQuery = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+    		if(ignoreDisabled) {
+    			emailAddressQuery.forAllDisabled().isFalse();
+    		}
+	        for(EMailAddress address: account.<EMailAddress>getAddress(emailAddressQuery)) {
                 String addr = ((EMailAddress)address).getEmailAddress();
                 if(emailAddress == null || (hint != null && !hint.isEmpty())) {
                 	if(emailAddress == null) {
@@ -614,19 +805,32 @@ public class Accounts extends AbstractImpl {
                 if(addr != null && address.isMain() && address.getUsage().contains(Addresses.USAGE_BUSINESS)) {
                     emailAddress = addr;
                 }
-            }
-        }
+	        }
+	        if(emailAddress != null) {
+	        	return emailAddress;
+	        }
+    	}
         return emailAddress;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get primary business phone of given account.
+     * 
+     * @param account
+     * @return
+     * @throws ServiceException
+     */
     public String getPrimaryBusinessPhone(
         Account account
     ) throws ServiceException {
-        Collection<AccountAddress> addresses = account.getAddress();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
         String phoneNumber = null;
-        for(AccountAddress address: addresses) {
-            if(address instanceof PhoneNumber) {
+    	for(boolean ignoreDisabled: Arrays.asList(true, false)) {
+    		PhoneNumberQuery phoneNumberQuery = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
+    		if(ignoreDisabled) {
+    			phoneNumberQuery.forAllDisabled().isFalse();
+    		}
+	        for(PhoneNumber address: account.<PhoneNumber>getAddress(phoneNumberQuery)) {
                 String adr = ((PhoneNumber)address).getPhoneNumberFull();
                 if((phoneNumber == null) && (adr != null)) {
                     phoneNumber = adr;
@@ -634,17 +838,21 @@ public class Accounts extends AbstractImpl {
                 if(adr != null && address.isMain() && address.getUsage().contains(Addresses.USAGE_BUSINESS)) {
                     phoneNumber = adr;
                 }
-            }
-        }
+	        }
+	        if(phoneNumber != null) {
+	        	return phoneNumber;
+	        }
+    	}
         return phoneNumber;
     }
 
     /**
-     * Same as getMainAddresses(account, false);
+     * Same as getMainAddresses(account, false)
+     * 
      * @param account
      * @return main addresses of account
      */
-    public org.opencrx.kernel.account1.jmi1.AccountAddress[] getMainAddresses(
+    public AccountAddress[] getMainAddresses(
         Account account
     ) {
     	return this.getMainAddresses(account, false);
@@ -655,6 +863,7 @@ public class Accounts extends AbstractImpl {
      * true then address.isMain() is true for all returned addresses. If strict
      * is false then non-main addresses are returned in case a main address with
      * the same type and usage does exist.
+     * 
      * @param account
      * @param strict
      * @return array with elements {web home, web business, phone home, phone business, 
@@ -683,6 +892,10 @@ public class Accounts extends AbstractImpl {
     	);
     }
 
+    /**
+     * Callback interface for filtering addresses.
+     *
+     */
     public interface AddressFilter {
     	
     	boolean matches(AccountAddress address);
@@ -694,6 +907,7 @@ public class Accounts extends AbstractImpl {
      * If strict is true then address.isMain() is true for all returned addresses. If strict
      * is false then non-main addresses are returned in case a main address with
      * the same type and usage does exist.
+     * 
      * @param account
      * @param addressFilter
      * @param strict
@@ -872,7 +1086,12 @@ public class Accounts extends AbstractImpl {
         return accountAddresses;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update VCARD of given account.
+     * 
+     * @param account
+     * @throws ServiceException
+     */
     public void updateVcard(
         Account account
     ) throws ServiceException {
@@ -900,304 +1119,56 @@ public class Accounts extends AbstractImpl {
         );
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Update member callback. E.g. invoked by jdoPreDelete().
+     * 
+     * @param member
+     * @throws ServiceException
+     */
     public void updateMember(
     	Member member
     ) throws ServiceException {    	
     }
     
-    //-------------------------------------------------------------------------
-    public AccountAddressQuery getFilteredAddressQuery(
-        AbstractFilterAddress addressFilter,
-        boolean forCounting
-    ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(addressFilter);
-        Collection<AddressFilterProperty> filterProperties = addressFilter.getAddressFilterProperty();
-        boolean hasQueryFilterClause = false;
-        AccountAddressQuery query = (AccountAddressQuery)pm.newQuery(AccountAddress.class);
-        for(AddressFilterProperty filterProperty: filterProperties) {
-            Boolean isActive = filterProperty.isActive();            
-            if((isActive != null) && isActive.booleanValue()) {
-            	if(filterProperty instanceof AddressTypeFilterProperty) {
-            		AddressTypeFilterProperty p = (AddressTypeFilterProperty)filterProperty;
-            		if(!p.getAddressType().isEmpty()) {
-            			switch(p.getAddressType().get(0)) {
-            				case 0:
-            					query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
-            					break;
-            				case 1:
-            					query = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
-            					break;
-            				case 2:
-            					query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
-            					break;
-            				case 3:
-            					query = (WebAddressQuery)pm.newQuery(WebAddress.class);
-            					break;
-            				case 4:
-            					query = (RoomQuery)pm.newQuery(Room.class);
-            					break;
-            			}
-            		}
-            	}
-            }
-        }        
-        for(AddressFilterProperty filterProperty: filterProperties) {
-            Boolean isActive = filterProperty.isActive();            
-            if((isActive != null) && isActive.booleanValue()) {
-                // Query filter
-                if(filterProperty instanceof AddressQueryFilterProperty) {
-                	AddressQueryFilterProperty p = (AddressQueryFilterProperty)filterProperty;
-                	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(query);
-                	queryFilter.setClause(
-                		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
-                	);
-                    queryFilter.getStringParam().addAll(
-                    	p.getStringParam()
-                    );
-                    queryFilter.getIntegerParam().addAll(
-                    	p.getIntegerParam()
-                    );
-                    queryFilter.getDecimalParam().addAll(
-                    	p.getDecimalParam()
-                    );
-                    queryFilter.getBooleanParam().add(
-                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
-                    );
-                    queryFilter.getDateParam().addAll(
-                    	p.getDateParam()
-                    );
-                    queryFilter.getDateTimeParam().addAll(
-                    	p.getDateTimeParam()
-                    );
-                    hasQueryFilterClause = true;
-                }
-                // Attribute filter
-                else if(filterProperty instanceof AttributeFilterProperty) {
-                	AttributeFilterProperty attributeFilterProperty = (AttributeFilterProperty)filterProperty;
-                    // Get filterOperator, filterQuantor
-                    short operator = attributeFilterProperty.getFilterOperator();
-                    operator = operator == 0 ? 
-                    	ConditionType.IS_IN.code() : 
-                    		operator;
-                    short quantor = attributeFilterProperty.getFilterQuantor();
-                    quantor = quantor == 0 ? 
-                    	Quantifier.THERE_EXISTS.code() : 
-                    	quantor;                    
-                    if(filterProperty instanceof AddressCategoryFilterProperty) {
-                    	AddressCategoryFilterProperty p = (AddressCategoryFilterProperty)filterProperty;
-                    	switch(Quantifier.valueOf(quantor)) {
-                    		case FOR_ALL:
-                    			switch(ConditionType.valueOf(operator)) {
-                    				case IS_IN: 
-                    					query.forAllCategory().elementOf(p.getCategory()); 
-                    					break;
-                    				case IS_GREATER:
-                    					query.forAllCategory().greaterThan(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_GREATER_OR_EQUAL:
-                    					query.forAllCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_LESS:
-                    					query.forAllCategory().lessThan(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_LESS_OR_EQUAL:
-                    					query.forAllCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_NOT_IN:
-                    					query.forAllCategory().notAnElementOf(p.getCategory()); 
-                    					break;
-                    				default:
-                    					query.forAllCategory().elementOf(p.getCategory()); 
-                    					break;
-                    			}
-                    			break;
-                    		default:
-                    			switch(ConditionType.valueOf(operator)) {
-                    				case IS_IN: 
-                    					query.thereExistsCategory().elementOf(p.getCategory()); 
-                    					break;
-                    				case IS_GREATER:
-                    					query.thereExistsCategory().greaterThan(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_GREATER_OR_EQUAL:
-                    					query.thereExistsCategory().greaterThanOrEqualTo(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_LESS:
-                    					query.thereExistsCategory().lessThan(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_LESS_OR_EQUAL:
-                    					query.thereExistsCategory().lessThanOrEqualTo(p.getCategory().get(0)); 
-                    					break;
-                    				case IS_NOT_IN:
-                    					query.thereExistsCategory().notAnElementOf(p.getCategory()); 
-                    					break;
-                    				default:
-                    					query.thereExistsCategory().elementOf(p.getCategory()); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof AddressUsageFilterProperty) {
-                    	AddressUsageFilterProperty p = (AddressUsageFilterProperty)filterProperty;
-                    	switch(Quantifier.valueOf(quantor)) {
-	                		case FOR_ALL:
-	                			switch(ConditionType.valueOf(operator)) {
-	                				case IS_IN: 
-	                					query.forAllUsage().elementOf(p.getUsage()); 
-	                					break;
-	                				case IS_GREATER:
-	                					query.forAllUsage().greaterThan(p.getUsage().get(0)); 
-	                					break;
-	                				case IS_GREATER_OR_EQUAL:
-	                					query.forAllUsage().greaterThanOrEqualTo(p.getUsage().get(0)); 
-	                					break;
-	                				case IS_LESS:
-	                					query.forAllUsage().lessThan(p.getUsage().get(0)); 
-	                					break;
-	                				case IS_LESS_OR_EQUAL:
-	                					query.forAllUsage().lessThanOrEqualTo(p.getUsage().get(0)); 
-	                					break;
-	                				case IS_NOT_IN:
-	                					query.forAllUsage().notAnElementOf(p.getUsage()); 
-	                					break;
-	                				default:
-	                					query.forAllUsage().elementOf(p.getUsage()); 
-	                					break;
-	                			}
-	                			break;
-                    		default:
-                    			switch(ConditionType.valueOf(operator)) {
-                    				case IS_IN: 
-                    					query.thereExistsUsage().elementOf(p.getUsage()); 
-                    					break;
-                    				case IS_GREATER:
-                    					query.thereExistsUsage().greaterThan(p.getUsage().get(0)); 
-                    					break;
-                    				case IS_GREATER_OR_EQUAL:
-                    					query.thereExistsUsage().greaterThanOrEqualTo(p.getUsage().get(0)); 
-                    					break;
-                    				case IS_LESS:
-                    					query.thereExistsUsage().lessThan(p.getUsage().get(0)); 
-                    					break;
-                    				case IS_LESS_OR_EQUAL:
-                    					query.thereExistsUsage().lessThanOrEqualTo(p.getUsage().get(0)); 
-                    					break;
-                    				case IS_NOT_IN:
-                    					query.thereExistsUsage().notAnElementOf(p.getUsage()); 
-                    					break;
-                    				default:
-                    					query.thereExistsUsage().elementOf(p.getUsage()); 
-                    					break;
-                    			}
-                    			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof AddressMainFilterProperty) {
-                    	AddressMainFilterProperty p = (AddressMainFilterProperty)filterProperty;                    	
-                    	switch(quantor) {
-	                		default:
-	                			switch(ConditionType.valueOf(operator)) {
-	                				case IS_IN:
-	                					query.isMain().equalTo(p.isMain()); 
-	                					break;
-		            				case IS_NOT_IN:
-		            					query.isMain().equalTo(!p.isMain()); 
-		            					break;
-	                			}
-	                			break;
-                    	}
-                    }
-                    else if(filterProperty instanceof AddressDisabledFilterProperty) {
-                    	AddressDisabledFilterProperty p = (AddressDisabledFilterProperty)filterProperty;                    	
-                    	switch(Quantifier.valueOf(quantor)) {
-	                		case FOR_ALL:
-	                			switch(ConditionType.valueOf(operator)) {
-	                				case IS_IN:
-	                					query.forAllDisabled().equalTo(p.isDisabled()); 
-	                					break;
-	                				case IS_NOT_IN:
-	                					query.forAllDisabled().equalTo(!p.isDisabled()); 
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(ConditionType.valueOf(operator)) {
-	                				case IS_IN:
-	                					query.thereExistsDisabled().equalTo(p.isDisabled()); 
-	                					break;
-	                				case IS_NOT_IN:
-	                					query.thereExistsDisabled().equalTo(!p.isDisabled()); 
-	                					break;
-	                			}
-	                			break;
-                    	}
-                	}
-                    else if(filterProperty instanceof AddressAccountMembershipFilterProperty) {
-                    	AddressAccountMembershipFilterProperty p = (AddressAccountMembershipFilterProperty)filterProperty;
-                    	switch(Quantifier.valueOf(quantor)) {
-	                		case FOR_ALL:
-	                			switch(ConditionType.valueOf(operator)) {
-	                				case IS_IN:
-	                                	query.account().thereExistsAccountMembership().forAllAccountFrom().elementOf(p.getAccount());
-	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
-	                					break;
-	                				case IS_NOT_IN:
-	                                	query.account().thereExistsAccountMembership().forAllAccountFrom().notAnElementOf(p.getAccount());
-	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
-	                					break;
-	                			}
-	                			break;
-	                		default:
-	                			switch(ConditionType.valueOf(operator)) {
-	                				case IS_IN:
-	                                	query.account().thereExistsAccountMembership().thereExistsAccountFrom().elementOf(p.getAccount());
-	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
-	                					break;
-	                				case IS_NOT_IN:
-	                                	query.account().thereExistsAccountMembership().thereExistsAccountFrom().notAnElementOf(p.getAccount());
-	                                	query.account().thereExistsAccountMembership().distance().equalTo(-1);
-	                					break;
-	                			}
-	                			break;
-	                    }
-                    }
-                }
-            }
-        }
-        if(!hasQueryFilterClause && forCounting) {
-        	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(query);
-        	queryFilter.setClause(
-        		Database_1_Attributes.HINT_COUNT + "(1=1)"
-        	);
-        }
-        return query;
-    }
-        
-    //-------------------------------------------------------------------------
+    /**
+     * Count addresses matching the given filter.
+     * 
+     * @param addressFilter
+     * @return
+     * @throws ServiceException
+     */
     public int countFilteredAddress(
     	AbstractFilterAddress addressFilter
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(addressFilter);
-    	AccountAddressQuery query = this.getFilteredAddressQuery(
-    		addressFilter, 
-    		true 
-    	);
-    	List<AccountAddress> addresses =
-    		((org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(addressFilter.refGetPath().getPrefix(5))).getAddress(query);
+    	AccountAddressQuery query = (AccountAddressQuery)pm.newQuery(AccountAddress.class);
+    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	queryExtension.setClause(
+    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+    	);    	
+    	List<AccountAddress> addresses = addressFilter.getFilteredAddress(query);
         return addresses.size();
     }
         
-    //-------------------------------------------------------------------------
+    /**
+     * Move address to target account. The new address is created and cloned
+     * on the target account. The existing address is set to disabled. In
+     * addition replaces all references to the old addresses with the new address. 
+     * 
+     * @param source
+     * @param targetAccount
+     * @param updateRelationshipsSince
+     * @param updateRelationshipsBefore
+     * @return
+     * @throws ServiceException
+     */
     public int moveAddressToAccount(
     	AccountAddress source,
         Account targetAccount,
         Date updateRelationshipsSince,
         Date updateRelationshipsBefore        
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(source);
-    	
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(source);    	
     	// Clone address
     	AccountAddress target = null;
     	// Try to find address on target account. Clone it if it does not exist.
@@ -1241,7 +1212,16 @@ public class Accounts extends AbstractImpl {
     	);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Replace all references to the source address with the target address.
+     * 
+     * @param source
+     * @param target
+     * @param updateRelationshipsSince
+     * @param updateRelationshipsBefore
+     * @return
+     * @throws ServiceException
+     */
     public int moveAddress(
     	AccountAddress source,
         AccountAddress target,
@@ -1401,7 +1381,13 @@ public class Accounts extends AbstractImpl {
     	return count;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Callback for removing an account. E.g. called by jdoPreDelete().
+     * 
+     * @param account
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeAccount(
         Account account,
         boolean preDelete

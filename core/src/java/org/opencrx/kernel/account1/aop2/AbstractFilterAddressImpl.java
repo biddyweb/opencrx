@@ -53,10 +53,11 @@
 package org.opencrx.kernel.account1.aop2;
 
 import org.opencrx.kernel.backend.Accounts;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class AbstractFilterAddressImpl
 	<S extends org.opencrx.kernel.account1.jmi1.AbstractFilterAddress,N extends org.opencrx.kernel.account1.cci2.AbstractFilterAddress,C extends Void>
@@ -77,11 +78,11 @@ public class AbstractFilterAddressImpl
             int count = Accounts.getInstance().countFilteredAddress(
                 this.sameObject()
             );
-            return Utils.getBasePackage(this.sameManager()).createCountFilteredObjectsResult(
-                count
+            return Structures.create(
+            	org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.class, 
+            	Datatypes.member(org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult.Member.count, count)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }

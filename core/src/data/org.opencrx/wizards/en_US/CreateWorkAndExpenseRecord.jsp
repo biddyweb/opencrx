@@ -1,18 +1,17 @@
-﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: CreateWorkAndExpenseRecord.jsp,v 1.74 2012/07/08 13:30:30 wfro Exp $
  * Description:	Create Work Record
- * Revision:	$Revision: 1.74 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -57,170 +56,21 @@
 %><%@ page session="true" import="
 java.util.*,
 java.io.*,
-java.math.*,
-java.net.*,
 java.text.*,
-javax.xml.datatype.*,
-org.openmdx.base.accessor.jmi.cci.*,
-org.openmdx.base.exception.*,
-org.openmdx.portal.servlet.*,
-org.openmdx.portal.servlet.action.*,
-org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
-org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
-org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.base.query.*,
 org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
 org.openmdx.base.exception.*,
-org.openmdx.base.text.conversion.*
+org.openmdx.base.accessor.jmi.cci.*,
+org.openmdx.portal.servlet.*,
+org.openmdx.portal.servlet.attribute.*,
+org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.control.*,
+org.openmdx.portal.servlet.wizards.*,
+org.openmdx.base.naming.*
 " %>
-<%!
-
-	public static String getDateAsString(
-		GregorianCalendar date
-	) {
-		return getDateAsString(
-			date.get(GregorianCalendar.YEAR),
-			date.get(GregorianCalendar.MONTH) + 1,
-			date.get(GregorianCalendar.DAY_OF_MONTH)
-		);
-	}
-
-	public static String getDateAsString(
-		int year,
-		int month,
-		int dayOfMonth
-	) {
-		return // YYYYMMDD
-			Integer.toString(year) +
-			((month < 10 ? "0" : "") + Integer.toString(month)) +
-			((dayOfMonth < 10 ? "0" : "") + Integer.toString(dayOfMonth));
-	}
-
-	public static GregorianCalendar getDateAsCalendar(
-		String dateAsString,
-		ApplicationContext app
-	) {
-
-		GregorianCalendar date = new GregorianCalendar(app.getCurrentLocale());
-		date.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-		date.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-		date.set(GregorianCalendar.YEAR, Integer.valueOf(dateAsString.substring(0, 4)));
-		date.set(GregorianCalendar.MONTH, Integer.valueOf(dateAsString.substring(4, 6)) - 1);
-		date.set(GregorianCalendar.DAY_OF_MONTH, Integer.valueOf(dateAsString.substring(6, 8)));
-		date.set(GregorianCalendar.HOUR_OF_DAY, 0);
-		date.set(GregorianCalendar.MINUTE, 0);
-		date.set(GregorianCalendar.SECOND, 0);
-		date.set(GregorianCalendar.MILLISECOND, 0);
-		return date;
-	}
-
-	public static int getDayOfWeek(
-			String dateAsString,
-			ApplicationContext app
-		) {
-			GregorianCalendar date = getDateAsCalendar(dateAsString, app);
-			return date.get(date.DAY_OF_WEEK);
-	}
-
-	private static String decimalMinutesToHhMm(
-		double decimalMinutes
-	) {
-		NumberFormat hhFormatter = new DecimalFormat("#,##0");
-		NumberFormat mmFormatter = new DecimalFormat("#,#00");
-		int hours = (int)(decimalMinutes / 60.0);
-		int minutes = (int)java.lang.Math.rint(decimalMinutes % 60.0);
-		if (minutes == 60) {
-				hours += 1;
-				minutes = 0;
-		}
-		return hhFormatter.format(hours) + ":" + mmFormatter.format(minutes);
-	}
-
-	public static String getUsername(
-		javax.jdo.PersistenceManager pm,
-		org.opencrx.kernel.home1.jmi1.Segment homeSegment,
-		org.opencrx.kernel.activity1.jmi1.Resource resource
-	) {
-		//org.opencrx.kernel.home1.cci2.UserHomeQuery userHomeFilter = org.opencrx.kernel.utils.Utils.getHomePackage(pm).createUserHomeQuery();
-		String userName = null;
-		org.opencrx.kernel.account1.jmi1.Contact contact = null;
-		try {
-				contact = resource.getContact();
-				for(
-					Iterator i = homeSegment.getUserHome().iterator();
-					i.hasNext() && userName == null && contact != null;
-				) {
-					try {
-							org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)i.next();
-							if (userHome.getContact() != null && userHome.getContact().refMofId().compareTo(contact.refMofId()) == 0) {
-									userName = ((new Path(userHome.refMofId())).getLastComponent()).toString();
-							}
-					} catch (Exception e) {}
-				}
-		} catch (Exception e) {}
-		return userName;
-	}
-
-	public org.opencrx.security.realm1.jmi1.PrincipalGroup findPrincipalGroup(
-		 String principalGroupName,
-		 org.openmdx.security.realm1.jmi1.Realm realm,
-		 javax.jdo.PersistenceManager pm
-	) {
-		try {
-			org.opencrx.security.realm1.jmi1.PrincipalGroup principalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-				principalGroupName,
-				realm
-			);
-			return principalGroup;
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public org.opencrx.kernel.activity1.jmi1.CalendarDay createOrUpdateCalendarDay(
-			String name,
-			String date, /* in format YYYYMMDD */
-			org.opencrx.kernel.activity1.jmi1.Calendar calendar,
-			org.opencrx.kernel.activity1.jmi1.CalendarDay calendarDay,
-			org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
-			javax.jdo.PersistenceManager pm
-	) {
-			try {
-				pm.currentTransaction().begin();
-				if(calendarDay == null) {
-					calendarDay = pm.newInstance(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
-					calendarDay.refInitialize(false, false);
-					calendarDay.setName(name);
-					XMLGregorianCalendar cal = org.w3c.spi2.Datatypes.create(
-							XMLGregorianCalendar.class,
-							date
-					);
-					calendarDay.setDateOfDay(cal);
-					calendar.addCalendarDay(
-						false,
-						org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
-						calendarDay
-					);
-				}
-				calendarDay.setName(name);
-				pm.currentTransaction().commit();
-			}
-			catch(Exception e) {
-				new ServiceException(e).log();
-				try {
-					pm.currentTransaction().rollback();
-				} catch(Exception e0) {}
-			}
-			return calendarDay;
-	}
-
-
-%>
 <%
 	final boolean SHOW_ERRORS = false;
 	final int MAX_ACTIVITY_SHOWN_INITIALLY = 50;
@@ -228,41 +78,10 @@ org.openmdx.base.text.conversion.*
 	final int MAX_ACTIVITY_SORT_ORDER = 4;
 	final String FORM_NAME = "CreateWorkAndExpenseRecord";
 	final String WIZARD_NAME = FORM_NAME + ".jsp";
-	final String SUBMIT_HANDLER = "javascript:$('command').value=this.name;";
 	final String ONFOCUS_HANDLER = "javascript:$('lastFocusId').value=this.id;";
 	final String CAUTION = "<img border='0' alt='' height='16px' src='../../images/caution.gif' />";
-	final String PRIVATE_TOKEN = "PRIVATE";
 
 	final boolean EXCLUDE_ACTIVITYTRACKER_TEMPLATES = true; // excludes ActivityTracker if ActivityTracker.userBoolean1 == true
-	final String ACTIVITY_FILTER_SEGMENT = "Segment";
-	final String ACTIVITY_FILTER_ANYGROUP = "AnyGroup";
-	final String ACTIVITY_FILTER_TRACKER = "Tracker";
-	final String ACTIVITY_FILTER_PROJECT = "Project";
-	final String ACTIVITY_FILTER_CATEGORY = "Category";
-	final String ACTIVITY_FILTER_MILESTONE = "Milestone";
-
-	final String ACTIVITY_CLASS = "org:opencrx:kernel:activity1:Activity";
-	final String ACTIVITYFILTERGLOBAL_CLASS = "org:opencrx:kernel:activity1:ActivityFilterGlobal";
-	final String ACTIVITYFILTERGROUP_CLASS = "org:opencrx:kernel:activity1:ActivityFilterGroup";
-	final String ACTIVITYSEGMENT_CLASS = "org:opencrx:kernel:activity1:Segment";
-	final String ACTIVITYGROUPASSIGNMENT_CLASS = "org:opencrx:kernel:activity1:ActivityGroupAssignment";
-	final String ACTIVITYTRACKER_CLASS = "org:opencrx:kernel:activity1:ActivityTracker";
-	final String ACTIVITYCATEGORY_CLASS = "org:opencrx:kernel:activity1:ActivityCategory";
-	final String ACTIVITYMILESTONE_CLASS = "org:opencrx:kernel:activity1:ActivityMilestone";
-	final String DISABLED_FILTER_PROPERTY_CLASS = "org:opencrx:kernel:activity1:DisabledFilterProperty";
-	final String RESOURCE_CLASS = "org:opencrx:kernel:activity1:Resource";
-	final String CALENDARDAY_CLASS = "org:opencrx:kernel:activity1:CalendarDay";
-	final String ACCOUNT_CLASS = "org:opencrx:kernel:account1:Account";
-	final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
-	final String GROUP_CLASS = "org:opencrx:kernel:account1:Group";
-	final String WORKANDEXPENSERECORD_CLASS = "org:opencrx:kernel:activity1:WorkAndExpenseRecord";
-	final int RECORDTYPE_WORK_MAX = 99; // <=99 --> WorkRecord, >= 100 --> ExpenseRecord
-	final String[] UOM_NAMES = {
-			"s", "min", "hour", "day",
-			"m", "km", "mile", "feet", "inch",
-			"kg",
-			"Piece(s)", "Unit(s)"
-	};
 
 	final String featureRecordType = "workAndExpenseType";
 	final String featureRecordTypeWork = "workAndExpenseTypeWorkOnly";
@@ -274,703 +93,34 @@ org.openmdx.base.text.conversion.*
 
 	final String errorStyle = "style='background-color:#FFF0CC;'";
 	final String errorStyleInline = "background-color:#FFF0CC;";
-	// Init
-	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =	request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + requestId;
-	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + objectXri;
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		session.setAttribute(WIZARD_NAME, null);
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
+	
+	CreateWorkAndExpenseRecordController wc = new CreateWorkAndExpenseRecordController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();		
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	Texts_1_0 texts = app.getTexts();
-	org.openmdx.portal.servlet.Codes codes = app.getCodes();
-
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-
-	String errorMsg = "";
-
-	// Format DateTimes
-	TimeZone timezone = TimeZone.getTimeZone(app.getCurrentTimeZone());
-	SimpleDateFormat dtf = new SimpleDateFormat("EEEE", app.getCurrentLocale()); dtf.setTimeZone(timezone);
-	SimpleDateFormat monthFormat = new java.text.SimpleDateFormat("MMMM", app.getCurrentLocale()); monthFormat.setTimeZone(timezone);
-	SimpleDateFormat dayInWeekFormat = new java.text.SimpleDateFormat("E", app.getCurrentLocale()); dayInWeekFormat.setTimeZone(timezone);
-	SimpleDateFormat weekdayf = new SimpleDateFormat("EE", app.getCurrentLocale()); weekdayf.setTimeZone(timezone);
-	SimpleDateFormat dateonlyf = new SimpleDateFormat("dd-MMM-yyyy", app.getCurrentLocale()); dateonlyf.setTimeZone(timezone);
-	SimpleDateFormat datetimef = new SimpleDateFormat("dd-MMM-yyyy HH:mm", app.getCurrentLocale());	datetimef.setTimeZone(timezone);
-	SimpleDateFormat datef = new SimpleDateFormat("EE d-MMMM-yyyy", app.getCurrentLocale()); datef.setTimeZone(timezone);
-	SimpleDateFormat dtsortf = new SimpleDateFormat("yyyyMMddHHmmss", app.getCurrentLocale()); dtsortf.setTimeZone(timezone);
-	SimpleDateFormat calendardayf = new SimpleDateFormat("yyyyMMdd", app.getCurrentLocale()); calendardayf.setTimeZone(timezone);
-	NumberFormat formatter = new DecimalFormat("00000");
-	NumberFormat quantityf = new DecimalFormat("0.000");
-	NumberFormat ratesepf = new DecimalFormat("#,##0.00");
-	NumberFormat formatter0 = new DecimalFormat("0");
-
-	org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = (org.opencrx.kernel.activity1.jmi1.Segment)pm.getObjectById(
-			new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
-		);
-		
-	org.opencrx.kernel.uom1.jmi1.Uom uomPercent = null;
-	try {
-		uomPercent = (org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById(
-				new Path("xri://@openmdx*org.opencrx.kernel.uom1/provider/" + providerName + "/segment/Root/uom/Percent")
-		);
-	} catch (Exception e) {}
-
-
-	// Dates and Times
-	Map formValues = new HashMap();
-
-
-	UserDefinedView userView = new UserDefinedView(
-		pm.getObjectById(new Path(objectXri)),
-		app,
-		viewsCache.getView(requestId)
-	);
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
+	
 	int tabIndex = 1000; // calendar
-
-	boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
 	boolean mustReload = false;
-	boolean creationFailed = false;
-
-	String command = request.getParameter("command");
-	//System.out.println("command=" + command);
-	boolean actionNextMonth = "NextMonth".equals(command);
-	boolean actionPrevMonth = "PrevMonth".equals(command);
-	boolean actionNextYear = "NextYear".equals(command);
-	boolean actionPrevYear = "PrevYear".equals(command);
-	boolean actionSelectDate = command != null && command.startsWith("SelectDate.");
-	boolean actionSelectDateP = command != null && command.startsWith("SelectDateP.");
-	boolean actionSelectDateN = command != null && command.startsWith("SelectDateN.");
-	boolean actionCancel = command != null && command.startsWith("cancel.");
-	boolean actionAdd = command != null && command.startsWith("add.");
-	boolean actionReload = command != null && command.startsWith("reload.");
-	boolean actionEvictAndReload = command != null && command.startsWith("EVICT_RELOAD");
-
-	if (actionReload & (request.getParameter("deleteWorkRecordXri") != null && request.getParameter("deleteWorkRecordXri").length() > 0)) {
-		// delete WorkRecord
-		try {
-				RefObject_1_0 objToDelete = (RefObject_1_0)pm.getObjectById(new Path(request.getParameter("deleteWorkRecordXri")));
-				pm.currentTransaction().begin();
-				objToDelete.refDelete();
-				pm.currentTransaction().commit();
-		} catch (Exception e) {
-				try {
-						pm.currentTransaction().rollback();
-				} catch (Exception er) {}
-				new ServiceException(e).log();
-		}
-	}
-
-	if (actionEvictAndReload) {
-			app.resetPmData();
-	}
-	boolean isWorkRecord = ((request.getParameter("isExpenseRecord") == null) || (request.getParameter("isExpenseRecord").length() == 0));
-	boolean isWorkRecordInPercent = isWorkRecord &&	((request.getParameter("isWorkRecordInPercent") != null) && (request.getParameter("isWorkRecordInPercent").length() > 0));
-	boolean hasProjects = ((request.getParameter("hasProjects") != null) && (request.getParameter("hasProjects").length() > 0));
-	
-
-	String contactXri = null;
-	String resourceXri = null;
-	String activityFilter = null;
-	String activityFilterXri = null;
-	String activityXri = null;
-
-	if (isFirstCall) {
-		try {
-			// try to derive initial settings from calling object
-			if (obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-					// called from Contact
-					contactXri = ((org.opencrx.kernel.account1.jmi1.Contact)obj).refMofId();
-			} else if (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) {
-					// called from ActivityTracker
-					activityFilterXri = ((org.opencrx.kernel.activity1.jmi1.ActivityTracker)obj).refMofId();
-					activityFilter = ACTIVITY_FILTER_TRACKER;
-			} else if (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityCategory) {
-				// called from ActivityCategory
-				activityFilterXri = ((org.opencrx.kernel.activity1.jmi1.ActivityCategory)obj).refMofId();
-				activityFilter = ACTIVITY_FILTER_CATEGORY;
-			} else if (obj instanceof org.opencrx.kernel.activity1.jmi1.ActivityMilestone) {
-				// called from ActivityMilestone
-				activityFilterXri = ((org.opencrx.kernel.activity1.jmi1.ActivityMilestone)obj).refMofId();
-				activityFilter = ACTIVITY_FILTER_MILESTONE;
-			} else if ((obj instanceof org.opencrx.kernel.activity1.jmi1.Activity) || (obj instanceof org.opencrx.kernel.activity1.jmi1.ResourceAssignment)) {
-					org.opencrx.kernel.activity1.jmi1.Activity activity = null;
-					if (obj instanceof org.opencrx.kernel.activity1.jmi1.ResourceAssignment) {
-							if (((org.opencrx.kernel.activity1.jmi1.ResourceAssignment)obj).getResource() != null) {
-									resourceXri = ((org.opencrx.kernel.activity1.jmi1.ResourceAssignment)obj).getResource().refMofId();
-							}
-							activityXri = new Path(obj.refMofId()).getParent().getParent().toXri();
-					} else {
-							// called from Activity
-							activityXri = ((org.opencrx.kernel.activity1.jmi1.Activity)obj).refMofId();
-					}
-					if (activityXri != null) {
-							org.opencrx.kernel.activity1.jmi1.ActivityTracker tracker = null;
-							org.opencrx.kernel.activity1.jmi1.ActivityCategory category = null;
-							org.opencrx.kernel.activity1.jmi1.ActivityMilestone milestone = null;
-							// hint: choose any of the assigned activity groups (preference: tracker > category > milestone), otherwise segment
-							for(Iterator i = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).getAssignedGroup().iterator(); i.hasNext(); ) {
-									org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment ass = (org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment)i.next();
-									if (ass.getActivityGroup() != null) {
-											org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = ass.getActivityGroup();
-											if (
-													ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker &&
-													(
-															((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isDisabled() == null ||
-															!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isDisabled().booleanValue()
-													)
-											) {
-													tracker = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag;
-											} else if (
-													ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityCategory &&
-													(
-															((org.opencrx.kernel.activity1.jmi1.ActivityCategory)ag).isDisabled() == null ||
-															!((org.opencrx.kernel.activity1.jmi1.ActivityCategory)ag).isDisabled().booleanValue()
-													)
-											) {
-													category = (org.opencrx.kernel.activity1.jmi1.ActivityCategory)ag;
-											} else if (
-													ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityMilestone &&
-													(
-															((org.opencrx.kernel.activity1.jmi1.ActivityMilestone)ag).isDisabled() == null ||
-															!((org.opencrx.kernel.activity1.jmi1.ActivityMilestone)ag).isDisabled().booleanValue()
-													)
-											) {
-													milestone = (org.opencrx.kernel.activity1.jmi1.ActivityMilestone)ag;
-											}
-									}
-									if (tracker != null) {
-											activityFilterXri = tracker.refMofId();
-											activityFilter = ACTIVITY_FILTER_TRACKER;
-									} else if (category != null) {
-											activityFilterXri = category.refMofId();
-											activityFilter = ACTIVITY_FILTER_CATEGORY;
-									} else if (milestone != null) {
-										activityFilterXri = milestone.refMofId();
-										activityFilter = ACTIVITY_FILTER_MILESTONE;
-									} else {
-										activityFilterXri = "";
-										activityFilter = ACTIVITY_FILTER_SEGMENT;
-									}
-							}
-					}
-			} else if (obj instanceof org.opencrx.kernel.activity1.jmi1.Resource) {
-				// called from Resource
-				resourceXri = ((org.opencrx.kernel.activity1.jmi1.Resource)obj).refMofId();
-				if (((org.opencrx.kernel.activity1.jmi1.Resource)obj).getContact() != null) {
-						contactXri = ((org.opencrx.kernel.activity1.jmi1.Resource)obj).getContact().refMofId();
-				}
-			}
-		} catch (Exception e) {
-				new ServiceException(e).log();
-		}
-		if (activityFilter == null) {activityFilter = ACTIVITY_FILTER_TRACKER;}
-
-		// determine wheter there are ActivityTrackers with userString0 != null
-		org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-		trackerFilter.forAllDisabled().isFalse();
-		trackerFilter.thereExistsUserBoolean0().isTrue();
-		hasProjects = !activitySegment.getActivityTracker(trackerFilter).isEmpty();
-	}
-
-	// Parameter contact
-	if (contactXri == null) {contactXri = request.getParameter("contactXri");}
-	org.opencrx.kernel.account1.jmi1.Contact contact = null;
-	String contactXriTitle = request.getParameter("contactXri.Title") == null ? "" : request.getParameter("contactXri.Title");
-	boolean showAllResources = false;
-	boolean showAllResourcesOfContact = false;
-	boolean isResourceChange = ((request.getParameter("isResourceChange") != null) && (request.getParameter("isResourceChange").length() > 0));
-	boolean isContactChange = ((request.getParameter("isContactChange") != null) && (request.getParameter("isContactChange").length() > 0));
-	boolean resetActivityXri = ((request.getParameter("resetActivityXri") != null) && (request.getParameter("resetActivityXri").length() > 0));
-	try {
-			if ((contactXri != null) && (contactXri.length() > 0)) {
-					if (contactXri.compareTo("*") == 0) {
-							showAllResources = true;
-							if (!isResourceChange && (resourceXri != null && resourceXri.length() > 0)) {
-									resourceXri = "*";
-							}
-					} else {
-							contact = (org.opencrx.kernel.account1.jmi1.Contact)pm.getObjectById(new Path(contactXri));
-					}
-			} else if (obj instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-					contact = (org.opencrx.kernel.account1.jmi1.Contact)obj;
-			} else {
-					// default is current users Contact (as defined in current user's UserHome
-					// get UserHome
-					org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
-					if (myUserHome.getContact() != null) {
-						contact = myUserHome.getContact();
-					}
-			}
-	} catch (Exception e) {}
-
-	org.opencrx.kernel.activity1.jmi1.Resource resource = null;
-	if ((resourceXri == null) && (!isContactChange)) {
-			resourceXri = request.getParameter("resourceXri");
-			if ((resourceXri != null) && (resourceXri.length() > 0)) {
-					if (resourceXri.compareTo("*") == 0) {
-							showAllResourcesOfContact = true;
-					} else if (isResourceChange) {
-							try {
-									resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
-									contact = resource.getContact();
-									showAllResources = false;
-							} catch (Exception e) {}
-					}
-			}
-	}
-
-	if (contact == null) {
-			showAllResources = true;
-			contactXri = "*";
-			contactXriTitle = "*";
-	} else {
-			contactXri = contact.refMofId();
-			contactXriTitle = app.getHtmlEncoder().encode(new ObjectReference(contact, app).getTitle(), false);
-	}
-
-	String projectMain = request.getParameter("projectMain") == null ? "" : request.getParameter("projectMain");
-
-	if (activityFilterXri == null) {
-			activityFilterXri = request.getParameter("activityFilterXri");
-			if (activityFilterXri == null) {activityFilterXri = "";}
-	}
-
-	if (activityFilter == null) {
-			activityFilter = request.getParameter("activityFilter");
-			if (activityFilter == null) {activityFilter = "";}
-	}
-
-	org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup = null;
-	try {
-		if ((activityFilterXri != null) && (activityFilterXri.length() > 0)) {
-				activityGroup = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)pm.getObjectById(new Path(activityFilterXri));
-		}
-	} catch (Exception e) {}
-
-	if (activityXri == null) {activityXri = request.getParameter("activityXri");}
-	String recordType	= request.getParameter("recordType")	== null ? Integer.toString(Activities.WorkRecordType.STANDARD.getValue()) : request.getParameter("recordType");	// Parameter recordType
-	String name				= request.getParameter("name")				== null ? ""	: request.getParameter("name");				// Parameter name
-	String description = request.getParameter("description")	== null ? ""	: request.getParameter("description"); // Parameter description
-	String effortHH		= (request.getParameter("effortHH")		== null || request.getParameter("effortHH").length() == 0) ? "8" : request.getParameter("effortHH");		// Parameter effortHH
-	String effortMM		= (request.getParameter("effortMM")		== null || request.getParameter("effortMM").length() == 0) ? "00": request.getParameter("effortMM");		// Parameter effortMM
-	String quantPercent= (request.getParameter("quantPercent")== null || request.getParameter("quantPercent").length() == 0) ? "100" : request.getParameter("quantPercent");		// Parameter quantPercent
-	String startedAtHH = (request.getParameter("startedAtHH") == null || request.getParameter("startedAtHH").length() == 0) ? "08": request.getParameter("startedAtHH"); // Parameter startedAtHH
-	String startedAtMM = (request.getParameter("startedAtMM") == null || request.getParameter("startedAtMM").length() == 0) ? "00": request.getParameter("startedAtMM"); // Parameter startedAtMM
-	String endedAtHH	 = request.getParameter("endedAtHH")		== null ? ""	: request.getParameter("endedAtHH");	 // Parameter endedAtHH
-	String endedAtMM	 = request.getParameter("endedAtMM")		== null ? ""	: request.getParameter("endedAtMM");	 // Parameter endedAtMM
-	String billingCurrency = request.getParameter("billingCurrency")	== null ? "756" : request.getParameter("billingCurrency");	// Parameter billingCurrency [default "756 - CHF"]
-	String rate				= request.getParameter("rate")				== null ? ""	: request.getParameter("rate");				// Parameter rate
-	String isBillable	= isFirstCall ? "isBillable" : request.getParameter("isBillable");
-	String isReimbursable = isFirstCall ? "" : request.getParameter("isReimbursable");
-	String makePrivate	= isFirstCall ? "" : request.getParameter("makePrivate");
-	String isFullStartedAtDate	= isFirstCall ? "" : request.getParameter("isFullStartedAtDate");
-	String paymentType = request.getParameter("paymentType")	== null ? "1" : request.getParameter("paymentType");	// Parameter paymentType [default "1 - Cash"]
-	String uomXri			= request.getParameter("uomXri") != null ? request.getParameter("uomXri") : "";
-	String quantity		= (request.getParameter("quantity")		== null || request.getParameter("quantity").length() == 0) ? "1" : request.getParameter("quantity");		// Parameter quantity
-	String lastCreatedWorkRecordXri		 = request.getParameter("lastCreatedWorkRecordXri")		!= null ? request.getParameter("lastCreatedWorkRecordXri")		: "";
-	String lastCreatedExpenseRecordXri	= request.getParameter("lastCreatedExpenseRecordXri") != null ? request.getParameter("lastCreatedExpenseRecordXri") : "";
-	String lastFocusId	= request.getParameter("lastFocusId") != null ? request.getParameter("lastFocusId") : "";
-
-	String filterActivityGroupName = request.getParameter("filterActivityGroupName") == null ? ""	: request.getParameter("filterActivityGroupName"); // Parameter filterActivityGroupName
-	String filterActivityName = request.getParameter("filterActivityName") == null ? ""	: request.getParameter("filterActivityName"); // Parameter filterActivityName
-
-	String excludeClosedActivities		 = isFirstCall ? "checked" : request.getParameter("excludeClosedActivities");
-	String showActivityGroupNameFilter = isFirstCall ? "" : request.getParameter("showActivityGroupNameFilter");
-	int activitySortOrder = 1;
-	try {
-			activitySortOrder = request.getParameter("activitySortOrder") != null ? Integer.parseInt(request.getParameter("activitySortOrder")) : 1;
-	} catch (Exception e) {};
-	String isFullMonth	= isFirstCall ? "" : request.getParameter("isFullMonth");
-
-	String selectedDateStr = request.getParameter("selectedDateStr"); // // YYYYMMDD
-	GregorianCalendar today = new GregorianCalendar(app.getCurrentLocale());
-	today.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-	String todayStr = getDateAsString(today);
-	//System.out.println("todayStr = " + todayStr + " [time = " + today.getTime() + " tz  = " + today.getTimeZone().getDisplayName() + "]");
-
-	if(selectedDateStr == null || selectedDateStr.length() != 8) {
-		selectedDateStr = todayStr;
-	}
-	
-	if(actionPrevMonth || actionSelectDateP) {
-		GregorianCalendar date = getDateAsCalendar(selectedDateStr, app); //
-		date.add(GregorianCalendar.MONTH, -1);
-		selectedDateStr = getDateAsString(date);
-	}
-	if(actionNextMonth || actionSelectDateN) {
-		GregorianCalendar date = getDateAsCalendar(selectedDateStr, app); //
-		date.add(GregorianCalendar.MONTH, 1);
-		selectedDateStr = getDateAsString(date);
-	}
-	if(actionPrevYear) {
-		GregorianCalendar date = getDateAsCalendar(selectedDateStr, app); //
-		date.add(GregorianCalendar.YEAR, -1);
-		selectedDateStr = getDateAsString(date);
-	}
-	if(actionNextYear) {
-		GregorianCalendar date = getDateAsCalendar(selectedDateStr, app); //
-		date.add(GregorianCalendar.YEAR, 1);
-		selectedDateStr = getDateAsString(date);
-	}
-	// Select date
-	// YYYYMMDD
-	// 012345678
-	Integer calendarYear = Integer.parseInt(selectedDateStr.substring(0,4));
-	Integer calendarMonth = Integer.parseInt(selectedDateStr.substring(4,6))-1;
-	int dayOfMonth = Integer.parseInt(selectedDateStr.substring(6,8));
-
-	if(actionSelectDateP || actionSelectDate || actionSelectDateN) {
-		dayOfMonth = Integer.valueOf(command.substring(command.indexOf(".") + 1));
-		selectedDateStr = getDateAsString(calendarYear, calendarMonth+1, dayOfMonth);
-	}
-
-	GregorianCalendar calendar = new GregorianCalendar(app.getCurrentLocale());
-	calendar.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-	calendar.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-	calendar.set(GregorianCalendar.YEAR, calendarYear);
-	calendar.set(GregorianCalendar.MONTH, calendarMonth);
-	calendar.set(GregorianCalendar.DAY_OF_MONTH, 1);
-
-	// Cancel
-	if(actionCancel) {
-		session.setAttribute(WIZARD_NAME, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
-
-	// try to parse startedAt
-	GregorianCalendar startedAt = null;
-	try {
-			startedAt = getDateAsCalendar(selectedDateStr, app);
-
-			int numValueMM = Integer.parseInt(startedAtMM);
-			if (numValueMM < 0) {
-					numValueMM = 0;
-					startedAtMM = "00";
-			} else if (numValueMM > 59) {
-					numValueMM = 59;
-					startedAtMM = "59";
-			}
-			startedAt.set(GregorianCalendar.MINUTE, numValueMM);
-
-			int numValueHH = Integer.parseInt(startedAtHH);
-			if (numValueHH < 0) {
-					numValueHH = 0;
-					startedAtHH = "00";
-			} else if (numValueHH > 24) {
-					numValueHH = 24;
-					startedAtHH = "24";
-			}
-			if ((numValueHH == 24) && (numValueMM > 0)) {
-					numValueHH = 23;
-					startedAtHH = "23";
-			}
-			startedAt.set(GregorianCalendar.HOUR_OF_DAY, numValueHH);
-	} catch (Exception e) {
-			errorMsg += "started at is mandatory<br>";
-			startedAt = null;
-	}
-
-	// try to parse endedAt
-	GregorianCalendar endedAt = null;
-	try {
-			endedAt = getDateAsCalendar(selectedDateStr, app);
-
-			int numValueMM = Integer.parseInt(endedAtMM);
-			if (numValueMM < 0) {
-					numValueMM = 0;
-					endedAtMM = "00";
-			} else if (numValueMM > 59) {
-					numValueMM = 59;
-					endedAtMM = "59";
-			}
-			endedAt.set(GregorianCalendar.MINUTE, numValueMM);
-
-			int numValueHH = Integer.parseInt(endedAtHH);
-			if (numValueHH < 0) {
-					numValueHH = 0;
-					endedAtHH = "00";
-			} else if (numValueHH > 24) {
-					numValueHH = 24;
-					endedAtHH = "24";
-			}
-			if ((numValueHH == 24) && (numValueMM > 0)) {
-					numValueHH = 23;
-					endedAtHH = "23";
-			}
-			endedAt.set(GregorianCalendar.HOUR_OF_DAY, numValueHH);
-	} catch (Exception e) {
-			endedAt = null; // this is an optional attribute
-			endedAtHH = "";
-			endedAtMM = "";
-	}
-
-	// try to parse paraEffort
-	Short paraEffortHH = null;
-	Short paraEffortMM = null;
-	try {
-			short numValueMM = Short.parseShort(effortMM);
-			if (numValueMM < 0) {
-					numValueMM = 0;
-					effortMM = "00";
-			} else if (numValueMM > 59) {
-					numValueMM = 59;
-					effortMM = "59";
-			}
-			paraEffortMM = numValueMM;
-
-			short numValueHH = Short.parseShort(effortHH);
-			if (numValueHH < 0) {
-					numValueHH = 0;
-					effortHH = "00";
-			}
-			paraEffortHH = numValueHH;
-	} catch (Exception e) {
-			paraEffortHH = null;
-			paraEffortMM = null;
-			effortHH = "0";
-			effortMM = "00";
-	}
-
-	// try to parse rate
-	java.math.BigDecimal paraRate = null;
-	try {
-			paraRate = new java.math.BigDecimal(rate);
-	} catch (Exception e) {
-			paraRate = null;
-			if (!isWorkRecord) {
-					errorMsg += "rate is mandatory!<br>";
-			}
-	}
-
-	// try to parse quantity
-	java.math.BigDecimal paraQuantity = null;
-	boolean quantityIsZero = false;
-	try {
-			paraQuantity = new java.math.BigDecimal(quantity);
-			if (!isWorkRecord && paraQuantity.compareTo(java.math.BigDecimal.ZERO) == 0) {
-				errorMsg += "quantity is 0!<br>";
-				quantityIsZero = true;
-			}
-	} catch (Exception e) {
-			paraQuantity = null;
-	}
-
-	// try to parse quantPercent
-	boolean quantPercentageIsZero = false;
-	Short paraQuantPercentage = null;
-	try {
-			short numValuePercentage = Short.parseShort(quantPercent);
-			if (numValuePercentage <= 0) {
-					numValuePercentage = 0;
-					quantPercent = "0";
-					quantPercentageIsZero = true;
-			} else if (numValuePercentage > 100) {
-					numValuePercentage = 100;
-					quantPercent = "100";
-			}
-			paraQuantPercentage = numValuePercentage;
-	} catch (Exception e) {
-			paraQuantPercentage = null;
-			quantPercent = "100";
-	}
-
-	// Add
-	boolean canExecuteAdd = (activityXri != null) &&
-													(resourceXri != null) &&
-													(startedAt != null) &&
-													(
-														(
-															(isWorkRecord && !isWorkRecordInPercent) &&
-															(paraEffortHH != null) &&
-															(paraEffortMM != null)
-														)
-														||
-														(
-															(isWorkRecord && isWorkRecordInPercent) &&
-															(paraQuantPercentage != null) &&
-															!quantPercentageIsZero
-														)
-														||
-														(
-															!isWorkRecord &&
-															(paraRate != null) &&
-															!quantityIsZero &&
-															(uomXri != null) && (uomXri.length() > 0)
-														)
-													);
-	if (canExecuteAdd && ((name == null) || (name.length() == 0))) {
-			canExecuteAdd = false;
-			creationFailed = true; // emulate creation failure to show warning sign next to add button
-	}
-
-	boolean createdWorkRecordInPercent = false;
-	
-	if(actionAdd && canExecuteAdd) {
-			creationFailed = true;
-			try {
-					org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = null;
-					if (isWorkRecord) {
-							// add WorkRecord
-							if (endedAt == null && !isWorkRecordInPercent) {
-									// calculate as startedAt + paraEffort
-									endedAt = (GregorianCalendar)startedAt.clone();
-									endedAt.add(GregorianCalendar.HOUR_OF_DAY, paraEffortHH);
-									endedAt.add(GregorianCalendar.MINUTE, paraEffortMM);
-							}
-							org.opencrx.kernel.activity1.jmi1.ActivityAddWorkRecordParams params = null;
-							
-							if (isWorkRecordInPercent) {
-								createdWorkRecordInPercent = true;
-								params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityAddWorkRecordParams(
-										(short)0, // depotSelector
-										((description != null) && (description.length() == 0) ? null : description),
-										paraQuantPercentage,
-										null,
-										null,
-										false,
-										((name != null) && (name.length() == 0) ? null : name),
-										null, // owningGroups
-										null,
-										new Short((short)0),
-										Short.parseShort(recordType),
-										(org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)),
-										startedAt.getTime()
-								);
-							} else {
-								params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityAddWorkRecordParams(
-										(short)0, // depotSelector
-										((description != null) && (description.length() == 0) ? null : description),
-										paraEffortHH,
-										paraEffortMM,
-										(endedAt != null ? endedAt.getTime() : null),
-										((isBillable != null) && (isBillable.length() > 0)),
-										((name != null) && (name.length() == 0) ? null : name),
-										null, // owningGroups
-										paraRate,
-										Short.parseShort(billingCurrency),
-										Short.parseShort(recordType),
-										(org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)),
-										startedAt.getTime()
-								);
-							}
-							pm.currentTransaction().begin();
-							org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult result = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).addWorkRecord(params);
-							pm.currentTransaction().commit();
-							workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)pm.getObjectById(result.getWorkRecord().refGetPath());
-							if (isWorkRecordInPercent) {
-								pm.currentTransaction().begin();
-								workAndExpenseRecord.setQuantityUom(uomPercent);
-								workAndExpenseRecord.setEndedAt(null);
-								pm.currentTransaction().commit();
-							}
-					} else {
-							// add ExpenseRecord
-							if (endedAt == null) {
-									// set endedAt = startedAt
-									endedAt = (GregorianCalendar)startedAt.clone();
-							}
-							org.opencrx.kernel.activity1.jmi1.ActivityAddExpenseRecordParams params = org.opencrx.kernel.utils.Utils.getActivityPackage(pm).createActivityAddExpenseRecordParams(
-										(short)0, // depotSelector
-										((description != null) && (description.length() == 0) ? null : description),
-										(endedAt != null ? endedAt.getTime() : null),
-										((isBillable != null) && (isBillable.length() > 0)),
-										((isReimbursable != null) && (isReimbursable.length() > 0)),
-										((name != null) && (name.length() == 0) ? null : name),
-										null, // owningGroups
-										Short.parseShort(paymentType),
-										paraQuantity,
-										(org.opencrx.kernel.uom1.jmi1.Uom)pm.getObjectById(new Path(uomXri)),
-										paraRate,
-										Short.parseShort(billingCurrency),
-										Short.parseShort(recordType),
-										(org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)),
-										startedAt.getTime()
-							);
-							pm.currentTransaction().begin();
-							org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult result = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).addExpenseRecord(params);
-							pm.currentTransaction().commit();
-							workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)pm.getObjectById(result.getWorkRecord().refGetPath());
-					}
-					lastCreatedWorkRecordXri = workAndExpenseRecord.refMofId();
-					creationFailed = false;
-					if (makePrivate != null && makePrivate.length() > 0) {
-							List newOwningGroups = new ArrayList();
-							org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
-							// remove all OwningGroups that are not private
-							for (
-								Iterator i = workAndExpenseRecord.getOwningGroup().iterator();
-								i.hasNext();
-							) {
-									org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
-											(org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-									if (currentPrincipalGroup.getName() != null && (currentPrincipalGroup.getName().toUpperCase().indexOf(PRIVATE_TOKEN) >= 0)) {
-											newOwningGroups.add(currentPrincipalGroup);
-									}
-							}
-
-							// determine primary owning group of principal (if inferrable from Resource)
-							String userName = null;
-							org.opencrx.security.realm1.jmi1.PrincipalGroup resourcePrincipalGroup = null;
-							try {
-									org.opencrx.kernel.home1.jmi1.Segment homeSegment =
-											(org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
-												new Path("xri:@openmdx:org.opencrx.kernel.home1/provider/" + providerName + "/segment/" + segmentName)
-											);
-									userName = getUsername(pm, homeSegment, (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri)));
-									org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
-											pm,
-											providerName,
-											segmentName
-										);
-									if (userName != null) {
-											resourcePrincipalGroup = findPrincipalGroup(userName + ".Group", realm, pm);
-											if (resourcePrincipalGroup != null) {
-												newOwningGroups.add(resourcePrincipalGroup);
-											}
-									}
-							} catch (Exception e) {
-									new ServiceException(e).log();
-							}
-
-							// set new OwningGroups
-							pm.currentTransaction().begin();
-							org.opencrx.kernel.base.jmi1.ModifyOwningGroupsParams replaceOwningGroupsParams = basePkg.createModifyOwningGroupsParams(
-									newOwningGroups,
-									(short)1 // recursive
-								);
-							workAndExpenseRecord.replaceOwningGroup(replaceOwningGroupsParams);
-							pm.currentTransaction().commit();
-					}
-			} catch (Exception e) {
-					createdWorkRecordInPercent = false;
-					try {
-							pm.currentTransaction().rollback();
-					} catch (Exception er) {}
-					errorMsg += "could not create Work / Expense Record<br>";
-					new ServiceException(e).log();
-			}
-			//app.resetPmData();
-	}
-
+	GregorianCalendar firstDayOfMonth = wc.getFirstDayOfMonthCal(wc.getFormFields().getSelectedDateStr());
+	boolean isWorkRecord = Boolean.TRUE.equals(wc.getFormFields().getIsWorkRecord());
+	boolean isWorkRecordInPercent = Boolean.TRUE.equals(wc.getFormFields().getIsWorkRecordInPercent());
+	boolean isInitialized = Boolean.TRUE.equals(wc.getFormFields().getIsInitialized());
+	String name = wc.getFormFields().getName();
+	String selectedDateStr = wc.getFormFields().getSelectedDateStr();
+	String activityXri = wc.getFormFields().getActivityXri();
+	String activityFilterXri = wc.getFormFields().getActivityFilterXri();
+	Boolean makePrivate = wc.getFormFields().getMakePrivate();
+	Short billingCurrency = wc.getFormFields().getBillingCurrency();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<%= texts.getDir() %>">
+<html dir="<%= wc.getTexts().getDir() %>">
 <head>
 	<title>openCRX - Create Work/Expense Record</title>
 	<meta name="label" content="Create Work/Expense Record">
@@ -1229,1529 +379,1007 @@ org.openmdx.base.text.conversion.*
 				</table>
 			</div>
 		</div>
-
 		<div id="content-wrap">
 			<div id="content" style="padding:0px 0.5em 0px 0.5em;">
 				<div id="aPanel">
 					<div id="inspector">
 						<div class="inspTabPanel" style="z-index: 201;">
-							<a class="<%= isWorkRecord && !isWorkRecordInPercent ? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='';										 $('reload.button').click();" href="#">Work Report</a>
-							<a class="<%= isWorkRecordInPercent									? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='isWorkRecordInPercent';$('reload.button').click();" href="#">Work Report in %</a>
-							<a class="<%= isWorkRecord													 ? "" : "selected" %>" onclick="$('isExpenseRecord').value='isExpenseRecord';$('isWorkRecordInPercent').value='';			$('reload.button').click();" href="#">Expense Report</a>
+							<a class="<%= isWorkRecord && !isWorkRecordInPercent ? "selected" : "" %>" onclick="javascript:$('isWorkRecord').checked=true;$('isWorkRecordInPercent').checked=false;$('Reload.button').click();" href="#">Work Report</a>
+							<a class="<%= isWorkRecord && isWorkRecordInPercent ? "selected" : "" %>" onclick="javascript:$('isWorkRecord').checked=true;$('isWorkRecordInPercent').checked=true;$('Reload.button').click();" href="#">Work Report in %</a>
+							<a class="<%= isWorkRecord ? "" : "selected" %>" onclick="javascript:$('isWorkRecord').checked=false;$('isWorkRecordInPercent').checked=false;$('Reload.button').click();" href="#">Expense Report</a>
 						</div>
 						<div id="inspContent" class="inspContent" style="z-index: 200;">
 							<div id="inspPanel0" class="selected" style="padding-top: 10px;">
-
-
-				<form name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
-					<input type="hidden" name="command" id="command" value="none"/>
-					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-					<input type="hidden" name="selectedDateStr" id="selectedDateStr" value="<%= selectedDateStr %>" />
-					<input type="hidden" name="isExpenseRecord" id="isExpenseRecord" value="<%= isWorkRecord ? "" : "isExpenseRecord"	%>" />
-					<input type="hidden" name="isWorkRecordInPercent" id="isWorkRecordInPercent" value="<%= !isWorkRecordInPercent ? "" : "isWorkRecordInPercent"	%>" />
-					<input type="hidden" name="hasProjects" id="hasProjects" value="<%= hasProjects ? "hasProjects" : ""	%>" />
-					<input type="hidden" name="isContactChange" id="isContactChange" value="" />
-					<input type="hidden" name="isResourceChange" id="isResourceChange" value="" />
-					<input type="hidden" name="resetActivityXri" id="resetActivityXri" value="" />
-					<input type="hidden" name="activitySortOrder" id="activitySortOrder" value="<%= activitySortOrder %>" />
-					<input type="checkbox" style="display:none;" id="isFirstCall" name="isFirstCall" checked="true" />
-					<input type="hidden" name="deleteWorkRecordXri" id="deleteWorkRecordXri" value="" />
-					<input type="hidden" name="lastCreatedWorkRecordXri" value="<%= lastCreatedWorkRecordXri %>" />
-					<input type="hidden" name="lastCreatedExpenseRecordXri" value="<%= lastCreatedExpenseRecordXri %>" />
-					<input type="hidden" name="lastFocusId" id="lastFocusId" value="<%= lastFocusId %>" />
-
-					<input style="position:absolute;left:-500px;" type="submit" id="reload.button" name="reload.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="<%= SUBMIT_HANDLER %>" />
-
-					<table id="scheduleTable">
-						<tr>
-							<td style="width:240px;">
-								<!--	Calendar -->
-								<table>
-									<tr><td>
-										<div id="wizMonth" style="width:100%;">
-											<table style="width:100%;">
-												<tr>
-													<td>
-														<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&lt;&lt;" onclick="<%= SUBMIT_HANDLER %>" />
-														<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;"	onclick="<%= SUBMIT_HANDLER %>" />
-													</td>
-													<td style="width:100%;vertical-align:middle;">
-														<span style="font-weight:bold;">&nbsp;<%= monthFormat.format(calendar.getTime()) + " " + calendarYear %>&nbsp;</span>
-													</td>
-													<td>
-														<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="<%= SUBMIT_HANDLER %>" />
-														<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&gt;&gt;" onclick="<%= SUBMIT_HANDLER %>" />
-													</td>
-												</tr>
-											</table>
-										</div>
-									</td></tr>
-									<tr><td>
-										<table id="calWizard" cellspacing="1">
-											<thead>
-												<tr>
-													<th style="text-align:center;padding:0px 10px;cursor:pointer;" title="today" onclick="javascript:$('selectedDateStr').value='<%= todayStr %>';$('reload.button').click();">#</th>
+								<form name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
+									<input type="hidden" name="Command" id="Command" value=""/>
+									<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+									<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
+									<input type="hidden" name="selectedDateStr" id="selectedDateStr" value="<%= wc.getFormFields().getSelectedDateStr() %>" />
+									<input type="hidden" name="dayOfMonth" id="dayOfMonth" value="" />
+									<input type="checkbox" name="isWorkRecord" id="isWorkRecord" style="display:none;" <%= isWorkRecord ? "checked" : "" %> />
+									<input type="checkbox" name="isWorkRecordInPercent" id="isWorkRecordInPercent" style="display:none;" <%= isWorkRecordInPercent ? "checked" : "" %> />
+									<input type="checkbox" name="hasProjects" id="hasProjects" style="display:none;" <%= Boolean.TRUE.equals(wc.getFormFields().getHasProjects()) ? "checked" : "" %> />
+									<input type="checkbox" name="isContactChange" id="isContactChange" style="display:none;" />
+									<input type="checkbox" name="isResourceChange" id="isResourceChange" style="display:none;" />
+									<input type="checkbox" name="resetActivityXri" id="resetActivityXri" style="display:none;" />
+									<input type="hidden" name="activitySortOrder" id="activitySortOrder" value="<%= Integer.toString(wc.getFormFields().getActivitySortOrder()) %>" />
+									<input type="checkbox" style="display:none;" id="isInitialized" name="isInitialized" checked />
+									<input type="hidden" name="deleteWorkRecordXri" id="deleteWorkRecordXri" value="" />
+									<input type="hidden" name="lastCreatedWorkExpenseRecordXri" value="<%=wc.getFormFields().getLastCreatedWorkExpenseRecordXri()%>" />
+									<input type="hidden" name="lastFocusId" id="lastFocusId" value="<%=wc.getFormFields().getLastFocusId()%>" />
+									<input type="hidden" name="updateCalendarDay" id="updateCalendarDay" value="" />
+									<input type="hidden" name="createCalendarDay" id="createCalendarDay" value="" />
+									<input style="position:absolute;left:-500px;" type="submit" id="Reload.button" name="Reload" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getReloadText()%>" onclick="javascript:if($('Command').value==''){$('Command').value=this.name;};" />
+									<table id="scheduleTable">
+										<tr>
+											<td style="width:240px;">
+												<!--	Calendar -->
+												<table>
+													<tr><td>
+														<div id="wizMonth" style="width:100%;">
+															<table style="width:100%;">
+																<tr>
+																	<td>
+																		<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&lt;&lt;" onclick="javascript:$('Command').value=this.name;" />
+																		<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;"	onclick="javascript:$('Command').value=this.name;" />
+																	</td>
+																	<td style="width:100%;vertical-align:middle;">
+																		<span style="font-weight:bold;">&nbsp;<%=wc.getMonthFormat().format(firstDayOfMonth.getTime()) + " " + firstDayOfMonth.get(Calendar.YEAR)%>&nbsp;</span>
+																	</td>
+																	<td>
+																		<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="javascript:$('Command').value=this.name;" />
+																		<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&gt;&gt;" onclick="javascript:$('Command').value=this.name;" />
+																	</td>
+																</tr>
+															</table>
+														</div>
+													</td></tr>
+													<tr><td>
+														<table id="calWizard" cellspacing="1">
+															<thead>
+																<tr>
+																	<th style="text-align:center;padding:0px 10px;cursor:pointer;" title="today" onclick="javascript:$('selectedDateStr').value='<%=wc.getDateAsString(new GregorianCalendar())%>';$('Reload.button').click();">#</th>
 <%
-													GregorianCalendar dayInWeekCalendar = (GregorianCalendar)calendar.clone();
-													while(dayInWeekCalendar.get(GregorianCalendar.DAY_OF_WEEK) != dayInWeekCalendar.getFirstDayOfWeek()) {
-														dayInWeekCalendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-													}
-													for(int i = 0; i < 7; i++) {
+																	GregorianCalendar dayInWeekCalendar = (GregorianCalendar)firstDayOfMonth.clone();
+																	while(dayInWeekCalendar.get(GregorianCalendar.DAY_OF_WEEK) != dayInWeekCalendar.getFirstDayOfWeek()) {
+																		dayInWeekCalendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
+																	}
+																	for(int i = 0; i < 7; i++) {
 %>
-														<th style="text-align:right;"><%= dayInWeekFormat.format(dayInWeekCalendar.getTime()) %>&nbsp;</th>
+																		<th style="text-align:right;"><%=wc.getDayInWeekFormat().format(dayInWeekCalendar.getTime())%>&nbsp;</th>
 <%
-														dayInWeekCalendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-													}
+																		dayInWeekCalendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
+																	}
 %>
-												</tr>
-											</thead>
-											<tbody>
+																</tr>
+															</thead>
+															<tbody>
 <%
-												int selectedWeekOfYear = -1;
-												if (selectedDateStr != null) {
-														selectedWeekOfYear = getDateAsCalendar(selectedDateStr, app).get(GregorianCalendar.WEEK_OF_YEAR);
-												}
-												GregorianCalendar calendarPrevMonth = new GregorianCalendar(app.getCurrentLocale());
-												calendarPrevMonth.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-												calendarPrevMonth.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-												calendarPrevMonth.set(GregorianCalendar.YEAR, calendarYear);
-												calendarPrevMonth.set(GregorianCalendar.MONTH, calendarMonth);
-												calendarPrevMonth.set(GregorianCalendar.DAY_OF_MONTH, 1);
-												while (calendarPrevMonth.get(GregorianCalendar.DAY_OF_WEEK) != calendarPrevMonth.getFirstDayOfWeek()) {
-														calendarPrevMonth.add(GregorianCalendar.DAY_OF_MONTH, -1);
-												}
-												while(calendar.get(GregorianCalendar.MONTH) == calendarMonth) {
+															int selectedWeekOfYear = -1;
+															if (wc.getFormFields().getSelectedDateStr() != null) {
+																selectedWeekOfYear = firstDayOfMonth.get(GregorianCalendar.WEEK_OF_YEAR);
+															}
+															GregorianCalendar calendarPrevMonth = new GregorianCalendar(app.getCurrentLocale());
+															calendarPrevMonth.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+															calendarPrevMonth.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
+															calendarPrevMonth.set(GregorianCalendar.YEAR, firstDayOfMonth.get(Calendar.YEAR));
+															calendarPrevMonth.set(GregorianCalendar.MONTH, firstDayOfMonth.get(Calendar.MONTH));
+															calendarPrevMonth.set(GregorianCalendar.DAY_OF_MONTH, 1);
+															while (calendarPrevMonth.get(GregorianCalendar.DAY_OF_WEEK) != calendarPrevMonth.getFirstDayOfWeek()) {
+																calendarPrevMonth.add(GregorianCalendar.DAY_OF_MONTH, -1);
+															}
+															GregorianCalendar calendar = (GregorianCalendar)firstDayOfMonth.clone();
+															int calendarMonth = firstDayOfMonth.get(Calendar.MONTH);
+															while(calendar.get(GregorianCalendar.MONTH) == firstDayOfMonth.get(Calendar.MONTH)) {
 %>
+																<tr>
+																	<td style="text-align:right;font-size:6pt;vertical-align:middle;padding:0px 10px;"><%=calendar.get(GregorianCalendar.WEEK_OF_YEAR)%></td>
+<%
+																		for(int i = 0; i < 7; i++) {
+																			int dayOfMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
+																			if(((i + calendar.getFirstDayOfWeek() - 1) % 7 + 1) != calendar.get(GregorianCalendar.DAY_OF_WEEK)) {
+																				int prevMonthDayOfMonth = calendarPrevMonth.get(GregorianCalendar.DAY_OF_MONTH);
+																				String cssClass = selectedWeekOfYear == calendarPrevMonth.get(GregorianCalendar.WEEK_OF_YEAR)
+																					? "selectedweek"
+																					: "outofmonth";
+%>
+																				<td style="text-align:right;"><input id="SelectDateP.Button" tabindex="<%=tabIndex++%>" name="SelectDateP" type="submit" class="abutton <%=cssClass%>" value="&nbsp;<%=prevMonthDayOfMonth < 10 ? "&nbsp; " : ""%><%=prevMonthDayOfMonth%>&nbsp;" onclick="javascript:$('Command').value=this.name;$('dayOfMonth').value='<%=prevMonthDayOfMonth%>';" /></td>
+<%
+																				calendarPrevMonth.add(GregorianCalendar.DAY_OF_MONTH, 1);
+																			}
+																			else {
+																				String dateAsString = wc.getDateAsString(
+																					calendar.get(Calendar.YEAR),
+																					calendar.get(Calendar.MONTH)+1,
+																					calendar.get(Calendar.DAY_OF_MONTH)
+																				);
+																				String cssClass = (wc.getFormFields().getSelectedDateStr() != null) && (wc.getFormFields().getSelectedDateStr().equals(dateAsString))
+																					? (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "selectedday")
+																					: (selectedWeekOfYear == calendar.get(GregorianCalendar.WEEK_OF_YEAR)
+																							? "selectedweek"
+																							: (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "bookable")
+																						 );
+																				String buttonName = calendar.get(GregorianCalendar.MONTH) != calendarMonth
+																					? "SelectDateN"
+																					: "SelectDate";
+%>
+																				<td style="text-align:right;"><input id="<%=buttonName%>.Button" tabindex="<%=tabIndex++%>" name="<%=buttonName%>" type="submit" class="abutton <%=cssClass%>" value="&nbsp;<%=dayOfMonth < 10 ? "&nbsp; " : ""%><%=dayOfMonth%>&nbsp;" onclick="javascript:$('Command').value=this.name;$('dayOfMonth').value='<%=dayOfMonth%>';" /></td>
+<%
+																				calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
+																			}
+																		}
+%>
+																</tr>
+<%
+															}
+%>
+															</tbody>
+														</table>
+													</td></tr>
+												</table>
+											</td>
+											<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+											<td style="width:100%;">
+												<fieldset>
+												<table class="fieldGroup">
 													<tr>
-														<td style="text-align:right;font-size:6pt;vertical-align:middle;padding:0px 10px;"><%= calendar.get(GregorianCalendar.WEEK_OF_YEAR) %></td>
+														<td class="label"><span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS)%>:</span></td>
 <%
-														for(int i = 0; i < 7; i++) {
-															dayOfMonth = calendar.get(GregorianCalendar.DAY_OF_MONTH);
-															if(((i + calendar.getFirstDayOfWeek() - 1) % 7 + 1) != calendar.get(GregorianCalendar.DAY_OF_WEEK)) {
-																int prevMonthDayOfMonth = calendarPrevMonth.get(GregorianCalendar.DAY_OF_MONTH);
-																String cssClass = selectedWeekOfYear == calendarPrevMonth.get(GregorianCalendar.WEEK_OF_YEAR)
-																	? "selectedweek"
-																	: "outofmonth";
+														tabIndex = 1;
+														String lookupId = org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString();
+														Action findContactTargetObjectAction = Action.getFindObjectAction(contactTargetFinder, lookupId);
+														String accountName = app.getLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS);
 %>
-																<td style="text-align:right;"><input id="SelectDateP.<%= prevMonthDayOfMonth %>.Button" tabindex="<%= tabIndex++ %>" name="SelectDateP.<%= prevMonthDayOfMonth %>" type="submit" class="abutton <%= cssClass %>" value="&nbsp;<%= prevMonthDayOfMonth < 10 ? "&nbsp; " : "" %><%= prevMonthDayOfMonth %>&nbsp;" onclick="<%= SUBMIT_HANDLER %>" /></td>
-<%
-																calendarPrevMonth.add(GregorianCalendar.DAY_OF_MONTH, 1);
-															}
-															else {
-																String dateAsString = getDateAsString(
-																	calendarYear,
-																	calendarMonth+1,
-																	dayOfMonth
+														<td>
+															<div class="autocompleterMenu">
+																<ul id="nav" class="nav" onmouseover="sfinit(this);" >
+																	<li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
+																		<ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
+																			<li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(fullName)*filterOperator*(IS_LIKE)*orderByFeature*(fullName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACCOUNT_CLASS, "fullName", app.getCurrentLocaleAsIndex())%></a></li>
+																			<li <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACCOUNT_CLASS, "description", app.getCurrentLocaleAsIndex()) == null ? "style='display:none;" : ""%>><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(description)*filterOperator*(IS_LIKE)*orderByFeature*(description)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACCOUNT_CLASS, "description", app.getCurrentLocaleAsIndex())%></a></li>
+																			<li <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACCOUNT_CLASS, "aliasName", app.getCurrentLocaleAsIndex()) == null ? "style='display:none;" : ""%>><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(aliasName)*filterOperator*(IS_LIKE)*orderByFeature*(aliasName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACCOUNT_CLASS, "aliasName", app.getCurrentLocaleAsIndex())%></a></li>
+																			<li><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(firstName)*filterOperator*(IS_LIKE)*orderByFeature*(firstName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS, "firstName", app.getCurrentLocaleAsIndex())%></a></li>
+																			<li><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(middleName)*filterOperator*(IS_LIKE)*orderByFeature*(middleName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS, "middleName", app.getCurrentLocaleAsIndex())%></a></li>
+																			<li><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(lastName)*filterOperator*(IS_LIKE)*orderByFeature*(lastName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS, "lastName", app.getCurrentLocaleAsIndex())%></a></li>
+																			<li <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS, "nickName", app.getCurrentLocaleAsIndex()) == null ? "style='display:none;" : ""%>><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(nickName)*filterOperator*(IS_LIKE)*orderByFeature*(nickName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS, "nickName", app.getCurrentLocaleAsIndex())%></a></li>
+																		</ul>
+																	</li>
+																</ul>
+															</div>
+															<div class="autocompleterInput"><input type="text" class="valueL mandatory valueAC <%=wc.getContact() == null ? "inputError" : ""%>" id="contactXri.Title" name="contactXri.Title" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getContactXriTitle() != null ? wc.getFormFields().getContactXriTitle() : ""%>" onfocus="<%=ONFOCUS_HANDLER%>" /></div>
+															<input type="hidden" class="valueLLocked" id="contactXri" readonly="true" name="contactXri" value="<%=wc.getFormFields().getContactXri() != null ? wc.getFormFields().getContactXri() : ""%>" />
+															<div class="autocomplete" id="contact.Update" style="display:none;z-index:500;"></div>
+															<script type="text/javascript" language="javascript" charset="utf-8">
+																function afterUpdateReload(titleField, selectedItem) {
+																	updateXriField(titleField, selectedItem);
+																	$('isContactChange').checked="true";
+																	$('resetActivityXri').checked="true";
+																	$('Reload.button').click();
+																}
+																ac_addObject0 = new Ajax.Autocompleter(
+																	'contactXri.Title',
+																	'contact.Update',
+																	'../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.account1%2Fprovider%2F<%=wc.getProviderName()%>%2Fsegment%2F<%=wc.getSegmentName()%>%29*referenceName*%28account%29*filterByType*%28org%3Aopencrx%3Akernel%3Aaccount1%3AContact%29*filterByFeature*%28fullName%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28fullName%29*position*%280%29*size*%2820%29',
+																	{
+																		paramName: 'filtervalues',
+																		minChars: 0,
+																		afterUpdateElement: afterUpdateReload
+																	}
 																);
-																String cssClass = (selectedDateStr != null) && (selectedDateStr.compareTo(dateAsString) == 0)
-																	? (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "selectedday")
-																	: (selectedWeekOfYear == calendar.get(GregorianCalendar.WEEK_OF_YEAR)
-																			? "selectedweek"
-																			: (calendar.get(GregorianCalendar.MONTH) != calendarMonth ? "outofmonth" : "bookable")
-																		 );
-																String buttonName = calendar.get(GregorianCalendar.MONTH) != calendarMonth
-																	? "SelectDateN"
-																	: "SelectDate";
-%>
-																<td style="text-align:right;"><input id="<%= buttonName %>.<%= dayOfMonth %>.Button" tabindex="<%= tabIndex++ %>" name="<%= buttonName %>.<%= dayOfMonth %>" type="submit" class="abutton <%= cssClass %>" value="&nbsp;<%= dayOfMonth < 10 ? "&nbsp; " : "" %><%= dayOfMonth %>&nbsp;" onclick="<%= SUBMIT_HANDLER %>" /></td>
-<%
-																calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
-															}
-														}
-%>
+															</script>
+														</td>
+														<td class="addon">
+															<img class="popUpButton" border="0" alt="" src="../../images/closeInsp.gif" style="float:right;" onclick="javascript:$('contactXri').value='*';$('isContactChange').checked='true';$('contactXri.Title').value='*';$('resetActivityXri').checked=true;$('Reload.button').click();" />
+															<img class="popUpButton" border="0" align="bottom" alt="Click to open ObjectFinder" src="../../images/lookup.gif" onclick="OF.findObject('../../<%=findContactTargetObjectAction.getEncodedHRef()%>', $('contactXri.Title'), $('contactXri'), '<%=lookupId%>');$('isContactChange').checked=true;" />
+														</td>
 													</tr>
+													<tr>
+														<td class="label">
+															<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.RESOURCE_CLASS)%>:</span>
+														</td>
+														<td>
 <%
-												}
+															boolean noResourcesFound = false;
+															String resourceXri = "";
+															org.opencrx.kernel.activity1.cci2.ResourceQuery resourceFilter = 
+																(org.opencrx.kernel.activity1.cci2.ResourceQuery)wc.getPm().newQuery(org.opencrx.kernel.activity1.jmi1.Resource.class);
+															if (!Boolean.TRUE.equals(wc.getShowAllResources())) {
+																resourceFilter.thereExistsContact().equalTo(wc.getContact());
+															}
+															resourceFilter.forAllDisabled().isFalse();
+															resourceFilter.orderByName().ascending();
+															resourceFilter.orderByDescription().ascending();
+															List resources = wc.getActivitySegment().getResource(resourceFilter);
+															if (resources.isEmpty()) {
+																wc.appendErrorMsg("no matching resource found!<br>");
+																noResourcesFound = true;
+																resourceXri = "";
 %>
-											</tbody>
-										</table>
-									</td></tr>
-								</table>
-							</td>
-							<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-							<td style="width:100%;">
-								<fieldset>
-								<table class="fieldGroup">
-									<tr>
-										<td class="label"><span class="nw"><%= app.getLabel(CONTACT_CLASS) %>:</span></td>
-<%
-										tabIndex = 1;
-										String lookupId = org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString();
-										Action findContactTargetObjectAction = Action.getFindObjectAction(contactTargetFinder, lookupId);
-										String accountName = app.getLabel(CONTACT_CLASS);
-%>
-										<td>
-											<div class="autocompleterMenu">
-												<ul id="nav" class="nav" onmouseover="sfinit(this);" >
-													<li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
-														<ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
-															<li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(fullName)*filterOperator*(IS_LIKE)*orderByFeature*(fullName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(ACCOUNT_CLASS, "fullName", app.getCurrentLocaleAsIndex()) %></a></li>
-															<li <%= userView.getFieldLabel(ACCOUNT_CLASS, "description", app.getCurrentLocaleAsIndex()) == null ? "style='display:none;" : "" %>><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(description)*filterOperator*(IS_LIKE)*orderByFeature*(description)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(ACCOUNT_CLASS, "description", app.getCurrentLocaleAsIndex()) %></a></li>
-															<li <%= userView.getFieldLabel(ACCOUNT_CLASS, "aliasName", app.getCurrentLocaleAsIndex()) == null ? "style='display:none;" : "" %>><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(aliasName)*filterOperator*(IS_LIKE)*orderByFeature*(aliasName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(ACCOUNT_CLASS, "aliasName", app.getCurrentLocaleAsIndex()) %></a></li>
-															<li><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(firstName)*filterOperator*(IS_LIKE)*orderByFeature*(firstName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(CONTACT_CLASS, "firstName", app.getCurrentLocaleAsIndex()) %></a></li>
-															<li><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(middleName)*filterOperator*(IS_LIKE)*orderByFeature*(middleName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(CONTACT_CLASS, "middleName", app.getCurrentLocaleAsIndex()) %></a></li>
-															<li><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(lastName)*filterOperator*(IS_LIKE)*orderByFeature*(lastName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(CONTACT_CLASS, "lastName", app.getCurrentLocaleAsIndex()) %></a></li>
-															<li <%= userView.getFieldLabel(CONTACT_CLASS, "nickName", app.getCurrentLocaleAsIndex()) == null ? "style='display:none;" : "" %>><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(nickName)*filterOperator*(IS_LIKE)*orderByFeature*(nickName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(CONTACT_CLASS, "nickName", app.getCurrentLocaleAsIndex()) %></a></li>
-														</ul>
-													</li>
-												</ul>
-											</div>
-											<div class="autocompleterInput"><input type="text" class="valueL mandatory valueAC <%= contact == null ? "inputError" : "" %>" id="contactXri.Title" name="contactXri.Title" tabindex="<%= tabIndex++ %>" value="<%= contactXriTitle != null ? contactXriTitle : "" %>" onfocus="<%= ONFOCUS_HANDLER %>" /></div>
-											<input type="hidden" class="valueLLocked" id="contactXri" readonly="true" name="contactXri" value="<%= contactXri != null ? contactXri : "" %>" />
-											<div class="autocomplete" id="contact.Update" style="display:none;z-index:500;"></div>
-											<script type="text/javascript" language="javascript" charset="utf-8">
-												function afterUpdateReload(titleField, selectedItem) {
-														updateXriField(titleField, selectedItem);
-														$('isContactChange').value="true";
-														$('resetActivityXri').value='true';
-														$('reload.button').click();
-												}
-												ac_addObject0 = new Ajax.Autocompleter(
-													'contactXri.Title',
-													'contact.Update',
-													'../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.account1%2Fprovider%2F<%= providerName %>%2Fsegment%2F<%= segmentName %>%29*referenceName*%28account%29*filterByType*%28org%3Aopencrx%3Akernel%3Aaccount1%3AContact%29*filterByFeature*%28fullName%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28fullName%29*position*%280%29*size*%2820%29',
-													{
-														paramName: 'filtervalues',
-														minChars: 0,
-														afterUpdateElement: afterUpdateReload
-													}
-												);
-											</script>
-										</td>
-										<td class="addon">
-											<img class="popUpButton" border="0" alt="" src="../../images/closeInsp.gif" style="float:right;" onclick="javascript:$('contactXri').value='*';$('isContactChange').value='true';$('contactXri.Title').value='*';$('resetActivityXri').value='true';$('reload.button').click();" />
-											<img class="popUpButton" border="0" align="bottom" alt="Click to open ObjectFinder" src="../../images/lookup.gif" onclick="OF.findObject('../../<%= findContactTargetObjectAction.getEncodedHRef() %>', $('contactXri.Title'), $('contactXri'), '<%= lookupId %>');$('isContactChange').value='true';" />
-										</td>
-									</tr>
-									<tr>
-										<td class="label">
-											<span class="nw"><%= app.getLabel(RESOURCE_CLASS) %>:</span>
-										</td>
-										<td>
-<%
-											boolean noResourcesFound = false;
-											org.opencrx.kernel.activity1.cci2.ResourceQuery resourceFilter = activityPkg.createResourceQuery();
-											if (!showAllResources) {
-													resourceFilter.thereExistsContact().equalTo(contact);
-											}
-											resourceFilter.forAllDisabled().isFalse();
-											resourceFilter.orderByName().ascending();
-											resourceFilter.orderByDescription().ascending();
-											List resources = activitySegment.getResource(resourceFilter);
-											if (resources.isEmpty()) {
-													errorMsg += "no matching resource found!<br>";
-													noResourcesFound = true;
-													resourceXri = "";
-%>
-													<select id="resourceXri" name="resourceXri" class="valueL" <%= errorStyle %> tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
-														<option value="">--</option>
-													</select>
-<%
-											} else {
-												if (resourceXri == null) {mustReload = true;}
-%>
-												<select id="resourceXri" name="resourceXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('isResourceChange').value='true';$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
-<%
-													for (
-															Iterator i = resources.iterator();
-															i.hasNext();
-													) {
-															org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)i.next();
-															String contactTitle = "--";
-															try {
-																	contactTitle = app.getHtmlEncoder().encode(new ObjectReference(res.getContact(), app).getTitle(), false);
-															} catch (Exception e) {}
-															if (((resourceXri == null) || (resourceXri.length() == 0)) && (!showAllResourcesOfContact)) {
-																	resourceXri = res.refMofId();
-															}
-%>
-															<option <%= (resourceXri != null) && (resourceXri.compareTo(res.refMofId()) == 0) ? "selected" : "" %> value="<%= res.refMofId() %>"><%= res.getName() != null ? app.getHtmlEncoder().encode(res.getName(), false) : contactTitle %><%= showAllResources ? " [" + contactTitle + "]" : "" %></option>
-<%
-													}
-%>
-												</select>
-<%
-											}
-%>
-											<input type="hidden" name="previousResourceXri" value="<%= resourceXri %>" />
-										</td>
-										<td class="addon">
-												<%= noResourcesFound ? CAUTION : "" %>
-										</td>
-									</tr>
-
-									<tr>
-										<td class="label">
-											<span class="nw"><%= app.getLabel(ACTIVITYFILTERGROUP_CLASS) %>:</span>
-										</td>
-										<td nowrap>
-<%
-
-											Map projectNames = new TreeMap();
-											Iterator projectMainIterator = null;
-											Iterator activityFilterIterator = null;
-											Map orderedActivityGroups = new TreeMap();
-
-											List activities = null;
-											boolean openOnly = (excludeClosedActivities != null) && (excludeClosedActivities.length() > 0);
-											org.opencrx.kernel.activity1.cci2.ActivityQuery activityQuery = activityPkg.createActivityQuery();
-											activityQuery.forAllDisabled().isFalse();
-											if (openOnly) {
-												activityQuery.activityState().lessThan(
-													new Short((short)20) // Status "not closed"
-												);
-											}
-											switch (activitySortOrder) {
-													case	0: activityQuery.orderByActivityNumber().ascending(); break;
-													case	1: activityQuery.orderByActivityNumber().descending(); break;
-													case	2: activityQuery.orderByName().ascending(); break;
-													case	3: activityQuery.orderByName().descending(); break;
-													default: activityQuery.orderByActivityNumber().descending(); break;
-											}
-
-											if (ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0) {
-													activities = activitySegment.getActivity(activityQuery);
-													activityGroup = null; // ensure that all activities are shown
-											} else {
-													int gCounter = 0;
-													if (ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter) == 0) {
-															// get ActivityTrackers
-															org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-															trackerFilter.forAllDisabled().isFalse();
-															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-																	if (
-																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																	) {
-																			orderedActivityGroups.put(
-																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
-																					ag
-																				);
-																	}
-															}
-															// get ActivityCategories
-															org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
-															categoryFilter.forAllDisabled().isFalse();
-															for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-																	if (
-																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																	) {
-																			orderedActivityGroups.put(
-																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
-																					ag
-																				);
-																	}
-															}
-															// get ActivityMilestones
-															org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
-															milestoneFilter.forAllDisabled().isFalse();
-															for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-																	if (
-																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																	) {
-																			orderedActivityGroups.put(
-																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
-																					ag
-																				);
-																	}
-															}
-															activityFilterIterator = orderedActivityGroups.values().iterator();
-													} else if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0) {
-															// get projects, i.e. ActivityTrackers with userString0 != null
-															org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-															trackerFilter.forAllDisabled().isFalse();
-															trackerFilter.thereExistsUserBoolean0().isTrue();
-															trackerFilter.orderByUserString0().ascending();
-															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
-																	if ((at.getUserString1() == null) || (at.getUserString1().length() == 0)) {
-																		if ((projectMain.length() == 0) && (at.getUserString0() != null)) {
-																				// set initial value of projectName
-																				projectMain = at.getUserString0().trim();
-																		}
-																		projectNames.put(
-																				(at.getUserString0() != null ? at.getUserString0().trim() : "_?"),
-																				at
-																			);
-																	}
-															}
-															projectMainIterator = projectNames.values().iterator(); // all distinct project names
-
-															trackerFilter = activityPkg.createActivityTrackerQuery();
-															trackerFilter.forAllDisabled().isFalse();
-															trackerFilter.userString1().isNonNull();
-															trackerFilter.thereExistsUserString0().equalTo(projectMain);
-															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)i.next();
-																	if ((at.getUserString1() != null) && (at.getUserString1().length() > 0)) {
-																		if (
-																				(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																				(at.getUserString1().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																		) {
-																				orderedActivityGroups.put(
-																						(at.getUserString1() != null ? at.getUserString1().trim() : "_?") + "		" + gCounter++,
-																						at
-																					);
-																		}
-																	}
-															}
-															activityFilterIterator = orderedActivityGroups.values().iterator();
-													} else if (ACTIVITY_FILTER_TRACKER.compareTo(activityFilter) == 0) {
-															// get ActivityTrackers
-															org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery trackerFilter = activityPkg.createActivityTrackerQuery();
-															trackerFilter.forAllDisabled().isFalse();
-															for(Iterator i = activitySegment.getActivityTracker(trackerFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-																	if (
-																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																	) {
-																			orderedActivityGroups.put(
-																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
-																					ag
-																				);
-																	}
-															}
-															activityFilterIterator = orderedActivityGroups.values().iterator();
-													} else if (ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter) == 0) {
-															// get ActivityCategories
-															org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery categoryFilter = activityPkg.createActivityCategoryQuery();
-															categoryFilter.forAllDisabled().isFalse();
-															for(Iterator i = activitySegment.getActivityCategory(categoryFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-																	if (
-																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																	) {
-																			orderedActivityGroups.put(
-																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
-																					ag
-																				);
-																	}
-															}
-															activityFilterIterator = orderedActivityGroups.values().iterator();
-													} else if (ACTIVITY_FILTER_MILESTONE.compareTo(activityFilter) == 0) {
-															// get ActivityMilestones
-															org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery milestoneFilter = activityPkg.createActivityMilestoneQuery();
-															milestoneFilter.forAllDisabled().isFalse();
-															for(Iterator i = activitySegment.getActivityMilestone(milestoneFilter).iterator(); i.hasNext(); ) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)i.next();
-																	if (
-																			(showActivityGroupNameFilter == null) || (showActivityGroupNameFilter.length() == 0) ||
-																			(ag.getName() == null) || (ag.getName().toUpperCase().indexOf(filterActivityGroupName.toUpperCase()) >= 0)
-																	) {
-																			orderedActivityGroups.put(
-																					(ag.getName() != null ? ag.getName() : "_?") + "		" + gCounter++,
-																					ag
-																				);
-																	}
-															}
-															activityFilterIterator = orderedActivityGroups.values().iterator();
-													}
-
-													tabIndex += 10;
-													if (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) != 0) {
-															if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
-																activityGroup = null; // reset potentially existing selection
-																errorMsg += "no activity groups found!<br>";
-%>
-																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" <%= errorStyle %> tabindex="<%= tabIndex+5 %>" onfocus="<%= ONFOCUS_HANDLER %>">
+																<select id="resourceXri" name="resourceXri" class="valueL" <%=errorStyle%> tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>">
 																	<option value="">--</option>
 																</select>
 <%
 															} else {
+																if (resourceXri == null) {mustReload = true;}
 %>
-																<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%= tabIndex+5 %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
+																<select id="resourceXri" name="resourceXri" class="valueL" tabindex="<%=tabIndex++%>" onchange="javascript:$('isResourceChange').checked=true;$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>">
 <%
-																	boolean hasSelection = false;
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
-																	while (activityFilterIterator.hasNext()) {
-																			org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)activityFilterIterator.next();
-																			if (
-																					!EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
-																					((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
-																			) {
-																					boolean selected = false;
-																					if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
-																							activityGroup = ag;
-																							selected = true;
-																							hasSelection = true;
-																					}
-																					if (firstAg == null) {
-																							firstAg = ag;
-																					}
+																	for (
+																		Iterator i = resources.iterator();
+																		i.hasNext();
+																	) {
+																		org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)i.next();
+																		String contactTitle = "--";
+																		try {
+																			contactTitle = app.getHtmlEncoder().encode(new ObjectReference(res.getContact(), app).getTitle(), false);
+																		} catch (Exception e) {}
+																		if (((resourceXri == null) || resourceXri.isEmpty()) && !Boolean.TRUE.equals(wc.getShowAllResourcesOfContact())) {
+																			resourceXri = res.refGetPath().toXRI();
+																		}
 %>
-																					<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
+																		<option <%=(resourceXri != null) && resourceXri.equals(res.refGetPath().toXRI()) ? "selected" : ""%> value="<%=res.refGetPath().toXRI()%>"><%=res.getName() != null ? app.getHtmlEncoder().encode(res.getName(), false) : contactTitle%><%=Boolean.TRUE.equals(wc.getShowAllResources()) ? " [" + contactTitle + "]" : ""%></option>
 <%
-																			}
-																	}
-																	if (!hasSelection) {
-																			activityGroup = firstAg; // to ensure proper location of activities
-																			activityFilterXri = firstAg.refMofId();
 																	}
 %>
 																</select>
 <%
 															}
-													}
-											}
 %>
-											<select class="valueL" style="width:<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 || ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0 ? "100" : "49" %>%;float:left;" id="activityFilter" name="activityFilter" tabindex="<%= tabIndex++ %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
-												<option <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter)	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_SEGMENT %>"	>*</option>
-												<option <%= ACTIVITY_FILTER_ANYGROUP.compareTo(activityFilter)== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_ANYGROUP %>" ><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> / <%= app.getLabel(ACTIVITYCATEGORY_CLASS) %> / <%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
+															<input type="hidden" name="previousResourceXri" value="<%=resourceXri%>" />
+														</td>
+														<td class="addon">
+															<%=noResourcesFound ? CAUTION : ""%>
+														</td>
+													</tr>				
+													<tr>
+														<td class="label">
+															<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYFILTERGROUP_CLASS)%>:</span>
+														</td>
+														<td nowrap>
 <%
-												if (hasProjects) {
+															org.opencrx.kernel.activity1.jmi1.ActivityGroup activityGroup = wc.getActivityGroup();
+															List activities = null;
+															boolean openOnly = Boolean.TRUE.equals(wc.getFormFields().getExcludeClosedActivities());
+															org.opencrx.kernel.activity1.cci2.ActivityQuery activityQuery = (org.opencrx.kernel.activity1.cci2.ActivityQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Activity.class);
+															activityQuery.forAllDisabled().isFalse();
+															if (openOnly) {
+																activityQuery.activityState().lessThan(
+																	new Short((short)20) // Status "not closed"
+																);
+															}
+															switch (wc.getFormFields().getActivitySortOrder()) {
+																case 0: activityQuery.orderByActivityNumber().ascending(); break;
+																case 1: activityQuery.orderByActivityNumber().descending(); break;
+																case 2: activityQuery.orderByName().ascending(); break;
+																case 3: activityQuery.orderByName().descending(); break;
+																default: activityQuery.orderByActivityNumber().descending(); break;
+															}
+															if (CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT.equals(wc.getFormFields().getActivityFilter())) {
+																activities = wc.getActivitySegment().getActivity(activityQuery);
+																activityGroup = null; // ensure that all activities are shown
+															} else {
+																tabIndex += 10;
+																if(!CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_PROJECT.equals(wc.getFormFields().getActivityFilter())) {
+																	if (wc.getSortedActivityGroups() == null || wc.getSortedActivityGroups().isEmpty()) {
+																		activityGroup = null; // reset potentially existing selection
+																		wc.appendErrorMsg("no activity groups found!<br>");
 %>
-														<option <%= ACTIVITY_FILTER_PROJECT.compareTo(activityFilter)	 == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_PROJECT %>"	><%= app.getLabel(ACTIVITYTRACKER_CLASS) %> [<%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>]</option>
+																		<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" <%=errorStyle%> tabindex="<%=tabIndex+5%>" onfocus="<%=ONFOCUS_HANDLER%>">
+																			<option value="">--</option>
+																		</select>
 <%
-												}
+																	} else {
 %>
-												<option <%= ACTIVITY_FILTER_TRACKER.compareTo(activityFilter)	 == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_TRACKER %>"	><%= app.getLabel(ACTIVITYTRACKER_CLASS) %></option>
-												<option <%= ACTIVITY_FILTER_CATEGORY.compareTo(activityFilter)	== 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_CATEGORY %>" ><%= app.getLabel(ACTIVITYCATEGORY_CLASS) %></option>
-												<option <%= ACTIVITY_FILTER_MILESTONE.compareTo(activityFilter) == 0 ? "selected" : "" %> value="<%= ACTIVITY_FILTER_MILESTONE %>"><%= app.getLabel(ACTIVITYMILESTONE_CLASS) %></option>
-											</select>
-										</td>
-										<td class="addon">
-												<input type="checkbox" id="showActivityGroupNameFilter" name="showActivityGroupNameFilter" <%= (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="showActivityGroupNameFilter" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-										</td>
-									</tr>
+																		<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%=tabIndex+5%>" onchange="javascript:$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>">
 <%
-									tabIndex += 10;
-									if (hasProjects) {
-										boolean isProject = ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0;
+																			boolean hasSelection = false;
+																			org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
+																			for(org.opencrx.kernel.activity1.jmi1.ActivityGroup ag: wc.getSortedActivityGroups()) {
+																				if (
+																					!EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
+																					((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
+																				) {
+																					boolean selected = false;
+																					if(activityFilterXri != null && activityFilterXri.equals(ag.refGetPath().toXRI())) {
+																						activityGroup = ag;
+																						selected = true;
+																						hasSelection = true;
+																					}
+																					if (firstAg == null) {
+																						firstAg = ag;
+																					}
 %>
-										<tr <%= isProject ? "" : "style='display:none;'" %>>
-											<td class="label">
-												<span class="nw"><%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %> - <%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userString1", app.getCurrentLocaleAsIndex()) %>:</span>
-											</td>
-											<td nowrap>
+																					<option <%=activityFilterXri != null && activityFilterXri.equals(ag.refGetPath().toXRI()) ? "selected" : ""%> value="<%=ag.refGetPath().toXRI()%>"><%=app.getHtmlEncoder().encode(ag.getName(), false)%></option>
 <%
-												if (activityFilterIterator == null || !activityFilterIterator.hasNext()) {
-														if (isProject) {
-																activityGroup = null; // reset potentially existing selection
-																errorMsg += "no activity groups found!<br>";
+																				}
+																			}
+																			if (!hasSelection) {
+																				activityGroup = firstAg; // to ensure proper location of activities
+																				activityFilterXri = firstAg.refGetPath().toXRI();
+																			}
+%>
+																		</select>
+<%
+																	}
+																}
 															}
 %>
-														<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" class="valueL" <%= errorStyle %> tabindex="<%= tabIndex+5 %>" onfocus="<%= ONFOCUS_HANDLER %>">
-															<option value="">--</option>
-														</select>
+															<select class="valueL" style="width:<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT.equals(wc.getFormFields().getActivityFilter()) || CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_PROJECT.equals(wc.getFormFields().getActivityFilter()) ? "100" : "49"%>%;float:left;" id="activityFilter" name="activityFilter" tabindex="<%=tabIndex++%>" onchange="javascript:$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>">
+																<option <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT.equals(wc.getFormFields().getActivityFilter()) ? "selected" : ""%> value="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT%>"	>*</option>
+																<option <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_ANYGROUP.equals(wc.getFormFields().getActivityFilter()) ? "selected" : ""%> value="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_ANYGROUP%>" ><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS)%> / <%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYCATEGORY_CLASS)%> / <%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYMILESTONE_CLASS)%></option>
 <%
-												} else {
+																if(Boolean.TRUE.equals(wc.getFormFields().getHasProjects())) {
 %>
-														<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%= tabIndex+5 %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
+																	<option <%= CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_PROJECT.equals(wc.getFormFields().getActivityFilter()) ? "selected" : ""%> value="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_PROJECT%>"	><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS)%> [<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %>]</option>
 <%
-														boolean hasSelection = false;
-														org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
-														while (activityFilterIterator.hasNext()) {
-																	org.opencrx.kernel.activity1.jmi1.ActivityGroup ag = (org.opencrx.kernel.activity1.jmi1.ActivityGroup)activityFilterIterator.next();
-																	if (
-																			!EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
-																			((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
-																	) {
-																			boolean selected = false;
-																			if ((activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0)) {
+																}
+%>
+																<option <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_TRACKER.equals(wc.getFormFields().getActivityFilter()) ? "selected" : ""%> value="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_TRACKER%>"	><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS)%></option>
+																<option <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_CATEGORY.equals(wc.getFormFields().getActivityFilter()) ? "selected" : ""%> value="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_CATEGORY%>" ><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYCATEGORY_CLASS)%></option>
+																<option <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_MILESTONE.equals(wc.getFormFields().getActivityFilter()) ? "selected" : ""%> value="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_MILESTONE%>"><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYMILESTONE_CLASS)%></option>
+															</select>
+														</td>
+														<td class="addon">
+															<input type="checkbox" id="showActivityGroupNameFilter" name="showActivityGroupNameFilter" <%=Boolean.TRUE.equals(wc.getFormFields().getShowActivityGroupNameFilter()) ? "checked" : ""%> tabindex="<%=tabIndex++%>" onchange="javascript:$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>" />
+														</td>
+													</tr>
+<%
+													tabIndex += 10;
+													if (Boolean.TRUE.equals(wc.getFormFields().getHasProjects())) {
+														boolean isProject = CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_PROJECT.equals(wc.getFormFields().getActivityFilter());
+%>
+														<tr <%= isProject ? "" : "style='display:none;'"%>>
+															<td class="label">
+																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex())%> - <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS, "userString1", app.getCurrentLocaleAsIndex())%>:</span>
+															</td>
+															<td nowrap>
+<%
+																if(wc.getSortedActivityGroups() == null || wc.getSortedActivityGroups().isEmpty()) {
+																	if (isProject) {
+																		activityGroup = null; // reset potentially existing selection
+																		wc.appendErrorMsg("no activity groups found!<br>");
+																	}
+%>
+																	<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" class="valueL" <%=errorStyle%> tabindex="<%=tabIndex+5%>" onfocus="<%=ONFOCUS_HANDLER%>">
+																		<option value="">--</option>
+																	</select>
+<%
+																} else {
+%>
+																	<select class="valueL" style="width:50%;float:right;" id="activityFilterXri" name="activityFilterXri" tabindex="<%=tabIndex+5%>" onchange="javascript:$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>">
+<%
+																		boolean hasSelection = false;
+																		org.opencrx.kernel.activity1.jmi1.ActivityGroup firstAg = null;
+																		for(org.opencrx.kernel.activity1.jmi1.ActivityGroup ag: wc.getSortedActivityGroups()) {
+																			if (
+																				!EXCLUDE_ACTIVITYTRACKER_TEMPLATES || !(ag instanceof org.opencrx.kernel.activity1.jmi1.ActivityTracker) ||
+																				((((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1() == null) || (!((org.opencrx.kernel.activity1.jmi1.ActivityTracker)ag).isUserBoolean1().booleanValue()))
+																			) {
+																				boolean selected = false;
+																				if (activityFilterXri != null && activityFilterXri.equals(ag.refGetPath().toXRI())) {
 																					activityGroup = ag;
 																					selected = true;
 																					hasSelection = true;
-																			}
-																			if (firstAg == null) {
+																				}
+																				if (firstAg == null) {
 																					firstAg = ag;
-																			}
-%>
-																		<option <%= (activityFilterXri != null) && (activityFilterXri.compareTo(ag.refMofId()) == 0) ? "selected" : "" %> value="<%= ag.refMofId() %>"><%= app.getHtmlEncoder().encode(ag.getName(), false) %></option>
-<%
-																	}
-															}
-															if (!hasSelection) {
-																	activityGroup = firstAg; // to ensure proper location of activities
-																	activityFilterXri = firstAg.refMofId();
-															}
-%>
-														</select>
-<%
-												}
-
-												if (projectMainIterator == null || !projectMainIterator.hasNext()) {
-														if (isProject) {
-															errorMsg += "no main topics!<br>";
-														}
-%>
-														<select id="projectMain" name="projectMain" class="valueL" style="width:49%;float:left;<%= errorStyleInline %>" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
-															<option value="">--</option>
-														</select>
-<%
-												} else {
-%>
-														<select class="valueL" style="width:49%;float:left;" id="projectMain" name="projectMain" tabindex="<%= tabIndex++ %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
-<%
-															while (projectMainIterator.hasNext()) {
-																org.opencrx.kernel.activity1.jmi1.ActivityTracker at = (org.opencrx.kernel.activity1.jmi1.ActivityTracker)projectMainIterator.next();
-																if (at.getUserString0() != null) {
-%>
-																	<option <%= (projectMain != null) && (projectMain.compareTo(at.getUserString0().trim()) == 0) ? "selected" : "" %> value="<%= app.getHtmlEncoder().encode(at.getUserString0().trim(), false) %>"><%= app.getHtmlEncoder().encode(at.getUserString0().trim(), false) %></option>
-<%
-																}
-															}
-%>
-														</select>
-<%
-												}
-%>
-											</td>
-											<td class="addon"></td>
-										</tr>
-<%
-									}
-									tabIndex += 10;
-%>
-									<tr <%= (showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) ? "" : "style='display:none;'" %>>
-										<td class="label">
-											<span class="nw"><%= app.getLabel(ACTIVITYFILTERGLOBAL_CLASS) %>:</span>
-										</td>
-										<td>
-											<input type="<%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "hidden" : "text" %>" class="valueL" name="filterActivityGroupName" id="filterActivityGroupName" title="<%= userView.getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex()) %> <%= userView.getFieldLabel(ACTIVITYGROUPASSIGNMENT_CLASS, "activityGroup", app.getCurrentLocaleAsIndex()) %>" <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "" : "style='width:50%;float:right;'" %> tabindex="<%= tabIndex+5 %>" value="<%= app.getHtmlEncoder().encode(filterActivityGroupName, false) %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-											<input type="text" class="valueL" name="filterActivityName" id="filterActivityName" title="<%= userView.getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex()) %>" <%= ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) == 0 ? "" : "style='width:49%;float:left;'" %> tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(filterActivityName, false) %>" onchange="javascript:$('resetActivityXri').value='true';$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-										</td>
-										<td class="addon"></td>
-									</tr>
-
-									<tr>
-										<td class="label">
-											<div style="float:right;">
-													<img class="timeButtonL" border="0" title=">" alt="" src="../../images/filter_down_star.gif" onclick="javascript:$('activitySortOrder').value = '<%= (activitySortOrder + 1) % MAX_ACTIVITY_SORT_ORDER %>';$('reload.button').click();" />
-											</div>
-											<span class="nw"><%= app.getLabel(ACTIVITYSEGMENT_CLASS) %>:</span>
-										</td>
-										<td>
-<%
-											tabIndex += 10;
-											boolean noActivitiesFound = false;
-											if (activityGroup != null) {
-												activities = activityGroup.getFilteredActivity(activityQuery);
-											}
-											boolean hasActivitySelection = false;
-											String firstActivityXri = null;
-%>
-											<select id="activityXri" name="activityXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>">
-<%
-												if (activities == null || activities.isEmpty()) {
-														if ((activityGroup != null) && (activityXri != null && "MAX".compareTo(activityXri) != 0)) {
-																errorMsg += "no activities found!<br>";
-																noActivitiesFound = true;
-														}
-%>
-														<option value="">--</option>
-<%
-												}
-												else {
-													int activityCounter = 0;
-													int maxToShow = MAX_ACTIVITY_SHOWN_INITIALLY;
-													if (activityXri != null && "MAX".compareTo(activityXri) == 0) {
-															maxToShow = MAX_ACTIVITY_SHOWN;
-													};
-													for (
-															Iterator i = activities.iterator();
-															i.hasNext() && (activityCounter < maxToShow);
-															activityCounter++
-													) {
-															org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
-															boolean selected = (activityXri != null) && (activityXri.compareTo(activity.refMofId()) == 0);
-															if (selected) {
-																	hasActivitySelection = true;
-															}
-															if (
-																	(showActivityGroupNameFilter != null) && (showActivityGroupNameFilter.length() > 0) &&
-																	(activity.getName() != null) && (activity.getName().toUpperCase().indexOf(filterActivityName.toUpperCase()) == -1)
-															) {
-																	activityCounter--;
-															} else {
-																	if (firstActivityXri == null) {
-																			firstActivityXri = activity.refMofId();
-																	}
-%>
-																	<option <%= selected ? "selected" : "" %> value="<%= activity.refMofId() %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
-<%
-															}
-													}
-													if (activityCounter == 0) {
-															errorMsg += "no activities found!<br>";
-															noActivitiesFound = true;
-%>
-															<option value="">--</option>
-<%
-													}
-													if (activityCounter >= maxToShow) {
-%>
-														<option value="MAX"><%= activityCounter < MAX_ACTIVITY_SHOWN ? "&mdash;&mdash;&gt;" : "..." %></option>
-<%
-													}
-												}
-												if (!hasActivitySelection && !resetActivityXri && (activityXri != null) && (activityXri.length() > 0) && !"MAX".equalsIgnoreCase(activityXri)) {
-														// add another option to prevent loss of activity selection
-														//System.out.println("activityXri = " + activityXri);
-														hasActivitySelection = true;
-														org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
-%>
-														<option selected value="<%= activityXri %>"><%= openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ") %>#<%= activity.getActivityNumber() %>: <%= app.getHtmlEncoder().encode(activity.getName(), false) %></option>
-<%
-												}
-												if (!hasActivitySelection) {
-														// set activityXri to first activity in drop down
-														activityXri = firstActivityXri;
-												}
-%>
-											</select>
-										</td>
-										<td class="addon">
-												<input type="checkbox" id="excludeClosedActivities" name="excludeClosedActivities" title="Open Activities only" <%= (excludeClosedActivities != null) && (excludeClosedActivities.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="excludeClosedActivities" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-												<%= noActivitiesFound ? CAUTION : "" %>
-										</td>
-									</tr>
-								</table>
-								</fieldset>
-
-								<fieldset>
-								<table class="fieldGroup">
-									<tr>
-										<td class="label">
-											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>:</span>
-										</td>
-										<td>
-											<select class="valueL" name="recordType" id="recordType" tabindex="<%= tabIndex++ %>" <%= isWorkRecord ? "onchange='javascript:$(\"reload.button\").click();'" : "" %> onfocus="<%= ONFOCUS_HANDLER %>">
-<%
-												Map<Short,String> recordType_longTextsC = codes.getLongTextByCode(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), false);
-
-												if (recordType_longTextsC == null) {
-%>
-													<option value="0">N/A
-<%
-												}	else {
-													Iterator options = recordType_longTextsC.entrySet().iterator();
-													if (options.hasNext()) {options.next();} // skip N/A
-													while (options.hasNext()) {
-														Map.Entry option = (Map.Entry)options.next();
-														short value = Short.parseShort((option.getKey()).toString());
-														String selectedModifier = Short.parseShort(recordType) == value ? "selected" : "";
-														if (!isWorkRecordInPercent || value == Activities.WorkRecordType.STANDARD.getValue()) {
-%>
-																<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
-<%
-														}
-													}
-												}
-%>
-											</select>
-										</td>
-										<td class="addon"></td>
-									</tr>
-<%
-									if (isWorkRecordInPercent && activityXri != null && activityXri.length()>0) {
-											try {
-													name = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).getName();
-											} catch (Exception e) {}
-									}
-									if (name.length() == 0) {errorMsg += "name is mandatory!<br>";}
-%>
-									<tr>
-										<td class="label">
-											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
-										</td>
-										<td>
-											<input type="text" class="valueL <%= isWorkRecordInPercent ? "" : "mandatory" %>" name="name" id="name" <%= isWorkRecordInPercent ? "readonly" : " " %> tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(name, false) %>" <%= name.length() == 0 ? errorStyle : "" %> onfocus="<%= ONFOCUS_HANDLER %>" />
-										</td>
-										<td class="addon">
-												<%= name.length() == 0 ? CAUTION : "" %>
-										</td>
-									</tr>
-
-									<tr>
-										<td class="label">
-											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span>
-										</td>
-										<td>
-											<input type="text" class="valueL" name="description" id="description" tabindex="<%= tabIndex++ %>" value="<%= app.getHtmlEncoder().encode(description, false) %>" onfocus="<%= ONFOCUS_HANDLER %>" />
-										</td>
-										<td class="addon"></td>
-									</tr>
-<%
-									String previousRecordType = request.getParameter("previousRecordType") == null ? "" : request.getParameter("previousRecordType");
-									String previousResourceXri = request.getParameter("previousResourceXri") == null ? "" : request.getParameter("previousResourceXri");
-									boolean isRecordTypeChange = isFirstCall || recordType.compareTo(previousRecordType) != 0;
-									if ((resourceXri != null) && (resourceXri.length() > 0) && (resourceXri.compareTo("*") != 0) && (resourceXri.compareTo(previousResourceXri) != 0)) {
-											// resource changed, get default currency
-											org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
-											if ((resourceXri != null) && (resourceXri.length() > 0) && (resourceXri.compareTo("*") != 0)) {
-												try {
-														billingCurrency = String.valueOf(res.getRateCurrency());
-												} catch (Exception e) {}
-											}
-									}
-									if (
-											(isRecordTypeChange) ||
-											(resourceXri.compareTo(previousResourceXri) != 0)
-									) {
-											// resource changed, get rate
-											if ((resourceXri != null) && (resourceXri.length() > 0) && (resourceXri.compareTo("*") != 0)) {
-												org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
-												try {
-														if (recordType.compareTo(String.valueOf(Activities.WorkRecordType.STANDARD.getValue())) == 0) {
-																rate = res.getStandardRate() != null ? quantityf.format(res.getStandardRate()) : "0.000";
-														} else if (recordType.compareTo(String.valueOf(Activities.WorkRecordType.OVERTIME.getValue())) == 0) {
-																rate = res.getOvertimeRate() != null ? quantityf.format(res.getOvertimeRate()) : "0.000";
-														}
-												} catch (Exception e) {}
-											}
-									}
-%>
-									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-										<td class="label">
-											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "rate", app.getCurrentLocaleAsIndex()) %>:</span>
-										</td>
-										<td nowrap>
-											<input type="text" <%= isWorkRecord ? "" : "class='mandatory'" %> style="font-weight:bold;width:47%;float:right;padding-top:2px;padding-right:2px;text-align:right;<%= !isWorkRecord && paraRate==null ? errorStyleInline: "" %>" name="rate" id="rate" tabindex="<%= tabIndex+5 %>" value="<%= rate %>"	onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-											<select class="valueL" style="width:49%;float:left;" id="billingCurrency" name="billingCurrency" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
-<%
-												Map<Short,String> billingCurrency_longTextsC = codes.getLongTextByCode(featureBillingCurrency, app.getCurrentLocaleAsIndex(), false);
-
-												if (billingCurrency_longTextsC == null) {
-%>
-													<option value="0">N/A
-<%
-												}	else {
-													for(Iterator options = billingCurrency_longTextsC.entrySet().iterator() ; options.hasNext(); ) {
-														Map.Entry option = (Map.Entry)options.next();
-														short value = Short.parseShort((option.getKey()).toString());
-														String selectedModifier = Short.parseShort(billingCurrency) == value ? "selected" : "";
-%>
-														<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
-<%
-													}
-												}
-												tabIndex += 10;
-%>
-											</select>
-											<input type="hidden" name="previousRecordType" value="<%= recordType %>" />
-										</td>
-										<td class="addon"></td>
-									</tr>
-
-									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-										<td class="label">
-											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>:</span>
-										</td>
-										<td>
-											<input type="checkbox" id="isBillable" name="isBillable" <%= (isBillable != null) && (isBillable.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="isBillable" onfocus="<%= ONFOCUS_HANDLER %>" />
-										</td>
-										<td class="addon"></td>
-									</tr>
-
-									<tr class="time">
-										<td class="label timelabel">
-											<span class="nw"><b><%= datef.format(getDateAsCalendar(selectedDateStr, app).getTime()) %></b>:</span>
-										</td>
-										<td class="time">
-											<table>
-												<tr class="centered" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-													<td><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %></td>
-													<td></td>
-													<td><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
-													<td style="width:100%;">&nbsp;</td>
-												</tr>
-												<tr class="centered" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-													<td>
-														<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('startedAtHH').value + ':' + $('startedAtMM').value, -15);$('startedAtHH').value = hh_mm.split(':')[0];$('startedAtMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="startedAtHH" id="startedAtHH" tabindex="<%= tabIndex++ %>" value="<%= startedAtHH %>" <%= startedAt == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />:<input type="text" class="time" name="startedAtMM" id="startedAtMM"" tabindex="<%= tabIndex++ %>" value="<%= startedAtMM %>" <%= startedAt == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('startedAtHH').value + ':' + $('startedAtMM').value, +15);$('startedAtHH').value = hh_mm.split(':')[0];$('startedAtMM').value = hh_mm.split(':')[1];" />
-													</td>
-													<td>&mdash;</td>
-													<td>
-														<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('endedAtHH').value + ':' + $('endedAtMM').value, -15);$('endedAtHH').value = hh_mm.split(':')[0];$('endedAtMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="endedAtHH" id="endedAtHH" tabindex="<%= tabIndex++ %>" value="<%= endedAtHH %>" onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />:<input type="text" class="time" name="endedAtMM" id="endedAtMM"" tabindex="<%= tabIndex++ %>" value="<%= endedAtMM %>" onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('endedAtHH').value + ':' + $('endedAtMM').value, +15);$('endedAtHH').value = hh_mm.split(':')[0];$('endedAtMM').value = hh_mm.split(':')[1];" />
-													</td>
-													<td></td>
-												</tr>
-
-												<!--	WorkRecord -->
-												<tr class="centered" <%= isWorkRecord && !isWorkRecordInPercent ? "" : "style='display:none;'" %>>
-													<td style="padding-top:5px;">hh:mm</td>
-													<td></td>
-													<td></td>
-													<td></td>
-												</tr>
-												<tr class="centered" <%= isWorkRecord && !isWorkRecordInPercent ? "" : "style='display:none;'" %>>
-													<td>
-														<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('effortHH').value + ':' + $('effortMM').value, -15);$('effortHH').value = hh_mm.split(':')[0];$('effortMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="effortHH" id="effortHH" tabindex="<%= tabIndex++ %>" value="<%= effortHH %>" <%= paraEffortHH == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />:<input type="text" class="time" name="effortMM" id="effortMM"" tabindex="<%= tabIndex++ %>" value="<%= effortMM %>" <%= paraEffortMM == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('effortHH').value + ':' + $('effortMM').value, +15);$('effortHH').value = hh_mm.split(':')[0];$('effortMM').value = hh_mm.split(':')[1];" />
-													</td>
-													<td></td>
-													<td></td>
-													<td></td>
-												</tr>
-<%
-												// WorkRecordInPercent special treatment
-												
-												org.opencrx.kernel.activity1.jmi1.Resource currentResource = null;
-												org.opencrx.kernel.activity1.jmi1.Calendar cal = null;
-												org.opencrx.kernel.activity1.jmi1.CalendarDay calDay = null;
-												String calDayName = null;
-												try {
-													calDayName = calendardayf.format(getDateAsCalendar(selectedDateStr, app).getTime());
-												} catch (Exception e) {}
-												String calDayLoad = null;
-												short defaultLoad = 100;
-												
-												boolean isCurrentUsersResource = false;
-												if (isWorkRecordInPercent) {
-													// try to get Default Calendar of Resource
-													try {
-														currentResource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
-														if (currentResource != null) {
-																if (currentResource.getCalendar() != null) {
-																	cal = currentResource.getCalendar();
-
-																	// get default load from WeekDay 
-																	org.opencrx.kernel.activity1.cci2.WeekDayQuery weekDayQuery = (org.opencrx.kernel.activity1.cci2.WeekDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.WeekDay.class);
-																	weekDayQuery.dayOfWeek().equalTo(new Short((short)getDayOfWeek(selectedDateStr, app)));
-																	Collection daysOfWeek = cal.getWeekDay(weekDayQuery);
-																	if(!daysOfWeek.isEmpty()) {
-																		org.opencrx.kernel.activity1.jmi1.WeekDay weekDay = (org.opencrx.kernel.activity1.jmi1.WeekDay)daysOfWeek.iterator().next();
-																		if (weekDay.getWorkDurationHours() != null) {
-																				defaultLoad = weekDay.getWorkDurationHours().shortValue();
-																				if (defaultLoad < 0) {
-																						defaultLoad = 0;
 																				}
-																				if (defaultLoad > 100) {
-																						defaultLoad = 100;
-																				}
-																		}
-																	}
-																
-																	// try to get CalendarDay
-																	org.opencrx.kernel.activity1.cci2.CalendarDayQuery calendarDayQuery = (org.opencrx.kernel.activity1.cci2.CalendarDayQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.CalendarDay.class);
-																	calendarDayQuery.dateOfDay().equalTo(getDateAsCalendar(selectedDateStr, app).getTime());
-																	Collection calendarDays = cal.getCalendarDay(calendarDayQuery);
-																	if(!calendarDays.isEmpty()) {
-																		calDay = (org.opencrx.kernel.activity1.jmi1.CalendarDay)calendarDays.iterator().next();
-																		calDayName = calDay.getName();
-																		try {
-																				if (calDayName != null) {
-																						String[] calDayNameSplit = calDayName.split("@");
-																						if (calDayNameSplit.length>=2) {
-																								calDayName = calDayNameSplit[0];
-																								calDayLoad = calDayNameSplit[1];
-																						}
-																				}
-																		} catch (Exception e) {}
-																	}
-																}
-																// default is current users Contact (as defined in current user's UserHome
-																// get UserHome
-																org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
-																if (
-																		(myUserHome.getContact() != null) &&
-																		(currentResource.getContact() != null) &&
-																		(myUserHome.getContact().refMofId().compareTo(currentResource.getContact().refMofId()) == 0)
-																) {
-																	isCurrentUsersResource = true;
-																}
-																
-																if (cal != null && calDay != null /*&& isCurrentUsersResource*/) {
-																		String calendarDayName = null;
-																		//System.out.println("UPDATE: " + request.getParameter("ACTION.updateCalendarDay"));
-																		if (request.getParameter("load." + selectedDateStr) != null && request.getParameter("load." + selectedDateStr).length() > 0) {
-																				calendarDayName = selectedDateStr + "@" + request.getParameter("load." + selectedDateStr);
-																		} else {
-																				if (request.getParameter("ACTION.updateCalendarDay") != null && request.getParameter("ACTION.updateCalendarDay").length() > 9) {
-																						calendarDayName = request.getParameter("ACTION.updateCalendarDay");
-																				}
-																		}
-	
-																		if (calendarDayName != null && calendarDayName.compareTo(calDay.getName()) != 0) {
-																			System.out.println(new java.util.Date() + "UPDATE: " + calendarDayName);
-																			try {
-																					calDay = createOrUpdateCalendarDay(
-																							calendarDayName,
-																							calendarDayName.substring(0,8),
-																							cal,
-																							calDay,
-																							activitySegment,
-																							pm
-																					);
-																			} catch (Exception e) {
-																					new ServiceException(e).log();
-																			}
-																			String[] calDayNameSplit = calendarDayName.split("@");
-																			if (calDayNameSplit.length>=2) {
-																					calDayName = calDayNameSplit[0];
-																					calDayLoad = calDayNameSplit[1];
+%>
+																				<option <%=activityFilterXri != null && activityFilterXri.equals(ag.refGetPath().toXRI()) ? "selected" : ""%> value="<%=ag.refGetPath().toXRI()%>"><%=app.getHtmlEncoder().encode(ag.getName(), false)%></option>
+<%
 																			}
 																		}
-																}
-																if (cal != null && calDay == null /*&& isCurrentUsersResource*/) {
-																		String calendarDayName = null;
-																		if (request.getParameter("load." + selectedDateStr) != null && request.getParameter("load." + selectedDateStr).length() > 0) {
-																				calendarDayName = selectedDateStr + "@" + request.getParameter("load." + selectedDateStr);
-																		} else {
-																				if (request.getParameter("ACTION.createCalendarDay") != null && request.getParameter("ACTION.createCalendarDay").length() > 9) {
-																						calendarDayName = request.getParameter("ACTION.createCalendarDay");
-																				}
+																		if (!hasSelection) {
+																			activityGroup = firstAg; // to ensure proper location of activities
+																			activityFilterXri = firstAg.refGetPath().toXRI();
 																		}
-																			
-																		if (calendarDayName != null) {
-																				System.out.println(new java.util.Date() + "CREATE: " + calendarDayName);
-																				try {
-																						calDay = createOrUpdateCalendarDay(
-																								calendarDayName,
-																								calendarDayName.substring(0,8),
-																								cal,
-																								null,
-																								activitySegment,
-																								pm
-																						);
-																				} catch (Exception e) {
-																						new ServiceException(e).log();
-																				}
-																		}
+%>
+																	</select>
+<%
 																}
-																if (cal != null && calDay == null && createdWorkRecordInPercent) {
-																		// System.out.println("created default calendar day: " + calDayName + "@100");
-																		try {
-																				if (calDayName != null && calDayName.length() > 0) {
-																						calDay = createOrUpdateCalendarDay(
-																								calDayName + "@" + defaultLoad,
-																								calDayName,
-																								cal,
-																								null,
-																								activitySegment,
-																								pm
-																						);
-																				}
-																		} catch (Exception e) {
-																				new ServiceException(e).log();
+																if (wc.getSortedProjects() == null || wc.getSortedProjects().isEmpty()) {
+																	if (isProject) {
+																		wc.appendErrorMsg("no main topics!<br>");
+																	}
+%>
+																	<select id="projectMain" name="projectMain" class="valueL" style="width:49%;float:left;<%=errorStyleInline%>" tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>">
+																		<option value="">--</option>
+																	</select>
+<%
+																} else {
+%>
+																	<select class="valueL" style="width:49%;float:left;" id="projectMain" name="projectMain" tabindex="<%=tabIndex++%>" onchange="javascript:$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>">
+<%
+																		for(org.opencrx.kernel.activity1.jmi1.ActivityTracker at: wc.getSortedProjects()) {
+																			if (at.getUserString0() != null) {
+%>
+																				<option <%=wc.getFormFields().getProjectMain().equals(at.getUserString0().trim()) ? "selected" : ""%> value="<%=app.getHtmlEncoder().encode(at.getUserString0().trim(), false)%>"><%=app.getHtmlEncoder().encode(at.getUserString0().trim(), false)%></option>
+<%
+																			}
 																		}
+%>
+																	</select>
+<%
 																}
+%>
+																</td>
+																<td class="addon"></td>
+															</tr>
+<%
 														}
-													} catch (Exception e) {}
-												}
+														tabIndex += 10;
 %>
-												<!--	WorkRecordInPercent -->
-												<tr <%= isWorkRecordInPercent ? "" : "style='display:none;'" %>>
-													<td style="vertical-align:bottom;">
-														<img class="timeButtonL" border="0" title="- 5%" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:$('quantPercent').value = percentageTick($('quantPercent').value, -5);" /><input type="text" class="percentage" name="quantPercent" id="quantPercent" tabindex="<%= tabIndex++ %>" value="<%= quantPercent %>" <%= quantPercent == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%= ONFOCUS_HANDLER %>" />%<img class="timeButtonR" border="0" title="+ 5%" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:$('quantPercent').value = percentageTick($('quantPercent').value, 5);" />
-													</td>
-													<td style="vertical-align:bottom;width:30px;">&nbsp;</td>
-													<td style="vertical-align:bottom;padding-right:30px;">
-															<%= userView.getFieldLabel(RESOURCE_CLASS, "calendar", app.getCurrentLocaleAsIndex()) %>:<br>
-															<%= cal != null && cal.getName() != null ? cal.getName() : "--" %>
-													</td>
-													<td style="vertical-align:bottom;padding-right:30px;">
-															<%= calDay != null && calDay.getName() != null ? app.getLabel(CALENDARDAY_CLASS) + ":  " + calDay.getName() : "Default Load: " + defaultLoad + "%" %><br>
+														<tr <%=Boolean.TRUE.equals(wc.getFormFields().getShowActivityGroupNameFilter()) ? "" : "style='display:none;'"%>>
+															<td class="label">
+																<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYFILTERGLOBAL_CLASS)%>:</span>
+															</td>
+															<td>
+																<input type="<%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT.equals(wc.getFormFields().getActivityFilter()) ? "hidden" : "text"%>" class="valueL" name="filterActivityGroupName" id="filterActivityGroupName" title="<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex())%> <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITYGROUPASSIGNMENT_CLASS, "activityGroup", app.getCurrentLocaleAsIndex())%>" <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT.equals(wc.getFormFields().getActivityFilter()) ? "" : "style='width:50%;float:right;'"%> tabindex="<%=tabIndex+5%>" value="<%=app.getHtmlEncoder().encode(wc.getFormFields().getFilterActivityGroupName(), false)%>" onchange="javascript:$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>" />
+																<input type="text" class="valueL" name="filterActivityName" id="filterActivityName" title="<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex())%>" <%=CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_SEGMENT.equals(wc.getFormFields().getActivityFilter()) ? "" : "style='width:49%;float:left;'"%> tabindex="<%=tabIndex++%>" value="<%=app.getHtmlEncoder().encode(wc.getFormFields().getFilterActivityName(), false)%>" onchange="javascript:$('resetActivityXri').checked=true;$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>" />
+															</td>
+															<td class="addon"></td>
+														</tr>
+														<tr>
+															<td class="label">
+																<div style="float:right;">
+																		<img class="timeButtonL" border="0" title=">" alt="" src="../../images/filter_down_star.gif" onclick="javascript:$('activitySortOrder').value = '<%=(wc.getFormFields().getActivitySortOrder() + 1) % MAX_ACTIVITY_SORT_ORDER%>';$('Reload.button').click();" />
+																</div>
+																<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYSEGMENT_CLASS)%>:</span>
+															</td>
+															<td>
 <%
-															if (cal != null && calDay != null && calDay.getName() != null) {
-																	// change options
+																tabIndex += 10;
+																boolean noActivitiesFound = false;
+																if (wc.getActivityGroup() != null) {
+																	activities = wc.getActivityGroup().getFilteredActivity(activityQuery);
+																}
+																boolean hasActivitySelection = false;
+																String firstActivityXri = null;
 %>
-																	<input type="hidden" name="currentCalendarDayXri" id="currentCalendarDayXri" value="<%= calDay.refMofId() %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	   style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("0") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("25") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("50") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	 style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("75") == 0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="updateCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;<%= calDayLoad != null && calDayLoad.compareTo("100") == 0 ? "border:2px black solid;" : "" %>" />
+																<select id="activityXri" name="activityXri" class="valueL" tabindex="<%=tabIndex++%>" onchange="javascript:$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>">
 <%
-															} else if (cal != null /*&& isCurrentUsersResource*/) {
-																	// create options
+																	if (activities == null || activities.isEmpty()) {
+																		if ((activityGroup != null) && (activityXri != null && !"MAX".equals(activityXri))) {
+																			wc.appendErrorMsg("no activities found!<br>");
+																			noActivitiesFound = true;
+																		}
 %>
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="0%"	 onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@0';"	   style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==   0 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="25%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@25';"	 style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==  25 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="50%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@50';"	 style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==  50 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="75%"	onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@75';"	 style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad ==  75 ? "border:2px black solid;" : "" %>" />
-																	<INPUT type="submit" name="createCalendarDay" tabindex="<%= tabIndex++ %>" value="100%" onmouseup="javascript:this.name='ACTION.'+this.name;this.value='<%= calDayName %>@100';" style="font-size:10px;font-weight:bold;width:4em;<%= defaultLoad == 100 ? "border:2px black solid;" : "" %>" />
-
+																		<option value="">--</option>
 <%
-															}
+																	}
+																	else {
+																		int activityCounter = 0;
+																		int maxToShow = MAX_ACTIVITY_SHOWN_INITIALLY;
+																		if (activityXri != null && "MAX".equals(activityXri)) {
+																			maxToShow = MAX_ACTIVITY_SHOWN;
+																		};
+																		for (
+																			Iterator i = activities.iterator();
+																			i.hasNext() && (activityCounter < maxToShow);
+																			activityCounter++
+																		) {
+																			org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
+																			boolean selected = activityXri != null && activityXri.equals(activity.refGetPath().toXRI());
+																			if (selected) {
+																				hasActivitySelection = true;
+																			}
+																			if (
+																				Boolean.TRUE.equals(wc.getFormFields().getShowActivityGroupNameFilter()) &&
+																				(activity.getName() != null) && (activity.getName().toUpperCase().indexOf(wc.getFormFields().getFilterActivityName().toUpperCase()) == -1)
+																			) {
+																				activityCounter--;
+																			} else {
+																				if (firstActivityXri == null) {
+																					firstActivityXri = activity.refGetPath().toXRI();
+																				}
 %>
-													</td>
-												</tr>
-
-
-												<!--	ExpenseRecord -->
-												<tr class="centered" <%= isWorkRecord ? "style='display:none;'" : "" %>>
-													<td style="padding-top:5px;"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
-													<td></td>
-													<td style="padding-top:5px;"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()) %></td>
-													<td></td>
-												</tr>
-												<tr class="centered" <%= isWorkRecord ? "style='display:none;'" : "" %>>
-													<td>
-														<input type="text" class="quantity" <%= quantityIsZero ? errorStyle : "" %> name="quantity" id="quantity" tabindex="<%= tabIndex++ %>" value="<%= quantity %>" <%= paraQuantity == null ? errorStyle : "" %> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onchange="javascript:$('reload.button').click();" onfocus="<%= ONFOCUS_HANDLER %>" />
-													</td>
-													<td></td>
-													<td colspan="2">
+																				<option <%=selected ? "selected" : ""%> value="<%=activity.refGetPath().toXRI()%>"><%=openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ")%>#<%=activity.getActivityNumber()%>: <%=app.getHtmlEncoder().encode(activity.getName(), false)%></option>
 <%
-														boolean noUomsFound = false;
-														org.opencrx.kernel.uom1.jmi1.Uom1Package uomPkg = org.opencrx.kernel.utils.Utils.getUomPackage(pm);
-														org.opencrx.kernel.uom1.jmi1.Segment uomSegment = (org.opencrx.kernel.uom1.jmi1.Segment)pm.getObjectById(
-																new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + providerName + "/segment/Root")
-															);
-														org.opencrx.kernel.uom1.cci2.UomQuery uomFilter = uomPkg.createUomQuery();
-														uomFilter.name().elementOf(Arrays.asList(UOM_NAMES));
-														uomFilter.orderByName().ascending();
-														uomFilter.orderByDescription().ascending();
-														List uoms = uomSegment.getUom(uomFilter);
-														if (uoms.isEmpty()) {
-																errorMsg += "no matching UOMs found!<br>";
-																noUomsFound = true;
+																			}
+																		}
+																		if (activityCounter == 0) {
+																			wc.appendErrorMsg("no activities found!<br>");
+																			noActivitiesFound = true;
 %>
-																<select id="uomXri" name="uomXri" class="valueL" <%= errorStyle %> tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
-																	<option value="">--</option>
+																			<option value="">--</option>
+<%
+																		}
+																		if (activityCounter >= maxToShow) {
+%>
+																			<option value="MAX"><%=activityCounter < MAX_ACTIVITY_SHOWN ? "&mdash;&mdash;&gt;" : "..."%></option>
+<%
+																		}
+																	}
+																	if (!hasActivitySelection && !Boolean.TRUE.equals(wc.getFormFields().getResetActivityXri()) && (activityXri != null) && !activityXri.isEmpty() && !"MAX".equalsIgnoreCase(activityXri)) {
+																		// add another option to prevent loss of activity selection
+																		hasActivitySelection = true;
+																		org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
+%>
+																		<option selected value="<%=activityXri%>"><%=openOnly ? "" : (activity.getActivityState() < (short)20 ? "[&ensp;] " : "[X] ")%>#<%=activity.getActivityNumber()%>: <%=app.getHtmlEncoder().encode(activity.getName(), false)%></option>
+<%
+																	}
+																	if (!hasActivitySelection) {
+																		// set activityXri to first activity in drop down
+																		activityXri = firstActivityXri;
+																	}
+%>
 																</select>
+															</td>
+															<td class="addon">
+																	<input type="checkbox" id="excludeClosedActivities" name="excludeClosedActivities" title="Open Activities only" <%=Boolean.TRUE.equals(wc.getFormFields().getExcludeClosedActivities()) ? "checked" : ""%> tabindex="<%=tabIndex++%>" onchange="javascript:$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>" />
+																	<%=noActivitiesFound ? CAUTION : ""%>
+															</td>
+														</tr>
+													</table>
+													</fieldset>
+					
+													<fieldset>
+													<table class="fieldGroup">
+														<tr>
+															<td class="label">
+																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex())%>:</span>
+															</td>
+															<td>
+																<select class="valueL" name="recordType" id="recordType" tabindex="<%=tabIndex++%>" <%=isWorkRecord ? "onchange='javascript:$(\"Reload.button\").click();'" : ""%> onfocus="<%=ONFOCUS_HANDLER%>">
 <%
-														} else {
+																	Map<Short,String> recordType_longTextsC = wc.getCodes().getLongTextByCode(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), false);
+																	if (recordType_longTextsC == null) {
 %>
-															<select class="valueL" id="uomXri" name="uomXri" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
+																		<option value="0">N/A
 <%
-																for (
-																		Iterator i = uoms.iterator();
-																		i.hasNext();
-																) {
-																		org.opencrx.kernel.uom1.jmi1.Uom uom = (org.opencrx.kernel.uom1.jmi1.Uom)i.next();
+																	} else {
+																		Iterator options = recordType_longTextsC.entrySet().iterator();
+																		if (options.hasNext()) {options.next();} // skip N/A
+																		while (options.hasNext()) {
+																			Map.Entry option = (Map.Entry)options.next();
+																			short value = Short.parseShort((option.getKey()).toString());
+																			String selectedModifier = wc.getFormFields().getRecordType() == value ? "selected" : "";
+																			if (!isWorkRecordInPercent || value == Activities.WorkRecordType.STANDARD.getValue()) {
 %>
-																		<option <%= (uomXri != null) && (uomXri.compareTo(uom.refMofId()) == 0) ? "selected" : "" %> value="<%= uom.refMofId() %>"><%= app.getHtmlEncoder().encode(uom.getName(), false) %> [<%= uom.getDescription() != null ? app.getHtmlEncoder().encode(uom.getDescription(), false) : "--" %>]</option>
+																				<option <%=selectedModifier%> value="<%=value%>"><%=(wc.getCodes().getLongTextByCode(isWorkRecord ? featureRecordTypeWork : featureRecordTypeExpense, app.getCurrentLocaleAsIndex(), true).get(new Short(value)))%>
 <%
-																}
-															}
+																			}
+																		}
+																	}
 %>
-														</select>
-
-													</td>
-												</tr>
-												<tr class="centered" <%= isWorkRecord ? "style='display:none;'" : "" %>>
-													<td style="padding-top:5px;"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %></td>
-													<td></td>
-													<td style="padding-top:5px;"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "paymentType", app.getCurrentLocaleAsIndex()) %></td>
-													<td></td>
-												</tr>
-												<tr class="centered" <%= isWorkRecord ? "style='display:none;'" : "" %>>
-													<td>
-														<input type="checkbox" id="isReimbursable" name="isReimbursable" <%= (isReimbursable != null) && (isReimbursable.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="isReimbursable" onfocus="<%= ONFOCUS_HANDLER %>" />
-													</td>
-													<td></td>
-													<td colspan="2">
-														<select class="valueL" id="paymentType" name="paymentType" tabindex="<%= tabIndex++ %>" onfocus="<%= ONFOCUS_HANDLER %>">
-			<%
-															Map<Short,String> paymentType_longTextsC = codes.getLongTextByCode(featurePaymentType, app.getCurrentLocaleAsIndex(), false);
-
-															if (paymentType_longTextsC == null) {
-			%>
-																<option value="0">N/A
-			<%
-															}	else {
-																for(Iterator options = paymentType_longTextsC.entrySet().iterator() ; options.hasNext(); ) {
-																	Map.Entry option = (Map.Entry)options.next();
-																	short value = Short.parseShort((option.getKey()).toString());
-																	String selectedModifier = Short.parseShort(paymentType) == value ? "selected" : "";
-			%>
-																	<option <%= selectedModifier %> value="<%= value %>"><%= (codes.getLongTextByCode(featurePaymentType, app.getCurrentLocaleAsIndex(), true).get(new Short(value))) %>
-			<%
-																}
-															}
-			%>
-														</select>
-													</td>
-												</tr>
-
-											</table>
-
-										</td>
-										<td class="addon"></td>
-									</tr>
-
-								</table>
-								</fieldset>
-
+																</select>
+															</td>
+															<td class="addon"></td>
+														</tr>
 <%
-								org.opencrx.kernel.activity1.jmi1.Activity selectedActivity = null;
-								boolean showMakePrivate = false;
-								boolean hasPrivateOwningGroup = false;
-								boolean atLeastOnePrivateMatch = false; // true if current principal is member of at least one private group which is also an owning group of the selected activity
-								List privateOwningGroups = new ArrayList();
-								if (activityXri != null && activityXri.length() > 0) {
-										selectedActivity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
-										for (
-											Iterator i = selectedActivity.getOwningGroup().iterator();
-											i.hasNext() && !showMakePrivate;
-										) {
-												org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrincipalGroup =
-														(org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-												if (currentPrincipalGroup.getName() != null && (currentPrincipalGroup.getName().toUpperCase().indexOf(PRIVATE_TOKEN) >= 0)) {
-														privateOwningGroups.add(currentPrincipalGroup);
-														hasPrivateOwningGroup = true;
+														if (isWorkRecordInPercent && activityXri != null && !activityXri.isEmpty()) {
+															try {
+																name = ((org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri))).getName();
+															} catch (Exception e) {}
+														}
+														if (name.length() == 0) {
+															wc.appendErrorMsg("name is mandatory!<br>");
+														}
+%>
+														<tr>
+															<td class="label">
+																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex())%>:</span>
+															</td>
+															<td>
+																<input type="text" class="valueL <%=isWorkRecordInPercent ? "" : "mandatory"%>" name="name" id="name" <%=isWorkRecordInPercent ? "readonly" : " "%> tabindex="<%=tabIndex++%>" value="<%=app.getHtmlEncoder().encode(name, false)%>" <%=name.length() == 0 ? errorStyle : ""%> onfocus="<%=ONFOCUS_HANDLER%>" />
+															</td>
+															<td class="addon">
+																	<%= name.length() == 0 ? CAUTION : ""%>
+															</td>
+														</tr>
+														<tr>
+															<td class="label">
+																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex())%>:</span>
+															</td>
+															<td>
+																<input type="text" class="valueL" name="description" id="description" tabindex="<%=tabIndex++%>" value="<%=app.getHtmlEncoder().encode(wc.getFormFields().getDescription(), false)%>" onfocus="<%=ONFOCUS_HANDLER%>" />
+															</td>
+															<td class="addon"></td>
+														</tr>
+														<tr <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>>
+															<td class="label">
+																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "rate", app.getCurrentLocaleAsIndex())%>:</span>
+															</td>
+															<td nowrap>
+																<input type="text" name="rate" id="rate" <%=isWorkRecord ? "" : "class='mandatory'"%> style="font-weight:bold;width:47%;float:right;padding-top:2px;padding-right:2px;text-align:right;<%=!isWorkRecord && wc.getParaRate() == null ? errorStyleInline: ""%>" tabindex="<%=tabIndex+5%>" value="<%=wc.getResourceRate()%>" onfocus="<%=ONFOCUS_HANDLER%>" />
+																<select class="valueL" style="width:49%;float:left;" id="billingCurrency" name="billingCurrency" tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>">
+<%
+																	Map<Short,String> billingCurrency_longTextsC = wc.getCodes().getLongTextByCode(featureBillingCurrency, app.getCurrentLocaleAsIndex(), false);
+																	if (billingCurrency_longTextsC == null) {
+%>
+																		<option value="0">N/A
+<%
+																	} else {
+																		for(Iterator options = billingCurrency_longTextsC.entrySet().iterator() ; options.hasNext(); ) {
+																			Map.Entry option = (Map.Entry)options.next();
+																			short value = Short.parseShort((option.getKey()).toString());
+																			String selectedModifier = billingCurrency == value ? "selected" : "";
+%>
+																			<option <%=selectedModifier%> value="<%=value%>"><%=(wc.getCodes().getLongTextByCode(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true).get(new Short(value)))%>
+<%
+																		}
+																	}
+																	tabIndex += 10;
+%>
+																</select>
+																<input type="hidden" name="previousRecordType" value="<%=Short.toString(wc.getFormFields().getRecordType())%>" />
+															</td>
+															<td class="addon"></td>
+														</tr>
+														<tr <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>>
+															<td class="label">
+																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex())%>:</span>
+															</td>
+															<td>
+																<input type="checkbox" id="isBillable" name="isBillable" <%=Boolean.TRUE.equals(wc.getFormFields().getIsBillable()) ? "checked" : ""%> tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>" />
+															</td>
+															<td class="addon"></td>
+														</tr>
+														<tr class="time">
+															<td class="label timelabel">
+																<span class="nw"><b><%=wc.getDateFormat().format(wc.getDateAsCalendar(selectedDateStr, app).getTime())%></b>:</span>
+															</td>
+															<td class="time">
+																<table>
+																	<tr class="centered" <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>>
+																		<td><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex())%></td>
+																		<td></td>
+																		<td><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex())%></td>
+																		<td style="width:100%;">&nbsp;</td>
+																	</tr>
+																	<tr class="centered" <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>>
+																		<td>
+																			<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('startedAtHH').value + ':' + $('startedAtMM').value, -15);$('startedAtHH').value = hh_mm.split(':')[0];$('startedAtMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="startedAtHH" id="startedAtHH" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getStartedAtHH()%>" <%=wc.getStartedAt() == null ? errorStyle : ""%> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" />:<input type="text" class="time" name="startedAtMM" id="startedAtMM"" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getStartedAtMM()%>" <%=wc.getStartedAt() == null ? errorStyle : ""%> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('startedAtHH').value + ':' + $('startedAtMM').value, +15);$('startedAtHH').value = hh_mm.split(':')[0];$('startedAtMM').value = hh_mm.split(':')[1];" />
+																		</td>
+																		<td>&mdash;</td>
+																		<td>
+																			<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('endedAtHH').value + ':' + $('endedAtMM').value, -15);$('endedAtHH').value = hh_mm.split(':')[0];$('endedAtMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="endedAtHH" id="endedAtHH" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getEndedAtHH()%>" onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" />:<input type="text" class="time" name="endedAtMM" id="endedAtMM" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getEndedAtMM()%>" onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('endedAtHH').value + ':' + $('endedAtMM').value, +15);$('endedAtHH').value = hh_mm.split(':')[0];$('endedAtMM').value = hh_mm.split(':')[1];" />
+																		</td>
+																		<td></td>
+																	</tr>
+					
+																	<!--	WorkRecord -->
+																	<tr class="centered" <%=isWorkRecord && !isWorkRecordInPercent ? "" : "style='display:none;'"%>>
+																		<td style="padding-top:5px;">hh:mm</td>
+																		<td></td>
+																		<td></td>
+																		<td></td>
+																	</tr>
+																	<tr class="centered" <%=isWorkRecord && !isWorkRecordInPercent ? "" : "style='display:none;'"%>>
+																		<td>
+																			<img class="timeButtonL" border="0" title="- 0:15" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:var hh_mm = timeTick($('effortHH').value + ':' + $('effortMM').value, -15);$('effortHH').value = hh_mm.split(':')[0];$('effortMM').value = hh_mm.split(':')[1];" /><input type="text" class="time" name="effortHH" id="effortHH" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getEffortHH()%>" <%=wc.getParaEffortHH() == null ? errorStyle : ""%> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" />:<input type="text" class="time" name="effortMM" id="effortMM" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getEffortMM()%>" <%=wc.getParaEffortMM() == null ? errorStyle : ""%> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" /><img class="timeButtonR" border="0" title="+ 0:15" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:var hh_mm = timeTick($('effortHH').value + ':' + $('effortMM').value, +15);$('effortHH').value = hh_mm.split(':')[0];$('effortMM').value = hh_mm.split(':')[1];" />
+																		</td>
+																		<td></td>
+																		<td></td>
+																		<td></td>
+																	</tr>
+																	<!--	WorkRecordInPercent -->
+																	<tr <%=isWorkRecordInPercent ? "" : "style='display:none;'"%>>
+																		<td style="vertical-align:bottom;">
+																			<img class="timeButtonL" border="0" title="- 5%" alt="" src="../../images/arrow_smallleft.gif" onclick="javascript:$('quantPercent').value = percentageTick($('quantPercent').value, -5);" /><input type="text" class="percentage" name="quantPercent" id="quantPercent" tabindex="<%=tabIndex++%>" value="<%= wc.getFormFields().getQuantPercent() %>" <%= wc.getFormFields().getQuantPercent() == null || wc.getFormFields().getQuantPercent().isEmpty() ? errorStyle : ""%> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onfocus="<%=ONFOCUS_HANDLER%>" />%<img class="timeButtonR" border="0" title="+ 5%" alt="" src="../../images/arrow_smallright.gif" onclick="javascript:$('quantPercent').value = percentageTick($('quantPercent').value, 5);" />
+																		</td>
+																		<td style="vertical-align:bottom;width:30px;">&nbsp;</td>
+																		<td style="vertical-align:bottom;padding-right:30px;">
+																				<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.RESOURCE_CLASS, "calendar", app.getCurrentLocaleAsIndex())%>:<br>
+																				<%=wc.getResourceCalendar() != null && wc.getResourceCalendar().getName() != null ? wc.getResourceCalendar().getName() : "--"%>
+																		</td>
+																		<td style="vertical-align:bottom;padding-right:30px;">
+																			<%=wc.getResourceCalendarDay() != null && wc.getResourceCalendarDay().getName() != null ? app.getLabel(CreateWorkAndExpenseRecordController.CALENDARDAY_CLASS) + ":  " + wc.getResourceCalendarDay().getName() : "Default Load: " + wc.getResourceDefaultLoad() + "%"%><br>
+<%
+																			if(wc.getResourceCalendar() != null && wc.getResourceCalendarDay() != null && wc.getResourceCalendarDay().getName() != null) {
+																				// Change options
+																				for(Integer load: Arrays.asList(0, 25, 50, 75, 100)) {
+%>
+																					<input type="submit" name="updateCalendarDay<%=load%>" tabindex="<%=tabIndex++%>" value="<%=load%>%" onclick="javascript:$('updateCalendarDay').value='<%=wc.getResourceCalendarDayName()+"@"+load %>';$('Reload.button').click();" style="font-size:10px;font-weight:bold;width:4em;<%=wc.getResourceCalendarDayLoad() != null && wc.getResourceCalendarDayLoad().equals(load) ? "border:2px black solid;" : ""%>" />
+<%
+																				}
+																			} else if (wc.getResourceCalendar() != null) {
+																				// Create options
+																				for(Integer load: Arrays.asList(0, 25, 50, 75, 100)) {
+%>
+																					<input type="submit" name="createCalendarDay<%=load%>" tabindex="<%=tabIndex++%>" value="<%=load%>%" onclick="javascript:$('createCalendarDay').value='<%=wc.getResourceCalendarDayName()+"@"+load %>';$('Reload.button').click();" style="font-size:10px;font-weight:bold;width:4em;<%=wc.getResourceDefaultLoad().equals(load) ? "border:2px black solid;" : ""%>" />
+<%
+																				}
+																			}
+%>
+																		</td>
+																	</tr>
+																	<!--	ExpenseRecord -->
+																	<tr class="centered" <%=isWorkRecord ? "style='display:none;'" : ""%>>
+																		<td style="padding-top:5px;"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())%></td>
+																		<td></td>
+																		<td style="padding-top:5px;"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex())%></td>
+																		<td></td>
+																	</tr>
+																	<tr class="centered" <%=isWorkRecord ? "style='display:none;'" : ""%>>
+																		<td>
+																			<input type="text" class="quantity" <%=Boolean.TRUE.equals(wc.getQuantityIsZero()) ? errorStyle : ""%> name="quantity" id="quantity" tabindex="<%=tabIndex++%>" value="<%=wc.getFormFields().getQuantity()%>" <%=wc.getParaQuantity() == null ? errorStyle : ""%> onkeypress="javascript:oldValue=this.value;" onkeyup="javascript:positiveDecimalsVerify(this);" onchange="javascript:$('Reload.button').click();" onfocus="<%=ONFOCUS_HANDLER%>" />
+																		</td>
+																		<td></td>
+																		<td colspan="2">
+<%
+																			boolean noUomsFound = false;
+																			org.opencrx.kernel.uom1.jmi1.Segment uomSegment = (org.opencrx.kernel.uom1.jmi1.Segment)pm.getObjectById(
+																				new Path("xri://@openmdx*org.opencrx.kernel.uom1").getDescendant("provider", wc.getProviderName(), "segment", "Root")
+																			);
+																			org.opencrx.kernel.uom1.cci2.UomQuery uomFilter = (org.opencrx.kernel.uom1.cci2.UomQuery)pm.newQuery(org.opencrx.kernel.uom1.jmi1.Uom.class);
+																			uomFilter.name().elementOf(Arrays.asList(CreateWorkAndExpenseRecordController.UOM_NAMES));
+																			uomFilter.orderByName().ascending();
+																			uomFilter.orderByDescription().ascending();
+																			List uoms = uomSegment.getUom(uomFilter);
+																			if (uoms.isEmpty()) {
+																				wc.appendErrorMsg("no matching UOMs found!<br>");
+																				noUomsFound = true;
+%>
+																				<select id="uomXri" name="uomXri" class="valueL" <%=errorStyle%> tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>">
+																					<option value="">--</option>
+																				</select>
+<%
+																			} else {
+%>
+																				<select class="valueL" id="uomXri" name="uomXri" tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>">
+<%
+																					for (
+																						Iterator i = uoms.iterator();
+																						i.hasNext();
+																					) {
+																						org.opencrx.kernel.uom1.jmi1.Uom uom = (org.opencrx.kernel.uom1.jmi1.Uom)i.next();
+%>
+																						<option <%=(wc.getFormFields().getUomXri() != null) && (wc.getFormFields().getUomXri().equals(uom.refGetPath().toXRI())) ? "selected" : ""%> value="<%=uom.refGetPath().toXRI()%>"><%=app.getHtmlEncoder().encode(uom.getName(), false)%> [<%=uom.getDescription() != null ? app.getHtmlEncoder().encode(uom.getDescription(), false) : "--"%>]</option>
+<%
+																					}
+%>
+																				</select>
+<%
+																			}
+%>
+																		</td>
+																	</tr>
+																	<tr class="centered" <%=isWorkRecord ? "style='display:none;'" : ""%>>
+																		<td style="padding-top:5px;"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex())%></td>
+																		<td></td>
+																		<td style="padding-top:5px;"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "paymentType", app.getCurrentLocaleAsIndex())%></td>
+																		<td></td>
+																	</tr>
+																	<tr class="centered" <%=isWorkRecord ? "style='display:none;'" : ""%>>
+																		<td>
+																			<input type="checkbox" id="isReimbursable" name="isReimbursable" <%=Boolean.TRUE.equals(wc.getFormFields().getIsReimbursable()) ? "checked" : ""%> tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>" />
+																		</td>
+																		<td></td>
+																		<td colspan="2">
+																			<select class="valueL" id="paymentType" name="paymentType" tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>">
+<%
+																				Map<Short,String> paymentType_longTextsC = wc.getCodes().getLongTextByCode(featurePaymentType, app.getCurrentLocaleAsIndex(), false);
+																				if (paymentType_longTextsC == null) {
+%>
+																					<option value="0">N/A
+<%
+																				} else {
+																					for(Iterator options = paymentType_longTextsC.entrySet().iterator() ; options.hasNext(); ) {
+																						Map.Entry option = (Map.Entry)options.next();
+																						short value = Short.parseShort((option.getKey()).toString());
+																						String selectedModifier = wc.getFormFields().getPaymentType() == value ? "selected" : "";
+%>
+																						<option <%=selectedModifier%> value="<%=value%>"><%=(wc.getCodes().getLongTextByCode(featurePaymentType, app.getCurrentLocaleAsIndex(), true).get(new Short(value)))%>
+<%
+																					}
+																				}
+%>		
+																			</select>
+																		</td>
+																	</tr>
+					
+																</table>
+															</td>
+															<td class="addon"></td>
+														</tr>
+													</table>
+													</fieldset>
+													<fieldset <%=Boolean.TRUE.equals(wc.getShowMakePrivate()) ? "" : "style='display:none;'"%>>
+													<table class="fieldGroup">
+														<tr>
+															<td class="label" style="padding-top:5px;">
+																<span class="nw"><strong><%=CreateWorkAndExpenseRecordController.PRIVATE_TOKEN%></strong>:</span>
+															</td>
+															<td>
+																<input type="checkbox" id="makePrivate" name="makePrivate" <%=Boolean.TRUE.equals(makePrivate) ? "checked" : ""%> tabindex="<%=tabIndex++%>" onfocus="<%=ONFOCUS_HANDLER%>" />
+																<%=wc.getGroupNames()%>
+															</td>
+															<td class="addon"></td>
+														</tr>
+													</table>
+													</fieldset>
+												</td>
+											</tr>
+											<tr>
+												<td>
+<%
+												if (!Boolean.TRUE.equals(wc.getCanExecuteAdd()) || Boolean.TRUE.equals(wc.getCreationFailed()) || noActivitiesFound || noResourcesFound) {
+%>
+													<div style="float:right;" title="<%=wc.getErrorMsg().replace("<br>", " - ")%>" >
+														<%=CAUTION%>
+													</div>
+<%
 												}
-										}
-								}
-
-								String groupNames = "";
-								org.opencrx.kernel.home1.jmi1.UserHome myUserHome = null;
-								try {
-										// get UserHome
-										myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(obj.refGetPath(), pm);
-								} catch (Exception e) {
-										new ServiceException(e).log();
-								};
-								org.openmdx.security.realm1.jmi1.Principal principal = null;
-								try {
-										org.openmdx.security.realm1.jmi1.Realm realm = org.opencrx.kernel.backend.SecureObject.getInstance().getRealm(
-											pm,
-											providerName,
-											segmentName
-										);
-										principal = org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-											myUserHome.refGetPath().getBase(),
-											realm
-										);
-										// check whether user is member of at least one private group which is also an owning group of the selected activity
-										for (
-											Iterator i = privateOwningGroups.iterator();
-											i.hasNext();
-										) {
-												org.opencrx.security.realm1.jmi1.PrincipalGroup currentPrivateOwningGroup =
-														(org.opencrx.security.realm1.jmi1.PrincipalGroup)i.next();
-												if (groupNames.length() > 0) {groupNames += ", ";}
-												groupNames += currentPrivateOwningGroup.getName();
-												if (principal.getIsMemberOf().contains(currentPrivateOwningGroup)) {
-														atLeastOnePrivateMatch = true;
-												}
-										}
-								}
-								catch (Exception e) {
-										new ServiceException(e).log();
-								};
-
-								showMakePrivate = hasPrivateOwningGroup && atLeastOnePrivateMatch;
-								if (!showMakePrivate) {
-										// reset makePrivate
-										makePrivate = "";
-								}
 %>
-								<fieldset <%= showMakePrivate ? "" : "style='display:none;'" %>>
-								<table class="fieldGroup">
-									<tr>
-										<td class="label" style="padding-top:5px;">
-											<span class="nw"><strong><%= PRIVATE_TOKEN %></strong>:</span>
-										</td>
-										<td>
-											<input type="checkbox" id="makePrivate" name="makePrivate" <%= (makePrivate != null) && (makePrivate.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="makePrivate" onfocus="<%= ONFOCUS_HANDLER %>" />
-											<%= groupNames %>
-										</td>
-										<td class="addon"></td>
-									</tr>
-								</table>
-								</fieldset>
-							</td>
-						</tr>
-						<tr>
-							<td>
-<%
-								if (!canExecuteAdd || creationFailed || noActivitiesFound || noResourcesFound) {
-								//System.out.println("creation failed");
-%>
-									<div style="float:right;" title="<%= errorMsg.replace("<br>", " - ") %>" >
-										<%= CAUTION %>
-									</div>
-<%
-								}
-%>
-								<div class="buttons">
-									<input type="submit" id="EVICT_RELOAD" name="EVICT_RELOAD" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="<%= SUBMIT_HANDLER %>" />
-								</div>
-							</td>
-							<td></td>
-							<td>
-									<input type="submit" id="add.button" name="add.button" <%= noActivitiesFound || noResourcesFound ? "disabled" : "" %> tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %>" onclick="<%= SUBMIT_HANDLER %>" />
-									<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>" />
-							</td>
-						</tr>
-					</table>
-<%
-					if (SHOW_ERRORS && errorMsg.length() > 0) {
-%>
-						<div style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
-							<%= errorMsg %>
-						</div>
-<%
-					}
-%>
-					<br>
-
-<%
-					if ((resource == null) && (resourceXri != null) && (resourceXri.length() > 0) && (resourceXri.compareTo("*") != 0)) {
-						try {
-								resource = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(resourceXri));
-								contact = resource.getContact();
-								showAllResources = false;
-						} catch (Exception e) {}
-					}
-					if ((contact != null) || (resource != null)) {
-							Map workAndExpenseRecords = new TreeMap();
-							org.opencrx.kernel.activity1.cci2.ResourceQuery resourceQuery = activityPkg.createResourceQuery();
-							if (contact != null) {
-									resourceQuery.thereExistsContact().equalTo(contact);
-							}
-							resourceQuery.forAllDisabled().isFalse();
-
-							GregorianCalendar calendarBeginOfWeek = getDateAsCalendar(selectedDateStr, app);
-							while (calendarBeginOfWeek.get(GregorianCalendar.DAY_OF_WEEK) != calendarBeginOfWeek.getFirstDayOfWeek()) {
-									calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, -1);
-							}
-							GregorianCalendar calendarBeginOPeriod = getDateAsCalendar(selectedDateStr, app);
-							if ((isFullMonth != null) && (isFullMonth.length() > 0)) {
-									calendarBeginOPeriod.set(GregorianCalendar.DAY_OF_MONTH, 1);
-							} else {
-									calendarBeginOPeriod = (GregorianCalendar)calendarBeginOfWeek.clone();
-							}
-							java.util.Date beginOfPeriod = calendarBeginOPeriod.getTime();
-							GregorianCalendar calendarEndOfPeriod = (GregorianCalendar)calendarBeginOPeriod.clone();
-							if ((isFullMonth != null) && (isFullMonth.length() > 0)) {
-									calendarEndOfPeriod.add(GregorianCalendar.MONTH, 1);
-							} else {
-									calendarEndOfPeriod.add(GregorianCalendar.DAY_OF_MONTH, 7);
-							}
-							calendarEndOfPeriod.add(GregorianCalendar.MILLISECOND, -1);
-							java.util.Date endOfPeriod = calendarEndOfPeriod.getTime();
-
-							org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery workAndExpenseRecordFilter = activityPkg.createWorkAndExpenseRecordQuery();
-							//workAndExpenseRecordFilter.forAllDisabled().isFalse();
-							workAndExpenseRecordFilter.thereExistsStartedAt().between(beginOfPeriod, endOfPeriod);
-							if (isWorkRecord) {
-									if (isWorkRecordInPercent) {
-											workAndExpenseRecordFilter.recordType().equalTo(new Short((short)1));
-											if (uomPercent != null) {
-													workAndExpenseRecordFilter.thereExistsQuantityUom().equalTo(uomPercent);
-											}
-									} else {
-											workAndExpenseRecordFilter.recordType().between(new Short((short)1), new Short((short)RECORDTYPE_WORK_MAX));
-											if (uomPercent != null) {
-													workAndExpenseRecordFilter.forAllQuantityUom().notEqualTo(uomPercent);
-											}
-									}
-							} else {
-									workAndExpenseRecordFilter.recordType().greaterThan(new Short((short)RECORDTYPE_WORK_MAX));
-							}
-							double[] sumDays = new double[7];
-							double[] sumDaysBillable = new double[7];
-							for(int i = 0; i < sumDays.length; i++) {
-								sumDays[i] = 0.0;
-								sumDaysBillable[i] = 0.0;
-							}
-							int counter = 0;
-							org.opencrx.kernel.activity1.jmi1.Resource res = null;
-							Iterator r = null;
-							if (contact != null) {
-									// iterate through all resources of this contact
-									r = activitySegment.getResource(resourceQuery).iterator();
-									if (r.hasNext()) {
-											res = (org.opencrx.kernel.activity1.jmi1.Resource)r.next();
-									}
-							} else {
-									// process single resource only
-									res = resource;
-							}
-							while (res != null) {
-									for (
-											Iterator w = res.getWorkReportEntry(workAndExpenseRecordFilter).iterator();
-											w.hasNext();
-											counter++
-									) {
-											org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
-											GregorianCalendar startedAtCal = new GregorianCalendar(app.getCurrentLocale());
-											startedAtCal.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-											startedAtCal.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-											String sortKey = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
-											try {
-													if (workAndExpenseRecord.getStartedAt() == null) {
-															sortKey = "yyyyMMddHHmmss";
-															startedAtCal.setTime(beginOfPeriod);
-													} else {
-															sortKey = dtsortf.format(workAndExpenseRecord.getStartedAt());
-															startedAtCal.setTime(workAndExpenseRecord.getStartedAt());
-													}
-													sortKey += workAndExpenseRecord.getActivity().getActivityNumber() + formatter.format(counter);
-											} catch (Exception e) {};
-											if (workAndExpenseRecord.getQuantity() != null) {
-													sumDays[startedAtCal.get(GregorianCalendar.DAY_OF_WEEK) % 7] += workAndExpenseRecord.getQuantity().doubleValue();
-													if (workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue()) {
-															sumDaysBillable[startedAtCal.get(GregorianCalendar.DAY_OF_WEEK) % 7] += workAndExpenseRecord.getQuantity().doubleValue();
-													}
-											}
-											workAndExpenseRecords.put(sortKey, workAndExpenseRecord);
-									}
-									res = null;
-									if ((r != null) && (r.hasNext())) {
-											res = (org.opencrx.kernel.activity1.jmi1.Resource)r.next();
-									}
-							}
-
-%>
-							<hr>
-							<h2 style="padding-left:5px;">
-								<%= app.getLabel(WORKANDEXPENSERECORD_CLASS) %>
-								<input type="checkbox" name="isFullMonth" <%= (isFullMonth != null) && (isFullMonth.length() > 0) ? "checked" : "" %> tabindex="<%= tabIndex++ %>" value="isFullMonth" onchange="javascript:$('reload.button').click();" />
-								[<%= calendarBeginOPeriod != null ? datef.format(calendarBeginOPeriod.getTime()) : "--" %> &mdash; <%= calendarEndOfPeriod != null ? datef.format(calendarEndOfPeriod.getTime()) : "--" %>]
-							</h2>
-
-<%
-							if (counter > 0) {
-									boolean showFullStartedAtDate = (!isWorkRecordInPercent) && (isFullStartedAtDate != null) && (isFullStartedAtDate.length() > 0);
-%>
-									<table><tr><td style="padding-left:5px;">
-									<table class="gridTable">
-										<tr class="gridTableHeader">
-											<td class="smallheaderR" colspan="2">
-												<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>
-												<input type="checkbox" name="isFullStartedAtDate" <%= showFullStartedAtDate ? "checked" : "" %> <%= isWorkRecordInPercent ? "style='display:none;'" : "" %> tabindex="<%= tabIndex++ %>" value="isFullStartedAtDate" onchange="javascript:$('reload.button').click();" />
+												<div class="buttons">
+													<input type="submit" id="EvictReload.Button" name="EvictReload" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getReloadText()%>" onclick="javascript:$('Command').value=this.name;" />
+												</div>
 											</td>
-											<td class="smallheaderR <%= showFullStartedAtDate ? "" : "hidden" %>" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %></td>
-											<td class="smallheaderR"><%= isWorkRecord ? (isWorkRecordInPercent ? "%" : "hh:mm") : userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex()) %></td>
-											<td class="smallheaderR"><%= isWorkRecordInPercent ? "&sum;" : "" %></td>
-<%
-											if (!isWorkRecord) {
-%>
-												<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-<%
-											}
-											if (isWorkRecord && !isWorkRecordInPercent) {
-%>
-												<td class="smallheader">&nbsp;</td>
-												<td class="smallheaderR" colspan="2"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex()) %></td>
-												<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>">$&nbsp;</td>
-												<td class="smallheaderR" title="<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>">*&nbsp;</td>
-<%
-											}
-%>
-											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-											<td class="smallheader" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-											<td class="smallheader"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex()) %>&nbsp;</td>
-											<td class="smallheader">&nbsp;</td>
+											<td></td>
+											<td>
+												<input type="submit" id="AddWorkRecord.button" name="AddWorkRecord" <%=noActivitiesFound || noResourcesFound ? "disabled" : ""%> tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getNewText()%>" onclick="javascript:$('Command').value=this.name;" />
+												<input type="submit" id="Cancel.button" name="Cancel" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getCloseText()%>" onclick="javascript:$('Command').value=this.name;" />
+											</td>
 										</tr>
+									</table>
 <%
-										boolean isEvenRow = false;
-										boolean isFirstRow = false;
-										BigDecimal dailySum = BigDecimal.ZERO;
-										String startedAtCurrent = "";
-										String startedAtPrevious = "";
-										int rowCounter = 0;
-										for (
-												Iterator w = workAndExpenseRecords.values().iterator();
-												w.hasNext();
-										) {
-												org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
-
-												GregorianCalendar startedAtDate = new GregorianCalendar(app.getCurrentLocale());
-												startedAtDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-												startedAtDate.setTime(workAndExpenseRecord.getStartedAt());
-												startedAtCurrent = getDateAsString(startedAtDate);
-												boolean matchWithFormStartedAt =
-														startedAtCurrent.compareTo(selectedDateStr) == 0;
-												GregorianCalendar creationDate = new GregorianCalendar(app.getCurrentLocale());
-												creationDate.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
-												creationDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
-												creationDate.setTime(workAndExpenseRecord.getCreatedAt());
-												boolean matchWithFormJustCreated = workAndExpenseRecord.refMofId().compareTo((isWorkRecord ? lastCreatedWorkRecordXri : lastCreatedExpenseRecordXri)) == 0;
-
-												org.opencrx.kernel.activity1.jmi1.Activity activity = workAndExpenseRecord.getActivity();
-												String recordHref = "";
-												Action action = new Action(
-														SelectObjectAction.EVENT_ID,
-														new Action.Parameter[]{
-																new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
-														},
-														"",
-														true // enabled
-													);
-												recordHref = "../../" + action.getEncodedHRef();
-												String activityHref = "";
-												if (activity != null) {
-													action = new Action(
-															SelectObjectAction.EVENT_ID,
+									if (SHOW_ERRORS && !wc.getErrorMsg().isEmpty()) {
+%>
+										<div style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+											<%=wc.getErrorMsg()%>
+										</div>
+<%
+									}
+%>
+									<br>
+<%
+									if ((wc.getContact() != null) || (wc.getResource() != null)) {
+%>
+										<hr>
+										<h2 style="padding-left:5px;">
+											<%=app.getLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS)%>
+											<input type="checkbox" name="isFullMonth" <%=Boolean.TRUE.equals(wc.getFormFields().getIsFullMonth()) ? "checked" : ""%> tabindex="<%=tabIndex++%>" onchange="javascript:$('Reload.button').click();" />
+											[<%=wc.getCalendarBeginOfPeriod() != null ? wc.getDateFormat().format(wc.getCalendarBeginOfPeriod().getTime()) : "--"%> &mdash; <%=wc.getCalendarEndOfPeriod() != null ? wc.getDateFormat().format(wc.getCalendarEndOfPeriod().getTime()) : "--"%>]
+										</h2>
+<%
+										if (wc.getWorkAndExpenseRecords() != null && !wc.getWorkAndExpenseRecords().isEmpty()) {
+											boolean showFullStartedAtDate = !isWorkRecordInPercent && Boolean.TRUE.equals(wc.getFormFields().getIsFullStartedAtDate());
+%>
+											<table><tr><td style="padding-left:5px;">
+												<table class="gridTable">
+													<tr class="gridTableHeader">
+														<td class="smallheaderR" colspan="2">
+															<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex())%>
+															<input type="checkbox" name="isFullStartedAtDate" <%=showFullStartedAtDate ? "checked" : ""%> <%=isWorkRecordInPercent ? "style='display:none;'" : ""%> tabindex="<%=tabIndex++%>" onchange="javascript:$('Reload.button').click();" />
+														</td>
+														<td class="smallheaderR <%=showFullStartedAtDate ? "" : "hidden"%>" colspan="2"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex())%></td>
+														<td class="smallheaderR"><%=isWorkRecord ? (isWorkRecordInPercent ? "%" : "hh:mm") : wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "quantity", app.getCurrentLocaleAsIndex())%></td>
+														<td class="smallheaderR"><%=isWorkRecordInPercent ? "&sum;" : ""%></td>
+<%
+														if (!isWorkRecord) {
+%>
+															<td class="smallheader"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "quantityUom", app.getCurrentLocaleAsIndex())%>&nbsp;</td>
+<%
+														}
+														if (isWorkRecord && !isWorkRecordInPercent) {
+%>
+															<td class="smallheader">&nbsp;</td>
+															<td class="smallheaderR" colspan="2"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "billableAmount", app.getCurrentLocaleAsIndex())%></td>
+															<td class="smallheaderR" title="<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex())%>">$&nbsp;</td>
+															<td class="smallheaderR" title="<%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex())%>">*&nbsp;</td>
+<%
+														}
+%>
+														<td class="smallheader"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex())%>&nbsp;</td>
+														<td class="smallheader"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "activity", app.getCurrentLocaleAsIndex())%>&nbsp;</td>
+														<td class="smallheader" <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex())%>&nbsp;</td>
+														<td class="smallheader"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex())%>&nbsp;</td>
+														<td class="smallheader">&nbsp;</td>
+													</tr>
+<%
+													boolean isEvenRow = false;
+													boolean isFirstRow = false;
+													java.math.BigDecimal dailySum = java.math.BigDecimal.ZERO;
+													String startedAtCurrent = "";
+													String startedAtPrevious = "";
+													int rowCounter = 0;
+													for (
+														Iterator w = wc.getWorkAndExpenseRecords().values().iterator();
+														w.hasNext();
+													) {
+														org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
+														GregorianCalendar startedAtDate = new GregorianCalendar(app.getCurrentLocale());
+														startedAtDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
+														startedAtDate.setTime(workAndExpenseRecord.getStartedAt());
+														startedAtCurrent = wc.getDateAsString(startedAtDate);
+														boolean matchWithFormStartedAt = startedAtCurrent.compareTo(selectedDateStr) == 0;
+														GregorianCalendar creationDate = new GregorianCalendar(app.getCurrentLocale());
+														creationDate.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));
+														creationDate.setMinimalDaysInFirstWeek(4); // this conforms to DIN 1355/ISO 8601
+														creationDate.setTime(workAndExpenseRecord.getCreatedAt());
+														boolean matchWithFormJustCreated = workAndExpenseRecord.refGetPath().toXRI().equals(wc.getFormFields().getLastCreatedWorkExpenseRecordXri());
+														org.opencrx.kernel.activity1.jmi1.Activity activity = workAndExpenseRecord.getActivity();
+														String recordHref = "";
+														Action action = new Action(
+															org.openmdx.portal.servlet.action.SelectObjectAction.EVENT_ID,
 															new Action.Parameter[]{
-																	new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
+																new Action.Parameter(Action.PARAMETER_OBJECTXRI, workAndExpenseRecord.refMofId())
 															},
 															"",
 															true // enabled
 														);
-													activityHref = "../../" + action.getEncodedHRef();
-												}
-
-												boolean isDayBreak = false;
-												if (isWorkRecordInPercent && startedAtCurrent.compareTo(startedAtPrevious) != 0) {
-														// new day --> break and print sum
-														isDayBreak = true;
-														startedAtPrevious = startedAtCurrent;
-														dailySum = BigDecimal.ZERO;
-												}
-												if (isFirstRow) {
-														isDayBreak = false;
-														isFirstRow = false;
-												}
-												double recordTotal = 0.0;
-												boolean quantityError = false;
-												try {
-														if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getRate() != null) {
+														recordHref = "../../" + action.getEncodedHRef();
+														String activityHref = "";
+														if (activity != null) {
+															action = new Action(
+																org.openmdx.portal.servlet.action.SelectObjectAction.EVENT_ID,
+																new Action.Parameter[]{
+																		new Action.Parameter(Action.PARAMETER_OBJECTXRI, activity.refMofId())
+																},
+																"",
+																true // enabled
+															);
+															activityHref = "../../" + action.getEncodedHRef();
+														}
+														boolean isDayBreak = false;
+														if (isWorkRecordInPercent && startedAtCurrent.compareTo(startedAtPrevious) != 0) {
+															// new day --> break and print sum
+															isDayBreak = true;
+															startedAtPrevious = startedAtCurrent;
+															dailySum = java.math.BigDecimal.ZERO;
+														}
+														if (isFirstRow) {
+															isDayBreak = false;
+															isFirstRow = false;
+														}
+														double recordTotal = 0.0;
+														boolean quantityError = false;
+														try {
+															if (workAndExpenseRecord.getQuantity() != null && workAndExpenseRecord.getRate() != null) {
 																dailySum = dailySum.add(workAndExpenseRecord.getQuantity());
 																recordTotal = workAndExpenseRecord.getQuantity().doubleValue() * workAndExpenseRecord.getRate().doubleValue();
+															}
+														} catch (Exception e) {
+															quantityError = true;
 														}
-												} catch (Exception e) {
-														quantityError = true;
-												}
-												if (workAndExpenseRecord.getBillingCurrency() == 0) {
-														quantityError = true;
-												}
-												String currency = "N/A";
-												try {
-														currency = (String)(codes.getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
-												} catch (Exception e) {}
+														if (workAndExpenseRecord.getBillingCurrency() == 0) {
+															quantityError = true;
+														}
+														String currency = "N/A";
+														try {
+																currency = (String)(wc.getCodes().getShortText(featureBillingCurrency, app.getCurrentLocaleAsIndex(), true, true).get(new Short(workAndExpenseRecord.getBillingCurrency())));
+														} catch (Exception e) {}
 %>
-												<tr <%= matchWithFormJustCreated ? "class='created'" : (matchWithFormStartedAt ? "class='match'" : (isEvenRow ? "class='even'" : "")) %>>
-													<td><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? weekdayf.format(workAndExpenseRecord.getStartedAt()) : "--" %>&nbsp;</a></td>
-													<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? (showFullStartedAtDate ? datetimef.format(workAndExpenseRecord.getStartedAt()) : dateonlyf.format(workAndExpenseRecord.getStartedAt())) : "--" %></a></td>
-													<td <%= showFullStartedAtDate ? "" : "class='hidden'" %>><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? weekdayf.format(workAndExpenseRecord.getEndedAt()) : "--" %>&nbsp;</a></td>
-													<td class="padded_r <%= showFullStartedAtDate ? "" : "hidden" %>"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? datetimef.format(workAndExpenseRecord.getEndedAt()) : "--" %></a></td>
-													<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=	workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? (isWorkRecordInPercent ? formatter0.format(workAndExpenseRecord.getQuantity()) : decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)) : quantityf.format(workAndExpenseRecord.getQuantity())) %></a></td>
+														<tr <%= matchWithFormJustCreated ? "class='created'" : (matchWithFormStartedAt ? "class='match'" : (isEvenRow ? "class='even'" : "")) %>>
+															<td><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? wc.getWeekDayFormat().format(workAndExpenseRecord.getStartedAt()) : "--" %>&nbsp;</a></td>
+															<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getStartedAt() != null ? (showFullStartedAtDate ? wc.getDateTimeFormat().format(workAndExpenseRecord.getStartedAt()) : wc.getDateOnlyFormat().format(workAndExpenseRecord.getStartedAt())) : "--" %></a></td>
+															<td <%= showFullStartedAtDate ? "" : "class='hidden'" %>><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? wc.getWeekDayFormat().format(workAndExpenseRecord.getEndedAt()) : "--" %>&nbsp;</a></td>
+															<td class="padded_r <%= showFullStartedAtDate ? "" : "hidden" %>"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getEndedAt() != null ? wc.getDateTimeFormat().format(workAndExpenseRecord.getEndedAt()) : "--" %></a></td>
+															<td class="padded_r"><a href='<%= recordHref %>' target='_blank'><%=	workAndExpenseRecord.getQuantity() == null ? "--" : (isWorkRecord ? (isWorkRecordInPercent ? wc.getFormatter0().format(workAndExpenseRecord.getQuantity()) : wc.decimalMinutesToHhMm(workAndExpenseRecord.getQuantity().doubleValue() * 60.0)) : wc.getQuantityFormat().format(workAndExpenseRecord.getQuantity())) %></a></td>
 <%
-													if (isWorkRecordInPercent) {
+															if (isWorkRecordInPercent) {
 %>
-															<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter++ %>"><%= formatter0.format(dailySum.doubleValue()) %></td>
+																<td class="padded_r <%= dailySum.doubleValue() == 100.0 ? "" : "error" %> " id="cumSum<%= rowCounter++ %>"><%= wc.getFormatter0().format(dailySum.doubleValue()) %></td>
 <%
-													} else {
+															} else {
 %>
-															<td class="padded_r"></td>
+																<td class="padded_r"></td>
 <%
-													}
-													if (!isWorkRecord) {
+															}
+															if (!isWorkRecord) {
 %>
-														<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getQuantityUom().getName(), false) : "?" %>&nbsp;</a></td>
+																<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getQuantityUom() != null && workAndExpenseRecord.getQuantityUom().getName() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getQuantityUom().getName(), false) : "?" %>&nbsp;</a></td>
 <%
-													}
-													if (isWorkRecord && !isWorkRecordInPercent) {
+															}
+															if (isWorkRecord && !isWorkRecordInPercent) {
 %>
-														<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? ratesepf.format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
-														<td class="padded"	 <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
-														<td class="padded_r" <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= ratesepf.format(recordTotal) %></a></td>
-														<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isBillable() != null && workAndExpenseRecord.isBillable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
-														<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= workAndExpenseRecord.isReimbursable() != null && workAndExpenseRecord.isReimbursable().booleanValue() ? "" : "not" %>checked_r.gif" /></a></td>
+																<td class="padded_r"><a href='<%= recordHref %>' target='_blank'>[<%= workAndExpenseRecord.getRate() != null ? wc.getRatesEpFormat().format(workAndExpenseRecord.getRate()) : "--" %>]&nbsp;</a></td>
+																<td class="padded"	 <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= currency %></a></td>
+																<td class="padded_r" <%= quantityError ? errorStyle : "" %>><a href='<%= recordHref %>' target='_blank'><%= wc.getRatesEpFormat().format(recordTotal) %></a></td>
+																<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= Boolean.TRUE.equals(workAndExpenseRecord.isBillable()) ? "" : "not" %>checked_r.gif" /></a></td>
+																<td class="padded"><a href='<%= recordHref %>' target='_blank'><img src="../../images/<%= Boolean.TRUE.equals(workAndExpenseRecord.isReimbursable()) ? "" : "not" %>checked_r.gif" /></a></td>
 <%
-													}
+															}
 %>
-													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= app.getHtmlEncoder().encode(workAndExpenseRecord.getName(), false) %></a></td>
-													<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %>&nbsp;</a></td>
-													<td class="padded" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><a href='<%= recordHref %>' target='_blank'><%= (codes.getLongTextByCode(featureRecordType, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
-													<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getDescription(), false) : "" %></a></td>
-													<td class="padded">
-														<img src="../../images/deletesmall.gif" style="cursor:pointer;" onclick="javascript:$('deleteWorkRecordXri').value='<%= app.getHtmlEncoder().encode(workAndExpenseRecord.refMofId(), false) %>'; $('reload.button').click();" />
+															<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= app.getHtmlEncoder().encode(workAndExpenseRecord.getName(), false) %></a></td>
+															<td class="padded"><a href='<%= activityHref %>' target='_blank'>#<%= app.getHtmlEncoder().encode(new ObjectReference(activity, app).getTitle(), false) %>&nbsp;</a></td>
+															<td class="padded" <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>><a href='<%= recordHref %>' target='_blank'><%= (wc.getCodes().getLongTextByCode(featureRecordType, app.getCurrentLocaleAsIndex(), true).get(new Short(workAndExpenseRecord.getRecordType()))) %></a></td>
+															<td class="padded"><a href='<%= recordHref %>' target='_blank'><%= workAndExpenseRecord.getDescription() != null ? app.getHtmlEncoder().encode(workAndExpenseRecord.getDescription(), false) : "" %></a></td>
+															<td class="padded">
+																<img src="../../images/deletesmall.gif" style="cursor:pointer;" onclick="javascript:$('deleteWorkRecordXri').value='<%= app.getHtmlEncoder().encode(workAndExpenseRecord.refGetPath().toXRI(), false) %>';$('Command').value='DeleteWorkRecord';$('Reload.button').click();" />
 <%
-															if (!isDayBreak) {
+																if (!isDayBreak) {
 %>
 																	<script language="javascript" type="text/javascript">
 																			try {
@@ -2759,104 +1387,102 @@ org.openmdx.base.text.conversion.*
 																			} catch (e) {}
 																	</script>
 <%
-															}
+																}
 %>
-													</td>
-												</tr>
+															</td>
+														</tr>
 <%
-												isEvenRow = !isEvenRow;
+														isEvenRow = !isEvenRow;
+													}
+%>
+												</table>
+											</td></tr></table>
+<%
+											if (isWorkRecord & !isWorkRecordInPercent) {
+												GregorianCalendar calendarBeginOfWeek = wc.getCalendarBeginOfPeriod();
+%>
+												<table><tr><td style="padding-left:5px;">
+												<table class="gridTable">
+													<tr class="gridTableHeader">
+<%
+														int dayCounter = 0;
+														for (int i = calendarBeginOfWeek.get(GregorianCalendar.DAY_OF_WEEK); dayCounter < 7; dayCounter++) {
+%>
+															<td class="smallheader"><%= wc.getWeekDayFormat().format(calendarBeginOfWeek.getTime()) %></td>
+<%
+															calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, 1);
+														}
+%>
+														<td class="smallheader">hh:mm&nbsp;&nbsp;</td>
+														<td class="smallheaderR">&nbsp;</td>
+													</tr>
+													<tr>
+<%
+														double sumWeek = 0.0;
+														dayCounter = 0;
+														for(int i = calendarBeginOfWeek.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
+%>
+															<td class="padded_r"><%= isWorkRecordInPercent ? wc.getFormatter0().format(wc.getSumDays()[i % 7])+"%" : wc.decimalMinutesToHhMm(wc.getSumDays()[i % 7] * 60.0) %></td>
+<%
+															sumWeek += wc.getSumDays()[i % 7];
+															i++;
+														}
+%>
+														<td class="padded_r"><%= isWorkRecordInPercent ? "" : wc.decimalMinutesToHhMm(sumWeek * 60.0) %></td>
+														<td class="padded">&sum;</td>
+													</tr>
+													<tr>
+<%
+														double sumWeekBillable = 0.0;
+														dayCounter = 0;
+														for(int i = calendarBeginOfWeek.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
+%>
+															<td class="padded_r"><%= wc.decimalMinutesToHhMm(wc.getSumDaysBillable()[i % 7] * 60.0) %></td>
+<%
+															sumWeekBillable += wc.getSumDaysBillable()[i % 7];
+															i++;
+														}
+%>
+														<td class="padded_r"><%= wc.decimalMinutesToHhMm(sumWeekBillable * 60.0) %></td>
+														<td class="padded">&sum; (<%= wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>)</td>
+													</tr>
+												</table>
+											</td></tr></table>
+<%
 										}
-%>
-									</table>
-									</td></tr></table>
-
-<%
-									if (isWorkRecord & !isWorkRecordInPercent) {
-%>
-										<table><tr><td style="padding-left:5px;">
-										<table class="gridTable">
-											<tr class="gridTableHeader">
-<%
-												int dayCounter = 0;
-												for (int i = calendarBeginOfWeek.get(GregorianCalendar.DAY_OF_WEEK); dayCounter < 7; dayCounter++) {
-%>
-													<td class="smallheader"><%= weekdayf.format(calendarBeginOfWeek.getTime()) %></td>
-<%
-													calendarBeginOfWeek.add(GregorianCalendar.DAY_OF_MONTH, 1);
-												}
-%>
-													<td class="smallheader">hh:mm&nbsp;&nbsp;</td>
-													<td class="smallheaderR">&nbsp;</td>
-											</tr>
-											<tr>
-<%
-												double sumWeek = 0.0;
-												dayCounter = 0;
-												for(int i = calendarBeginOfWeek.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
-%>
-													<td class="padded_r"><%= isWorkRecordInPercent ? formatter0.format(sumDays[i % 7])+"%" : decimalMinutesToHhMm(sumDays[i % 7] * 60.0) %></td>
-<%
-													sumWeek += sumDays[i % 7];
-													i++;
-												}
-%>
-													<td class="padded_r"><%= isWorkRecordInPercent ? "" : decimalMinutesToHhMm(sumWeek * 60.0) %></td>
-													<td class="padded">&sum;</td>
-											</tr>
-											<tr>
-<%
-												double sumWeekBillable = 0.0;
-												dayCounter = 0;
-												for(int i = calendarBeginOfWeek.getFirstDayOfWeek(); dayCounter < 7; dayCounter++) {
-%>
-													<td class="padded_r"><%= decimalMinutesToHhMm(sumDaysBillable[i % 7] * 60.0) %></td>
-<%
-													sumWeekBillable += sumDaysBillable[i % 7];
-													i++;
-												}
-%>
-													<td class="padded_r"><%= decimalMinutesToHhMm(sumWeekBillable * 60.0) %></td>
-													<td class="padded">&sum; (<%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>)</td>
-											</tr>
-										</table>
-										</td></tr></table>
-<%
 									}
-							}
-					}
+								}
 %>
-				</form>
-				<script language="javascript" type="text/javascript">
-						function setFocus(id) {
-							try {
-								$(id).focus();
-							} catch(e){}
-						}
+							</form>
+							<script language="javascript" type="text/javascript">
+								function setFocus(id) {
+									try {
+										$(id).focus();
+									} catch(e){}
+								}
 <%
-						if (isFirstCall)									 { %>setFocus('contactXri.Title');	<% }
-						else if (isContactChange)					{ %>setFocus('contactXri.Title');	<% }
-						else if (isResourceChange)				 { %>setFocus('resourceXri');			 <% }
-						else if (isResourceChange)				 { %>setFocus('resourceXri');			 <% }
-						else if (isRecordTypeChange)			 { %>setFocus('recordType');				<% }
-												else if (lastFocusId.length() > 0) { %>setFocus('<%= lastFocusId %>');<% }
-
+								if (!Boolean.TRUE.equals(wc.getFormFields().getIsInitialized())) {
+									%>setFocus('contactXri.Title');	<% 
+								} else if (Boolean.TRUE.equals(wc.getFormFields().getIsContactChange())) {
+									%>setFocus('contactXri.Title');	<% 
+								} else if (Boolean.TRUE.equals(wc.getFormFields().getIsResourceChange())) {
+									%>setFocus('resourceXri'); <% 
+								} else if (wc.isRecordTypeChange()) {
+									%>setFocus('recordType'); <% 
+								} else if (wc.getFormFields().getLastFocusId() != null && !wc.getFormFields().getLastFocusId().isEmpty()) {
+									%>setFocus('<%= wc.getFormFields().getLastFocusId() %>');<% 
+								}
 %>
-				</script>
-
-							</div> <!-- inspPanel0 -->
+							</script>
+						</div> <!-- inspPanel0 -->
 						</div> <!-- inspContent -->
 					</div> <!-- inspector -->
 				</div> <!-- aPanel -->
-
 			</div> <!-- content -->
 		</div> <!-- content-wrap -->
 	</div> <!-- wrap -->
 </div> <!-- container -->
-<%= mustReload ? "<script language='javascript' type='text/javascript'>$('reload.button').click();</script>" : "" %>
+<%= mustReload ? "<script language='javascript' type='text/javascript'>$('Reload.button').click();</script>" : "" %>
 </body>
 </html>
-<%
-if(pm != null) {
-	pm.close();
-}
-%>
+<t:wizardClose controller="<%= wc %>" />

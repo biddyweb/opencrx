@@ -60,10 +60,11 @@ import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class CompoundBookingImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.CompoundBooking,N extends org.opencrx.kernel.depot1.cci2.CompoundBooking,C extends Void>
@@ -88,25 +89,25 @@ public class CompoundBookingImpl
                 errors
             );
             if(compoundBooking == null) {
-                return Utils.getDepotPackage(this.sameManager()).createCancelCompoundBookingResult(
-                    null,
-                    (short)1, 
-                    errors.toString()
-                );
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.Member.cancelBooking, null),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.Member.status, (short)1),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.Member.statusMessage, errors.toString())                	
+                );            	
+            } else {
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.Member.cancelBooking, compoundBooking),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.Member.status, (short)0),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.CancelCompoundBookingResult.Member.statusMessage, null)                	
+                );            	
             }
-            else {
-                return Utils.getDepotPackage(this.sameManager()).createCancelCompoundBookingResult(
-                    compoundBooking,
-                    (short)0, 
-                    null
-                );
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
-        
+
     //-----------------------------------------------------------------------
     public org.openmdx.base.jmi1.Void acceptCb(
     ) {

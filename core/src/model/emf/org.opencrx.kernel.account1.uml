@@ -679,6 +679,10 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_H32kbt7NEdmKapscEl8OLg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_H32kbd7NEdmKapscEl8OLg"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_ymD0oCTSEeKWSJ9fk63BEw" name="dateOfDeath" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_5_360CTSEeKWSJ9fk63BEw"/>
+            </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D3F3FEC2A0058" name="governmentId">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_H32kcd7NEdmKapscEl8OLg" value="1"/>
@@ -1406,7 +1410,7 @@
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedOperation xmi:id="_kRekECm0EdyhBqtrvaHm2Q" name="countFilteredAccount">
+            <ownedOperation xmi:id="_kRekECm0EdyhBqtrvaHm2Q" name="countFilteredAccount" isQuery="true">
               <ownedParameter xmi:id="_mobNUCm0EdyhBqtrvaHm2Q" name="ReturnResultParameter1" direction="return">
                 <type xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3CpXICl_EdywXdAHn-NS-w"/>
               </ownedParameter>
@@ -1633,7 +1637,7 @@
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedOperation xmi:id="_bKslwCm0EdyhBqtrvaHm2Q" name="countFilteredAddress">
+            <ownedOperation xmi:id="_bKslwCm0EdyhBqtrvaHm2Q" name="countFilteredAddress" isQuery="true">
               <ownedParameter xmi:id="_emfXMCm0EdyhBqtrvaHm2Q" name="ReturnResultParameter1" direction="return">
                 <type xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3CpXICl_EdywXdAHn-NS-w"/>
               </ownedParameter>

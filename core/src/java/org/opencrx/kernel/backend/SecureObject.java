@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -71,27 +71,45 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.persistence.spi.PersistenceManagers;
 
+/**
+ * SecureObject
+ *
+ */
 public class SecureObject extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register plugin.
+	 * 
+	 */
 	public static void register(
 	) {
 		registerImpl(new SecureObject());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get registered plugin instance.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static SecureObject getInstance(
 	) throws ServiceException {
 		return getInstance(SecureObject.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	protected SecureObject(
 	) {
 		
 	}
 	
-    //-----------------------------------------------------------------------
+	/**
+	 * AclMarshaller
+	 *
+	 */
 	interface AclMarshaller extends Marshaller {
 		
 		AclMarshaller clone(PersistenceManager pm);
@@ -132,6 +150,10 @@ public class SecureObject extends AbstractImpl {
         
     }
 
+    /**
+     * AddOwningGroupMarshaller
+     *
+     */
     static class AddOwningGroupMarshaller implements AclMarshaller {
 
     	public AddOwningGroupMarshaller(
@@ -165,6 +187,10 @@ public class SecureObject extends AbstractImpl {
         private final org.opencrx.security.realm1.jmi1.PrincipalGroup group;
     }
 
+    /**
+     * ReplaceOwningGroupMarshaller
+     *
+     */
     static class ReplaceOwningGroupMarshaller implements AclMarshaller {
     
     	public ReplaceOwningGroupMarshaller(
@@ -204,6 +230,10 @@ public class SecureObject extends AbstractImpl {
     	
     }
 
+    /**
+     * RemoveOwningGroupMarshaller
+     *
+     */
     static class RemoveOwningGroupMarshaller implements AclMarshaller {
     	
     	public RemoveOwningGroupMarshaller(
@@ -238,6 +268,10 @@ public class SecureObject extends AbstractImpl {
         
     }
 
+    /**
+     * SetAccessLevelMarshaller
+     *
+     */
     static class SetAccessLevelMarshaller implements AclMarshaller {
     	
     	public SetAccessLevelMarshaller(
@@ -283,7 +317,13 @@ public class SecureObject extends AbstractImpl {
         
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Find principal.
+     * 
+     * @param name
+     * @param realm
+     * @return
+     */
     public org.openmdx.security.realm1.jmi1.Principal findPrincipal(
         String name,
         org.openmdx.security.realm1.jmi1.Realm realm
@@ -294,13 +334,20 @@ public class SecureObject extends AbstractImpl {
             return (org.openmdx.security.realm1.jmi1.Principal)pm.getObjectById(
                 realm.refGetPath().getDescendant(new String[]{"principal", principalChain.get(0)})
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             return null;
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Find principal.
+     * 
+     * @param name
+     * @param realmIdentity
+     * @param pm
+     * @return
+     * @throws ServiceException
+     */
     public org.openmdx.security.realm1.jmi1.Principal findPrincipal(
         String name,
         Path realmIdentity,
@@ -310,7 +357,14 @@ public class SecureObject extends AbstractImpl {
     	return this.findPrincipal(name, realm);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get realm.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public org.openmdx.security.realm1.jmi1.Realm getRealm(
         javax.jdo.PersistenceManager pm,
         String providerName,
@@ -321,7 +375,14 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get policy.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public org.openmdx.security.authorization1.jmi1.Policy getPolicy(
         javax.jdo.PersistenceManager pm,
         String providerName,
@@ -332,7 +393,15 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Create principal group if required and init.
+     * 
+     * @param groupName
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public PrincipalGroup initPrincipalGroup(
         String groupName,
         PersistenceManager pm,
@@ -352,7 +421,6 @@ public class SecureObject extends AbstractImpl {
         principalGroup = pm.newInstance(PrincipalGroup.class);
         principalGroup.setDescription(segmentName + "\\\\" + groupName);
         realm.addPrincipal(                
-            false,
             groupName,
             principalGroup
         );                        
@@ -360,8 +428,16 @@ public class SecureObject extends AbstractImpl {
         return principalGroup;
     }
                 
-    //-----------------------------------------------------------------------
-    @SuppressWarnings("unchecked")
+    /**
+     * Apply acls.
+     * 
+     * @param obj
+     * @param marshaller
+     * @param mode
+     * @param reportText
+     * @param report
+     * @param level
+     */
     public void applyAcls(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
     	AclMarshaller marshaller,
@@ -392,9 +468,10 @@ public class SecureObject extends AbstractImpl {
             report.add(reportText);           
             if((mode != null) && (mode.intValue() == MODE_RECURSIVE)) {
             	Model_1_0 model = Model_1Factory.getModel();
-                Map<String,ModelElement_1_0> references = (Map)model.getElement(
+                @SuppressWarnings({"unchecked"})
+                Map<String,ModelElement_1_0> references = model.getElement(
                     obj.refClass().refMofId()
-                ).objGetValue("reference");
+                ).objGetMap("reference");
                 for(ModelElement_1_0 featureDef: references.values()) {
                     ModelElement_1_0 referencedEnd = model.getElement(
                         featureDef.objGetValue("referencedEnd")
@@ -442,7 +519,15 @@ public class SecureObject extends AbstractImpl {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Set owning user.
+     * 
+     * @param obj
+     * @param user
+     * @param mode
+     * @param report
+     * @throws ServiceException
+     */
     public void setOwningUser(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
         org.opencrx.security.realm1.jmi1.User user,
@@ -461,7 +546,15 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Add owning group.
+     * 
+     * @param obj
+     * @param group
+     * @param mode
+     * @param report
+     * @throws ServiceException
+     */
     public void addOwningGroup(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
     	org.opencrx.security.realm1.jmi1.PrincipalGroup group,
@@ -480,7 +573,15 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Replace owning groups.
+     * 
+     * @param obj
+     * @param groups
+     * @param mode
+     * @param report
+     * @throws ServiceException
+     */
     public void replaceOwningGroups(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
     	List<org.opencrx.security.realm1.jmi1.PrincipalGroup> groups,
@@ -499,7 +600,15 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Remove owning group.
+     * 
+     * @param obj
+     * @param group
+     * @param mode
+     * @param report
+     * @throws ServiceException
+     */
     public void removeOwningGroup(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
     	org.opencrx.security.realm1.jmi1.PrincipalGroup group,
@@ -518,7 +627,14 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Remove all owning groups.
+     * 
+     * @param obj
+     * @param mode
+     * @param report
+     * @throws ServiceException
+     */
     public void removeAllOwningGroup(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
     	short mode,
@@ -550,7 +666,17 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Set access level.
+     * 
+     * @param obj
+     * @param accessLevelBrowse
+     * @param accessLevelUpdate
+     * @param accessLevelDelete
+     * @param mode
+     * @param report
+     * @throws ServiceException
+     */
     public void setAccessLevel(
     	org.opencrx.kernel.base.jmi1.SecureObject obj,
     	short accessLevelBrowse,
@@ -573,14 +699,25 @@ public class SecureObject extends AbstractImpl {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get login realm identity.
+     * 
+     * @param providerName
+     * @return
+     */
     public Path getLoginRealmIdentity(
     	String providerName
     ) {
     	return SecureObject.getRealmIdentity(providerName, "Default");
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get realm identity.
+     * 
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public static Path getRealmIdentity(
     	String providerName,
     	String segmentName
@@ -588,7 +725,13 @@ public class SecureObject extends AbstractImpl {
         return new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get policy identity.
+     * 
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public static Path getPolicyIdentity(
     	String providerName,
     	String segmentName
@@ -596,7 +739,12 @@ public class SecureObject extends AbstractImpl {
         return new Path("xri://@openmdx*org.openmdx.security.authorization1").getDescendant("provider", providerName, "segment", "Root", "policy", segmentName);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update SecureObject callback.
+     * 
+     * @param secureObject
+     * @throws ServiceException
+     */
     public void updateSecureObject(
         org.opencrx.kernel.base.jmi1.SecureObject secureObject
     ) throws ServiceException {

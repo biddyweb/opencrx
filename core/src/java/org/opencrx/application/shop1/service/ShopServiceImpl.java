@@ -76,7 +76,6 @@ import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.cci2.LegalEntityQuery;
 import org.opencrx.kernel.account1.cci2.MemberQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Account1Package;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
@@ -87,7 +86,6 @@ import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
-import org.opencrx.kernel.activity1.jmi1.Activity1Package;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
 import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult;
@@ -107,7 +105,6 @@ import org.opencrx.kernel.base.jmi1.SecureObject;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.code1.cci2.CodeValueContainerQuery;
 import org.opencrx.kernel.code1.jmi1.AbstractEntry;
-import org.opencrx.kernel.code1.jmi1.Code1Package;
 import org.opencrx.kernel.code1.jmi1.CodeValueContainer;
 import org.opencrx.kernel.code1.jmi1.CodeValueEntry;
 import org.opencrx.kernel.code1.jmi1.SimpleEntry;
@@ -119,7 +116,7 @@ import org.opencrx.kernel.contract1.jmi1.AbstractContract;
 import org.opencrx.kernel.contract1.jmi1.AbstractInvoicePosition;
 import org.opencrx.kernel.contract1.jmi1.AbstractSalesOrderPosition;
 import org.opencrx.kernel.contract1.jmi1.AccountAssignmentContract;
-import org.opencrx.kernel.contract1.jmi1.Contract1Package;
+import org.opencrx.kernel.contract1.jmi1.CreatePositionParams;
 import org.opencrx.kernel.contract1.jmi1.DeliveryInformation;
 import org.opencrx.kernel.contract1.jmi1.Invoice;
 import org.opencrx.kernel.contract1.jmi1.InvoicePosition;
@@ -129,14 +126,12 @@ import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderCreateInvoiceResult;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
-import org.opencrx.kernel.depot1.jmi1.Depot1Package;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.opencrx.kernel.generic.cci2.PropertySetQuery;
 import org.opencrx.kernel.generic.jmi1.Description;
-import org.opencrx.kernel.generic.jmi1.GenericPackage;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.generic.jmi1.PropertySet;
 import org.opencrx.kernel.product1.cci2.AbstractPriceLevelQuery;
@@ -152,7 +147,6 @@ import org.opencrx.kernel.product1.jmi1.CreateInitialPricesParams;
 import org.opencrx.kernel.product1.jmi1.PriceUomFilterProperty;
 import org.opencrx.kernel.product1.jmi1.PricingRule;
 import org.opencrx.kernel.product1.jmi1.Product;
-import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
 import org.opencrx.kernel.product1.jmi1.ProductClassification;
 import org.opencrx.kernel.product1.jmi1.ProductClassificationFilterProperty;
@@ -165,8 +159,6 @@ import org.opencrx.kernel.product1.jmi1.SalesTaxType;
 import org.opencrx.kernel.product1.jmi1.SetConfigurationTypeParams;
 import org.opencrx.kernel.uom1.cci2.UomQuery;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.uom1.jmi1.Uom1Package;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
@@ -221,30 +213,12 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Account1Package getAccountPackage(
-    ) {
-        return Utils.getAccountPackage(this.pm);
-    }
-    
-    //-----------------------------------------------------------------------
     public org.opencrx.kernel.account1.jmi1.Segment getAccountSegment(
     ) {
         return 
             (org.opencrx.kernel.account1.jmi1.Segment)this.pm.getObjectById(
                 new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/" + this.providerName + "/segment/" + this.segmentName)
             );
-    }
-    
-    //-----------------------------------------------------------------------
-    protected GenericPackage getGenericPackage(
-    ) {
-        return Utils.getGenericPackage(this.pm); 
-    }
-    
-    //-----------------------------------------------------------------------
-    protected Code1Package getCodePackage(
-    ) {
-        return Utils.getCodePackage(this.pm); 
     }
     
     //-----------------------------------------------------------------------
@@ -258,24 +232,12 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Contract1Package getContractPackage(
-    ) {
-        return Utils.getContractPackage(this.pm); 
-    }
-    
-    //-----------------------------------------------------------------------
     public org.opencrx.kernel.contract1.jmi1.Segment getContractSegment(
     ) {
         return 
             (org.opencrx.kernel.contract1.jmi1.Segment)this.pm.getObjectById(
                 new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/" + this.providerName + "/segment/" + this.segmentName)
             );
-    }
-    
-    //-----------------------------------------------------------------------
-    protected Depot1Package getDepotPackage(
-    ) {
-        return Utils.getDepotPackage(this.pm); 
     }
     
     //-----------------------------------------------------------------------
@@ -288,24 +250,12 @@ public class ShopServiceImpl
     }
     
     //-----------------------------------------------------------------------
-    protected Product1Package getProductPackage(
-    ) {
-        return Utils.getProductPackage(this.pm); 
-    }
-    
-    //-----------------------------------------------------------------------
     public org.opencrx.kernel.product1.jmi1.Segment getProductSegment(
     ) {
         return 
             (org.opencrx.kernel.product1.jmi1.Segment)this.pm.getObjectById(
                 new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/" + this.providerName + "/segment/" + this.segmentName)
             );
-    }
-    
-    //-----------------------------------------------------------------------
-    protected Activity1Package getActivityPackage(
-    ) {
-        return Utils.getActivityPackage(this.pm); 
     }
     
     //-----------------------------------------------------------------------
@@ -326,12 +276,6 @@ public class ShopServiceImpl
             );
     }
 
-    //-----------------------------------------------------------------------
-    protected Uom1Package getUomPackage(
-    ) {
-        return Utils.getUomPackage(this.pm); 
-    }
-    
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.uom1.jmi1.Segment getUomSegment(
     ) {
@@ -726,23 +670,23 @@ public class ShopServiceImpl
         Product product = this.findProduct(productNumber);
         Uom priceUom = this.findUom(priceUomName);
         String positionName = product.getName() + " (" + priceUom.getName() + ")";
-        org.opencrx.kernel.contract1.jmi1.CreatePositionParams createPositionParams = 
-            this.getContractPackage().createCreatePositionParams(
-            	ignoreProductConfiguration,
-                positionName, 
-                priceUom, 
-                pricingDate, 
-                null, // pricingRule 
-                product, 
-                quantity, // quantity 
-                priceUom
-            );
-        this.pm.currentTransaction().begin();
+        CreatePositionParams createPositionParams = Structures.create(
+        	CreatePositionParams.class,
+        	Datatypes.member(CreatePositionParams.Member.ignoreProductConfiguration, ignoreProductConfiguration),
+        	Datatypes.member(CreatePositionParams.Member.name, positionName),
+        	Datatypes.member(CreatePositionParams.Member.priceUom, priceUom),
+        	Datatypes.member(CreatePositionParams.Member.pricingDate, pricingDate),
+        	Datatypes.member(CreatePositionParams.Member.pricingRule, null),
+        	Datatypes.member(CreatePositionParams.Member.product, product),
+        	Datatypes.member(CreatePositionParams.Member.quantity, quantity),
+        	Datatypes.member(CreatePositionParams.Member.priceUom, priceUom)
+        );
+        PersistenceHelper.currentUnitOfWork(this.pm).begin();
         org.opencrx.kernel.contract1.jmi1.CreatePositionResult createPositionResult = 
-            contract.createPosition(createPositionParams);
-        this.pm.currentTransaction().commit();
+        	contract.createPosition(createPositionParams);
+        PersistenceHelper.currentUnitOfWork(this.pm).commit();;
         SalesContractPosition contractPosition = (SalesContractPosition)this.pm.getObjectById(createPositionResult.getPosition().refGetPath());
-        this.pm.currentTransaction().begin();
+        PersistenceHelper.currentUnitOfWork(this.pm).begin();
         contractPosition.setSalesTaxType(salesTaxType);
         contractPosition.setDiscountIsPercentage(
             discountIsPercentage == null ? Boolean.TRUE : discountIsPercentage
@@ -769,16 +713,16 @@ public class ShopServiceImpl
                 );
             }
         }        
-        this.pm.currentTransaction().commit();
+        PersistenceHelper.currentUnitOfWork(this.pm).commit();;
         this.pm.refresh(contractPosition);
         // Override original price defined by price list
         if(
         	pricePerUnit != null && 
         	pricePerUnit.compareTo(contractPosition.getPricePerUnit()) != 0
         ) {
-        	this.pm.currentTransaction().begin();
+        	PersistenceHelper.currentUnitOfWork(this.pm).begin();
         	contractPosition.setPricePerUnit(pricePerUnit);
-        	this.pm.currentTransaction().commit();
+        	PersistenceHelper.currentUnitOfWork(this.pm).commit();;
         }
         return contractPosition;
     }
@@ -868,8 +812,7 @@ public class ShopServiceImpl
     ) {
         // postalAddressInvoice
         if(postalAddressInvoiceT != null) {
-            org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressInvoice = 
-                this.getContractPackage().getPostalAddress().createPostalAddress();
+            org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressInvoice = pm.newInstance(org.opencrx.kernel.contract1.jmi1.PostalAddress.class);
             this.datatypeMappers.mapPostalAddress(
                 postalAddressInvoiceT, 
                 postalAddressInvoice
@@ -886,8 +829,7 @@ public class ShopServiceImpl
         }
         // postalAddressDelivery
         if(postalAddressDeliveryT != null) {
-            org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressDelivery = 
-                this.getContractPackage().getPostalAddress().createPostalAddress();
+            org.opencrx.kernel.contract1.jmi1.PostalAddress postalAddressDelivery =  pm.newInstance(org.opencrx.kernel.contract1.jmi1.PostalAddress.class);
             this.datatypeMappers.mapPostalAddress(
                 postalAddressDeliveryT,
                 postalAddressDelivery
@@ -1009,8 +951,10 @@ public class ShopServiceImpl
         Product product,
         ProductConfigurationTypeSet configurationType
     ) {
-        SetConfigurationTypeParams setConfigurationTypeParams = 
-            this.getProductPackage().createSetConfigurationTypeParams(configurationType);
+        SetConfigurationTypeParams setConfigurationTypeParams = Structures.create(
+        	SetConfigurationTypeParams.class, 
+        	Datatypes.member(SetConfigurationTypeParams.Member.configurationType, configurationType)
+        );
         product.setConfigurationType(setConfigurationTypeParams);
         // Configuration properties
         Collection<ProductConfiguration> configurations = product.getConfiguration();
@@ -1055,7 +999,7 @@ public class ShopServiceImpl
                 }
             }
             if(description == null) {
-                description = this.getGenericPackage().getDescription().createDescription();
+                description = pm.newInstance(Description.class);
                 description.getOwningGroup().addAll(
                     product.getOwningGroup()
                 );
@@ -1089,16 +1033,15 @@ public class ShopServiceImpl
                 }
             }
             if(picture == null) {
-                picture = this.getGenericPackage().getMedia().createMedia();
+                picture = pm.newInstance(Media.class);
                 picture.getOwningGroup().addAll(
                     product.getOwningGroup()
                 );
                 product.addMedia(
-                    false, 
                     this.uuidAsString(), 
                     picture
                 );
-            }        
+            }
             picture.setDescription(productT.getPictureTitle());
             picture.setContentName(productT.getPictureTitle());
             picture.setContentMimeType(productT.getPictureMimeType());
@@ -1122,7 +1065,7 @@ public class ShopServiceImpl
             productPhase.refDelete();
         }
         for(ProductPhaseT productPhaseT: productT.getProductPhase()) {
-            ProductPhase productPhase = this.getProductPackage().getProductPhase().createProductPhase();
+            ProductPhase productPhase = pm.newInstance(ProductPhase.class);
             productPhase.setName(productPhaseT.getName());
             productPhase.setProductPhaseKey(productPhaseT.getProductPhaseKey());
             productPhase.setValidFrom(productPhaseT.getValidFrom());
@@ -1131,7 +1074,6 @@ public class ShopServiceImpl
                 product.getOwningGroup()
             );
             product.addProductPhase(
-                false, 
                 this.uuidAsString(), 
                 productPhase
             );
@@ -1201,13 +1143,12 @@ public class ShopServiceImpl
 	            }
 	        }
 	        if(contractStatusProperties == null) {
-	            contractStatusProperties = this.getGenericPackage().getPropertySet().createPropertySet();
+	            contractStatusProperties = pm.newInstance(PropertySet.class);
 	            contractStatusProperties.setName(contractStatusPropertySetName);
 	            contractStatusProperties.getOwningGroup().addAll(
 	            	contract.getOwningGroup()
 	            );
 	            contract.addPropertySet(
-	                false, 
 	                this.uuidAsString(), 
 	                contractStatusProperties
 	            );
@@ -1240,7 +1181,7 @@ public class ShopServiceImpl
         	}
         	// Create if it does not exist
         	if(bundleFilter == null) {
-	            bundleFilter = Utils.getProductPackage(this.pm).getProductFilterGlobal().createProductFilterGlobal();
+	            bundleFilter = this.pm.newInstance(ProductFilterGlobal.class);
 	            bundleFilter.setName(productT.getProductNumber());
 	            bundleFilter.setDescription("Filter for product bundle " + productT.getProductNumber());
 	            this.datatypeMappers.getProductFilterFieldMapper().setProductFilterType(
@@ -1251,7 +1192,6 @@ public class ShopServiceImpl
 	                productSegment.getOwningGroup()
 	            );
 	            productSegment.addProductFilter(
-	                false, 
 	                this.uuidAsString(), 
 	                bundleFilter
 	            );
@@ -1267,7 +1207,7 @@ public class ShopServiceImpl
         	}
         	// Create if it does not exist
         	if(filterProperty == null) {
-        		filterProperty = Utils.getProductPackage(this.pm).getProductClassificationFilterProperty().createProductClassificationFilterProperty();
+        		filterProperty = pm.newInstance(ProductClassificationFilterProperty.class);
         		filterProperty.setName("Classifications");
         		filterProperty.setActive(Boolean.TRUE);
         		filterProperty.setFilterOperator(ConditionType.IS_IN.code());
@@ -1276,7 +1216,6 @@ public class ShopServiceImpl
                     bundleFilter.getOwningGroup()
                 );
                 bundleFilter.addProductFilterProperty(
-                    false, 
                     this.uuidAsString(), 
                     filterProperty
                 );
@@ -1322,21 +1261,22 @@ public class ShopServiceImpl
 	        			if(params.getReportingCustomerNumber() != null) {
 	        				reportingCustomer = this.findAccount(params.getReportingCustomerNumber());
 	        			}
-	        			ActivityDoFollowUpParams doFollowUpParams = this.getActivityPackage().createActivityDoFollowUpParams(
-	        				reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null, 
-	        				params.getDescription(), 
-	        				params.getName(), 
-	        				transition
-	        			);
-	        			this.pm.currentTransaction().begin();
+						ActivityDoFollowUpParams doFollowUpParams = Structures.create(
+							ActivityDoFollowUpParams.class, 
+							Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null),
+							Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, params.getDescription()),
+							Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, params.getName()),
+							Datatypes.member(ActivityDoFollowUpParams.Member.transition, transition)
+						);
+	        			PersistenceHelper.currentUnitOfWork(this.pm).begin();
 	        			ActivityDoFollowUpResult doFollowUpResult = activity.doFollowUp(doFollowUpParams);
-	        			this.pm.currentTransaction().commit();
+	        			PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	        			ActivityFollowUp followUp = doFollowUpResult.getFollowUp();
 	        			this.pm.refresh(followUp);
 	        			if(params.getCategory() != null && !params.getCategory().isEmpty()) {
-		        			this.pm.currentTransaction().begin();
+		        			PersistenceHelper.currentUnitOfWork(this.pm).begin();
 		        			followUp.getCategory().addAll(params.getCategory());
-		        			this.pm.currentTransaction().commit();
+		        			PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	        			}
 	                    result.add(
 	                        Datatypes.member(
@@ -1394,7 +1334,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -1429,14 +1369,14 @@ public class ShopServiceImpl
         		Lead customerContract = this.findCustomerContractByContractNumber(customerContractNumber);
     			if(customerContract != null) {
             		if(customerContracts == null || !customerContracts.contains(customerContract)) {
-        				this.pm.currentTransaction().begin();
+        				PersistenceHelper.currentUnitOfWork(this.pm).begin();
         				AccountAssignmentContract accountAssignment = this.pm.newInstance(AccountAssignmentContract.class);
         				accountAssignment.setAccount(customer);
         				customerContract.addAssignedAccount(
         					this.uuidAsString(), 
         					accountAssignment
         				);
-        				this.pm.currentTransaction().commit();
+        				PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	                    result.add(
 	                        Datatypes.member(
 	                        	AddCustomerToCustomerContractResult.Member.status,
@@ -1485,7 +1425,7 @@ public class ShopServiceImpl
         }
 	    catch(Exception e) {
 	        try {
-	            this.pm.currentTransaction().rollback();
+	            PersistenceHelper.currentUnitOfWork(this.pm).rollback();
 	        } catch(Exception e0) {}            
 	        new ServiceException(e).log();
 	        result.add(
@@ -1541,7 +1481,7 @@ public class ShopServiceImpl
 	        			}        			
 	        		}
 	        		if(position != null) {
-	        			this.pm.currentTransaction().begin();
+	        			PersistenceHelper.currentUnitOfWork(this.pm).begin();
 	        			DeliveryInformation deliveryInformation = this.pm.newInstance(DeliveryInformation.class);
 	        			deliveryInformation.setActualDeliveryOn(deliveryInformationT.getActualDeliveryOn());
 	        			deliveryInformation.setQuantityShipped(
@@ -1565,7 +1505,7 @@ public class ShopServiceImpl
 	        				this.uuidAsString(), 
 	        				deliveryInformation
 	        			);
-	        			this.pm.currentTransaction().commit();	      
+	        			PersistenceHelper.currentUnitOfWork(this.pm).commit();;	      
 	                    result.add(
 	                        Datatypes.member(
 	                        	AddDeliveryInformationResult.Member.status,
@@ -1614,7 +1554,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -1729,7 +1669,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -1758,13 +1698,13 @@ public class ShopServiceImpl
         try {
             Invoice invoice = this.findInvoice(params.getInvoiceNumber());
             if(invoice != null) {
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 invoice.setCancelOn(
                 	params.getCancelOn() == null ?
                 		new Date() :
                 		params.getCancelOn()
                 );
-                this.pm.currentTransaction().commit();      
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;      
                 result.add(
                     Datatypes.member(
                         CancelInvoiceResult.Member.status,
@@ -1789,7 +1729,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -1818,7 +1758,7 @@ public class ShopServiceImpl
         try {
             SalesOrder salesOrder = this.findSalesOrder(params.getSalesOrderNumber());
             if(salesOrder != null) {
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 salesOrder.setCancelOn(
                 	params.getCancelOn() == null ?
                 		new Date() :
@@ -1829,7 +1769,7 @@ public class ShopServiceImpl
                 for(SalesOrderPosition position: positions) {
                 	position.setDisabled(true);
                 }
-                this.pm.currentTransaction().commit();      
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;      
                 result.add(
                     Datatypes.member(
                         CancelSalesOrderResult.Member.status,
@@ -1854,7 +1794,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -1893,21 +1833,22 @@ public class ShopServiceImpl
         			if(params.getReportingCustomerNumber() != null) {
         				reportingCustomer = this.findAccount(params.getReportingCustomerNumber());
         			}
-        			NewActivityParams newActivityParams = this.getActivityPackage().createNewActivityParams(
-        				null, // creationContext
-        				params.getDescription(), 
-        				params.getDetailedDescription(), 
-        				params.getDueBy(), 
-        				ICalendar.ICAL_TYPE_NA, 
-        				params.getName(), 
-        				params.getPriority() == null ? (short)0 : params.getPriority().shortValue(), 
-        				reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null,
-        				params.getScheduledEnd(), 
-        				params.getScheduledStart()
+        			NewActivityParams newActivityParams = Structures.create(
+        				NewActivityParams.class, 
+        				Datatypes.member(NewActivityParams.Member.creationContext, null),
+        				Datatypes.member(NewActivityParams.Member.description, params.getDescription()),
+        				Datatypes.member(NewActivityParams.Member.detailedDescription, params.getDetailedDescription()),
+        				Datatypes.member(NewActivityParams.Member.dueBy, params.getDueBy()),
+        				Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+        				Datatypes.member(NewActivityParams.Member.name, params.getName()),
+        				Datatypes.member(NewActivityParams.Member.priority, params.getPriority() == null ? (short)0 : params.getPriority().shortValue()),
+        				Datatypes.member(NewActivityParams.Member.reportingContact, reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null),
+        				Datatypes.member(NewActivityParams.Member.scheduledEnd, params.getScheduledEnd()),
+        				Datatypes.member(NewActivityParams.Member.scheduledStart, params.getScheduledStart())
         			);
-        			this.pm.currentTransaction().begin();
+        			PersistenceHelper.currentUnitOfWork(this.pm).begin();
         			NewActivityResult newActivityResult = activityCreator.newActivity(newActivityParams);
-        			this.pm.currentTransaction().commit();
+        			PersistenceHelper.currentUnitOfWork(this.pm).commit();;
         			Activity activity = newActivityResult.getActivity();
         			this.pm.refresh(activity);
                     result.add(
@@ -1954,7 +1895,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2006,7 +1947,7 @@ public class ShopServiceImpl
                 	(!isDuplicateEMailAddressHome && !isDuplicateEMailAddressBusiness)
                 ) {
                     // Create Customer
-                    this.pm.currentTransaction().begin();
+                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
                     Contact customer = this.pm.newInstance(Contact.class);
                     customer.setLastName(params.getLastName());
                     customer.setFirstName(params.getFirstName());
@@ -2049,7 +1990,7 @@ public class ShopServiceImpl
 	                        emailAddressBusiness
 	                    );
                     }
-                    this.pm.currentTransaction().commit();
+                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                     customer = (Contact)this.pm.getObjectById(customer.refGetPath());
                     this.pm.refresh(customer);
                     result.add(
@@ -2098,7 +2039,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -2130,7 +2071,7 @@ public class ShopServiceImpl
             List<Account> legalEntities = this.getAccountSegment().getAccount(legalEntityQuery);
             if(legalEntities.isEmpty()) {
                 // Create Customer
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 LegalEntity customer = this.pm.newInstance(LegalEntity.class);
                 customer.setName(params.getLegalName());
                 customer.getOwningGroup().addAll(
@@ -2141,7 +2082,7 @@ public class ShopServiceImpl
                     this.uuidAsString(), 
                     customer
                 );
-                this.pm.currentTransaction().commit();
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                 customer = (LegalEntity)this.pm.getObjectById(customer.refGetPath());
                 this.pm.refresh(customer);
                 result.add(
@@ -2178,7 +2119,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -2239,13 +2180,12 @@ public class ShopServiceImpl
                     customerContract.getOwningGroup().addAll(
                         this.getContractSegment().getOwningGroup()
                     );
-                    this.pm.currentTransaction().begin();
+                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
                     this.getContractSegment().addLead(
-                        false, 
                         this.uuidAsString(), 
                         customerContract
                     );
-                    this.pm.currentTransaction().commit();
+                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                     customerContract = (Lead)this.pm.getObjectById(customerContract.refGetPath());
                     this.pm.refresh(customerContract);                     	
                     result.add(
@@ -2290,7 +2230,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2339,8 +2279,9 @@ public class ShopServiceImpl
                 	);
                 	if(validationResult == null) {
 	                    String invoiceNumber = this.getNextInvoiceNumber(customer);
-	                    this.pm.currentTransaction().begin();
-	                    Invoice invoice = Accounts.getInstance().createInvoice(
+	                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
+	                    @SuppressWarnings("deprecation")
+                        Invoice invoice = Accounts.getInstance().createInvoice(
 	                    	customer, 
 	                    	invoiceNumber + " /" + customerNumber, // name
 	                    	null, // description 
@@ -2367,7 +2308,7 @@ public class ShopServiceImpl
 	                        params.getInvoice().getContract().getPostalAddressInvoice(), 
 	                        params.getInvoice().getContract().getPostalAddressDelivery()
 	                    );
-	                    this.pm.currentTransaction().commit();
+	                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	                    this.addContractPositions(
 	                        invoice,
 	                        params.getInvoice().getContract().getPosition(),
@@ -2375,9 +2316,9 @@ public class ShopServiceImpl
 	                        null, // discountIsPercentage
 	                        null // discount
 	                    );
-	                    this.pm.currentTransaction().begin();
+	                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
 	                    invoice.reprice();
-	                    this.pm.currentTransaction().commit();                        
+	                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;                        
 	                    this.pm.refresh(invoice);
 	                    result.add(
 	                        Datatypes.member(
@@ -2433,7 +2374,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2465,7 +2406,8 @@ public class ShopServiceImpl
                 Account customer = originalInvoice.getCustomer();                        	
             	String customerNumber = this.datatypeMappers.getAccountFieldMapper().getAccountNumber(customer);
                 String newInvoiceNumber = this.getNextInvoiceNumber(originalInvoice.getCustomer());
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
+                @SuppressWarnings("deprecation")
                 Invoice newInvoice = Accounts.getInstance().createInvoice(
                 	customer, 
                 	newInvoiceNumber + " /" + customerNumber, // name 
@@ -2489,16 +2431,16 @@ public class ShopServiceImpl
                 if(contractCategory != null) {
                 	newInvoice.getCategory().add(contractCategory);
                 }                
-                this.pm.currentTransaction().commit();     
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;     
                 InvoiceT originalInvoiceT =  this.datatypeMappers.mapInvoice(originalInvoice);
                 Lead customerContract = this.findCustomerContract(originalInvoice);                
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 this.addContractAddresses(
                     newInvoice, 
                     originalInvoiceT.getContract().getPostalAddressInvoice(), 
                     originalInvoiceT.getContract().getPostalAddressDelivery()
                 );
-                this.pm.currentTransaction().commit();
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                 SysLog.detail("Adding positions to newly created invoice", originalInvoiceT.getContract().getPosition().size());
                 this.addContractPositions(
                     newInvoice,
@@ -2538,7 +2480,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2568,7 +2510,7 @@ public class ShopServiceImpl
             SalesOrder salesOrder = this.findSalesOrder(params.getSalesOrderNumber());
             if(salesOrder != null) {
                 String invoiceNumber = this.getNextInvoiceNumber(salesOrder.getCustomer());
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 SalesOrderCreateInvoiceResult createInvoiceResult = salesOrder.createInvoice();
                 this.pm.flush();
                 Invoice invoice = (Invoice)this.pm.getObjectById(createInvoiceResult.getInvoice().refGetPath());
@@ -2586,7 +2528,7 @@ public class ShopServiceImpl
                 if(contractCategory != null) {
                 	invoice.getCategory().add(contractCategory);
                 }
-                this.pm.currentTransaction().commit();
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                 this.pm.refresh(invoice);
                 result.add(
                     Datatypes.member(
@@ -2618,7 +2560,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2649,19 +2591,18 @@ public class ShopServiceImpl
             for(ProductClassificationT classificationT: params.getClassification()) {
                 ProductClassification classification = this.findProductClassification(classificationT.getClassificationId());
                 if(classification == null) {
-                    this.pm.currentTransaction().begin();
-                    classification = this.getProductPackage().getProductClassification().createProductClassification();
+                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
+                    classification = pm.newInstance(ProductClassification.class);
                     classification.setName(classificationT.getClassificationId());
                     classification.setDescription(classificationT.getDescription());
                     classification.getOwningGroup().addAll(
                         this.getProductSegment().getOwningGroup()
                     );
                     this.getProductSegment().addProductClassification(
-                        false, 
                         this.uuidAsString(), 
                         classification
                     );
-                    this.pm.currentTransaction().commit();                    
+                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;                    
                 }
                 else {
                     result.add(
@@ -2691,7 +2632,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2723,7 +2664,7 @@ public class ShopServiceImpl
             for(ProductT productT: params.getProduct()) {
                 Product product = this.findProduct(productT.getProductNumber());
                 if(product == null) {
-                     product = this.getProductPackage().getProduct().createProduct();
+                     product = pm.newInstance(Product.class);
                      // Product classification
                      List<ProductClassification> productClassifications = new ArrayList<ProductClassification>();
                      for(String classificationId: productT.getClassificationId()) {
@@ -2777,13 +2718,12 @@ public class ShopServiceImpl
                      product.getOwningGroup().addAll(
                          this.getProductSegment().getOwningGroup()
                      );
-                     this.pm.currentTransaction().begin();
+                     PersistenceHelper.currentUnitOfWork(this.pm).begin();
                      this.getProductSegment().addProduct(
-                         false, 
                          productT.getProductNumber(), 
                          product
                      );
-                     this.pm.currentTransaction().commit();
+                     PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                      // Configuration type
                      ProductConfigurationTypeSet configurationType = null;
                      if(productT.getConfigurationType() != null) {
@@ -2802,7 +2742,7 @@ public class ShopServiceImpl
 	                         break;                                                                          
 	                     }
                      }
-                     this.pm.currentTransaction().begin();
+                     PersistenceHelper.currentUnitOfWork(this.pm).begin();
                      if(configurationType != null) {
 	                     this.updateProductConfiguration(
 	                         productT, 
@@ -2826,7 +2766,7 @@ public class ShopServiceImpl
                          productT,
                          product
                      );
-                     this.pm.currentTransaction().commit();
+                     PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                      result.add(
                          Datatypes.member(
                              CreateProductsResult.Member.status,
@@ -2870,14 +2810,15 @@ public class ShopServiceImpl
                         }
                     }
                     if(priceUom != null) {
-                        this.pm.currentTransaction().begin();
-                        CreateInitialPricesParams createInitialPricesParams = this.getProductPackage().createCreateInitialPricesParams(
-                            creationStartedAt,
-                            priceUom,
-                            Products.PROCESSING_MODE_PROCESS
+                        PersistenceHelper.currentUnitOfWork(this.pm).begin();
+                        CreateInitialPricesParams createInitialPricesParams = Structures.create(
+                        	CreateInitialPricesParams.class, 
+                        	Datatypes.member(CreateInitialPricesParams.Member.includeProductsModifiedSince, creationStartedAt),
+                        	Datatypes.member(CreateInitialPricesParams.Member.priceUom, priceUom),
+                        	Datatypes.member(CreateInitialPricesParams.Member.processingMode, Products.PROCESSING_MODE_PROCESS)
                         );
                         priceLevel.createInitialPrices(createInitialPricesParams);
-                        this.pm.currentTransaction().commit();
+                        PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                     }
                 }
             }
@@ -2895,7 +2836,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -2943,14 +2884,13 @@ public class ShopServiceImpl
                 		params.getSalesOrder().getContract().getPosition()
                 	);
                 	if(validationResult == null) {
-	                    this.pm.currentTransaction().begin();
+	                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
 	                    String contractNumber = params.getSalesOrder().getContract().getContractNumber();
 	                    String salesOrderNumber = contractNumber == null || contractNumber.isEmpty() ?
 	                    	this.getNextSalesOrderNumber(customer) :
 	                    		contractNumber;
-	                    SalesOrder salesOrder = this.getContractPackage().getSalesOrder().createSalesOrder();
+	                    SalesOrder salesOrder = pm.newInstance(SalesOrder.class);
 	                    this.getContractSegment().addSalesOrder(
-	                        false,
 	                        this.uuidAsString(),
 	                        salesOrder
 	                    );
@@ -2982,7 +2922,7 @@ public class ShopServiceImpl
 	                        params.getSalesOrder().getContract().getPostalAddressDelivery(), 
 	                        params.getSalesOrder().getContract().getPostalAddressInvoice() 
 	                    );
-	                    this.pm.currentTransaction().commit();
+	                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	                    this.pm.refresh(salesOrder);
 	                    this.addContractPositions(
 	                        salesOrder,
@@ -2991,9 +2931,9 @@ public class ShopServiceImpl
 	                        null, // discountIsPercentage
 	                        null // discount
 	                    );
-	                    this.pm.currentTransaction().begin();
+	                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
 	                    salesOrder.reprice();
-	                    this.pm.currentTransaction().commit();                        
+	                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;                        
 	                    this.pm.refresh(salesOrder);
 	                    result.add(
 	                        Datatypes.member(
@@ -3049,7 +2989,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -3123,7 +3063,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -3186,7 +3126,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -4182,19 +4122,18 @@ public class ShopServiceImpl
 		        customerNumber = this.shopName + "." + params.getPriceCurrency();
 		        customerContract = this.findCustomerContractByContractNumber(customerNumber);
 		        if(customerContract == null) {
-		            customerContract = this.getContractPackage().getLead().createLead();
+		            customerContract = pm.newInstance(Lead.class);
 		            this.datatypeMappers.getLeadFieldMapper().setContractNumber(customerContract, customerNumber);
 		            this.datatypeMappers.getLeadFieldMapper().setContractCurrency(customerContract, params.getPriceCurrency());
 		            customerContract.getOwningGroup().addAll(
 		                this.getContractSegment().getOwningGroup()
 		            );
-		            this.pm.currentTransaction().begin();
+		            PersistenceHelper.currentUnitOfWork(this.pm).begin();
 		            this.getContractSegment().addLead(
-		                false, 
 		                this.uuidAsString(), 
 		                customerContract
 		            );
-		            this.pm.currentTransaction().commit();                    
+		            PersistenceHelper.currentUnitOfWork(this.pm).commit();;                    
 		        }
             }
 		    else {
@@ -4227,14 +4166,14 @@ public class ShopServiceImpl
                             Collection<Uom> priceUoms = product.getPriceUom();
                             for(Uom priceUom: priceUoms) {
                                 for(Date pricingDate: params.getPricingDate()) {
-                                    org.opencrx.kernel.product1.jmi1.GetPriceLevelParams getPriceLevelParams = 
-                                        this.getProductPackage().createGetPriceLevelParams(
-                                            customerContract, 
-                                            priceUom, 
-                                            pricingDate, 
-                                            product, 
-                                            new BigDecimal(params.getQuantity() == null ? "1.0" : params.getQuantity())
-                                        );
+                                	org.opencrx.kernel.product1.jmi1.GetPriceLevelParams getPriceLevelParams = Structures.create(
+                                		org.opencrx.kernel.product1.jmi1.GetPriceLevelParams.class, 
+                                		Datatypes.member(org.opencrx.kernel.product1.jmi1.GetPriceLevelParams.Member.contract, customerContract),
+                                		Datatypes.member(org.opencrx.kernel.product1.jmi1.GetPriceLevelParams.Member.priceUom, priceUom),
+                                		Datatypes.member(org.opencrx.kernel.product1.jmi1.GetPriceLevelParams.Member.pricingDate, pricingDate),
+                                		Datatypes.member(org.opencrx.kernel.product1.jmi1.GetPriceLevelParams.Member.product, product),
+                                		Datatypes.member(org.opencrx.kernel.product1.jmi1.GetPriceLevelParams.Member.quantity, new BigDecimal(params.getQuantity() == null ? "1.0" : params.getQuantity()))
+                                	);
                                     org.opencrx.kernel.product1.jmi1.GetPriceLevelResult getPriceLevelResult = 
                                         rule.getPriceLevel(getPriceLevelParams);
                                     if(getPriceLevelResult.getPriceLevel() != null) {
@@ -4556,25 +4495,26 @@ public class ShopServiceImpl
         			if(params.getOnBehalfOfCustomerNumber() != null) {
         				reportingCustomer = this.findAccount(params.getOnBehalfOfCustomerNumber());
         			}
-        			NewActivityParams newActivityParams = this.getActivityPackage().createNewActivityParams(
-        				null, // creationContext
-        				params.getSubject(), 
-        				null, // detailed description, 
-        				null, // dueBy 
-        				ICalendar.ICAL_TYPE_NA, 
-        				params.getSubject(), 
-        				Priority.NORMAL.getValue(), 
-        				reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null,
-        				null, // scheduledEnd 
-        				null // scheduledStart
+        			NewActivityParams newActivityParams = Structures.create(
+        				NewActivityParams.class, 
+        				Datatypes.member(NewActivityParams.Member.creationContext, null),
+        				Datatypes.member(NewActivityParams.Member.description, params.getSubject()),
+        				Datatypes.member(NewActivityParams.Member.detailedDescription, null),
+        				Datatypes.member(NewActivityParams.Member.dueBy, null),
+        				Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+        				Datatypes.member(NewActivityParams.Member.name, params.getSubject()),
+        				Datatypes.member(NewActivityParams.Member.priority, Priority.NORMAL.getValue()),
+        				Datatypes.member(NewActivityParams.Member.reportingContact, reportingCustomer instanceof Contact ? (Contact)reportingCustomer : null),
+        				Datatypes.member(NewActivityParams.Member.scheduledStart, null),
+        				Datatypes.member(NewActivityParams.Member.scheduledEnd, null)
         			);
-        			this.pm.currentTransaction().begin();
+        			PersistenceHelper.currentUnitOfWork(this.pm).begin();
         			NewActivityResult newActivityResult = activityCreator.newActivity(newActivityParams);
-        			this.pm.currentTransaction().commit();
+        			PersistenceHelper.currentUnitOfWork(this.pm).commit();;
         			Activity activity = newActivityResult.getActivity();
         			this.pm.refresh(activity);
         			if(activity instanceof EMail) {
-        				this.pm.currentTransaction().begin();
+        				PersistenceHelper.currentUnitOfWork(this.pm).begin();
         				EMail email = (EMail)activity;
         				email.setMessageSubject(
         					params.getSubject()
@@ -4589,7 +4529,7 @@ public class ShopServiceImpl
         					params.getRecipientCc(), 
         					params.getRecipientBcc()
         				);
-         				this.pm.currentTransaction().commit();
+         				PersistenceHelper.currentUnitOfWork(this.pm).commit();;
          				// Send EMail
          				Activities.getInstance().sendEMail(
          					email
@@ -4650,7 +4590,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -4688,12 +4628,12 @@ public class ShopServiceImpl
                     duplicateUserName = !accounts.isEmpty();
                 }
                 if(!duplicateUserName) {
-                    this.pm.currentTransaction().begin();
+                    PersistenceHelper.currentUnitOfWork(this.pm).begin();
                     this.datatypeMappers.getAccountFieldMapper().setUserName(customer, params.getCredentials().getUserName()); 
                     this.datatypeMappers.getAccountFieldMapper().setPasswordMd5(customer, params.getCredentials().getPasswordMd5());
                     this.datatypeMappers.getAccountFieldMapper().setResetPasswordChallenge(customer, params.getCredentials().getResetPasswordChallenge());
                     this.datatypeMappers.getAccountFieldMapper().setResetPasswordResponse(customer, params.getCredentials().getResetPasswordResponse());
-                    this.pm.currentTransaction().commit();
+                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                     result.add(
                         Datatypes.member(
                             SetCredentialsResult.Member.status,
@@ -4730,7 +4670,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -4761,12 +4701,12 @@ public class ShopServiceImpl
             if(customerContractNumber != null) {
 	            Lead customerContract = this.findCustomerContractByContractNumber(customerContractNumber);
 	            if(customerContract != null) {
-	                this.pm.currentTransaction().begin();	       
+	                PersistenceHelper.currentUnitOfWork(this.pm).begin();	       
 	                this.setContractStatus(
 	                	customerContract, 
 	                	params.getContractStatus()
 	                );
-	                this.pm.currentTransaction().commit();
+	                PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	                result.add(
 	                    Datatypes.member(
 	                    	SetCustomerContractStatusResult.Member.status,
@@ -4803,7 +4743,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -4832,7 +4772,7 @@ public class ShopServiceImpl
         try {
             Account customer = this.findAccount(params.getCustomerNumber());
             if(customer != null) {
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 // Update state history
                 String shortDescription = customer.getDescription();
                 shortDescription = shortDescription == null
@@ -4845,7 +4785,7 @@ public class ShopServiceImpl
                 );
                 customer.setAccountState(DatatypeMappers.toShort(params.getCustomerStatus().getStatus()));
                 customer.setDescription(params.getCustomerStatus().getDescription());
-                this.pm.currentTransaction().commit();    
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;    
                 result.add(
                     Datatypes.member(
                         SetCustomerStatusResult.Member.status,
@@ -4870,7 +4810,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -4899,7 +4839,7 @@ public class ShopServiceImpl
         try {
             Invoice invoice = this.findInvoice(params.getInvoiceNumber());
             if(invoice != null) {
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 this.setContractStatus(
                 	invoice, 
                 	params.getInvoiceStatus()
@@ -4907,7 +4847,7 @@ public class ShopServiceImpl
                 if(params.getInvoiceStatus().getStatus() == InvoiceState.PAID.getValue()) {
                     this.datatypeMappers.getInvoiceFieldMapper().setPaymentDate(invoice, new Date());
                 }
-                this.pm.currentTransaction().commit();      
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;      
                 result.add(
                     Datatypes.member(
                         SetInvoiceStatusResult.Member.status,
@@ -4932,7 +4872,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -4961,7 +4901,7 @@ public class ShopServiceImpl
         try {
             Product product = this.findProduct(params.getProductNumber());
             if(product != null) {
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 // Update state history
                 String shortDescription = product.getDescription();
                 shortDescription = shortDescription == null
@@ -4974,7 +4914,7 @@ public class ShopServiceImpl
                 );
                 product.setProductState((short)params.getProductStatus().getStatus());
                 product.setDescription(params.getProductStatus().getDescription());
-                this.pm.currentTransaction().commit();        
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;        
                 result.add(
                     Datatypes.member(
                         SetProductStatusResult.Member.status,
@@ -4999,7 +4939,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(
@@ -5034,18 +4974,18 @@ public class ShopServiceImpl
                     if(params.getPositionNumber().equals(position.getPositionNumber())) {
                         BigDecimal quantity = new BigDecimal(params.getQuantity());
                         if(quantity.compareTo(BigDecimal.ZERO) == 0) {
-                            this.pm.currentTransaction().begin();
+                            PersistenceHelper.currentUnitOfWork(this.pm).begin();
                             position.refDelete();
-                            this.pm.currentTransaction().commit();
+                            PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                         }
                         else {
-                            this.pm.currentTransaction().begin();
+                            PersistenceHelper.currentUnitOfWork(this.pm).begin();
                             position.setQuantity(quantity);
-                            this.pm.currentTransaction().commit();
+                            PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                         }
-                        this.pm.currentTransaction().begin();
+                        PersistenceHelper.currentUnitOfWork(this.pm).begin();
                         salesOrder.reprice();
-                        this.pm.currentTransaction().commit();
+                        PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                     }
                 }
                 result.add(
@@ -5098,12 +5038,12 @@ public class ShopServiceImpl
         try {
             SalesOrder salesOrder = this.findSalesOrder(params.getSalesOrderNumber());
             if(salesOrder != null) {
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 this.setContractStatus(
                 	salesOrder, 
                 	params.getSalesOrderStatus()
                 );
-                this.pm.currentTransaction().commit();    
+                PersistenceHelper.currentUnitOfWork(this.pm).commit();;    
                 result.add(
                     Datatypes.member(
                         SetSalesOrderStatusResult.Member.status,
@@ -5128,7 +5068,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -5185,7 +5125,7 @@ public class ShopServiceImpl
 	            			primaryContact = this.findAccount(primaryContactNumber);            			
 	            		}
 	            		if(primaryContact != null || primaryContactNumber == null) {
-	                        this.pm.currentTransaction().begin();
+	                        PersistenceHelper.currentUnitOfWork(this.pm).begin();
 		                    // Update main data
 		                    if(params.isUpdateMainData()) {
 		                    	// Account
@@ -5261,13 +5201,12 @@ public class ShopServiceImpl
 		                        else {                        
 		                            EMailAddress address = (EMailAddress)addresses[Accounts.MAIL_BUSINESS];
 		                            if(address == null) {
-		                                address = this.getAccountPackage().getEMailAddress().createEMailAddress();
+		                                address = pm.newInstance(EMailAddress.class);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
 		                                );                                
 		                                legalEntity.addAddress(
-		                                    false, 
 		                                    this.uuidAsString(), 
 		                                    address
 		                                );
@@ -5286,13 +5225,12 @@ public class ShopServiceImpl
 		                        else {                        
 		                            PhoneNumber address = (PhoneNumber)addresses[Accounts.FAX_BUSINESS];
 		                            if(address == null) {
-		                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+		                                address = pm.newInstance(PhoneNumber.class);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
 		                                );                                
 		                                legalEntity.addAddress(
-		                                    false, 
 		                                    this.uuidAsString(), 
 		                                    address
 		                                );
@@ -5311,13 +5249,12 @@ public class ShopServiceImpl
 		                        else {                        
 		                            PhoneNumber address = (PhoneNumber)addresses[Accounts.PHONE_BUSINESS];
 		                            if(address == null) {
-		                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+		                                address = pm.newInstance(PhoneNumber.class);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
-		                                );                                
+		                                );
 		                                legalEntity.addAddress(
-		                                    false, 
 		                                    this.uuidAsString(), 
 		                                    address
 		                                );
@@ -5336,13 +5273,12 @@ public class ShopServiceImpl
 		                        else {                        
 		                            WebAddress address = (WebAddress)addresses[Accounts.WEB_BUSINESS];
 		                            if(address == null) {
-		                                address = this.getAccountPackage().getWebAddress().createWebAddress();
+		                                address = pm.newInstance(WebAddress.class);
 		                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 		                                address.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
 		                                );                                
 		                                legalEntity.addAddress(
-		                                    false, 
 		                                    this.uuidAsString(), 
 		                                    address
 		                                );
@@ -5370,13 +5306,12 @@ public class ShopServiceImpl
 		                                }
 		                            }
 		                            if(isNew) {
-		                                PropertySet propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
+		                                PropertySet propertySet = pm.newInstance(PropertySet.class);
 		                                propertySet.setName(PropertySetName.GenericData.toString());
 		                                propertySet.getOwningGroup().addAll(
 		                                	legalEntity.getOwningGroup()
 		                                );
 		                                legalEntity.addPropertySet(
-		                                    false, 
 		                                    this.uuidAsString(), 
 		                                    propertySet
 		                                );
@@ -5388,7 +5323,7 @@ public class ShopServiceImpl
 		                            }
 		                        }
 		                    }
-		                    this.pm.currentTransaction().commit();
+		                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 		                    result.add(
 		                        Datatypes.member(
 		                            UpdateCustomerResult.Member.customer,
@@ -5473,7 +5408,7 @@ public class ShopServiceImpl
 	                	!this.emailAddressMustBeUnique || 
 	                	(!isDuplicateEmailAddressHome && !isDuplicateEmailAddressBusiness)
 	                ) {
-	                	this.pm.currentTransaction().begin();
+	                	PersistenceHelper.currentUnitOfWork(this.pm).begin();
 	                    if(Boolean.TRUE.equals(params.isUpdateMainData())) {
 	                    	// Account
 	                        customer.getExternalLink().clear();
@@ -5554,13 +5489,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PostalAddress address = (PostalAddress)addresses[Accounts.POSTAL_HOME];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPostalAddress().createPostalAddress();
+	                                address = pm.newInstance(PostalAddress.class);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5579,13 +5513,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PostalAddress address = (PostalAddress)addresses[Accounts.POSTAL_BUSINESS];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPostalAddress().createPostalAddress();
+	                                address = pm.newInstance(PostalAddress.class);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5604,13 +5537,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            EMailAddress address = (EMailAddress)addresses[Accounts.MAIL_HOME];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getEMailAddress().createEMailAddress();
+	                                address = pm.newInstance(EMailAddress.class);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5629,13 +5561,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            EMailAddress address = (EMailAddress)addresses[Accounts.MAIL_BUSINESS];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getEMailAddress().createEMailAddress();
+	                                address = pm.newInstance(EMailAddress.class);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5654,13 +5585,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.FAX_HOME];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+	                                address = pm.newInstance(PhoneNumber.class);
 	                                address.getUsage().add(Addresses.USAGE_HOME_FAX);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5679,13 +5609,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.FAX_BUSINESS];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+	                                address = pm.newInstance(PhoneNumber.class);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS_FAX);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5704,13 +5633,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.PHONE_HOME];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+	                                address = pm.newInstance(PhoneNumber.class);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5729,13 +5657,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.PHONE_BUSINESS];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+	                                address = pm.newInstance(PhoneNumber.class);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
-	                                );                                
+	                                );
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5754,13 +5681,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            PhoneNumber address = (PhoneNumber)addresses[Accounts.MOBILE];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+	                                address = pm.newInstance(PhoneNumber.class);
 	                                address.getUsage().add(Addresses.USAGE_MOBILE);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
-	                                );                                
+	                                );
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5779,13 +5705,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            WebAddress address = (WebAddress)addresses[Accounts.WEB_HOME];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getWebAddress().createWebAddress();
+	                                address = pm.newInstance(WebAddress.class);
 	                                address.getUsage().add(Addresses.USAGE_HOME);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
-	                                );                                
+	                                );      
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5804,13 +5729,12 @@ public class ShopServiceImpl
 	                        else {                        
 	                            WebAddress address = (WebAddress)addresses[Accounts.WEB_BUSINESS];
 	                            if(address == null) {
-	                                address = this.getAccountPackage().getWebAddress().createWebAddress();
+	                                address = pm.newInstance(WebAddress.class);
 	                                address.getUsage().add(Addresses.USAGE_BUSINESS);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5848,13 +5772,12 @@ public class ShopServiceImpl
 	                                }
 	                            }
 	                            while(i < contactT.getMessengerAddress().size()) {
-	                                PhoneNumber address = this.getAccountPackage().getPhoneNumber().createPhoneNumber();
+	                                PhoneNumber address = pm.newInstance(PhoneNumber.class);
 	                                address.getUsage().add(Addresses.USAGE_OTHER);
 	                                address.getOwningGroup().addAll(
 	                                	contact.getOwningGroup()
 	                                );                                
 	                                contact.addAddress(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    address
 	                                );
@@ -5874,18 +5797,17 @@ public class ShopServiceImpl
 	                    if(Boolean.TRUE.equals(params.isUpdateGenericData())) {
 	                        List<StringPropertyT> genericData = params.getCustomer().getGenericData();
 	                        if(genericData != null) {
-	                        	PropertySetQuery propertySetQuery = this.getGenericPackage().createPropertySetQuery();
+	                        	PropertySetQuery propertySetQuery = (PropertySetQuery)pm.newQuery(PropertySet.class);
 	                        	propertySetQuery.name().equalTo(PropertySetName.GenericData.toString());
 	                        	List<PropertySet> propertySets = contact.getPropertySet(propertySetQuery);
 	                        	PropertySet propertySet = null;
 	                        	if(propertySets.isEmpty()) {
-	                                propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
+	                                propertySet = pm.newInstance(PropertySet.class);
 	                                propertySet.setName(PropertySetName.GenericData.toString());
 	                                propertySet.getOwningGroup().addAll(
 	                                    customer.getOwningGroup()
 	                                );
 	                                contact.addPropertySet(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    propertySet
 	                                );                        		
@@ -5916,18 +5838,17 @@ public class ShopServiceImpl
 	                    if(Boolean.TRUE.equals(params.isUpdateBookmarks())) {
 	                        List<StringPropertyT> bookmarks = contactT.getBookmarks();
 	                        if(bookmarks != null) {
-	                        	PropertySetQuery propertySetQuery = this.getGenericPackage().createPropertySetQuery();
+	                        	PropertySetQuery propertySetQuery = (PropertySetQuery)pm.newQuery(PropertySet.class);
 	                        	propertySetQuery.name().equalTo(PropertySetName.Bookmarks.toString());
 	                        	List<PropertySet> propertySets = contact.getPropertySet(propertySetQuery);
 	                        	PropertySet propertySet = null;
 	                        	if(propertySets.isEmpty()) {
-	                                propertySet = this.getGenericPackage().getPropertySet().createPropertySet();
+	                                propertySet = pm.newInstance(PropertySet.class);
 	                                propertySet.setName(PropertySetName.Bookmarks.toString());
 	                                propertySet.getOwningGroup().addAll(
 	                                    customer.getOwningGroup()
 	                                );
 	                                customer.addPropertySet(
-	                                    false, 
 	                                    this.uuidAsString(), 
 	                                    propertySet
 	                                );                        		
@@ -5941,7 +5862,7 @@ public class ShopServiceImpl
 	                            );
 	                        }
 	                    }
-	                    this.pm.currentTransaction().commit();
+	                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	                    result.add(
 	                        Datatypes.member(
 	                            UpdateCustomerResult.Member.customer,
@@ -5996,7 +5917,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -6028,12 +5949,12 @@ public class ShopServiceImpl
 	            Lead customerContract = this.findCustomerContractByContractNumber(customerContractNumber);
 	            CustomerContractT customerContractT = params.getCustomerContract();
 	            if(customerContract != null && customerContractT != null) {
-	                this.pm.currentTransaction().begin();
+	                PersistenceHelper.currentUnitOfWork(this.pm).begin();
 		           	this.datatypeMappers.mapCustomerContract(
 		                customerContractT,
 		                customerContract
 		            );	                    			                
-	                this.pm.currentTransaction().commit();
+	                PersistenceHelper.currentUnitOfWork(this.pm).commit();;
 	                result.add(
 	                    Datatypes.member(
 	                        UpdateCustomerContractResult.Member.customerContract,
@@ -6078,7 +5999,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}                        
             new ServiceException(e).log();
             result.add(
@@ -6110,7 +6031,7 @@ public class ShopServiceImpl
             if(product != null) {
                 ProductT productT = params.getProduct();
                 boolean hasErrors = false;
-                this.pm.currentTransaction().begin();
+                PersistenceHelper.currentUnitOfWork(this.pm).begin();
                 // Main data
                 if(!hasErrors && params.isUpdateMainData()) {
                 	 this.datatypeMappers.mapProduct(
@@ -6221,7 +6142,7 @@ public class ShopServiceImpl
                 	);
                 }
                 if(!hasErrors) {
-                    this.pm.currentTransaction().commit();
+                    PersistenceHelper.currentUnitOfWork(this.pm).commit();;
                     result.add(
                         Datatypes.member(
                             UpdateProductResult.Member.product,
@@ -6240,10 +6161,10 @@ public class ShopServiceImpl
                                 null
                             )
                         )                            
-                    );                                
+                    );
                 }
                 else {
-                    this.pm.currentTransaction().rollback();
+                    PersistenceHelper.currentUnitOfWork(this.pm).rollback();
                 }
             }
             else {
@@ -6260,7 +6181,7 @@ public class ShopServiceImpl
         }
         catch(Exception e) {
             try {
-                this.pm.currentTransaction().rollback();
+                PersistenceHelper.currentUnitOfWork(this.pm).rollback();
             } catch(Exception e0) {}            
             new ServiceException(e).log();
             result.add(

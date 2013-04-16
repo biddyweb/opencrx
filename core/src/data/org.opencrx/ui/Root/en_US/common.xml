@@ -3483,6 +3483,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:workflow">
 										<_object>
 											<active>true</active>
@@ -3495,7 +3512,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3512,7 +3529,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>30</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3529,7 +3546,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>30</_item>
+												<_item>40</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3546,7 +3563,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>40</_item>
+												<_item>50</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3563,7 +3580,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>50</_item>
+												<_item>60</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3580,7 +3597,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>50</_item>
+												<_item>70</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3597,7 +3614,24 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>60</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:parentProcessInstance">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>Parent workflow process</_item>
+											</toolTip>
+											<label>
+												<_item>Parent workflow process</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -3618,10 +3652,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Workflow instance</_item>
+												<_item>Workflow process</_item>
 											</toolTip>
 											<label>
-												<_item>Workflow instance</_item>
+												<_item>Workflow process</_item>
 											</label>
 											<order>
 												<_item>0</_item>

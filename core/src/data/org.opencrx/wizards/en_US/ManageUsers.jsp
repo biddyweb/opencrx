@@ -2,17 +2,14 @@
 /*
  * ====================================================================
  * Project:		openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ManageUsers.jsp,v 1.5 2010/12/21 12:13:25 cmu Exp $
  * Description: Manage openCRX Users (membership of PrincipalGroups, etc.)
- * Revision:	$Revision: 1.5 $
  * Owner:		CRIXP AG, Switzerland, http://www.crixp.com
- * Date:		$Date: 2010/12/21 12:13:25 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +70,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.text.conversion.*,
@@ -309,17 +305,11 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						viewsCache.getView(requestId)
 					);
 
-					// Get realm1 package
-					org.opencrx.security.realm1.jmi1.Realm1Package realmPkg = org.opencrx.kernel.utils.Utils.getRealmPackage(pm);
-
 					// security realm
 					org.openmdx.security.realm1.jmi1.Realm realm =
 						(org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
 							new Path("xri://@openmdx*org.openmdx.security.realm1").getDescendant("provider", providerName, "segment", "Root", "realm", segmentName)
 						);
-
-					// Get home1 package
-					org.opencrx.kernel.home1.jmi1.Home1Package homePkg = org.opencrx.kernel.utils.Utils.getHomePackage(pm);
 
 					// Get home segment
 					org.opencrx.kernel.home1.jmi1.Segment homeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
@@ -407,7 +397,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						String previousMembershipString = (request.getParameter("previousMembershipString") == null ? "" : request.getParameter("previousMembershipString"));
 						String membershipSelector = (request.getParameter("membershipSelector") == null ? "" : request.getParameter("membershipSelector"));
 
-						org.opencrx.kernel.home1.cci2.UserHomeQuery userHomeFilter = homePkg.createUserHomeQuery();
+						org.opencrx.kernel.home1.cci2.UserHomeQuery userHomeFilter = (org.opencrx.kernel.home1.cci2.UserHomeQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.UserHome.class);
 						userHomeFilter.orderByIdentity().ascending();
 						//userHomeFilter.forAllDisabled().isFalse();
 
@@ -488,7 +478,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 								itSetCounter++;
 								try {
 										if (userSelectorType < 100) {
-												org.opencrx.security.realm1.cci2.PrincipalQuery principalFilter = realmPkg.createPrincipalQuery();
+												org.opencrx.security.realm1.cci2.PrincipalQuery principalFilter = (org.opencrx.security.realm1.cci2.PrincipalQuery)pm.newQuery(org.opencrx.security.realm1.jmi1.Principal.class);
 												if (userSelectorType == 0) {
 														// active users only
 														principalFilter.forAllDisabled().isFalse();
@@ -670,177 +660,174 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 												new ServiceException(e).log();
 										}
 										if (pmUser != null && userHome != null) {
-												pmUser.currentTransaction().begin();
+											pmUser.currentTransaction().begin();
 
-												Properties userSettings =	new Properties();
-												boolean currentUserOwnsHome = app.getCurrentUserRole().equals(userHome.refGetPath().getBase() + "@" + segmentName);
-												if(currentUserOwnsHome) {
-													userSettings = app.getSettings();
-												}
-												else if(userHome.getSettings() != null) {
-													userSettings.load(
-														new ByteArrayInputStream(
-															userHome.getSettings().getBytes("UTF-8")
-														)
-													);
-												}
-
-												String settingTimezone = userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName());
-												String settingStoreSettingsOnLogoff = userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "true" : "false";
-
-												org.opencrx.kernel.home1.cci2.EMailAccountQuery emailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pmUser.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
-												emailAccountQuery.thereExistsIsActive().isTrue();
-												emailAccountQuery.thereExistsIsDefault().isTrue();
-												List<org.opencrx.kernel.home1.jmi1.EMailAccount> emailAccounts = userHome.getEMailAccount(emailAccountQuery);
-												org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = emailAccounts.isEmpty() ? null : emailAccounts.iterator().next();
-												String settingEmailAccount = (defaultEmailAccount == null || defaultEmailAccount.getName() == null ? "" : defaultEmailAccount.getName());
-												String settingSendmailSubjectPrefix = (userHome.getSendMailSubjectPrefix() == null ? "[" + providerName + ":" + segmentName + "]" : userHome.getSendMailSubjectPrefix());
-												String settingWebAccessUrl = (userHome.getWebAccessUrl() == null ? request.getRequestURL().substring(0, request.getRequestURL().indexOf("/wizards")) :	userHome.getWebAccessUrl());
-												String settingTopNavigationShowMax = userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX.getName(), "6");
-												Boolean settingShowTopNavigationSublevel = "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL.getName()));
-												Boolean settingGridDefaultAlignmentIsWide = "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE.getName()));
-												Boolean settingHideWorkspaceDashboard = "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD.getName()));
-												
-												Action[] rootObjectActions = app.getRootObjectActions();
-												List<String> settingRootObjects = new ArrayList<String>();
-												// Always show root object 0
-												settingRootObjects.add("1");
-												int n = 1;
-
-												for(int i = 1; i < rootObjectActions.length; i++) {
-													Action action = rootObjectActions[i];
-													if(action.getParameter(Action.PARAMETER_REFERENCE).length() == 0) {
-															String state = (userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE.getName() + (app.getCurrentPerspective() == 0 ? "" : "[" + Integer.toString(app.getCurrentPerspective()) + "]") + "." + n + ".State", "1").equals("1") ? "1" : "0");
-															if(i < app.getRootObject().length && app.getRootObject()[i] instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
-																state = "1";
-															}
-															settingRootObjects.add(
-																state == null ? "0" : state
-															);
-															n++;
-													}
-												}
-												
-												Map<String,String> settingSubscriptions = new HashMap<String,String>();
-												org.opencrx.kernel.workflow1.cci2.TopicQuery topicQuery =
-														(org.opencrx.kernel.workflow1.cci2.TopicQuery)pmUser.newQuery(org.opencrx.kernel.workflow1.jmi1.Topic.class);
-												topicQuery.orderByName().ascending();
-												topicQuery.forAllDisabled().isFalse();
-
-												org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, providerName, segmentName);
-												for(Iterator i = workflowSegment.getTopic(topicQuery).iterator(); i.hasNext(); ) {
-													org.opencrx.kernel.workflow1.jmi1.Topic topic = (org.opencrx.kernel.workflow1.jmi1.Topic)i.next();
-													ObjectReference objRefTopic = new ObjectReference(topic, app);
-													org.opencrx.kernel.home1.cci2.SubscriptionQuery query = homePkg.createSubscriptionQuery();
-													query.thereExistsTopic().equalTo(topic);
-													Collection subscriptions = userHome.getSubscription(query);
-													org.opencrx.kernel.home1.jmi1.Subscription subscription = subscriptions.isEmpty()
-														? null
-														: (org.opencrx.kernel.home1.jmi1.Subscription)subscriptions.iterator().next();
-													Set eventTypes = new HashSet();
-													if(subscription != null) {
-														for(Iterator j = subscription.getEventType().iterator(); j.hasNext(); ) {
-															eventTypes.add(
-																Integer.valueOf(((Number)j.next()).intValue())
-															);
-														}
-													}
-													String topicId = topic.refGetPath().getBase();
-													if (subscription != null && subscription.isActive()) {
-															settingSubscriptions.put("topicIsActive-" + topicId, "1");
-													}
-													if (eventTypes.contains(Integer.valueOf(1))) {settingSubscriptions.put("topicCreation-" + topicId, "1");}
-													if (eventTypes.contains(Integer.valueOf(3))) {settingSubscriptions.put("topicReplacement-" + topicId, "3");}
-													if (eventTypes.contains(Integer.valueOf(4))) {settingSubscriptions.put("topicRemoval-" + topicId, "4");}
-												}
-
-												org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
-													userHome,
-													app.getCurrentPerspective(),
-													userSettings,
-													false, // Do not init user home (allowed, as pmUser runs as user home's principal)
-													true, // Always save settings
-													userHome.getPrimaryGroup(),
-													settingTimezone,
-													settingStoreSettingsOnLogoff,
-													settingEmailAccount,
-													settingSendmailSubjectPrefix,
-													settingWebAccessUrl,
-													settingTopNavigationShowMax,
-													settingShowTopNavigationSublevel,
-													settingGridDefaultAlignmentIsWide,
-													settingHideWorkspaceDashboard,													
-													settingRootObjects,
-													settingSubscriptions
+											Properties userSettings =	new Properties();
+											boolean currentUserOwnsHome = app.getCurrentUserRole().equals(userHome.refGetPath().getBase() + "@" + segmentName);
+											if(currentUserOwnsHome) {
+												userSettings = app.getSettings();
+											}
+											else if(userHome.getSettings() != null) {
+												userSettings.load(
+													new ByteArrayInputStream(
+														userHome.getSettings().getBytes("UTF-8")
+													)
 												);
+											}
 
+											String settingTimezone = userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName());
+											String settingStoreSettingsOnLogoff = userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "true" : "false";
+
+											org.opencrx.kernel.home1.cci2.EMailAccountQuery emailAccountQuery = (org.opencrx.kernel.home1.cci2.EMailAccountQuery)pmUser.newQuery(org.opencrx.kernel.home1.jmi1.EMailAccount.class);
+											emailAccountQuery.thereExistsIsActive().isTrue();
+											emailAccountQuery.thereExistsIsDefault().isTrue();
+											List<org.opencrx.kernel.home1.jmi1.EMailAccount> emailAccounts = userHome.getEMailAccount(emailAccountQuery);
+											org.opencrx.kernel.home1.jmi1.EMailAccount defaultEmailAccount = emailAccounts.isEmpty() ? null : emailAccounts.iterator().next();
+											String settingEmailAccount = (defaultEmailAccount == null || defaultEmailAccount.getName() == null ? "" : defaultEmailAccount.getName());
+											String settingSendmailSubjectPrefix = (userHome.getSendMailSubjectPrefix() == null ? "[" + providerName + ":" + segmentName + "]" : userHome.getSendMailSubjectPrefix());
+											String settingWebAccessUrl = (userHome.getWebAccessUrl() == null ? request.getRequestURL().substring(0, request.getRequestURL().indexOf("/wizards")) :	userHome.getWebAccessUrl());
+											String settingTopNavigationShowMax = userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_MAX.getName(), "6");
+											Boolean settingShowTopNavigationSublevel = "true".equals(userSettings.getProperty(UserSettings.TOP_NAVIGATION_SHOW_SUBLEVEL.getName()));
+											Boolean settingGridDefaultAlignmentIsWide = "true".equals(userSettings.getProperty(UserSettings.GRID_DEFAULT_ALIGNMENT_IS_WIDE.getName()));
+											Boolean settingHideWorkspaceDashboard = "true".equals(userSettings.getProperty(UserSettings.HIDE_WORKSPACE_DASHBOARD.getName()));
+											Boolean settingScrollHeader = "true".equals(userSettings.getProperty(UserSettings.SCROLL_HEADER.getName()));
+											
+											Action[] rootObjectActions = app.getRootObjectActions();
+											List<String> settingRootObjects = new ArrayList<String>();
+											// Always show root object 0
+											settingRootObjects.add("1");
+											int n = 1;
+
+											for(int i = 1; i < rootObjectActions.length; i++) {
+												Action action = rootObjectActions[i];
+												if(action.getParameter(Action.PARAMETER_REFERENCE).length() == 0) {
+														String state = (userSettings.getProperty(UserSettings.ROOT_OBJECT_STATE.getName() + (app.getCurrentPerspective() == 0 ? "" : "[" + Integer.toString(app.getCurrentPerspective()) + "]") + "." + n + ".State", "1").equals("1") ? "1" : "0");
+														if(i < app.getRootObject().length && app.getRootObject()[i] instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
+															state = "1";
+														}
+														settingRootObjects.add(
+															state == null ? "0" : state
+														);
+														n++;
+												}
+											}
+											
+											Map<String,String> settingSubscriptions = new HashMap<String,String>();
+											org.opencrx.kernel.workflow1.cci2.TopicQuery topicQuery =
+													(org.opencrx.kernel.workflow1.cci2.TopicQuery)pmUser.newQuery(org.opencrx.kernel.workflow1.jmi1.Topic.class);
+											topicQuery.orderByName().ascending();
+											topicQuery.forAllDisabled().isFalse();
+
+											org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, providerName, segmentName);
+											for(Iterator i = workflowSegment.getTopic(topicQuery).iterator(); i.hasNext(); ) {
+												org.opencrx.kernel.workflow1.jmi1.Topic topic = (org.opencrx.kernel.workflow1.jmi1.Topic)i.next();
+												ObjectReference objRefTopic = new ObjectReference(topic, app);
+												org.opencrx.kernel.home1.cci2.SubscriptionQuery query = (org.opencrx.kernel.home1.cci2.SubscriptionQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.Subscription.class);
+												query.thereExistsTopic().equalTo(topic);
+												Collection subscriptions = userHome.getSubscription(query);
+												org.opencrx.kernel.home1.jmi1.Subscription subscription = subscriptions.isEmpty()
+													? null
+													: (org.opencrx.kernel.home1.jmi1.Subscription)subscriptions.iterator().next();
+												Set eventTypes = new HashSet();
+												if(subscription != null) {
+													for(Iterator j = subscription.getEventType().iterator(); j.hasNext(); ) {
+														eventTypes.add(
+															Integer.valueOf(((Number)j.next()).intValue())
+														);
+													}
+												}
+												String topicId = topic.refGetPath().getBase();
+												if (subscription != null && subscription.isActive()) {
+														settingSubscriptions.put("topicIsActive-" + topicId, "1");
+												}
+												if (eventTypes.contains(Integer.valueOf(1))) {settingSubscriptions.put("topicCreation-" + topicId, "1");}
+												if (eventTypes.contains(Integer.valueOf(3))) {settingSubscriptions.put("topicReplacement-" + topicId, "3");}
+												if (eventTypes.contains(Integer.valueOf(4))) {settingSubscriptions.put("topicRemoval-" + topicId, "4");}
+											}
+											org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
+												userHome,
+												app.getCurrentPerspective(),
+												userSettings,
+												false, // Do not init user home (allowed, as pmUser runs as user home's principal)
+												true, // Always save settings
+												userHome.getPrimaryGroup(),
+												settingTimezone,
+												settingStoreSettingsOnLogoff,
+												settingEmailAccount,
+												settingSendmailSubjectPrefix,
+												settingWebAccessUrl,
+												settingTopNavigationShowMax,
+												settingShowTopNavigationSublevel,
+												settingGridDefaultAlignmentIsWide,
+												settingHideWorkspaceDashboard,
+												settingScrollHeader,
+												settingRootObjects,
+												settingSubscriptions
+											);
 										}
 										pmUser.currentTransaction().commit();
 								} catch (Exception e) {
-										errorMsg = "Cannot apply user settings";
-										new ServiceException(e).log();
-										try {
-												pmUser.currentTransaction().rollback();
-										} catch (Exception er) {}
+									errorMsg = "Cannot apply user settings";
+									new ServiceException(e).log();
+									try {
+											pmUser.currentTransaction().rollback();
+									} catch (Exception er) {}
 								}
 
 						} else if (request.getParameter("ACTION.addMembership") != null) {
-								// System.out.println("addMembership: " + request.getParameter("ACTION.addMembership"));
-								// make principal member of selectedPrincipalGroup
+							// System.out.println("addMembership: " + request.getParameter("ACTION.addMembership"));
+							// make principal member of selectedPrincipalGroup
+							try {
+								pm.currentTransaction().begin();
+								org.opencrx.security.realm1.jmi1.Principal principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(new Path((request.getParameter("ACTION.addMembership"))));
+
+								org.opencrx.security.realm1.jmi1.PrincipalGroup selectedPrincipalGroup = null;
 								try {
-										pm.currentTransaction().begin();
-										org.opencrx.security.realm1.jmi1.Principal principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(new Path((request.getParameter("ACTION.addMembership"))));
+									selectedPrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+										membershipSelector,
+										realm
+									);
+								} catch (Exception e) {}
+								boolean isMemberOfSelectedPrincipalGroup = selectedPrincipalGroup != null && principal.getIsMemberOf() != null && principal.getIsMemberOf().contains(selectedPrincipalGroup);
 
-										org.opencrx.security.realm1.jmi1.PrincipalGroup selectedPrincipalGroup = null;
-										try {
-											selectedPrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-												membershipSelector,
-												realm
-											);
-										} catch (Exception e) {}
-										boolean isMemberOfSelectedPrincipalGroup = selectedPrincipalGroup != null && principal.getIsMemberOf() != null && principal.getIsMemberOf().contains(selectedPrincipalGroup);
-
-										if (selectedPrincipalGroup != null && !isMemberOfSelectedPrincipalGroup) {
-												principal.getIsMemberOf().add(selectedPrincipalGroup);
-										}
-										pm.currentTransaction().commit();
-								} catch (Exception e) {
-										errorMsg = "Cannot add Membership";
-										new ServiceException(e).log();
-										try {
-												pm.currentTransaction().rollback();
-										} catch (Exception er) {}
+								if (selectedPrincipalGroup != null && !isMemberOfSelectedPrincipalGroup) {
+										principal.getIsMemberOf().add(selectedPrincipalGroup);
 								}
-
-
+								pm.currentTransaction().commit();
+							} catch (Exception e) {
+								errorMsg = "Cannot add Membership";
+								new ServiceException(e).log();
+								try {
+										pm.currentTransaction().rollback();
+								} catch (Exception er) {}
+							}
 						} else if (request.getParameter("ACTION.removeMembership") != null) {
-								// System.out.println("removeMembership: " + request.getParameter("ACTION.removeMembership"));
-								// make principal member of selectedPrincipalGroup
-								try {
-										pm.currentTransaction().begin();
-										org.opencrx.security.realm1.jmi1.Principal principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(new Path((request.getParameter("ACTION.removeMembership"))));
+							// System.out.println("removeMembership: " + request.getParameter("ACTION.removeMembership"));
+							// make principal member of selectedPrincipalGroup
+							try {
+									pm.currentTransaction().begin();
+									org.opencrx.security.realm1.jmi1.Principal principal = (org.opencrx.security.realm1.jmi1.Principal)pm.getObjectById(new Path((request.getParameter("ACTION.removeMembership"))));
 
-										org.opencrx.security.realm1.jmi1.PrincipalGroup selectedPrincipalGroup = null;
-										try {
-											selectedPrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
-												membershipSelector,
-												realm
-											);
-										} catch (Exception e) {}
-										boolean isMemberOfSelectedPrincipalGroup = selectedPrincipalGroup != null && principal.getIsMemberOf() != null && principal.getIsMemberOf().contains(selectedPrincipalGroup);
+									org.opencrx.security.realm1.jmi1.PrincipalGroup selectedPrincipalGroup = null;
+									try {
+										selectedPrincipalGroup = (org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
+											membershipSelector,
+											realm
+										);
+									} catch (Exception e) {}
+									boolean isMemberOfSelectedPrincipalGroup = selectedPrincipalGroup != null && principal.getIsMemberOf() != null && principal.getIsMemberOf().contains(selectedPrincipalGroup);
 
-										if (selectedPrincipalGroup != null && isMemberOfSelectedPrincipalGroup) {
-												principal.getIsMemberOf().remove(selectedPrincipalGroup);
-										}
-										pm.currentTransaction().commit();
-								} catch (Exception e) {
-										errorMsg = "Cannot remove Membership";
-										new ServiceException(e).log();
-										try {
-												pm.currentTransaction().rollback();
-										} catch (Exception er) {}
-								}
-
+									if (selectedPrincipalGroup != null && isMemberOfSelectedPrincipalGroup) {
+											principal.getIsMemberOf().remove(selectedPrincipalGroup);
+									}
+									pm.currentTransaction().commit();
+							} catch (Exception e) {
+									errorMsg = "Cannot remove Membership";
+									new ServiceException(e).log();
+									try {
+											pm.currentTransaction().rollback();
+									} catch (Exception er) {}
+							}
 						} else if (request.getParameter("ACTION.exportXLS") != null) {
 								// System.out.println("Export_XLS: " + request.getParameter("ACTION.exportXLS"));
 								try {

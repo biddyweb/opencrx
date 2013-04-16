@@ -57,35 +57,33 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.UUID;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.kernel.account1.cci2.ContactQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Accounts;
+import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.utils.AccountQueryHelper;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.ComponentConfigHelper;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
-import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.id.UUIDs;
@@ -94,45 +92,117 @@ import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.WebKeys;
 import org.openmdx.portal.servlet.action.SelectObjectAction;
 
+/**
+ * ICalServlet
+ *
+ */
 public class ICalServlet extends FreeBusyServlet {
 
-	//-----------------------------------------------------------------------
-    @SuppressWarnings("deprecation")
-    protected boolean hasBirthday(
-    	org.opencrx.kernel.account1.jmi1.Contact contact,
-		int year
-    ) {
-		return
-			((contact.isDisabled() == null) || (!contact.isDisabled().booleanValue())) && // contact must not be disabled
-			((contact.getBirthdate() != null) && (contact.getBirthdate().getYear() <= year)) && // born no later than year
-			(true // not deceased
-			/*
-				(contact.getDeceasedDate() == null) ||
-				(contact.getDeceasedDate().getYear() > year)) ||
-				(	(contact.getDeceasedDate().getYear() == year) &&
-					((contact.getDeceasedDate().getMonth() > contact.getBirthdate().getMonth()) ||
-					(	(contact.getDeceasedDate().getMonth() == contact.getBirthdate().getMonth()) &&
-						(contact.getDeceasedDate().getDate() >= contact.getBirthdate().getDate())
-					)
-					)
-				)
-			*/
-			);
+	/**
+	 * CalendarType
+	 *
+	 */
+	public enum CalendarType {
+
+		BDAYS("/bdays"),
+		ANNIVERSARIES("/anniversaries"),
+		DATESOFDEATH("/datesofdeath");
+
+		private CalendarType(
+			String path
+		) {
+			this.path = path;
+		}
+		
+		public String getPath() {
+			return path;
+		}
+
+		private final String path;
 	}
 
-    //-----------------------------------------------------------------------
+    /**
+     * Returns true if date of given calendar is valid for given year.
+     * 
+     * @param contact
+     * @param calendarType
+     * @param year
+     * @return
+     */
+    protected boolean acceptDate(
+    	Contact contact,
+    	CalendarType calendarType,
+		int year
+    ) {
+    	GregorianCalendar dateOfBirth = null;
+    	GregorianCalendar anniversary = null;
+		GregorianCalendar dateOfDeath = null;
+		GregorianCalendar dateOfBirthInYear = null;
+		GregorianCalendar anniversaryInYear = null;
+    	if(contact.getBirthdate() != null) {
+    		dateOfBirth = new GregorianCalendar();
+    		dateOfBirth.setTime(contact.getBirthdate());
+    	}
+    	if(contact.getAnniversary() != null) {
+    		anniversary = new GregorianCalendar();
+    		anniversary.setTime(contact.getBirthdate());
+    	}
+		if(contact.getDateOfDeath() != null) {
+			dateOfDeath = new GregorianCalendar();
+			dateOfDeath.setTime(contact.getDateOfDeath());
+			if(dateOfBirth != null) {
+				dateOfBirthInYear = (GregorianCalendar)dateOfBirth.clone();
+				dateOfBirthInYear.set(Calendar.YEAR, year);
+			}
+			if(anniversary != null) {
+				anniversaryInYear = (GregorianCalendar)anniversary.clone();
+				anniversaryInYear.set(Calendar.YEAR, year);
+			}
+		}
+    	switch(calendarType) {
+	    	case BDAYS:
+	    		return
+	    			dateOfBirth != null && 
+	    			dateOfBirth.get(Calendar.YEAR) <= year /*&&
+	    			(dateOfDeath == null || dateOfBirthInYear.compareTo(dateOfDeath) <= 0)*/;
+	    	case ANNIVERSARIES:
+	    		return
+	    			anniversary != null && 
+	    			anniversary.get(Calendar.YEAR) <= year /*&&
+	    			(dateOfDeath == null || anniversaryInYear.compareTo(dateOfDeath) <= 0)*/;
+	    	case DATESOFDEATH:
+	    		return
+	    			dateOfDeath != null && 
+	    			dateOfDeath.get(Calendar.YEAR) <= year;
+	    	default:
+	    		return false;
+    	}
+	}
+
+    /**
+     * Get persistence manager.
+     * 
+     * @param req
+     * @return
+     */
     protected PersistenceManager getPersistenceManager(
         HttpServletRequest req
     ) {
-        return req.getUserPrincipal() == null ?
-            null :
+        return req.getUserPrincipal() == null ? null :
             this.pmf.getPersistenceManager(
                 req.getUserPrincipal().getName(),
                 null
             );
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get accounts helper.
+     * 
+     * @param pm
+     * @param filterId
+     * @param isDisabledFilter
+     * @return
+     */
     protected AccountQueryHelper getAccountsHelper(
         PersistenceManager pm,
         String filterId,
@@ -150,7 +220,13 @@ public class ICalServlet extends FreeBusyServlet {
         return accountsHelper;
     }
     
-	//-----------------------------------------------------------------------
+    /**
+     * Get access URL for given activity.
+     * 
+     * @param req
+     * @param activity
+     * @return
+     */
     protected String getActivityUrl(        
         HttpServletRequest req,
         Activity activity
@@ -171,37 +247,20 @@ public class ICalServlet extends FreeBusyServlet {
         	"&amp;parameter=" + selectActivityAction.getParameterEncoded(); 
     }
     
-	//-----------------------------------------------------------------------
-	protected void printAlarms(
-		PrintWriter p,
-		Activity event
-	) {
-		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
-        Collection<Timer> timers = event.getAssignedTimer();
-        List<String> principalChain = UserObjects.getPrincipalChain(pm);
-        for(Timer timer: timers) {
-        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
-        		p.println("BEGIN:VALARM");
-        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
-        		p.println("TRIGGER:" + (triggerMinutes < 0 ? "-" : "+") + "PT" + Math.abs(triggerMinutes) + "M");
-        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
-        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
-        		p.println("SUMMARY:" + timer.getName());
-        		if(timer.getDescription() != null) {
-        			p.println("DESCRIPTION:" + timer.getDescription());
-        		}
-        		p.println("END:VALARM");
-        	}
-        }
-	}
-
-    //-----------------------------------------------------------------------
+    /**
+     * Print ICAL for given activity.
+     * 
+     * @param activity
+     * @param p
+     * @param req
+     * @param index
+     */
     protected void printICal(
     	Activity activity,
     	PrintWriter p,
     	HttpServletRequest req,
     	int index
-    ) {
+    ) throws ServiceException {
         String ical = activity.getIcal();
         ical = ical.replace("\r\n", "\n"); // Remove \r just in case
         if(ical.indexOf("BEGIN:VEVENT") >= 0) {
@@ -234,7 +293,7 @@ public class ICalServlet extends FreeBusyServlet {
             		p.write("URL:" + url + "\n");
             	}
             }
-            this.printAlarms(p, activity);
+            Activities.getInstance().printAlarms(p, activity);
             p.write("END:VEVENT\n");
         }
         else if(ical.indexOf("BEGIN:VTODO") >= 0) {
@@ -259,12 +318,208 @@ public class ICalServlet extends FreeBusyServlet {
             		p.write("URL:" + url + "\n");
             	}
             }
-            this.printAlarms(p, activity);
+            Activities.getInstance().printAlarms(p, activity);
             p.write("END:VTODO\n");                        
         }
     }
-    
-    //-----------------------------------------------------------------------
+
+    /**
+     * Print given calendar of given type for given accounts.
+     * 
+     * @param calendarType
+     * @param accountsHelper
+     * @param req
+     * @param resp
+     * @throws ServiceException
+     */
+    protected void printCalendar(
+    	CalendarType calendarType,
+    	AccountQueryHelper accountsHelper,
+        HttpServletRequest req, 
+        HttpServletResponse resp    	
+    ) throws IOException {
+    	PersistenceManager pm = accountsHelper.getPersistenceManager();
+    	final int YEARS_BEFORE_SELECTED_YEAR = 1;
+    	final int YEARS_AFTER_SELECTED_YEAR = 1;
+		// year
+		GregorianCalendar now = new GregorianCalendar();
+		int year = now.get(GregorianCalendar.YEAR);
+		if(req.getParameter("year") != null) {
+			try {
+				year = Integer.parseInt(req.getParameter("year"));
+			} catch (Exception e) {}
+		}
+		// alarm
+		boolean createAlarm = req.getParameter("alarm") != null ? Boolean.valueOf(req.getParameter("alarm")) :
+			req.getParameter("ALARM") != null ? Boolean.valueOf(req.getParameter("ALARM")) :
+				false;
+		// icalType
+		short icalType = ICalendar.ICAL_TYPE_VEVENT;
+		if ((req.getParameter("icalType") != null) && (req.getParameter("icalType").compareTo("VTODO") == 0)) {
+			icalType = ICalendar.ICAL_TYPE_VTODO;
+		}
+		// max
+        int max = req.getParameter("max") != null ?
+        	Integer.valueOf(req.getParameter("max")) :
+        		DEFAULT_MAX_ACTIVITIES;
+        // categories
+        String categories = req.getParameter("categories") != null ? req.getParameter("categories") :
+        	calendarType.name();
+        // summaryPrefix
+        String summaryPrefix = req.getParameter("summaryPrefix") != null ? req.getParameter("summaryPrefix") :
+        	"";
+        if(accountsHelper.getAccountSegment() != null) {
+			SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(ICalendar.DATETIME_FORMAT);
+			dateTimeFormatter.setLenient(false);
+			GregorianCalendar calendarEndAt = new GregorianCalendar();
+			calendarEndAt.add(GregorianCalendar.YEAR, YEARS_AFTER_SELECTED_YEAR + 1);
+			calendarEndAt.set(GregorianCalendar.MONTH, 0);
+			calendarEndAt.set(GregorianCalendar.DAY_OF_MONTH, 1);
+			calendarEndAt.set(GregorianCalendar.HOUR_OF_DAY, 0);
+			calendarEndAt.set(GregorianCalendar.MINUTE, 0);
+			calendarEndAt.set(GregorianCalendar.SECOND, 0);
+			calendarEndAt.set(GregorianCalendar.MILLISECOND, 0);
+			ContactQuery contactQuery = (ContactQuery)pm.newQuery(Contact.class);
+			contactQuery.forAllDisabled().isFalse();
+			switch(calendarType) {
+				case BDAYS:
+					contactQuery.thereExistsBirthdate().lessThanOrEqualTo(calendarEndAt.getTime());
+					break;
+				case ANNIVERSARIES:
+					contactQuery.thereExistsAnniversary().lessThanOrEqualTo(calendarEndAt.getTime());
+					break;
+				case DATESOFDEATH:
+					contactQuery.thereExistsDateOfDeath().lessThanOrEqualTo(calendarEndAt.getTime());
+					break;
+			}
+        	Collection<Account> contacts = accountsHelper.getFilteredAccounts(contactQuery);
+            resp.setCharacterEncoding("UTF-8");
+            resp.setStatus(HttpServletResponse.SC_OK);
+            resp.setContentType("text/calendar");                
+            PrintWriter p = resp.getWriter();	    
+            p.write("BEGIN:VCALENDAR\n");
+            p.write("VERSION:2.0\n");
+            p.write("PRODID:" + ICalendar.PROD_ID + "\n");
+            p.write("CALSCALE:GREGORIAN\n");
+            p.write("METHOD:PUBLISH\n");    
+            int n = 0;
+        	for(Account account: contacts) {
+        		if(account instanceof Contact) {
+        			Contact contact = (Contact)account;
+					for(
+						int i = -YEARS_BEFORE_SELECTED_YEAR; 
+						i <= YEARS_AFTER_SELECTED_YEAR; 
+						i++
+					) {			
+						int currentYear = year + i;
+						if(this.acceptDate(contact, calendarType, currentYear)) {
+						    UUID uid = null;
+						    try {
+						        uid = UUIDConversion.fromString(contact.refGetPath().getBase());
+						    } catch(Exception e) {
+						        uid = UUIDs.newUUID();
+						    }
+						    String lastModified = dateTimeFormatter.format(new Date());
+						    String dtStart = null;
+						    String dtEnd = null;
+						    String dtDue = null;
+						    String valarm = null;
+						    String name = "";
+						    try {
+					  			name = contact.getFullName();
+					    		String age = "";
+					    		String description = "";
+					    		GregorianCalendar date = new GregorianCalendar();
+					    		switch(calendarType) {
+						    		case BDAYS: {
+						    			date = new GregorianCalendar();
+							    		date.setTime(contact.getBirthdate());
+							    		if(contact.getDateOfDeath() == null) {
+								    		age = Integer.toString(currentYear - date.get(Calendar.YEAR));
+								    		description = name + " *" + date.get(Calendar.YEAR) + " (" + age + ")";							    			
+							    		} else {
+							    			GregorianCalendar dateOfDeath = new GregorianCalendar();
+							    			dateOfDeath.setTime(contact.getDateOfDeath());
+								    		description = name + " " + date.get(Calendar.YEAR) + "-" + dateOfDeath.get(Calendar.YEAR) + " (+)";							    			
+							    		}
+							    		break;
+						    		}
+						    		case ANNIVERSARIES: {
+						    			date = new GregorianCalendar();
+							    		date.setTime(contact.getAnniversary());
+							    		age = Integer.toString(currentYear - date.get(GregorianCalendar.YEAR));
+							    		description = name + " #" + date.get(GregorianCalendar.YEAR) + " (" + age + ")";
+							    		break;
+						    		}
+						    		case DATESOFDEATH: {
+						    			date = new GregorianCalendar();
+							    		date.setTime(contact.getDateOfDeath());
+							    		age = Integer.toString(currentYear - date.get(GregorianCalendar.YEAR));
+							    		description = name + " +" + date.get(GregorianCalendar.YEAR) + " (" + age + ")";
+							    		break;
+						    		}
+					    		}
+					    		date.set(Calendar.YEAR, currentYear);
+					    		dtStart = "DTSTART;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
+					    		if(createAlarm) {
+									GregorianCalendar yesterday = new GregorianCalendar();
+							        yesterday.add(GregorianCalendar.DAY_OF_MONTH, -1);
+									if(yesterday.compareTo(date) <= 0) {
+										valarm = "BEGIN:VALARM\n" +
+								        "ACTION:DISPLAY\n" +
+								        "DESCRIPTION:" + description + "\n" +
+								        "TRIGGER;VALUE=DURATION:-P1D\n" +
+								        "END:VALARM\n";
+									}
+					    		}
+						        date.add(GregorianCalendar.DAY_OF_MONTH, 1);
+						        dtEnd = "DTEND;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
+						        dtDue = "DUE;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
+						        String emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(account, null);
+						        String attendee = null;
+						        if(emailAddress != null) {
+									String fullName = contact.getFullName();
+									if(fullName == null) {
+										attendee = "ATTENDEE;CN=" + emailAddress + ";ROLE=REQ-PARTICIPANT;RSVP=TRUE:MAILTO:" + emailAddress + "\n";
+									} else {
+										attendee = "ATTENDEE;CN=\"" + fullName + " (" + emailAddress + ")\";ROLE=REQ-PARTICIPANT;RSVP=TRUE:MAILTO:" + emailAddress + "\n";
+									}
+						        }
+						        p.write((icalType == ICalendar.ICAL_TYPE_VTODO ? "BEGIN:VTODO\n" : "BEGIN:VEVENT\n"));
+						        p.write("UID:" + uid.toString() + "-" + age + "\n");
+						        p.write("LAST-MODIFIED:" + lastModified.substring(0, 15) + "Z\n");
+						        p.write(dtStart + "\n");
+						        p.write(dtEnd + "\n");
+						        p.write(dtDue + "\n");
+						        p.write(valarm != null ? valarm : "");
+						        p.write("CATEGORIES:" + categories + "\n");
+						        p.write("DTSTAMP:" + (dateTimeFormatter.format(contact.getModifiedAt())).substring(0, 15) + "Z\n");
+						        p.write("SUMMARY:" + (summaryPrefix == null || summaryPrefix.isEmpty() ? "" : summaryPrefix + " - ") + description + "\n");
+						        p.write("DESCRIPTION:" + description + "\n");
+						        p.write(attendee != null ? attendee : "");
+						        p.write("PRIORITY:6\n");
+						        p.write("STATUS:CONFIRMED\n");
+						        p.write("CLASS:PUBLIC\n");
+						        String url = Base.getInstance().getAccessUrl(req, "-ical-", contact);
+					        	p.write("URL:" + url + "\n");
+						        p.write(icalType == ICalendar.ICAL_TYPE_VTODO ? "END:VTODO\n" : "END:VEVENT\n");
+					 		} catch (Exception e) {
+					 			new ServiceException(e).log();
+					 		}
+						}
+					}
+				    n++;
+                    if(n > max) break;
+        		}
+        	}
+        	p.write("END:VCALENDAR\n");
+            p.flush();
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.opencrx.application.ical.FreeBusyServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     protected void doGet(
         HttpServletRequest req, 
@@ -326,13 +581,13 @@ public class ICalServlet extends FreeBusyServlet {
 	                    Integer.valueOf(maxActivitiesValue);
 	            // Return all activities in ICS format
 	            if(
-	                RESOURCE_TYPE_ICS.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
-	                RESOURCE_NAME_ACTIVITIES_ICS.equals(req.getParameter(PARAMETER_NAME_RESOURCE))
+	                RESOURCE_FORMAT_ICS.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
+	                RESOURCE_ACTIVITIES_ICS.equals(req.getParameter(PARAMETER_NAME_RESOURCE))
 	            ) {
 	                resp.setCharacterEncoding("UTF-8");
 	                resp.setStatus(HttpServletResponse.SC_OK);
 	                resp.setContentType("text/calendar");
-	                ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
+	                ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
 	                if(activitiesHelper.isDisabledFilter()) {
 	                    activityQuery.thereExistsDisabled().isTrue();                    
 	                }
@@ -361,12 +616,16 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.write("END:VEVENT\n");
 	                int n = 0;
 	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
-	                	this.printICal(
-	                		activity, 
-	                		p, 
-	                		req, 
-	                		n
-	                	);
+	                	try {
+		                	this.printICal(
+		                		activity, 
+		                		p, 
+		                		req, 
+		                		n
+		                	);
+	                	} catch(Exception e) {
+	                		new ServiceException(e).log();
+	                	}
 	                    n++;
 	                    if(n > maxActivities) break;
 	                }
@@ -375,13 +634,13 @@ public class ICalServlet extends FreeBusyServlet {
 	            }
 	            // Return all activities in XML format
 	            else if(
-	                RESOURCE_TYPE_XML.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
-	                RESOURCE_NAME_ACTIVITIES_XML.equals(req.getParameter(PARAMETER_NAME_RESOURCE))
+	                RESOURCE_FORMAT_XML.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
+	                RESOURCE_ACTIVITIES_XML.equals(req.getParameter(PARAMETER_NAME_RESOURCE))
 	            ) {
 	                resp.setCharacterEncoding("UTF-8");
 	                resp.setStatus(HttpServletResponse.SC_OK);
-	                resp.setContentType("text/html");
-	                ActivityQuery activityQuery = Utils.getActivityPackage(pm).createActivityQuery();
+	                resp.setContentType("text/xml");
+	                ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
 	                if(activitiesHelper.isDisabledFilter()) {
 	                    activityQuery.thereExistsDisabled().isTrue();                    
 	                }
@@ -394,14 +653,14 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.write("<data>\n");
 	                int n = 0;
 	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
-	                    p.write("  <event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getActivityUrl(req, activity) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">\n");
+	                    p.write("<event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getActivityUrl(req, activity) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">");
 	                    String description = (activity.getDescription() == null) || (activity.getDescription().trim().length() == 0) ? 
 	                        activity.getName() : 
 	                        activity.getDescription();
 	                    p.write(XMLEncoder.encode(
 	                        description == null ? "" : description
 	                    ));
-	                    p.write("  </event>\n");
+	                    p.write("</event>\n");
 	                    n++;
 	                    if(n > maxActivities) break;
 	                }
@@ -409,8 +668,8 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.flush();
 	            }
 	            else if(
-	                RESOURCE_TYPE_HTML.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
-	                RESOURCE_NAME_ACTIVITIES_HTML.equals(req.getParameter(PARAMETER_NAME_RESOURCE))
+	                RESOURCE_FORMAT_HTML.equals(req.getParameter(PARAMETER_NAME_TYPE)) ||
+	                RESOURCE_ACTIVITIES_HTML.equals(req.getParameter(PARAMETER_NAME_RESOURCE))
 	            ) {        
 	                int height = req.getParameter(PARAMETER_NAME_HEIGHT) == null
 	                    ? 500
@@ -526,177 +785,39 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.write("</html>\n");
 	                p.flush();
 	            }
-	        }
-            else {
+	        } else {
                 super.doGet(req, resp);
             }
         }
-        else if(req.getRequestURI().endsWith("/bdays")) {
-        	final int YEARS_BEFORE_SELECTED_YEAR = 1;
-        	final int YEARS_AFTER_SELECTED_YEAR = 1;        	
-	        AccountQueryHelper accountsHelper = this.getAccountsHelper(
-	            pm, 
-	            filterId,
-	            isDisabledFilter
-	        );
-			// year
-			GregorianCalendar now = new GregorianCalendar();
-			int year = now.get(GregorianCalendar.YEAR);
-			if(req.getParameter("year") != null) {
-				try {
-					year = Integer.parseInt(req.getParameter("year"));
-				} catch (Exception e) {}
-			}
-			// alarm
-			boolean createAlarm = req.getParameter("alarm") != null ?
-				Boolean.valueOf(req.getParameter("alarm")) :
-				req.getParameter("ALARM") != null ?
-					Boolean.valueOf(req.getParameter("ALARM")) :
-					false;
-			// icalType
-			short icalType = ICalendar.ICAL_TYPE_VEVENT;
-			if ((req.getParameter("icalType") != null) && (req.getParameter("icalType").compareTo("VTODO") == 0)) {
-				icalType = ICalendar.ICAL_TYPE_VTODO;
-			}		
-			// max
-            int max = req.getParameter("max") != null ?
-            	Integer.valueOf(req.getParameter("max")) :
-            		DEFAULT_MAX_ACTIVITIES;
-            // categories
-            String categories = req.getParameter("categories") != null ?
-            	req.getParameter("categories") :
-            	"Birthday";
-            // summaryPrefix
-            String summaryPrefix = req.getParameter("summaryPrefix") != null ?
-            	req.getParameter("summaryPrefix") :
-            	"";
-	        if(accountsHelper.getAccountSegment() != null) {
-				SimpleDateFormat dateTimeFormatter = new SimpleDateFormat(ICalendar.DATETIME_FORMAT);
-				dateTimeFormatter.setLenient(false);
-				GregorianCalendar latestBirthdate = new GregorianCalendar();
-				latestBirthdate.add(GregorianCalendar.YEAR, YEARS_AFTER_SELECTED_YEAR + 1);
-				latestBirthdate.set(GregorianCalendar.MONTH, 0);
-				latestBirthdate.set(GregorianCalendar.DAY_OF_MONTH, 1);
-				latestBirthdate.set(GregorianCalendar.HOUR_OF_DAY, 0);
-				latestBirthdate.set(GregorianCalendar.MINUTE, 0);
-				latestBirthdate.set(GregorianCalendar.SECOND, 0);
-				latestBirthdate.set(GregorianCalendar.MILLISECOND, 0);
-				GregorianCalendar earliestDeceasedDate = (GregorianCalendar)latestBirthdate.clone();
-				earliestDeceasedDate.add(GregorianCalendar.YEAR, -(YEARS_BEFORE_SELECTED_YEAR + YEARS_AFTER_SELECTED_YEAR + 1));	        	
-				org.opencrx.kernel.account1.cci2.ContactQuery contactFilter =
-			        (org.opencrx.kernel.account1.cci2.ContactQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Contact.class);
-				contactFilter.forAllDisabled().isFalse();
-				contactFilter.thereExistsBirthdate().lessThanOrEqualTo(latestBirthdate.getTime());	        
-				//contactFilter.forAllDeceasedDate().greaterThanOrEqualTo(earliestDeceasedDate.getTime());				
-	        	Collection<Account> contacts = accountsHelper.getFilteredAccounts(contactFilter);
-                resp.setCharacterEncoding("UTF-8");
-                resp.setStatus(HttpServletResponse.SC_OK);
-                resp.setContentType("text/calendar");                
-                PrintWriter p = resp.getWriter();	    
-                p.write("BEGIN:VCALENDAR\n");
-                p.write("VERSION:2.0\n");
-                p.write("PRODID:" + ICalendar.PROD_ID + "\n");
-                p.write("CALSCALE:GREGORIAN\n");
-                p.write("METHOD:PUBLISH\n");    
-                int n = 0;
-	        	for(Account account: contacts) {
-	        		if(account instanceof Contact) {
-	        			Contact contact = (Contact)account;
-						for(
-							int i = -YEARS_BEFORE_SELECTED_YEAR; 
-							i <= YEARS_AFTER_SELECTED_YEAR; 
-							i++
-						) {			
-							int currentYear = year + i;
-							if(this.hasBirthday(contact, currentYear)) {
-							    if(contact.getBirthdate() != null) {
-								    UUID uid = null;
-								    try {
-								        uid = UUIDConversion.fromString(contact.refGetPath().getBase());
-								    } catch(Exception e) {
-								        uid = UUIDs.newUUID();
-								    }
-								    String lastModified = dateTimeFormatter.format(new Date());
-								    String dtStart = null;
-								    String dtEnd = null;
-								    String dtDue = null;
-								    String valarm = null;
-								    String age = "";
-								    String name = "";
-								    try {
-							  			name = contact.getFullName();
-							    		GregorianCalendar date = new GregorianCalendar();
-							    		date.setTime(contact.getBirthdate());
-							    		age = Integer.toString(currentYear - date.get(GregorianCalendar.YEAR));
-							    		//rrule = "RRULE:FREQ=YEARLY;COUNT=3;BYMONTHDAY=" + birthdate.get(GregorianCalendar.DAY_OF_MONTH) + ";BYMONTH=" + (birthdate.get(GregorianCalendar.MONTH) + 1);
-							    		date.set(GregorianCalendar.YEAR, currentYear);
-							    		dtStart = "DTSTART;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
-							    		if (createAlarm) {
-											GregorianCalendar yesterday = new GregorianCalendar();
-									        yesterday.add(GregorianCalendar.DAY_OF_MONTH, -1);
-											if(yesterday.compareTo(date) <= 0) {
-												// generate VALARM
-												valarm = "BEGIN:VALARM\n" +
-										        "ACTION:DISPLAY\n" +
-										        "DESCRIPTION:Birthday " + age + " coming up " + name + "\n" +
-										        "TRIGGER;VALUE=DURATION:-P1D\n" +
-										        "END:VALARM\n";
-											}
-							    		}
-								        date.add(GregorianCalendar.DAY_OF_MONTH, 1);
-								        dtEnd = "DTEND;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
-								        dtDue = "DUE;VALUE=DATE:" + (dateTimeFormatter.format(date.getTime())).substring(0, 8);
-								        String emailAddress = Accounts.getInstance().getPrimaryBusinessEMail(account, null);
-								        String attendee = null;
-								        if(emailAddress != null) {
-											String fullName = contact.getFullName();
-											if(fullName == null) {
-												attendee = "ATTENDEE;CN=" + emailAddress + ";ROLE=REQ-PARTICIPANT;RSVP=TRUE:MAILTO:" + emailAddress + "\n";
-											}
-											else {
-												attendee = "ATTENDEE;CN=\"" + fullName + " (" + emailAddress + ")\";ROLE=REQ-PARTICIPANT;RSVP=TRUE:MAILTO:" + emailAddress + "\n";
-											}
-								        }
-								        p.write((icalType == ICalendar.ICAL_TYPE_VTODO ? "BEGIN:VTODO\n" : "BEGIN:VEVENT\n"));
-								        p.write("UID:" + uid.toString() + "-" + age + "\n");
-								        p.write("LAST-MODIFIED:" + lastModified.substring(0, 15) + "Z\n");
-								        p.write(dtStart + "\n");
-								        p.write(dtEnd + "\n");
-								        p.write(dtDue + "\n");
-								        p.write(valarm != null ? valarm : "");
-								        p.write("CATEGORIES:" + categories + "\n");
-								        p.write("DTSTAMP:" + (dateTimeFormatter.format(contact.getModifiedAt())).substring(0, 15) + "Z\n");
-								        p.write("SUMMARY:" + (summaryPrefix.length() == 0 ? "" : summaryPrefix + " ") + name + " (" + age + ")\n");
-							    		date.setTime(contact.getBirthdate());								        
-								        p.write("DESCRIPTION:" + name + " *" + date.get(GregorianCalendar.YEAR) + "\n");
-								        p.write(attendee != null ? attendee : "");
-								        p.write("PRIORITY:6\n");
-								        p.write("STATUS:CONFIRMED\n");
-								        p.write("CLASS:PUBLIC\n");
-								        String url = Base.getInstance().getAccessUrl(req, "-ical-", contact);
-							        	p.write("URL:" + url + "\n");
-								        p.write(icalType == ICalendar.ICAL_TYPE_VTODO ? "END:VTODO\n" : "END:VEVENT\n");
-							 		} 
-								    catch (Exception e) {
-							 			new ServiceException(e).log();
-							 		}
-							    }
-							}
-						}
-					    n++;
-	                    if(n > max) break;								    						
-	        		}
-	        	}
-	        	p.write("END:VCALENDAR\n");	        	
-                p.flush();	        	
-	        }
-            else {
-                super.doGet(req, resp);
-            }
-        }    
-        else {
-            super.doGet(req, resp);
+        // BDAYS
+        else if(req.getRequestURI().endsWith(CalendarType.BDAYS.getPath())) {       	
+        	this.printCalendar(
+        		CalendarType.BDAYS,
+        		this.getAccountsHelper(pm, filterId, isDisabledFilter),
+        		req,
+        		resp
+        	);
         }
+        // ANNIVERSARIES
+        else if(req.getRequestURI().endsWith(CalendarType.ANNIVERSARIES.getPath())) {
+        	this.printCalendar(
+        		CalendarType.ANNIVERSARIES,
+        		this.getAccountsHelper(pm, filterId, isDisabledFilter),
+        		req,
+        		resp
+        	);
+        }
+        // DATESOFDEATH
+        else if(req.getRequestURI().endsWith(CalendarType.DATESOFDEATH.getPath())) {
+        	this.printCalendar(
+        		CalendarType.DATESOFDEATH,
+        		this.getAccountsHelper(pm, filterId, isDisabledFilter),
+        		req,
+        		resp
+        	);
+	    } else {
+	    	super.doGet(req, resp);
+	    }        
         try {
         	if(pm != null) {
         		pm.close();
@@ -706,8 +827,10 @@ public class ICalServlet extends FreeBusyServlet {
         	}
         } catch(Exception e) {}
     }
-    
-    //-----------------------------------------------------------------------
+
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doPut(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     protected void doPut(
         HttpServletRequest req, 
@@ -758,8 +881,8 @@ public class ICalServlet extends FreeBusyServlet {
     //-----------------------------------------------------------------------
     private static final long serialVersionUID = 4746783518992145105L;
     
-    protected final static String RESOURCE_NAME_ACTIVITIES_ICS = "activities.ics";
-    protected final static String RESOURCE_NAME_ACTIVITIES_HTML = "activities.html";
-    protected final static String RESOURCE_NAME_ACTIVITIES_XML = "activities.xml";
+    protected final static String RESOURCE_ACTIVITIES_ICS = "activities.ics";
+    protected final static String RESOURCE_ACTIVITIES_HTML = "activities.html";
+    protected final static String RESOURCE_ACTIVITIES_XML = "activities.xml";
         
 }

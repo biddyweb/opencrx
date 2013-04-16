@@ -59,6 +59,7 @@ import java.util.List;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.application.ical.ICalServlet.CalendarType;
 import org.opencrx.kernel.activity1.jmi1.ActivityCategory;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
 import org.opencrx.kernel.activity1.jmi1.ActivityFilterGroup;
@@ -79,8 +80,22 @@ import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 
+/**
+ * AdapterConnectionHelper
+ *
+ */
 public class AdapterConnectionHelper {
 
+	/**
+	 * Map paths to URLs.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @param servletType
+	 * @param paths
+	 * @return
+	 * @throws ServiceException
+	 */
 	private static List<URL> mapToURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
@@ -102,6 +117,15 @@ public class AdapterConnectionHelper {
 		}
 	}
 	
+	/**
+	 * Get calendar paths for given object.
+	 * 
+	 * @param obj
+	 * @param isCollectionTypeTask
+	 * @param suffix
+	 * @return
+	 * @throws ServiceException
+	 */
 	private static List<String> getCalendarPaths(
 		RefObject_1_0 obj,
 		boolean isCollectionTypeTask,
@@ -177,6 +201,14 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get card paths for given object.
+	 * 
+	 * @param obj
+	 * @param suffix
+	 * @return
+	 * @throws ServiceException
+	 */
 	private static List<String> getCardPaths(
 		RefObject_1_0 obj,
 		String suffix
@@ -217,6 +249,14 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get CalDAV collection set URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getCalDavCollectionSetURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -243,6 +283,14 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get CalDAV event collection URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getCalDavEventCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -255,6 +303,14 @@ public class AdapterConnectionHelper {
 		);
 	}
 
+	/**
+	 * Get CalDAV task collection URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getCalDavTaskCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -267,6 +323,14 @@ public class AdapterConnectionHelper {
 		);
 	}
 
+	/**
+	 * Get WebDAV collection URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getWebDavCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -293,6 +357,14 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get CardDAV collection set URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getCardDavCollectionSetURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -318,6 +390,14 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get CardDAV collection URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getCardDavCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -349,6 +429,16 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get activities ICAL URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @param optionMax
+	 * @param optionIsDisabled
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getICalURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
@@ -363,7 +453,7 @@ public class AdapterConnectionHelper {
 				if((resource.getName() != null) && !resource.getName().isEmpty()) {
 					paths.add("/resource/" + resource.getName() + suffix);      	
 			      }
-			}			
+			}
 		    paths.addAll(
 		    	getCalendarPaths(
 		    		obj,
@@ -382,6 +472,17 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get timeline URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @param optionMax
+	 * @param optionIsDisabled
+	 * @param optionTimelineHeight
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getTimelineURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
@@ -416,6 +517,17 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get freebusy URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @param optionUser
+	 * @param optionMax
+	 * @param optionIsDisabled
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getFreeBusyURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
@@ -459,7 +571,20 @@ public class AdapterConnectionHelper {
 		}
 	}
 
-	public static List<URL> getBirthdayCalendarURLs(
+	/**
+	 * Get other calendar URLs (bdays, anniversaries, datesofdeath) for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @param optionMax
+	 * @param optionSummaryPrefix
+	 * @param optionCategories
+	 * @param optionYear
+	 * @param optionAlarm
+	 * @return
+	 * @throws ServiceException
+	 */
+	public static List<URL> getOtherCalendarURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
 		String optionMax,
@@ -479,20 +604,35 @@ public class AdapterConnectionHelper {
 			paths.addAll(
 				getCardPaths(
 					obj,
-					"&type=ics&max=&icalType=VTODO&summaryPrefix=" + (optionSummaryPrefix == null ? "" : optionSummaryPrefix) + "&categories=" + (optionCategories == null ? "" : optionCategories) + "&year=" + (optionYear == null ? "" : optionYear) + "&alarm=" + (optionAlarm == null ? "" : optionAlarm)
+					"&type=ics&max=" + optionMax + "&icalType=VTODO&summaryPrefix=" + (optionSummaryPrefix == null ? "" : optionSummaryPrefix) + "&categories=" + (optionCategories == null ? "" : optionCategories) + "&year=" + (optionYear == null ? "" : optionYear) + "&alarm=" + (optionAlarm == null ? "" : optionAlarm)
 				)
 			);
-			return mapToURLs(
-				baseUrl.endsWith("/") ? baseUrl + "bdays?id=" : baseUrl + "/bdays?id=",
-				obj,
-				"ical",
-				paths
-			);
+			List<URL> urls = new ArrayList<URL>();
+			for(CalendarType calendarType: CalendarType.values()) {
+				urls.addAll(
+					mapToURLs(
+						baseUrl.endsWith("/") ? baseUrl + calendarType.getPath().substring(1) + "?id=" : 
+							baseUrl + calendarType.getPath() + "?id=",
+						obj,
+						"ical",
+						paths
+					)
+				);
+			}
+			return urls;
 		} catch(Exception e) {
 			throw new ServiceException(e);
 		}
 	}
 
+	/**
+	 * Get VCARD URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getVCardURLs(
 		String baseUrl,
 		RefObject_1_0 obj
@@ -513,6 +653,14 @@ public class AdapterConnectionHelper {
 		}
 	}
 
+	/**
+	 * Get AirSync URLs for given object.
+	 * 
+	 * @param baseUrl
+	 * @param obj
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static List<URL> getAirSyncURLs(
 		String baseUrl,
 		RefObject_1_0 obj

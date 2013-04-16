@@ -712,7 +712,6 @@ public class Exporter extends AbstractImpl {
 		}
 		
 		// ---------------------------------------------------------------------
-		@SuppressWarnings("unchecked")
 		private void exportObject(
 			TraversedObject object, 
 			String reference, 
@@ -732,7 +731,8 @@ public class Exporter extends AbstractImpl {
 					object, 
 					reference
 				);
-				Map<String, ModelElement_1_0> references = (Map<String,ModelElement_1_0>)model.getElement(objectType).objGetValue("reference");
+				@SuppressWarnings("unchecked")
+                Map<String, ModelElement_1_0> references = model.getElement(objectType).objGetMap("reference");
 				for (ModelElement_1_0 featureDef : references.values()) {
 					ModelElement_1_0 referencedEnd = model.getElement(featureDef.objGetValue("referencedEnd"));
 					boolean referenceIsComposite = model.isReferenceType(featureDef) && AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation"));
@@ -863,9 +863,10 @@ public class Exporter extends AbstractImpl {
 			private Map<String, ModelElement_1_0> getAttributes(
 				TraversedObject object
 			) throws ServiceException {
-				return ((Map<String, ModelElement_1_0>) this.model.getElement(
-					object.getObject().refClass().refMofId()).objGetValue("attribute")
-				);
+				Map<String, ModelElement_1_0> attributes = this.model.getElement(
+					object.getObject().refClass().refMofId()
+				).objGetMap("attribute");
+				return attributes;
 			}
 
 			private int getMaxValueSize(

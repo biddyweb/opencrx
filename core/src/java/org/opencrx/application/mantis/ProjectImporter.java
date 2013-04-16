@@ -76,6 +76,8 @@ import java.util.regex.Pattern;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
+import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
@@ -90,12 +92,13 @@ import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.generic.jmi1.Media;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.cci.SystemAttributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ProjectImporter {
 
@@ -132,7 +135,6 @@ public class ProjectImporter {
     //-----------------------------------------------------------------------
     private Contact getContact(
         int userId,
-        org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg,
         org.opencrx.kernel.activity1.jmi1.Segment activitySegment,
         List<String> errors
     ) throws SQLException, ServiceException {
@@ -153,7 +155,7 @@ public class ProjectImporter {
                 while(tokenizer.hasMoreTokens()) {
                     emails.add(tokenizer.nextToken());
                 }
-                ResourceQuery resourceQuery = activityPkg.createResourceQuery();
+                ResourceQuery resourceQuery = (ResourceQuery)pm.newQuery(Resource.class);
                 resourceQuery.thereExistsDescription().equalTo(
                     emails.toArray(new String[emails.size()])
                 );
@@ -235,16 +237,13 @@ public class ProjectImporter {
             activityStates.put(new Integer(80), new Integer(120));
         
             // get activity segment
-            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = Utils.getActivityPackage(pm);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
                 (org.opencrx.kernel.activity1.jmi1.Segment)this.pm.getObjectById(
                     new Path("xri:@openmdx:org.opencrx.kernel.activity1/provider/" + providerName + "/segment/" + segmentName)
                 );
             // generic package
-            org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = Utils.getGenericPackage(pm);
             // Get activity creator
-            org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorFilter = 
-                activityPkg.createActivityCreatorQuery();
+            org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorFilter = (ActivityCreatorQuery)this.pm.newQuery(ActivityCreator.class); 
             activityCreatorFilter.name().equalTo(
                 new String[]{activityCreatorName}
             );            
@@ -261,8 +260,7 @@ public class ProjectImporter {
             }
                 
             // Get transition
-            org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery processTransitionFilter = 
-                activityPkg.createActivityProcessTransitionQuery();
+            ActivityProcessTransitionQuery processTransitionFilter = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
             processTransitionFilter.name().equalTo(
                 new String[]{processTransitionName}
             );            
@@ -349,7 +347,7 @@ public class ProjectImporter {
                     psBugTexts.close();
                     
                     String activityId = idFormatter.format(bugId);
-                    ActivityQuery activityFilter = activityPkg.createActivityQuery();
+                    ActivityQuery activityFilter = (ActivityQuery)pm.newQuery(Activity.class);
                     activityFilter.thereExistsMisc1().equalTo(
                         "mantis:" + activityId
                     );
@@ -357,18 +355,19 @@ public class ProjectImporter {
                     if(activities.isEmpty()) {
                         System.out.println("Creating incident " + activityId);
                         this.pm.currentTransaction().begin();
-                        NewActivityParams newActivityParams = activityPkg.createNewActivityParams(
-                        	null, // creationContext
-                            null, // description
-                            null, // detailedDescription
-                            null, // dueBy
-                            ICalendar.ICAL_TYPE_NA, // icalType
-                            bugSummary, // name
-                            (short)(bugPriority / 10 - 1), // priority
-                            null, // reportingContact
-                            null, // scheduledEnd
-                            bugDateSubmitted // scheduledStart
-                        );
+                        NewActivityParams newActivityParams = Structures.create(
+            				NewActivityParams.class, 
+            				Datatypes.member(NewActivityParams.Member.creationContext, null),
+            				Datatypes.member(NewActivityParams.Member.description, null),			
+            				Datatypes.member(NewActivityParams.Member.detailedDescription, null),			
+            				Datatypes.member(NewActivityParams.Member.dueBy, null),			
+            				Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),	
+            				Datatypes.member(NewActivityParams.Member.name, bugSummary),	
+            				Datatypes.member(NewActivityParams.Member.priority, (short)(bugPriority / 10 - 1)),
+            				Datatypes.member(NewActivityParams.Member.reportingContact, null),
+            				Datatypes.member(NewActivityParams.Member.scheduledEnd, null),
+            				Datatypes.member(NewActivityParams.Member.scheduledStart, bugDateSubmitted)
+            			); 
                         NewActivityResult res = activityCreator.newActivity(newActivityParams);
                         this.pm.currentTransaction().commit();
                         Incident incident = (Incident)this.pm.getObjectById(res.getActivity().refGetPath());
@@ -389,7 +388,6 @@ public class ProjectImporter {
                         incident.setMisc1("mantis:" + activityId);
                         Contact contact =  this.getContact(
                             bugReporterId, 
-                            activityPkg, 
                             activitySegment, 
                             errors
                         );
@@ -401,7 +399,6 @@ public class ProjectImporter {
                         incident.setReportingContact(contact);
                         contact = this.getContact(
                             bugHandlerId, 
-                            activityPkg, 
                             activitySegment, 
                             errors
                         );
@@ -444,7 +441,10 @@ public class ProjectImporter {
                         
                         // Reapply creator (set current state according to percent complete)
                         pm.currentTransaction().begin();
-                        ReapplyActivityCreatorParams rapplyAtivityCreatorParams = activityPkg.createReapplyActivityCreatorParams(activityCreator);
+                        ReapplyActivityCreatorParams rapplyAtivityCreatorParams = Structures.create(
+                        	ReapplyActivityCreatorParams.class, 
+                        	Datatypes.member(ReapplyActivityCreatorParams.Member.activityCreator, activityCreator)
+                        );
                         incident.reapplyActivityCreator(rapplyAtivityCreatorParams);
                         pm.currentTransaction().commit();
                         
@@ -462,10 +462,9 @@ public class ProjectImporter {
                             File file = new File(new File(fileBaseDir, fileDiskfile.getParentFile().getName()), fileDiskfile.getName());                            
                             try {
                                 System.out.println("Uploading file " + file);
-                                Media media = genericPkg.getMedia().createMedia();
+                                Media media = pm.newInstance(Media.class);
                                 pm.currentTransaction().begin();
                                 incident.addMedia(
-                                    false,
                                     idFormatter.format(fileId),
                                     media
                                 );
@@ -524,17 +523,18 @@ public class ProjectImporter {
                                 }
                             }                        
                             pm.currentTransaction().begin();
-                            Contact bugNoteReporter = this.getContact(bugNoteReporterId, activityPkg, activitySegment, errors);
+                            Contact bugNoteReporter = this.getContact(bugNoteReporterId, activitySegment, errors);
                             if(!errors.isEmpty()) {
                                 pm.currentTransaction().rollback();
                                 return;
                             }
-                            ActivityDoFollowUpParams doFollowUpParams = activityPkg.createActivityDoFollowUpParams(
-                                bugNoteReporter,
-                                note,
-                                processTransition.getName() + " by " + bugNoteReporter.getFullName(),
-                                processTransition
-                            );
+    						ActivityDoFollowUpParams doFollowUpParams = Structures.create(
+    							ActivityDoFollowUpParams.class, 
+    							Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, bugNoteReporter),
+    							Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, note),
+    							Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, processTransition.getName() + " by " + bugNoteReporter.getFullName()),
+    							Datatypes.member(ActivityDoFollowUpParams.Member.transition, processTransition)
+    						);
                             incident.doFollowUp(doFollowUpParams);
                             pm.currentTransaction().commit();
                         }
@@ -550,7 +550,10 @@ public class ProjectImporter {
                         pm.currentTransaction().commit();                        
                         // Reapply creator (set current state according to percent complete)
                         pm.currentTransaction().begin();
-                        ReapplyActivityCreatorParams reapplyActivityCreatorParams = activityPkg.createReapplyActivityCreatorParams(activityCreator);
+                        ReapplyActivityCreatorParams reapplyActivityCreatorParams = Structures.create(
+                        	ReapplyActivityCreatorParams.class, 
+                        	Datatypes.member(ReapplyActivityCreatorParams.Member.activityCreator, activityCreator)
+                        );
                         incident.reapplyActivityCreator(reapplyActivityCreatorParams);
                         pm.currentTransaction().commit();
                         // Remove all assigned resources

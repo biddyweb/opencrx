@@ -64,13 +64,14 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityWorkRecord;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.uom1.jmi1.Uom;
-import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.w3c.format.DateTimeFormat;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class ActivityImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.Activity,N extends org.opencrx.kernel.activity1.cci2.Activity,C extends ActivityImpl.DerivedAttributes>
@@ -167,17 +168,18 @@ public class ActivityImpl
                 params.getFollowUpTitle(),
                 params.getFollowUpText(),
                 params.getTransition(),
-                params.getAssignTo()
+                params.getAssignTo(),
+                params.getParentProcessInstance()
             );
-            return Utils.getActivityPackage(this.sameManager()).createActivityDoFollowUpResult(
-                followUp
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpResult.Member.followUp, followUp)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                   
     }
-    
+
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult addWorkRecord(
         org.opencrx.kernel.activity1.jmi1.ActivityAddWorkRecordParams params
@@ -211,15 +213,15 @@ public class ActivityImpl
                 Boolean.FALSE, // isReimbursable
                 owningGroups
             );
-            return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
-                workRecord
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.Member.workRecord, workRecord)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                                    
     }
-    
+
     //-----------------------------------------------------------------------
     public org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult addExpenseRecord(
         org.opencrx.kernel.activity1.jmi1.ActivityAddExpenseRecordParams params
@@ -244,11 +246,11 @@ public class ActivityImpl
                 params.isReimbursable(),
                 owningGroups
             );
-            return Utils.getActivityPackage(this.sameManager()).createAddWorkAndExpenseRecordResult(
-                workRecord
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult.Member.workRecord, workRecord)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }                                    
     }
@@ -335,12 +337,12 @@ public class ActivityImpl
                 totalQuantities,
                 quantityUoms
             );
-            return Utils.getActivityPackage(this.sameManager()).createCalcTotalQuantityResult(
-                quantityUoms,
-                totalQuantities
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.Member.quantityUom, quantityUoms),
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult.Member.totalQuantity, totalQuantities)
             );            
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }            
     }
@@ -353,17 +355,18 @@ public class ActivityImpl
             ActivityFollowUp followUp = Activities.getInstance().linkToAndFollowUp(
                 this.sameObject(),
                 params.getTransition(),
-                params.getActivity()
+                params.getActivity(),
+                params.getParentProcessInstance()
             );
-            return Utils.getActivityPackage(this.sameManager()).createLinkToAndFollowUpResult(
-            	followUp
+            return Structures.create(
+            	org.opencrx.kernel.activity1.jmi1.LinkToAndFollowUpResult.class, 
+            	Datatypes.member(org.opencrx.kernel.activity1.jmi1.LinkToAndFollowUpResult.Member.followUp, followUp)
             );
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
-    
+
     //-----------------------------------------------------------------------
 	@Override
     public void jdoPreStore(

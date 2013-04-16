@@ -619,6 +619,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:icalClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal Klasse</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal Klasse</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:ical" _operation="create">
                     <_object>
                       <label>
@@ -1936,6 +1947,17 @@
                       </label>
                       <toolTip>
                         <_item>iCal Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:icalClass" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>iCal Klasse</_item>
+                      </label>
+                      <toolTip>
+                        <_item>iCal Klasse</_item>
                       </toolTip>
                     </_object>
                     <_content/>

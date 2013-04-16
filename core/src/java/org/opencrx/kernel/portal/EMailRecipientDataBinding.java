@@ -126,7 +126,8 @@ public class EMailRecipientDataBinding extends DataBinding {
 			}
 		}
 		// Collect deleted parties and sort
-		Set<RefObject_1_0> deletedObjects = pm.getManagedObjects(EnumSet.of(ObjectState.PERSISTENT_DELETED));
+		@SuppressWarnings("unchecked")
+        Set<RefObject_1_0> deletedObjects = pm.getManagedObjects(EnumSet.of(ObjectState.PERSISTENT_DELETED));
 		for(RefObject_1_0 object: deletedObjects) {
 			if(
 				(object instanceof org.opencrx.kernel.activity1.jmi1.EMailRecipient) &&

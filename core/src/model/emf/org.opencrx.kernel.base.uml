@@ -378,6 +378,14 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_F7Gf4S4CEdq3m7-vynCCsw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_F7Gf4C4CEdq3m7-vynCCsw"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_rvaCYGDJEeKD7NYhyGCJLg" name="parentProcessInstance" aggregation="composite">
+              <type xmi:type="uml:Class" href="org.opencrx.kernel.home1.uml#_3C7B8A60016D3F3EC02C0286"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_tm8LwGDJEeKD7NYhyGCJLg"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_GIfPIGDvEeKkR7Y0GARHWQ" name="name" aggregation="composite">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_KNadIGDvEeKkR7Y0GARHWQ"/>
+            </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D417827D803D1" name="WfProcess" isAbstract="true">
             <eAnnotations xmi:id="_IJbcvt7NEdmKapscEl8OLg" source="http://www.eclipse.org/uml2/2.0.0/UML">

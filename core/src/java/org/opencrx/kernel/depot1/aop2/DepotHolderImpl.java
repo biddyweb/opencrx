@@ -61,10 +61,11 @@ import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
 import org.opencrx.kernel.depot1.jmi1.Depot;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 public class DepotHolderImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.DepotHolder,N extends org.opencrx.kernel.depot1.cci2.DepotHolder,C extends Void>
@@ -96,21 +97,21 @@ public class DepotHolderImpl
                 errors
             );
             if(depot == null) {
-                return Utils.getDepotPackage(this.sameManager()).createOpenDepotResult(
-                    null,
-                    (short)1, 
-                    errors.toString()
-                );
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.OpenDepotResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotResult.Member.depot, null),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotResult.Member.status, (short)1),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotResult.Member.statusMessage, errors.toString())                	
+                );            	            	
+            } else {
+                return Structures.create(
+                	org.opencrx.kernel.depot1.jmi1.OpenDepotResult.class, 
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotResult.Member.depot, depot),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotResult.Member.status, (short)0),
+                	Datatypes.member(org.opencrx.kernel.depot1.jmi1.OpenDepotResult.Member.statusMessage, null)                	
+                );            	            	            	
             }
-            else {
-                return Utils.getDepotPackage(this.sameManager()).createOpenDepotResult(
-                    depot,
-                    (short)0, 
-                    null
-                );
-            }
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }

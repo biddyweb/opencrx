@@ -615,6 +615,10 @@
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_mzu_AJdAEeCPN92gRxzqUA" value="*"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_mYTnQJdAEeCPN92gRxzqUA"/>
             </ownedAttribute>
+            <ownedAttribute xmi:id="_azIwQAvfEeKVD5YCc253Vg" name="contractType" type="_YFsR0H1YEeC-utRUvNogqA" association="_azGUAAvfEeKVD5YCc253Vg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_azIwQgvfEeKVD5YCc253Vg" value="1"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_azIwQQvfEeKVD5YCc253Vg"/>
+            </ownedAttribute>
             <ownedOperation xmi:id="_KyglsH1yEeCLNog4vQmJNg" name="reapplyContractCreator">
               <ownedParameter xmi:id="_MfK70H1yEeCLNog4vQmJNg" direction="return">
                 <type xmi:type="uml:Class" href="../openMDX%202%20~%20Core%20(EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
@@ -1671,7 +1675,7 @@
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedAttribute>
-            <ownedOperation xmi:id="_KEk-8DL4Ed2JO9aiVMWzRg" name="countFilteredContract">
+            <ownedOperation xmi:id="_KEk-8DL4Ed2JO9aiVMWzRg" name="countFilteredContract" isQuery="true">
               <ownedParameter xmi:id="_QafYIDL4Ed2JO9aiVMWzRg" name="ReturnResultParameter1" direction="return">
                 <type xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_3CpXICl_EdywXdAHn-NS-w"/>
               </ownedParameter>
@@ -2425,6 +2429,12 @@
               <qualifier xmi:id="_1ZWsYIDKEeC62_2sRjld0Q" name="id">
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
+            </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Association" xmi:id="_azGUAAvfEeKVD5YCc253Vg" name="ContractHasContractType" memberEnd="_azIJMAvfEeKVD5YCc253Vg _azIwQAvfEeKVD5YCc253Vg">
+            <ownedEnd xmi:id="_azIJMAvfEeKVD5YCc253Vg" name="contract" type="_3C7B8A60016D3F40D53501B3" association="_azGUAAvfEeKVD5YCc253Vg">
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_azIJMgvfEeKVD5YCc253Vg" value="*"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_azIJMQvfEeKVD5YCc253Vg"/>
             </ownedEnd>
           </packagedElement>
         </packagedElement>

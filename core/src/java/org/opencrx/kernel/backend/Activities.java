@@ -57,6 +57,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
@@ -169,6 +170,7 @@ import org.opencrx.kernel.activity1.jmi1.TaskParty;
 import org.opencrx.kernel.activity1.jmi1.WeekDay;
 import org.opencrx.kernel.activity1.jmi1.WfAction;
 import org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord;
+import org.opencrx.kernel.backend.ICalendar.ICalClass;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
 import org.opencrx.kernel.depot1.jmi1.Depot;
 import org.opencrx.kernel.depot1.jmi1.DepotEntity;
@@ -179,6 +181,7 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.SecurityKeys.Action;
 import org.opencrx.kernel.generic.jmi1.Note;
 import org.opencrx.kernel.generic.jmi1.PropertySet;
+import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.uom1.jmi1.Uom;
@@ -192,6 +195,7 @@ import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
@@ -199,6 +203,8 @@ import org.openmdx.kernel.loading.Classes;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.format.DateTimeFormat;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 /**
  * Default Activities backend implementation. Methods of this class
@@ -220,6 +226,7 @@ public class Activities extends AbstractImpl {
 	
 	/**
 	 * Get instance of the currently registered Activities backend implementation.
+	 * 
 	 * @return
 	 * @throws ServiceException
 	 */
@@ -238,6 +245,7 @@ public class Activities extends AbstractImpl {
 	
     /**
      * Refresh items for the given activity tracker.
+     * 
      * @param activityTracker
      * @throws ServiceException
      */
@@ -248,10 +256,11 @@ public class Activities extends AbstractImpl {
         	activityTracker
         );
     }
-    
+
     /**
      * Mark given activity as dirty, i.e. 'touch' given activity. This will invoke
      * the pre-store callback on commit.
+     * 
      * @param activity
      * @throws ServiceException
      */
@@ -260,9 +269,27 @@ public class Activities extends AbstractImpl {
     ) throws ServiceException {
     	activity.setActivityState(activity.getActivityState());
     }
-    	
+
     /**
      * Find activity type according to given name.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     * @deprecated
+     */
+    public ActivityType findActivityType(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+    	return this.findActivityType(name, segment);
+    }
+
+    /**
+     * Find activity type according to given name.
+     * 
      * @param name
      * @param segment
      * @param pm
@@ -270,9 +297,9 @@ public class Activities extends AbstractImpl {
      */
     public ActivityType findActivityType(
         String name,
-        org.opencrx.kernel.activity1.jmi1.Segment segment,
-        javax.jdo.PersistenceManager pm
+        org.opencrx.kernel.activity1.jmi1.Segment segment
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         org.opencrx.kernel.activity1.cci2.ActivityTypeQuery activityTypeQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityTypeQuery)pm.newQuery(ActivityType.class);
         activityTypeQuery.name().equalTo(name);
@@ -284,6 +311,24 @@ public class Activities extends AbstractImpl {
 
     /**
      * Find activity process according to given name.
+     * 
+     * @param name
+     * @param segment
+     * @param pm
+     * @return
+     * @deprecated
+     */
+    public ActivityProcess findActivityProcess(
+        String name,
+        org.opencrx.kernel.activity1.jmi1.Segment segment,
+        javax.jdo.PersistenceManager pm
+    ) {
+    	return this.findActivityProcess(name, segment);
+    }
+
+    /**
+     * Find activity process according to given name.
+     * 
      * @param name
      * @param segment
      * @param pm
@@ -291,9 +336,9 @@ public class Activities extends AbstractImpl {
      */
     public ActivityProcess findActivityProcess(
         String name,
-        org.opencrx.kernel.activity1.jmi1.Segment segment,
-        javax.jdo.PersistenceManager pm
+        org.opencrx.kernel.activity1.jmi1.Segment segment
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(segment);
         org.opencrx.kernel.activity1.cci2.ActivityProcessQuery activityProcessQuery = 
         	(org.opencrx.kernel.activity1.cci2.ActivityProcessQuery)pm.newQuery(ActivityProcess.class);
         activityProcessQuery.name().equalTo(name);
@@ -305,6 +350,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Find activity process transition according to given name.
+     * 
      * @param activity
      * @param transitionName
      * @return
@@ -327,6 +373,7 @@ public class Activities extends AbstractImpl {
         
     /**
      * Find activity creator according to given name.
+     * 
      * @param name
      * @param segment
      * @return
@@ -358,6 +405,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Find activity tracker according to given name.
+     * 
      * @param name
      * @param segment
      * @return
@@ -371,6 +419,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Find activity tracker according to given name and creation context.
+     * 
      * @param name
      * @param segment
      * @param creationContext
@@ -396,6 +445,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Find activity milestone according to given name.
+     * 
      * @param name
      * @param segment
      * @return
@@ -409,6 +459,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Find activity milestone according to given name and creation context.
+     * 
      * @param name
      * @param segment
      * @param creationContext
@@ -445,6 +496,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Find activity category according to given name.
+     * 
      * @param name
      * @param segment
      * @return
@@ -458,6 +510,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Find activity category according to given name.
+     * 
      * @param name
      * @param segment
      * @param creationContext
@@ -493,7 +546,8 @@ public class Activities extends AbstractImpl {
     }
     
     /**
-     * Find calendar according to given name
+     * Find calendar according to given name.
+     * 
      * @param name
      * @param segment
      * @return
@@ -533,6 +587,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Creates a new calendar with weekdays MO-SU or updates an existing.
+     * 
      * @param calendarName
      * @param pm
      * @param providerName
@@ -669,6 +724,7 @@ public class Activities extends AbstractImpl {
       
     /**
      * Create (if it does not exist) the e-mail activity process.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -890,6 +946,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Create (if it does not exist) the bulk e-mail activity process.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -1193,6 +1250,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Create (if it does not exist) the bug and feature activity process.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -1440,6 +1498,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Creates a new activity type or updates an existing.
+     * 
      * @param activityProcess
      * @param activityTypeName
      * @param activityClass
@@ -1492,12 +1551,14 @@ public class Activities extends AbstractImpl {
 
     /**
      * Creates a new activity tracker or updates an existing.
+     * 
      * @param trackerName
      * @param owningGroups
      * @param pm
      * @param providerName
      * @param segmentName
      * @return
+     * @deprecated
      */
     public ActivityTracker initActivityTracker(
         String trackerName,
@@ -1511,6 +1572,29 @@ public class Activities extends AbstractImpl {
             providerName, 
             segmentName
         );
+    	return this.initActivityTracker(
+    		trackerName, 
+    		owningGroups, 
+    		activitySegment
+    	);
+    }
+
+    /**
+     * Creates a new activity tracker or updates an existing.
+     * 
+     * @param trackerName
+     * @param owningGroups
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
+    public ActivityTracker initActivityTracker(
+        String trackerName,
+        List<PrincipalGroup> owningGroups,
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activitySegment);
         ActivityTracker activityTracker = null;
         if((activityTracker = this.findActivityTracker(trackerName, activitySegment)) != null) {
             return activityTracker;            
@@ -1530,15 +1614,17 @@ public class Activities extends AbstractImpl {
         pm.currentTransaction().commit();
         return activityTracker;
     }
-            
+
     /**
      * Creates a new activity category or updates an existing.
+     * 
      * @param categoryName
      * @param owningGroups
      * @param pm
      * @param providerName
      * @param segmentName
      * @return
+     * @deprecated
      */
     public ActivityCategory initActivityCategory(
         String categoryName,
@@ -1552,6 +1638,29 @@ public class Activities extends AbstractImpl {
             providerName, 
             segmentName
         );
+    	return this.initActivityCategory(
+    		categoryName, 
+    		owningGroups, 
+    		activitySegment
+    	);
+    }
+
+    /**
+     * Creates a new activity category or updates an existing.
+     * 
+     * @param categoryName
+     * @param owningGroups
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
+    public ActivityCategory initActivityCategory(
+        String categoryName,
+        List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups,        
+        org.opencrx.kernel.activity1.jmi1.Segment activitySegment
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activitySegment);
         ActivityCategory activityCategory = null;
         if((activityCategory = this.findActivityCategory(categoryName, activitySegment)) != null) {
             return activityCategory;            
@@ -1574,6 +1683,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Creates a new activity creator if it does not exist or updates and existing.
+     * 
      * @param creatorName
      * @param activityType
      * @param activityGroups
@@ -1585,11 +1695,12 @@ public class Activities extends AbstractImpl {
         ActivityType activityType,
         List<ActivityGroup> activityGroups,
         List<PrincipalGroup> owningGroups
-    ) {
+    ) throws ServiceException {
     	return this.initActivityCreator(
     		creatorName, 
     		activityType, 
-    		ICalendar.ICAL_TYPE_VEVENT, 
+    		ICalendar.ICAL_TYPE_VEVENT,
+    		ICalClass.PUBLIC,
     		activityGroups, 
     		owningGroups
     	);
@@ -1597,6 +1708,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Initializes the activity creator.
+     * 
      * @param creatorName
      * @param activityType
      * @param icalType
@@ -1608,9 +1720,10 @@ public class Activities extends AbstractImpl {
         String creatorName,
         ActivityType activityType,
         short icalType,
+        ICalClass icalClass,
         List<ActivityGroup> activityGroups,
         List<PrincipalGroup> owningGroups
-    ) {
+    ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activityType);
     	boolean isTxLocal = !pm.currentTransaction().isActive();
     	String providerName = activityType.refGetPath().get(2);
@@ -1629,14 +1742,15 @@ public class Activities extends AbstractImpl {
         		pm.currentTransaction().begin();
         	}
             activityCreator = pm.newInstance(ActivityCreator.class);
-            activityCreator.setName(creatorName);
-            activityCreator.setPriority((short)0);
-            activityCreator.getOwningGroup().addAll(owningGroups);
-            activityCreator.getActivityGroup().addAll(
-                activityGroups
+            this.initActivityCreator(
+            	activityCreator, 
+            	creatorName, 
+            	activityType, 
+            	icalType, 
+            	icalClass, 
+            	activityGroups, 
+            	owningGroups
             );
-            activityCreator.setActivityType(activityType);
-            activityCreator.setIcalType(icalType);
             activitySegment.addActivityCreator(
                 this.getUidAsString(),
                 activityCreator
@@ -1659,9 +1773,43 @@ public class Activities extends AbstractImpl {
         }
         return activityCreator;
     }
-            
+   
+    /**
+     * Init given activity creator.
+     * 
+     * @param activityCreator
+     * @param creatorName
+     * @param activityType
+     * @param icalType
+     * @param icalClass
+     * @param activityGroups
+     * @param owningGroups
+     */
+    public void initActivityCreator(
+    	ActivityCreator activityCreator,
+    	String creatorName,
+    	ActivityType activityType,
+        short icalType,
+        ICalClass icalClass,    	
+    	List<ActivityGroup> activityGroups,
+    	List<PrincipalGroup> owningGroups
+    ) {
+        activityCreator.setName(creatorName);
+        activityCreator.setPriority((short)0);
+        if(owningGroups != null) {
+        	activityCreator.getOwningGroup().addAll(owningGroups);
+        }
+        if(activityGroups != null) {
+	        activityCreator.getActivityGroup().addAll(activityGroups);
+        }
+        activityCreator.setActivityType(activityType);
+        activityCreator.setIcalType(icalType);
+        activityCreator.setIcalClass(icalClass.getValue());
+    }
+
     /**
      * Refreshes an activity tracker. Currently recalculates the effort estimates.
+     * 
      * @param activityTracker
      * @return
      * @throws ServiceException
@@ -1747,6 +1895,7 @@ public class Activities extends AbstractImpl {
     /**
      * {@link #newActivity()} allows to create replica of the newly created 
      * activity.
+     * 
      * @param activity activity to be replicated.
      * @param activityCreator creator used to create activity.
      */
@@ -1759,15 +1908,16 @@ public class Activities extends AbstractImpl {
 
     /**
      * Create a new activity.
+     * 
      * @param activityCreator
      * @param name
      * @param description
      * @param detailedDescription
-     * @param suppliedScheduledStart
-     * @param suppliedScheduledEnd
-     * @param suppliedDueBy
-     * @param suppliedPriority
-     * @param suppliedIcalType
+     * @param scheduledStart
+     * @param scheduledEnd
+     * @param dueBy
+     * @param priority
+     * @param icalType
      * @param reportingContact
      * @param creationContext
      * @return
@@ -1778,11 +1928,12 @@ public class Activities extends AbstractImpl {
         String name,
         String description,
         String detailedDescription,
-        Date suppliedScheduledStart,
-        Date suppliedScheduledEnd,
-        Date suppliedDueBy,
-        Number suppliedPriority,
-        Number suppliedIcalType,
+        Date scheduledStart,
+        Date scheduledEnd,
+        Date dueBy,
+        Number priority,
+        Number icalType,
+        ICalClass icalClass,
         Contact reportingContact,
         ContextCapable creationContext
     ) throws ServiceException {
@@ -1792,11 +1943,12 @@ public class Activities extends AbstractImpl {
     		name, 
     		description, 
     		detailedDescription, 
-    		suppliedScheduledStart, 
-    		suppliedScheduledEnd, 
-    		suppliedDueBy, 
-    		suppliedPriority, 
-    		suppliedIcalType, 
+    		scheduledStart, 
+    		scheduledEnd, 
+    		dueBy, 
+    		priority, 
+    		icalType, 
+    		icalClass,
     		reportingContact, 
     		creationContext, 
     		activityGroups
@@ -1805,15 +1957,16 @@ public class Activities extends AbstractImpl {
 
     /**
      * Creates a new activity and links the tracker with this new activity.
+     * 
      * @param activityCreator
      * @param name
      * @param description
      * @param detailedDescription
-     * @param suppliedScheduledStart
-     * @param suppliedScheduledEnd
-     * @param suppliedDueBy
-     * @param suppliedPriority
-     * @param suppliedIcalType
+     * @param scheduledStart
+     * @param scheduledEnd
+     * @param dueBy
+     * @param priority
+     * @param icalType
      * @param reportingContact
      * @param creationContext
      * @param activityGroups
@@ -1825,11 +1978,12 @@ public class Activities extends AbstractImpl {
         String name,
         String description,
         String detailedDescription,
-        Date suppliedScheduledStart,
-        Date suppliedScheduledEnd,
-        Date suppliedDueBy,
-        Number suppliedPriority,
-        Number suppliedIcalType,
+        Date scheduledStart,
+        Date scheduledEnd,
+        Date dueBy,
+        Number priority,
+        Number icalType,
+        ICalClass icalClass,
         Contact reportingContact,
         ContextCapable creationContext,
         List<ActivityGroup> activityGroups
@@ -1849,35 +2003,40 @@ public class Activities extends AbstractImpl {
         if(activityCreator.getActivityType() != null) {
             ActivityType activityType = activityCreator.getActivityType();
             ActivityProcess activityProcess = activityType.getControlledBy();
-            Date scheduledStart = null;
-            scheduledStart = suppliedScheduledStart != null ? 
-                suppliedScheduledStart : 
-                (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledStart() != null) ? 
-                    new Date(System.currentTimeMillis() + activityCreator.getScheduledStart().getTime()) : 
-                    new Date();
-            Date scheduledEnd = null;
-            scheduledEnd = suppliedScheduledEnd != null ? 
-                suppliedScheduledEnd : 
-                (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledEnd() != null) ? 
-                    new Date(System.currentTimeMillis() + activityCreator.getScheduledEnd().getTime() - activityCreator.getBaseDate().getTime()) : 
-                    new Date(scheduledStart.getTime() + 3600000L);
-            Date dueBy = null;
-            dueBy = suppliedDueBy != null ? 
-                suppliedDueBy : 
-                (activityCreator.getBaseDate() != null) && (activityCreator.getDueBy() != null) ? 
-                    new Date(System.currentTimeMillis() + activityCreator.getDueBy().getTime() - activityCreator.getBaseDate().getTime()) : 
-                    null;
-            short priority = (suppliedPriority == null) || (suppliedPriority.shortValue() == 0) ?
-                activityCreator.getPriority() != 0 ? 
-                    activityCreator.getPriority() : 
-                    (short)2 :    
-                suppliedPriority.shortValue();
-            short icalType = (suppliedIcalType == null) || (suppliedIcalType.shortValue() == 0) ?
-                activityCreator.getIcalType() :    
-                suppliedIcalType.shortValue();
-            String activityClass = activityType.getActivityClassName() != null ? 
-                activityType.getActivityClassName() : 
-                ACTIVITY_TYPES[((Number)activityType.getActivityClass()).intValue()];
+            Date aScheduledStart = null;
+            aScheduledStart = scheduledStart != null 
+            	? scheduledStart 
+            	: (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledStart() != null) 
+            		? new Date(System.currentTimeMillis() + activityCreator.getScheduledStart().getTime())
+            		: new Date();
+            Date aScheduledEnd = null;
+            aScheduledEnd = scheduledEnd != null 
+            	? scheduledEnd 
+            	: (activityCreator.getBaseDate() != null) && (activityCreator.getScheduledEnd() != null) 
+            		? new Date(System.currentTimeMillis() + activityCreator.getScheduledEnd().getTime() - activityCreator.getBaseDate().getTime()) 
+            		: new Date(aScheduledStart.getTime() + 3600000L);
+            Date aDueBy = null;
+            aDueBy = dueBy != null 
+            	? dueBy 
+            	: (activityCreator.getBaseDate() != null) && (activityCreator.getDueBy() != null) 
+            		? new Date(System.currentTimeMillis() + activityCreator.getDueBy().getTime() - activityCreator.getBaseDate().getTime()) 
+            		: null;
+            short aPriority = (priority == null) || (priority.shortValue() == 0) 
+            	? activityCreator.getPriority() != 0 
+            		? activityCreator.getPriority() 
+            		: (short)2 
+            	: priority.shortValue();
+            short aIcalType = (icalType == null) || (icalType.shortValue() == 0) 
+            	? activityCreator.getIcalType() 
+            		: icalType.shortValue();
+            short aIcalClass = (icalClass == null) || (icalClass.getValue() == 0) 
+            	? activityCreator.getIcalClass() == 0 
+            		? ICalClass.PUBLIC.getValue()
+            		: activityCreator.getIcalClass()            		
+            	: icalClass.getValue();
+            String activityClass = activityType.getActivityClassName() != null 
+            	? activityType.getActivityClassName() 
+            	: ACTIVITY_TYPES[((Number)activityType.getActivityClass()).intValue()];
             Activity newActivity = null;
 			try {
 				String packageName = activityClass.substring(0, activityClass.lastIndexOf(":"));
@@ -1887,8 +2046,7 @@ public class Activities extends AbstractImpl {
 						packageName.replace(":", ".") + "." + Names.JMI1_PACKAGE_SUFFIX + "." + className
 					)
 				);
-			}
-			catch(ClassNotFoundException e) {
+			} catch(ClassNotFoundException e) {
 				throw new ServiceException(e);
 			}
             if(name != null) {
@@ -1900,26 +2058,26 @@ public class Activities extends AbstractImpl {
             if(detailedDescription != null) {
                 newActivity.setDetailedDescription(detailedDescription);
             }
-            if(scheduledStart != null) {
-                newActivity.setScheduledStart(scheduledStart);
+            if(aScheduledStart != null) {
+                newActivity.setScheduledStart(aScheduledStart);
             }
-            if(scheduledEnd != null) {
-                newActivity.setScheduledEnd(scheduledEnd);
+            if(aScheduledEnd != null) {
+                newActivity.setScheduledEnd(aScheduledEnd);
             }
             if(reportingContact != null) {
                 newActivity.setReportingContact(reportingContact);                    
-            }
-            else {
+            } else {
                 org.opencrx.kernel.home1.jmi1.UserHome userHome = UserHomes.getInstance().getUserHome(
                     activityCreator.refGetPath(),
                     pm
                 );
                 newActivity.setReportingContact(userHome.getContact());
             }
-            newActivity.setPriority(new Short(priority));
-            newActivity.setIcalType(new Short(icalType));
-            if(dueBy != null) {
-                newActivity.setDueBy(dueBy);
+            newActivity.setPriority(aPriority);
+            newActivity.setIcalType(aIcalType);
+            newActivity.setIcalClass(aIcalClass);
+            if(aDueBy != null) {
+                newActivity.setDueBy(aDueBy);
             }
             newActivity.setActivityState(new Short((short)0));
             newActivity.setPercentComplete(new Short((short)0));
@@ -1978,6 +2136,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Create a vote for given activity.
+     * 
      * @param activity
      * @param name
      * @param description
@@ -2012,6 +2171,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Mark activity as all-day event.
+     * 
      * @param activity
      * @param timezoneID
      */
@@ -2056,6 +2216,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Perform a followUp and link it to given activity.
+     * 
      * @param activity
      * @param processTransition
      * @param linkTo
@@ -2065,7 +2226,8 @@ public class Activities extends AbstractImpl {
     public ActivityFollowUp linkToAndFollowUp(
         Activity activity,
         ActivityProcessTransition processTransition,
-    	Activity linkTo
+    	Activity linkTo,
+    	WfProcessInstance parentProcessInstance
     ) throws ServiceException {
     	if(linkTo == null) return null;
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
@@ -2099,7 +2261,8 @@ public class Activities extends AbstractImpl {
     		followUpTitle, 
     		followUpText, 
     		processTransition, 
-    		linkTo.getReportingContact()
+    		linkTo.getReportingContact(),
+    		parentProcessInstance
     	);
     	followUp.setActivity(linkTo);
     	ActivityLinkTo activityLink = pm.newInstance(ActivityLinkTo.class);
@@ -2115,6 +2278,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Strip leading non-letter characters.
+     * 
      * @param s
      * @return
      */
@@ -2131,6 +2295,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Strip trailing non letter characters.
+     * 
      * @param s
      * @return
      */
@@ -2147,6 +2312,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Get activity name of sub-activity according to name pattern of sub-activity transition.
+     * 
      * @param transition
      * @param activity
      * @param followUpTitle
@@ -2187,6 +2353,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Get activity group name of sub-activity according to name pattern of sub-activity transition.
+     * 
      * @param transition
      * @param activity
      * @param activityGroup
@@ -2236,6 +2403,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Perform a follow up on an activity.
+     * 
      * @param activity
      * @param followUpTitle
      * @param followUpText
@@ -2249,7 +2417,8 @@ public class Activities extends AbstractImpl {
         String followUpTitle,
         String followUpText,
         ActivityProcessTransition processTransition,
-        Contact assignTo
+        Contact assignTo,
+        WfProcessInstance parentProcessInstance
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);    	
     	String providerName = activity.refGetPath().get(2);
@@ -2271,8 +2440,7 @@ public class Activities extends AbstractImpl {
                 ((processTransition.getPrevState() != null) && processTransition.getPrevState().equals(processState))
             ) {
                 
-            }
-            else {
+            } else {
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
                     OpenCrxException.ACTIVITY_TRANSITION_NOT_VALID_FOR_STATE, 
@@ -2309,8 +2477,7 @@ public class Activities extends AbstractImpl {
                 	SetActualEndAction setActualEndAction = (SetActualEndAction)action;
                     if((setActualEndAction.isResetToNull() != null) && setActualEndAction.isResetToNull().booleanValue()) {
                         activity.setActualEnd(null);
-                    }
-                    else {
+                    } else {
                         activity.setActualEnd(new Date());
                     }
                 }
@@ -2319,8 +2486,7 @@ public class Activities extends AbstractImpl {
                 	SetActualStartAction setActualStartAction = (SetActualStartAction)action;
                     if((setActualStartAction.isResetToNull() != null) && setActualStartAction.isResetToNull().booleanValue()) {
                         activity.setActualStart(null);
-                    }
-                    else {
+                    } else {
                         activity.setActualStart(new Date());
                     }
                 }
@@ -2333,8 +2499,7 @@ public class Activities extends AbstractImpl {
                         if(setAssignedToAction.getContactFeatureName() != null) {
                         	try {
                         		contact = (Contact)activity.refGetValue(setAssignedToAction.getContactFeatureName());
-                        	} 
-                        	catch(Exception e) {}
+                        	} catch(Exception e) {}
                         }
                         if(contact == null) {
                             UserHome userHome = UserHomes.getInstance().getUserHome(action.refGetPath(), pm);
@@ -2367,24 +2532,25 @@ public class Activities extends AbstractImpl {
                         try {
                             WfProcessInstance wfProcessInstance = 
                                 Workflows.getInstance().executeWorkflow(
-                                    userHome,
-                                    wfAction.getWfProcess(),
-                                    activity,
-                                    null,
-                                    null,
-                                    null
+                                	Base.getInstance().getTitle(activity, null, (short)0, false) + " / " + processTransition.getName() + " / " + userHome.refGetPath().getBase(),
+                                    userHome, // wfTarget
+                                    wfAction.getWfProcess(), // wfProcess
+                                    activity, // targetObject
+                                    null, // triggeredBy
+                                    null, // triggeredByEventId
+                                    null, // triggeredByEventType
+                                    parentProcessInstance
                                 );
                             SysLog.detail("Execution of workflow successful.", action);
                             Boolean wfExecutionFailed = wfProcessInstance.isFailed();
-                            if((wfExecutionFailed != null) && wfExecutionFailed.booleanValue()) {
+                            if(Boolean.TRUE.equals(wfExecutionFailed)) {
                                 failed = true;
                             }
-                        }
-                        catch(Exception e) {
+                        } catch(Exception e) {
                         	SysLog.warning("Execution of action failed --> transition failed.", action);
                             new ServiceException(e).log();
                             failed = true;
-                        }                            
+                        }
                     }
                 }
                 // ActivityCreationAction
@@ -2397,11 +2563,12 @@ public class Activities extends AbstractImpl {
                                 activityCreationAction.getName(),
                                 activityCreationAction.getActivityDescription(),
                                 null, // detailedDescription
-                                null, // suppliedScheduledStart
-                                null, // suppliedScheduledEnd
-                                null, // suppliedDueBy
-                                null, // suppliedPriority
+                                null, // scheduledStart
+                                null, // scheduledEnd
+                                null, // dueBy
+                                null, // priority
                                 ICalendar.ICAL_TYPE_NA, // icalType
+                                ICalClass.NA,
                                 activity.getReportingContact(),
                                 activity // creationContext
                             );
@@ -2415,8 +2582,7 @@ public class Activities extends AbstractImpl {
                             	this.getUidAsString(),
                             	activityLinkTo
                             );
-                        }
-                        catch(Exception e) {
+                        } catch(Exception e) {
                         	SysLog.warning("Execution of action failed --> transition failed.", action);
                             new ServiceException(e).log();
                             failed = true;
@@ -2441,10 +2607,10 @@ public class Activities extends AbstractImpl {
                                     linkedActivityFollowUpAction.getTransitionTitle(),
                                     linkedActivityFollowUpAction.getTransitionText(),
                                     linkedActivityFollowUpAction.getTransition(),
-                                    null
+                                    null,
+                                    parentProcessInstance
                                 );
-                            }
-                            catch(Exception e) {
+                            } catch(Exception e) {
                             	SysLog.warning("Execution of action failed --> transition failed.", action);
                                 new ServiceException(e).log();
                                 failed = true;
@@ -2511,20 +2677,26 @@ public class Activities extends AbstractImpl {
             	} else {
             		activityGroups = transition.getActivityCreator().getActivityGroup();
             	}
+            	String subActivityDescription = followUpText;
+            	subActivityDescription = subActivityDescription == null || subActivityDescription.length() < 100 ?
+            		subActivityDescription :
+            			subActivityDescription.substring(0, 100) + "...";
+            	String subActivityDetailedDescription = followUpText;
             	subActivity = this.newActivity(
                 	transition.getActivityCreator(),
                     subActivityName,
-                    followUpText,
-                    null, // detailedDescription
+                    subActivityDescription,
+                    subActivityDetailedDescription, // detailedDescription
                     null, // suppliedScheduledStart
                     null, // suppliedScheduledEnd
                     null, // suppliedDueBy
                     null, // suppliedPriority
-                    ICalendar.ICAL_TYPE_NA, // icalType
+                    ICalendar.ICAL_TYPE_NA,
+                    ICalClass.NA,
                     activity.getReportingContact(),
                     followUp, // creationContext
                     activityGroups
-                );            		
+                );
                 // Link sub activity with original
                 ActivityLinkTo activityLinkTo = pm.newInstance(ActivityLinkTo.class);
                 activityLinkTo.setName(activity.getName());
@@ -2552,8 +2724,7 @@ public class Activities extends AbstractImpl {
                 true, // overwrite
                 false // useRunAsPrincipal
             );
-        }
-        else {
+        } else {
             followUp.setAssignedTo(assignTo);
         }
         return followUp;
@@ -2561,6 +2732,7 @@ public class Activities extends AbstractImpl {
         
     /**
      * Update a work record.
+     * 
      * @param workRecord
      * @throws ServiceException
      */
@@ -2600,8 +2772,7 @@ public class Activities extends AbstractImpl {
                         workRecord.getWorkCb(),
                         false
                     );
-                } 
-                catch(Exception e) {}
+                } catch(Exception e) {}
             }
             workRecord.setWorkCb(null);
             // Depot credit
@@ -2614,8 +2785,7 @@ public class Activities extends AbstractImpl {
             Collection<DepotReference> depotReferences = null;
             if(resource == null) {
                 depotReferences = Collections.emptyList();
-            }
-            else {
+            } else {
                 depotReferences = resource.getDepotReference();
             }
             // Depot selector
@@ -2652,8 +2822,7 @@ public class Activities extends AbstractImpl {
                         new BasicException.Parameter("param0", depotDebit.refGetPath()),
                         new BasicException.Parameter("param1", depotCredit.refGetPath())
                     );
-                }
-                else {
+                } else {
                     Date valueDate = workRecord.getEndedAt();
                     DepotPosition positionCredit = Depots.getInstance().openDepotPosition(
                         depotCredit,
@@ -2694,7 +2863,8 @@ public class Activities extends AbstractImpl {
     }
     
     /**
-     * Creates and adds a work record
+     * Creates and adds a work record.
+     * 
      * @param activity
      * @param resource
      * @param name
@@ -2766,8 +2936,7 @@ public class Activities extends AbstractImpl {
                 (short)0,
                 groups
             );
-        }
-        else {
+        } else {
             resourceAssignment = resourceAssignments.iterator().next();
         }            
         workRecord = pm.newInstance(ActivityWorkRecord.class);
@@ -2790,8 +2959,7 @@ public class Activities extends AbstractImpl {
 	            	    (endedAt = DateTimeFormat.BASIC_UTC_FORMAT.parse(DateTimeFormat.BASIC_UTC_FORMAT.format(new Date(startedAt.getTime() + quantity.multiply(new BigDecimal(3600000L)).longValue())))) : 
 	            	endedAt
 	        );
-        }
-        catch(Exception e) {}
+        } catch(Exception e) {}
         // Default amount is endedAt - startedAt in hours/minutes
         if(quantity == null && endedAt != null && startedAt != null) {
         	workRecord.setQuantity(
@@ -2802,11 +2970,9 @@ public class Activities extends AbstractImpl {
         		uomHour = (Uom)pm.getObjectById(
         			new Path("xri:@openmdx:org.opencrx.kernel.uom1/provider/" + activity.refGetPath().get(2) + "/segment/Root/uom/hour")
         		);
-        	}
-        	catch(Exception e) {}
+        	} catch(Exception e) {}
         	workRecord.setQuantityUom(uomHour);
-        }
-        else {
+        } else {
         	workRecord.setQuantity(quantity);        	
             workRecord.setQuantityUom(quantityUom);
         }
@@ -2823,8 +2989,7 @@ public class Activities extends AbstractImpl {
         	} else if(recordType == WorkRecordType.OVERTIME.getValue()) {
         		workRecord.setRate(resource.getOvertimeRate());
         	}
-        }
-        else {
+        } else {
         	workRecord.setRate(rate);
             workRecord.setBillingCurrency(rateCurrency);
         }
@@ -2835,8 +3000,7 @@ public class Activities extends AbstractImpl {
         workRecord.setDepotSelector(depotSelector);
         if(groups != null && !groups.isEmpty()) {
         	workRecord.getOwningGroup().addAll(groups);
-        }
-        else {
+        } else {
         	workRecord.getOwningGroup().addAll(
         		resourceAssignment.getOwningGroup()
         	);
@@ -2855,6 +3019,7 @@ public class Activities extends AbstractImpl {
     /**
      * Callback for removing a work record. Throws exception in case of
      * existing bookings.
+     * 
      * @param workRecord
      * @param preDelete
      * @throws ServiceException
@@ -2877,6 +3042,7 @@ public class Activities extends AbstractImpl {
     /**
      * Callback for removing an activity group. Throws exception in case of
      * activities assigned to this group.
+     * 
      * @param activityGroup
      * @param preDelete
      * @throws ServiceException
@@ -2903,7 +3069,8 @@ public class Activities extends AbstractImpl {
     }
     
     /**
-     * Extract UID field from given ical
+     * Extract UID field from given ical.
+     * 
      * @param ical
      * @return
      */
@@ -2923,6 +3090,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Update replicated activity.
+     * 
      * @param activity
      * @param replica
      * @param linkTo
@@ -2991,6 +3159,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Update calculated and derived fields of given activity.
+     * 
      * @param activity
      * @throws ServiceException
      */
@@ -3002,8 +3171,7 @@ public class Activities extends AbstractImpl {
             if((activity.getDueBy() == null)) {
             	try {
             		activity.setDueBy(DateTimeFormat.BASIC_UTC_FORMAT.parse("99991231T000000.000Z"));
-            	}
-            	catch(Exception e) {}
+            	} catch(Exception e) {}
             }
             if(activity.getPercentComplete() == null) {
                 activity.setPercentComplete(new Short((short)0));
@@ -3012,7 +3180,7 @@ public class Activities extends AbstractImpl {
         List<String> statusMessage = new ArrayList<String>();
         String ical = ICalendar.getInstance().mergeIcal(
         	activity, 
-        	activity.getIcal(), 
+        	activity.getIcal(),
         	statusMessage 
         );
         activity.setIcal(
@@ -3035,8 +3203,7 @@ public class Activities extends AbstractImpl {
         	activity.getExternalLink().add(
         		ICalendar.ICAL_SCHEMA + uid
         	);
-        }
-        else if(!icalLinkMatches) {
+        } else if(!icalLinkMatches) {
         	// Should not happen. Log warning.
         	// Activity must be fixed manually with updateICal() operation
         	SysLog.warning("Activity's external link does not contain ical UID", Arrays.asList(activity.refGetPath().toString(), activity.getActivityNumber()));
@@ -3071,6 +3238,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Create resource assignment for given activity.
+     * 
      * @param activity
      * @param resource
      * @param resourceOrder
@@ -3112,8 +3280,7 @@ public class Activities extends AbstractImpl {
         );
         if(owningGroups != null && !owningGroups.isEmpty()) {
         	resourceAssignment.getOwningGroup().addAll(owningGroups);
-        }
-        else {
+        } else {
         	resourceAssignment.getOwningGroup().addAll(
         		activity.getOwningGroup()
         	);
@@ -3128,6 +3295,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Reapply activity creator to given activity.
+     * 
      * @param activity
      * @param activityCreator
      * @param activityGroups
@@ -3210,8 +3378,7 @@ public class Activities extends AbstractImpl {
                         for(Resource r: rs) {
                             resources.add(r);
                         }
-                    }
-                    else {
+                    } else {
                         // Try to find resource matching the current user
                     	ResourceQuery resourceQuery = (ResourceQuery)pm.newQuery(Resource.class);
                     	org.opencrx.kernel.account1.jmi1.Contact contact = 
@@ -3340,6 +3507,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Assign resource to given activity.
+     * 
      * @param activity
      * @param resource
      * @throws ServiceException
@@ -3351,23 +3519,10 @@ public class Activities extends AbstractImpl {
         if(resource != null) {
         	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);        	
             Contact contact = resource.getContact();
-            Collection<ResourceAssignment> resourceAssignments = activity.getAssignedResource(); 
-            boolean hasAssignment = false;
-            // Try to find resource which matches specified contact
-            for(ResourceAssignment resourceAssignment: resourceAssignments) {
-                if(resourceAssignment.getResource() != null) {
-                    Resource assignedResource = resourceAssignment.getResource();
-                    if(
-                        (assignedResource.getContact() != null) &&
-                        contact.equals(assignedResource.getContact())
-                    ) {
-                        hasAssignment = true;
-                        break;
-                    }
-                }
-            }
-            // Create a resource assignment
-            if(!hasAssignment) {
+            ResourceAssignmentQuery resourceAssignmentQuery = (ResourceAssignmentQuery)pm.newQuery(ResourceAssignment.class);
+            resourceAssignmentQuery.thereExistsResource().thereExistsContact().equalTo(contact);
+            // Create resource assignment for contact if required
+            if(activity.getAssignedResource(resourceAssignmentQuery).isEmpty()) {
                 ResourceAssignment resourceAssignment = pm.newInstance(ResourceAssignment.class);
                 resourceAssignment.setName(resource.getName());
                 resourceAssignment.setDescription(
@@ -3378,7 +3533,6 @@ public class Activities extends AbstractImpl {
                 resourceAssignment.setResourceOrder((short)0);
                 resourceAssignment.setWorkDurationPercentage((short)100);
                 activity.addAssignedResource(
-                	false,
                 	this.getUidAsString(),
                 	resourceAssignment
                 );
@@ -3389,6 +3543,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Update ical of given activity.
+     * 
      * @param activity
      * @throws ServiceException
      */
@@ -3406,8 +3561,7 @@ public class Activities extends AbstractImpl {
         byte[] item = null;
         try {
             item = ical.getBytes("UTF-8");
-        } 
-        catch(Exception e) {
+        } catch(Exception e) {
             item = ical.getBytes();    
         }
         ICalendar.getInstance().importItem(
@@ -3421,6 +3575,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Sum the work record quantities for the given work records.
+     * 
      * @param workAndExpenseRecords
      * @param totalQuantities
      * @param quantityUoms
@@ -3448,8 +3603,7 @@ public class Activities extends AbstractImpl {
 	                );
                     found = true;
                     break;
-            	}
-            	else if(uomScaleFactor.compareTo(BigDecimal.ZERO) > 0) {
+            	} else if(uomScaleFactor.compareTo(BigDecimal.ZERO) > 0) {
             		totalQuantities.set(
             			ii,
             			totalQuantities.get(ii).divide(uomScaleFactor, RoundingMode.FLOOR)
@@ -3481,6 +3635,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Sum the work record quantities for the given activity.
+     * 
      * @param activity
      * @param recordType
      * @param startAt
@@ -3516,6 +3671,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Sum the work record quantities for the given resource.
+     * 
      * @param resource
      * @param recordType
      * @param startAt
@@ -3551,6 +3707,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Sum the work record quantities for the given activity group. 
+     * 
      * @param activityGroup
      * @param recordType
      * @param startAt
@@ -3586,6 +3743,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Sum the work record quantities for the given activity filter. 
+     * 
      * @param activityFilter
      * @param recordType
      * @param startAt
@@ -3625,6 +3783,7 @@ public class Activities extends AbstractImpl {
         
     /**
      * Calculate main effort estimates.
+     * 
      * @param activity
      * @return
      * @throws ServiceException
@@ -3659,6 +3818,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Count activities of given activity filter.
+     * 
      * @param activityFilter
      * @return
      * @throws ServiceException
@@ -3678,6 +3838,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Creates and adds an email recipient to the email activity.
+     * 
      * @param pm
      * @param emailActivity
      * @param address
@@ -3714,6 +3875,7 @@ public class Activities extends AbstractImpl {
      * the email message contains an email address which is contained in an
      * openCRX account. Email addresses for which no account can be found, are
      * recorded via a note attached to the email activity.
+     * 
      * @param email
      * @param addresses
      * @param type
@@ -3748,6 +3910,7 @@ public class Activities extends AbstractImpl {
                     providerName,
                     segmentName,
                     address,
+                    true, // exactCaseInsensitiveOnly
                     true // forceCreate
                 );
             if(!emailAddresses.isEmpty()) {
@@ -3764,6 +3927,7 @@ public class Activities extends AbstractImpl {
     /**
      * Search email activity with the given external link, i.e. the given
      * message id.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -3778,9 +3942,8 @@ public class Activities extends AbstractImpl {
     ) {
         if(externalLink == null) {
             return Collections.emptyList();
-        }
-        else {
-            EMailQuery query = Utils.getActivityPackage(pm).createEMailQuery();
+        } else {
+            EMailQuery query = (EMailQuery)pm.newQuery(EMail.class);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment =
                 this.getActivitySegment(
                     pm,
@@ -3796,6 +3959,7 @@ public class Activities extends AbstractImpl {
         
     /**
      * Get activity segment.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -3813,6 +3977,7 @@ public class Activities extends AbstractImpl {
 
 	/**
 	 * Find resource matching user of given user's home.
+	 * 
 	 * @param activitySegment
 	 * @param userHome
 	 * @return
@@ -3850,8 +4015,7 @@ public class Activities extends AbstractImpl {
 				if(resource == null) {
 					resource = resources.iterator().next();
 				}
-			}
-			catch(Exception e) {}
+			} catch(Exception e) {}
 		}
 		return resource;
 	}
@@ -3861,6 +4025,7 @@ public class Activities extends AbstractImpl {
      * (i.e., TO, CC, BCC) to be attached to the email activity by a note
      * indicating whether an account containing the email address could be
      * found.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -3966,6 +4131,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Adds a note to the currently processed email activity.
+     * 
      * @param pm
      * @param emailActivity
      * @param title
@@ -4033,13 +4199,11 @@ public class Activities extends AbstractImpl {
         }
         if (priority.equalsIgnoreCase("normal") || priority.equalsIgnoreCase("3")) {
             priorityAsShort = Priority.NORMAL.getValue();
-        } 
-        else if (priority.equalsIgnoreCase("high")
+        } else if (priority.equalsIgnoreCase("high")
                 || priority.equalsIgnoreCase("1")
                 || priority.equalsIgnoreCase("Urgent")) {
             priorityAsShort = Priority.HIGH.getValue();
-        } 
-        else if (priority.equalsIgnoreCase("low")
+        } else if (priority.equalsIgnoreCase("low")
                 || priority.equalsIgnoreCase("5")
                 || priority.equalsIgnoreCase("Non-Urgent")) {
             priorityAsShort = Priority.LOW.getValue();
@@ -4049,6 +4213,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Get first text part of mime content.
+     * 
      * @param content
      * @return
      * @throws MessagingException
@@ -4072,20 +4237,19 @@ public class Activities extends AbstractImpl {
             return multipartMessage.getCount() > 0 ?
                 multipartMessage.getBodyPart(0) :
                 null;
-        }
-        else if(content instanceof Part) {
+        } else if(content instanceof Part) {
             Object c = ((Part)content).getContent();
             return c instanceof MimeMultipart ?
             	Activities.getFirstTextPart(c) :
                 (Part)content;
-        }  
-        else {
+        } else {
             return null;
         }
     }
     
     /**
      * Get message body of mime part.
+     * 
      * @param messagePart
      * @return
      * @throws IOException
@@ -4099,8 +4263,7 @@ public class Activities extends AbstractImpl {
         Object content = part.getContent();
         if(content instanceof String) {
             return (String)content;
-        }
-        else if (content instanceof InputStream) {
+        } else if (content instanceof InputStream) {
             if(part.isMimeType("text/plain") || part.isMimeType("text/html")) {
                 BufferedReader in = new BufferedReader(new InputStreamReader(
                     part.getInputStream())
@@ -4113,8 +4276,7 @@ public class Activities extends AbstractImpl {
                     }
                 }
                 return body.toString();
-            }
-            else {
+            } else {
                 return "";
             }
         }
@@ -4123,6 +4285,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Get name of original zipped mime message in format 1.
+     * 
      * @return
      */
     protected String getOriginalMessageName1(
@@ -4132,6 +4295,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Get name of original zipped mime message attached to activity in format 2.
+     * 
      * @param email
      * @return
      */
@@ -4145,6 +4309,7 @@ public class Activities extends AbstractImpl {
      * Maps email activity to message. If email activity has a media attachment
      * which contains the original MimeMessage the stream of this message is
      * returned in addition.
+     * 
      * @param email
      * @param message
      * @return
@@ -4165,16 +4330,14 @@ public class Activities extends AbstractImpl {
             String charset = null;
             if (!MimeUtils.isAllAscii(text)) {
                 charset = MimeUtility.getDefaultJavaCharset();
-            }
-            else {
+            } else {
                 charset = "us-ascii";                
             }
             messageBodyPart.setContent(
                 text, 
                 "text/html; charset=" + MimeUtility.quote(charset, HeaderTokenizer.MIME)
             );        
-        }
-        else {
+        } else {
             messageBodyPart.setText(text);            
         }
         multipart.addBodyPart(messageBodyPart);    
@@ -4198,6 +4361,7 @@ public class Activities extends AbstractImpl {
                     	originalMessageMediaName1.equals(media.getContentName()) || 
                     	originalMessageMediaName2.equals(media.getContentName())
                     ) {
+                        @SuppressWarnings("resource")
                         ZipInputStream zippedMessageStream = new ZipInputStream(mediaContent.toInputStream());
                         zippedMessageStream.getNextEntry();
                         originalMessageStream = zippedMessageStream;
@@ -4211,8 +4375,7 @@ public class Activities extends AbstractImpl {
                         Base64.encode(mediaContent.getBuffer(), 0, mediaContent.size()).getBytes("US-ASCII")
                     );
                     multipart.addBodyPart(messageBodyPart);
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                     new ServiceException(e).log();
                 }
             }
@@ -4220,9 +4383,10 @@ public class Activities extends AbstractImpl {
         message.setContent(multipart);
         return originalMessageStream;
     }
-    
+
     /**
      * Get internet address of given address.
+     * 
      * @param address
      * @param gateway
      * @return
@@ -4233,8 +4397,7 @@ public class Activities extends AbstractImpl {
     ) {
         if(address instanceof EMailAddress) {
             return ((EMailAddress)address).getEmailAddress();
-        }
-        else if(address instanceof PhoneNumber) {
+        } else if(address instanceof PhoneNumber) {
             String phoneNumber = ((PhoneNumber)address).getPhoneNumberFull();
             StringBuilder inetAddress = new StringBuilder();
             for(int i = 0; i < phoneNumber.length(); i++) {
@@ -4252,14 +4415,14 @@ public class Activities extends AbstractImpl {
                 );
             }
             return inetAddress.toString();
-        }
-        else {
+        } else {
             return null;
         }
     }
     
     /**
      * Map message recipients to given email activity.
+     * 
      * @param emailActivity
      * @return
      * @throws AddressException
@@ -4273,6 +4436,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Map message recipients to email activity.
+     * 
      * @param email
      * @param message
      * @return
@@ -4291,8 +4455,7 @@ public class Activities extends AbstractImpl {
         AccountAddress sender = null;
         try {
             sender = email.getSender();
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
         }
@@ -4317,14 +4480,12 @@ public class Activities extends AbstractImpl {
             	recipient.getPartyType() == PartyType.EMAIL_TO.getValue()
             ) {
                 recipientType = RecipientType.TO;
-            }
-            else if(
+            } else if(
             	recipient.getPartyType() == PartyType.OPTIONAL.getValue() ||
             	recipient.getPartyType() == PartyType.EMAIL_CC.getValue()
             ) {
                 recipientType = RecipientType.CC;
-            }
-            else if(recipient.getPartyType() == PartyType.EMAIL_BCC.getValue()) {
+            } else if(recipient.getPartyType() == PartyType.EMAIL_BCC.getValue()) {
                 recipientType = RecipientType.BCC;
             }
             if(recipientType != null) {
@@ -4332,8 +4493,7 @@ public class Activities extends AbstractImpl {
                 	AccountAddress address = null;
                 	try {
                 		address = ((EMailRecipient)recipient).getParty();
-                	}
-                	catch(Exception e) {
+                	} catch(Exception e) {
                 		new ServiceException(e).log();
                 	}
                 	if((address != null) && !Boolean.TRUE.equals(address.isDisabled())) {
@@ -4343,8 +4503,7 @@ public class Activities extends AbstractImpl {
 	                            address,
 	                            gateway
 	                        );
-	                    } 
-	                    catch(Exception e) {
+	                    } catch(Exception e) {
 	                        ServiceException e0 = new ServiceException(e);
 	                        SysLog.detail(e0.getMessage(), e0.getCause());
 	                    }
@@ -4358,20 +4517,17 @@ public class Activities extends AbstractImpl {
 		                                to
 		                            );
 	                            }
-	                        }
-	                        catch(Exception e) {
+	                        } catch(Exception e) {
 	                        	SysLog.warning("Invalid recipient", Arrays.asList(email, inetAddress));
 	                        }
 	                    }
                 	}
-                }
-                else if(recipient instanceof EMailRecipientGroup) {
+                } else if(recipient instanceof EMailRecipientGroup) {
                     EMailRecipientGroup recipientGroup = (EMailRecipientGroup)recipient;
                 	AddressGroup addressGroup = null;
                 	try {
                 		addressGroup = recipientGroup.getParty();
-                	}
-                	catch(Exception e) {
+                	} catch(Exception e) {
                 		new ServiceException(e).log();
                 	}                    
                     AddressGroupMemberQuery addressGroupMemberQuery = (AddressGroupMemberQuery)pm.newQuery(AddressGroupMember.class);
@@ -4401,8 +4557,7 @@ public class Activities extends AbstractImpl {
 		                                        to
 		                                    );
 	                                    }
-	                                }
-	                                catch(Exception e) {
+	                                } catch(Exception e) {
 	                                	SysLog.warning("Invalid recipient", Arrays.asList(email, inetAddress));
 	                                }
 	                            }
@@ -4411,13 +4566,14 @@ public class Activities extends AbstractImpl {
                     }
                 }
             }
-        }        
-        return recipients;        
+        }
+        return recipients;
     }
-    
+
     /**
      * Maps email to mime message. Either returns message or an input stream
      * which contains a mime message.
+     * 
      * @param email
      * @param message
      * @return
@@ -4435,8 +4591,7 @@ public class Activities extends AbstractImpl {
             if(messageStream != null) {
                 return messageStream;
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             new ServiceException(e).log();
         }
         try {
@@ -4444,8 +4599,7 @@ public class Activities extends AbstractImpl {
                 email, 
                 message
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             new ServiceException(e).log();
         }
         message.setSubject(
@@ -4466,6 +4620,7 @@ public class Activities extends AbstractImpl {
         
     /**
      * Find activity creator according to given activity class.
+     * 
      * @param activityCreators
      * @param activityClass
      * @return
@@ -4487,6 +4642,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Callback for activity removal.
+     * 
      * @param activity
      * @param preDelete
      * @throws ServiceException
@@ -4499,6 +4655,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Map email addresses to internet addresses.
+     * 
      * @param addresses
      * @return
      * @throws AddressException
@@ -4512,14 +4669,12 @@ public class Activities extends AbstractImpl {
             for (int i = 0; i < addresses.length; i++) {
                 if (addresses[0] instanceof InternetAddress) {
                     internetAddresses[i] = ((InternetAddress)addresses[i]).getAddress();
-                } 
-                else {
+                } else {
                     InternetAddress temp = new InternetAddress(addresses[i].toString());
                     internetAddresses[i] = temp.getAddress();
                 }
             }
-        } 
-        else {
+        } else {
             internetAddresses = new String[]{UNSPECIFIED_ADDRESS};
         }
         return internetAddresses;
@@ -4527,6 +4682,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Parse mime content type.
+     * 
      * @param contentType
      * @return
      */
@@ -4534,21 +4690,27 @@ public class Activities extends AbstractImpl {
         String contentType
     ) {
         String[] result = new String[2];
+        contentType = contentType.replace("\t", " ");
+        contentType = contentType.replace("\r\n", "");
         Pattern pattern = Pattern.compile("([0-9a-zA-Z/\\+\\-\\.]+)(?:;(?:[ \\r\\n\\t]*)name(?:[^\\=]*)\\=\"(.*)\")?");
         Matcher matcher = pattern.matcher(contentType);
         if(matcher.find()) {
             result[0] = matcher.group(1);
-            result[1] = matcher.group(2);
-        }
-        else {
+            try {
+            	result[1] = matcher.group(2) == null ? null : MimeUtility.decodeText(matcher.group(2));
+            } catch(Exception e) {
+            	result[1] = matcher.group(2);            	
+            }
+        } else {
             result[0] = contentType;
-            result[1] = null;                            
+            result[1] = null;
         }
         return result;
     }
-    
+
     /**
      * Add attachments to given email activity.
+     * 
      * @param mimeMessage
      * @param email
      * @throws IOException
@@ -4582,9 +4744,10 @@ public class Activities extends AbstractImpl {
             }
         }
     }
-        
+
     /**
      * Import mime message and map to given email activity.
+     * 
      * @param email
      * @param mimeMessage
      * @param isNew
@@ -4728,7 +4891,8 @@ public class Activities extends AbstractImpl {
 		            					this.linkToAndFollowUp(
 		            						activity, 
 		            						processTransitions.iterator().next(), 
-		            						email
+		            						email,
+		            						null // parentProcessInstance
 		            					);
 	        						}
 	        					} catch(Exception e) {
@@ -4748,6 +4912,7 @@ public class Activities extends AbstractImpl {
                 providerName,
                 segmentName,
                 this.getInternetAddresses(addressesFrom)[0],
+                true, // exactCaseInsensitiveOnly
                 true // forceCreate
             );
         EMailAddress from = null;
@@ -4764,8 +4929,7 @@ public class Activities extends AbstractImpl {
                     from, 
                     PartyType.EMAIL_FROM
                 );
-            }
-            else {
+            } else {
             	EMailRecipient recipient = recipients.iterator().next();
             	recipient.setParty(from);
             }
@@ -4784,6 +4948,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Import mime message and map to email activities.
+     * 
      * @param pm
      * @param providerName
      * @param segmentName
@@ -4869,25 +5034,18 @@ public class Activities extends AbstractImpl {
     				ActivityCreator creator = this.findActivityCreator(activityQualifier, activitySegment);
     				if(creator == null) {
     					SysLog.warning("Activity creator not found. No activity will be created", activityQualifier);
-    				} 
-    				else {
+    				} else {
     					if(subject == null || subject.length() <= 5) {
         					SysLog.warning("Subject line must have at least five characters", subject);    						
-    					} 
-    					else {
-				            pm.currentTransaction().begin();                            
-				            NewActivityParams newActivityParams = Utils.getActivityPackage(pm).createNewActivityParams(
-				            	null, // creationContext
-				                null, // description
-				                this.getMessageBody(mimeMessage), // detailedDescription
-				                null, // dueBy
-				                ICalendar.ICAL_TYPE_NA, // icalType
-				                subject,
-				                this.getMessagePriority(mimeMessage),
-				                null, // reportingContact
-				                null, // scheduledEnd
-				                null  // scheduledStart
-				            );
+    					} else {
+				            pm.currentTransaction().begin();
+				            NewActivityParams newActivityParams = Structures.create(
+				            	NewActivityParams.class,
+				            	Datatypes.member(NewActivityParams.Member.detailedDescription, this.getMessageBody(mimeMessage)),
+				            	Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+				            	Datatypes.member(NewActivityParams.Member.name, subject),
+				            	Datatypes.member(NewActivityParams.Member.priority, this.getMessagePriority(mimeMessage))
+				            );				            
 				            NewActivityResult newActivityResult = creator.newActivity(
 				                newActivityParams
 				            );
@@ -4915,8 +5073,7 @@ public class Activities extends AbstractImpl {
                     } catch(Exception e) {}
                 }
             }    	
-    	}
-    	else {    		
+    	} else {    		
     		messages.add(mimeMessage);
     		// Default Email creator
     		if(emailCreator == null) {
@@ -4942,17 +5099,11 @@ public class Activities extends AbstractImpl {
 	    			);
 	    		}
 	            pm.currentTransaction().begin();
-	            NewActivityParams newActivityParams = Utils.getActivityPackage(pm).createNewActivityParams(
-	            	null, // creationContext
-	                null, // description
-	                null, // detailedDescription
-	                null, // dueBy
-	                ICalendar.ICAL_TYPE_NA, // icalType
-	                message.getSubject(),
-	                this.getMessagePriority(message),
-	                null, // reportingContact
-	                null, // scheduledEnd
-	                null  // scheduledStart
+	            NewActivityParams newActivityParams = Structures.create(
+	            	NewActivityParams.class,
+	            	Datatypes.member(NewActivityParams.Member.name, message.getSubject()),
+	            	Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+	            	Datatypes.member(NewActivityParams.Member.priority, this.getMessagePriority(message))
 	            );
 	            NewActivityResult newActivityResult = emailCreator.newActivity(
 	                newActivityParams
@@ -4993,6 +5144,7 @@ public class Activities extends AbstractImpl {
 
     /** 
      * Add recipients to given email activity.
+     * 
      * @param email
      * @param sender
      * @param recipientTo
@@ -5084,6 +5236,7 @@ public class Activities extends AbstractImpl {
 
     /**
      * Send given e-mail, i.e. perform "Send E-Mail" transition given activity.
+     * 
      * @param email
      * @throws ServiceException
      */
@@ -5097,12 +5250,13 @@ public class Activities extends AbstractImpl {
 			"Assign"
 		);
 		pm.currentTransaction().begin();
-		ActivityDoFollowUpParams doFollowUpParams = Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
-			null, // assignTo 
-			null, // followUpText
-			"Accepted", 
-			transition
-		);
+		ActivityDoFollowUpParams doFollowUpParams = Structures.create(
+			ActivityDoFollowUpParams.class, 
+			Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, null),
+			Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, null),
+			Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, "Accepted"),
+			Datatypes.member(ActivityDoFollowUpParams.Member.transition, transition)
+		);		
 		email.doFollowUp(doFollowUpParams);
 		pm.currentTransaction().commit();
 		// Send as mail
@@ -5117,12 +5271,13 @@ public class Activities extends AbstractImpl {
 			);         					
 		}
 		pm.currentTransaction().begin();
-		doFollowUpParams = Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
-			null, // assignTo 
-			null, // followUpText 
-			"Processing", 
-			transition
-		);
+		doFollowUpParams = Structures.create(
+			ActivityDoFollowUpParams.class, 
+			Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, null),
+			Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, null),
+			Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, "Processing"),
+			Datatypes.member(ActivityDoFollowUpParams.Member.transition, transition)
+		);		
 		email.doFollowUp(doFollowUpParams);
 		pm.currentTransaction().commit();
 		// Close
@@ -5131,18 +5286,20 @@ public class Activities extends AbstractImpl {
 			"Close"
 		);
 		pm.currentTransaction().begin();
-		doFollowUpParams = Utils.getActivityPackage(pm).createActivityDoFollowUpParams(
-			null, // assignTo 
-			null, // followUpText 
-			"Sent", 
-			transition
-		);
+		doFollowUpParams = Structures.create(
+			ActivityDoFollowUpParams.class, 
+			Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, null),
+			Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, null),
+			Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, "Sent"),
+			Datatypes.member(ActivityDoFollowUpParams.Member.transition, transition)
+		);		
 		email.doFollowUp(doFollowUpParams);
 		pm.currentTransaction().commit();    	
     }
 
     /**
      * Export activity process to SCXML.
+     * 
      * @param activityProcess
      * @return
      */
@@ -5179,6 +5336,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Import activity process from SCXML stream.
+     * 
      * @param activitySegment
      * @param scxml
      * @param report
@@ -5334,8 +5492,7 @@ public class Activities extends AbstractImpl {
 				} else {
 					report.add("Attribute name for scxml is either not set or empty");
 				}
-			}
-			catch(Exception e) {
+			} catch(Exception e) {
 				report.add("Exception occured while importing " + e.getMessage());
 			}
 		}
@@ -5344,6 +5501,7 @@ public class Activities extends AbstractImpl {
     
     /**
      * Get parties of given activity.
+     * 
      * @param activity
      * @return
      */
@@ -5354,30 +5512,55 @@ public class Activities extends AbstractImpl {
         if(activity instanceof EMail) {
         	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient();
         	parties.addAll(c);
-        }
-        else if(activity instanceof Incident) {
+        } else if(activity instanceof Incident) {
         	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty();
         	parties.addAll(c);
-        }
-        else if(activity instanceof Mailing) {
+        } else if(activity instanceof Mailing) {
         	Collection<MailingRecipient> c = ((Mailing)activity).getMailingRecipient();
         	parties.addAll(c);
-        }
-        else if(activity instanceof Meeting) {
+        } else if(activity instanceof Meeting) {
         	Collection<MeetingParty> c = ((Meeting)activity).getMeetingParty();
         	parties.addAll(c);
-        }
-        else if(activity instanceof PhoneCall) {
+        } else if(activity instanceof PhoneCall) {
         	Collection<AbstractPhoneCallRecipient> c = ((PhoneCall)activity).getPhoneCallRecipient();
         	parties.addAll(c);
-        }
-        else if(activity instanceof Task) {
+        } else if(activity instanceof Task) {
         	Collection<TaskParty> c = ((Task)activity).getTaskParty();
         	parties.addAll(c);
         }
         return parties;
     }
     
+	/**
+	 * Print alarm tags for the given event.
+	 * 
+	 * @param p
+	 * @param event
+	 */
+	public void printAlarms(
+		PrintWriter p,
+		Activity event
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
+        Collection<Timer> timers = event.getAssignedTimer();
+        List<String> principalChain = UserObjects.getPrincipalChain(pm);
+        for(Timer timer: timers) {
+        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
+        		p.println("BEGIN:VALARM");
+        		p.println("ACTION:DISPLAY");
+        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
+        		p.println("TRIGGER;VALUE=DURATION:" + (triggerMinutes < 0 ? "-" : "") + "PT" + Math.abs(triggerMinutes) + "M");
+        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
+        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
+        		p.println("SUMMARY:" + timer.getName());
+        		if(timer.getDescription() != null) {
+        			p.println("DESCRIPTION:" + timer.getDescription());
+        		}
+        		p.println("END:VALARM");
+        	}
+        }
+	}
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -5433,6 +5616,7 @@ public class Activities extends AbstractImpl {
     	PHONE_CALL((short)6),
     	TASK((short)8),
     	ABSENCE((short)9),
+    	EXTERNAL_ACTIVITY((short)10),    	
     	SALES_VISIT((short)11);
     	
     	private short value;

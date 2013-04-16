@@ -8,7 +8,10 @@
 		</field>
 		<field name="userHome" visibility="none">
 			<column name="P$$PARENT"/>
-		</field>		    
+		</field>
+		<field name="childProcessInstance" visibility="cci">
+			<join table="OOCKE1_JOIN_WFPROCINSTHASCHILD"/>
+		</field>
     </class>
   </package>
 </openmdxjdo>

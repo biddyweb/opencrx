@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: ImportAddressesWizard.jsp,v 1.8 2012/07/08 13:30:30 wfro Exp $
  * Description: ImportAddressGroupMemberWizard
- * Revision:    $Revision: 1.8 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:30 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,220 +53,103 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.text.*,
-org.openmdx.application.cci.*,
-org.openmdx.base.text.conversion.*,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
+org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.naming.*,
-org.openmdx.kernel.log.*
-" %><%
-	request.setCharacterEncoding("UTF-8");
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
-		return;
-	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	String formName = "ImportAddressesForm";
-	String wizardName = "ImportAddressesWizard.jsp";
-
-	// Get Parameters
-	boolean actionImport = request.getParameter("OK.Button") != null;
-	boolean actionCancel = request.getParameter("Cancel.Button") != null;
-
-	if(actionCancel) {
-	  session.setAttribute(wizardName, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
+org.openmdx.base.naming.*
+" %>
+<%
+	final String FORM_NAME = "ImportAddressesForm";	
+	ImportAddressesWizardController wc = new ImportAddressesWizardController();
 %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html dir="<%= texts.getDir() %>">
-<head>
-	<title><%= app.getTexts().getNewText() %> - <%= app.getLabel("org:opencrx:kernel:activity1:AddressGroup") %></title>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
+		return;
+	}
+	ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+	RefObject_1_0 obj = wc.getObject();
+%>
+<!--
 	<meta name="label" content="Import Addresses">
 	<meta name="toolTip" content="Import Addresses">
-	<meta name="targetType" content="_self">
+	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:AddressGroup">
 	<meta name="order" content="9998">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
-	<!--[if lt IE 7]><script type="text/javascript" src="../../javascript/iehover-fix.js"></script><![endif]-->
-	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
-	<script language="javascript" type="text/javascript" src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script>
-	<link rel="stylesheet" type="text/css" href="../../_style/ssf.css">
-	<link rel="stylesheet" type="text/css" href="../../_style/n2default.css">
-	<link rel="shortcut icon" href="../../images/favicon.ico" />
-	<script language="javascript" type="text/javascript">
-    	history.forward(); // prevent going back to this page by breaking history
-	  	var OF = null;
-	  	try {
-			OF = self.opener.OF;
-	  	}
-	  	catch(e) {
-			OF = null;
-	  	}
-	  	if(!OF) {
-			OF = new ObjectFinder();
-	  	}
-	</script>
-</head>
+-->
+<br />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="post" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
+	<input type="hidden" id="Command" name="Command" value="" />
+	<table class="fieldGroup">
+		<tr>
+			<td class="label">Address filter:</td>
+			<td>
+				<select id="addressFilterXri" class="valueL" tabindex="100" name="addressFilterXri">
 <%
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-	org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
-	    new Path("xri:@openmdx:org.opencrx.kernel.account1/provider/" + providerName + "/segment/" + segmentName)
-	);
-	if(actionImport) {
-	    if(
-	    	(obj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroup) &&
-	    	(request.getParameter("AddressFilter.xri") != null)
-	    ) {
-	      org.opencrx.kernel.activity1.jmi1.AddressGroup addressGroup = (org.opencrx.kernel.activity1.jmi1.AddressGroup)obj;
-	      Set addressXris = new HashSet();
-				for(Iterator i = addressGroup.getMember().iterator(); i.hasNext(); ) {
-						addressXris.add(((org.opencrx.kernel.activity1.jmi1.AddressGroupMember)i.next()).getAddress().refMofId());
-				}
+					org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, wc.getProviderName(), wc.getSegmentName());
+					org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery addressFilterQuery = (org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AddressFilterGlobal.class);
+					addressFilterQuery.forAllDisabled().isFalse();
+					addressFilterQuery.orderByName().ascending();
+					for(org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter: accountSegment.getAddressFilter(addressFilterQuery)) {
+%>
+						<option value="<%= addressFilter.refMofId() %>"><%= new ObjectReference(addressFilter, app).getTitle() %></option>
+<%
+					}
+%>
+				</select>
+			</td>
+			<td class="addon"/>
+			<td class="label"/>
+			<td/>
+			<td class="addon"/>
+		</tr>
+		<tr>
+			<td class="label">Count limit:</td>
+			<td><input type="text" class="valueR" id="countLimit" name="countLimit" value="0"/></td>
+			<td class="addon"/></td>
+			<td class="label"/>
+			<td/>
+			<td class="addon"/>
+		</tr>
+	</table>
+	<br />
+	<div id="WaitIndicator" style="width:50px;height:24px;" class="wait">&nbsp;</div>
+	<div id="SubmitArea" style="display:none;">										    	    								
+		<input type="submit" name="OK" tabindex="9000" value="Import" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
+		<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+	</div>
+</form>
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
+			onFailure: function() { },
+			onSuccess: function(t) {
+				$('UserDialog').update(t.responseText);
+			}
+		});
+		Event.stop(event);
+	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';		
+</script>
+<t:wizardClose controller="<%= wc %>" />
 
-		    org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter = (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)pm.getObjectById(new Path(request.getParameter("AddressFilter.xri")));
-		    int countLimit = -1;
-		    try {
-		    		countLimit = Integer.valueOf(request.getParameter("CountLimit"));
-		    } catch (Exception e) {}
-				pm.currentTransaction().begin();
-				int ii = 0;
-				for(Iterator i = addressFilter.getFilteredAddress().iterator(); i.hasNext() && ii < countLimit; ) {
-				    org.opencrx.kernel.account1.jmi1.AccountAddress address = (org.opencrx.kernel.account1.jmi1.AccountAddress)i.next();
-				    if (addressXris.contains(address.refMofId())) {continue;} // do not import duplicates
-
-				    org.opencrx.kernel.activity1.jmi1.AddressGroupMember member = pm.newInstance(org.opencrx.kernel.activity1.jmi1.AddressGroupMember.class);
-				    member.refInitialize(false, false);
-				    member.setAddress(address);
-						addressGroup.addMember(
-						    false,
-						    org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString(),
-						    member
-						);
-						ii++;
-						if(ii % 100 == 0) {
-							pm.currentTransaction().commit();
-							pm.currentTransaction().begin();
-						}
-				}
-				pm.currentTransaction().commit();
-			    Action nextAction = new ObjectReference(
-			    	obj,
-			    	app
-			   	).getSelectObjectAction();
-				response.sendRedirect(
-					request.getContextPath() + "/" + nextAction.getEncodedHRef()
-				);
-				return;
-	   }
-	}
-%>
-<body>
-<div id="container">
-	<div id="wrap">
-		<div id="header" style="height:90px;">
-			<div id="logoTable">
-				<table id="headerlayout">
-					  <tr id="headRow">
-					<td id="head" colspan="2">
-					  <table id="info">
-						<tr>
-						  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-						  <td id="headerCellSpacerLeft"></td>
-						  <td id="headerCellMiddle">&nbsp;</td>
-						  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-						</tr>
-					  </table>
-					</td>
-				  </tr>
-				</table>
-			</div>
-		</div>
-		<div id="content-wrap">
-			<div id="content" style="padding:100px 0.5em 0px 0.5em;">
-				<form name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= wizardName %>">
-					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
-					<table cellspacing="8" class="tableLayout">
-						<tr>
-							<td class="cellObject">
-								<div class="panel" id="panelObj0" style="display: block">
-									<div class="fieldGroupName">Import addresses</div>
-										<table class="fieldGroup">
-											<tr>
-												<td class="label">Address filter:</td>
-												<td>
-													<select id="AddressFilter.xri" class="valueL" tabindex="100" name="AddressFilter.xri">
-<%
-														org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery addressFilterQuery = (org.opencrx.kernel.account1.cci2.AddressFilterGlobalQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AddressFilterGlobal.class);
-														addressFilterQuery.forAllDisabled().isFalse();
-														addressFilterQuery.orderByName().ascending();
-														for(Iterator i = accountSegment.getAddressFilter(addressFilterQuery).iterator(); i.hasNext(); ) {
-														    org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter = (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)i.next();
-%>
-															<option value="<%= addressFilter.refMofId() %>"><%= new ObjectReference(addressFilter, app).getTitle() %></option>
-<%
-														}
-%>
-													</select>
-												</td>
-												<td class="addon"/>
-												<td class="label"/>
-												<td/>
-												<td class="addon"/>
-											</tr>
-											<tr>
-												<td class="label">Count limit:</td>
-												<td><input type="text" class="valueR" id="CountLimit" name="CountLimit" value="0"/></td>
-												<td class="addon"/></td>
-												<td class="label"/>
-												<td/>
-												<td class="addon"/>
-											</tr>
-										</table>
-									</div>
-								</div>
-								<input type="submit" class="abutton" name="OK.Button" id="OK.Button" tabindex="9000" value="Import" />
-								<input  type="submit" class="abutton" name="Cancel.Button" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" />
-							</td>
-						</tr>
-					</table>
-				</form>
-			</div> <!-- content -->
-		</div> <!-- content-wrap -->
-	</div> <!-- wrap -->
-</div> <!-- container -->
-</body>
-</html>
-<%
-if(pm != null) {
-	pm.close();
-}
-%>

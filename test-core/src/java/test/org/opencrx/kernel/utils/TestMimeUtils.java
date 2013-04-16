@@ -72,6 +72,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.utils.MimeUtils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
@@ -90,7 +91,10 @@ import test.org.opencrx.generic.AbstractTest;
  */
 public class TestMimeUtils {
 
-    //-----------------------------------------------------------------------
+    /**
+     * @throws NamingException
+     * @throws ServiceException
+     */
     @BeforeClass
     public static void initialize(
     ) throws NamingException, ServiceException {
@@ -100,23 +104,38 @@ public class TestMimeUtils {
         entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * TestAll
+     *
+     */
     public static class TestAll extends AbstractTest {
     	
+		/**
+		 * Constructor.
+		 */
 		public TestAll(
 		) {
 			super(TestMimeUtils.entityManagerFactory);
 		}
 	
+        /**
+         * @throws ServiceException
+         * @throws IOException
+         * @throws ParseException
+         */
         @Test
         public void run(
         ) throws ServiceException, IOException, ParseException{
         	this.testMimeUtils();
         }
 		
+	    /**
+	     * @throws ServiceException
+	     */
 	    protected void testMimeUtils(
 	    ) throws ServiceException {
 	    	try {
+	    		org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);	    		
 	    		File dir = new File("./etc/Outlook");
 	    		for(File file: dir.listFiles()) {
 	    			try {
@@ -127,9 +146,9 @@ public class TestMimeUtils {
 					    	List<String> errors = new ArrayList<String>();
 					    	MimeMessage mimeMessage = MimeUtils.mapMsgToMime(
 					    		msgStream,
-					    		null, // accountSegment
+					    		accountSegment, // accountSegment
 					    		Collections.<String,String>emptyMap(),
-					    		true, // validateMappedAddresses
+					    		true, // validateAddresses
 					    		errors
 					    	);
 					    	if(mimeMessage != null) {

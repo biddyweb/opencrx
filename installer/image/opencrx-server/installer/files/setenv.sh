@@ -3,6 +3,7 @@
 # [openCRX]
 export JAVA_OPTS="$JAVA_OPTS -Xmx800M"
 export JAVA_OPTS="$JAVA_OPTS -XX:MaxPermSize=256m"
+export JAVA_OPTS="$JAVA_OPTS -Dfile.encoding=UTF-8"
 export JAVA_OPTS="$JAVA_OPTS -Djava.protocol.handler.pkgs=org.openmdx.kernel.url.protocol"
 export JAVA_OPTS="$JAVA_OPTS -Dorg.opencrx.maildir=$CATALINA_BASE/maildir"
 export JAVA_OPTS="$JAVA_OPTS -Dorg.opencrx.airsyncdir=$CATALINA_BASE/airsyncdir"

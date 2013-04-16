@@ -322,7 +322,8 @@ public class OpenCrxSecurity_1 extends Standard_1 {
          */
         public MappedRecord retrieveObject(
         	ServiceHeader header,
-            Path identity
+            Path identity,
+            boolean preferringNotFoundException
         ) throws ServiceException {
         	try {
 	        	DataproviderRequest getRequest = new DataproviderRequest(
@@ -334,10 +335,10 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	        	DataproviderReply getReply = this.newDataproviderReply();
 	        	this.getDelegatingInteraction().get(
 	        		getRequest.getInteractionSpec(), 
-	        		Query_2Facade.newInstance(getRequest.path()), 
+	        		Query_2Facade.newInstance(getRequest.path(), preferringNotFoundException), 
 	        		getReply.getResult()
 	        	);
-	        	return getReply.getObject();
+	        	return getReply.getResult().isEmpty() ? null : getReply.getObject();
         	} catch(ResourceException e) {
         		throw new ServiceException(e);
         	}
@@ -531,14 +532,14 @@ public class OpenCrxSecurity_1 extends Standard_1 {
             this.checkPermission(
 	            header,
 	            request
-	        );
-	                    
+	        );            
 	        String operationName = request.path().get(
 	            request.path().size() - 2
 	        );
 	        MappedRecord source = this.retrieveObject(
 	        	header,
-	            request.path().getPrefix(request.path().size() - 2)
+	            request.path().getPrefix(request.path().size() - 2),
+	            true
 	        );
 	        String sourceClass = Object_2Facade.getObjectClass(source);
 	        MappedRecord param = request.object();
@@ -557,7 +558,6 @@ public class OpenCrxSecurity_1 extends Standard_1 {
 	                );
 	            }
 	        }
-	        
 	        // reply
 	        if(result != null) {
 	        	output.setPath(result.getPath());

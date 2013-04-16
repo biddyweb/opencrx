@@ -63,7 +63,6 @@ import java.util.TreeSet;
 
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
-import javax.naming.spi.NamingManager;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -86,8 +85,11 @@ import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.MeetingQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
+import org.opencrx.kernel.base.cci2.IndexEntryQuery;
+import org.opencrx.kernel.base.jmi1.IndexEntry;
 import org.opencrx.kernel.contract1.cci2.SalesOrderPositionQuery;
 import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
+import org.opencrx.kernel.contract1.jmi1.GenericContract;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
 import org.opencrx.kernel.product1.cci2.AccountAssignmentProductQuery;
@@ -95,9 +97,9 @@ import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.AccountAssignmentProduct;
 import org.opencrx.kernel.product1.jmi1.Product;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ExtentCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
-import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
 
 import test.org.opencrx.generic.AbstractTest;
 
@@ -113,22 +115,22 @@ import test.org.opencrx.generic.AbstractTest;
  */
 public class TestQuery {
 
-    //-----------------------------------------------------------------------
     @BeforeClass
     public static void initialize(
     ) throws NamingException, ServiceException {
-        if(!NamingManager.hasInitialContextFactoryBuilder()) {
-            NonManagedInitialContextFactoryBuilder.install(null);
-        }
-        emf = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactory();
+    	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactoryProxy(
+    		"http://127.0.0.1:8080/opencrx-rest-CRX/", 
+    		"admin-Standard", 
+    		"admin-Standard", 
+    		"application/vnd.openmdx.wbxml" // text/xml
+    	);        
     }
-    
-    //-----------------------------------------------------------------------
+
     public static class TestAll extends AbstractTest {
     	
 		public TestAll(
 		) {
-			super(TestQuery.emf);
+			super(TestQuery.entityManagerFactory);
 		}
 	
         @Test
@@ -374,21 +376,42 @@ public class TestQuery {
             	(org.opencrx.kernel.contract1.jmi1.Segment)pm.getObjectById(
 	        		new Path("xri://@openmdx*org.opencrx.kernel.contract1").getDescendant("provider", providerName, "segment", segmentName)
             	);
-            SalesOrderPositionQuery salesOrderPositionQuery = (SalesOrderPositionQuery)pm.newQuery(SalesOrderPosition.class);
-            salesOrderPositionQuery.identity().like(
-            	contractSegment.refGetPath().getDescendant("salesOrder", ":*", "position", ":*").toXRI()
-            );
-            salesOrderPositionQuery.forAllDisabled().isFalse();
-            salesOrderPositionQuery.forAllExternalLink().startsNotWith("TEST:");
-            salesOrderPositionQuery.thereExistsConfiguration().name().equalTo("CropScan.Default");
-            List<SalesOrderPosition> salesOrderPositions = contractSegment.getExtent(salesOrderPositionQuery);            
-            List<Path> salesOrderPositionIdentities = new ArrayList<Path>();
-            for(SalesOrderPosition salesOrderPosition: salesOrderPositions) {
-            	salesOrderPositionIdentities.add(salesOrderPosition.refGetPath());
+            {
+            	SalesOrderPositionQuery salesOrderPositionQuery = (SalesOrderPositionQuery)PersistenceHelper.newQuery(
+            		this.pm.getExtent(SalesOrderPosition.class),
+            		contractSegment.refGetPath().getDescendant("salesOrder", ":*", "position", ":*")
+                );
+	            salesOrderPositionQuery.forAllDisabled().isFalse();
+	            salesOrderPositionQuery.forAllExternalLink().startsNotWith("TEST:");
+	            salesOrderPositionQuery.thereExistsConfiguration().name().equalTo("CropScan.Default");
+	            List<SalesOrderPosition> salesOrderPositions = contractSegment.getExtent(salesOrderPositionQuery);            
+	            List<Path> salesOrderPositionIdentities = new ArrayList<Path>();
+	            for(SalesOrderPosition salesOrderPosition: salesOrderPositions) {
+	            	salesOrderPositionIdentities.add(salesOrderPosition.refGetPath());
+	            }
+	        	assertTrue(salesOrderPositionQuery.toString(), !salesOrderPositionIdentities.isEmpty());
             }
-        	assertTrue(salesOrderPositionQuery.toString(), !salesOrderPositionIdentities.isEmpty());	        	            
+            {
+            	int count = 0;
+            	for(GenericContract contract: contractSegment.<GenericContract>getContract()) {
+            		// Get index entries where the XRIs of the indexed object matches a pattern
+                	IndexEntryQuery query = (IndexEntryQuery)PersistenceHelper.newQuery(
+                		pm.getExtent(IndexEntry.class),
+                		contractSegment.refGetPath().getDescendant("indexEntry", ":*")
+                	);
+                	query.thereExistsIndexedObject().elementOf(
+            			PersistenceHelper.getCandidates(
+    	        			pm.getExtent(ExtentCapable.class, true),
+    	        			contract.refMofId() + "/($...)"
+            			)
+            		);
+                	System.out.println("Contract " + contract.refMofId() + " and its composites have " + contractSegment.getExtent(query).size() + " index entries");
+                	count++;
+                	if(count > 50) break;
+            	}
+            }
 	    }
-	    
+
 	    protected void testAccountAssignmentsQuery(
 	    ) {	    	
 	    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = 
@@ -399,50 +422,71 @@ public class TestQuery {
 	    		(org.opencrx.kernel.product1.jmi1.Segment)pm.getObjectById(
 	        		new Path("xri://@openmdx*org.opencrx.kernel.product1").getDescendant("provider", providerName, "segment", segmentName)
 	    		);
-	    	int count = 0;
 	    	Collection<Account> accounts = accountSegment.getAccount();
-	    	for(Account account: accounts) {
-	    		// New style extent query
-            	AccountAssignmentProductQuery query = (AccountAssignmentProductQuery)PersistenceHelper.newQuery(
-            		pm.getExtent(AccountAssignmentProduct.class), 
-            		productSegment.refGetPath().getDescendant("product", ":*", "assignedAccount", "%")
-            	);
-	    		// Old style extent query
-//	    		AccountAssignmentProductQuery query = (AccountAssignmentProductQuery)pm.newQuery(AccountAssignmentProduct.class);
-//	    		query.identity().like(
-//	    				productSegment.refGetPath().getDescendant("product", ":*", "assignedAccount", ":*").toResourcePattern()
-//	    		);
-	    		Date since = new Date(System.currentTimeMillis() - (10L * 86400L * 1000L));
-	    		query.thereExistsAccount().equalTo(account);
-	    		query.thereExistsValidFrom().greaterThan(since);
-	    		query.accountRole().greaterThanOrEqualTo((short)2);		        
-	    		List<AccountAssignmentProduct> assignments = productSegment.getExtent(query);
-	    		Set<Date> dates = new TreeSet<Date>();
-	    		for(AccountAssignmentProduct assignment: assignments) {
-	    			dates.add(assignment.getValidFrom());
-	    		}
-	    		System.out.println("Dates=" + dates);
-	    		count++;
-	    		if(count > 50) break;
-	    	}
-	    	// Products with specific account assignment
-	    	if(!accounts.isEmpty()) {
-		    	Account account = accounts.iterator().next();
-		    	ProductQuery productQuery = (ProductQuery)this.pm.newQuery(Product.class);
-	    		Date since = new Date(System.currentTimeMillis() - (10L * 86400L * 1000L));
-	    		productQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(account);
-	    		productQuery.thereExistsAssignedAccount().thereExistsValidFrom().greaterThan(since);
-	    		productQuery.thereExistsAssignedAccount().accountRole().greaterThanOrEqualTo((short)2);
-	    		List<Product> products = productSegment.getProduct(productQuery);
-	    		count = 0;
-	    		for(Product product: products) {
-	    			System.out.println("Product=" + product.getProductNumber());
+    		// New style extent query
+	    	{
+		    	int count = 0;
+		    	for(Account account: accounts) {
+	            	AccountAssignmentProductQuery query = (AccountAssignmentProductQuery)PersistenceHelper.newQuery(
+	            		pm.getExtent(AccountAssignmentProduct.class), 
+	            		productSegment.refGetPath().getDescendant("product", ":*", "assignedAccount", "%")
+	            	);
+		    		Date since = new Date(System.currentTimeMillis() - (10L * 86400L * 1000L));
+		    		query.thereExistsAccount().equalTo(account);
+		    		query.thereExistsValidFrom().greaterThan(since);
+		    		query.accountRole().greaterThanOrEqualTo((short)2);		        
+		    		List<AccountAssignmentProduct> assignments = productSegment.getExtent(query);
+		    		Set<Date> dates = new TreeSet<Date>();
+		    		for(AccountAssignmentProduct assignment: assignments) {
+		    			dates.add(assignment.getValidFrom());
+		    		}
+		    		System.out.println("Dates=" + dates);
 		    		count++;
 		    		if(count > 50) break;
+		    	}
+	    	}
+	    	// Products with specific account assignment
+	    	{
+		    	if(!accounts.isEmpty()) {
+			    	Account account = accounts.iterator().next();
+			    	ProductQuery productQuery = (ProductQuery)this.pm.newQuery(Product.class);
+		    		Date since = new Date(System.currentTimeMillis() - (10L * 86400L * 1000L));
+		    		productQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(account);
+		    		productQuery.thereExistsAssignedAccount().thereExistsValidFrom().greaterThan(since);
+		    		productQuery.thereExistsAssignedAccount().accountRole().greaterThanOrEqualTo((short)2);
+		    		List<Product> products = productSegment.getProduct(productQuery);
+		    		int count = 0;
+		    		for(Product product: products) {
+		    			System.out.println("Product=" + product.getProductNumber());
+			    		count++;
+			    		if(count > 50) break;
+		    		}
+		    	}
+	    	}
+	    	// Accounts member of group 
+	    	{
+	    		GroupQuery groupQuery = (GroupQuery)this.pm.newQuery(Group.class);
+	    		int count = 0;
+	    		for(Group group: accountSegment.<Group>getAccount(groupQuery)) {
+	    			ContactQuery newContactsQuery = (ContactQuery)this.pm.newQuery(Contact.class);
+					newContactsQuery.forAllDisabled().isFalse();
+	    			newContactsQuery.thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
+	    			newContactsQuery.thereExistsAccountMembership().distance().equalTo(-1);
+	    			newContactsQuery.thereExistsAccountMembership().forAllDisabled().isFalse();
+					newContactsQuery.thereExistsAccountMembership().createdAt().greaterThanOrEqualTo(new Date(0L));
+					newContactsQuery.thereExistsAccountMembership().orderByModifiedAt().descending();	    			
+	    			int count1 = 0;
+	    			for(Contact contact: accountSegment.<Contact>getAccount(newContactsQuery)) {
+	    				System.out.println("Contact " + contact.getFullName() + " is member of group " + group.getFullName());
+	    				count1++;
+	    				if(count1 > 50) break;
+	    			}
+	    			count++;
+	    			if(count > 50) break;
 	    		}
 	    	}
 	    }
-	    
+
 	    protected void testMultivaluedReferences(
 	    ) {
 	    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
@@ -481,7 +525,7 @@ public class TestQuery {
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
-    protected static PersistenceManagerFactory emf = null;
+    protected static PersistenceManagerFactory entityManagerFactory = null;
 	protected static String providerName = "CRX";
 	protected static String segmentName = "Standard";
 		    

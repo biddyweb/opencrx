@@ -1,18 +1,17 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
+<%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:        $Id: TwitterCreateAccessTokenWizard.jsp,v 1.5 2012/07/08 13:30:31 wfro Exp $
  * Description: TwitterCreateAccessTokenWizard
- * Revision:    $Revision: 1.5 $
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:31 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -54,67 +53,41 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-%><%@ page session="true" import="
+%>
+<%@page session="true" import="
 java.util.*,
 java.io.*,
 java.text.*,
-twitter4j.*,
-twitter4j.auth.*,
-org.opencrx.kernel.backend.Activities,
+org.opencrx.kernel.backend.*,
+org.opencrx.kernel.portal.wizard.*,
+org.opencrx.kernel.generic.*,
 org.openmdx.kernel.id.cci.*,
 org.openmdx.kernel.id.*,
+org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
-org.openmdx.base.exception.*,
-org.opencrx.application.twitter.*,
 org.openmdx.base.naming.*
-" %><%
-	final String REQUEST_TOKEN_KEY = RequestToken.class.getName();
-
-	request.setCharacterEncoding("UTF-8");
-	String servletPath = "." + request.getServletPath();
-	String servletPathPrefix = servletPath.substring(0, servletPath.lastIndexOf("/") + 1);
-	ApplicationContext app = (ApplicationContext)session.getValue(WebKeys.APPLICATION_KEY);
-	ViewsCache viewsCache = (ViewsCache)session.getValue(WebKeys.VIEW_CACHE_KEY_SHOW);
-	String requestId =  request.getParameter(Action.PARAMETER_REQUEST_ID);
-	String objectXri = request.getParameter(Action.PARAMETER_OBJECTXRI);
-	if(objectXri == null || app == null || viewsCache.getView(requestId) == null) {
-		response.sendRedirect(
-			request.getContextPath() + "/" + WebKeys.SERVLET_NAME
-		);
+" %>
+<%
+	final String FORM_NAME = "TwitterCreateAccessTokenForm";	
+	TwitterCreateAccessTokenWizardController wc = new TwitterCreateAccessTokenWizardController();
+%>
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+<%
+	if(response.getStatus() != HttpServletResponse.SC_OK) {
+		wc.close();
 		return;
 	}
-	javax.jdo.PersistenceManager pm = app.getNewPmData();
-	javax.jdo.PersistenceManager rootPm = pm.getPersistenceManagerFactory().getPersistenceManager(
-          org.opencrx.kernel.generic.SecurityKeys.ROOT_PRINCIPAL,
-          null
-      );    			
-	RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
-	Texts_1_0 texts = app.getTexts();
-	Codes codes = app.getCodes();
-	String formName = "TwitterCreateAccessTokenForm";
-	String wizardName = "TwitterCreateAccessTokenWizard.jsp";
-
-	// Get Parameters
-	String command = request.getParameter("Command");
-	String pin = request.getParameter("PIN");
-	if(command == null) command = "";
-	boolean actionOk = "OK".equals(command);
-	boolean actionCancel = "Cancel".equals(command);
-
-	if(actionCancel) {
-	  session.setAttribute(wizardName, null);
-		Action nextAction = new ObjectReference(obj, app).getSelectObjectAction();
-		response.sendRedirect(
-			request.getContextPath() + "/" + nextAction.getEncodedHRef()
-		);
-		return;
-	}
+	org.openmdx.portal.servlet.ApplicationContext app = wc.getApp();
+	javax.jdo.PersistenceManager pm = wc.getPm();
+   	session.setAttribute(
+   		TwitterCreateAccessTokenWizardController.REQUEST_TOKEN_KEY,
+   		wc.getRequestToken()
+   	);
 %>
 <!--
 	<meta name="label" content="Twitter - Create Access Token">
@@ -123,102 +96,59 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:home1:TwitterAccount">
 	<meta name="order" content="9000">
 -->
-<%
-	org.opencrx.kernel.home1.jmi1.TwitterAccount twitterAccount = (org.opencrx.kernel.home1.jmi1.TwitterAccount)obj;
-	String providerName = obj.refGetPath().get(2);
-	String segmentName = obj.refGetPath().get(4);
-	String message = null;
-	org.opencrx.kernel.admin1.jmi1.ComponentConfiguration configuration = 
-		org.opencrx.application.twitter.TwitterUtils.getComponentConfiguration(
-			providerName, 
-			segmentName, 
-			rootPm
-		);
-    Twitter twitter = new TwitterFactory().getInstance();
-    twitter.setOAuthConsumer(
-    	org.opencrx.application.twitter.TwitterUtils.getConsumerKey(twitterAccount, configuration),
-    	org.opencrx.application.twitter.TwitterUtils.getConsumerSecret(twitterAccount, configuration)    	
-    );
-	if(actionOk) {
-	    RequestToken requestToken = (RequestToken)session.getAttribute(REQUEST_TOKEN_KEY);
-	    if(requestToken != null) {
-		    AccessToken accessToken = null;
-		    try {
-		    	accessToken = twitter.getOAuthAccessToken(requestToken, pin);
-		    	pm.currentTransaction().begin();
-		    	twitterAccount.setAccessToken(accessToken.getToken());
-		    	twitterAccount.setAccessTokenSecret(accessToken.getTokenSecret());
-		    	pm.currentTransaction().commit();
-			    Action nextAction = new ObjectReference(
-			    	twitterAccount,
-			    	app
-			   	).getSelectObjectAction();
-				session.removeAttribute(REQUEST_TOKEN_KEY);
-				response.sendRedirect(
-					request.getContextPath() + "/" + nextAction.getEncodedHRef()
-				);
-				return;	    	
-			} 
-		    catch(Exception e) {
-		    	new ServiceException(e).log();
-		    	message = e.getMessage();
-			}
-	    }
-	}
-	RequestToken requestToken = twitter.getOAuthRequestToken();
-   	session.setAttribute(
-		REQUEST_TOKEN_KEY,
-   		requestToken
-   	);
-%>
 <br />
-<form id="<%= formName %>" name="<%= formName %>" accept-charset="UTF-8" method="POST" action="<%= servletPath %>">
-	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
-	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
-	<table cellspacing="8" class="tableLayout">
+	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= formName %>" style="display: block">
-					<div class="fieldGroupName">&nbsp;</div>				
-					<table class="fieldGroup">
-						<tr>
-							<td title="" class="label"><span class="nw">Authentication URL:</span></td>
-							<td><a href="<%= requestToken.getAuthorizationURL() %>" target="_blank">Click here to get PIN</a></td>
-							<td class="addon"></td>
-						</tr>
-					</table>				
-					<table class="fieldGroup">
-						<tr>
-							<td title="" class="label"><span class="nw">PIN:</span></td>
-							<td>
-							  <input type="text" value="" tabindex="1100" class="valueL mandatory" name="PIN" id="PIN">
-							</td>
-							<td class="addon"></td>
-						</tr>
-					</table>
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
 <%
-					if(message != null) {
+					if(wc.getRequestToken() != null) {
+%>				
+						<div class="fieldGroupName">&nbsp;</div>				
+						<table class="fieldGroup">
+							<tr>
+								<td title="" class="label"><span class="nw">Authentication URL:</span></td>
+								<td><a href="<%= wc.getRequestToken().getAuthorizationURL() %>" target="_blank">Click here to get PIN</a></td>
+								<td class="addon"></td>
+							</tr>
+						</table>
+						<table class="fieldGroup">
+							<tr>
+								<td title="" class="label"><span class="nw">PIN:</span></td>
+								<td>
+								  <input type="text" value="" tabindex="1100" class="valueL mandatory" name="PIN" id="PIN">
+								</td>
+								<td class="addon"></td>
+							</tr>
+						</table>
+<%
+					}
+					if(wc.getMessage() != null && !wc.getMessage().isEmpty()) {
 %>														
 						<div class="fieldGroupName">&nbsp;</div>				
 						<table class="fieldGroup">
 							<tr>
-								<td><%= message %></td>
+								<td><%= wc.getMessage() %></td>
 							</tr>
 						</table>
 <%
 					}
 %>										
 				</div>
-				<input type="submit" class="abutton" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
-				<input  type="submit" class="abutton" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+				<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+				<input  type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 			</td>
 		</tr>
 	</table>
 </form>
-<script language="javascript" type="text/javascript">
-	Event.observe('<%= formName %>', 'submit', function(event) {
-		$('<%= formName %>').request({
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
 			onFailure: function() { },
 			onSuccess: function(t) {
 				$('UserDialog').update(t.responseText);
@@ -227,11 +157,5 @@ org.openmdx.base.naming.*
 		Event.stop(event);
 	});
 </script>
-<%
-if(pm != null) {
-	pm.close();
-}
-if(rootPm != null) {
-	rootPm.close();
-}
-%>
+<t:wizardClose controller="<%= wc %>" />
+

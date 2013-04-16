@@ -1,18 +1,15 @@
 ﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Name:        $Id: BulkEmail.jsp,v 1.17 2012/07/08 13:30:03 wfro Exp $
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: create Bulk E-mail (e.g. for campaign)
- * Revision:    $Revision: 1.17 $
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:        $Date: 2012/07/08 13:30:03 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2012 CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2013 CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,7 +63,6 @@ org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.action.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.kernel.log.*,
@@ -325,9 +321,6 @@ org.openmdx.uses.org.apache.commons.fileupload.*
              );
 
           // Get account1 and activity1 package
-          org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
-          org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = org.opencrx.kernel.utils.Utils.getActivityPackage(pm);
-
           UserDefinedView userView = new UserDefinedView(
             (RefObject_1_0)pm.getObjectById(new Path(objectXri)),
             app,
@@ -452,18 +445,19 @@ org.openmdx.uses.org.apache.commons.fileupload.*
             // create Email Activity
             pm.currentTransaction().begin();
             //System.out.println("creating new Activity");
-            org.opencrx.kernel.activity1.jmi1.NewActivityParams params = activityPkg.createNewActivityParams(
-            	null, // creationContext              
-              	activityDescription, // String description              
-              	null, // String detailedDescription              
-              	today, // Date dueBy              
-              	(short)0, // Date icalType              
-              	activityName, // String name              
-              	(short)2, // short Priority              
-              	contact, // Contact reportingContact (might be null)              
-              	today, // Date scheduledEnd              
-              	today // Date scheduledStart
-            );
+            org.opencrx.kernel.activity1.jmi1.NewActivityParams params = org.w3c.spi2.Structures.create(
+           		org.opencrx.kernel.activity1.jmi1.NewActivityParams.class, 
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.creationContext, null),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.description, activityDescription),			
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.detailedDescription, null),			
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.dueBy, today),			
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.icalType, (short)0),	
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.name, activityName),	
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.priority, (short)2),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.reportingContact, contact),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.scheduledEnd, today),
+   				org.w3c.spi2.Datatypes.member(org.opencrx.kernel.activity1.jmi1.NewActivityParams.Member.scheduledStart, today)
+   			); 
             org.opencrx.kernel.activity1.jmi1.NewActivityResult result = currentActivityCreator.newActivity(params);
             pm.currentTransaction().commit();
 
@@ -486,32 +480,24 @@ org.openmdx.uses.org.apache.commons.fileupload.*
             }
 
             if (recipientEmail != null) {
-              org.opencrx.kernel.activity1.jmi1.EMailRecipient emailRecipient = activityPkg.getEMailRecipient().createEMailRecipient();
-              emailRecipient.refInitialize(false, false);
+              org.opencrx.kernel.activity1.jmi1.EMailRecipient emailRecipient = pm.newInstance( org.opencrx.kernel.activity1.jmi1.EMailRecipient.class);
               emailRecipient.setParty(recipientEmail);
               emailRecipient.setPartyType((short)CODE_TO); // TO
               newActivity.addEmailRecipient(
-                false,
                 org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                 emailRecipient
               );
             }
 
             if (bulkRecipientGroup != null) {
-              org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup emailRecipientGroup = activityPkg.getEMailRecipientGroup().createEMailRecipientGroup();
-              emailRecipientGroup.refInitialize(false, false);
+              org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup emailRecipientGroup = pm.newInstance(org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup.class);
               emailRecipientGroup.setParty(bulkRecipientGroup);
               emailRecipientGroup.setPartyType((short)CODE_BCC); // BCC
               newActivity.addEmailRecipient(
-                false,
                 org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
                 emailRecipientGroup
               );
             }
-
-    				// Add media to crx object
-    				org.opencrx.kernel.generic.jmi1.GenericPackage genericPkg = org.opencrx.kernel.utils.Utils.getGenericPackage(pm);
-
             int m = 0;
             for (Iterator i = filenames.iterator(); i.hasNext();) {
               try {
@@ -524,15 +510,13 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                 String contentName = r.readLine();
                 r.close();
 
-        				org.opencrx.kernel.generic.jmi1.Media media = genericPkg.getMedia().createMedia();
-        				media.refInitialize(false, false);
+        				org.opencrx.kernel.generic.jmi1.Media media = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
         				media.setContentName(contentName);
         				media.setContentMimeType(contentMimeType);
       		    	media.setContent(
                   org.w3c.cci2.BinaryLargeObjects.valueOf(new File(filename))
                 );
         				newActivity.addMedia(
-        					false,
         					org.opencrx.kernel.backend.Base.getInstance().getUidAsString(),
         					media
         				);
@@ -553,15 +537,17 @@ org.openmdx.uses.org.apache.commons.fileupload.*
 
               // create Workflow params
               // Get base package
-              org.opencrx.kernel.base.jmi1.BasePackage basePkg = org.opencrx.kernel.utils.Utils.getBasePackage(pm);
-              org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams wfparams = basePkg.createExecuteWorkflowParams(
-                null,
-                (org.openmdx.base.jmi1.BasicObject) newActivity,
-                null,
-                null,
-                null,
-                workflow
-              );
+              org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams wfparams = org.w3c.spi2.Structures.create(
+                org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.class, 
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.name, "BulkEmail"),
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.parentProcessInstance, null),			
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.startAt, null),			
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.targetObject, (org.openmdx.base.jmi1.BasicObject) newActivity),			
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.triggeredBy, null),	
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.triggeredByEventId, null),	
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.triggeredByEventType, null),
+     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.workflow, workflow)
+			  ); 
               try {
                   pm.currentTransaction().begin();
                   org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult wfresult = userHome.executeWorkflow(wfparams);
@@ -622,7 +608,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                         <option value="0">N/A</option>
 <%
                         // get ActivityCreators sorted by name (asc) for SalesRep responsible for customer
-                        org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorFilter = activityPkg.createActivityCreatorQuery();
+                        org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery activityCreatorFilter = (org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.ActivityCreator.class);
                         activityCreatorFilter.orderByName().ascending();
                         int maxCreator = 200;
                         int counter = 0;

@@ -2,17 +2,14 @@
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: ManageMembers.jsp,v 1.42 2012/07/13 10:06:48 wfro Exp $
  * Description:	Manage members
- * Revision:	$Revision: 1.42 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/07/13 10:06:48 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -73,7 +70,6 @@ org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
 org.openmdx.portal.servlet.view.*,
 org.openmdx.portal.servlet.control.*,
-org.openmdx.portal.servlet.reports.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
 org.openmdx.base.query.*,
@@ -185,10 +181,9 @@ org.apache.poi.hssf.util.*
     HSSFCellStyle topAlignedStyle,
     SimpleDateFormat exceldate,
     ApplicationContext app,
-    org.openmdx.portal.servlet.Codes codes,
-    org.opencrx.kernel.account1.jmi1.Account1Package accountPkg
+    org.openmdx.portal.servlet.Codes codes
 	) {
-
+	  javax.jdo.PersistenceManager pm = javax.jdo.JDOHelper.getPersistenceManager(account);
 	  org.opencrx.kernel.account1.jmi1.Contact contact = null;
 	  org.opencrx.kernel.account1.jmi1.LegalEntity legalEntity = null;
 	  org.opencrx.kernel.account1.jmi1.UnspecifiedAccount unspecifiedAccount = null;
@@ -533,7 +528,7 @@ org.apache.poi.hssf.util.*
     List memberRoleList = new ArrayList();
 
     try {
-      org.opencrx.kernel.account1.cci2.AccountMembershipQuery accountMembershipFilter = accountPkg.createAccountMembershipQuery();
+      org.opencrx.kernel.account1.cci2.AccountMembershipQuery accountMembershipFilter = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
       accountMembershipFilter.distance().equalTo(
         new Short((short)-1) // only direct/immediate memberships are of interest
       );
@@ -836,9 +831,6 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 			      viewsCache.getView(requestId)
 			    );
 
-			    // Get account1 package
-			    org.opencrx.kernel.account1.jmi1.Account1Package accountPkg = org.opencrx.kernel.utils.Utils.getAccountPackage(pm);
-
 			    // Get account segment
 			    org.opencrx.kernel.account1.jmi1.Segment accountSegment =
 			      (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
@@ -919,45 +911,45 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						String searchString = (request.getParameter("searchString") == null ? "" : request.getParameter("searchString"));
 						String previousSearchString = (request.getParameter("previousSearchString") == null ? "" : request.getParameter("previousSearchString"));
 
-						org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = accountPkg.createAccountQuery();
+						org.opencrx.kernel.account1.cci2.AccountQuery accountFilter = (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
 						accountFilter.forAllDisabled().isFalse();
 						accountFilter.orderByFullName().ascending();
 
-						org.opencrx.kernel.account1.cci2.AccountQuery searchAccountFullNameFilter = accountPkg.createAccountQuery();
+						org.opencrx.kernel.account1.cci2.AccountQuery searchAccountFullNameFilter = (org.opencrx.kernel.account1.cci2.AccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Account.class);
 						searchAccountFullNameFilter.forAllDisabled().isFalse();
 						searchAccountFullNameFilter.thereExistsFullName().like("(?i)" + wildcard + searchString + wildcard);
 						searchAccountFullNameFilter.orderByFullName().ascending();
 
-						org.opencrx.kernel.account1.cci2.ContactQuery contactFilter = accountPkg.createContactQuery();
+						org.opencrx.kernel.account1.cci2.ContactQuery contactFilter = (org.opencrx.kernel.account1.cci2.ContactQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Contact.class);
 						contactFilter.forAllDisabled().isFalse();
 						contactFilter.orderByFullName().ascending();
 
-						org.opencrx.kernel.account1.cci2.LegalEntityQuery legalEntityFilter = accountPkg.createLegalEntityQuery();
+						org.opencrx.kernel.account1.cci2.LegalEntityQuery legalEntityFilter = (org.opencrx.kernel.account1.cci2.LegalEntityQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.LegalEntity.class);
 						legalEntityFilter.forAllDisabled().isFalse();
 						legalEntityFilter.orderByFullName().ascending();
 
-						org.opencrx.kernel.account1.cci2.GroupQuery groupFilter = accountPkg.createGroupQuery();
+						org.opencrx.kernel.account1.cci2.GroupQuery groupFilter = (org.opencrx.kernel.account1.cci2.GroupQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Group.class);
 						groupFilter.forAllDisabled().isFalse();
 						groupFilter.orderByFullName().ascending();
 
-						org.opencrx.kernel.account1.cci2.UnspecifiedAccountQuery unspecifiedAccountFilter = accountPkg.createUnspecifiedAccountQuery();
+						org.opencrx.kernel.account1.cci2.UnspecifiedAccountQuery unspecifiedAccountFilter = (org.opencrx.kernel.account1.cci2.UnspecifiedAccountQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.UnspecifiedAccount.class);
 						unspecifiedAccountFilter.forAllDisabled().isFalse();
 						unspecifiedAccountFilter.orderByFullName().ascending();
 
-						org.opencrx.kernel.account1.cci2.MemberQuery memberFilter = accountPkg.createMemberQuery();
+						org.opencrx.kernel.account1.cci2.MemberQuery memberFilter = (org.opencrx.kernel.account1.cci2.MemberQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Member.class);
 						memberFilter.orderByCreatedAt().ascending();
 
-						org.opencrx.kernel.account1.cci2.EMailAddressQuery searchEMailAddressFilter = accountPkg.createEMailAddressQuery();
+						org.opencrx.kernel.account1.cci2.EMailAddressQuery searchEMailAddressFilter = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
 						searchEMailAddressFilter.forAllDisabled().isFalse();
 						searchEMailAddressFilter.thereExistsEmailAddress().like("(?i)" + wildcard + searchString + wildcard);
 						searchEMailAddressFilter.orderByEmailAddress().ascending();
 
-						org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCityFilter = accountPkg.createPostalAddressQuery();
+						org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCityFilter = (org.opencrx.kernel.account1.cci2.PostalAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
 						searchPostalAddressCityFilter.forAllDisabled().isFalse();
 						searchPostalAddressCityFilter.thereExistsPostalCity().like("(?i)" + wildcard + searchString + wildcard);
 						searchPostalAddressCityFilter.orderByPostalCity().ascending();
 
-						org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCodeFilter = accountPkg.createPostalAddressQuery();
+						org.opencrx.kernel.account1.cci2.PostalAddressQuery searchPostalAddressCodeFilter = (org.opencrx.kernel.account1.cci2.PostalAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
 						searchPostalAddressCodeFilter.forAllDisabled().isFalse();
 						searchPostalAddressCodeFilter.thereExistsPostalCode().like("(?i)" + wildcard + searchString + wildcard);
 						searchPostalAddressCodeFilter.orderByPostalCode().ascending();
@@ -1155,8 +1147,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 						        try {
 						            pm.currentTransaction().begin();
 						            org.opencrx.kernel.account1.jmi1.Account accountTarget = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path((request.getParameter("ACTION.create"))));
-						            org.opencrx.kernel.account1.jmi1.Member newMember = accountPkg.getMember().createMember();
-						            newMember.refInitialize(false, false);
+						            org.opencrx.kernel.account1.jmi1.Member newMember = pm.newInstance(org.opencrx.kernel.account1.jmi1.Member.class);
 						            //newMember.setMemberRole(new short[]{MEMBERROLESALESREGION});
 						            newMember.setValidFrom(new java.util.Date());
 						            newMember.setAccount(accountTarget);
@@ -1465,7 +1456,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                   int memberCounter = 0;
                   String memberHref = "";
                   org.opencrx.kernel.account1.jmi1.Member member = null;
-                  org.opencrx.kernel.account1.cci2.MemberQuery isMemberFilter = accountPkg.createMemberQuery();
+                  org.opencrx.kernel.account1.cci2.MemberQuery isMemberFilter = (org.opencrx.kernel.account1.cci2.MemberQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.Member.class);
                   isMemberFilter.thereExistsAccount().equalTo(account);
                   for(Iterator m = accountSource.getMember(isMemberFilter).iterator(); m.hasNext(); ) {
                       try {
@@ -1495,7 +1486,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                   }
 
                   if (downloadAction != null && sheetAccounts != null) {
-                      spreadSheetRow = addAccount(sheetAccounts, account, spreadSheetRow, wrappedStyle, topAlignedStyle, exceldate, app, codes, accountPkg);
+                      spreadSheetRow = addAccount(sheetAccounts, account, spreadSheetRow, wrappedStyle, topAlignedStyle, exceldate, app, codes);
                       //spreadSheetRow++;
                   }
 
@@ -1516,7 +1507,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 
                   // get all (not disabled) EMailAddresses of this account
                   SortedSet<String> eMailAddresses = new TreeSet<String>();
-                  org.opencrx.kernel.account1.cci2.EMailAddressQuery eMailAddressFilter = accountPkg.createEMailAddressQuery();
+                  org.opencrx.kernel.account1.cci2.EMailAddressQuery eMailAddressFilter = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
                   eMailAddressFilter.forAllDisabled().isFalse();
                   for (
                     Iterator a = account.getAddress(eMailAddressFilter).iterator();
@@ -1534,7 +1525,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                   org.opencrx.kernel.account1.jmi1.PostalAddress homeAddr = null;
                   org.opencrx.kernel.account1.jmi1.PostalAddress otherAddr = null;
                   if (infoAddr == null) {
-		                  org.opencrx.kernel.account1.cci2.PostalAddressQuery addressFilter = accountPkg.createPostalAddressQuery();
+		                  org.opencrx.kernel.account1.cci2.PostalAddressQuery addressFilter = (org.opencrx.kernel.account1.cci2.PostalAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.PostalAddress.class);
 		                  addressFilter.forAllDisabled().isFalse();
 		                  for (
 		                    Iterator a = account.getAddress(addressFilter).iterator();
@@ -1572,8 +1563,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                           try {
                               pm.currentTransaction().begin();
                               org.opencrx.kernel.account1.jmi1.Account accountTarget = account;
-                              org.opencrx.kernel.account1.jmi1.Member newMember = accountPkg.getMember().createMember();
-                              newMember.refInitialize(false, false);
+                              org.opencrx.kernel.account1.jmi1.Member newMember = pm.newInstance(org.opencrx.kernel.account1.jmi1.Member.class);
                               //newMember.setMemberRole(new short[]{0});
                               newMember.setValidFrom(new java.util.Date());
                               newMember.setAccount(accountTarget);
@@ -1850,7 +1840,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
                                 <td align="left" title="<%= app.getLabel(ACCOUNT_CLASS) %> with duplicate <%= app.getLabel(EMAILADDRESS_CLASS) %>"><%= CAUTION %>
 <%
                                     SortedSet<String> currentEMailAddresses = new TreeSet<String>();
-                                    org.opencrx.kernel.account1.cci2.EMailAddressQuery ceMailAddressFilter = accountPkg.createEMailAddressQuery();
+                                    org.opencrx.kernel.account1.cci2.EMailAddressQuery ceMailAddressFilter = (org.opencrx.kernel.account1.cci2.EMailAddressQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.EMailAddress.class);
                                     ceMailAddressFilter.forAllDisabled().isFalse();
                                     for (
                                       Iterator ca = parentAccount.getAddress(eMailAddressFilter).iterator();
