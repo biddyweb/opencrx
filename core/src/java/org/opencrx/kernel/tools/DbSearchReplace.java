@@ -62,6 +62,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -314,6 +315,8 @@ public class DbSearchReplace {
 	 * Database search/replace utility.
 	 *  
 	 * @param conn
+	 * @param tableNameIncludes
+	 * @param tableNameExcludes
 	 * @param columnNameIncludes
 	 * @param columnNameExcludes
 	 * @param searchPattern
@@ -324,6 +327,8 @@ public class DbSearchReplace {
 	 */
 	public static void dbSearchReplace(
 		Connection conn,
+		String tableNameIncludes,
+		String tableNameExcludes,
 	    String columnNameIncludes,
 	    String columnNameExcludes,
 	    String searchPattern,
@@ -331,6 +336,7 @@ public class DbSearchReplace {
 	    boolean validateOnly,
 	    PrintStream out
 	) throws ServiceException {
+		// Prepare table names
 		{
 			DBOBJECTS_KERNEL.clear();
 			DBOBJECTS_SECURITY.clear();
@@ -350,6 +356,35 @@ public class DbSearchReplace {
 					}
 				}
 			}			
+		}
+		// Apply table name patterns
+		{
+			for(Iterator<String> i = DBOBJECTS_KERNEL.iterator(); i.hasNext(); ) {
+				String tableName = i.next();
+				boolean includeTable = true;
+				if(tableNameIncludes != null) {
+					includeTable = Pattern.matches(tableNameIncludes, tableName.toUpperCase());
+				}
+				if(tableNameExcludes != null) {
+					includeTable &= !Pattern.matches(tableNameExcludes, tableName.toUpperCase());
+				}
+				if(!includeTable) {
+					i.remove();
+				}				
+			}
+			for(Iterator<String> i = DBOBJECTS_SECURITY.iterator(); i.hasNext(); ) {
+				String tableName = i.next();
+				boolean includeTable = true;
+				if(tableNameIncludes != null) {
+					includeTable = Pattern.matches(tableNameIncludes, tableName.toUpperCase());
+				}
+				if(tableNameExcludes != null) {
+					includeTable &= !Pattern.matches(tableNameExcludes, tableName.toUpperCase());
+				}
+				if(!includeTable) {
+					i.remove();
+				}
+			}
 		}
 		try {
 			// Namespace kernel

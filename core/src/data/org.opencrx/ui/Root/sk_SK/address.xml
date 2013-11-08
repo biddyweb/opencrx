@@ -40,6 +40,35 @@
                       </additionalElementDefinition>
                     </_content>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Priradené adresy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Priradené adresy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedAddress" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Priradené adresy (zablokované)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Priradené adresy (zablokované)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:assignedAddress" _operation="create">
                     <_object>
                       <label>
@@ -84,6 +113,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:authority" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Autorita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Autorita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:identity" _operation="create">
                     <_object>
                       <label>
@@ -91,6 +131,160 @@
                       </label>
                       <toolTip>
                         <_item>Adresa</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zlúč adresu do inej adresy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zlúč adresu do inej adresy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:updateRelationshipsSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktualizovať vzťahy od</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktualizovať vzťahy od</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:updateRelationshipsBefore" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktualizovať vzťahy pred</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktualizovať vzťahy pred</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:targetAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zlúč do adresy</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zlúč do adresy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressResult:count" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepojenie aktualizované</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepojenie aktualizované</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Presuň adresu k inému účtu (klientovi)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Presuň adresu k inému účtu (klientovi)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:updateRelationshipsSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktualizovať prepojenie od</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktualizovať prepojenie od</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:updateRelationshipsBefore" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktualizovať prepojenie pred</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktualizovať prepojenie pred</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:targetAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Presuň adresu k účtu (klientovi)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Presuň adresu k účtu (klientovi)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountResult:count" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Prepojenie aktualizované</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Prepojenie aktualizované</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -836,6 +1030,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:tz" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Časová zóna</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Časová zóna</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:usage" _operation="create">
                     <_object>
                       <label>
@@ -868,6 +1073,72 @@
                       </shortLabel>
                       <toolTip>
                         <_item>Skontrolujte, či je toto hlavná adresa tohoto typu adries</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:region1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Región 1</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Región 1</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:region2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Región 2</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Región 2</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:region3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Región 3</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Región 3</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:regionType1" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Región typu 1</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Región typu 1</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:regionType2" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Región typu 2</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Región typu 2</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:Addressable:regionType3" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Región typu 3</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Región typu 3</_item>
                       </toolTip>
                     </_object>
                     <_content/>

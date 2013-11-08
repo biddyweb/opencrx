@@ -60,6 +60,7 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
+import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
 import org.opencrx.kernel.activity1.jmi1.ActivityLinkTo;
@@ -90,6 +91,19 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
    	) {
    		super();
    	}
+
+	/**
+	 * Set exit action after successful creation of the activity.
+	 * 
+	 * @param activity
+	 */
+	public void setExitActionAfterCreation(
+		Activity activity
+	) throws ServiceException {
+		this.setExitAction(
+			new ObjectReference(activity, getApp()).getSelectObjectAction()
+		);
+	}
 
 	/**
 	 * OK action.
@@ -271,9 +285,7 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 		    				new ServiceException(e).log();
 		    			}
 	                }
-	                this.setExitAction(
-						new ObjectReference(result.getActivity(), app).getSelectObjectAction()
-					);
+	                this.setExitActionAfterCreation(result.getActivity());
 					return;
 				}
 			} catch (Exception e) {

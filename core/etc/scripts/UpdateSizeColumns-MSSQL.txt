@@ -1,1 +1,0 @@
-ant -Ddb.jdbc.url="jdbc:sqlserver://localhost:1433;databaseName=CRX" -Ddb.jdbc.driver="com.microsoft.sqlserver.jdbc.SQLServerDriver" -Ddb.jdbc.driver.classpath="..\opt\microsoft\jre-1.5\sql-server-2005\lib\sqljdbc.jar" -Ddb.username="system" -Ddb.password="manager" update-size-columns-1_11_0

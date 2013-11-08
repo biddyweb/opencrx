@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:salesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Типы налогов</_item>
+                        <_item>Тип налога</_item>
                       </label>
                       <toolTip>
-                        <_item>Типы налогов</_item>
+                        <_item>Тип налога</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SalesTaxType" _operation="create">
                     <_object>
                       <label>
-                        <_item>Тип НДС</_item>
+                        <_item>Тип налога</_item>
                       </label>
                       <toolTip>
-                        <_item>Тип НДС</_item>
+                        <_item>Тип налога</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -69,10 +69,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:SalesTaxType:rate" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ставка НДС</_item>
+                        <_item>Ставка налога</_item>
                       </label>
                       <toolTip>
-                        <_item>Ставка НДС</_item>
+                        <_item>Ставка налога</_item>
                       </toolTip>
                     </_object>
                     <_content/>

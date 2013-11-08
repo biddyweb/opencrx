@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -89,16 +89,30 @@ import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
+/**
+ * CalDavStore
+ *
+ */
 public class CalDavStore implements WebDavStore {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 * @param pmf
+	 */
 	public CalDavStore(
 		PersistenceManagerFactory pmf
 	) {
 		this.pmf = pmf;
 	}
 	
-	//-----------------------------------------------------------------------
+    /**
+     * Get new, user-specific persistence manager for this request.
+     * 
+     * @param req
+     * @param pmf
+     * @return
+     */
     public static PersistenceManager getPersistenceManager(
         HttpServletRequest req,
         PersistenceManagerFactory pmf
@@ -111,7 +125,14 @@ public class CalDavStore implements WebDavStore {
             );
     }
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Get query helper for given filter id.
+	 * 
+	 * @param pm
+	 * @param filterId
+	 * @param isDisabledFilter
+	 * @return
+	 */
 	public static ActivityQueryHelper getActivityQueryHelper(
         PersistenceManager pm,
         String filterId,
@@ -132,12 +153,16 @@ public class CalDavStore implements WebDavStore {
         return activitiesHelper;
     }
     		
-	//-----------------------------------------------------------------------
 	/**
 	 * Path is of the form:
-	 * - Format 1: {provider.id} "/" {segment.id} "/user/" {user.id} "/profile/" {profile.name}
+	 * - Format 1: {provider.id} "/" {segment.id} ["/user/"] {user.id} ["/profile/"] {profile.id}]
 	 * - Format 2: {provider.id} "/" {segment.id} "/" {user.id} "/" {profile.id} "/" {feed.id} [":VTODO"] "/" {activity.id}
-	 * - Format 3: {provider.id} "/" {segment.id} ["/user/" {user.id} ] "/" {tracker|milestone|category|home|resource|filter} "/" {calendar.name} ["/filter/" {filter.name}] ["/VTODO"] "/" {activity.id}	
+	 * - Format 3: {provider.id} "/" {segment.id} ["/user/" {user.id} ] "/" {tracker|milestone|category|home|resource|filter} "/" {calendar.name} ["/filter/" {filter.name}] ["/VTODO"] "/" {activity.id}
+	 * 	
+	 * @param requestContext
+	 * @param path
+	 * @param allowRunAs
+	 * @return
 	 */
 	protected Resource getResourceByPath(
 		RequestContext requestContext, 
@@ -149,47 +174,29 @@ public class CalDavStore implements WebDavStore {
 		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
+		// Normalize path
+		path = path.replace("/user/", "/");
+		path = path.replace("/profile/", "/");
 		String[] components = path.split("/");
-		// Format 1
-		if(
-			components.length == 6 && 
-			"user".equals(components[2]) && 
-			"profile".equals(components[4])
-		) {
-			String userId = components[3];
-    		UserHome userHome = (UserHome)pm.getObjectById(
-    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", userId)
-    		);
-        	CalendarProfile syncProfile = null;
-        	CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
-        	calendarProfileQuery.name().equalTo(components[5]);
-        	List<CalendarProfile> calendarProfiles = userHome.getSyncProfile(calendarProfileQuery);
-        	if(!calendarProfiles.isEmpty()) {
-        		syncProfile = calendarProfiles.iterator().next();
-	    		String runAs = null;
-	    		if(!userId.equals(req.getUserPrincipal().getName())) {
-	    			runAs = userId;
-	    		}
-	    		return new CalendarProfileResource(
-	    			requestContext, 
-	    			syncProfile,
-	    			runAs
-	    		);
-        	}
+		if(components.length < 3) {
+			components = new String[]{components[0], components[1], req.getUserPrincipal().getName()};
+		}
+		if(components.length < 4) {
+			components = new String[]{components[0], components[1], components[2], "CalDAV"};			
 		}
 		// Format 3
-		else if(
-			components.length >= 3 && 
-			(CALENDAR_TYPES.contains(components[2]) || ("user".equals(components[2]) && CALENDAR_TYPES.contains(components[4]))) 
+		if(
+			CALENDAR_TYPES.contains(components[2]) || 
+			CALENDAR_TYPES.contains(components[3])
 		) {
 			String runAs = null;
-			if("user".equals(components[2])) {
-				String userId = components[3];
+			if(CALENDAR_TYPES.contains(components[3])) {
+				String userId = components[2];
 				if(allowRunAs && !userId.equals(req.getUserPrincipal().getName())) {
 					runAs = userId;
 				}
 				path = components[0] + "/" + components[1];
-				for(int i = 4; i < components.length; i++) {
+				for(int i = 3; i < components.length; i++) {
 					path += "/" + components[i];
 				}
 			}
@@ -214,8 +221,7 @@ public class CalDavStore implements WebDavStore {
 			if(queryHelper.getSource() == null) {
 				SysLog.log(Level.FINE, "Unable to get query helper for user >{0}< and path >{1}<", req.getUserPrincipal().getName(), Arrays.asList(components));
 				return null;
-			}
-			else {
+			} else {
 				ActivityCollectionResource activityCollectionResource = new QueryBasedActivityCollectionResource(
 					requestContext,
 					queryHelper,
@@ -249,90 +255,93 @@ public class CalDavStore implements WebDavStore {
 					return activityCollectionResource;
 				}
 			}
-		}
-		// Format 2
-		else if(components.length >= 3) {
+		} else {
+			// Format 1, 2
 			String userId = components[2];
-    		String runAs = null;
-    		if(allowRunAs && !userId.equals(req.getUserPrincipal().getName())) {
-    			runAs = userId;
-    		}
-			// UserHome
-			if(components.length == 3) {
-				UserHome userHome = (UserHome)pm.getObjectById(
-	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", userId)
-	    		);
-	    		return new UserHomeResource(
-	    			requestContext, 
-	    			userHome,
-	    			runAs
-	    		);
-			}	
-			// SyncProfile
-			else if(components.length == 4) {
-	    		CalendarProfile calendarProfile = (CalendarProfile)pm.getObjectById(
-	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", userId, "syncProfile", components[3])
-	    		);
-	    		return new CalendarProfileResource(
-	    			requestContext, 
-	    			calendarProfile,
-	    			runAs
-	    		);
-			}
-			// SyncFeed
-			else if(components.length == 5) {
-				String id = components[4];
-				ActivityCollectionResource.Type type = ActivityCollectionResource.Type.VEVENT; 
-				if(id.endsWith(":VTODO")) {
-					id = id.substring(0, id.indexOf(":VTODO"));
-					type = ActivityCollectionResource.Type.VTODO;
-				}
-	    		SyncFeed syncFeed = (SyncFeed)pm.getObjectById(
-	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", userId, "syncProfile", components[3], "feed", id)
-	    		);
-	    		return new SyncFeedBasedActivityCollectionResource(
-	    			requestContext, 
-	    			syncFeed,
-	    			type,
-	    			runAs
-	    		);
-			}
-			// Activity
-			else if(components.length == 6) {
-				ActivityCollectionResource parent = (ActivityCollectionResource)this.getResourceByPath(
-		   			requestContext, 
-		   			components[0] + "/" + components[1] + "/" + components[2] + "/" + components[3] + "/" + components[4]
-		   		);
-				String id = components[5];
-				if(id.endsWith(".ics")) {
-					id = id.substring(0, id.indexOf(".ics"));
-				}
-	    		if(this.uidMapping.containsKey(id)) {
-	    			String newId = this.uidMapping.get(id);
-	    			// old -> new mapping only available for one request
-	    			this.uidMapping.remove(id);
-	    			id = newId;
-	    		}			
-				// Get activity
-	    		try {
-		    		Activity activity = (Activity)pm.getObjectById(
-		    			new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", components[0], "segment", components[1], "activity", id)
-		    		);
-		    		return new ActivityResource(
-		    			requestContext, 
-		    			activity,
-		    			parent
-		    		);
-	    		} catch(Exception e) {
-	    			ServiceException e0 = new ServiceException(e);
-					SysLog.detail(e0.getMessage(), e0.getCause());
+    		UserHome userHome = (UserHome)pm.getObjectById(
+    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", userId)
+    		);
+        	CalendarProfile syncProfile = null;
+        	// Find sync profile by qualifier
+        	try {
+        		syncProfile = (CalendarProfile)pm.getObjectById(
+        			userHome.refGetPath().getDescendant("syncProfile", components[3])
+        		);
+        	} catch(Exception ignore) {}
+        	// Find sync profile by name
+        	if(syncProfile == null) {
+	        	CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
+	        	calendarProfileQuery.name().equalTo(components[3]);
+	        	List<CalendarProfile> calendarProfiles = userHome.getSyncProfile(calendarProfileQuery);
+	        	if(!calendarProfiles.isEmpty()) {
+	        		syncProfile = calendarProfiles.iterator().next();
+	        	}
+        	}
+        	if(syncProfile != null) {
+	    		String runAs = null;
+	    		if(!userId.equals(req.getUserPrincipal().getName())) {
+	    			runAs = userId;
 	    		}
-			}
+        		if(components.length == 4) {
+    	    		return new CalendarProfileResource(
+    	    			requestContext, 
+    	    			syncProfile,
+    	    			runAs
+    	    		);        			
+    			} else if(components.length == 5) {
+    				// SyncFeed
+    				String id = components[4];
+    				ActivityCollectionResource.Type type = ActivityCollectionResource.Type.VEVENT; 
+    				if(id.endsWith(":VTODO")) {
+    					id = id.substring(0, id.indexOf(":VTODO"));
+    					type = ActivityCollectionResource.Type.VTODO;
+    				}
+    	    		SyncFeed syncFeed = syncProfile.getFeed(id);
+    	    		return new SyncFeedBasedActivityCollectionResource(
+    	    			requestContext, 
+    	    			syncFeed,
+    	    			type,
+    	    			runAs
+    	    		);
+    			} else if(components.length == 6) {
+    				// Activity
+    				ActivityCollectionResource parent = (ActivityCollectionResource)this.getResourceByPath(
+    		   			requestContext, 
+    		   			components[0] + "/" + components[1] + "/" + components[2] + "/" + components[3] + "/" + components[4]
+    		   		);
+    				String id = components[5];
+    				if(id.endsWith(".ics")) {
+    					id = id.substring(0, id.indexOf(".ics"));
+    				}
+    	    		if(this.uidMapping.containsKey(id)) {
+    	    			String newId = this.uidMapping.get(id);
+    	    			// old -> new mapping only available for one request
+    	    			this.uidMapping.remove(id);
+    	    			id = newId;
+    	    		}			
+    				// Get activity
+    	    		try {
+    		    		Activity activity = (Activity)pm.getObjectById(
+    		    			new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", components[0], "segment", components[1], "activity", id)
+    		    		);
+    		    		return new ActivityResource(
+    		    			requestContext, 
+    		    			activity,
+    		    			parent
+    		    		);
+    	    		} catch(Exception e) {
+    	    			ServiceException e0 = new ServiceException(e);
+    					SysLog.detail(e0.getMessage(), e0.getCause());
+    	    		}
+    			}
+        	}
 		}
 		return null;		
 	}
-	
-	//-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#begin(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public RequestContext begin(
     	HttpServletRequest req,
@@ -342,7 +351,9 @@ public class CalDavStore implements WebDavStore {
 		return requestContext;
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#commit(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+	 */
 	@Override
 	public void commit(
 		RequestContext requestContext
@@ -360,7 +371,9 @@ public class CalDavStore implements WebDavStore {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#createCollection(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
 	public void createCollection(
 		RequestContext requestContext, 
@@ -369,7 +382,9 @@ public class CalDavStore implements WebDavStore {
 		throw new WebdavException("Not supported by CalDAV");
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getChildren(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public Collection<Resource> getChildren(
 		RequestContext requestContext, 
@@ -382,7 +397,9 @@ public class CalDavStore implements WebDavStore {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public BinaryLargeObject getResourceContent(
 		RequestContext requestContext, 
@@ -395,7 +412,9 @@ public class CalDavStore implements WebDavStore {
 		}
 	}
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceByPath(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
 	public Resource getResourceByPath(
 		RequestContext requestContext, 
@@ -408,7 +427,9 @@ public class CalDavStore implements WebDavStore {
 		);
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#removeResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public void removeResource(
 		RequestContext requestContext, 
@@ -422,7 +443,9 @@ public class CalDavStore implements WebDavStore {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#moveResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource, java.lang.String, java.lang.String)
+	 */
 	@Override
     public MoveResourceStatus moveResource(
     	RequestContext requestContext, 
@@ -433,7 +456,9 @@ public class CalDavStore implements WebDavStore {
 		throw new WebdavException("Not supported by CalDAV");	    
     }
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#rollback(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+	 */
 	@Override
 	public void rollback(
 		RequestContext requestContext
@@ -447,7 +472,9 @@ public class CalDavStore implements WebDavStore {
 		} catch(Exception e) {}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getMimeType(org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
     public String getMimeType(
     	Resource res
@@ -455,11 +482,16 @@ public class CalDavStore implements WebDavStore {
 		if(res instanceof CalDavResource) {
 			return ((CalDavResource)res).getMimeType();
 		} else {
-			return "text/xml";
+			return "application/xml";
 		}
     }
 	
-	//-----------------------------------------------------------------------	
+    /**
+     * Get parent element of path.
+     * 
+     * @param path
+     * @return
+     */
     protected String getParentPath(
     	String path
     ) {
@@ -470,7 +502,26 @@ public class CalDavStore implements WebDavStore {
         return null;
     }
 	
-	//-----------------------------------------------------------------------
+    /**
+     * Get base of given path.
+     * 
+     * @param path
+     * @return
+     */
+    protected String getBasePath(
+    	String path
+    ) {
+    	int slash = path.lastIndexOf('/');
+    	if(slash != -1) {
+    		return path.substring(slash + 1);
+    	} else {
+    		return null;
+    	}
+    }
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#putResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.io.InputStream, java.lang.String)
+	 */
 	@Override
     public PutResourceStatus putResource(
     	RequestContext requestContext, 
@@ -496,17 +547,19 @@ public class CalDavStore implements WebDavStore {
 		        		activityCollection.getQueryHelper(),
 		        		true
 		        	);
-		            if(result.getOldUID() != null && result.getActivity() != null) {
-		            	this.uidMapping.put(
-		            		result.getOldUID(), 
-		            		result.getActivity().refGetPath().getBase()
-		            	);
+		            if(result.getActivity() != null) {
+		            	String id = this.getBasePath(path);
+		            	if(id != null) {
+			            	this.uidMapping.put(
+			            		id.indexOf(".ics") >= 0 ? id.substring(0, id.indexOf(".ics")) : id, 
+			            		result.getActivity().refGetPath().getBase()
+			            	);
+		            	}
 		            }
-		        	return result.getStatus() == ICalendar.PutICalResult.Status.CREATED ? 
-		        		PutResourceStatus.CREATED : 
-		        			PutResourceStatus.UPDATED;
-		    	}
-		    	catch(Exception e) {
+		        	return result.getStatus() == ICalendar.PutICalResult.Status.CREATED 
+		        		? PutResourceStatus.CREATED 
+		        		: PutResourceStatus.UPDATED;
+		    	} catch(Exception e) {
 		    		new ServiceException(e).log();
 		    	}
 			} else {
@@ -516,7 +569,9 @@ public class CalDavStore implements WebDavStore {
 	    return null;
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getLocksByPath(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
     public List<Lock> getLocksByPath(
     	RequestContext requestContext, 
@@ -525,7 +580,9 @@ public class CalDavStore implements WebDavStore {
 		return Collections.emptyList();
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#lock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int)
+	 */
 	@Override
     public Lock lock(
     	RequestContext requestContext, 
@@ -539,7 +596,9 @@ public class CalDavStore implements WebDavStore {
 	    return null;
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#setLockTimeout(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, int)
+	 */
 	@Override
     public void setLockTimeout(
     	RequestContext requestContext, 
@@ -548,7 +607,9 @@ public class CalDavStore implements WebDavStore {
     ) {	    
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#unlock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
     public boolean unlock(
     	RequestContext requestContext, 

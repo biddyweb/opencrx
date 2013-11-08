@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: SegmentImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -65,11 +65,23 @@ import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * SegmentImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class SegmentImpl
 	<S extends org.opencrx.kernel.home1.jmi1.Segment,N extends org.opencrx.kernel.home1.cci2.Segment,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public SegmentImpl(
         S same,
         N next
@@ -77,7 +89,12 @@ public class SegmentImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Create user.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.home1.jmi1.CreateUserResult createUser(
         org.opencrx.kernel.home1.jmi1.CreateUserParams params
     ) {
@@ -106,6 +123,8 @@ public class SegmentImpl
 	            false,
 	            initialPassword,
 	            initialPasswordVerification,
+	            null, // eMailAddress
+	            null, // timezone
 	            errors
 	        );
 	        if((userHome == null) || !errors.isEmpty()) {
@@ -128,7 +147,12 @@ public class SegmentImpl
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Import users.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.home1.jmi1.ImportUsersResult importUsers(
         org.opencrx.kernel.home1.jmi1.ImportUsersParams params
     ) {

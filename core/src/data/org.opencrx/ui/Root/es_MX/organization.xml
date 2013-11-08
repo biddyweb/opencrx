@@ -77,17 +77,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nombre de la Organización</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:organizationState" _operation="create">
                     <_object>
                       <label>
@@ -95,28 +84,6 @@
                       </label>
                       <toolTip>
                         <_item>Estado de la Organización</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:Pane:Attr:Tab:0:Group:10" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Información Adicional</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Información Adicional</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descripción</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Descripción</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: AbstractFilterProductImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,11 +59,23 @@ import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * AbstractFilterProductImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class AbstractFilterProductImpl
 	<S extends org.opencrx.kernel.product1.jmi1.AbstractFilterProduct,N extends org.opencrx.kernel.product1.cci2.AbstractFilterProduct,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public AbstractFilterProductImpl(
         S same,
         N next
@@ -71,7 +83,11 @@ public class AbstractFilterProductImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Count filtered products.
+     * 
+     * @return
+     */
     public org.opencrx.kernel.base.jmi1.CountFilteredObjectsResult countFilteredProduct(
     ) {
         try {
@@ -86,5 +102,5 @@ public class AbstractFilterProductImpl
             throw new JmiServiceException(e);
         }            
     }
-        
+
 }

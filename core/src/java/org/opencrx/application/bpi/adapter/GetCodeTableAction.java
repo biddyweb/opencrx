@@ -54,8 +54,10 @@ package org.opencrx.application.bpi.adapter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.FetchGroup;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,14 +87,38 @@ public class GetCodeTableAction extends BpiAction {
     	if(codeValueContainers == null || codeValueContainers.isEmpty()) {
     		resp.setStatus(HttpServletResponse.SC_NOT_FOUND); 
     	} else {
-    		CodeValueContainer codeValueContainer = codeValueContainers.iterator().next();
-    		resp.setCharacterEncoding("UTF-8");
-    		resp.setContentType("application/json");
-    		PrintWriter pw = resp.getWriter();
-    		BpiCodeTable bpiCodeTable = plugIn.newBpiCodeTable();
-    		bpiCodeTable.setId(path.getBase());
-    		plugIn.printObject(pw, plugIn.toBpiCodeTable(codeValueContainer, bpiCodeTable));
-    		resp.setStatus(HttpServletResponse.SC_OK);
+    		try {
+	    		CodeValueContainer codeValueContainer = codeValueContainers.iterator().next();
+	    		List<Short> locales = new ArrayList<Short>();
+	    		if(req.getParameter("locales") != null) {
+	    			for(String locale: req.getParameter("locales").split(",")) {
+	    				try {
+	    					locales.add(Short.parseShort(locale));
+	    				} catch(Exception ignore) {}
+	    			}
+	    		}
+	    		resp.setCharacterEncoding("UTF-8");
+	    		resp.setContentType("application/json");
+	    		PrintWriter pw = resp.getWriter();
+	    		BpiCodeTable bpiCodeTable = plugIn.newBpiCodeTable();
+	    		bpiCodeTable.setId(path.getBase());
+	    		plugIn.printObject(
+	    			pw, 
+	    			plugIn.toBpiCodeTable(
+	    				codeValueContainer, 
+	    				bpiCodeTable,
+	    				locales,
+	    				FetchGroup.ALL
+	    			)
+	    		);
+	    		resp.setStatus(HttpServletResponse.SC_OK);
+    		} catch(Exception e) {
+        		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);	    			
+    			new ServiceException(e).log();
+    			try {
+    				pm.currentTransaction().rollback();
+    			} catch(Exception ignore) {}
+    		}
     	}
     }
 

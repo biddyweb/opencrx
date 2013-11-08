@@ -56,13 +56,6 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Accounts;
-import org.opencrx.kernel.contract1.jmi1.Invoice;
-import org.opencrx.kernel.contract1.jmi1.Lead;
-import org.opencrx.kernel.contract1.jmi1.Opportunity;
-import org.opencrx.kernel.contract1.jmi1.Quote;
-import org.opencrx.kernel.contract1.jmi1.SalesOrder;
-import org.opencrx.kernel.utils.Utils;
-import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 

@@ -715,61 +715,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>İçkin Nesneler</_item>
-                      </label>
-                      <toolTip>
-                        <_item>İçkin Nesneler</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>İsim</_item>
-                      </label>
-                      <toolTip>
-                        <_item>İsim</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Açıklama</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Açıklama</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involvedRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rol</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rol</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involved" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>İçkin Nesne</_item>
-                      </label>
-                      <toolTip>
-                        <_item>İçkin Nesne</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>

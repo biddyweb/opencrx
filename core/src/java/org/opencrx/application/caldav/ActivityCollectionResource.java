@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: ActivityCollectionResource
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -66,6 +66,7 @@ import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.openmdx.base.collection.MarshallingCollection;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.marshalling.Marshaller;
 
 abstract class ActivityCollectionResource extends CalDavResource {
@@ -74,7 +75,11 @@ abstract class ActivityCollectionResource extends CalDavResource {
 		VEVENT, VTODO
 	}
 
-	//-----------------------------------------------------------------------
+	/**
+	 * ActivityResourceCollection
+	 *
+	 * @param <T>
+	 */
 	static class ActivityResourceCollection<T> extends MarshallingCollection<T> {
 		
 		public ActivityResourceCollection(
@@ -121,7 +126,17 @@ abstract class ActivityCollectionResource extends CalDavResource {
 
 	}
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 * @param requestContext
+	 * @param object
+	 * @param queryHelper
+	 * @param type
+	 * @param allowChange
+	 * @param backColor
+	 * @param runAs
+	 */
 	public ActivityCollectionResource(
 		RequestContext requestContext,
 		BasicObject object,
@@ -150,14 +165,19 @@ abstract class ActivityCollectionResource extends CalDavResource {
         this.runAs = runAs;
 	}
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.caldav.CalDavResource#getObject()
+	 */
 	@Override
-    public BasicObject getObject(
+    public ContextCapable getObject(
     ) {
         return super.getObject();
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#getDisplayName()
+	 */
+	@Override
     public String getDisplayName(
     ) {
     	Set<String> features = this.getObject().refDefaultFetchGroup();
@@ -173,14 +193,18 @@ abstract class ActivityCollectionResource extends CalDavResource {
     	return name;
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#isCollection()
+	 */
 	@Override
     public boolean isCollection(
     ) {
 		return true;
     }
 
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.caldav.CalDavResource#getName()
+     */
     @Override
     public String getName(
     ) {

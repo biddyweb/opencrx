@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,11 +55,20 @@ package org.opencrx.kernel.portal;
 import org.opencrx.kernel.portal.action.GridExportAsXlsAction;
 import org.opencrx.kernel.portal.action.GridExportAsXmlAction;
 import org.opencrx.kernel.portal.action.GridExportIncludingCompositesAsXmlAction;
+import org.opencrx.kernel.portal.action.GridExportWysiwygAllColumnsAsXlsAction;
+import org.opencrx.kernel.portal.action.GridExportWysiwygAsXlsAction;
 import org.openmdx.portal.servlet.DefaultActionFactory;
 import org.openmdx.portal.servlet.action.AbstractAction;
 
+/**
+ * ActionFactory
+ *
+ */
 public class ActionFactory extends DefaultActionFactory {
 
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultActionFactory#getAction(short)
+	 */
 	@Override
     public AbstractAction getAction(
     	short event
@@ -71,6 +80,10 @@ public class ActionFactory extends DefaultActionFactory {
 				return new GridExportAsXlsAction();
 			case GridExportIncludingCompositesAsXmlAction.EVENT_ID:
 				return new GridExportIncludingCompositesAsXmlAction();
+			case GridExportWysiwygAsXlsAction.EVENT_ID:
+				return new GridExportWysiwygAsXlsAction();
+			case GridExportWysiwygAllColumnsAsXlsAction.EVENT_ID:
+				return new GridExportWysiwygAllColumnsAsXlsAction();
 			default:
 				return super.getAction(event);
 		}

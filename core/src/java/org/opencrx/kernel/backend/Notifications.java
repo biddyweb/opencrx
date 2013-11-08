@@ -75,7 +75,6 @@ import org.opencrx.kernel.activity1.jmi1.MeetingParty;
 import org.opencrx.kernel.backend.Activities.PartyStatus;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
-import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;

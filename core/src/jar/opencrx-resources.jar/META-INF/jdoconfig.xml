@@ -44,6 +44,10 @@
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[11]" value="org.opencrx.kernel.generic.aop2"/>
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[12]" value="org:opencrx:kernel:forecast1"/>
         <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[12]" value="org.opencrx.kernel.forecast1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[13]" value="org:opencrx:kernel:building1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[13]" value="org.opencrx.kernel.building1.aop2"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.modelPackage[14]" value="org:opencrx:kernel:document1"/>
+        <property name="org.opencrx.kernel.aop2.PlugIn.Standard.packageImpl[14]" value="org.opencrx.kernel.document1.aop2"/>
     </persistence-manager-factory>
 
     <!-- Data manager -->

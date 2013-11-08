@@ -104,6 +104,9 @@ public class MapsController extends AbstractWizardController {
 		String htmlAddress = "";
 		String allStreetLines = "";
 		boolean atLeastOneIncluded = false;
+		for(String postalAddressLine: postalAddress.getPostalAddressLine()) {
+			htmlAddress += postalAddressLine + "<br />";
+		}
 		for(String streetLine: postalAddress.getPostalStreet()) {
 			boolean include = false;
 			for (int j=0; (j < STREET_PATTERNs.length) && !include; j++) {
@@ -114,7 +117,7 @@ public class MapsController extends AbstractWizardController {
 				url += "%20" + streetLine;
 			}
 			allStreetLines += "%20" + streetLine;
-			htmlAddress += streetLine + "<br>";
+			htmlAddress += streetLine + "<br />";
 		}
 		if (!atLeastOneIncluded) {
 			url += "%20" + allStreetLines;
@@ -124,14 +127,14 @@ public class MapsController extends AbstractWizardController {
 			: postalAddress.getPostalCode().trim();
 		if (!tmp.isEmpty()) {
 			url += "%20" + tmp;
-			htmlAddress += tmp + ", ";
+			htmlAddress += tmp + " ";
 		}
 		tmp = postalAddress.getPostalCity() == null
 			? ""
 			: postalAddress.getPostalCity().trim();
 		if (!tmp.isEmpty()) {
 			url += "%20" + tmp;
-			htmlAddress += tmp + ", ";
+			htmlAddress += tmp + "<br />";
 		}
 		String country = postalAddress.getPostalCountry() == 0
 			? DEFAULT_COUNTRY

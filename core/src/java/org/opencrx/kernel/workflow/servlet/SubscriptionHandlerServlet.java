@@ -369,6 +369,8 @@ public class SubscriptionHandlerServlet
     }
         
     /**
+     * Return true if the topic XRI pattern matches the object XRI.
+     * 
      * @param providerName
      * @param segmentName
      * @param topic
@@ -401,6 +403,8 @@ public class SubscriptionHandlerServlet
     }        
     
     /**
+     * Find subscriptions for the audit entry's XRI.
+     * 
      * @param providerName
      * @param segmentName
      * @param workflowSegment
@@ -452,13 +456,16 @@ public class SubscriptionHandlerServlet
      * i.e. asynchronous and non-successful synchronous workflows are handled 
      * by the WorkflowControllerServlet.
      * 
-     * @param pmUser
-     * @param triggeredBy
-     * @param targetObject
+     * @param wfProcessInstanceName
+     * @param userHome
+     * @param targetObjectIdentity
+     * @param triggeredByIdentity
+     * @param triggeredByEventType
      * @param wfProcesses
      * @throws ServiceException
      */
     protected void executeWorkflows(
+    	String wfProcessInstanceName,
     	UserHome userHome,
     	Path targetObjectIdentity,
     	Path triggeredByIdentity,
@@ -475,13 +482,14 @@ public class SubscriptionHandlerServlet
             ContextCapable targetObject = null;
             try {
             	targetObject = (ContextCapable)pmUser.getObjectById(targetObjectIdentity);
-            } catch(Exception e) {}
+            } catch(Exception ignore) {}
             ContextCapable triggeredBy = null;
             try {
             	triggeredBy = (ContextCapable)pmUser.getObjectById(triggeredByIdentity);
-            } catch(Exception e) {}
+            } catch(Exception ignore) {}
             // In case user has no access to target object (NO_PERMISSION, ...) ignore subscription
             if(targetObject instanceof BasicObject && triggeredBy instanceof BasicObject) {
+            	int count = 0;
 		        for(WfProcess wfProcess: wfProcesses) {
 		            try {
 		                MessageDigest md = MessageDigest.getInstance("MD5");
@@ -489,6 +497,11 @@ public class SubscriptionHandlerServlet
 		                md.update(wfProcess.refMofId().getBytes("UTF-8"));                                        
 		                ExecuteWorkflowParams params = Structures.create(
 		                	ExecuteWorkflowParams.class,
+		                	Datatypes.member(
+		                		ExecuteWorkflowParams.Member.name,
+		                		(wfProcessInstanceName == null || wfProcessInstanceName.isEmpty() ? wfProcess.getName() : wfProcessInstanceName) +
+		                		(wfProcesses.size() == 1 ? "" : " [" + count + "]")
+		                	),
 		                	Datatypes.member(ExecuteWorkflowParams.Member.targetObject, targetObject),
 		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredBy, pmUser.getObjectById(triggeredBy.refGetPath())),
 		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredByEventId, Base64.encode(md.digest()).replace('/', '-')),
@@ -503,8 +516,7 @@ public class SubscriptionHandlerServlet
 		                    // executeWorkflow touches userHome in separate uow. Prevent concurrent modification exception                                            
 		                    pmUser.refresh(userHome);
 		                    pmUser.currentTransaction().commit();
-		                }
-		                catch(Exception e) {
+		                } catch(Exception e) {
 		                	ServiceException e0 = new ServiceException(e);
 		                	SysLog.warning("Execution of workflow FAILED", "action=" + (wfProcess == null ? null : wfProcess.getName()) + "; home=" + (userHome == null ? null : userHome.refMofId()) + "; cause=" + (e0.getCause() == null ? null : e0.getCause().getMessage()));
 		                	if(e0.getExceptionCode() == BasicException.Code.NOT_FOUND) {
@@ -516,13 +528,12 @@ public class SubscriptionHandlerServlet
 		                        pmUser.currentTransaction().rollback();
 		                    } catch(Exception e1) {}
 		                }
-		            }
-		            catch(NoSuchAlgorithmException e) {
+		            } catch(NoSuchAlgorithmException e) {
+		                new ServiceException(e).log();
+		            } catch (UnsupportedEncodingException e) {
 		                new ServiceException(e).log();
 		            }
-		            catch (UnsupportedEncodingException e) {
-		                new ServiceException(e).log();
-		            }
+		            count++;
 		        }
 	        }
     	} finally {
@@ -549,7 +560,6 @@ public class SubscriptionHandlerServlet
         org.opencrx.kernel.home1.jmi1.Segment userHomeSegment,
         List<AuditEntry> auditEntries
     ) throws ServiceException {
-        
         List<String> auditEntryXris = new ArrayList<String>();
         for(AuditEntry auditEntry: auditEntries) {
             auditEntryXris.add(auditEntry.refMofId());
@@ -559,8 +569,7 @@ public class SubscriptionHandlerServlet
             AuditEntry auditEntry = null;
             try {
                 auditEntry = (AuditEntry)pm.getObjectById(new Path(auditEntryXri));
-            } 
-            catch(Exception e) {
+            } catch(Exception e) {
             	SysLog.warning("Can not access audit entry", Arrays.asList(new String[]{auditEntryXri, e.getMessage()}));
             	SysLog.detail(e.getMessage(), e.getCause());
             }
@@ -601,6 +610,7 @@ public class SubscriptionHandlerServlet
                             if(!userIsDisabled) {
                                 Collection<WfProcess> actions = subscription.getTopic().getPerformAction();
                                 this.executeWorkflows(
+                                	subscription.getName(),
                                 	userHome, 
                                 	new Path(auditEntry.getAuditee()),
                                 	subscription.refGetPath(), 
@@ -677,23 +687,20 @@ public class SubscriptionHandlerServlet
                         userHomeSegment,
                         auditEntries
                     );
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                     new ServiceException(e).log();                    
                     System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");                    
                 }
             }
             try {
                 pm.close();
-            } 
-            catch(Exception e) {}
-        }
-        catch(Exception e) {
+            } catch(Exception ignore) {}
+        } catch(Exception e) {
             new ServiceException(e).log();
             System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
         }        
     }
-    
+
     /**
      * @param id
      * @param providerName
@@ -793,6 +800,7 @@ public class SubscriptionHandlerServlet
 	                	Path userHomeIdentity = timer.refGetPath().getParent().getParent();
 	                    UserHome userHome = (UserHome)pm.getObjectById(userHomeIdentity);            		
 	            		this.executeWorkflows(
+	            			timer.getName(),
 	            			userHome, 
 	            			timer.getTarget() == null ? null : timer.getTarget().refGetPath(), // targetObject
 	            			timerIdentity, // triggerBy
@@ -807,7 +815,7 @@ public class SubscriptionHandlerServlet
 	            	} finally {
 	            		try {
 	            			pm.close();
-	            		} catch(Exception e) {}
+	            		} catch(Exception ignore) {}
 	            	}
 	            }
             }

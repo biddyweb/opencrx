@@ -337,6 +337,7 @@ public class Indexed_1 extends Database_1 {
                             else if(
                                 "text/html".equals(contentMimeType) ||
                                 "text/xml".equals(contentMimeType) ||
+                                "application/xml".equals(contentMimeType) ||
                                 contentName.endsWith(".xml") || 
                                 contentName.endsWith(".html") || 
                                 contentName.endsWith(".htm")

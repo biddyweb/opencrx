@@ -72,7 +72,7 @@ public class GridExportIncludingCompositesAsXmlAction extends GridExportObjectsA
     	List<Path> selectedObjectIdentities,
     	int maxItems
     ) throws ServiceException {
-		return new DefaultGridExporter(
+		return new ModelBasedGridExporter(
 			grid,
 			selectedObjectIdentities,
 			Exporter.MIME_TYPE_XML,

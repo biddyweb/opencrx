@@ -731,61 +731,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>相关对象</_item>
-                      </label>
-                      <toolTip>
-                        <_item>相关对象</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>名字</_item>
-                      </label>
-                      <toolTip>
-                        <_item>名字</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>描述</_item>
-                      </label>
-                      <toolTip>
-                        <_item>描述</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involvedRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>角色</_item>
-                      </label>
-                      <toolTip>
-                        <_item>角色</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involved" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>相关对象</_item>
-                      </label>
-                      <toolTip>
-                        <_item>相关对象</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:importItem" _operation="create">
                     <_object>
                       <label>
@@ -973,18 +918,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>重用活动创建器 </_item>
-                      </label>
-                      <toolTip>
-                        <_item>重用活动创建器 </_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:in" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:linkToAndFollowUp:Group:in" _operation="create">
                     <_object>
                       <label>
                         <_item>输入</_item>
@@ -995,24 +929,46 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpParams:activity" _operation="create">
                     <_object>
                       <label>
-                        <_item>活动创建器</_item>
+                        <_item>链到一个活动</_item>
                       </label>
                       <toolTip>
-                        <_item>活动创建器</_item>
+                        <_item>链到一个活动</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:result" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpParams:parentProcessInstance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>父工作流</_item>
+                      </label>
+                      <toolTip>
+                        <_item>父工作流</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:linkToAndFollowUp:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>结果</_item>
                       </label>
                       <toolTip>
                         <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkToAndFollowUpResult:followUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>跟进</_item>
+                      </label>
+                      <toolTip>
+                        <_item>跟进</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1051,6 +1007,50 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:assignTo:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>重用活动创建器 </_item>
+                      </label>
+                      <toolTip>
+                        <_item>重用活动创建器 </_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReapplyActivityCreatorParams:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>活动创建器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>活动创建器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:reapplyActivityCreator:Group:result" _operation="create">
                     <_object>
                       <label>
                         <_item>结果</_item>
@@ -1589,6 +1589,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEvent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>标记为全天活动</_item>
+                      </label>
+                      <toolTip>
+                        <_item>标记为全天活动</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEvent:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEvent:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment" _operation="create">
                     <_object>
                       <label>
@@ -1596,17 +1629,6 @@
                       </label>
                       <toolTip>
                         <_item>指定活动组</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupAssignment:assignedTo" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>负责人</_item>
-                      </label>
-                      <toolTip>
-                        <_item>负责人</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1971,6 +1993,17 @@
                       </label>
                       <toolTip>
                         <_item>汇报联系人</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:NewActivityParams:creationContext" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>上下文</_item>
+                      </label>
+                      <toolTip>
+                        <_item>上下文</_item>
                       </toolTip>
                     </_object>
                     <_content/>

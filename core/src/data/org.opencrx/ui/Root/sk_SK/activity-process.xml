@@ -33,13 +33,35 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Čiastková aktivita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Čiastková aktivita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:title" _operation="create">
                     <_object>
                       <label>
                         <_item>Nadpis</_item>
                       </label>
                       <toolTip>
-                        <_item>Nadpis poznámky</_item>
+                        <_item>Nadpis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nadpis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nadpis</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -58,36 +80,36 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:transition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prechod</_item>
+                        <_item>Zmena</_item>
                       </label>
                       <toolTip>
-                        <_item>Prechod</_item>
+                        <_item>Zmena</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
-										<_object>
-											<toolTip>
-												<_item>Nadpis / Text</_item>
-											</toolTip>
-											<label>
-												<_item>Nadpis / Text</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
-										<_object>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedFollowUp" _operation="create">
+                    <_object>
                       <label>
-                        <_item>Vytvorené dňa</_item>
+                        <_item>Zmena - info</_item>
                       </label>
                       <toolTip>
-                        <_item>Dátum a čas, kedy bol objekt vytvorený (nemenné)</_item>
+                        <_item>Zmena - info</_item>
                       </toolTip>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:formattedNote" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nadpis / Text</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nadpis / Text</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:modifiedAt" _operation="create">
                     <_object>
                       <label>
@@ -95,6 +117,17 @@
                       </label>
                       <toolTip>
                         <_item>Dátum a čas poslednej úpravy objektu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vytvorené dňa</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dátum a čas, kedy bol objekt vytvorený (nemenné)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -110,7 +143,29 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:text" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Text</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Text</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFollowUp:activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Aktivity</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Aktivity</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivity:activity" _operation="create">
                     <_object>
                       <label>
                         <_item>Aktivity</_item>
@@ -146,10 +201,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcess:transition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prechody</_item>
+                        <_item>Zmeny</_item>
                       </label>
                       <toolTip>
-                        <_item>Všetky prechody</_item>
+                        <_item>Všetké zmeny</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -223,10 +278,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityProcessTransition" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prechod aktivitového procesu</_item>
+                        <_item>Zmeny aktivitového procesu</_item>
                       </label>
                       <toolTip>
-                        <_item>Prechod aktivitového procesu</_item>
+                        <_item>Zmeny aktivitového procesu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -315,6 +370,61 @@
                       </label>
                       <toolTip>
                         <_item>Nový % hotovo</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zmena čiastkovej aktivity</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zmena čiastkovej aktivity</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:subActivityNamePattern" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Čiastková aktivita - vzor mena</_item>
+                      </label>
+                      <toolTip>
+                        <_item>${A} titul aktivity, ${N} meno zmeny, ${F} kroky titulu, ${G} názov skupiny aktivít</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:templateNamePattern" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Šablóna - vzor mena</_item>
+                      </label>
+                      <toolTip>
+                        <_item>${A} titul aktivity, ${N} meno zmeny, ${F} kroky titulu, ${G} názov skupiny aktivít</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tvorca aktivity</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tvorca aktivity</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:SubActivityTransition:useCreatorAsTemplate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Použi tvorcu ako šablónu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Použi tvorcu ako šablónu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -519,6 +629,9 @@
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:LinkedActivityFollowUpAction:transition" _operation="create">
                     <_object>
+                      <label>
+                        <_item>Zmena</_item>
+                      </label>
                       <toolTip>
                         <_item>Zmena</_item>
                       </toolTip>

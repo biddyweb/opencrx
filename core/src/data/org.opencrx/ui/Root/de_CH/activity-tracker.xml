@@ -26,6 +26,17 @@
                     <_object/>
                     <_content>
                       <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="10" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Kampagnen</_item>
+														</toolTip>
+														<label>
+															<_item>Kampagnen</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
 												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
 													<_object>
 														<toolTip>
@@ -156,6 +167,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityGroupRelationship" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Involvierte Aktivitätsgruppen</_item>
+											</toolTip>
+											<label>
+												<_item>Involvierte Aktivitätsgruppen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:assignedAccount" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Zugewiesene Kontakte</_item>
+											</toolTip>
+											<label>
+												<_item>Zugewiesene Kontakte</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityNote" _operation="create">
                     <_object>
                       <label>
@@ -222,6 +255,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityGroupType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:defaultCreator" _operation="create">
                     <_object>
                       <label>
@@ -233,6 +277,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:mainActivity" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Hauptaktivität</_item>
+											</toolTip>
+											<label>
+												<_item>Hauptaktivität</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:targetGroupAccounts" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Zielgruppe Kontakte (für Kampagnen, Anlässe, etc.)</_item>
+											</toolTip>
+											<label>
+												<_item>Zielgruppe Kontakte</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:creationContext" _operation="create">
                     <_object>
                       <label>
@@ -354,6 +420,107 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätsgruppenbeziehung</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätsgruppenbeziehung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:name" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:description" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:relationshipType" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Beziehungstyp</_item>
+											</toolTip>
+											<label>
+												<_item>Typ</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:activityGroup" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätsgruppe</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätsgruppe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Zuweisung Kontakt</_item>
+											</toolTip>
+											<label>
+												<_item>Zuweisung Kontakt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup:accountRole" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Rolle</_item>
+											</toolTip>
+											<label>
+												<_item>Rolle</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup:name" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup:description" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:Pane:Op:Tab:calcTotalQuantity">
 										<_object>

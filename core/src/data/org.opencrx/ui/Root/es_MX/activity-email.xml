@@ -33,17 +33,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sender" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Remitente</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Remitente</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:readReceiptRequested" _operation="create">
                     <_object>
                       <label>
@@ -55,17 +44,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sendDate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Fecha de Envío</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Fecha de Envío</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:deliveryReceiptRequested" _operation="create">
                     <_object>
                       <label>
@@ -73,6 +51,28 @@
                       </label>
                       <toolTip>
                         <_item>Recibo de entrega</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sender" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Remitente</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Remitente</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:sendDate" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Fecha de Envío</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Fecha de Envío</_item>
                       </toolTip>
                     </_object>
                     <_content/>

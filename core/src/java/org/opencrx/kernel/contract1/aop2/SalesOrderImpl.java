@@ -54,7 +54,6 @@ package org.opencrx.kernel.contract1.aop2;
 
 import java.util.List;
 
-import javax.jdo.JDOHelper;
 import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 

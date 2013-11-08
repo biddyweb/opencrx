@@ -57,7 +57,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
@@ -106,6 +105,8 @@ import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
+import org.opencrx.kernel.activity1.cci2.AbstractEMailRecipientQuery;
+import org.opencrx.kernel.activity1.cci2.AbstractPhoneCallRecipientQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityLinkFromQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityLinkToQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessActionQuery;
@@ -114,8 +115,12 @@ import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.AddressGroupMemberQuery;
 import org.opencrx.kernel.activity1.cci2.EMailQuery;
 import org.opencrx.kernel.activity1.cci2.EMailRecipientQuery;
+import org.opencrx.kernel.activity1.cci2.IncidentPartyQuery;
+import org.opencrx.kernel.activity1.cci2.MailingRecipientQuery;
+import org.opencrx.kernel.activity1.cci2.MeetingPartyQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
+import org.opencrx.kernel.activity1.cci2.TaskPartyQuery;
 import org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
 import org.opencrx.kernel.activity1.jmi1.AbstractEMailRecipient;
@@ -181,7 +186,6 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.SecurityKeys.Action;
 import org.opencrx.kernel.generic.jmi1.Note;
 import org.opencrx.kernel.generic.jmi1.PropertySet;
-import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.uom1.jmi1.Uom;
@@ -195,7 +199,6 @@ import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
-import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.base.text.conversion.XMLEncoder;
 import org.openmdx.kernel.exception.BasicException;
@@ -1773,7 +1776,7 @@ public class Activities extends AbstractImpl {
         }
         return activityCreator;
     }
-   
+
     /**
      * Init given activity creator.
      * 
@@ -3447,7 +3450,12 @@ public class Activities extends AbstractImpl {
                     }                    
                     Collection<PropertySet> propertySets = activityCreator.getPropertySet();
                     for(PropertySet propertySet: propertySets) {
-                        if(!excludePropertySets.contains(propertySet.getName())) {
+                    	// Only clone property sets from activity creator to 
+                    	// activity which are marked as public (+|*)
+                        if(
+                        	(propertySet.getName().startsWith("+") || propertySet.getName().startsWith("*")) && 
+                        	!excludePropertySets.contains(propertySet.getName())
+                        ) {
                             Cloneable.getInstance().cloneObject(
                                 propertySet,
                                 activity,
@@ -3458,7 +3466,7 @@ public class Activities extends AbstractImpl {
                                 activity.getOwningGroup()
                             );
                         }
-                    }                            
+                    }
                     // Set processState, lastTransition
                     activity.setActivityType(activityType);
                     activity.setProcessState(null);
@@ -5508,57 +5516,73 @@ public class Activities extends AbstractImpl {
     public List<AbstractActivityParty> getActivityParties(
     	Activity activity
     ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
         List<AbstractActivityParty> parties = new ArrayList<AbstractActivityParty>();
         if(activity instanceof EMail) {
-        	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient();
+        	AbstractEMailRecipientQuery query = (AbstractEMailRecipientQuery)pm.newQuery(AbstractEMailRecipient.class);
+        	query.forAllDisabled().isFalse();
+        	Collection<AbstractEMailRecipient> c = ((EMail)activity).getEmailRecipient(query);
         	parties.addAll(c);
         } else if(activity instanceof Incident) {
-        	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty();
+        	IncidentPartyQuery query = (IncidentPartyQuery)pm.newQuery(IncidentParty.class);
+        	query.forAllDisabled().isFalse();
+        	Collection<IncidentParty> c = ((Incident)activity).getIncidentParty(query);
         	parties.addAll(c);
         } else if(activity instanceof Mailing) {
+        	MailingRecipientQuery query = (MailingRecipientQuery)pm.newQuery(MailingRecipient.class);
+        	query.forAllDisabled().isFalse();
         	Collection<MailingRecipient> c = ((Mailing)activity).getMailingRecipient();
         	parties.addAll(c);
         } else if(activity instanceof Meeting) {
+        	MeetingPartyQuery query = (MeetingPartyQuery)pm.newQuery(MeetingParty.class);
+        	query.forAllDisabled().isFalse();
         	Collection<MeetingParty> c = ((Meeting)activity).getMeetingParty();
         	parties.addAll(c);
         } else if(activity instanceof PhoneCall) {
+        	AbstractPhoneCallRecipientQuery query = (AbstractPhoneCallRecipientQuery)pm.newQuery(AbstractPhoneCallRecipient.class);
+        	query.forAllDisabled().isFalse();
         	Collection<AbstractPhoneCallRecipient> c = ((PhoneCall)activity).getPhoneCallRecipient();
         	parties.addAll(c);
         } else if(activity instanceof Task) {
+        	TaskPartyQuery query = (TaskPartyQuery)pm.newQuery(TaskParty.class);
+        	query.forAllDisabled().isFalse();
         	Collection<TaskParty> c = ((Task)activity).getTaskParty();
         	parties.addAll(c);
         }
         return parties;
     }
-    
+
 	/**
-	 * Print alarm tags for the given event.
+	 * Get main activity tracker for given activity creator.
 	 * 
-	 * @param p
-	 * @param event
+	 * @param activityCreator
+	 * @return
 	 */
-	public void printAlarms(
-		PrintWriter p,
-		Activity event
+	public ActivityTracker getMainActivityTracker(
+		List<ActivityGroup> activityGroups
 	) {
-		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
-        Collection<Timer> timers = event.getAssignedTimer();
-        List<String> principalChain = UserObjects.getPrincipalChain(pm);
-        for(Timer timer: timers) {
-        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
-        		p.println("BEGIN:VALARM");
-        		p.println("ACTION:DISPLAY");
-        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
-        		p.println("TRIGGER;VALUE=DURATION:" + (triggerMinutes < 0 ? "-" : "") + "PT" + Math.abs(triggerMinutes) + "M");
-        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
-        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
-        		p.println("SUMMARY:" + timer.getName());
-        		if(timer.getDescription() != null) {
-        			p.println("DESCRIPTION:" + timer.getDescription());
-        		}
-        		p.println("END:VALARM");
-        	}
-        }
+		ActivityTracker tracker = null;
+		ActivityTracker firstTracker = null;
+		for(ActivityGroup activityGroup: activityGroups) {
+			try {
+				if(activityGroup instanceof ActivityTracker) {
+					if (firstTracker == null) {
+						firstTracker = (ActivityTracker)activityGroup;
+					}
+					if(!activityGroup.getFilteredActivity().isEmpty()) {
+						tracker = (ActivityTracker)activityGroup;
+					}
+				}
+			} catch (Exception e) {
+				new ServiceException(e).log();
+			}
+			if(tracker != null) {
+				break;
+			}
+		}
+		return tracker != null
+			 ? tracker
+		     : firstTracker;		
 	}
 
     //-------------------------------------------------------------------------
@@ -5780,13 +5804,18 @@ public class Activities extends AbstractImpl {
 	
 	/**
 	 * Activity group types.
+	 * 
 	 */
 	public enum ActivityGroupType {
 		
-		TRACKER((short)10),
-		MILESTONE((short)20),
-		CATEGORY((short)30);
-		
+		NONE((short)0),
+		AGENDA((short)10),
+		BUG_TRACKER((short)20),
+		CAMPAIGN((short)30),
+		PROJECT((short)40),
+		EVENT((short)50),
+		CASE((short)60);
+
 		private short value;
 		
 		private ActivityGroupType(

@@ -107,7 +107,7 @@ abstract class CardDavResource implements Resource {
 
 	public String getMimeType(
 	) {
-		return "text/xml";
+		return "application/xml";
 	}
 	
 	public BinaryLargeObject getContent(

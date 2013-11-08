@@ -77,6 +77,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractActivityParty:emailHint" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-mail提示</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-mail提示</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractActivityParty:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>类型</_item>
+                      </label>
+                      <toolTip>
+                        <_item>类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractActivityParty:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:emailHint" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-mail提示</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-mail提示</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:partyType" _operation="create">
                     <_object>
                       <label>
@@ -84,6 +128,17 @@
                       </label>
                       <toolTip>
                         <_item>类型</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -88,20 +88,32 @@ public class GetOrganizationMembersAction extends BpiAction {
     	if(organizations == null || organizations.isEmpty()) {
     		resp.setStatus(HttpServletResponse.SC_NOT_FOUND); 
     	} else {
-    		LegalEntity organization = organizations.iterator().next();
-    		resp.setCharacterEncoding("UTF-8");
-    		resp.setContentType("application/json");
-    		PrintWriter pw = resp.getWriter();
-    		List<BpiAccountMember> bpiAccountMembers = new ArrayList<BpiAccountMember>();
-    		for(Member member: organization.<Member>getMember()) {
-    			if(member.getAccount() != null && member.getAccount() instanceof Contact) {
-    				bpiAccountMembers.add(
-    					plugIn.toBpiAccountMember(member, plugIn.newBpiAccountMember())
-    				);
-    			}
+    		try {
+	    		LegalEntity organization = organizations.iterator().next();
+	    		resp.setCharacterEncoding("UTF-8");
+	    		resp.setContentType("application/json");
+	    		PrintWriter pw = resp.getWriter();
+	    		List<BpiAccountMember> bpiAccountMembers = new ArrayList<BpiAccountMember>();
+	    		for(Member member: organization.<Member>getMember()) {
+	    			if(member.getAccount() != null && member.getAccount() instanceof Contact) {
+	    				bpiAccountMembers.add(
+	    					plugIn.toBpiAccountMember(
+	    						member, 
+	    						plugIn.newBpiAccountMember(),
+	    						this.getFetchGroup(req)
+	    					)
+	    				);
+	    			}
+	    		}
+	    		plugIn.printObject(pw, bpiAccountMembers);
+	    		resp.setStatus(HttpServletResponse.SC_OK);
+    		} catch(Exception e) {
+        		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);	    			
+    			new ServiceException(e).log();
+    			try {
+    				pm.currentTransaction().rollback();
+    			} catch(Exception ignore) {}
     		}
-    		plugIn.printObject(pw, bpiAccountMembers);
-    		resp.setStatus(HttpServletResponse.SC_OK);
     	}
     }
 

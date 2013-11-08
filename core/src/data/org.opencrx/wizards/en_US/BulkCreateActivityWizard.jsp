@@ -82,6 +82,7 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:account1:Group">
 	<meta name="forClass" content="org:opencrx:kernel:account1:AddressFilterGlobal">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:AddressGroup">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityGroup">
 	<meta name="order" content="5555">
 -->
 <%
@@ -96,7 +97,7 @@ org.openmdx.base.naming.*
 
 	BulkCreateActivityWizardController wc = new BulkCreateActivityWizardController();
 %>
-	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Reload' />
 <%
 	if(response.getStatus() != HttpServletResponse.SC_OK) {
 		wc.close();		
@@ -123,7 +124,48 @@ org.openmdx.base.naming.*
 <%
 					wc.getForms().get(FORM_NAME_CREATOR).paint(viewPort, null, true);
 					viewPort.flush();
+					if(wc.getSelectedLocale() != null) {
 %>
+						<table class="fieldGroup">
+							<tr>
+								<td title="" class="label"><span class="nw">Locale:</span></td>
+								<td>
+								    <select name="selectedLocale" tabindex="2100" class="valueL">
+<%
+										for(Short locale: wc.getSelectableLocales()) {
+%>								    
+											<option value="<%= locale %>" <%= wc.getSelectedLocale() != null && locale.equals(wc.getSelectedLocale()) ? "selected" : "" %>> <%= wc.getCodes().getLongTextByCode("locale", app.getCurrentLocaleAsIndex(), true).get(locale) %></option>
+<%
+										}
+%>
+								    </select>
+								</td>
+								<td class="addon"></td>
+							</tr>
+							<tr>
+								<td title="" class="label"><span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityGroup", "targetGroupAccounts", app.getCurrentLocaleAsIndex()) %>:</span></td>
+								<td>
+								    <select tabindex="2110" name="selectedTargetGroupXri" class="valueL">
+<%
+										if(wc.getSelectedTargetGroup() == null) {
+%>
+											<option value=""></option>
+<%											
+										}
+										for(org.openmdx.base.jmi1.BasicObject targetGroup: wc.getSelectableTargetGroups()) {
+%>								    
+											<option value="<%= targetGroup.refGetPath().toXRI() %>" <%= wc.getSelectedTargetGroup() != null && wc.getSelectedTargetGroup().refGetPath().equals(targetGroup.refGetPath()) ? "selected" : ""%>><%= wc.getApp().getPortalExtension().getTitle(targetGroup, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), false, app) %></option>
+<%
+										}
+%>											
+								    </select>
+								</td>
+								<td class="addon"></td>
+							</tr>
+						</table>
+<%
+					}
+%>						
 				</div>
 				<div id="SubmitArea1">
 					<input type="submit" name="Reload"  id="Reload.Button"  tabindex="8000" value="<%= wc.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('SubmitArea1').style.visibility='hidden';" />
@@ -173,13 +215,38 @@ org.openmdx.base.naming.*
 							<input type="submit" name="CreateTest" id="CreateTest.Button" tabindex="9010" value="Create/Update <%= BulkCreateActivityWizardController.NUM_OF_TEST_ACTIVITIES %> Test Activities" <%= wc.getCreationType() == CreationType.CREATE_TEST ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
 							<input type="submit" name="Create" id="Create.Button" tabindex="9030" value="Create/Update all Activities" <%= wc.getCreationType() == CreationType.CREATE ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
 <%
-						} else {
-%>
-							<span style="border:1px solid grey;padding:3px;"> E-Mail Sender missing </span>
-<%
 						}
 %>
 						<input type="submit" name="Cancel" tabindex="9040" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('Command').value=this.name;" />
+<%						
+						if(!Boolean.TRUE.equals(wc.getCanCreate())) {							
+%>
+							<br />
+							<div style="padding:10px;margin:2px;background-color:#FF9900;">
+								Unable to create activities because some data is missing. Please check:
+								<ul>
+<%
+									if(wc.getActivityCreator() == null) {
+%>								
+										<li>Activity creator</li>
+<%
+									}
+									if(!wc.hasTargetGroupAccounts()) {
+%>										
+										<li><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityGroup", "targetGroupAccounts", app.getCurrentLocaleAsIndex()) %></li>
+<%
+									}
+									if(!wc.hasEMailSender()) {
+%>										
+										<li>E-Mail sender</li>
+<%
+									}
+%>										
+								</ul>
+							</div>
+<%
+						}
+%>
 					</div><div style="clear:both;"></div>					
 <%
 					if(Boolean.TRUE.equals(wc.getCanCreate())) {
@@ -215,7 +282,7 @@ org.openmdx.base.naming.*
 								wc.getCreationType() == CreationType.CREATE_TEST
 							) {
 %>
-							<div style="border:1px solid black;padding:10px;margin:2px;background-color:#FF9900;display:block;">
+							<div style="padding:10px;margin:2px;background-color:#FF9900;display:block;">
 <%
 								if (
 									wc.getActivityType().getActivityClass() == Activities.ActivityClass.EMAIL.getValue()
@@ -282,10 +349,14 @@ if(wc.getActivityCreator() != null) {
 				</div>
 <%
 			}
+			if(!(wc.getObject() instanceof org.opencrx.kernel.activity1.jmi1.ActivityGroup)) {
 %>
-			<portal:showobject id='<%= "A" + ii %>' object="<%= activityGroup.refGetPath() %>" navigationTarget="_blank" resourcePathPrefix="./" showAttributes="true" grids="filteredActivity">
-				<portal:query name="filteredActivity" query="<%= activityQuery %>" />
-			</portal:showobject>
+				<portal:showobject id='<%= "A" + ii %>' object="<%= activityGroup.refGetPath() %>" navigationTarget="_blank" resourcePathPrefix="./" showAttributes="true" grids="filteredActivity">
+					<portal:query name="filteredActivity" query="<%= activityQuery %>" />
+				</portal:showobject>
+<%
+			}
+%>			
 		</div>
 <%
 		ii++;
@@ -302,5 +373,8 @@ if(wc.getActivityCreator() != null) {
   		});
   		Event.stop(event);
   	});
-</script>			
+  	try {
+  		$('org:opencrx:kernel:activity1:Activity:lastAppliedCreator[1100]').onchange = function() {$('Reload.Button').click();};  		
+  	} catch(e){};
+</script>
 <t:wizardClose controller="<%= wc %>" />

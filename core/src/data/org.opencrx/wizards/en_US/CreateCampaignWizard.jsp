@@ -107,7 +107,38 @@ org.openmdx.base.naming.*
 <%
 					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
 					viewPort.flush();
+					// Drop-downs for locales
 %>
+					<div class="fieldGroupName">&nbsp;</div>
+					<table class="fieldGroup">
+<%										
+						java.util.Map<Short,String> locales = wc.getLocaleCodes();				
+						for(int i = 0; i < 5; i++) {
+%>
+							<tr>
+								<td title="" class="label"><span class="nw">Locale <%= i == 0 ? "(Default)" : Integer.toString(i) %>:</span></td>
+								<td>
+									<select tabindex="200<%= i %>" class="valueL" name="locale<%= i %>" id="locale<%= i %>">
+<%
+										if(i > 0) {
+%>
+											<option value=""> </option>
+<%
+										}
+										for(java.util.Map.Entry<Short,String> locale: locales.entrySet()) {
+%>
+											<option value="<%= locale.getKey() %>" <%=  wc.getSelectedLocales() != null && i < wc.getSelectedLocales().size() && wc.getSelectedLocales().get(i).equals(locale.getKey()) ? "selected" : "" %>><%= locale.getValue() %></option>
+<%
+										}
+%>
+									</select>
+								</td>
+								<td class="addon"></td>
+							</tr>
+<%
+						}
+%>
+					</table>						
 				</div>
 				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
 				<div id="SubmitArea" style="float:left;display:none;">

@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -84,19 +84,30 @@ import org.opencrx.application.uses.net.sf.webdav.exceptions.ObjectAlreadyExists
 import org.opencrx.application.uses.net.sf.webdav.exceptions.WebdavException;
 import org.openmdx.base.exception.ServiceException;
 
-
+/**
+ * DoHead
+ *
+ */
 public class DoHead extends WebDavMethod {
 
     protected final WebDavStore _store;
 
     private static Logger LOG = Logger.getLogger(DoHead.class.getPackage().getName());
 
+    /**
+     * Constructor.
+     * 
+     * @param store
+     */
     public DoHead(
     	WebDavStore store 
     ) {
         _store = store;
     }
 
+    /* (non-Javadoc)
+     * @see org.opencrx.application.uses.net.sf.webdav.methods.WebDavMethod#execute(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+     */
     @Override
     public void execute(
     	RequestContext requestContext 
@@ -108,8 +119,7 @@ public class DoHead extends WebDavMethod {
         Resource so = _store.getResourceByPath(requestContext, path);
         if(so == null) {
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);        	
-        }
-        else {
+        } else {
             try {
                 String eTagMatch = req.getHeader("If-None-Match");
                 if (eTagMatch != null) {
@@ -155,6 +165,13 @@ public class DoHead extends WebDavMethod {
         }
     }
 
+    /**
+     * Process request in case the resource is a folder.
+     * 
+     * @param requestContext
+     * @param so
+     * @throws IOException
+     */
     protected void folderBody(
     	RequestContext requestContext, 
     	Resource so
@@ -162,6 +179,13 @@ public class DoHead extends WebDavMethod {
         // no body for HEAD
     }
 
+    /**
+     * Process request in case the resource is not a folder.
+     * 
+     * @param requestContext
+     * @param so
+     * @throws IOException
+     */
     protected void doBody(
     	RequestContext requestContext, 
         Resource so

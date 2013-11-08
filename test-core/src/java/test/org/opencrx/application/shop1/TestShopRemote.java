@@ -97,7 +97,7 @@ public class TestShopRemote extends TestShop {
 		org.opencrx.kernel.backend.Exporter.register();
 		org.opencrx.kernel.backend.Forecasts.register();
 		org.opencrx.kernel.backend.ICalendar.register();
-		org.opencrx.kernel.backend.Importer.register();
+		org.opencrx.kernel.backend.XmlImporter.register();
 		org.opencrx.kernel.backend.Models.register();
 		org.opencrx.kernel.backend.Notifications.register();
 		org.opencrx.kernel.backend.Products.register();

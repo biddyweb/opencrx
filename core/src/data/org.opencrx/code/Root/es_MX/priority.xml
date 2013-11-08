@@ -18,7 +18,7 @@
                         <org.opencrx.kernel.code1.CodeValueEntry code="0" _operation="set">
                           <_object>
                             <longText>
-                              <_item> N/A</_item>
+                              <_item>--none--</_item>
                             </longText>
                           </_object>
                           <_content/>

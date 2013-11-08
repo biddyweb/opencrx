@@ -1,6 +1,6 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: openCRX access control plugin
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2005, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -122,23 +122,35 @@ import org.openmdx.security.realm1.jmi1.Realm;
 import org.openmdx.security.realm1.jmi1.Role;
 
 /**
- * openCRX access control plugin. Implements the openCRX access control logic.
+ * Access control plugin. Implements the openCRX access control logic.
+ * 
  */
 public class AccessControl_1 extends Standard_1 {
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	public AccessControl_1(
 	) {
 	}
 
-    //--------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.application.dataprovider.layer.model.Standard_1#getInteraction(javax.resource.cci.Connection)
+     */
+	@Override
     public Interaction getInteraction(
         Connection connection
     ) throws ResourceException {
         return new LayerInteraction(connection);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get user identity for given principal.
+     * 
+     * @param principal
+     * @return
+     */
     protected Path getUserIdentity(
     	CachedPrincipal principal
     ) {
@@ -148,13 +160,19 @@ public class AccessControl_1 extends Standard_1 {
     	);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * GetRunAsPrincipalResult
+     *
+     */
     interface GetRunAsPrincipalResult {
     	CachedPrincipal getPrincipal();
     	Path getUserIdentity();
     }
     
-    //-------------------------------------------------------------------------
+	/**
+	 * CachedPrincipal
+	 *
+	 */
 	public class CachedPrincipal {
 	
 		public CachedPrincipal(
@@ -171,8 +189,7 @@ public class AccessControl_1 extends Standard_1 {
 				try {
 					Group group = i.next();
 					this.isMemberOf.add(group.refGetPath().getBase());
-				}
-				catch(Exception e) {
+				} catch(Exception e) {
 					ServiceException e0 = new ServiceException(
 						e,
 						OpenCrxException.DOMAIN,
@@ -365,8 +382,7 @@ public class AccessControl_1 extends Standard_1 {
     		                		this.getPrincipal(qualifiedGroupName).getAllSupergroups()
     		                	);
     	                	}
-                    	}
-                    	catch(Exception e) {
+                    	} catch(Exception e) {
         					ServiceException e0 = new ServiceException(
         						e,
         						OpenCrxException.DOMAIN,
@@ -386,12 +402,10 @@ public class AccessControl_1 extends Standard_1 {
                         	System.currentTimeMillis() + this.cachedPrincipalsTTL
                         )
                     );
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                 	new ServiceException(e).log();
                     this.cachedPrincipals.remove(principalName);
-                }
-                finally {
+                } finally {
                 	pm.close();
                 }    		
         	}
@@ -410,6 +424,7 @@ public class AccessControl_1 extends Standard_1 {
 
 	    /**
 	     * Get runAs principal according to service header and available runAs permissions.
+	     * 
 	     * @param header
 	     * @param request
 	     * @param interaction
@@ -438,8 +453,7 @@ public class AccessControl_1 extends Standard_1 {
 	        			if(runAsPrincipalName.equals(header.getPrincipalChain().get(1))) {
 	        				if(hasRunAsPermission) {
 	        	        		SysLog.warning("Multiple runAs permissions found. Accepting first only.", Arrays.asList(header.getPrincipalChain(), principal, runAsPermissions));        					
-	        				}
-	        				else {
+	        				} else {
 			        			CachedPrincipal runAsPrincipal = this.getPrincipal(runAsPrincipalName);
 			        	        Path runAsUserIdentity = AccessControl_1.this.getUser(runAsPrincipal);
 			        	        SysLog.detail("Applying runAs permission", Arrays.asList(principal, userIdentity, runAsPrincipal, runAsUserIdentity));
@@ -493,10 +507,9 @@ public class AccessControl_1 extends Standard_1 {
     	            pm.close();	            
             	}
             	return principal.getPrimaryGroup();
-            }
-            // In case the principal does not have a user home
-            // which defines the primary group fallback to user principal
-            catch(Exception e) {
+            } catch(Exception e) {
+                // In case the principal does not have a user home
+                // which defines the primary group fallback to user principal
             	Path primaryGroup = 
             		this.getPrincipal(principal.getIdentity().getBase() + "." + SecurityKeys.USER_SUFFIX).getIdentity();
             	principal.setPrimaryGroup(primaryGroup);
@@ -654,8 +667,7 @@ public class AccessControl_1 extends Standard_1 {
 	            Set<String> permissions = new HashSet<String>();
 	            if(secureObject.attributeValuesAsList("accessLevelDelete").isEmpty()) {
 	            	SysLog.error("Missing value for attribute 'accessLevelDelete'", secureObject);
-	            }
-	            else {
+	            } else {
 	                permissions = this.getPermissions(
 	                	request,
 		                principal,
@@ -676,14 +688,12 @@ public class AccessControl_1 extends Standard_1 {
 	            	}
 	            	return true;
 	            }
-        	}
-        	// UPDATE
-        	else if(action == Action.UPDATE) {
+        	} else if(action == Action.UPDATE) {
+            	// UPDATE
 	            Set<String> permissions = new HashSet<String>();
 	            if(secureObject.attributeValuesAsList("accessLevelUpdate").isEmpty()) {
 	            	SysLog.error("Missing value for attribute 'accessLevelUpdate'", secureObject);
-	            }
-	            else {
+	            } else {
 	                permissions = this.getPermissions(
 	                	request,
 		                principal,
@@ -704,14 +714,12 @@ public class AccessControl_1 extends Standard_1 {
 	            	}
 	            	return true;
 	            }
-        	}
-        	// READ
-        	else if(action == Action.READ) {
+        	} else if(action == Action.READ) {
+            	// READ
                 Set<String> permissions = new HashSet<String>();
                 if(parent.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
                 	SysLog.error("Missing value for attribute 'accessLevelBrowse'", parent);
-                }
-                else {
+                } else {
                     permissions = this.getPermissions(
                     	request,
                         principal,
@@ -728,8 +736,7 @@ public class AccessControl_1 extends Standard_1 {
                 	}
                     permissions.retainAll(secureObject.attributeValuesAsList("owner"));
                     return !permissions.isEmpty();
-                }
-                else {
+                } else {
 	            	if(grantedPermissions != null) {
 	            		grantedPermissions.add(ALL_PERMISSION);
 	            	}
@@ -762,13 +769,12 @@ public class AccessControl_1 extends Standard_1 {
                 				}
                         		if(request.path().isLike(pattern)) {
                         			matches = true;
-                        		}
-                        		// runAs permission defined for activityCreator implies runAs permission for 
-                        		// activities created with this creator and their composites
-                        		else if(
+                        		} else if(
                         			secureObject != null &&
                         			secureObject.getPath().startsWith(new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", request.path().get(2), "segment", request.path().get(4), "activity"))
                         		) {
+                            		// runAs permission defined for activityCreator implies runAs permission for 
+                            		// activities created with this creator and their composites
                         			Object_2Facade activity = null;
                         			if(request.path().isLike(new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", request.path().get(2), "segment", request.path().get(4), "activity", ":*"))) {
                         				activity = secureObject;
@@ -786,9 +792,8 @@ public class AccessControl_1 extends Standard_1 {
 	                        		}
                         		}
                 			}
-                		}
-                		// groupMembership: runAs permission
-                		else if(permission.startsWith("groupMembership:")) {
+                		} else if(permission.startsWith("groupMembership:")) {
+                    		// groupMembership: runAs permission
 	    					// Activity group membership
 	    					if(
 	    						request.path().startsWith(new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", request.path().get(2), "segment", request.path().get(4), "activity")) &&
@@ -821,8 +826,7 @@ public class AccessControl_1 extends Standard_1 {
 	            						}
                 					}
 	                			}
-	    					}
-        					else {
+	    					} else {
         						// Test for other memberships TBD
         					}
                 		}
@@ -834,15 +838,13 @@ public class AccessControl_1 extends Standard_1 {
                 		grantedPermissions.addAll(permissions);
                 	}
                     return !permissions.isEmpty();
-                }
-                else {
+                } else {
 	            	if(grantedPermissions != null) {
 	            		grantedPermissions.add(ALL_PERMISSION);
 	            	}
                 	return true;
                 }
-        	}
-        	else {
+        	} else {
             	SysLog.error("Unknown action", action.toString());
         		return false;
         	}
@@ -850,6 +852,7 @@ public class AccessControl_1 extends Standard_1 {
 
         /**
          * Restrict query according to permissions of given principal.
+         * 
          * @param request
          * @param object
          * @param principal
@@ -865,8 +868,7 @@ public class AccessControl_1 extends Standard_1 {
         	Set<String> memberships = new HashSet<String>();    	
             if(object.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
             	SysLog.error("Missing attribute value for accessLevelBrowse", object);
-            }
-            else {
+            } else {
                 memberships = this.getPermissions(
                 	request,
                     principal,
@@ -913,7 +915,12 @@ public class AccessControl_1 extends Standard_1 {
         private long cachedPrincipalsTTL = 120000;        
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get user identity for given principal.
+     * 
+     * @param qualifiedPrincipalName
+     * @return
+     */
     protected Path getUserIdentity(
     	String qualifiedPrincipalName
     ) {
@@ -924,8 +931,7 @@ public class AccessControl_1 extends Standard_1 {
             SysLog.error("FATAL: object has illegal formatted owner (<realm segment>:<subject name>): " + qualifiedPrincipalName);
             realmName = "Root";
             principalName = qualifiedPrincipalName;
-        }
-        else {
+        } else {
             realmName = qualifiedPrincipalName.substring(0, pos);
             principalName = qualifiedPrincipalName.substring(pos+1);
         }
@@ -935,7 +941,13 @@ public class AccessControl_1 extends Standard_1 {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get user identity for principal of given realm.
+     * 
+     * @param realmName
+     * @param principalName
+     * @return
+     */
     protected Path getUserIdentity(
     	String realmName,
     	String principalName
@@ -956,14 +968,26 @@ public class AccessControl_1 extends Standard_1 {
         return userIdentity;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get user identity for principal.
+     * 
+     * @param principal
+     * @return
+     * @throws ServiceException
+     */
     protected Path getUser(
     	CachedPrincipal principal
     ) throws ServiceException {
     	return this.getUserIdentity(principal);
     }
         
-    //-------------------------------------------------------------------------
+    /**
+     * Get group identity for principal.
+     * 
+     * @param accessPath
+     * @param qualifiedPrincipalName
+     * @return
+     */
     protected Path getGroupIdentity(
         Path accessPath,
         String qualifiedPrincipalName
@@ -975,8 +999,7 @@ public class AccessControl_1 extends Standard_1 {
             System.err.println("FATAL: object has illegal formatted owner (<realm segment>:<subject name>): " + qualifiedPrincipalName + "; path=" + accessPath.toXRI());
             segmentName = "Root";
             principalName = qualifiedPrincipalName;
-        }
-        else {
+        } else {
             segmentName = qualifiedPrincipalName.substring(0, pos);
             principalName = qualifiedPrincipalName.substring(pos+1);
         }
@@ -986,7 +1009,13 @@ public class AccessControl_1 extends Standard_1 {
         return principalIdentity;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get qualified principal name.
+     * 
+     * @param accessPath
+     * @param principalName
+     * @return
+     */
     protected String getQualifiedPrincipalName(
         Path accessPath,
         String principalName
@@ -994,14 +1023,22 @@ public class AccessControl_1 extends Standard_1 {
         return accessPath.get(4) + ":" + principalName;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get qualified principal name.
+     * 
+     * @param principalIdentity
+     * @return
+     */
     protected String getQualifiedPrincipalName(
         Path principalIdentity
     ) {
         return principalIdentity.get(6) + ":" + principalIdentity.getBase();
     }
     
-    // --------------------------------------------------------------------------
+    /**
+     * LayerInteraction
+     *
+     */
     public class LayerInteraction extends Standard_1.LayerInteraction {
         
         public LayerInteraction(
@@ -1043,7 +1080,13 @@ public class AccessControl_1 extends Standard_1 {
 	        }
 	    }
 
-	    //-------------------------------------------------------------------------
+	    /**
+	     * Find objects.
+	     * 
+	     * @param reference
+	     * @return
+	     * @throws ServiceException
+	     */
 	    protected MappedRecord[] findObjects(
 	        Path reference
 	    ) throws ServiceException {
@@ -1072,7 +1115,16 @@ public class AccessControl_1 extends Standard_1 {
 	        }
 	    }
 
-	    //-------------------------------------------------------------------------
+	    /**
+	     * Get owning user for new object.
+	     * 
+	     * @param requestingUser
+	     * @param newObjectFacade
+	     * @param parentFacade
+	     * @param realm
+	     * @return
+	     * @throws ServiceException
+	     */
 	    protected String getOwningUserForNewObject(
 	    	Path requestingUser,
 	    	Object_2Facade newObjectFacade,
@@ -1087,15 +1139,13 @@ public class AccessControl_1 extends Standard_1 {
 	            !parentFacade.attributeValuesAsList("owner").isEmpty()
 	        ) {
 	           owningUser = (String)parentFacade.attributeValue("owner");
-	        }   
-	        // Owning user set on new object
-	        else if(!newObjectFacade.attributeValuesAsList("owningUser").isEmpty()) {
+	        } else if(!newObjectFacade.attributeValuesAsList("owningUser").isEmpty()) {
+		        // Owning user set on new object
 	            owningUser = AccessControl_1.this.getQualifiedPrincipalName(
 	                (Path)newObjectFacade.attributeValue("owningUser")
 	            );
-	        }
-	        // Set requesting principal as default
-	        else {
+	        } else {
+		        // Set requesting principal as default
 	            // If no user found set owner to segment administrator
 	            owningUser = newObjectFacade.attributeValuesAsList("owner").isEmpty() ? 
 	            	requestingUser == null ? 
@@ -1106,7 +1156,15 @@ public class AccessControl_1 extends Standard_1 {
 	        return owningUser;
 	    }
 	    
-	    // --------------------------------------------------------------------------
+	    /**
+	     * Get owning groups for new object.
+	     * 
+	     * @param requestingPrincipal
+	     * @param newObjectFacade
+	     * @param parentFacade
+	     * @return
+	     * @throws ServiceException
+	     */
 	    protected Set<String> getOwningGroupsForNewObject(
 	    	CachedPrincipal requestingPrincipal,
 	    	Object_2Facade newObjectFacade,
@@ -1123,8 +1181,7 @@ public class AccessControl_1 extends Standard_1 {
 	                	AccessControl_1.this.getQualifiedPrincipalName((Path)i.next())
 	                );
 	            }
-	        }
-	        else {
+	        } else {
 	        	Path userGroup = requestingPrincipal == null ? 
 	        		null : 
 	        		realm.getPrimaryGroup(requestingPrincipal);
@@ -1156,7 +1213,7 @@ public class AccessControl_1 extends Standard_1 {
 	    }
 	    
 	    /**
-	     * Get object from cache. If not in cached, retrieve it and add it to cache
+	     * Get object from cache. If not in cached, retrieve it and add it to cache.
 	     * 
 	     * @param header
 	     * @param path
@@ -1175,8 +1232,7 @@ public class AccessControl_1 extends Standard_1 {
 	                if(entry != null) {
 	                    if(entry.getValue() == null) {
 	                        i.remove();
-	                    }
-	                    else {
+	                    } else {
 	                        Long expiresAt = (Long)entry.getValue()[1];
 	                        if((expiresAt == null) || (expiresAt < System.currentTimeMillis())) {
 	                            i.remove();
@@ -1416,8 +1472,7 @@ public class AccessControl_1 extends Standard_1 {
 		        	input, 
 		        	output
 		        );
-	        }
-	        else {
+	        } else {
 		        super.find(
 		        	ispec, 
 		        	input, 
@@ -1493,8 +1548,7 @@ public class AccessControl_1 extends Standard_1 {
 			                    reply
 			                );
 			                return true;
-			            }
-			            else {
+			            } else {
 	                        throw new ServiceException(
 	                            BasicException.Code.DEFAULT_DOMAIN,
 	                            BasicException.Code.AUTHORIZATION_FAILURE, 
@@ -1635,8 +1689,7 @@ public class AccessControl_1 extends Standard_1 {
 		        String owningUser = null;
 		        if(!replacementFacade.attributeValuesAsList("owningUser").isEmpty()) {
 		            owningUser = AccessControl_1.this.getQualifiedPrincipalName((Path)replacementFacade.attributeValue("owningUser"));
-		        }
-		        else {
+		        } else {
 		            // if no user found set owner to segment administrator
 		            owningUser = objectFacade.attributeValuesAsList("owner").isEmpty() ? 
 		            	userIdentity == null ? 
@@ -1657,8 +1710,7 @@ public class AccessControl_1 extends Standard_1 {
 	    	                );
 	                    }
 		            }
-		        }
-		        else {
+		        } else {
 	                // keep existing owning group
 	                if(objectFacade.attributeValuesAsList("owner").size() > 1) {
 	                    owningGroup.addAll(
@@ -1799,7 +1851,13 @@ public class AccessControl_1 extends Standard_1 {
 	    
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Complete derived attributes.
+     * 
+     * @param header
+     * @param object
+     * @throws ServiceException
+     */
     protected void completeOwningUserAndGroup(
       ServiceHeader header,
       MappedRecord object
@@ -1810,8 +1868,7 @@ public class AccessControl_1 extends Standard_1 {
         if(!facade.attributeValuesAsList("owner").isEmpty()) {
             if((String)facade.attributeValue("owner") == null) {
             	SysLog.error("Values of attribute owner are corrupt. Element at index 0 (owning user) is missing. Fix the database", object);
-            }
-            else {
+            } else {
             	facade.attributeValuesAsList("owningUser").add(
 	                this.getUserIdentity((String)facade.attributeValue("owner"))
 	            );
@@ -1824,7 +1881,13 @@ public class AccessControl_1 extends Standard_1 {
         }       
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Complete derived attributes for returned objects.
+     * 
+     * @param header
+     * @param object
+     * @throws ServiceException
+     */
     protected void completeObject(
       ServiceHeader header,
       MappedRecord object
@@ -1835,14 +1898,20 @@ public class AccessControl_1 extends Standard_1 {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Complete reply.
+     * 
+     * @param header
+     * @param reply
+     * @return
+     * @throws ServiceException
+     */
     protected DataproviderReply completeReply(
       ServiceHeader header,
       DataproviderReply reply
     ) throws ServiceException {
     	if(reply.getResult() != null) {
-	      for(int i = 0; i < reply.getObjects().length; i++) {
-	    	  MappedRecord object = reply.getObjects()[i];
+    	for(MappedRecord object : reply.getObjects()) {
 	          this.completeObject(
 	              header,
 	              object
@@ -1852,7 +1921,13 @@ public class AccessControl_1 extends Standard_1 {
     	return reply;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Test whether object is instance of PrincipalGroup.
+     * 
+     * @param object
+     * @return
+     * @throws ServiceException
+     */
     protected boolean isPrincipalGroup(
     	MappedRecord object
     ) throws ServiceException {
@@ -1863,7 +1938,13 @@ public class AccessControl_1 extends Standard_1 {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Test whether object's type is a subclass of SecureObject.
+     * 
+     * @param object
+     * @return
+     * @throws ServiceException
+     */
     protected boolean isSecureObject(
     	MappedRecord object
     ) throws ServiceException {
@@ -1871,8 +1952,7 @@ public class AccessControl_1 extends Standard_1 {
         if(objectClass == null) {
         	SysLog.error("Undefined object class", Object_2Facade.getPath(object));
             return true;
-        }
-        else {
+        } else {
             return this.model.isSubtypeOf(
                 objectClass,
                 "org:opencrx:kernel:base:SecureObject"
@@ -1880,7 +1960,13 @@ public class AccessControl_1 extends Standard_1 {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Test whether type is a subclass of SecureObject.
+     * 
+     * @param type
+     * @return
+     * @throws ServiceException
+     */
     protected boolean isSecureObject(
       ModelElement_1_0 type
     ) throws ServiceException {
@@ -1890,7 +1976,11 @@ public class AccessControl_1 extends Standard_1 {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get persistence manager.
+     * 
+     * @return
+     */
     public PersistenceManager newDelegatingPersistenceManager(
     ) {
         if(!this.connectionFactories.isEmpty()) {
@@ -1919,10 +2009,10 @@ public class AccessControl_1 extends Standard_1 {
         return null;
     }
 
-    //-------------------------------------------------------------------------
     /* (non-Javadoc)
      * @see org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0#activate(short, org.openmdx.compatibility.base.application.configuration.Configuration, org.openmdx.compatibility.base.dataprovider.spi.Layer_1_0)
      */
+    @Override
     public void activate(
         short id, 
         Configuration configuration,
@@ -1937,8 +2027,7 @@ public class AccessControl_1 extends Standard_1 {
         // realmIdentity
         if(!configuration.values(ConfigurationKeys.REALM_IDENTITY).isEmpty()) {
             this.realmIdentity = new Path((String)configuration.values(ConfigurationKeys.REALM_IDENTITY).get(0));
-        }
-        else {
+        } else {
             throw new ServiceException(
                 BasicException.Code.DEFAULT_DOMAIN,
                 BasicException.Code.INVALID_CONFIGURATION, 
@@ -1957,7 +2046,12 @@ public class AccessControl_1 extends Standard_1 {
             ((Boolean)configuration.values("useExtendedAccessLevelBasic").get(0)).booleanValue();        
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Extract principal name from request header.
+     * 
+     * @param header
+     * @return
+     */
     protected String getPrincipalName(
     	ServiceHeader header
     ) {
@@ -1966,9 +2060,9 @@ public class AccessControl_1 extends Standard_1 {
         	(String)header.getPrincipalChain().get(0);
     }
 
-    //-------------------------------------------------------------------------
     /**
      * Allows to provide a custom-specific realm implementation.
+     * 
      */
     protected DefaultRealm newRealm(
     	Path realmIdentity
@@ -1976,7 +2070,14 @@ public class AccessControl_1 extends Standard_1 {
         return new DefaultRealm(realmIdentity);
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get realm for given request.
+     * 
+     * @param header
+     * @param request
+     * @return
+     * @throws ServiceException
+     */
     protected DefaultRealm getRealm(
         ServiceHeader header,
         DataproviderRequest request
@@ -2009,7 +2110,14 @@ public class AccessControl_1 extends Standard_1 {
         return realm;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Get type referenced by access path.
+     * 
+     * @param accessPath
+     * @param filter
+     * @return
+     * @throws ServiceException
+     */
     protected ModelElement_1_0 getReferencedType(
         Path accessPath,
         FilterProperty[] filter
@@ -2049,7 +2157,14 @@ public class AccessControl_1 extends Standard_1 {
         return this.model.getTypes(accessPath)[2];        
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Create request result.
+     *
+     * @param request
+     * @param structName
+     * @return
+     * @throws ServiceException
+     */
     protected MappedRecord createResult(
         DataproviderRequest request,
         String structName
@@ -2062,18 +2177,23 @@ public class AccessControl_1 extends Standard_1 {
 	            structName
 	        ).getDelegate();
 	        return result;
-    	}
-    	catch(ResourceException e) {
+    	} catch(ResourceException e) {
     		throw new ServiceException(e);
     	}
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get object cache.
+     * 
+     * @return
+     */
     protected static ConcurrentMap<Path,Object[]> getObjectCache(
     ) {
     	return objectCache;
     }
     
+    //-----------------------------------------------------------------------
+    // Members
     //-----------------------------------------------------------------------
     protected final static Path EXTENT_PATTERN = 
         new Path("xri:@openmdx:**/provider/**/segment/**/extent");

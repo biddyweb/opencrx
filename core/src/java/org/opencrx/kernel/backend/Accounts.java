@@ -66,8 +66,10 @@ import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.account1.cci2.AccountAddressQuery;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.cci2.ContactQuery;
 import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.cci2.PhoneNumberQuery;
+import org.opencrx.kernel.account1.cci2.PostalAddressQuery;
 import org.opencrx.kernel.account1.cci2.RoomQuery;
 import org.opencrx.kernel.account1.cci2.WebAddressQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
@@ -101,6 +103,7 @@ import org.opencrx.kernel.contract1.jmi1.Quote;
 import org.opencrx.kernel.contract1.jmi1.SalesContract;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -116,6 +119,7 @@ public class Accounts extends AbstractImpl {
 
 	/**
 	 * Register Accounts backend instance.
+	 * 
 	 */
 	public static void register(
 	) {
@@ -392,10 +396,9 @@ public class Accounts extends AbstractImpl {
      * @param account
      * @throws ServiceException
      */
-    public void updateFullName(
+    public void updateAccountFullName(
         Account account
     ) throws ServiceException {
-        // org:opencrx:kernel:account1:Contact:fullName
         if(account instanceof Contact) {
         	Contact contact = (Contact)account;
             contact.setFullName(
@@ -403,16 +406,126 @@ public class Accounts extends AbstractImpl {
                   + (contact.getFirstName() == null ? "" : contact.getFirstName() + " ")
                   + (contact.getMiddleName() == null ? "" : contact.getMiddleName() + "") ).trim()
             );
-        }
-        // org:opencrx:kernel:account1:AbstractGroup
-        else if(account instanceof AbstractGroup) {
+        } else if(account instanceof AbstractGroup) {
         	AbstractGroup group = (AbstractGroup)account;
             group.setFullName(
                 group.getName() == null ? "" : group.getName()
             );
         }
     }
-    
+
+    /**
+     * Update postal address lines which are derived from account information.
+     * Override this method for custom-specific behavior. The default implementation
+     * updates address lines of the form [salutation, firstName " " lastName] and
+     * [firstName " " lastName].
+     * 
+     * @param account
+     * @throws ServiceException
+     */
+    public void updatePostalAddressLine(
+    	Account account
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+    	try {
+    		if(account instanceof Contact) {
+    			Contact contact = (Contact)account;
+	    		// Get currently persistent account (old account)
+	        	PersistenceManager pmOld = pm.getPersistenceManagerFactory().getPersistenceManager(
+	        		SecurityKeys.ROOT_PRINCIPAL,
+	        		null
+	        	);
+	        	Contact contactOld = (Contact)pmOld.getObjectById(contact.refGetPath());
+	    		PostalAddressQuery query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+	    		query.forAllDisabled().isFalse();
+	    		for(PostalAddress postalAddress: contact.<PostalAddress>getAddress(query)) {
+	    			if(
+	    				postalAddress.getPostalAddressLine().size() == 1 &&
+	    				Utils.areEqual(postalAddress.getPostalAddressLine().get(1), contactOld.getFirstName() + " " + contactOld.getLastName())
+	    			) {
+	    				List<String> postalAddressLines = new ArrayList<String>();
+	    				postalAddressLines.add(contact.getFirstName() + " " + contact.getLastName());
+	    				if(!Utils.areEqual(postalAddress.getPostalAddressLine(), postalAddressLines)) {
+		    				postalAddress.getPostalAddressLine().clear();
+		    				postalAddress.getPostalAddressLine().addAll(postalAddressLines);
+	    				}
+	    			} else if(
+	    				(postalAddress.getPostalAddressLine().size() == 2 &&
+	    				Utils.areEqual(postalAddress.getPostalAddressLine().get(0), contactOld.getSalutation()) &&
+	    				Utils.areEqual(postalAddress.getPostalAddressLine().get(1), contactOld.getFirstName() + " " + contactOld.getLastName()))
+	    			) {
+	    				List<String> postalAddressLines = new ArrayList<String>();
+	    				if(contact.getSalutation() != null && !contact.getSalutation().isEmpty()) {
+	    					postalAddressLines.add(contact.getSalutation());
+	    				}
+	    				postalAddressLines.add(contact.getFirstName() + " " + contact.getLastName());
+	    				if(!Utils.areEqual(postalAddress.getPostalAddressLine(), postalAddressLines)) {
+		    				postalAddress.getPostalAddressLine().clear();
+		    				postalAddress.getPostalAddressLine().addAll(postalAddressLines);
+	    				}
+	    			}
+	    		}
+    		}
+		} catch(Exception ignore) {}        	
+    }
+
+    /**
+     * Update the addresses assigned to the given address. The default
+     * implementation amends matching postal addresses. Override this
+     * method for custom-specific behavior.
+     * 
+     * @param address
+     * @throws ServiceException
+     */
+    public void updateAssignedAddresses(
+    	AccountAddress address
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(address);
+    	if(address instanceof PostalAddress) {
+    		PostalAddress postalAddress = (PostalAddress)address;
+        	try {
+        		// Get currently persistent address (old address)
+            	PersistenceManager pmOld = pm.getPersistenceManagerFactory().getPersistenceManager(
+            		SecurityKeys.ROOT_PRINCIPAL,
+            		null
+            	);
+	        	PostalAddress postalAddressOld = (PostalAddress)pmOld.getObjectById(postalAddress.refGetPath());
+	        	// Only update, if old and new are different
+	        	if(
+    				!Utils.areEqual(postalAddressOld.getPostalStreet(), postalAddress.getPostalStreet()) ||
+    				!Utils.areEqual(postalAddressOld.getPostalStreetNumber(), postalAddress.getPostalStreetNumber()) ||
+    				!Utils.areEqual(postalAddressOld.getPostalCode(), postalAddress.getPostalCode()) ||
+    				!Utils.areEqual(postalAddressOld.getPostalCity(), postalAddress.getPostalCity()) ||
+    				!Utils.areEqual(postalAddressOld.getPostalState(), postalAddress.getPostalState()) || 
+    				(postalAddressOld.getPostalCountry() != postalAddress.getPostalCountry()) 
+	        	) {
+		    		Account account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
+		    		PostalAddressQuery query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+		    		query.forAllDisabled().isFalse();
+		    		for(PostalAddress assignedAddress: account.<PostalAddress>getAssignedAddress(query)) {
+		    			// Update assigned address only if it matches the old address
+		    			if(
+		    				Utils.areEqual(postalAddressOld.getPostalStreet(), assignedAddress.getPostalStreet()) &&
+		    				Utils.areEqual(postalAddressOld.getPostalStreetNumber(), assignedAddress.getPostalStreetNumber()) &&
+		    				Utils.areEqual(postalAddressOld.getPostalCode(), assignedAddress.getPostalCode()) &&
+		    				Utils.areEqual(postalAddressOld.getPostalCity(), assignedAddress.getPostalCity()) &&
+		    				Utils.areEqual(postalAddressOld.getPostalState(), assignedAddress.getPostalState()) && 
+		    				(postalAddressOld.getPostalCountry() == assignedAddress.getPostalCountry()) 
+		    			) {
+		    				assignedAddress.getPostalStreet().clear();
+		    				assignedAddress.getPostalStreet().addAll(postalAddress.getPostalStreet());
+		    				assignedAddress.setPostalStreetNumber(postalAddress.getPostalStreetNumber());
+		    				assignedAddress.setPostalCode(postalAddress.getPostalCode());
+		    				assignedAddress.setPostalCity(postalAddress.getPostalCity());
+		    				assignedAddress.setPostalState(postalAddress.getPostalState());
+		    				assignedAddress.setPostalCountry(postalAddress.getPostalCountry());	    				
+		    			}
+		    		}
+        		}
+        	} catch(Exception ignore) {}
+    	}    	
+    }
+
     /**
      * Update derived attributes of given account. E.g. invoked by jdoPreStore().
      * 
@@ -422,9 +535,8 @@ public class Accounts extends AbstractImpl {
     public void updateAccount(
         Account account
     ) throws ServiceException {
-        this.updateFullName(
-            account 
-        );
+        this.updateAccountFullName(account);
+        this.updatePostalAddressLine(account);
         List<String> statusMessage = new ArrayList<String>();
         String oldVCardAsString = account.getVcard();
         String newVCardAsString = VCard.getInstance().mergeVcard(
@@ -504,11 +616,14 @@ public class Accounts extends AbstractImpl {
     	AccountAddress address
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(address);
+    	// Parse phone numbers
     	if(address instanceof PhoneNumber) {
     		Addresses.getInstance().updatePhoneNumber(
     			(PhoneNumber)address 
     		);    		
     	}
+    	// Amend assigned addresses
+    	this.updateAssignedAddresses(address);
 		// Mark account as dirty updates VCard, ...
 		this.markAccountAsDirty(
 			(Account)pm.getObjectById(
@@ -516,7 +631,7 @@ public class Accounts extends AbstractImpl {
 			)
 		);
     }
-    
+
     /**
      * Callback when address is removed, e.g. jdoPreDelete.
      * 
@@ -1394,7 +1509,139 @@ public class Accounts extends AbstractImpl {
     ) throws ServiceException {
     	// Override for custom-specific implementation
     }
-    
+
+	/**
+	 * Get matching contacts.
+	 * 
+	 * @param accountSegment
+	 * @param accountQuery
+	 * @param firstName
+	 * @param lastName
+	 * @param aliasName
+	 * @param phoneNumberMobile
+	 * @param phoneNumberHome
+	 * @param phoneNumberBusiness
+	 * @param postalCityHome
+	 * @param postalCityBusiness
+	 * @param postalStreetHome
+	 * @param postalStreetBusiness
+	 * @param emailHome
+	 * @param emailBusiness
+	 * @return
+	 * @throws ServiceException
+	 */
+	public List<Account> getMatchingAccounts(
+		org.opencrx.kernel.account1.jmi1.Segment accountSegment,
+		AccountQuery accountQuery,
+		String fullName,
+		String firstName,
+		String lastName,
+		String aliasName,
+		String phoneNumberMobile,
+		String phoneNumberHome,
+		String phoneNumberBusiness,
+		String postalCityHome,
+		String postalCityBusiness,
+		List<String> postalStreetHome,
+		List<String> postalStreetBusiness,
+		String emailHome,
+		String emailBusiness
+	) throws ServiceException {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+		accountQuery.orderByFullName().ascending();	    
+		boolean hasQueryProperty = false;
+      	final String wildcard = ".*";
+      	if(accountQuery instanceof ContactQuery) {
+      		ContactQuery contactQuery = (ContactQuery)accountQuery;
+		    if(firstName != null) {
+		        hasQueryProperty = true;
+		        contactQuery.thereExistsFirstName().like("(?i)" + wildcard + firstName + wildcard);
+		    }
+		    if(lastName != null) {
+		        hasQueryProperty = true;
+		        contactQuery.thereExistsLastName().like("(?i)" + wildcard + lastName + wildcard);
+		    } else {
+		    	// is required field, so use wildcard if no search string is provided
+		        hasQueryProperty = true;
+		        contactQuery.thereExistsLastName().like(wildcard);
+		    }
+      	}
+	    if(fullName != null) {
+	        hasQueryProperty = true;
+	        accountQuery.thereExistsFullName().like("(?i)" + wildcard + fullName + wildcard);
+	    }
+	    if(aliasName != null) {
+	        hasQueryProperty = true;
+	        accountQuery.thereExistsAliasName().like("(?i)" + wildcard + aliasName + wildcard);
+	    }
+	    String queryFilterClause = null;
+	    List<String> stringParams = new ArrayList<String>();
+	    int stringParamIndex = 0;
+	    if(phoneNumberMobile != null) {
+	    	PhoneNumberQuery query = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
+	    	query.thereExistsPhoneNumberFull().like(wildcard + phoneNumberMobile + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(phoneNumberHome != null) {
+	    	PhoneNumberQuery query = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
+	    	query.thereExistsPhoneNumberFull().like(wildcard + phoneNumberHome + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(phoneNumberBusiness != null) {
+	    	PhoneNumberQuery query = (PhoneNumberQuery)pm.newQuery(PhoneNumber.class);
+	    	query.thereExistsPhoneNumberFull().like(wildcard + phoneNumberBusiness + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(postalCityHome != null) {
+	    	PostalAddressQuery query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+	    	query.thereExistsPostalCity().like(wildcard + postalCityHome + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(postalCityBusiness != null) {
+	    	PostalAddressQuery query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+	    	query.thereExistsPostalCity().like(wildcard + postalCityBusiness + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(postalStreetHome != null) {
+	        for(int i = 0; i < postalStreetHome.size(); i++) {
+		        hasQueryProperty = true;
+		        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
+		        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE ((adr.postal_street_0" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_1" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_2" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_3" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_4" + " LIKE ?s" + stringParamIndex + ")))";
+		        stringParams.add(wildcard + postalStreetHome.get(i) + wildcard);
+		        stringParamIndex++;
+	        }
+	    }
+	    if(postalStreetBusiness != null) {
+	        for(int i = 0; i < postalStreetBusiness.size(); i++) {
+		        hasQueryProperty = true;
+		        if(stringParamIndex > 0) { queryFilterClause += " AND "; } else { queryFilterClause = ""; }
+		        queryFilterClause += "v.object_id IN (SELECT act.object_id FROM OOCKE1_ACCOUNT act INNER JOIN OOCKE1_ADDRESS adr ON adr.p$$parent = act.object_id WHERE ((adr.postal_street_0" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_1" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_2" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_3" + " LIKE ?s" + stringParamIndex + ") OR (adr.postal_street_4" + " LIKE ?s" + stringParamIndex + ")))";
+		        stringParams.add(wildcard + postalStreetBusiness.get(i) + wildcard);
+		        stringParamIndex++;
+	        }
+	    }
+	    if(emailHome != null) {
+	    	emailHome = emailHome.trim();
+	    	EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+	    	query.thereExistsEmailAddress().like(wildcard + emailHome + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(emailBusiness != null) {
+	    	emailBusiness = emailBusiness.trim();
+	    	EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+	    	query.thereExistsEmailAddress().like(wildcard + emailBusiness + wildcard);
+	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
+	    }
+	    if(queryFilterClause != null) {
+	    	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(accountQuery);
+		    queryFilter.setClause(queryFilterClause);
+		    queryFilter.getStringParam().addAll(stringParams);
+	    }
+	   	return hasQueryProperty ?
+	        accountSegment.getAccount(accountQuery) :
+	        null;
+	}
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

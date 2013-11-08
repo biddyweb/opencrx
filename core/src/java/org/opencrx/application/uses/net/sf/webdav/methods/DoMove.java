@@ -132,12 +132,18 @@ public class DoMove extends WebDavMethod {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
         if (!_readOnly) {
-            WebDavStore.MoveResourceStatus status = 
-            	_store.moveResource(requestContext, res, sourcePath, destinationPath);
+            WebDavStore.MoveResourceStatus status = _store.moveResource(
+            	requestContext, 
+            	res, 
+            	sourcePath, 
+            	destinationPath
+            );
             resp.setStatus(
-            	status == WebDavStore.MoveResourceStatus.CREATED ?
-            		HttpServletResponse.SC_CREATED :
-            			HttpServletResponse.SC_NO_CONTENT
+            	status == WebDavStore.MoveResourceStatus.CREATED 
+            		? HttpServletResponse.SC_CREATED
+            		: status == WebDavStore.MoveResourceStatus.FORBIDDEN
+            			? HttpServletResponse.SC_FORBIDDEN
+            			: HttpServletResponse.SC_NO_CONTENT
             );
         } else {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);

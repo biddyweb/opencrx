@@ -409,7 +409,7 @@ public class Exporter extends AbstractImpl {
 	/**
 	 * Export object according to the given export profile and itemMimeType. The
 	 * default implementation allows to export objects in the format 
-	 * text/xml or application/x-excel. The default implementation recursively walks
+	 * application/xml or application/x-excel. The default implementation recursively walks
 	 * the object (composites and references objects) according to the reference 
 	 * filter. 
 	 * Override this method for custom-specific export and rendering of objects. E.g.
@@ -594,7 +594,7 @@ public class Exporter extends AbstractImpl {
 	// -------------------------------------------------------------------------
 	// Members
 	// -------------------------------------------------------------------------
-	public static final String MIME_TYPE_XML = "text/xml";
+	public static final String MIME_TYPE_XML = "application/xml";
 
 	public static final String MIME_TYPE_EXCEL = "application/x-excel";
 

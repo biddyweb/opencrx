@@ -498,28 +498,31 @@ public class VCard extends AbstractImpl {
             }
             // postalCity
             adr.append(
-                (postalAddress.getPostalCity() == null) ? 
-                    ";" : 
-                    ";" + this.encodeString(postalAddress.getPostalCity())
+                postalAddress.getPostalCity() == null 
+                	? ";" 
+                	: ";" + this.encodeString(postalAddress.getPostalCity())
             );
             // postalState
             adr.append(
-                (postalAddress.getPostalState() == null) ? 
-                    ";" : 
-                    ";" + this.encodeString(postalAddress.getPostalState())
+                postalAddress.getPostalState() == null 
+                	? ";" 
+                	: ";" + this.encodeString(postalAddress.getPostalState())
             );            
             // postalCode
             adr.append(
-                (postalAddress.getPostalCode() == null) ? 
-                    ";" : 
-                    ";" + this.encodeString(postalAddress.getPostalCode())
+                postalAddress.getPostalCode() == null
+                	? ";" 
+                	: ";" + this.encodeString(postalAddress.getPostalCode())
             );
             adr.append(";");
+            String[] postalCountry = Addresses.getInstance().mapToPostalCountryText(
+        		postalAddress.getPostalCountry(),
+        		codeSegment
+        	); 
             adr.append(
-            	Addresses.getInstance().mapToPostalCountryText(
-            		postalAddress.getPostalCountry(),
-            		codeSegment
-            	)
+            	postalCountry == null 
+            		? "" 
+            		: postalCountry[0]
             );   
             adrWork = adr.toString();
         }
@@ -542,29 +545,32 @@ public class VCard extends AbstractImpl {
             }
             // postalCity
             adr.append(
-                (postalAddress.getPostalCity() == null) ? 
-                    ";" : 
-                    ";" + this.encodeString(postalAddress.getPostalCity())
+                postalAddress.getPostalCity() == null 
+                	? ";" 
+                	: ";" + this.encodeString(postalAddress.getPostalCity())
             );
             // postalState
             adr.append(
-                (postalAddress.getPostalState() == null) ? 
-                    ";" : 
-                    ";" + this.encodeString(postalAddress.getPostalState())
+                postalAddress.getPostalState() == null 
+                	? ";" 
+                	: ";" + this.encodeString(postalAddress.getPostalState())
             );
             // postalCode
             adr.append(
-                (postalAddress.getPostalCode() == null) ? 
-                    ";" : 
-                    ";" + this.encodeString(postalAddress.getPostalCode())
+                postalAddress.getPostalCode() == null 
+                	? ";" 
+                	: ";" + this.encodeString(postalAddress.getPostalCode())
             );
             // postalCountry
             adr.append(";");
+            String[] postalCountry = Addresses.getInstance().mapToPostalCountryText(
+        		postalAddress.getPostalCountry(),
+        		codeSegment
+        	);            
             adr.append(
-            	Addresses.getInstance().mapToPostalCountryText(
-            		postalAddress.getPostalCountry(),
-            		codeSegment
-            	)
+            	postalCountry == null 
+	        		? "" 
+	        		: postalCountry[0]            	
             );   
             adrHome = adr.toString();
         }

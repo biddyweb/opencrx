@@ -84,18 +84,22 @@ import org.opencrx.kernel.account1.jmi1.Group;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.MeetingQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.base.cci2.IndexEntryQuery;
 import org.opencrx.kernel.base.jmi1.IndexEntry;
 import org.opencrx.kernel.contract1.cci2.SalesOrderPositionQuery;
 import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
+import org.opencrx.kernel.contract1.cci2.SalesVolumeContractQuery;
 import org.opencrx.kernel.contract1.jmi1.GenericContract;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.contract1.jmi1.SalesOrderPosition;
+import org.opencrx.kernel.contract1.jmi1.SalesVolumeContract;
 import org.opencrx.kernel.product1.cci2.AccountAssignmentProductQuery;
 import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.AccountAssignmentProduct;
 import org.opencrx.kernel.product1.jmi1.Product;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ExtentCapable;
 import org.openmdx.base.naming.Path;
@@ -118,12 +122,20 @@ public class TestQuery {
     @BeforeClass
     public static void initialize(
     ) throws NamingException, ServiceException {
-    	entityManagerFactory = org.opencrx.kernel.utils.Utils.getPersistenceManagerFactoryProxy(
-    		"http://127.0.0.1:8080/opencrx-rest-CRX/", 
-    		"admin-Standard", 
-    		"admin-Standard", 
-    		"application/vnd.openmdx.wbxml" // text/xml
-    	);        
+//    	{
+//          if(!NamingManager.hasInitialContextFactoryBuilder()) {
+//                NonManagedInitialContextFactoryBuilder.install(null);
+//          }    		
+//        	entityManagerFactory = Utils.getPersistenceManagerFactory();
+//    	}
+    	{
+	    	entityManagerFactory = Utils.getPersistenceManagerFactoryProxy(
+	    		"http://127.0.0.1:8080/opencrx-rest-CRX/", 
+	    		"admin-Standard", 
+	    		"admin-Standard", 
+	    		"application/vnd.openmdx.wbxml" // text/xml
+	    	);
+    	}
     }
 
     public static class TestAll extends AbstractTest {
@@ -220,12 +232,15 @@ public class TestQuery {
 			    	GroupQuery groupQuery = (GroupQuery)this.pm.newQuery(Group.class);
 			    	groupQuery.orderByName().ascending();
 			    	List<Group> groups = accountSegment.getAccount(groupQuery);
+			    	int count = 0;
 			    	for(Group group: groups) {
 			    		AccountAddressQuery addressQuery = (AccountAddressQuery)this.pm.newQuery(AccountAddress.class);
 			    		addressQuery.account().thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
 			    		addressQuery.account().thereExistsAccountMembership().distance().equalTo(-1);
 			    		List<AccountAddress> addresses = accountSegment.getAddress(addressQuery);
 			    		System.out.println("Group " + group.getName() + " has addresses " + !addresses.isEmpty());
+			    		count++;
+			    		if(count > 10) break;
 			    	}
 		    	}
 		    	// Test 1: Account groups with new members
@@ -289,20 +304,20 @@ public class TestQuery {
 		    	{
 		        	AbstractGroupQuery groupQuery = (AbstractGroupQuery)this.pm.newQuery(AbstractGroup.class);
 		        	List<AbstractGroup> groups = accountSegment.getAccount(groupQuery);
-		        	int ni = 0;
+		        	int counti = 0;
 		        	for(AbstractGroup group: groups) {
 			        	MeetingQuery meetingQuery = (MeetingQuery)this.pm.newQuery(Meeting.class);	        	
 			        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().thereExistsAccountFrom().equalTo(group);
 			        	meetingQuery.thereExistsMeetingParty().thereExistsParty().thereExistsAccountMembership().distance().equalTo(-1);
 			        	List<Meeting> meetings = activitySegment.getActivity(meetingQuery);
-			        	int nj = 0;
+			        	int countj = 0;
 			        	for(Meeting meeting: meetings) {
 			        		System.out.println("Meeting " + meeting.getActivityNumber() + " has party where account is member of group " + group.getName());
-			        		nj++;
-			        		if(nj > 50) break;
+			        		countj++;
+			        		if(countj > 50) break;
 			        	}
-			        	ni++;
-			        	if(ni > 500) break;
+			        	counti++;
+			        	if(counti > 500) break;
 		        	}
 		    	}
 	        	// Test 7: Get accounts which have only notes with title "Test"
@@ -311,11 +326,11 @@ public class TestQuery {
 		        	accountQuery.forAllNote().thereExistsTitle().equalTo("Test");
 		        	accountQuery.orderByFullName().ascending();
 		        	List<Account> accounts = accountSegment.getAccount(accountQuery);
-		        	int n = 0;
+		        	int count = 0;
 		        	for(Account account: accounts) {
 		        		System.out.println("Account " + account.getFullName() + " (" + account.refMofId() + ")" + " has only notes with Title 'Test'");
-		        		n++;
-		        		if(n > 100) break;
+		        		count++;
+		        		if(count > 100) break;
 		        	}
 		    	}
 		    	// Test 8: Get contacts where email matches
@@ -324,46 +339,79 @@ public class TestQuery {
 		    		EMailAddressQuery emailAddressQuery = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
 		    		emailAddressQuery.thereExistsEmailAddress().like(".*com");
 		    		contactQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(emailAddressQuery));
-		    		int n = 0;
+		    		int count = 0;
 		    		for(Contact contact: accountSegment.<Contact>getAccount(contactQuery)) {
 		        		System.out.println("Contact " + contact.getFullName() + " (" + contact.refMofId() + ")" + " has an email address like '.*com'");
-		        		n++;
-		        		if(n > 100) break;		    			
+		        		count++;
+		        		if(count > 100) break;		    			
 		    		}
 		    	}
 		    	// Test 9: Accounts having members with given memberRole
 		    	{
 		    		ContactQuery contactQuery = (ContactQuery)pm.newQuery(Contact.class);
 		    		contactQuery.thereExistsMember().thereExistsMemberRole().equalTo((short)13);
-		    		int n = 0;
+		    		int count = 0;
 		    		for(Contact contact: accountSegment.<Contact>getAccount(contactQuery)) {
 		        		System.out.println("Contact " + contact.getFullName() + " (" + contact.refMofId() + ")" + " has member having memberRole 13");
-		        		n++;
-		        		if(n > 100) break;
+		        		count++;
+		        		if(count > 100) break;
 		    		}
 		    	}
 		    	// Test 10: Accounts having addresses
 		    	{
 		    		AccountQuery query = (AccountQuery)pm.newQuery(Account.class);		    		
 		    		query.thereExistsAddress().modifiedAt().greaterThanOrEqualTo(new Date(0));
-		    		int n = 0;
+		    		int count = 0;
 		    		for(Account account: accountSegment.<Account>getAccount(query)) {
 		    			assertTrue("Account must have at least one address", !account.getAddress().isEmpty());
 		        		System.out.println("Account " + account.getFullName() + " (" + account.refMofId() + ")" + " has " + account.getAddress().size() + " addresses");
-		        		n++;
-		        		if(n > 100) break;
+		        		count++;
+		        		if(count > 100) break;
 		    		}
 		    	}
 		    	// Test 11: Accounts having no addresses
 		    	{
 		    		AccountQuery query = (AccountQuery)pm.newQuery(Account.class);		    		
 		    		query.forAllAddress().modifiedAt().lessThan(new Date(0));
-		    		int n = 0;
+		    		int count = 0;
 		    		for(Account account: accountSegment.<Account>getAccount(query)) {
 		    			//assertTrue("Account must have no address", account.getAddress().isEmpty());
 		        		System.out.println("Account " + account.getFullName() + " (" + account.refMofId() + ")" + " has " + account.getAddress().size() + " addresses");
-		        		n++;
-		        		if(n > 100) break;
+		        		count++;
+		        		if(count > 100) break;
+		    		}
+		    	}
+		    	// Test 12: Nested query with reference assignedAccount on abstract root class AbstractContract		    
+		    	{
+		    		Date salesOrderDate = new Date();
+		    		int count = 0;
+		    		for(Account account: accountSegment.<Account>getAccount()) {
+						SalesVolumeContractQuery salesVolumeContractQuery = (SalesVolumeContractQuery)pm.newQuery(SalesVolumeContract.class);
+						salesVolumeContractQuery.forAllDisabled().isFalse();
+						salesVolumeContractQuery.thereExistsAssignedAccount().thereExistsAccount().equalTo(account);
+						salesVolumeContractQuery.thereExistsAssignedAccount().forAllValidFrom().lessThanOrEqualTo(salesOrderDate);
+						salesVolumeContractQuery.thereExistsAssignedAccount().forAllValidTo().greaterThanOrEqualTo(salesOrderDate);
+						salesVolumeContractQuery.thereExistsAssignedAccount().accountRole().equalTo((short)100);
+						salesVolumeContractQuery.contractState().lessThanOrEqualTo(new Short((short)1000));
+						salesVolumeContractQuery.forAllActiveOn().lessThanOrEqualTo(salesOrderDate);
+						salesVolumeContractQuery.forAllExpiresOn().greaterThanOrEqualTo(salesOrderDate);
+						salesVolumeContractQuery.orderByContractNumber().ascending();
+						List<SalesVolumeContract> salesVolumeContracts = contractSegment.getContract(salesVolumeContractQuery);
+						System.out.println("Account " + account.getFullName() + " has sales volume contracts: " + !salesVolumeContracts.isEmpty());
+						count++;
+						if(count > 50) break;
+		    		}
+		    	}
+		    	// Test 13: Nested query with reference to abstract root class ActivityGroup		    
+		    	{
+		    		int count = 0;
+		    		for(ActivityTracker activityTracker: activitySegment.<ActivityTracker>getActivityTracker()) {
+		    			ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+		    			activityQuery.thereExistsAssignedGroup().thereExistsActivityGroup().equalTo(activityTracker);
+						List<Activity> activities = activityTracker.getFilteredActivity(activityQuery);
+						System.out.println("Activity tracker " + activityTracker.getName() + " has activities: " + !activities.isEmpty());
+						count++;
+						if(count > 50) break;
 		    		}
 		    	}
 	        } finally {

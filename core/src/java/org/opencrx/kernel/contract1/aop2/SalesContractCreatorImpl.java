@@ -54,7 +54,6 @@ package org.opencrx.kernel.contract1.aop2;
 
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.contract1.jmi1.AbstractContract;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;

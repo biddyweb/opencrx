@@ -121,6 +121,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembershipFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vyhľadávacie kritéria - Členstvo účtov</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vyhľadávacie kritéria - Členstvo účtov</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountMembershipFilterProperty:account" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Účty (klienti)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Učty (klienti)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CategoryFilterProperty" _operation="create">
                     <_object>
                       <label>

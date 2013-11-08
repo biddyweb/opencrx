@@ -1199,7 +1199,7 @@
 												<_item>0</_item>
 												<_item>1015</_item>
 											</order>
-											<maxMember>2</maxMember>
+											<maxMember>3</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1241,6 +1241,25 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:involvedObject">
+										<_object>
+											<active>true</active>
+											<inPlace>true</inPlace>
+											<toolTip>
+												<_item>Involved Objects</_item>
+											</toolTip>
+											<label>
+												<_item>»Involved Objects</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>1020</_item>
+											</order>
+											<maxMember>6</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating">
 										<_object>
 											<active>true</active>
@@ -1256,7 +1275,7 @@
 												<_item>0</_item>
 												<_item>1030</_item>
 											</order>
-											<maxMember>4</maxMember>
+											<maxMember>5</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1510,24 +1529,46 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Documents</_item>
+												<_item>Document</_item>
 											</toolTip>
 											<label>
-												<_item>Documents</_item>
+												<_item>Document</_item>
 											</label>
-											<iconKey>Document</iconKey>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:Pane:Attr:Tab:0:Group:0">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:name">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Document</_item>
+												<_item>Name</_item>
 											</toolTip>
 											<label>
-												<_item>Document</_item>
+												<_item>Name</_item>
 											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:description">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Description of document attachment</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1540,29 +1581,16 @@
 											<label>
 												<_item>Document</_item>
 											</label>
-											<order>
-												<_item>0</_item>
+											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:description">
-										<_object>
-											<columnBreak>true</columnBreak>
-											<active>true</active>
-											<toolTip>
-												<_item>description of document attachment</_item>
-											</toolTip>
-											<label>
-												<_item>Description</_item>
-											</label>
-											<order>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>80</_item>
-											</order>
+												<_item>0</_item>
+											</orderObjectContainer>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1739,6 +1767,128 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<!-- InvolvedObject-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved Object</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Object</_item>
+											</label>
+											<iconKey>InvolvedObject</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:involvedRole">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Role</_item>
+											</toolTip>
+											<label>
+												<_item>Role</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:validFrom">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Valid from</_item>
+											</toolTip>
+											<label>
+												<_item>Valid from</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:validTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Valid to</_item>
+											</toolTip>
+											<label>
+												<_item>Valid to</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:involved">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved object</_item>
+											</toolTip>
+											<label>
+												<_item>Involved object</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>0</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<!--Rating-->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Rating">
 										<_object>
@@ -1765,6 +1915,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Rating:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Rating:ratingLevel">
 										<_object>
 											<active>true</active>
@@ -1777,7 +1944,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -1794,7 +1961,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>30</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -1811,7 +1978,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>30</_item>
+												<_item>40</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -1820,7 +1987,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
-											<spanRow>3</spanRow>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Description of rating</_item>
 											</toolTip>
@@ -2364,6 +2531,67 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									
+									<!--AdditionalExternalLink-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Additional External Link</_item>
+											</toolTip>
+											<label>
+												<_item>Additional External Link</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:Pane:Attr:Tab:0:Group:0">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Extent</_item>
+											</toolTip>
+											<label>
+												<_item>Extent</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									
 									<!-- Operations Menu Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="Pane:Op:100">
 										<_object>
@@ -2679,7 +2907,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-                  <!-- Operations Result used in account1, activity1, and product1 -->
+                  <!-- Operations Result used in account1, activity1, document1 and product1 -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:CountFilteredObjectsResult:count">
 										<_object>
 											<active>true</active>

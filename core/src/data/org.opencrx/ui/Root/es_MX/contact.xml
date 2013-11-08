@@ -11,17 +11,6 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:contact" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Cuentas</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Cuentas</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:contact" _operation="create">
                     <_object>
                       <label>
@@ -73,17 +62,6 @@
                       </label>
                       <toolTip>
                         <_item>Información Personal</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Fotografía</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Fotografía</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -436,86 +414,6 @@
                       </label>
                       <toolTip>
                         <_item>CURP ó RFC</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Fotografía</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Fotografía</_item>
-                      </toolTip>
-                    </_object>
-                    <_content>
-                      <alternateElementDefinition>
-                        <org.openmdx.ui1.AlternateElementDefinition id="0" _operation="create">
-                          <_object>
-                            <label>
-                              <_item>Fotografía</_item>
-                            </label>
-                            <toolTip>
-                              <_item>Fotografía</_item>
-                            </toolTip>
-                          </_object>
-                          <_content/>
-                        </org.openmdx.ui1.AlternateElementDefinition>
-                      </alternateElementDefinition>
-                    </_content>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titulo / Origen</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titulo / Origen</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Exportar como vCard</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Exportar como vCard</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Entrada</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Entrada</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Idioma</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Idioma</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resultado</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resultado</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -128,9 +128,7 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
         org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.getInstance().initActivityTracker(
             name,
             allUsers,
-            pm,
-            providerName,
-            segmentName
+            activitySegment
         );
     	// ActivityCreator Incident
     	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.getInstance().initActivityCreator(
@@ -138,8 +136,7 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
 	    	Activities.getInstance().initActivityType(
 	    	    Activities.getInstance().findActivityProcess(
 	    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-	    	        activitySegment,
-	    	        pm
+	    	        activitySegment
 	    	    ),
 	    	    Activities.ACTIVITY_CREATOR_NAME_INCIDENTS,
 	    	    Activities.ActivityClass.INCIDENT.getValue(),
@@ -155,8 +152,7 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
 	    	Activities.getInstance().initActivityType(
 	    	    Activities.getInstance().findActivityProcess(
 	    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-	    	        activitySegment,
-	    	        pm
+	    	        activitySegment
 	    	    ),
 	    	    Activities.ACTIVITY_TYPE_NAME_MEETINGS,
 	    	    Activities.ActivityClass.MEETING.getValue(),
@@ -172,8 +168,7 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
 	    	Activities.getInstance().initActivityType(
 	    	    Activities.getInstance().findActivityProcess(
 	    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-	    	        activitySegment,
-	    	        pm
+	    	        activitySegment
 	    	    ),
 	    	    Activities.ACTIVITY_TYPE_NAME_TASKS,
 	    	    Activities.ActivityClass.TASK.getValue(),
@@ -189,8 +184,7 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
 	    	Activities.getInstance().initActivityType(
 	    	    Activities.getInstance().findActivityProcess(
 	    	        Activities.ACTIVITY_PROCESS_NAME_EMAILS,
-	    	        activitySegment,
-	    	        pm
+	    	        activitySegment
 	    	    ),
 	    	    Activities.ACTIVITY_TYPE_NAME_EMAILS,
 	    	    Activities.ActivityClass.EMAIL.getValue(),
@@ -204,10 +198,11 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
         pm.currentTransaction().begin();
     	activityTracker.setDescription(description);
     	activityTracker.setDefaultCreator(defaultCreator);
+    	activityTracker.setActivityGroupType(Activities.ActivityGroupType.PROJECT.getValue());    	
     	pm.currentTransaction().commit();
     	return activityTracker;
 	}
-	
+
 	/**
 	 * OK action.
 	 * 

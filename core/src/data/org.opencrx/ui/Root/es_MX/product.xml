@@ -22,17 +22,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:allProduct" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Visión General del Producto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Visión General del Producto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:product" _operation="create">
                     <_object>
                       <label>
@@ -592,17 +581,6 @@
                       </label>
                       <toolTip>
                         <_item>Producto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ConfiguredProduct:Pane:Attr:Tab:10:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Detalles adicionales del producto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Detalles adicionales del producto</_item>
                       </toolTip>
                     </_object>
                     <_content/>

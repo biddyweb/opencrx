@@ -80,6 +80,7 @@ import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
@@ -113,12 +114,14 @@ import org.opencrx.kernel.backend.Activities.PartyStatus;
 import org.opencrx.kernel.backend.Activities.PartyType;
 import org.opencrx.kernel.base.jmi1.ImportParams;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.utils.ActivityQueryHelper;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -299,15 +302,28 @@ public class ICalendar extends AbstractImpl {
 	}
 	
     /**
-     * Escape newlines by '\n'.
+     * Replace all control characters by blanks except newline. 
+     * The newline \n is escaped and replaced by '\n'.
      * 
      * @param from
      * @return
      */
-    private String escapeNewlines(
+    private String escapeControlChars(
         String from
     ) {
-    	return from.replace("\n", "\\n");
+    	if(from == null) return null;
+    	String to = "";
+    	for(int i = 0; i < from.length(); i++) {
+    		char c = from.charAt(i);
+    		if(c == '\n') {
+    			to += "\\n";
+    		} else if(!Character.isValidCodePoint(c) || c < ' ') {
+    			to += " ";
+    		} else {
+    			to += c;
+    		}
+    	}
+    	return to;
     }
 
     /**
@@ -691,13 +707,13 @@ public class ICalendar extends AbstractImpl {
                     }
                     // LOCATION
                     if((location != null) && !location.isEmpty()) {
-                        targetIcal.println("LOCATION:" + this.escapeNewlines(this.escapeCommas(location)));
+                        targetIcal.println("LOCATION:" + this.escapeControlChars(this.escapeCommas(location)));
                     }
                     // DTSTAMP
                     targetIcal.println("DTSTAMP:" + DateTimeFormat.BASIC_UTC_FORMAT.format(new Date()).substring(0, 15) + "Z");
                     // DESCRIPTION
                     if((description != null) && !description.isEmpty()) {
-                        targetIcal.println("DESCRIPTION:" + this.escapeNewlines(description));
+                        targetIcal.println("DESCRIPTION:" + this.escapeControlChars(description));
                     }
                     // SUMMARY
                     if((summary != null) && !summary.isEmpty()) {
@@ -1125,6 +1141,47 @@ public class ICalendar extends AbstractImpl {
     }
     
     /**
+     * Map party email address to EMailAddress. Return matching addresses.
+     * For PartyType.ORGANIZER an EMailAddress is created on-the-fly
+     * and assigned to Accounts.getUnassignableAddressesHolder() if it does 
+     * not exist. Override this method for custom-specific behaviour.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @param email
+     * @param partyType
+     * @return
+     * @throws ServiceException
+     */
+    protected List<EMailAddress> mapPartyEMail(
+    	PersistenceManager pm,
+    	String providerName,
+    	String segmentName,
+    	String email,
+    	PartyType partyType,
+    	PartyStatus partyStatus
+    ) throws ServiceException {
+    	if(PartyType.ORGANIZER.equals(partyType)) {
+    		return Accounts.getInstance().lookupEmailAddress(
+        		pm, 
+        		providerName, 
+        		segmentName, 
+        		email,
+        		false, // exactCaseInsensitiveOnly
+        		true // forceCreate
+        	);
+    	} else {
+    		return Accounts.getInstance().lookupEmailAddress(
+        		pm, 
+        		providerName, 
+        		segmentName, 
+        		email
+        	);
+    	}
+    }
+
+    /**
      * Map fields of ical to activity.
      * 
      * @param icalAsString
@@ -1164,46 +1221,46 @@ public class ICalendar extends AbstractImpl {
             	}
             	if(pos >= 0) {
 	                String email = attendee.getValue().substring(pos + 7);
-	            	List<EMailAddress> emailAddresses = Accounts.getInstance().lookupEmailAddress(
-	            		pm, 
-	            		providerName, 
-	            		segmentName, 
-	            		email
-	            	);
-	            	if(!emailAddresses.isEmpty()) {
-	            		partyEmails.add(
-	            			emailAddresses.iterator().next()
-	            		);
-	            		if(attendee.getParameters().get("ROLE") != null && !attendee.getParameters().get("ROLE").isEmpty()) {
-	            			if("REQ-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
-	            				partyTypes.add(PartyType.REQUIRED);
-	            			} else if("OPT-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
-	            				partyTypes.add(PartyType.OPTIONAL);	            				
-	            			} else {
-		            			partyTypes.add(PartyType.NA);	            				
-	            			}
-	            		} else {
-	            			partyTypes.add(PartyType.REQUIRED);
-	            		}
-	                    if(attendee.getParameters().get("PARTSTAT") != null && !attendee.getParameters().get("PARTSTAT").isEmpty()) {
-		                    if("NEEDS-ACTION".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
-		                    	partyStatuses.add(PartyStatus.NEEDS_ACTION);
-		                    } else if("ACCEPTED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
-		                    	partyStatuses.add(PartyStatus.ACCEPTED);
-		                    } else if("DECLINED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
-		                    	partyStatuses.add(PartyStatus.DECLINED);
-		                    } else if("TENTATIVE".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
-		                    	partyStatuses.add(PartyStatus.TENTATIVE);
-		                    } else if("DELEGATED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
-		                    	partyStatuses.add(PartyStatus.DELEGATED);
-		                    } else if("COMPLETED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
-		                    	partyStatuses.add(PartyStatus.COMPLETED);
-		                    } else {
-		                    	partyStatuses.add(PartyStatus.NA);
-		                    }
+	                PartyType partyType = PartyType.REQUIRED;
+            		if(attendee.getParameters().get("ROLE") != null && !attendee.getParameters().get("ROLE").isEmpty()) {
+            			if("REQ-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
+            				partyType = PartyType.REQUIRED;
+            			} else if("OPT-PARTICIPANT".equals(attendee.getParameters().get("ROLE").get(0))) {
+            				partyType = PartyType.OPTIONAL;	            				
+            			} else {
+	            			partyType = PartyType.NA;	            				
+            			}
+            		}
+            		PartyStatus partyStatus = PartyStatus.NA;
+                    if(attendee.getParameters().get("PARTSTAT") != null && !attendee.getParameters().get("PARTSTAT").isEmpty()) {
+	                    if("NEEDS-ACTION".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
+	                    	partyStatus = PartyStatus.NEEDS_ACTION;
+	                    } else if("ACCEPTED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
+	                    	partyStatus = PartyStatus.ACCEPTED;
+	                    } else if("DECLINED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
+	                    	partyStatus = PartyStatus.DECLINED;
+	                    } else if("TENTATIVE".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
+	                    	partyStatus = PartyStatus.TENTATIVE;
+	                    } else if("DELEGATED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
+	                    	partyStatus = PartyStatus.DELEGATED;
+	                    } else if("COMPLETED".equals(attendee.getParameters().get("PARTSTAT").get(0))) {
+	                    	partyStatus = PartyStatus.COMPLETED;
 	                    } else {
 	                    	partyStatuses.add(PartyStatus.NA);
 	                    }
+                    }
+	            	List<EMailAddress> emailAddresses = this.mapPartyEMail(
+	            		pm, 
+	            		providerName, 
+	            		segmentName, 
+	            		email, 
+	            		partyType,
+	            		partyStatus
+	            	);
+	            	if(!emailAddresses.isEmpty()) {
+	            		partyEmails.add(emailAddresses.iterator().next());
+	            		partyTypes.add(partyType);
+	            		partyStatuses.add(partyStatus);
 	            	}
             	}
             }
@@ -1238,38 +1295,34 @@ public class ICalendar extends AbstractImpl {
         	}
         }
         // externalLink
-        boolean hasIcalUid = false;
-        boolean hasIcalRecurrenceId = false;
-        List<String> externalLinks = activity.getExternalLink();
-        String icalUid = ical.get("UID") == null ? 
-        	activity.refGetPath().getBase() : 
-        		ICalField.getFieldValue("UID", ical);
-        String icalRecurrenceId = ICalField.getFieldValue("RECURRENCE-ID", ical);
-        for(int i = 0; i < externalLinks.size(); i++) {
-            if((externalLinks.get(i)).startsWith(ICAL_SCHEMA)) {
-                externalLinks.set(
-                    i,
-                    ICAL_SCHEMA + icalUid
-                );
-                hasIcalUid = true;
-            } else if((externalLinks.get(i)).startsWith(ICAL_RECURRENCE_ID_SCHEMA)) {
-                externalLinks.set(
-                    i,
-                    ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId
-                );
-                hasIcalRecurrenceId = true;
+        boolean hasUid = false;
+        boolean hasRecurrenceId = false;
+        String uid = ical.get("UID") == null 
+        	? activity.refGetPath().getBase() 
+        	: ICalField.getFieldValue("UID", ical);
+        String recurrenceId = ICalField.getFieldValue("RECURRENCE-ID", ical);
+        List<String> externalLinks = new ArrayList<String>();        
+        for(String externalLink: activity.getExternalLink()) {
+            if(externalLink.startsWith(ICAL_SCHEMA)) {
+                externalLinks.add(ICAL_SCHEMA + uid);
+                hasUid = true;
+            } else if(externalLink.startsWith(ICAL_RECURRENCE_ID_SCHEMA)) {
+            	if(recurrenceId != null && !recurrenceId.isEmpty()) {
+	                externalLinks.add(ICAL_RECURRENCE_ID_SCHEMA + recurrenceId);
+	                hasRecurrenceId = true;
+            	}
+            } else {
+            	externalLinks.add(externalLink);
             }
         }
-        if(!hasIcalUid) {
-            externalLinks.add(
-                ICAL_SCHEMA + icalUid    
-            );
+        if(!hasUid) {
+            externalLinks.add(ICAL_SCHEMA + uid);
         }
-        if(!hasIcalRecurrenceId && icalRecurrenceId != null) {
-            externalLinks.add(
-                ICAL_RECURRENCE_ID_SCHEMA + icalRecurrenceId    
-            );
+        if(!hasRecurrenceId && recurrenceId != null && !recurrenceId.isEmpty()) {
+            externalLinks.add(ICAL_RECURRENCE_ID_SCHEMA + recurrenceId);
         }
+        activity.getExternalLink().clear();
+        activity.getExternalLink().addAll(externalLinks);
         // DTSTART
         String dtStart = ICalField.getFieldValue("DTSTART", ical);
         if((dtStart != null) && !dtStart.isEmpty()) {
@@ -2049,7 +2102,320 @@ public class ICalendar extends AbstractImpl {
 		
 	}
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Print alarm tags for the given event.
+	 * 
+	 * @param p
+	 * @param event
+	 */
+	public void printAlarms(
+		PrintWriter p,
+		Activity event
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(event);
+        Collection<Timer> timers = event.getAssignedTimer();
+        List<String> principalChain = UserObjects.getPrincipalChain(pm);
+        for(Timer timer: timers) {
+        	if(timer.refGetPath().get(6).equals(principalChain.get(0))) {
+        		p.println("BEGIN:VALARM");
+        		p.println("ACTION:DISPLAY");
+        		long triggerMinutes = (timer.getTimerStartAt().getTime() - event.getScheduledStart().getTime()) / 60000L;
+        		p.println("TRIGGER;VALUE=DURATION:" + (triggerMinutes < 0 ? "-" : "") + "PT" + Math.abs(triggerMinutes) + "M");
+        		p.println("REPEAT:" + (timer.getTriggerRepeat() == null ? 1 :timer.getTriggerRepeat()));
+        		p.println("DURATION:PT" + (timer.getTriggerIntervalMinutes() == null ? 15 :timer.getTriggerIntervalMinutes()) + "M");
+        		p.println("SUMMARY:" + timer.getName());
+        		if(timer.getDescription() != null) {
+        			p.println("DESCRIPTION:" + timer.getDescription());
+        		}
+        		p.println("END:VALARM");
+        	}
+        }
+	}
+
+	/**
+	 * Get UID of this activity resource.
+	 * 
+	 * @param event
+	 * @return
+	 */
+	public String getUid(
+    	String event
+    ) {
+    	String uid = null;
+    	if(event.indexOf("UID:") > 0) {
+    		int start = event.indexOf("UID:");
+    		int end = event.indexOf("\n", start);
+    		if(end > start) {
+    			uid = event.substring(start + 4, end).trim();
+    		}
+    	}    	
+    	return uid;
+    }
+
+	/**
+	 * Print activity as ICAL VCALENDAR.
+	 * 
+	 * @param pw
+	 * @param activity
+	 * @param queryHelper
+	 * @param runAs
+	 * @param eventsOnly
+	 * @param req
+	 * @param accessUrlContext
+	 */
+	public void printCalendar(
+		PrintWriter pw,
+		Activity activity,
+		ActivityQueryHelper queryHelper,
+		String runAs,
+		boolean eventsOnly,
+		HttpServletRequest req,
+		String accessUrlContext
+	) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
+    	String ical = activity.getIcal();
+    	// In case of recurring activities collect activities 
+    	// which are member of the same recurrence
+    	List<Activity> events = new ArrayList<Activity>();
+    	events.add(activity);
+    	String uid = this.getUid(ical);
+    	if((uid != null) && (ical.indexOf("RRULE:") > 0) && queryHelper != null) {
+        	ActivityQuery memberQuery = (ActivityQuery)pm.newQuery(Activity.class);
+        	memberQuery.thereExistsExternalLink().equalTo(
+        		ICalendar.ICAL_SCHEMA + uid 
+        	);
+        	memberQuery.thereExistsExternalLink().startsWith(
+        		ICalendar.ICAL_RECURRENCE_ID_SCHEMA
+        	);
+        	Collection<Activity> members = queryHelper.getFilteredActivities(memberQuery);
+        	events.addAll(members);
+    	}
+    	String userAgent = req == null ? null : req.getHeader("user-agent");
+        boolean iPhone = userAgent != null && userAgent.indexOf("iPhone") > 0;
+        if(!eventsOnly) {
+	    	pw.println("BEGIN:VCALENDAR");
+	        pw.println("PRODID:" + ICalendar.PROD_ID);
+	        pw.println("VERSION:2.0");
+	        pw.println("CALSCALE:GREGORIAN");
+        }
+    	for(Activity event: events) {
+	        ical = event.getIcal();
+	        // Obfuscate event if we are in impersonate mode and event is not PUBLIC
+	        if(runAs != null && ical.indexOf("CLASS:PUBLIC") < 0) {
+	        	// UID
+	        	String oUID = null;
+	        	int pos1 = ical.indexOf("UID");
+	        	if(pos1 >= 0) {
+		        	int pos2 = ical.indexOf("\n", pos1);
+		        	if(pos2 > pos1) {
+		        		oUID = ical.substring(pos1, pos2);
+		        	}
+	        	}
+	        	// DTSTAMP
+	        	String oDTSTAMP = null;
+	        	pos1 = ical.indexOf("DTSTAMP");
+	        	if(pos1 >= 0) {
+		        	int pos2 = ical.indexOf("\n", pos1);
+		        	if(pos2 > pos1) {
+		        		oDTSTAMP = ical.substring(pos1, pos2);
+		        	}
+	        	}
+	        	// ORGANIZER
+	        	String oORGANIZER = null;
+	        	pos1 = ical.indexOf("ORGANIZER");
+	        	if(pos1 >= 0) {
+		        	int pos2 = ical.indexOf("\n", pos1);
+		        	if(pos2 > pos1) {
+		        		oORGANIZER = ical.substring(pos1, pos2);
+		        	}
+	        	}
+	        	// DTSTART
+	        	String oDTSTART = null;
+	        	pos1 = ical.indexOf("DTSTART");
+	        	if(pos1 >= 0) {
+		        	int pos2 = ical.indexOf("\n", pos1);
+		        	if(pos2 > pos1) {
+		        		oDTSTART = ical.substring(pos1, pos2);
+		        	}
+	        	}
+	        	// DTEND
+	        	String oDTEND = null;
+	        	pos1 = ical.indexOf("DTEND");
+	        	if(pos1 >= 0) {
+		        	int pos2 = ical.indexOf("\n", pos1);
+		        	if(pos2 > pos1) {
+		        		oDTEND = ical.substring(pos1, pos2);
+		        	}
+	        	}
+	        	// RRULE
+	        	String oRRULE = null;
+	        	pos1 = ical.indexOf("RRULE");
+	        	if(pos1 >= 0) {
+		        	int pos2 = ical.indexOf("\n", pos1);
+		        	if(pos2 > pos1) {
+		        		oRRULE = ical.substring(pos1, pos2);
+		        	}
+	        	}
+	        	ical = 
+        			"BEGIN:VEVENT\n" +        			
+        			(oUID == null ? "" : oUID + "\n") +
+        			"CLASS:CONFIDENTIAL\n" +
+        			(oDTSTAMP == null ? "" : oDTSTAMP + "\n") +
+        			(oORGANIZER == null ? "" : oORGANIZER + "\n") +
+        			"SUMMARY:*** (" + runAs + ")\n" +
+        			(oDTSTART == null ? "" : oDTSTART + "\n") +                		
+                    (oDTEND == null ? "" : oDTEND + "\n") +          	
+                    (oRRULE == null ? "" : oRRULE + "\n") +          	
+                    "END:VEVENT\n";
+	        }
+	        uid = this.getUid(ical);
+	        boolean externalLinkMatchesUid = false;
+	        if(uid != null) {
+		        for(String externalLink: event.getExternalLink()) {
+		        	if(externalLink.startsWith(ICalendar.ICAL_SCHEMA) && externalLink.endsWith(uid)) {
+		        		externalLinkMatchesUid = true;
+		        		break;
+		        	}
+		        }
+	        }
+	        if(!externalLinkMatchesUid) {
+	        	ServiceException e0 = new ServiceException(
+	        		BasicException.Code.DEFAULT_DOMAIN,
+	        		BasicException.Code.ASSERTION_FAILURE,
+	        		"Mismatch of activity's external link and ical's UID. Use updateIcal() to fix event.",
+	        		new BasicException.Parameter("activity", activity.refGetPath().toXRI()),
+	        		new BasicException.Parameter("externalLink", activity.getExternalLink()),
+	        		new BasicException.Parameter("uid", uid),
+	        		new BasicException.Parameter("ical", ical)
+	        	);
+	        	SysLog.warning("Mismatch of activity's external link and ical's UID. Use updateIcal() to fix event.", Arrays.asList(activity.refGetPath().toString(), activity.getActivityNumber()));
+	        	SysLog.detail(e0.getMessage(), e0.getCause());
+	        }
+	        ical = ical.replace("\r\n", "\n"); // Remove \r just in case
+	        // VEVENT
+	        if(ical.indexOf("BEGIN:VEVENT") >= 0) {
+	            int start = ical.indexOf("BEGIN:VEVENT");
+	            int end = ical.indexOf("END:VEVENT");
+	            if(end < 0 || start < 0 || end < start) {
+	            	SysLog.log(Level.WARNING, "ICAL {0} of activity {1} has bad format and will be ignored", ical, event.refGetPath().toXRI());
+	            } else {
+		            String vevent = ical.substring(start, end);
+		    		String url = null;
+		    		try {
+		    			url = Base.getInstance().getAccessUrl(req, accessUrlContext, event);
+		    		} catch(Exception e) {}
+		            // The attribute ORGANIZER (and ATTENDE and maybe other) attribute
+		            // puts the event into read-only mode in case of iPhone.
+		        	if(iPhone) {
+		        		if(((start = vevent.indexOf("ORGANIZER:")) > 0) && (vevent.indexOf("ATTENDEE:") < 0)) {
+		        			end = vevent.indexOf("\n", start);
+		        			vevent = vevent.substring(0, start) + vevent.substring(end + 1); 
+		        		}
+		        		if((start = vevent.indexOf("DESCRIPTION:")) > 0) {
+		        			end = vevent.indexOf("\n", start);
+		        			if(end > start) {
+		        				vevent = 
+		        					vevent.substring(0, end) + 
+		        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
+		        					vevent.substring(end);    					        					
+		        			}
+		        		} else {
+		        			vevent += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
+		        		}
+		        	}
+		        	if((start = vevent.indexOf("SUMMARY:")) > 0) {
+	        			end = vevent.indexOf("\n", start);
+	        			vevent = 
+	        				vevent.substring(0, start) + 
+	        				vevent.substring(start, end).replace(",", "\\,") + 
+	        				vevent.substring(end); 	        			
+		        	}
+		        	if((start = vevent.indexOf("DESCRIPTION:")) > 0) {
+	        			end = vevent.indexOf("\n", start);
+	        			vevent = 
+	        				vevent.substring(0, start) + 
+	        				vevent.substring(start, end).replace(",", "\\,") + 
+	        				vevent.substring(end); 	        			
+		        	}
+		            pw.print(vevent);
+		            SysLog.detail(vevent);
+		            if(vevent.indexOf("TRANSP:") < 0) {
+			        	try {
+			        		String transp = "OPAQUE";
+			        		if(transp != null) {
+			        			pw.println("TRANSP:" + transp);
+			        		}
+			        	} catch(Exception e) {}
+		            }
+		            if(vevent.indexOf("URL:") < 0) {
+		            	if(url != null) {
+		            		pw.println("URL:" + url);
+		            	}
+		            }
+		            try {
+		            	this.printAlarms(pw, event);
+		            } catch(Exception ignore) {}
+		            pw.println("END:VEVENT");
+	            }
+	        } else if(ical.indexOf("BEGIN:VTODO") >= 0) {
+		        // VTODO
+	            int start = ical.indexOf("BEGIN:VTODO");
+	            int end = ical.indexOf("END:VTODO");
+	            if(end < 0 || start < 0 || end < start) {
+	            	SysLog.log(Level.WARNING, "ICAL {0} of activity {1} has bad format and will be ignored", ical, event.refGetPath().toXRI());
+	            } else {	            
+		            String vtodo = ical.substring(start, end);
+		            String url = null;
+		            try {
+		            	url = Base.getInstance().getAccessUrl(req, accessUrlContext, event);
+		            } catch(Exception e) {}
+		            if(iPhone) {
+		        		if((start = vtodo.indexOf("DESCRIPTION:")) > 0) {
+		        			end = vtodo.indexOf("\n", start);
+		        			if(end > start) {
+		        				vtodo = 
+		        					vtodo.substring(0, end) + 
+		        					Base.COMMENT_SEPARATOR_EOT + " " + url + " " +
+		        					vtodo.substring(end);        					        					
+		        			}
+		        		} else {
+			    			vtodo += "DESCRIPTION:" + Base.COMMENT_SEPARATOR_BOT + " " + url + "\n";
+			    		}
+		            }
+		        	if((start = vtodo.indexOf("SUMMARY:")) > 0) {
+	        			end = vtodo.indexOf("\n", start);
+	        			vtodo = 
+	        				vtodo.substring(0, start) + 
+	        				vtodo.substring(start, end).replace(",", "\\,") + 
+	        				vtodo.substring(end); 	        			
+		        	}
+		        	if((start = vtodo.indexOf("DESCRIPTION:")) > 0) {
+	        			end = vtodo.indexOf("\n", start);
+	        			vtodo = 
+	        				vtodo.substring(0, start) + 
+	        				vtodo.substring(start, end).replace(",", "\\,") + 
+	        				vtodo.substring(end); 	        			
+		        	}
+		            pw.print(vtodo);
+		            SysLog.detail(vtodo);
+		            if(vtodo.indexOf("URL:") < 0) {
+		            	if(url != null) {
+		            		pw.println("URL:" + url);
+		            	}
+		            }
+		            try {
+		            	this.printAlarms(pw, event);
+		            } catch(Exception ignore) {}
+		            pw.println("END:VTODO");
+	            }
+	        }
+    	}
+    	if(!eventsOnly) {
+    		pw.print("END:VCALENDAR");
+    	}
+	}
+
+	//-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     public static final String DATETIME_FORMAT =  "yyyyMMdd'T'HHmmss";

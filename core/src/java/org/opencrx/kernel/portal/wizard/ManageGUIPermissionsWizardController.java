@@ -68,6 +68,7 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.WebKeys;
@@ -296,17 +297,56 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 			return false;
 		}
 		
-		public String roleName = null;
-		public final Map<String,WizardViewState> viewStates = new HashMap<String,WizardViewState>();
+		/**
+		 * @return the objectIdentity
+		 */
+		public Path getObjectIdentity() {
+			return objectIdentity;
+		}
+
+		/**
+		 * @param objectIdentity the objectIdentity to set
+		 */
+		public void setObjectIdentity(Path objectIdentity) {
+			this.objectIdentity = objectIdentity;
+		}
+
+		/**
+		 * @return the roleName
+		 */
+		public String getRoleName() {
+			return roleName;
+		}
+
+		/**
+		 * @param roleName the roleName to set
+		 */
+		public void setRoleName(String roleName) {
+			this.roleName = roleName;
+		}
+
+		/**
+		 * @return the viewStates
+		 */
+		public Map<String, WizardViewState> getViewStates() {
+			return viewStates;
+		}
+
+		private Path objectIdentity = null;
+		private String roleName = null;
+		private final Map<String,WizardViewState> viewStates = new HashMap<String,WizardViewState>();
 		
 	}
-	
+
 	/**
 	 * Cancel action.
 	 * 
 	 */
 	public void doCancel(		
 	) {
+		this.getSession().removeAttribute(
+			WizardState.class.getName()
+		);
 		this.setExitAction(
 			new ObjectReference(this.getObject(), this.getApp()).getSelectObjectAction()
 		);
@@ -325,6 +365,7 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 		@RequestParameter(name = "view") String viewName,
 		@RequestParameter(name = "role") String roleName
 	) throws ServiceException {
+		RefObject_1_0 obj = this.getObject();
 		this.viewName = viewName;
 		if(this.viewName == null) {
 			this.viewName = WizardState.VIEW_FIELD_PERMISSIONS;
@@ -336,7 +377,9 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 		PersistenceManager pm = this.getPm();
 		org.openmdx.security.realm1.jmi1.Principal currentPrincipal = Utils.getRequestingPrincipal(pm, this.getProviderName(), this.getSegmentName());
 		this.currentUserIsAdmin = currentPrincipal.refGetPath().getBase().equals(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + this.getSegmentName());
-		this.wizardState = (WizardState)this.getSession().getAttribute(WizardState.class.getName());	
+		this.wizardState = (WizardState)this.getSession().getAttribute(
+			WizardState.class.getName()
+		);	
 		this.policy = null;
 		try {
 			this.policy = SecureObject.getInstance().getPolicy(
@@ -374,10 +417,14 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 		}
 		// Store permissions
 		if(this.wizardState != null && Boolean.TRUE.equals(storePermissions)) {
-			String[] views = {WizardState.VIEW_FIELD_PERMISSIONS, WizardState.VIEW_GRID_PERMISSIONS, WizardState.VIEW_OPERATION_PERMISSIONS};
+			String[] views = {
+				WizardState.VIEW_FIELD_PERMISSIONS, 
+				WizardState.VIEW_GRID_PERMISSIONS, 
+				WizardState.VIEW_OPERATION_PERMISSIONS
+			};
 			pm.currentTransaction().begin();
 			for(String view: views) {
-				WizardViewState viewState = this.wizardState.viewStates.get(view);
+				WizardViewState viewState = this.wizardState.getViewStates().get(view);
 				for(String permission: viewState.addedGenericPermissions) {
 					this.addPermission(
 						this.policy, 
@@ -409,16 +456,21 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 			this.wizardState = null;			
 		}
 		// Update wizard state
-		if(this.wizardState == null || !this.roleName.equals(this.wizardState.roleName)) {
+		if(
+			this.wizardState == null ||
+			!this.roleName.equals(this.wizardState.getRoleName()) ||
+			!obj.refGetPath().equals(this.wizardState.getObjectIdentity())
+		) {
 			this.getSession().setAttribute(
 				WizardState.class.getName(),
 				this.wizardState = new WizardState()
 			);
-			this.wizardState.roleName = this.roleName;
+			this.wizardState.setRoleName(this.roleName);
+			this.wizardState.setObjectIdentity(obj.refGetPath());
 			if(selectedRole == null) {
 				org.openmdx.security.realm1.cci2.RoleQuery roleQuery = (org.openmdx.security.realm1.cci2.RoleQuery)pm.newQuery(org.openmdx.security.realm1.jmi1.Role.class);
 				roleQuery.orderByName().ascending();
-				List<org.openmdx.security.realm1.jmi1.Role> roles = policy.getRole(roleQuery);
+				List<org.openmdx.security.realm1.jmi1.Role> roles = this.policy.getRole(roleQuery);
 				if(!roles.isEmpty()) {
 					selectedRole = roles.iterator().next();
 				}
@@ -469,10 +521,10 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 				}
 				// Fields
 				viewState = this.wizardState.viewStates.get(WizardState.VIEW_FIELD_PERMISSIONS);
-				for(AttributeTab attributeTab: showView.getAttributePane().getAttributeTab()) {						
-					for(FieldGroup fieldGroup: attributeTab.getFieldGroup()) {
-						// Field groups only have generic permissions
-						String elementName = fieldGroup.getFieldGroupControl().getId();
+				for(AttributeTab attributeTab: showView.getAttributePane().getAttributeTab()) {
+					// Attribute tabs only have specific permissions
+					{
+						String elementName = attributeTab.getAttributeTabControl().getId();
 						for(String permission: getSpecificPermissions(this.getObject(), elementName, false)) {
 							if(isStoredPermission(storedPermissions, permission)) {
 								viewState.currentSpecificPermissions.add(permission);
@@ -480,8 +532,21 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 								viewState.specificPermissions.add(permission);
 							}
 						}
+					}
+					for(FieldGroup fieldGroup: attributeTab.getFieldGroup()) {
+						// Field groups only have specific permissions
+						{
+							String elementName = fieldGroup.getFieldGroupControl().getId();
+							for(String permission: getSpecificPermissions(this.getObject(), elementName, false)) {
+								if(isStoredPermission(storedPermissions, permission)) {
+									viewState.currentSpecificPermissions.add(permission);
+								} else {
+									viewState.specificPermissions.add(permission);
+								}
+							}
+						}
 						for(FieldGroupControl.Field field: fieldGroup.getFieldGroupControl().getFields()) {
-							elementName = field.getField().getQualifiedFeatureName();
+							String elementName = field.getField().getQualifiedFeatureName();
 							for(String permission: getGenericPermissions(this.getObject(), elementName, true)) {
 								if(isStoredPermission(storedPermissions, permission)) {
 									viewState.currentGenericPermissions.add(permission);
@@ -561,7 +626,7 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 			roleName
 		);
 		if(this.wizardState != null && selectedPermissions != null) {
-			WizardViewState viewState = this.wizardState.viewStates.get(viewName);		
+			WizardViewState viewState = this.wizardState.getViewStates().get(viewName);		
 			viewState.genericPermissions.removeAll(Arrays.asList(selectedPermissions));
 			viewState.removedGenericPermissions.removeAll(Arrays.asList(selectedPermissions));
 			viewState.addedGenericPermissions.addAll(Arrays.asList(selectedPermissions));
@@ -588,7 +653,7 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 			roleName
 		);
 		if(this.wizardState != null && selectedPermissions != null) {
-			WizardViewState viewState = this.wizardState.viewStates.get(viewName);		
+			WizardViewState viewState = this.wizardState.getViewStates().get(viewName);		
 			viewState.genericPermissions.addAll(Arrays.asList(selectedPermissions));
 			viewState.removedGenericPermissions.addAll(Arrays.asList(selectedPermissions));
 			viewState.addedGenericPermissions.removeAll(Arrays.asList(selectedPermissions));
@@ -615,7 +680,7 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 			roleName
 		);
 		if(this.wizardState != null && selectedPermissions != null) {
-			WizardViewState viewState = this.wizardState.viewStates.get(viewName);		
+			WizardViewState viewState = this.wizardState.getViewStates().get(viewName);		
 			viewState.specificPermissions.removeAll(Arrays.asList(selectedPermissions));
 			viewState.removedSpecificPermissions.removeAll(Arrays.asList(selectedPermissions));
 			viewState.addedSpecificPermissions.addAll(Arrays.asList(selectedPermissions));
@@ -642,7 +707,7 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 			roleName
 		);
 		if(this.wizardState != null && selectedPermissions != null) {
-			WizardViewState viewState = this.wizardState.viewStates.get(viewName);		
+			WizardViewState viewState = this.wizardState.getViewStates().get(viewName);		
 			viewState.specificPermissions.addAll(Arrays.asList(selectedPermissions));
 			viewState.removedSpecificPermissions.addAll(Arrays.asList(selectedPermissions));
 			viewState.addedSpecificPermissions.removeAll(Arrays.asList(selectedPermissions));

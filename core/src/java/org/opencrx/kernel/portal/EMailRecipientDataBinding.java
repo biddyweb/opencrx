@@ -70,7 +70,6 @@ import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.DataBinding;
 

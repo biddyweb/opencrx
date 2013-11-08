@@ -121,28 +121,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:actualEffortHours" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>hh (esfuerzo real)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>hh (esfuerzo real)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:actualEffortMinutes" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>mm (esfuerzo real)</_item>
-                      </label>
-                      <toolTip>
-                        <_item>mm (esfuerzo real)</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone" _operation="create">
                     <_object>
                       <label>

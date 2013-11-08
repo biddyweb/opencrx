@@ -103,6 +103,7 @@ import org.opencrx.kernel.product1.jmi1.ProductConfigurationType;
 import org.opencrx.kernel.product1.jmi1.ProductFilterProperty;
 import org.opencrx.kernel.product1.jmi1.ProductPhasePriceLevel;
 import org.opencrx.kernel.product1.jmi1.ProductQueryFilterProperty;
+import org.opencrx.kernel.product1.jmi1.RelatedProduct;
 import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
@@ -1694,19 +1695,78 @@ public class Products extends AbstractImpl {
         return result;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update product callback.
+     * 
+     * @param product
+     * @throws ServiceException
+     */
     public void updateProduct(
         Product product
     ) throws ServiceException {
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Remove product callback.
+     * 
+     * @param product
+     * @param preDelete
+     * @throws ServiceException
+     */
     public void removeProduct(
         Product product,
         boolean preDelete
     ) throws ServiceException {
     }
     
+    /**
+     * Update product base price callback.
+     * 
+     * @param price
+     * @throws ServiceException
+     */
+    public void updateProductBasePrice(
+        ProductBasePrice price
+    ) throws ServiceException {
+    }
+    
+    /**
+     * Remove product base price callback.
+     * 
+     * @param price
+     * @param preDelete
+     * @throws ServiceException
+     */
+    public void removeProductBasePrice(
+        ProductBasePrice price,
+        boolean preDelete
+    ) throws ServiceException {
+    }
+
+    /**
+     * Update related product callback.
+     * 
+     * @param relatedProduct
+     * @throws ServiceException
+     */
+    public void updateRelatedProduct(
+    	RelatedProduct relatedProduct
+    ) throws ServiceException {
+    }
+
+    /**
+     * Remove related product callback.
+     * 
+     * @param relatedProduct
+     * @param preDelete
+     * @throws ServiceException
+     */
+    public void removeRelatedProduct(
+        RelatedProduct relatedProduct,
+        boolean preDelete
+    ) throws ServiceException {
+    }
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

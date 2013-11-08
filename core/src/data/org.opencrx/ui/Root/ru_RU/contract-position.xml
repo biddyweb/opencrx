@@ -178,7 +178,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Имя-Поз</_item>
+                        <_item>Имя позиции</_item>
                       </label>
                       <toolTip>
                         <_item>Имя позиции</_item>
@@ -442,10 +442,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:taxAmount" _operation="create">
                     <_object>
                       <label>
-                        <_item>НДС</_item>
+                        <_item>Налог</_item>
                       </label>
                       <toolTip>
-                        <_item>НДС</_item>
+                        <_item>Налог</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -453,10 +453,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:amount" _operation="create">
                     <_object>
                       <label>
-                        <_item>Сумма(вкл. НДС)</_item>
+                        <_item>Сумма(вкл. налоги)</_item>
                       </label>
                       <toolTip>
-                        <_item>Сумма(вкл. НДС)</_item>
+                        <_item>Сумма(вкл. налоги)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -143,6 +143,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:AssignmentBasedFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文件夹项目</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文件夹项目(指定)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentBasedFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>文件夹项目</_item>
+                      </label>
+                      <toolTip>
+                        <_item>文件夹项目(文档)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document" _operation="create">
                     <_object>
                       <label>
@@ -172,6 +194,17 @@
                       </label>
                       <toolTip>
                         <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:assignmentRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>角色</_item>
+                      </label>
+                      <toolTip>
+                        <_item>角色</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -975,6 +1008,17 @@
                       </label>
                       <toolTip>
                         <_item>文件夹</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:assignmentRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>角色</_item>
+                      </label>
+                      <toolTip>
+                        <_item>角色</_item>
                       </toolTip>
                     </_object>
                     <_content/>

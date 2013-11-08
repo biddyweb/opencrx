@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,22 +52,26 @@
  */
 package org.opencrx.application.bpi.datatype;
 
-import java.util.List;
-
 /**
  * BpiOrganization
  *
  */
 public class BpiOrganization extends BpiAccount {
+	
+	private String name;
 
-	private List<BpiAddress> businessAddress;
-
-	public List<BpiAddress> getBusinessAddress() {
-		return businessAddress;
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
 	}
 
-	public void setBusinessAddress(List<BpiAddress> businessAddress) {
-		this.businessAddress = businessAddress;
+	/**
+	 * @param name the name to set
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }

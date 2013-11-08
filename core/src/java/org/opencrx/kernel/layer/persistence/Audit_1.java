@@ -97,14 +97,18 @@ import org.w3c.format.DateTimeFormat;
  */
 public class Audit_1 extends Indexed_1 {
 
-    // --------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.kernel.layer.persistence.Indexed_1#getInteraction(javax.resource.cci.Connection)
+     */
     public Interaction getInteraction(
         javax.resource.cci.Connection connection
     ) throws ResourceException {
         return new LayerInteraction(connection);
     }
         	
-    //-------------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.kernel.layer.persistence.Indexed_1#activate(short, org.openmdx.application.configuration.Configuration, org.openmdx.application.dataprovider.spi.Layer_1)
+     */
     @Override
     public void activate(
         short id, 
@@ -121,7 +125,13 @@ public class Audit_1 extends Indexed_1 {
         }
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Test whether object is instance of Auditee.
+     * 
+     * @param object
+     * @return
+     * @throws ServiceException
+     */
     protected boolean isAuditee(
       MappedRecord object
     ) throws ServiceException {
@@ -132,7 +142,12 @@ public class Audit_1 extends Indexed_1 {
         );
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Test whether object is instance of BasicObject.
+     * 
+     * @param object
+     * @return
+     */
     protected boolean isInstanceOfBasicObject(
     	MappedRecord object
     ) {
@@ -180,15 +195,13 @@ public class Audit_1 extends Indexed_1 {
         	} else {
                 return ((Comparable)v1).compareTo(v2) == 0;        		
         	}
-        }
-        else if(
+        } else if(
             (v1 instanceof Comparable) && 
             (v2 instanceof Comparable) &&
             (v1.getClass().equals(v2.getClass()))
         ) {
             return ((Comparable)v1).compareTo(v2) == 0;
-        }
-        else {
+        } else {
         	return v1.equals(v2);
         }
     }
@@ -248,8 +261,7 @@ public class Audit_1 extends Indexed_1 {
     	Object_2Facade facade;
         try {
 	        facade = Object_2Facade.newInstance(object);
-        }
-        catch (ResourceException e) {
+        } catch (ResourceException e) {
         	throw new ServiceException(e);
         }
         Date at = null;
@@ -257,8 +269,7 @@ public class Audit_1 extends Indexed_1 {
         	at = header.getRequestedAt() == null ?
             	new Date() :
             	    DateTimeFormat.BASIC_UTC_FORMAT.parse(header.getRequestedAt());
-        }
-        catch(ParseException e) {
+        } catch(ParseException e) {
             at = new Date();
         }
         List<String> by = header.getPrincipalChain();
@@ -348,8 +359,7 @@ public class Audit_1 extends Indexed_1 {
 		                getReply.getResult()
 		            );
 		            segment = getReply.getObject();
-	            }
-	            catch (ResourceException e) {
+	            } catch (ResourceException e) {
 	            	throw new ServiceException(e);
 	            }
 	            Audit_1.this.auditSegments.put(
@@ -400,16 +410,14 @@ public class Audit_1 extends Indexed_1 {
 		            	);
 		            }
 		            return true;
-		        }
-		        else {
+		        } else {
 		            return super.get(
 		                ispec,
 		                input,
 		                output
 		            );
 		        }
-	    	}
-	    	catch(ResourceException e) {
+	    	} catch(ResourceException e) {
 	    		throw new ServiceException(e);
 	    	}
 	    }
@@ -494,20 +502,18 @@ public class Audit_1 extends Indexed_1 {
 		                new Integer(mappedAuditEntries.size())
 		            );
 		            return true;
-		        }
-		        else {
+		        } else {
 		            return super.find(
 		                ispec,
 		                input,
 		                output
 		            );
 		        }
-	    	}
-	    	catch(ResourceException e) {
+	    	} catch(ResourceException e) {
 	    		throw new ServiceException(e);
 	    	}
 	    }
-	    
+
 	    /* (non-Javadoc)
 	     * @see org.openmdx.application.dataprovider.layer.persistence.jdbc.AbstractDatabase_1.LayerInteraction#put(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Object_2Facade, javax.resource.cci.IndexedRecord)
 	     */
@@ -524,9 +530,9 @@ public class Audit_1 extends Indexed_1 {
 	    	try {
 		        // Ignore replace requests for top-level objects such as segments 
 		        // (if not user is segment admin) providers, authorities
-		        String principalName = header.getPrincipalChain().size() == 0 ? 
-		            null : 
-		            (String)header.getPrincipalChain().get(0);        
+		        String principalName = header.getPrincipalChain().isEmpty() 
+		        	? null 
+		        	: header.getPrincipalChain().get(0);
 		        if(
 		            (request.path().size() > 5) ||
 		            ((request.path().size() == 5) && principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) 
@@ -608,15 +614,12 @@ public class Audit_1 extends Indexed_1 {
 		                        Audit_1.this.setSecurityAttributes(
 		                            auditEntry
 		                        );
-		                
-		                        // create entry
 		                        try {
 		                        	this.createAuditEntry(
 		                                header,
 		                                auditEntry
 		                            );
-		                        }
-		                        catch(ServiceException e) {
+		                        } catch(ServiceException e) {
 		                            e.log();
 		                        }
 		                    } else {
@@ -659,7 +662,6 @@ public class Audit_1 extends Indexed_1 {
         	ServiceHeader header = this.getServiceHeader();
             DataproviderRequest request = this.newDataproviderRequest(ispec, input);
 	    	try {
-		        // Create object
 		        super.create(
 		            ispec,
 		            input,
@@ -700,20 +702,17 @@ public class Audit_1 extends Indexed_1 {
 		            Audit_1.this.setSecurityAttributes(
 		                auditEntry
 		            );            
-		            // create entry
 		            try {
 		            	this.createAuditEntry(
 		                    header, 
 		                    auditEntry
 		                );
-		            }
-		            catch(ServiceException e) {
+		            } catch(ServiceException e) {
 		                e.log();
 		            }
 		        }           
 		        return true;
-	    	}
-	    	catch(ResourceException e) {
+	    	} catch(ResourceException e) {
 	    		throw new ServiceException(e);
 	    	}
 	    }
@@ -749,8 +748,7 @@ public class Audit_1 extends Indexed_1 {
 		        		Query_2Facade.newInstance(getRequest.object()), 
 		        		getReply.getResult()
 		        	);
-		        	MappedRecord existing = getReply.getObject();
-		
+		        	MappedRecord existing = getReply.getObject();		
 		            // Create ObjectRemovalAuditEntry and add it to segment
 		            if(Audit_1.this.isAuditee(existing)) {
 		            	MappedRecord auditEntry = Object_2Facade.newInstance(
@@ -783,15 +781,12 @@ public class Audit_1 extends Indexed_1 {
 		                Audit_1.this.setSecurityAttributes(
 		                    auditEntry
 		                );
-		                
-		                // create entry
 		                try {
 		                	this.createAuditEntry(
 		                        header, 
 		                        auditEntry
 		                    );
-		                }
-		                catch(ServiceException e) {
+		                } catch(ServiceException e) {
 		                    e.log();
 		                }
 		            }
@@ -803,8 +798,7 @@ public class Audit_1 extends Indexed_1 {
 		            output
 		        );
 		        return true;
-	    	}
-	    	catch(ResourceException e) {
+	    	} catch(ResourceException e) {
 	    		throw new ServiceException(e);
 	    	}
 	    }
@@ -871,8 +865,7 @@ public class Audit_1 extends Indexed_1 {
 		                Object_2Facade.newInstance(reply).attributeValuesAsList("visitStatus").add(
 		                    new Short((short)0)
 		                );
-		            }            
-		            else {
+		            } else {
 		            	 Object_2Facade.newInstance(reply).attributeValuesAsList("visitStatus").add(
 		                    new Short((short)1)
 		                );                
@@ -888,13 +881,18 @@ public class Audit_1 extends Indexed_1 {
 		                replyPath
 		            );
 		        }
-	    	}
-	    	catch(ResourceException e) {
+	    	} catch(ResourceException e) {
 	    		throw new ServiceException(e);
 	    	}
 	    }
 
-	    //-----------------------------------------------------------------------
+	    /**
+	     * Create audit entry.
+	     * 
+	     * @param header
+	     * @param auditEntry
+	     * @throws ServiceException
+	     */
 	    protected void createAuditEntry(
 	       ServiceHeader header,
 	       MappedRecord auditEntry
@@ -919,33 +917,6 @@ public class Audit_1 extends Indexed_1 {
 	    	    
     }
     
-    //-------------------------------------------------------------------------
-    protected MappedRecord createResult(
-      DataproviderRequest request,
-      String structName
-    ) throws ServiceException {
-    	MappedRecord result = null;
-        try {
-	        result = Object_2Facade.newInstance(
-	            request.path().getDescendant(
-	              new String[]{
-	            	  "reply", 
-	            	  UUIDConversion.toUID(UUIDs.newUUID())
-	              }
-	            ),
-	            structName
-	        ).getDelegate();
-        }
-        catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }
-        catch (ServiceException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
-    	return result;
-    }
-
     /**
      * Return the set of attributes which's values changed in o2 relative to o1.
      * 
@@ -1000,7 +971,13 @@ public class Audit_1 extends Indexed_1 {
         return changedAttributes;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get before image.
+     * 
+     * @param beforeImage
+     * @return
+     * @throws ServiceException
+     */
     @SuppressWarnings("unchecked")
     public String getBeforeImageAsString(
     	MappedRecord beforeImage
@@ -1025,6 +1002,8 @@ public class Audit_1 extends Indexed_1 {
         return beforeImageAsString;
     }
     
+    //-----------------------------------------------------------------------
+    // Members
     //-----------------------------------------------------------------------
     protected static final String NOT_VISITED_SUFFIX = "-";
 

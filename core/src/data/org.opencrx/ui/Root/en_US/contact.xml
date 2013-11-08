@@ -1,107 +1,114 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
-	<_object/>
+	<_object />
 	<_content>
 		<provider>
 			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
-				<_object/>
+				<_object />
 				<_content>
 					<segment>
 						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
-							<_object/>
+							<_object />
 							<_content>
 
-								<featureDefinition>							
-								  <!-- 400 = Home -->
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!phoneNumberFull">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <!-- 430 = Home fax -->
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <!-- 400 = Home -->
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!emailAddress">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <!-- 400 = Home -->
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!webUrl">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
+								<featureDefinition>
+									<!-- 400 = Home -->
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!phoneNumberFull">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<!-- 430 = Home fax -->
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<!-- 400 = Home -->
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!emailAddress">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<!-- 400 = Home -->
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!webUrl">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
 
-								  <!-- 400 = Home -->
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalAddressLine">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..n</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalStreet">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..n</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalState">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalCode">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalCity">
-									<_object>
-									  <type>org:w3c:string</type>
-									  <multiplicity>0..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								  <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalCountry">
-									<_object>
-									  <type>org:w3c:short</type>
-									  <multiplicity>1..1</multiplicity>
-									  <changeable>true</changeable>
-									</_object>
-									<_content/>
-								  </org.openmdx.ui1.StructuralFeatureDefinition>
-								</featureDefinition>														
-
+									<!-- 400 = Home -->
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalAddressLine">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..n</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalStreet">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..n</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalState">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalCode">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalCity">
+										<_object>
+											<type>org:w3c:string</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!postalCountry">
+										<_object>
+											<type>org:w3c:short</type>
+											<multiplicity>1..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:account1:Contact:address!authority">
+										<_object>
+											<type>org:opencrx:kernel:account1:Account</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>true</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+								</featureDefinition>
 								<elementDefinition>
-									<!--Pane1 Tab Definitions-->
+									<!--Pane1 Tab Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact">
 										<_object>
 											<active>true</active>
@@ -122,7 +129,7 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:contact">
 										<_object>
@@ -144,9 +151,9 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact">
 										<_object>
 											<active>true</active>
@@ -163,9 +170,9 @@
 											</order>
 											<iconKey>Contact</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:0">
 										<_object>
 											<active>true</active>
@@ -176,7 +183,7 @@
 												<_item>Person</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:20">
 										<_object>
@@ -188,9 +195,9 @@
 												<_item>Contact information</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in Details Tab-->
+									<!--FieldGroups in Details Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:0">
 										<_object>
 											<active>true</active>
@@ -201,9 +208,9 @@
 												<_item>Personal information</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Element Definition Contact-->
+									<!--Element Definition Contact -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutationCode">
 										<_object>
 											<active>true</active>
@@ -224,7 +231,7 @@
 												<_item>17</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:salutation">
 										<_object>
@@ -241,7 +248,7 @@
 												<_item>18</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:firstName">
 										<_object>
@@ -263,7 +270,7 @@
 												<_item>13</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:middleName">
 										<_object>
@@ -285,7 +292,7 @@
 												<_item>14</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:lastName">
 										<_object>
@@ -308,7 +315,7 @@
 												<_item>15</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:suffix">
 										<_object>
@@ -325,7 +332,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:nickName">
 										<_object>
@@ -347,10 +354,10 @@
 												<_item>16</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:aliasName" _operation="create">
-										<_object/>
+										<_object />
 										<_content>
 											<alternateElementDefinition>
 												<org.openmdx.ui1.AlternateElementDefinition id="0">
@@ -362,7 +369,7 @@
 															<_item>70</_item>
 														</orderFieldGroup>
 													</_object>
-													<_content/>
+													<_content />
 												</org.openmdx.ui1.AlternateElementDefinition>
 											</alternateElementDefinition>
 										</_content>
@@ -370,7 +377,7 @@
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!phoneNumberFull">
 										<_object>
-                      <dataBindingName>org.opencrx.kernel.portal.PhoneNumberDataBinding?[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true</dataBindingName>
+											<dataBindingName>org.opencrx.kernel.portal.PhoneNumberDataBinding?[isMain=(boolean)true];usage=(short)400;automaticParsing=(boolean)true</dataBindingName>
 											<active>true</active>
 											<toolTip>
 												<_item>Phone home</_item>
@@ -384,11 +391,11 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address*Fax!phoneNumberFull">
 										<_object>
-                      <dataBindingName>org.opencrx.kernel.portal.PhoneNumberDataBinding?[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true</dataBindingName>
+											<dataBindingName>org.opencrx.kernel.portal.PhoneNumberDataBinding?[isMain=(boolean)true];usage=(short)430;automaticParsing=(boolean)true</dataBindingName>
 											<active>false</active>
 											<toolTip>
 												<_item>Fax home</_item>
@@ -402,11 +409,11 @@
 												<_item>105</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!emailAddress">
 										<_object>
-                      <dataBindingName>org.opencrx.kernel.portal.EmailAddressDataBinding?[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]</dataBindingName>
+											<dataBindingName>org.opencrx.kernel.portal.EmailAddressDataBinding?[isMain=(boolean)true];usage=(short)400;[emailType=(short)1]</dataBindingName>
 											<active>true</active>
 											<toolTip>
 												<_item>E-mail home</_item>
@@ -420,11 +427,11 @@
 												<_item>130</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!webUrl">
 										<_object>
-                      <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:WebAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
 											<active>false</active>
 											<toolTip>
 												<_item>Web page home</_item>
@@ -438,54 +445,28 @@
 												<_item>150</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-<!--
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:externalLink" _operation="null">
-                      <_object/>
-                      <_content>
-                          <alternateElementDefinition>
-                                  <org.openmdx.ui1.AlternateElementDefinition id="0">
-                                  <_object>
-                                      <columnBreak>false</columnBreak>
-                                      <spanRow>2</spanRow>
-                                      <toolTip>
-                                          <_item>Outlook GUID</_item>
-                                          <_item>Outlook GUID</_item>
-                                      </toolTip>
-                                      <label>
-                                          <_item>Outlook</_item>
-                                          <_item>Outlook</_item>
-                                      </label>
-                                      <orderFieldGroup>
-                                          <_item>0</_item>
-                                          <_item>0</_item>
-                                          <_item>130</_item>
-                                      </orderFieldGroup>
-                                  </_object>
-                                  <_content/>
-                              </org.openmdx.ui1.AlternateElementDefinition>
-                          </alternateElementDefinition>
-                      </_content>
-                  </org.openmdx.ui1.ElementDefinition>
--->
+									<!-- <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:externalLink" _operation="null"> <_object/> <_content> <alternateElementDefinition> <org.openmdx.ui1.AlternateElementDefinition id="0"> <_object> <columnBreak>false</columnBreak> 
+										<spanRow>2</spanRow> <toolTip> <_item>Outlook GUID</_item> <_item>Outlook GUID</_item> </toolTip> <label> <_item>Outlook</_item> <_item>Outlook</_item> </label> <orderFieldGroup> <_item>0</_item> <_item>0</_item> <_item>130</_item> </orderFieldGroup> </_object> 
+										<_content/> </org.openmdx.ui1.AlternateElementDefinition> </alternateElementDefinition> </_content> </org.openmdx.ui1.ElementDefinition> -->
 
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:10">
-                    <_object>
-                      <active>true</active>
-                      <toolTip>
-                        <_item>Postal Address Business / Home</_item>
-                      </toolTip>
-                      <label>
-                        <_item>Postal Address Business / Home</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:0:Group:10">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Postal Address Business / Home</_item>
+											</toolTip>
+											<label>
+												<_item>Postal Address Business / Home</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalAddressLine">
 										<_object>
-											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
 											<active>true</active>
 											<columnBreak>true</columnBreak>
 											<spanRow>3</spanRow>
@@ -502,11 +483,11 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalStreet">
 										<_object>
-											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
 											<active>true</active>
 											<spanRow>2</spanRow>
 											<multiplicity>0..3</multiplicity> <!-- can be increased if more lines are needed -->
@@ -522,11 +503,11 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalState">
 										<_object>
-											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
 											<active>true</active>
 											<toolTip>
 												<_item>State</_item>
@@ -540,11 +521,11 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCode">
 										<_object>
-											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
 											<active>true</active>
 											<toolTip>
 												<_item>ZIP/Postal code</_item>
@@ -558,11 +539,11 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCity">
 										<_object>
-											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>										
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400</dataBindingName>
 											<active>true</active>
 											<toolTip>
 												<_item>City</_item>
@@ -576,11 +557,11 @@
 												<_item>120</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!postalCountry">
 										<_object>
-											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400?zeroAsNull=true</dataBindingName>										
+											<dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400?zeroAsNull=true</dataBindingName>
 											<active>true</active>
 											<toolTip>
 												<_item>Country/Region</_item>
@@ -594,10 +575,27 @@
 												<_item>130</_item>
 											</order>
 										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:address!authority">
+										<_object>
+											 <dataBindingName>org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding?type=org:opencrx:kernel:account1:PostalAddress;disabled=(boolean)false;[isMain=(boolean)true];usage=(short)400?zeroAsNull=true</dataBindingName>										
+											<active>true</active>
+											<toolTip>
+												<_item>Authority</_item>
+											</toolTip>
+											<label>
+												<_item>Authority</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>140</_item>
+											</order>
+										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-
-									<!--Contact Info-->
+									<!--Contact Info -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredContactMethod">
 										<_object>
 											<active>true</active>
@@ -613,7 +611,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredSpokenLanguage">
 										<_object>
@@ -630,7 +628,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:preferredWrittenLanguage">
 										<_object>
@@ -647,7 +645,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closingCode">
 										<_object>
@@ -664,7 +662,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closing">
 										<_object>
@@ -681,7 +679,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotEMail">
 										<_object>
@@ -699,7 +697,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPostalMail">
 										<_object>
@@ -716,7 +714,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotBulkPostalMail">
 										<_object>
@@ -733,7 +731,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotPhone">
 										<_object>
@@ -750,7 +748,7 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:doNotFax">
 										<_object>
@@ -767,7 +765,7 @@
 												<_item>120</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Organizational Information -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobTitle">
@@ -785,7 +783,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:jobRole">
 										<_object>
@@ -802,7 +800,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:organization">
 										<_object>
@@ -825,7 +823,7 @@
 												<_item>8</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:department">
 										<_object>
@@ -847,7 +845,7 @@
 												<_item>12</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- attributes deprecated since openCRX v2.1 -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:900100:Group:99">
@@ -860,7 +858,7 @@
 												<_item>DEPRECATED</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo">
 										<_object>
@@ -877,7 +875,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:assistant">
 										<_object>
@@ -894,7 +892,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:deputy">
 										<_object>
@@ -911,9 +909,9 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Personal information-->
+									<!--Personal information -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:gender">
 										<_object>
 											<active>true</active>
@@ -929,7 +927,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:familyStatus">
 										<_object>
@@ -946,7 +944,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:numberOfChildren">
 										<_object>
@@ -964,7 +962,7 @@
 											</order>
 											<minValue>0</minValue>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:childrenNames">
 										<_object>
@@ -982,7 +980,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:religion">
 										<_object>
@@ -1000,7 +998,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:education">
 										<_object>
@@ -1018,7 +1016,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeCurrency">
 										<_object>
@@ -1035,7 +1033,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeAmount">
 										<_object>
@@ -1052,7 +1050,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:birthdate">
 										<_object>
@@ -1069,7 +1067,7 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:dateOfDeath">
 										<_object>
@@ -1086,7 +1084,7 @@
 												<_item>115</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary">
 										<_object>
@@ -1103,7 +1101,7 @@
 												<_item>120</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId">
 										<_object>
@@ -1120,7 +1118,7 @@
 												<_item>130</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:citizenship">
 										<_object>
@@ -1138,94 +1136,34 @@
 												<_item>140</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Operations -->
-                  <!-- Operation Import Parameters are customized in common.xml -->
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:importItem">
-                    <_object>
-                      <active>true</active>
-                      <toolTip>
-                        <_item>Import vCard</_item>
-                      </toolTip>
-                      <label>
-                        <_item>Import vCard</_item>
-                      </label>
-                      <iconKey>org:opencrx:kernel:Import</iconKey>
-                      <order>
-                        <_item>100</_item>
-                        <_item>0</_item>
-                        <_item>110</_item>
-                      </order>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-<!--
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard">
+									<!-- Operation Import Parameters are customized in common.xml -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:importItem">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Export as vCard</_item>
+												<_item>Import vCard</_item>
 											</toolTip>
 											<label>
-												<_item>Export as vCard</_item>
+												<_item>Import vCard</_item>
 											</label>
+											<iconKey>org:opencrx:kernel:Import</iconKey>
 											<order>
 												<_item>100</_item>
 												<_item>0</_item>
-												<_item>210</_item>
-											</order>
-											<iconKey>org:opencrx:kernel:Export</iconKey>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Input</_item>
-											</toolTip>
-											<label>
-												<_item>Input</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
+												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:ExportVCardParams:locale">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Language</_item>
-											</toolTip>
-											<label>
-												<_item>Language</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Result</_item>
-											</toolTip>
-											<label>
-												<_item>Result</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
--->
+									<!-- <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard"> <_object> <active>true</active> <toolTip> <_item>Export as vCard</_item> </toolTip> <label> <_item>Export as vCard</_item> </label> <order> 
+										<_item>100</_item> <_item>0</_item> <_item>210</_item> </order> <iconKey>org:opencrx:kernel:Export</iconKey> </_object> <_content/> </org.openmdx.ui1.ElementDefinition> <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:in"> 
+										<_object> <active>true</active> <toolTip> <_item>Input</_item> </toolTip> <label> <_item>Input</_item> </label> <order> <_item>0</_item> <_item>0</_item> <_item>10</_item> </order> </_object> <_content/> </org.openmdx.ui1.ElementDefinition> <org.openmdx.ui1.ElementDefinition 
+										name="org:opencrx:kernel:account1:ExportVCardParams:locale"> <_object> <active>true</active> <toolTip> <_item>Language</_item> </toolTip> <label> <_item>Language</_item> </label> <order> <_item>0</_item> <_item>0</_item> <_item>10</_item> </order> </_object> 
+										<_content/> </org.openmdx.ui1.ElementDefinition> <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportVCard:Group:result"> <_object> <active>true</active> <toolTip> <_item>Result</_item> </toolTip> <label> <_item>Result</_item> 
+										</label> </_object> <_content/> </org.openmdx.ui1.ElementDefinition> -->
 								</elementDefinition>
 							</_content>
 						</org.openmdx.ui1.Segment>

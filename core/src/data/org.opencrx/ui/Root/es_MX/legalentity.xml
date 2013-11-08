@@ -110,17 +110,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:building" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Edificio</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Edificio</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:RevenueReport" _operation="create">
                     <_object>
                       <label>

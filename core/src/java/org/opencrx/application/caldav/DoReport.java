@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -50,7 +50,6 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-
 package org.opencrx.application.caldav;
 
 import java.io.ByteArrayOutputStream;
@@ -80,8 +79,17 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+/**
+ * DoReport
+ *
+ */
 public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods.DoReport {
 
+    /**
+     * Constructor.
+     * 
+     * @param store
+     */
     public DoReport(
     	WebDavStore store 
     ) {
@@ -130,60 +138,65 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
 	    			}
     			}
     		}
-    	}
-    	// Query
-    	else if(so instanceof ActivityCollectionResource) {
+    	} else if(so instanceof ActivityCollectionResource) {
+        	// Query
     		resources = _store.getChildren(requestContext, so);
        	}
         // Properties
         Node propNode = XMLHelper.findSubElement(rootElement, "prop");
         List<String> properties = XMLHelper.getPropertiesFromXML(propNode);
-        // Response
-        resp.setStatus(SC_MULTI_STATUS);
-        resp.setCharacterEncoding("UTF-8");
-        resp.setContentType("application/xml");
-        resp.setHeader("DAV", "1, 2, calendar-access");
-    	PrintWriter p = resp.getWriter();
-    	p.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
-    	SysLog.detail("<D:multistatus>");
-    	p.println("<D:multistatus xmlns:D=\"DAV:\" xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
-        for(Resource resource: resources) {
-        	ActivityResource res = (ActivityResource)resource;
-        	if(
-        		(res.getSyncFeedResource().getRunAs() == null) || 
-        		res.getObject().getIcal().indexOf("CLASS:PRIVATE") < 0
-        	) {
-            	String name = resource.getName();
-	        	p.println("  <D:response>");
-	        	p.println("    <D:href>" + this.encodeURL(resp, this.getHRef(req, req.getServletPath() + name, false)) + "</D:href>");
-	        	p.println("    <D:propstat>");
-	        	p.println("      <D:prop>");
-	        	for(String property: properties) {
-	        		if(property.indexOf("getetag") > 0) {
-	        			p.println("        <D:getetag>" + this.getETag(res) + "</D:getetag>");
-	        		} else if(property.indexOf("calendar-data") > 0) {
-			        	p.print  ("        <C:calendar-data xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
-			        	p.print("<![CDATA[");
-			        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource);
-			        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			        	BinaryLargeObjects.streamCopy(content.getContent(), 0L, bos);
-			        	bos.close();
-			        	p.print(bos.toString("UTF-8"));
-			        	p.print("]]>");
-		                p.println("</C:calendar-data>");
-	        		} else if(property.indexOf("getcontenttype") > 0) {
-	        			p.println("        <D:getcontenttype>" + _store.getMimeType(res) + "</D:getcontenttype>");
-	        		}
+        // SyncToken
+        Node syncTokenNode = XMLHelper.findSubElement(rootElement, "sync-token");
+        // sync-token not supported
+        if(syncTokenNode != null) {
+        	resp.setStatus(HttpServletResponse.SC_NOT_IMPLEMENTED);
+        } else {
+	        resp.setStatus(SC_MULTI_STATUS);
+	        resp.setCharacterEncoding("UTF-8");
+	        resp.setContentType("application/xml");
+	        resp.setHeader("DAV", "1, 2, calendar-access");
+	    	PrintWriter p = resp.getWriter();
+	    	p.println("<?xml version=\"1.0\" encoding=\"utf-8\" ?>");
+	    	SysLog.detail("<D:multistatus>");
+	    	p.println("<D:multistatus xmlns:D=\"DAV:\" xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
+	        for(Resource resource: resources) {
+	        	ActivityResource res = (ActivityResource)resource;
+	        	if(
+	        		(res.getSyncFeedResource().getRunAs() == null) || 
+	        		res.getObject().getIcal().indexOf("CLASS:PRIVATE") < 0
+	        	) {
+	            	String name = resource.getName();
+		        	p.println("  <D:response>");
+		        	p.println("    <D:href>" + this.encodeURL(resp, this.getHRef(req, req.getServletPath() + name, false)) + "</D:href>");
+		        	p.println("    <D:propstat>");
+		        	p.println("      <D:prop>");
+		        	for(String property: properties) {
+		        		if(property.indexOf("getetag") > 0) {
+		        			p.println("        <D:getetag>" + this.getETag(res) + "</D:getetag>");
+		        		} else if(property.indexOf("calendar-data") > 0) {
+				        	p.print  ("        <C:calendar-data xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
+				        	p.print("<![CDATA[");
+				        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource);
+				        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				        	BinaryLargeObjects.streamCopy(content.getContent(), 0L, bos);
+				        	bos.close();
+				        	p.print(bos.toString("UTF-8"));
+				        	p.print("]]>");
+			                p.println("</C:calendar-data>");
+		        		} else if(property.indexOf("getcontenttype") > 0) {
+		        			p.println("        <D:getcontenttype>" + _store.getMimeType(res) + "</D:getcontenttype>");
+		        		}
+		        	}
+		        	p.println("      </D:prop>");
+		        	p.println("      <D:status>HTTP/1.1 200 OK</D:status>");
+		        	p.println("    </D:propstat>");
+		        	p.println("  </D:response>");
 	        	}
-	        	p.println("      </D:prop>");
-	        	p.println("      <D:status>HTTP/1.1 200 OK</D:status>");
-	        	p.println("    </D:propstat>");
-	        	p.println("  </D:response>");
-        	}
+	        }
+	    	p.println("</D:multistatus>");
+	    	SysLog.detail("</D:multistatus>");
+	    	p.flush();
         }
-    	p.println("</D:multistatus>");
-    	SysLog.detail("</D:multistatus>");
-    	p.flush();
     }
 
     protected static final int SC_MULTI_STATUS = 207;

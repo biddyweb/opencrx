@@ -627,7 +627,6 @@ public class Contracts extends AbstractImpl {
         BigDecimal uomScaleFactor,
         BigDecimal salesTaxRate
     ) {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
         BigDecimal pricePerUnit = position.getPricePerUnit() == null ?
             BigDecimal.ZERO :
             	position.getPricePerUnit();
@@ -2542,7 +2541,6 @@ public class Contracts extends AbstractImpl {
         BigDecimal uomScaleFactor,
         BigDecimal salesTaxRate
     ) {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(calculationRule);
         BigDecimal pricePerUnit = position.getPricePerUnit() == null ?
             BigDecimal.ZERO :
             	position.getPricePerUnit();
@@ -2603,7 +2601,6 @@ public class Contracts extends AbstractImpl {
         java.math.BigDecimal[] salesCommissions,
         java.lang.Boolean[] salesCommissionIsPercentages
     ) {
-    	javax.jdo.PersistenceManager pm = javax.jdo.JDOHelper.getPersistenceManager(contract);
         java.math.BigDecimal totalBaseAmount = java.math.BigDecimal.ZERO;
         java.math.BigDecimal totalDiscountAmount = java.math.BigDecimal.ZERO;
         java.math.BigDecimal totalTaxAmount = java.math.BigDecimal.ZERO;

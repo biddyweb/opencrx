@@ -88,17 +88,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Más Gráficos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Más Gráficos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30" _operation="create">
                     <_object>
                       <label>
@@ -117,17 +106,6 @@
                       </label>
                       <toolTip>
                         <_item>Calendario</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Gráficos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Gráficos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -184,146 +162,6 @@
                       <toolTip>
                         <_item>Semana de trabajo</_item>
                       </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart0" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Título / Fuente</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Título / Fuente</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descripción</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart1" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Título / Fuente</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Título / Fuente</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descripción</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart2" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Título / Fuente</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Título / Fuente</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descripción</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart3" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Título / Fuente</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Título / Fuente</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo MIME</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descripción</_item>
-                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

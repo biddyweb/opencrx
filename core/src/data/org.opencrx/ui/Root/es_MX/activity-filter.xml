@@ -88,17 +88,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Actividades Filtradas</_item>
-                      </label>
-                      <toolTip>
-                        <_item>todas las actividades filtradas</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
@@ -110,24 +99,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filteredActivity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Propiedad de Filtrado de Grupo de Actividades</_item>
+                        <_item>Actividades Filtradas</_item>
                       </label>
                       <toolTip>
-                        <_item>Propiedad de Filtrado de Grupo de Actividades</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupFilterProperty:activityGroup" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Grupos de Actividades</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Grupos de Actividades</_item>
+                        <_item>todas las actividades filtradas</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -216,72 +194,6 @@
                       </label>
                       <toolTip>
                         <_item>Tipos de Actividad</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Propiedad de Filtrado de Recursos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Propiedad de Filtrado de Recursos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceFilterProperty:resource" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Recursos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Recursos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Propiedad de Filtrado de Nombres de Recursos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Propiedad de Filtrado de Nombres de Recursos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceNameFilterProperty:resourceName" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombres de recursos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nombres de recursos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Propiedad de Filtrado de Roles de Recursos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Propiedad de Filtrado de Roles de Recursos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRoleFilterProperty:resourceRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Roles de Recursos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Roles de Recursos</_item>
                       </toolTip>
                     </_object>
                     <_content/>

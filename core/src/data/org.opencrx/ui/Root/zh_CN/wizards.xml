@@ -44,6 +44,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>新活动</_item>
+                      </label>
+                      <toolTip>
+                        <_item>新活动</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>新活动</_item>
+                      </label>
+                      <toolTip>
+                        <_item>新活动</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>新活动</_item>
+                      </label>
+                      <toolTip>
+                        <_item>新活动</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createAgenda" _operation="create">
                     <_object>
                       <label>
@@ -161,6 +194,17 @@
                       </label>
                       <toolTip>
                         <_item>从Excel导入联系人</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:importAccountsFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>从Excel导入成员关系</_item>
+                      </label>
+                      <toolTip>
+                        <_item>从Excel导入成员关系</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -557,6 +601,28 @@
                       </label>
                       <toolTip>
                         <_item>上传文件</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setTimer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>设置定时器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>设置定时器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePasswordManaged" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>改变密码(受控)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>改变密码(受控)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

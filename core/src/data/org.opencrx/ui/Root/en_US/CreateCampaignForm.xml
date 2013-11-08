@@ -39,8 +39,6 @@
 													</_object>
 													<_content />
 												</org.openmdx.ui1.FormFieldDefinition>					
-											</formFieldDefinition>
-											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="description">
 													<_object>
 														<forClass>org:opencrx:kernel:activity1:ActivityGroup</forClass>
@@ -50,13 +48,19 @@
 													</_object>
 													<_content />
 												</org.openmdx.ui1.FormFieldDefinition>		
-											</formFieldDefinition>
-											<formFieldDefinition>
 												<org.openmdx.ui1.FormFieldDefinition id="activityType">
 													<_object>
 														<forClass>org:opencrx:kernel:activity1:ActivityCreator</forClass>
 														<featureName>activityType</featureName>
 														<order>120</order>														
+													</_object>
+													<_content />
+												</org.openmdx.ui1.FormFieldDefinition>					
+												<org.openmdx.ui1.FormFieldDefinition id="targetGroupAccounts">
+													<_object>
+														<forClass>org:opencrx:kernel:activity1:ActivityGroup</forClass>
+														<featureName>targetGroupAccounts</featureName>
+														<order>130</order>														
 													</_object>
 													<_content />
 												</org.openmdx.ui1.FormFieldDefinition>					

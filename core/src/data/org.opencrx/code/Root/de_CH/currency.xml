@@ -71,6 +71,14 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="710" _operation="set">
+													<_object>
+														<longText>
+															<_item>ZAR [Südafrikanischer Rand]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
 												<org.opencrx.kernel.code1.CodeValueEntry code="752" _operation="set">
 													<_object>
 														<longText>

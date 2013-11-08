@@ -33,6 +33,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:salesVolContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>销售合同</_item>
+                      </label>
+                      <toolTip>
+                        <_item>销售合同</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityPosition" _operation="create">
                     <_object>
                       <label>
@@ -73,182 +84,6 @@
                       </label>
                       <toolTip>
                         <_item>订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品提供的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品提供的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品提供的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品提供的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品提供的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品提供的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品提供的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品提供的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>复杂产品绑定的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品包的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品包的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品包的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品包的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品包的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品包的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>产品包的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>产品包的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:OpportunityBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>打包产品的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>打包产品的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:QuoteBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>打包产品的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>打包产品的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesOrderBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>打包产品的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>打包产品的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:InvoiceBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>打包产品的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>打包产品的订单明细项目</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1149,50 +984,6 @@
                       </label>
                       <toolTip>
                         <_item>已取消的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedBundledProductPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>已取消的打包产品的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>已取消的打包产品的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedProductOfferingPosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>已取消的产品供应的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>已取消的产品供应的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedComplexProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>已取消的复杂产品包的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>已取消的复杂产品包的订单明细项目</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:RemovedProductBundlePosition" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>已取消的产品包的订单明细项目</_item>
-                      </label>
-                      <toolTip>
-                        <_item>已取消的产品包的订单明细项目</_item>
                       </toolTip>
                     </_object>
                     <_content/>

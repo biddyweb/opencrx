@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Účty</_item>
+                        <_item>Spravovať Účty (Klientov)</_item>
                       </label>
                       <toolTip>
-                        <_item>Všetky účty</_item>
+                        <_item>Spravovať Účty (Klientov)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,7 +25,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:account" _operation="create">
                     <_object>
                       <label>
-                        <_item>Všetky účty</_item>
+                        <_item>Všetky účty (klienti)</_item>
                       </label>
                       <toolTip>
                         <_item>Všetky účty</_item>
@@ -40,10 +40,10 @@
                         <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
                           <_object>
                             <label>
-                              <_item>Účty</_item>
+                              <_item>Účty (klienti)</_item>
                             </label>
                             <toolTip>
-                              <_item>Účty</_item>
+                              <_item>Účty (klienti)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -79,7 +79,7 @@
                               <_item>Skupiny účtov</_item>
                             </label>
                             <toolTip>
-                              <_item>Skupiny účtov</_item>
+                              <_item>Skupiny účtov (klientov)</_item>
                             </toolTip>
                           </_object>
                           <_content/>
@@ -199,8 +199,11 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25:Group:10" _operation="create">
                     <_object>
                       <label>
-                        <_item>Účet</_item>
+                        <_item>&amp;nbsp;</_item>
                       </label>
+                      <toolTip>
+                        <_item>Hesap</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -231,17 +234,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Pracovný fax</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Pracovný fax</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull" _operation="create">
                     <_object>
                       <label>
@@ -260,6 +252,17 @@
                       </label>
                       <toolTip>
                         <_item>Iný telefón</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pracovný fax</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pracovný fax</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -359,6 +362,28 @@
                       </label>
                       <toolTip>
                         <_item>Štát/Krajina</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Pictured:pictureContent" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Obrázok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Obrázok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Pictured:picture" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Názov / Zdroj</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Názov / Zdroj</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -608,7 +633,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Op:Tab:createOpportunity" _operation="create">
                     <_object>
                       <label>
-                        <_item>Vytvorenie možností</_item>
+                        <_item>Vytvorenie príležitosti</_item>
                       </label>
                       <toolTip>
                         <_item>Vytvorenie príležitosti</_item>

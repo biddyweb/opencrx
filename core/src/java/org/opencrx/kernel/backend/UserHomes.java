@@ -565,6 +565,8 @@ public class UserHomes extends AbstractImpl {
      * @param isAdministrator
      * @param initialPassword
      * @param initialPasswordVerification
+     * @param eMailAddress
+     * @param timezone
      * @param errors
      * @return
      * @throws ServiceException
@@ -578,6 +580,8 @@ public class UserHomes extends AbstractImpl {
         boolean isAdministrator,
         String initialPassword,
         String initialPasswordVerification,
+        String eMailAddress,
+        String timezone,
         List<String> errors
     ) throws ServiceException {
         if(principalName == null) {
@@ -731,7 +735,6 @@ public class UserHomes extends AbstractImpl {
         	pmRoot.currentTransaction().commit();
         }
         //--- END pmRoot
-
         /**
          * User home
          */
@@ -783,7 +786,7 @@ public class UserHomes extends AbstractImpl {
 	            	true, // Do not init user home at this stage. Let user do it interactively
 	            	true, // storeSettings 
 	            	primaryGroup,
-	            	null, // settingTimezone, 
+	            	"-".equals(timezone) ? null : timezone, // settingTimezone, 
 	            	"1", // settingStoreSettingsOnLogoff
 	            	null, // settingDefaultEmailAccount 
 	            	"[" + providerName + ":" + segmentName + "]", 
@@ -798,6 +801,23 @@ public class UserHomes extends AbstractImpl {
 	            );
 	            pmAdmin.currentTransaction().commit();
 	            userHomeIdentity = userHome.refGetPath();
+	        }
+	        if(eMailAddress != null && !eMailAddress.isEmpty() && !"-".equals(eMailAddress)) {
+	        	EMailAccountQuery emailAccountQuery = (EMailAccountQuery)pmAdmin.newQuery(EMailAccount.class);
+	        	emailAccountQuery.name().equalTo(eMailAddress);
+	        	List<EMailAccount> emailAccounts = userHome.getEMailAccount(emailAccountQuery);
+	        	if(emailAccounts.isEmpty()) {
+	        		pmAdmin.currentTransaction().begin();
+	        		EMailAccount eMailAccount = (EMailAccount)pmAdmin.newInstance(EMailAccount.class);
+	        		eMailAccount.setName(eMailAddress);
+	        		eMailAccount.setDefault(Boolean.TRUE);
+	        		eMailAccount.setActive(Boolean.TRUE);
+	        		userHome.addEMailAccount(
+	        			this.getUidAsString(),
+	        			eMailAccount
+	        		);
+	        		pmAdmin.currentTransaction().commit();
+	        	}
 	        }
         }
         return userHomeIdentity == null ? null : (UserHome)pm.getObjectById(userHomeIdentity);
@@ -880,18 +900,19 @@ public class UserHomes extends AbstractImpl {
                     String primaryGroupName = t.nextToken();
                     String password = t.nextToken();
                     String groups = t.hasMoreTokens() ? t.nextToken() : "";
+                    String emailAddress = t.hasMoreTokens() ? t.nextToken() : null;
+                    String timezone = t.hasMoreTokens() ? t.nextToken() : null;
                     UserHome userHome = null;
                     try {
                     	userHome = homeSegment.getUserHome(principalName);
-                    }
-                    catch(Exception e) {}
+                    } catch(Exception e) {}
                     if(userHome == null) {
                         try {
                             Contact contact = this.retrieveContact(
                             	accountSegment, 
                             	accountAlias, 
                             	accountFullName
-                            );                            
+                            );
                             if(contact != null) {
                             	PrincipalGroup primaryGroup = null;
                                 try {
@@ -902,14 +923,16 @@ public class UserHomes extends AbstractImpl {
                                 List<String> errors = new ArrayList<String>();                                    
                                 // Get groups
                                 List<org.openmdx.security.realm1.jmi1.Group> isMemberOf = new ArrayList<org.openmdx.security.realm1.jmi1.Group>();
-                                StringTokenizer g = new StringTokenizer(groups, ",");
-                                while(g.hasMoreTokens()) {
-                                	org.openmdx.security.realm1.jmi1.Group group = null;
-                                	try {
-                                		group = (org.openmdx.security.realm1.jmi1.Group)realm.getPrincipal(g.nextToken());
-                                		isMemberOf.add(group);
-                                	} catch(Exception e) {}
-                                }                                    
+                                if(!"-".equals(groups)) {
+	                                StringTokenizer g = new StringTokenizer(groups, ",");
+	                                while(g.hasMoreTokens()) {
+	                                	org.openmdx.security.realm1.jmi1.Group group = null;
+	                                	try {
+	                                		group = (org.openmdx.security.realm1.jmi1.Group)realm.getPrincipal(g.nextToken());
+	                                		isMemberOf.add(group);
+	                                	} catch(Exception e) {}
+	                                }
+                                }
                                 this.createUserHome(
                                     realm,
                                     contact,
@@ -918,7 +941,9 @@ public class UserHomes extends AbstractImpl {
                                     isMemberOf,
                                     false, 
                                     password, 
-                                    password, 
+                                    password,
+                                    emailAddress,
+                                    timezone,
                                     errors
                                 );
                                 if(errors.isEmpty()) {
@@ -939,14 +964,13 @@ public class UserHomes extends AbstractImpl {
                     }
                 }
             }
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             new ServiceException(e).log();
-        }        
+        }       
         return 
             "Users=(created:" + nCreatedUsers + ",existing:" + nExistingUsers + ",failed no primary group:" + nFailedUsersNoPrimaryGroup + ",failed no contact:" + nFailedUsersNoContact + ",failed other:" + nFailedUsersOther + ");";       
     }
-    
+
     /**
      * Create object finder according to given basic search criteria.
      * 

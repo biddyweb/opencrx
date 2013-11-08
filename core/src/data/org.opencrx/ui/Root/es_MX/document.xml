@@ -143,72 +143,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:10" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Contenido</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Contenido</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Información adicional</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Información adicional</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Attr:Tab:0:Group:30" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Media</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Media</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titulo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titulo del documento</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Autor</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Autor del Documento</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Resumen</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Resumen del Documento</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentState" _operation="create">
                     <_object>
                       <label>
@@ -319,17 +253,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Palabras Clave</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Palabras Clave</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:searchText" _operation="create">
                     <_object>
                       <label>
@@ -363,13 +286,46 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:media" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:author" _operation="create">
                     <_object>
                       <label>
-                        <_item>Media</_item>
+                        <_item>Autor</_item>
                       </label>
                       <toolTip>
-                        <_item>Media</_item>
+                        <_item>Autor del Documento</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:title" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Titulo</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Titulo del documento</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentAbstract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Resumen</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Resumen del Documento</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:keywords" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Palabras Clave</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Palabras Clave</_item>
                       </toolTip>
                     </_object>
                     <_content/>

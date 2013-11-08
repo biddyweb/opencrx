@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -91,12 +91,18 @@ import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.format.DateTimeFormat;
 
+/**
+ * FreeBusyServlet
+ *
+ */
 public class FreeBusyServlet extends HttpServlet {
 
-    //-----------------------------------------------------------------------
+    /**
+     * RRule
+     *
+     */
     protected static class RRule {
     
-        //-------------------------------------------------------------------------
         protected Date getUtcDate(
             String dateTime
         ) throws ParseException {
@@ -169,7 +175,9 @@ public class FreeBusyServlet extends HttpServlet {
         private Date until = null;
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
+     */
     @Override
     public void init(
         ServletConfig config            
@@ -195,7 +203,11 @@ public class FreeBusyServlet extends HttpServlet {
         }            
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get persistence manager for root user.
+     * 
+     * @return
+     */
     protected PersistenceManager getRootPersistenceManager(
     ) {
         return this.pmf.getPersistenceManager(
@@ -204,7 +216,13 @@ public class FreeBusyServlet extends HttpServlet {
         );    	
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Get configuration for this component.
+     * 
+     * @param providerName
+     * @param rootPm
+     * @return
+     */
     protected org.opencrx.kernel.admin1.jmi1.ComponentConfiguration getComponentConfiguration(
         String providerName,
         PersistenceManager rootPm
@@ -218,8 +236,15 @@ public class FreeBusyServlet extends HttpServlet {
 		);
     }
     
-    //-----------------------------------------------------------------------
-    protected ActivityQueryHelper getActivitiesHelper(
+    /**
+     * Get activities query helper.
+     * 
+     * @param pm
+     * @param filterId
+     * @param isDisabledFilter
+     * @return
+     */
+    protected ActivityQueryHelper getActivitiesQueryHelper(
         PersistenceManager pm,
         String filterId,
         String isDisabledFilter
@@ -233,13 +258,18 @@ public class FreeBusyServlet extends HttpServlet {
                 activitiesHelper.parseDisabledFilter(
                    isDisabledFilter
                 );
-            }
-            catch(Exception  e) {}
+            } catch(Exception ignore) {}
         }        
         return activitiesHelper;
     }
-    
-    //-----------------------------------------------------------------------
+
+    /**
+     * Return true if string matches token.
+     * 
+     * @param token
+     * @param strings
+     * @return
+     */
     protected boolean matches(
     	String token,
     	List<String> strings
@@ -252,7 +282,9 @@ public class FreeBusyServlet extends HttpServlet {
     	return false;
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
     @Override
     protected void doGet(
         HttpServletRequest req, 
@@ -324,7 +356,7 @@ public class FreeBusyServlet extends HttpServlet {
     		null
     	);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
-        ActivityQueryHelper activitiesHelper = this.getActivitiesHelper(
+        ActivityQueryHelper activitiesHelper = this.getActivitiesQueryHelper(
             pm, 
             id,
             isDisabledFilter
@@ -406,23 +438,19 @@ public class FreeBusyServlet extends HttpServlet {
 				                    p.write("DTEND:" + ActivityQueryHelper.formatDateTime(scheduledEnd.getTime()) + "\n");	                    	
 			                    }
 		                		p.write("END:VEVENT\n");
-		                	}
-		                	else {
+		                	} else {
 		               			p.write("FREEBUSY:" + ActivityQueryHelper.formatDateTime(scheduledStart.getTime()) + "/" + ActivityQueryHelper.formatDateTime(scheduledEnd.getTime()) + "\n");                			
 		                	}
 		                    if("DAILY".equals(rrule.getFreq())) {
 		                        scheduledStart.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
 		                        scheduledEnd.add(GregorianCalendar.DAY_OF_MONTH, rrule.getInterval());
-		                    }
-		                    else if("WEEKLY".equals(rrule.getFreq())) {
+		                    } else if("WEEKLY".equals(rrule.getFreq())) {
 		                        scheduledStart.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());
 		                        scheduledEnd.add(GregorianCalendar.WEEK_OF_YEAR, rrule.getInterval());                                    
-		                    }
-		                    else if("MONTHLY".equals(rrule.getFreq())) {
+		                    } else if("MONTHLY".equals(rrule.getFreq())) {
 		                        scheduledStart.add(GregorianCalendar.MONTH, rrule.getInterval());
 		                        scheduledEnd.add(GregorianCalendar.MONTH, rrule.getInterval());                                                                        
-		                    }
-		                    else if("YEARLY".equals(rrule.getFreq())) {
+		                    } else if("YEARLY".equals(rrule.getFreq())) {
 		                        scheduledStart.add(GregorianCalendar.YEAR, rrule.getInterval());
 		                        scheduledEnd.add(GregorianCalendar.YEAR, rrule.getInterval());                                                                                                            
 		                    }
@@ -438,14 +466,12 @@ public class FreeBusyServlet extends HttpServlet {
             }
             p.write("END:VCALENDAR\n");
             p.flush();
-        }
-        else {
+        } else {
             super.doGet(req, resp);                
         }
         try {
             pm.close();            
-        } 
-        catch(Exception e) {}
+        } catch(Exception ignore) {}
     }
     
     //-----------------------------------------------------------------------

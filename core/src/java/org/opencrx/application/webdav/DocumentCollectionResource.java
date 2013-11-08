@@ -54,6 +54,7 @@ package org.opencrx.application.webdav;
 
 import java.util.AbstractCollection;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -64,19 +65,25 @@ import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.kernel.document1.cci2.DocumentBasedFolderEntryQuery;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
+import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentBasedFolderEntry;
+import org.opencrx.kernel.document1.jmi1.DocumentFilterGlobal;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.openmdx.base.collection.MarshallingCollection;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.marshalling.Marshaller;
 
 public abstract class DocumentCollectionResource extends WebDavResource {
 	
-	//-----------------------------------------------------------------------
-	static class DocumentResourceCollection<T> extends MarshallingCollection<T> {
+	/**
+	 * DocumentResourceCollectionBasedOnFolderEntry
+	 *
+	 */
+	static class DocumentResourceCollectionBasedOnFolderEntries extends MarshallingCollection<Resource> {
 		
-		public DocumentResourceCollection(
+		public DocumentResourceCollectionBasedOnFolderEntries(
 			final RequestContext requestContext,
 			Collection<DocumentBasedFolderEntry> entries,
 			final DocumentCollectionResource parentCollection
@@ -119,11 +126,64 @@ public abstract class DocumentCollectionResource extends WebDavResource {
         private static final long serialVersionUID = 6257982279508324945L;
 
 	}
-	
-	//-----------------------------------------------------------------------
-	static class DocumentFolderCollection<T> extends MarshallingCollection<T> {
 
-		public DocumentFolderCollection(
+	/**
+	 * DocumentResourceCollectionBasedOnDocument
+	 *
+	 */
+	static class DocumentResourceCollectionBasedOnDocuments extends MarshallingCollection<Resource> {
+		
+		public DocumentResourceCollectionBasedOnDocuments(
+			final RequestContext requestContext,
+			Collection<Document> entries,
+			final DocumentCollectionResource parentCollection
+		) {
+			super(
+				new Marshaller(){
+
+					@Override
+                    public Object marshal(
+                    	Object source
+                    ) throws ServiceException {
+						if(source instanceof Document) {
+							return new DocumentResource(
+								requestContext,
+								(Document)source,
+								parentCollection
+							);
+						} else {
+							return source;
+						}
+                    }
+
+					@Override
+                    public Object unmarshal(
+                    	Object source
+                    ) throws ServiceException {
+						if(source instanceof WebDavResource) {
+							return ((WebDavResource)source).getObject();
+						}
+						else {
+							return source;
+						}
+                    }
+					
+				},
+				entries
+			);
+		}
+
+        private static final long serialVersionUID = -4267414630873757556L;
+
+	}
+	
+	/**
+	 * DocumentFolderResourceCollection
+	 *
+	 */
+	static class DocumentFolderResourceCollection extends MarshallingCollection<Resource> {
+
+		public DocumentFolderResourceCollection(
 			final RequestContext requestContext,
 			Collection<DocumentFolder> entries
 		) {
@@ -165,7 +225,11 @@ public abstract class DocumentCollectionResource extends WebDavResource {
 
 	}
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * ChainingCollection
+	 *
+	 * @param <T>
+	 */
 	static class ChainingCollection<T> extends AbstractCollection<T> {
 
 		class ChainingIterator implements Iterator<T> {
@@ -229,7 +293,12 @@ public abstract class DocumentCollectionResource extends WebDavResource {
 		protected final Collection<T>[] collections;
 	}
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 * @param requestContext
+	 * @param documentFolder
+	 */
 	public DocumentCollectionResource(
 		RequestContext requestContext,
 		DocumentFolder documentFolder
@@ -240,7 +309,26 @@ public abstract class DocumentCollectionResource extends WebDavResource {
 		);
 	}
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 * @param requestContext
+	 * @param documentFilter
+	 */
+	public DocumentCollectionResource(
+		RequestContext requestContext,
+		DocumentFilterGlobal documentFilter
+	) {
+		super(
+			requestContext,
+			documentFilter
+		);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#getDisplayName()
+	 */
+	@Override
     public String getDisplayName(
     ) {
     	Set<String> features = this.getObject().refDefaultFetchGroup();
@@ -251,28 +339,36 @@ public abstract class DocumentCollectionResource extends WebDavResource {
     	return name;
     }
     		
-	//-----------------------------------------------------------------------
-	@Override
-    public DocumentFolder getObject(
-    ) {
-	    return (DocumentFolder)super.getObject();
-    }
-
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#isCollection()
+	 */
 	@Override
     public boolean isCollection(
     ) {
 		return true;
     }
 	
-	//-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.webdav.WebDavResource#getName()
+     */
     @Override
     public String getName(
     ) {
-    	return this.getObject().getName();
+    	BasicObject documentCollection = this.getObject();
+    	if(documentCollection instanceof DocumentFolder) {
+    		return ((DocumentFolder)documentCollection).getName();
+    	} else if(documentCollection instanceof DocumentFilterGlobal) {
+    		return ((DocumentFilterGlobal)documentCollection).getName();
+    	} else {
+    		return "NA";
+    	}
     }
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Get query for retrieving folder entries.
+	 * 
+	 * @return
+	 */
 	public DocumentBasedFolderEntryQuery getFolderEntryQuery(
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(this.getObject());
@@ -282,37 +378,72 @@ public abstract class DocumentCollectionResource extends WebDavResource {
         return query;
 	}
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Get query for retrieving document folders.
+	 * 
+	 * @return
+	 */
 	public DocumentFolderQuery getFolderQuery(
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(this.getObject());
-	    DocumentFolderQuery folderQuery = (DocumentFolderQuery)pm.newQuery(DocumentFolder.class);
-	    folderQuery.forAllDisabled().isFalse();
-	    return folderQuery;
+	    DocumentFolderQuery query = (DocumentFolderQuery)pm.newQuery(DocumentFolder.class);
+	    query.forAllDisabled().isFalse();
+	    return query;
 	}
-	
-	//-----------------------------------------------------------------------
+
+	/**
+	 * Get query for retrieving documents.
+	 * 
+	 * @return
+	 */
+	public DocumentQuery getDocumentQuery(
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(this.getObject());
+	    DocumentQuery query = (DocumentQuery)pm.newQuery(Document.class);
+	    query.forAllDisabled().isFalse();
+	    query.orderByCreatedAt().ascending();
+	    return query;
+	}
+
+    /* (non-Javadoc)
+     * @see org.opencrx.application.webdav.WebDavResource#getChildren()
+     */
     @Override
     @SuppressWarnings("unchecked")
 	public Collection<Resource> getChildren(
 	) {
-		DocumentBasedFolderEntryQuery folderEntryQuery = this.getFolderEntryQuery();
-        DocumentResourceCollection documentResourceCollection = new DocumentResourceCollection(
-        	this.getRequestContext(),
-        	this.getObject().getFolderEntry(folderEntryQuery),
-        	this
-        );
-        DocumentFolderQuery folderQuery = this.getFolderQuery();
-        DocumentFolderCollection documentFolderCollection = new DocumentFolderCollection(
-        	this.getRequestContext(),
-        	this.getObject().getSubFolder(folderQuery)
-        );
-        return new ChainingCollection(
-        	documentFolderCollection,
-        	documentResourceCollection
-        );
+    	BasicObject documentCollection = this.getObject();
+    	if(documentCollection instanceof DocumentFolder) {
+    		DocumentFolder documentFolder = (DocumentFolder)documentCollection;
+			DocumentBasedFolderEntryQuery folderEntryQuery = this.getFolderEntryQuery();
+			MarshallingCollection<Resource> documentResourceCollection = new DocumentResourceCollectionBasedOnFolderEntries(
+	        	this.getRequestContext(),
+	        	documentFolder.<DocumentBasedFolderEntry>getFolderEntry(folderEntryQuery),
+	        	this
+	        );
+	        DocumentFolderQuery folderQuery = this.getFolderQuery();
+	        MarshallingCollection<Resource> documentFolderCollection = new DocumentFolderResourceCollection(
+	        	this.getRequestContext(),
+	        	documentFolder.getSubFolder(folderQuery)
+	        );
+	        return new ChainingCollection<Resource>(
+	        	documentFolderCollection,
+	        	documentResourceCollection
+	        );
+    	} else if(documentCollection instanceof DocumentFilterGlobal) {
+    		DocumentFilterGlobal documentFilterGlobal = (DocumentFilterGlobal)documentCollection;
+    		DocumentQuery documentQuery = this.getDocumentQuery();
+    		MarshallingCollection<Resource> documentResourceCollection = new DocumentResourceCollectionBasedOnDocuments(
+    			this.getRequestContext(),
+    			documentFilterGlobal.<Document>getFilteredDocument(documentQuery),
+    			this
+    		);
+    		return documentResourceCollection;
+    	} else {
+    		return Collections.emptyList();
+    	}
 	}
-	
+
 	//-----------------------------------------------------------------------
     // Members
 	//-----------------------------------------------------------------------

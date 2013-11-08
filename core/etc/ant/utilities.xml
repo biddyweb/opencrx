@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: utilities.xml,v 1.24 2011/11/06 23:05:28 wfro Exp $
  * = Description: openCRX/Core build.xml
- * = Revision:    $Revision: 1.24 $
- * = Date:        $Date: 2011/11/06 23:05:28 $
- * = Copyright:   (c) 2003-2010 CRIXP AG
+ * = Copyright:   (c) 2003-2013 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -81,7 +78,7 @@
     <echo/>
     <echo message="Usage: code-merge"/>
 	  <echo message="> cd to directory containing code files, e.g. ../WEB-INF/config/code"/>
-	  <echo message="Unix: > ant -f $${OPENCRX_HOME}/core/ebuild.xml code-merge -Darg.sourceDir=$PWD -Darg.targetDir=$PWD -Darg.locale=&quot;de_CH/de_DE&quot;"/>
+	  <echo message="Unix: > ant -f $${OPENCRX_HOME}/core/build.xml code-merge -Darg.sourceDir=$PWD -Darg.targetDir=$PWD -Darg.locale=&quot;de_CH/de_DE&quot;"/>
 	  <echo message="DOS:  > ant -f $${OPENCRX_HOME}/core/build.xml code-merge -Darg.sourceDir=%CD% -Darg.targetDir=%CD% -Darg.locale=&quot;de_CH/de_DE&quot;"/>
     <echo/>
 	  <echo message="Usage: code-split"/>

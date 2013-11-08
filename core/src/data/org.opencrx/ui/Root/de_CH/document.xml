@@ -305,6 +305,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentReference" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Dokumentreferenzen</_item>
+											</toolTip>
+											<label>
+												<_item>Dokumentreferenzen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
 										<_object>
 											<toolTip>
@@ -682,7 +693,6 @@
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment">
 										<_object>
-											<active>true</active>
 											<toolTip>
 												<_item>Ordnerzuweisung</_item>
 											</toolTip>
@@ -715,6 +725,61 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Dokumentreferenz</_item>
+											</toolTip>
+											<label>
+												<_item>Dokumentreferenz</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:name" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:description" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:basedOn" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Basiert auf Dokument</_item>
+											</toolTip>
+											<label>
+												<_item>Basiert auf Dokument</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:object" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Referenziert von</_item>
+											</toolTip>
+											<label>
+												<_item>Referenziert von</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentRevision:name">
 										<_object>

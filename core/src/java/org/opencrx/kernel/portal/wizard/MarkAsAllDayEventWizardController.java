@@ -54,8 +54,8 @@ package org.opencrx.kernel.portal.wizard;
 
 import javax.jdo.PersistenceManager;
 
-import org.opencrx.kernel.activity1.jmi1.MarkAsAllDayEventParams;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.activity1.jmi1.MarkAsAllDayEventParams;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;

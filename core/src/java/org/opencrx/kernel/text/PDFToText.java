@@ -58,6 +58,8 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.pdfbox.pdmodel.PDDocument;
+import org.pdfbox.util.PDFTextStripper;
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
@@ -110,8 +112,6 @@ import java.io.StringWriter;
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-import org.pdfbox.pdmodel.PDDocument;
-import org.pdfbox.util.PDFTextStripper;
 
 public class PDFToText {
 

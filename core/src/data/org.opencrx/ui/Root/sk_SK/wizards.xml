@@ -25,15 +25,70 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nový Kontakt</_item>
+                        <_item>Editovať (rozšírené)</_item>
                       </label>
                       <toolTip>
-                        <_item>Nový Kontakt</_item>
+                        <_item>Editovať (rozšírené)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createLegalEntity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nová legálna entita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nová legálna entita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:createLegalEntity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Editovať (rozšírené)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Editovať (rozšírené)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nová Aktivita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nová Aktivita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nová aktivita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nová Aktivita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:createActivity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nová Aktivita</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nová Aktivita</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivity" _operation="create">
                     <_object>
                       <label>
                         <_item>Nová Aktivita</_item>
@@ -149,7 +204,7 @@
                         <_item>Nový Produkt</_item>
                       </label>
                       <toolTip>
-                        <_item>ový Produkt</_item>
+                        <_item>Nový Produkt</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -161,6 +216,61 @@
                       </label>
                       <toolTip>
                         <_item>Importovať Účty z Excel súboru</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:importAccountsFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Import členstiev z Excelovského dokumentu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Import členstiev z Excelovského dokumentu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Import Vlastností / Import nastavení z Excelovského dokumentu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Import Vlastností / Import nastavení z Excelovského dokumentu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Import vlastností z Excelovského dokumentu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Import vlastností z Excelovského dokumentu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Import konfigurácie produktu / Vlastnosti z Excelovského dokumentu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Import konfigurácie produktu / Vlastnosti z Excelovského dokumentu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:Pane:Op:Tab:importPropertiesFromXLS" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Import typov konfigurácií produktov / Vlastnosti z Excelovského dokumentu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Import typov konfigurácií produktov / Vlastnosti z Excelovského dokumentu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -215,7 +325,7 @@
                         <_item>Uložiť vyfiltrované Účty ako vCard</_item>
                       </label>
                       <toolTip>
-                        <_item>&gt;Uložiť vyfiltrované Účty ako vCard</_item>
+                        <_item>Uložiť vyfiltrované Účty ako vCard</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -315,6 +425,28 @@
                       </label>
                       <toolTip>
                         <_item>Uživateľské nastavenia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Použiť</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Použiť</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vypnúť</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vypnúť</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -440,6 +572,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivityFollowUp" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Sledovať</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Sledovať</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEventWizard" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Označiť ako celodennú udalosť</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Označiť ako celodennú udalosť</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia" _operation="create">
                     <_object>
                       <label>
@@ -458,6 +612,39 @@
                       </label>
                       <toolTip>
                         <_item>Pridať súbor dát</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:uploadMedia" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridať súbor dát</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridať súbor dát</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setTimer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nastaviť časovač</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nastaviť časovač</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePasswordManaged" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zmena hesla (Správa)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zmena hesla (Správa)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

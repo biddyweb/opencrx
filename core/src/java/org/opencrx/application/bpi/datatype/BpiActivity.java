@@ -157,6 +157,18 @@ public class BpiActivity extends BpiObject {
 	public void setAssignedTo(BpiContact assignedTo) {
 		this.assignedTo = assignedTo;
 	}
+	/**
+	 * @return the processState
+	 */
+	public String getProcessState() {
+		return processState;
+	}
+	/**
+	 * @param processState the processState to set
+	 */
+	public void setProcessState(String processState) {
+		this.processState = processState;
+	}
 	
 	private String activityNumber;
 	private String name;
@@ -165,6 +177,7 @@ public class BpiActivity extends BpiObject {
 	private Date scheduledStart;
 	private Date scheduledEnd;
 	private Short activityState;
+	private String processState;
 	private String location;
 	private BpiContact reportingContact;
 	private BpiContact assignedTo; 

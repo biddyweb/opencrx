@@ -56,13 +56,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
-import java.util.TreeSet;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -70,6 +70,7 @@ import javax.jdo.PersistenceManagerFactory;
 
 import org.opencrx.kernel.account1.cci2.AccountAddressQuery;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.cci2.MemberQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
@@ -85,7 +86,6 @@ import org.opencrx.kernel.activity1.cci2.EMailQuery;
 import org.opencrx.kernel.activity1.cci2.EMailRecipientQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
-import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.activity1.jmi1.AddressGroup;
 import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
 import org.opencrx.kernel.activity1.jmi1.EMail;
@@ -105,9 +105,11 @@ import org.opencrx.kernel.generic.jmi1.LocalizedFieldContainer;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.WorkflowHelper;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Codes;
@@ -133,6 +135,28 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 	}
 
 	/**
+	 * Queue returning object identities based on given object collection thread-safe.
+	 *
+	 */
+	public static class CollectionBasedQueue {
+		
+		public CollectionBasedQueue(
+			List<?> objects
+		) {
+			this.objectsIterator = objects.iterator();
+		}
+		
+		public synchronized Path take(
+		) {
+			return this.objectsIterator.hasNext()
+				? ((RefObject_1_0)this.objectsIterator.next()).refGetPath()
+				: null;
+		}
+
+		private final Iterator<?> objectsIterator;
+	}
+
+	/**
 	 * ActivityCreatorThread
 	 *
 	 */
@@ -141,10 +165,14 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		/**
 		 * Constructor.
 		 * 
+		 * @param pmf
 		 * @param wfProcessInstanceIdentity
 		 * @param activityCreatorIdentity
-		 * @param accountAndAddressXris
-		 * @param selectedAccountsOnly
+		 * @param selectedObjects
+		 * @param additionalAccounts
+		 * @param additionalAddresses
+		 * @param threadIndex
+		 * @param limit
 		 * @param excludeNoBulkEMail
 		 * @param name
 		 * @param description
@@ -160,15 +188,17 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		 * @param defaultPlaceHolders
 		 * @param locale
 		 * @param codes
+		 * @throws ServiceException
 		 */
 		public ActivityCreatorThread(
 			PersistenceManagerFactory pmf,
 			Path wfProcessInstanceIdentity,
 			Path activityCreatorIdentity,
-			List<Path> accountAndAddressXris,
-			int beginIndex,
-			int endIndex,			
-			boolean selectedAccountsOnly,
+			CollectionBasedQueue selectedObjects,
+			List<Path> additionalAccounts,
+			List<Path> additionalAddresses,
+			int threadIndex,
+			int limit,
 			Boolean excludeNoBulkEMail,
 			String name,
 			String description,
@@ -182,26 +212,24 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 			String emailMessageSubject,
 			String emailMessageBody,
 			Properties defaultPlaceHolders,
-			short locale,
-			Codes codes
+			short locale
 		) throws ServiceException {
     	    PersistenceManager pm = pmf.getPersistenceManager(
     	    	wfProcessInstanceIdentity.get(6),
     	    	null
     	    );
     	    UserObjects.setBulkLoad(pm, true);
-			this.activitySegment = Activities.getInstance().getActivitySegment(
-				pm,
-				wfProcessInstanceIdentity.get(2), 
-				wfProcessInstanceIdentity.get(4)
-			);
+    	    String providerName = wfProcessInstanceIdentity.get(2);
+    	    String segmentName = wfProcessInstanceIdentity.get(4);
+			this.activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
 			this.wfProcessInstanceIdentity = wfProcessInstanceIdentity;
 			this.activityCreator = (ActivityCreator)pm.getObjectById(activityCreatorIdentity);
-			this.selectedAccountsOnly = selectedAccountsOnly;
 			this.excludeNoBulkEMail = excludeNoBulkEMail;
-			this.accountAndAddressXris = accountAndAddressXris;
-			this.beginIndex = beginIndex;
-			this.endIndex = endIndex;
+			this.selectedObjects = selectedObjects;
+			this.additionalAccounts = additionalAccounts;
+			this.additionalAddresses = additionalAddresses;
+			this.threadIndex = threadIndex;
+			this.limit = limit;
 			this.name = name;
 			this.description = description;
 			this.detailedDescription = detailedDescription;
@@ -215,7 +243,11 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 			this.emailMessageBody = emailMessageBody;
 			this.defaultPlaceHolders = defaultPlaceHolders;
 			this.locale = locale;
-			this.codes = codes;
+			this.codes = new Codes(
+    			(RefObject_1_0)pm.getObjectById(
+    				new Path("xri://@openmdx*org.opencrx.kernel.code1").getDescendant("provider", providerName, "segment", "Root")
+    			)
+    		);
 		}
 
 		/**
@@ -253,230 +285,305 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 			emailRecipient.setPartyStatus(Activities.PartyStatus.ACCEPTED.getValue());		
 		}
 		
+		/**
+		 * Find account's e-mail address.
+		 * 
+		 * @param account
+		 * @param usages
+		 * @param excludeNoBulkEMail
+		 * @return
+		 * @throws ServiceException
+		 */
+		protected EMailAddress findEMailAddress(
+			Account account,
+			List<Short> usages,
+			Boolean excludeNoBulkEMail
+		) throws ServiceException {
+			PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+			EMailAddress emailAddress = null;
+			if(usages != null && !usages.isEmpty()) {
+				for(short usage: usages) {
+					List<AccountAddress> addresses = Accounts.getInstance().getAccountAddresses(
+						account, 
+						usage
+					);
+					for(AccountAddress address: addresses) {
+						if(address instanceof EMailAddress) {
+							emailAddress = emailAddress == null
+								? (EMailAddress)address
+								: Boolean.TRUE.equals(address.isMain()) ? (EMailAddress)address : emailAddress;
+						}
+					}
+					if(emailAddress != null) {
+						break;
+					}
+				}
+			} else {
+				EMailAddressQuery emailAddressQuery = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+				emailAddressQuery.forAllDisabled().isFalse();
+				emailAddressQuery.orderByCreatedAt().ascending();
+				List<EMailAddress> addresses = account.getAddress(emailAddressQuery);
+				for(EMailAddress address: addresses) {
+					emailAddress = emailAddress == null
+						? address
+						: Boolean.TRUE.equals(address.isMain()) ? address : emailAddress;
+				}
+			}
+			boolean sendingEmailToContactAllowed = true;
+			if(account instanceof Contact && Boolean.TRUE.equals(((Contact)account).isDoNotEMail())) {
+				sendingEmailToContactAllowed = false;
+			}
+			return (emailAddress != null) && (!Boolean.TRUE.equals(excludeNoBulkEMail) || sendingEmailToContactAllowed)
+				? emailAddress
+				: null;
+		}
+
+		/**
+		 * Create or update activity for given object.
+		 * 
+		 * @param selectedObject
+		 * @throws ServiceException
+		 */
+		protected void createOrUpdateActivity(
+			Object selectedObject
+		) throws ServiceException {
+			PersistenceManager pm = JDOHelper.getPersistenceManager(selectedObject);
+			AccountAddress address = null;
+			Account account = null;
+			if(selectedObject instanceof Account) {
+				account = (Account)selectedObject;
+			} else if(selectedObject instanceof AccountAddress) {
+				address = (AccountAddress)selectedObject;
+				account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
+			} else if(selectedObject instanceof Member) {
+				Member member = (Member)selectedObject;
+				if (member.getAccount() != null && !Boolean.TRUE.equals(member.getAccount().isDisabled())) {
+					account = member.getAccount();
+				}
+			} else if(selectedObject instanceof AddressGroupMember) {
+				AddressGroupMember addressGroupMember = (AddressGroupMember)selectedObject; 
+				if(addressGroupMember.getAddress() != null && !Boolean.TRUE.equals(addressGroupMember.getAddress().isDisabled())) {
+					address = addressGroupMember.getAddress();
+					account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
+				}   						    						
+			}
+			List<Activity> activities = null;
+			if(account != null) {
+				// E-mail activities
+				if(
+					this.activityCreator.getActivityType() != null &&
+					this.activityCreator.getActivityType().getActivityClass() == Activities.ActivityClass.EMAIL.getValue()
+				) {    					
+					if(!(address instanceof EMailAddress)) {
+						address = this.findEMailAddress(
+							account,
+							this.emailAddressUsages,
+							this.excludeNoBulkEMail
+						);
+					}
+					if(
+						account != null &&
+						address instanceof EMailAddress
+					) {
+						EMailQuery emailQuery = (EMailQuery)pm.newQuery(EMail.class);					
+						// Match recipient e-mail address
+						EMailRecipientQuery emailRecipientQuery = (EMailRecipientQuery)pm.newQuery(EMailRecipient.class);
+						emailRecipientQuery.thereExistsParty().equalTo(address);
+						emailRecipientQuery.partyType().notEqualTo(Activities.PartyType.EMAIL_FROM.getValue());
+						emailQuery.thereExistsEmailRecipient().elementOf(
+							org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(emailRecipientQuery)
+						);
+						if(account instanceof Contact) {
+							emailQuery.thereExistsReportingContact().equalTo(account);
+						} else if(account instanceof Account) {
+							emailQuery.thereExistsReportingAccount().equalTo(account);
+						}
+						// Match ActivityCreator
+						emailQuery.thereExistsLastAppliedCreator().equalTo(this.activityCreator);
+						emailQuery.orderByCreatedAt().descending();
+						activities = this.activitySegment.getActivity(emailQuery);    							
+					} else {
+						this.numberOfAccountsWithoutEmailAddress++;
+					}
+				} else {
+					ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+					// match Account with reportingContact/reportingAccount
+					if(account instanceof Contact) {
+						activityQuery.thereExistsReportingContact().equalTo(account);						
+					} else if(account instanceof Account) {
+						activityQuery.thereExistsReportingAccount().equalTo(account);
+					}
+					// match ActivityCreator
+					activityQuery.thereExistsLastAppliedCreator().equalTo(this.activityCreator);
+					activityQuery.orderByCreatedAt().descending();
+					activities = this.activitySegment.getActivity(activityQuery);						    						
+				}
+			}
+			if(activities != null) {
+				Activity activity = null;
+				boolean doUpdateAddress = false;
+				// Create if activity does not exist
+				if(activities.isEmpty()) {
+					String activityName = this.name + " / " + account.getFullName() + (account.getAliasName() == null ? "" : " / " + account.getAliasName());						
+					NewActivityParams newActivityParams = Structures.create(
+						NewActivityParams.class,
+						Datatypes.member(NewActivityParams.Member.description, this.description),
+						Datatypes.member(NewActivityParams.Member.detailedDescription, this.detailedDescription),
+						Datatypes.member(NewActivityParams.Member.dueBy, this.dueBy),
+						Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
+						Datatypes.member(NewActivityParams.Member.name, activityName),
+						Datatypes.member(NewActivityParams.Member.priority, this.priority),
+						Datatypes.member(NewActivityParams.Member.scheduledEnd, this.scheduledEnd),
+						Datatypes.member(NewActivityParams.Member.scheduledStart, this.scheduledStart)
+					);
+					try {
+						pm.currentTransaction().begin();
+						org.opencrx.kernel.activity1.jmi1.NewActivityResult result = this.activityCreator.newActivity(newActivityParams);							
+						pm.currentTransaction().commit();
+						activity = result.getActivity();
+						this.numberOfActivitiesCreated++;
+					} catch(Exception e) {
+					    this.numberFailed++;
+					    new ServiceException(e).log();
+						try {
+							pm.currentTransaction().rollback();
+						} catch(Exception ignore) {}
+					}
+					doUpdateAddress = true;
+				} else {
+					activity = activities.iterator().next();
+					if(
+						activity.getCreationContext() == null || 
+						!this.wfProcessInstanceIdentity.equals(activity.getCreationContext().refGetPath())
+					) {
+						doUpdateAddress = true;
+						this.numberOfActivitiesUpdated++;
+					} else {
+						this.numberOfActivitiesSkipped++;
+					}
+				}
+				if(doUpdateAddress) {
+					try {
+						String replacedDescription = null;
+						try {
+							replacedDescription = BulkCreateActivityWorkflow.this.replacePlaceHolders(
+								account, 
+								this.locale, 
+								this.description, 
+								this.defaultPlaceHolders, 
+								this.codes
+							);
+						} catch (Exception ignore) {}
+						String replacedDetailedDescription = null;
+						try {
+							replacedDetailedDescription = BulkCreateActivityWorkflow.this.replacePlaceHolders(
+								account, 
+								this.locale, 
+								this.detailedDescription, 
+								this.defaultPlaceHolders, 
+								this.codes
+							);
+						} catch (Exception ignore) {}
+						String replacedMessageSubject = null;
+						try {
+							replacedMessageSubject = BulkCreateActivityWorkflow.this.replacePlaceHolders(
+								account, 
+								this.locale, 
+								this.emailMessageSubject, 
+								this.defaultPlaceHolders, 
+								this.codes
+							);
+						} catch (Exception ignore) {}
+						String replacedMessageBody = null;
+						try {
+							replacedMessageBody = BulkCreateActivityWorkflow.this.replacePlaceHolders(
+								account, 
+								this.locale, 
+								this.emailMessageBody, 
+								this.defaultPlaceHolders, 
+								this.codes
+							);
+						} catch (Exception ignore) {}
+						pm.currentTransaction().begin();
+						activity.setDescription(replacedDescription);
+						activity.setDetailedDescription(replacedDetailedDescription);
+						activity.setCreationContext((WfProcessInstance)pm.getObjectById(this.wfProcessInstanceIdentity));
+						if(account instanceof Contact) {
+							activity.setReportingContact((Contact)account);
+						} else {
+							activity.setReportingContact(null);
+							activity.setReportingAccount(account);
+						}
+						if(activity instanceof EMail) {
+							EMail email = (EMail)activity;
+							email.setMessageSubject(replacedMessageSubject);
+							email.setMessageBody(replacedMessageBody);
+							// Sender / Recipient EMAIL_FROM
+							email.setSender(this.emailSender);
+							if(this.emailSender instanceof EMailAddress) {
+								this.updateEMailRecipient(
+									email,
+									(EMailAddress)this.emailSender,
+									Activities.PartyType.EMAIL_FROM
+								);
+							}
+							if(address instanceof EMailAddress) {
+								this.updateEMailRecipient(
+									email,
+									(EMailAddress)address,
+									Activities.PartyType.EMAIL_TO
+								);
+							}
+						}
+						pm.currentTransaction().commit();
+		   			} catch(Exception e) {
+		   				try {
+		   					pm.currentTransaction().rollback();
+		   				} catch(Exception e0) {}
+		   			}
+				}
+			}			
+		}
+		
 		/* (non-Javadoc)
 		 * @see java.lang.Thread#run()
 		 */
         @Override
         public void run(
         ) {
-        	PersistenceManager pm = JDOHelper.getPersistenceManager(this.activitySegment);
+        	PersistenceManager pm = JDOHelper.getPersistenceManager(this.activitySegment);        	
         	try {
-	        	for(int i = this.beginIndex; i < this.endIndex && i < this.accountAndAddressXris.size(); i++) {
-	        		Path id = this.accountAndAddressXris.get(i);
-					AccountAddress address = null;
-					Account account = null;
-					if(this.selectedAccountsOnly) {
-						try {
-							account = (Account)pm.getObjectById(id);
-						} catch (Exception e) {
-							new ServiceException(e).log();
-						}
-					} else {
-						try {
-							address = (AccountAddress)pm.getObjectById(id);
-							account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
-						} catch (Exception e) {
-							new ServiceException(e).log();
-						}
-					}
-					ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
-					EMailQuery emailQuery = (EMailQuery)pm.newQuery(EMail.class);					
-					List<Activity> activities = null;
-					// match recipient address
-					if(
-						account != null &&
-						address instanceof EMailAddress &&
-						this.activityCreator.getActivityType() != null &&
-						this.activityCreator.getActivityType().getActivityClass() == Activities.ActivityClass.EMAIL.getValue()
-					) {
-						// match recipient e-mail address
-						EMailRecipientQuery emailRecipientQuery = 
-							(EMailRecipientQuery)pm.newQuery(EMailRecipient.class);
-						emailRecipientQuery.thereExistsParty().equalTo(address);
-						emailQuery.thereExistsEmailRecipient().elementOf(
-							org.openmdx.base.persistence.cci.PersistenceHelper.asSubquery(emailRecipientQuery)
-						);
-						if(account instanceof Contact) {
-							emailQuery.thereExistsReportingContact().equalTo(account);						
-						} else if(account instanceof Account) {
-							emailQuery.thereExistsReportingAccount().equalTo(account);
-						}
-						// match ActivityCreator
-						emailQuery.thereExistsLastAppliedCreator().equalTo(this.activityCreator);
-						emailQuery.orderByCreatedAt().descending();
-						activities = this.activitySegment.getActivity(emailQuery);
-					} else {
-						// match Account with reportingContact/reportingAccount
-						if(account instanceof Contact) {
-							activityQuery.thereExistsReportingContact().equalTo(account);						
-						} else if(account instanceof Account) {
-							activityQuery.thereExistsReportingAccount().equalTo(account);
-						}
-						// match ActivityCreator
-						activityQuery.thereExistsLastAppliedCreator().equalTo(this.activityCreator);
-						activityQuery.orderByCreatedAt().descending();
-						activities = this.activitySegment.getActivity(activityQuery);						
-					}
-					Activity activity = null;
-					boolean doUpdateAddress = false;
-					// Create if activity does not exist
-					if(activities.isEmpty()) {
-						String activityName = this.name + " / " + account.getFullName() + (account.getAliasName() == null ? "" : " / " + account.getAliasName());						
-						NewActivityParams newActivityParams = Structures.create(
-							NewActivityParams.class,
-							Datatypes.member(NewActivityParams.Member.description, this.description),
-							Datatypes.member(NewActivityParams.Member.detailedDescription, this.detailedDescription),
-							Datatypes.member(NewActivityParams.Member.dueBy, this.dueBy),
-							Datatypes.member(NewActivityParams.Member.icalType, ICalendar.ICAL_TYPE_NA),
-							Datatypes.member(NewActivityParams.Member.name, activityName),
-							Datatypes.member(NewActivityParams.Member.priority, this.priority),
-							Datatypes.member(NewActivityParams.Member.scheduledEnd, this.scheduledEnd),
-							Datatypes.member(NewActivityParams.Member.scheduledStart, this.scheduledStart)
-						);
-						try {
-							pm.currentTransaction().begin();
-							org.opencrx.kernel.activity1.jmi1.NewActivityResult result = this.activityCreator.newActivity(newActivityParams);							
-							pm.currentTransaction().commit();
-							activity = result.getActivity();
-							this.numberOfActivitiesCreated++;
-						} catch(Exception e) {
-							try {
-								pm.currentTransaction().rollback();
-							} catch(Exception e0) {}
-						}
-						doUpdateAddress = true;
-					} else {
-						activity = activities.iterator().next();
-						if(
-							activity.getCreationContext() == null || 
-							!this.wfProcessInstanceIdentity.equals(activity.getCreationContext().refGetPath())
-						) {
-							doUpdateAddress = true;
-							this.numberOfActivitiesUpdated++;
-						} else {
-							this.numberOfActivitiesSkipped++;
-						}
-					}
-					if(doUpdateAddress) {
-						try {
-							String replacedDescription = null;
-							try {
-								replacedDescription = BulkCreateActivityWorkflow.this.replacePlaceHolders(
-									account, 
-									this.locale, 
-									this.description, 
-									this.defaultPlaceHolders, 
-									this.codes
-								);
-							} catch (Exception ignore) {}
-							String replacedDetailedDescription = null;
-							try {
-								replacedDetailedDescription = BulkCreateActivityWorkflow.this.replacePlaceHolders(
-									account, 
-									this.locale, 
-									this.detailedDescription, 
-									this.defaultPlaceHolders, 
-									this.codes
-								);
-							} catch (Exception ignore) {}
-							String replacedMessageSubject = null;
-							try {
-								replacedMessageSubject = BulkCreateActivityWorkflow.this.replacePlaceHolders(
-									account, 
-									this.locale, 
-									this.emailMessageSubject, 
-									this.defaultPlaceHolders, 
-									this.codes
-								);
-							} catch (Exception ignore) {}
-							String replacedMessageBody = null;
-							try {
-								replacedMessageBody = BulkCreateActivityWorkflow.this.replacePlaceHolders(
-									account, 
-									this.locale, 
-									this.emailMessageBody, 
-									this.defaultPlaceHolders, 
-									this.codes
-								);
-							} catch (Exception ignore) {}
-							pm.currentTransaction().begin();
-							activity.setDescription(replacedDescription);
-							activity.setDetailedDescription(replacedDetailedDescription);
-							activity.setCreationContext((WfProcessInstance)pm.getObjectById(this.wfProcessInstanceIdentity));
-							boolean sendingEmailToContactAllowed = true;
-							if(account instanceof Contact) {
-								if(Boolean.TRUE.equals(((Contact)account).isDoNotEMail())) {
-									sendingEmailToContactAllowed = false;
-								}
-								activity.setReportingContact((Contact)account);
-							} else {
-								activity.setReportingContact(null);
-								activity.setReportingAccount(account);
-							}
-							if(activity instanceof EMail) {
-								EMail email = (EMail)activity;
-								email.setMessageSubject(replacedMessageSubject);
-								email.setMessageBody(replacedMessageBody);
-								// Sender / Recipient EMAIL_FROM
-								email.setSender(this.emailSender);
-								if(this.emailSender instanceof EMailAddress) {
-									this.updateEMailRecipient(
-										email,
-										(EMailAddress)this.emailSender,
-										Activities.PartyType.EMAIL_FROM
-									);
-								}
-								// Recipient EMAIL_TO
-								AccountAddress recipientAddress = null;
-								if (address != null) {
-									recipientAddress = address;
-								} else {
-									for(short usage: this.emailAddressUsages) {
-										List<AccountAddress> addresses = Accounts.getInstance().getAccountAddresses(
-											account, 
-											usage
-										);
-										for(AccountAddress adr: addresses) {
-											if(adr instanceof EMailAddress) {
-												recipientAddress = recipientAddress == null
-													? adr
-													: Boolean.TRUE.equals(adr.isMain()) ? adr : recipientAddress;
-											}
-										}
-										if(recipientAddress != null) {
-											break;
-										}
-									}
-								}
-								if(
-									recipientAddress instanceof EMailAddress &&
-									(!Boolean.TRUE.equals(this.excludeNoBulkEMail) || sendingEmailToContactAllowed)
-								) {
-									this.updateEMailRecipient(
-										email,
-										(EMailAddress)recipientAddress,
-										Activities.PartyType.EMAIL_TO
-									);
-								} else {
-									// delete email as there is no recipient
-									email.refDelete();
-									this.counter--;
-									if(activities.isEmpty()) {
-										this.numberOfActivitiesCreated--;
-									} else {
-										this.numberOfActivitiesUpdated--;
-									}
-									this.numberOfAccountsWithoutEmailAddress++;
-								}
-							}
-							pm.currentTransaction().commit();
-			   			} catch(Exception e) {
-			   				try {
-			   					pm.currentTransaction().rollback();
-			   				} catch(Exception e0) {}
-			   			}
-					}
-	        	}
+        		// Handle explicitly listed accounts and addresses
+        		if(this.threadIndex == 0) {
+        			if(this.additionalAccounts != null) {
+	        			for(Path additionalAccountIdentity: this.additionalAccounts) {
+	        				this.createOrUpdateActivity(
+	        					pm.getObjectById(additionalAccountIdentity)
+	        				);
+	        			}
+        			}
+        			if(this.additionalAddresses != null) {
+	        			for(Path additionalAddressIdentity: this.additionalAddresses) {
+	        				this.createOrUpdateActivity(
+	        					pm.getObjectById(additionalAddressIdentity)
+	        				);
+	        			}
+        			}
+        		}
+        		// Handle objects specified by selector
+    			if(this.numberOfActivitiesCreated + this.numberOfActivitiesSkipped + this.numberOfActivitiesUpdated < this.limit) {
+	        		Path selectedObjectIdentity = null;
+	        		while((selectedObjectIdentity = this.selectedObjects.take()) != null) {
+	        			try {
+	        				this.createOrUpdateActivity(pm.getObjectById(selectedObjectIdentity));
+	        			} catch(Exception e) {
+	        				new ServiceException(e).log();
+	        			}
+	        			if(this.numberOfActivitiesCreated + this.numberOfActivitiesSkipped + this.numberOfActivitiesUpdated >= this.limit) {
+	        				break;
+	        			}
+		        	}
+    			}
         	} catch(Exception e) {
         		new ServiceException(e).log();
         	} finally {
@@ -520,7 +627,14 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		public int getNumberOfActivitiesSkipped() {
 			return numberOfActivitiesSkipped;
 		}
-        
+
+		/**
+         * @return the numberFailed
+         */
+        public int getNumberFailed() {
+            return numberFailed;
+        }
+
         //-------------------------------------------------------------------
         // Members
         //-------------------------------------------------------------------        
@@ -529,14 +643,16 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
         private int numberOfActivitiesUpdated = 0;
         private int numberOfAccountsWithoutEmailAddress = 0;
         private int numberOfActivitiesSkipped = 0;
+        private int numberFailed = 0;
 
-        private final org.opencrx.kernel.activity1.jmi1.Segment activitySegment;
+		private final org.opencrx.kernel.activity1.jmi1.Segment activitySegment;
         private final Path wfProcessInstanceIdentity;
         private final ActivityCreator activityCreator;
-        private final List<Path> accountAndAddressXris;
-        private final int beginIndex;
-        private final int endIndex;
-        private final boolean selectedAccountsOnly;
+        private final CollectionBasedQueue selectedObjects;
+        private final List<Path> additionalAccounts;
+        private final List<Path> additionalAddresses;
+        private final int threadIndex;
+        private final int limit;
         private final Boolean excludeNoBulkEMail;
         private final String name;
         private final String description;
@@ -555,6 +671,56 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 	}
 
 	/**
+	 * Get objects selected by selector.
+	 * 
+	 * @return
+	 */
+	protected List<?> getSelectedObjects(
+		RefObject_1_0 selector
+	) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(selector);
+		if(selector instanceof AccountFilterGlobal) {
+			AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
+			accountQuery.forAllDisabled().isFalse();
+	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(accountQuery);
+	    	queryExtension.setClause(
+	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+	    	);
+	    	List<Account> resultSet = ((AccountFilterGlobal)selector).getFilteredAccount(accountQuery);
+			return resultSet;
+		} else if(selector instanceof Group) {
+			MemberQuery memberQuery = (MemberQuery)pm.newQuery(Member.class);
+			memberQuery.forAllDisabled().isFalse();
+	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(memberQuery);
+	    	queryExtension.setClause(
+	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+	    	);
+	    	List<Member> resultSet = ((Group)selector).getMember(memberQuery);
+			return resultSet;
+		} else if(selector instanceof AddressFilterGlobal) {
+			AccountAddressQuery accountAddressQuery = (AccountAddressQuery)pm.newQuery(AccountAddress.class);
+			accountAddressQuery.forAllDisabled().isFalse();
+	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(accountAddressQuery);
+	    	queryExtension.setClause(
+	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+	    	);
+	    	List<AccountAddress> resultSet = ((AddressFilterGlobal)selector).getFilteredAddress(accountAddressQuery);
+			return resultSet; 
+		} else if(selector instanceof AddressGroup) {
+			AddressGroupMemberQuery addressGroupMemberQuery = (AddressGroupMemberQuery)pm.newQuery(AddressGroupMember.class);
+			addressGroupMemberQuery.forAllDisabled().isFalse();
+	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(addressGroupMemberQuery);
+	    	queryExtension.setClause(
+	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+	    	);
+	    	List<AddressGroupMember> resultSet = ((AddressGroup)selector).getMember(addressGroupMemberQuery);	    	
+			return resultSet;
+		} else {
+			return Collections.emptyList();
+		}
+	}
+
+	/**
 	 * Get workflow-specific script.
 	 * 
 	 * @param context
@@ -569,7 +735,6 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 			System.currentTimeMillis()	> this.lastRefreshAt + REFRESH_PERIOD_MILLIS
 		) {
 			try {
-				this.lastRefreshAt = System.currentTimeMillis();
 				PersistenceManager pm = JDOHelper.getPersistenceManager(context);
 				String providerName = context.refGetPath().get(2);
 				String segmentName = context.refGetPath().get(4);		
@@ -590,7 +755,6 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 					this.scriptLastModifiedAt == null || 
 					script.getModifiedAt().compareTo(this.scriptLastModifiedAt) > 0
 				) {
-					this.scriptLastModifiedAt = script.getModifiedAt();
 					ByteArrayOutputStream content = new ByteArrayOutputStream();
 					BinaryLargeObjects.streamCopy(
 						script.getContent().getContent(), 
@@ -600,6 +764,8 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 					this.script = ScriptUtils.getClass(
 						content.toString("UTF-8")
 					);
+					this.lastRefreshAt = System.currentTimeMillis();
+					this.scriptLastModifiedAt = script.getModifiedAt();
 				}
 			} catch(Exception e) {
 				throw new ServiceException(e);
@@ -792,6 +958,7 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 	 * @param numberOfAccountsWithoutEmailAddress
 	 * @param numberOfActivitiesCreated
 	 * @param numberOfActivitiesUpdated
+	 * @param numberFailed
 	 * @throws ServiceException
 	 */
 	protected void createLogEntry(
@@ -801,7 +968,8 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		int numberOfAccountsWithoutEmailAddress,
 		int numberOfActivitiesCreated,
 		int numberOfActivitiesUpdated,
-		int numberOfActivitiesSkipped
+		int numberOfActivitiesSkipped,
+		int numberFailed
 	) throws ServiceException {
 	    Map<String,Object> report = new HashMap<String,Object>();
 	    report.put(
@@ -824,9 +992,13 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 	    	"Skipped",
 	    	Integer.toString(numberOfActivitiesSkipped)
 	    );
+        report.put(
+            "Failed",
+            Integer.toString(numberFailed)
+        );
 	    report.put(
 	    	"Pending",
-	    	Integer.toString(numberOfActivities - numberOfAccountsWithoutEmailAddress - numberOfActivitiesCreated - numberOfActivitiesUpdated - numberOfActivitiesSkipped)
+	    	Integer.toString(numberOfActivities - numberOfAccountsWithoutEmailAddress - numberOfActivitiesCreated - numberOfActivitiesUpdated - numberOfActivitiesSkipped - numberFailed)
 	    );
         WorkflowHelper.createLogEntry(
             wfProcessInstance,
@@ -840,18 +1012,30 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 	 * 
 	 * @param name
 	 * @param wfProcessInstance
+	 * @param queryExecutionTime
+	 * @param queryExecutionTimeLimit
 	 * @param numberOfActivities
 	 * @throws ServiceException
 	 */
 	protected void createLogEntry(
 		String name,
 		WfProcessInstance wfProcessInstance,
+		long queryExecutionTime,
+		long queryExecutionTimeLimit,
 		int numberOfActivities
 	) throws ServiceException {
 	    Map<String,Object> report = new HashMap<String,Object>();
 	    report.put(
 	    	"Total",
 	    	Integer.toString(numberOfActivities)
+	    );
+	    report.put(
+	    	"Query execution time (ms)",
+	    	Long.toString(queryExecutionTime)
+	    );
+	    report.put(
+	    	"Query execution time limit (ms)",
+	    	Long.toString(queryExecutionTimeLimit)
 	    );
         WorkflowHelper.createLogEntry(
             wfProcessInstance,
@@ -878,12 +1062,6 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
             Map<String,Object> params = WorkflowHelper.getWorkflowParameters(
             	(WfProcessInstance)pmUser.getObjectById(wfProcessInstance.refGetPath())
             );
-            String providerName = wfProcessInstance.refGetPath().get(2);
-    		Codes codes = new Codes(
-    			(RefObject_1_0)pmUser.getObjectById(
-    				new Path("xri://@openmdx*org.opencrx.kernel.code1").getDescendant("provider", providerName, "segment", "Root")
-    			)
-    		);
 			Properties defaultPlaceHolders = new Properties();
 			if(params.get(OPTION_DEFAULT_PLACEHOLDERS) instanceof String) {
 				try {
@@ -898,9 +1076,9 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 	           		);
             	} catch(Exception ignore) {}
             }
-            RefObject_1_0 accounts = null;
+            RefObject_1_0 selector = null;
             if(params.get(OPTION_ACCOUNTS_SELECTOR) instanceof RefObject_1_0) {
-            	accounts = (RefObject_1_0)pmUser.getObjectById(
+            	selector = (RefObject_1_0)pmUser.getObjectById(
            			((RefObject_1_0)params.get(OPTION_ACCOUNTS_SELECTOR)).refGetPath()
            		);
             }
@@ -960,20 +1138,18 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 				);
 				idx++;
 			}
-			Account testAccount = null;
+			List<Path> testAccounts = new ArrayList<Path>();
             if(params.get(OPTION_TEST_ACCOUNT) instanceof Account) {
-            	testAccount = (Account)pmUser.getObjectById(
-           			((Account)params.get(OPTION_TEST_ACCOUNT)).refGetPath()
+            	testAccounts.add(
+            		((Account)params.get(OPTION_TEST_ACCOUNT)).refGetPath()
            		);
             }
-			List<EMailAddress> testEMails = new ArrayList<EMailAddress>();
+			List<Path> testEMails = new ArrayList<Path>();
 			idx = 0;
             while(params.get(OPTION_TEST_EMAIL + idx) instanceof EMailAddress) {
             	testEMails.add(
-            		(EMailAddress)pmUser.getObjectById(
-            			((EMailAddress)params.get(OPTION_TEST_EMAIL + idx)).refGetPath()
-            		)
-           		);
+        			((EMailAddress)params.get(OPTION_TEST_EMAIL + idx)).refGetPath()
+        		);
             }
             Boolean excludeNoBulkEMail = null;
             if(params.get(OPTION_EXCLUDE_NO_BULK_EMAIL) instanceof Boolean) {
@@ -992,75 +1168,26 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
             	: null;
     	    // Create activities
             {
-            	boolean selectedAccountsOnly = true;
-        		Set<Path> accountXris = new TreeSet<Path>();
-        		Set<Path> addressXris = new TreeSet<Path>();
-        		List<Path> accountAndAddressXris = new ArrayList<Path>();            	
-    			if(accounts instanceof AccountFilterGlobal) {
-    				AccountQuery accountQuery = (AccountQuery)pmUser.newQuery(Account.class);
-    				accountQuery.forAllDisabled().isFalse();
-    				for(Account account: ((AccountFilterGlobal)accounts).getFilteredAccount(accountQuery)) {
-    					try {
-    						accountXris.add(account.refGetPath());
-    					} catch (Exception e) {
-    						new ServiceException(e).log();
-    					}
-    				}
-    				accountAndAddressXris = new ArrayList<Path>(accountXris);
-    			} else if(accounts instanceof Group) {
-    				MemberQuery memberQuery = (MemberQuery)pmUser.newQuery(Member.class);
-    				memberQuery.forAllDisabled().isFalse();
-    				for(Member m: ((Group)accounts).getMember(memberQuery)) {
-    					try {
-    						if (m.getAccount() != null && !Boolean.TRUE.equals(m.getAccount().isDisabled())) {
-    							accountXris.add(m.getAccount().refGetPath());
-    						}
-    					} catch (Exception e) {
-    						new ServiceException(e).log();
-    					}
-    				}
-    				accountAndAddressXris = new ArrayList<Path>(accountXris);
-    			} else if(accounts instanceof AddressFilterGlobal) {
-    				AccountAddressQuery accountAddressQuery = (AccountAddressQuery)pmUser.newQuery(AccountAddress.class);
-    				accountAddressQuery.forAllDisabled().isFalse();
-    				for(AccountAddress accountAddress: ((AddressFilterGlobal)accounts).getFilteredAddress(accountAddressQuery)) {
-    					try {
-    						addressXris.add(accountAddress.refGetPath());
-    					} catch (Exception ignore) {}
-    				}
-    				selectedAccountsOnly = false;
-    				accountAndAddressXris = new ArrayList<Path>(addressXris);
-    			} else if(accounts instanceof AddressGroup) {
-    				AddressGroupMemberQuery addressGroupMemberQuery = (AddressGroupMemberQuery)pmUser.newQuery(AddressGroupMember.class);
-    				addressGroupMemberQuery.forAllDisabled().isFalse();
-    				for(AddressGroupMember addressGroupMember: ((AddressGroup)accounts).getMember(addressGroupMemberQuery)) {
-    					try {
-    						if (addressGroupMember.getAddress() != null && !Boolean.TRUE.equals(addressGroupMember.getAddress().isDisabled())) {
-    							addressXris.add(addressGroupMember.getAddress().refGetPath());
-    						}
-    					} catch (Exception ignore) {}
-    				}
-    				selectedAccountsOnly = false;
-    				accountAndAddressXris = new ArrayList<Path>(addressXris);
-    			}
-    			if(selectedAccountsOnly) {
-    				if(creationType == CreationType.CREATE_TEST_CONFIRMED) {
-    					if(testAccount != null) {
-   							accountAndAddressXris.add(0, testAccount.refGetPath());
-    					}
-    				}
-    			} else {
-    				if(creationType == CreationType.CREATE_TEST_CONFIRMED) {
-    					// add optional test addresses if any
-    					ActivityType actType = activityCreator.getActivityType(); 
-    					if(actType != null && actType.getActivityClass() == Activities.ActivityClass.EMAIL.getValue()) {
-    						for(EMailAddress testEMail: testEMails) {
-   								accountAndAddressXris.add(0, testEMail.refGetPath());
-    						}
-    					}
-    				}
-    			}
-    			if(
+            	long queryExecutionStartAt = System.currentTimeMillis();
+            	List<?> selectedObjects = this.getSelectedObjects(selector);
+        		int numberOfActivities = selectedObjects.size();
+        		long queryExecutionTime = System.currentTimeMillis() - queryExecutionStartAt;
+        		// Assert that the query execution time is below QUERY_EXECUTION_TIME_LIMIT
+    			// in case there are more than 1000 activities to create
+        		if(
+        			queryExecutionTime > QUERY_EXECUTION_TIME_LIMIT && 
+        			numberOfActivities > 1000
+        		) {
+    				this.createLogEntry(
+    					"Report - ERROR: Query too slow",
+    					wfProcessInstance, 
+    					queryExecutionTime,
+    					QUERY_EXECUTION_TIME_LIMIT,
+    					numberOfActivities 
+    				);
+        		}    			
+        		// Create activities
+        		else if(
     				activityCreator != null &&
     				(creationType == CreationType.CREATE_CONFIRMED || 
     				creationType == CreationType.CREATE_TEST_CONFIRMED)
@@ -1069,88 +1196,137 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
             		int numberOfActivitiesCreated = 0;
             		int numberOfActivitiesUpdated = 0;
             		int numberOfActivitiesSkipped = 0;
+            		int numberFailed = 0;
     				this.createLogEntry(
     					"Report @" + new Date(),
     					wfProcessInstance, 
-    					accountAndAddressXris.size(), 
+    					numberOfActivities, 
     					numberOfAccountsWithoutEmailAddress, 
     					numberOfActivitiesCreated, 
     					numberOfActivitiesUpdated,
-    					numberOfActivitiesSkipped
+    					numberOfActivitiesSkipped,
+    					numberFailed
     				);
-    				int counter = 0;
-    				while(counter < accountAndAddressXris.size()) {
-    					// Create activities in parallel. Start MAX_THREADS threads where 
-    					// each thread processes a batch of THREAD_BATCH_SIZE addresses
-    					List<ActivityCreatorThread> activityCreatorThreads = new ArrayList<ActivityCreatorThread>();    					
-    					for(int tIndex = 0; tIndex < MAX_THREADS; tIndex++) {
-    						ActivityCreatorThread t = new ActivityCreatorThread(
-	    						pmf, 
+					// Create activities in parallel. Start MAX_THREADS threads where 
+					// each thread processes the i-th element of the selected objects list.
+					List<ActivityCreatorThread> activityCreatorThreads = new ArrayList<ActivityCreatorThread>();
+					CollectionBasedQueue selectedObjectsQueue = new CollectionBasedQueue(selectedObjects);
+					for(int threadIndex = 0; threadIndex < MAX_THREADS; threadIndex++) {
+						try {
+							ActivityCreatorThread t = new ActivityCreatorThread(
+	    						pmf,
 	    						wfProcessInstance.refGetPath(), 
-	    						activityCreator.refGetPath(), 
+	    						activityCreator.refGetPath(),
+	    						selectedObjectsQueue,
 	    						creationType == CreationType.CREATE_TEST_CONFIRMED 
-	    							? accountAndAddressXris.subList(0, Math.min(NUM_OF_TEST_ACTIVITIES, accountAndAddressXris.size()))
-	    							: accountAndAddressXris,
-	    						counter + tIndex * THREAD_BATCH_SIZE,
-	    						counter + (tIndex + 1) * THREAD_BATCH_SIZE,
-	    						selectedAccountsOnly,
+	    							? testAccounts
+	    							: Collections.<Path>emptyList(),
+	    						creationType == CreationType.CREATE_TEST_CONFIRMED 
+	    							? testEMails
+	    							: Collections.<Path>emptyList(),
+	    						threadIndex,
+	    						creationType == CreationType.CREATE_TEST_CONFIRMED 
+	    							? threadIndex == 0 ? NUM_OF_TEST_ACTIVITIES : 0
+	    							: numberOfActivities, 
 	    						excludeNoBulkEMail, 
-	    						name, 
+	    						name,
 	    						description, 
 	    						detailedDescription, 
 	    						dueBy, 
-	    						priority, 
+	    						priority,
 	    						scheduledEnd, 
 	    						scheduledStart, 
-	    						emailSender == null ? null : emailSender.refGetPath(), 
+	    						emailSender == null 
+	    							? null 
+	    							: emailSender.refGetPath(), 
 	    						emailAddressUsages, 
 	    						emailMessageSubject, 
 	    						emailMessageBody, 
 	    						defaultPlaceHolders, 
-	    						locale, 
-	    						codes
+	    						locale
 	    					);
 	    					t.start();
-	    					activityCreatorThreads.add(t);	    					
-    					}
-    					// Wait for termination
-    					for(ActivityCreatorThread t: activityCreatorThreads) {
-    						try {
-    							t.join();
-    						} catch(Exception ignore) {}
-    						numberOfAccountsWithoutEmailAddress += t.getNumberOfAccountsWithoutEmailAddress();
-    						numberOfActivitiesCreated += t.getNumberOfActivitiesCreated();
-    						numberOfActivitiesUpdated += t.getNumberOfActivitiesUpdated();
-    						numberOfActivitiesSkipped += t.getNumberOfActivitiesSkipped();
-    					}
-						this.createLogEntry(
-							"Report @" + new Date(),
-							wfProcessInstance, 
-							accountAndAddressXris.size(),
-							numberOfAccountsWithoutEmailAddress, 
-							numberOfActivitiesCreated, 
-							numberOfActivitiesUpdated,
-							numberOfActivitiesSkipped
-						);
-						counter += MAX_THREADS * THREAD_BATCH_SIZE;
-    				}
-    				this.createLogEntry(
-    					"Report - Complete",
-    					wfProcessInstance, 
-    					accountAndAddressXris.size(), 
-    					numberOfAccountsWithoutEmailAddress, 
-    					numberOfActivitiesCreated, 
-    					numberOfActivitiesUpdated,
-						numberOfActivitiesSkipped
-    				);
+	    					activityCreatorThreads.add(t);
+						} catch(Exception e) {
+							new ServiceException(e).log();
+						}
+					}
+					// Monitor
+					{
+						boolean hasRunningThreads = true;
+						int lastTotalCount = 0;
+						while(hasRunningThreads) {
+		            		numberOfAccountsWithoutEmailAddress = 0;
+		            		numberOfActivitiesCreated = 0;
+		            		numberOfActivitiesUpdated = 0;
+		            		numberOfActivitiesSkipped = 0;
+		            		numberFailed = 0;
+		            		hasRunningThreads = false;
+							for(ActivityCreatorThread t: activityCreatorThreads) {
+								numberOfAccountsWithoutEmailAddress += t.getNumberOfAccountsWithoutEmailAddress();
+								numberOfActivitiesCreated += t.getNumberOfActivitiesCreated();
+								numberOfActivitiesUpdated += t.getNumberOfActivitiesUpdated();
+								numberOfActivitiesSkipped += t.getNumberOfActivitiesSkipped();
+								numberFailed += t.getNumberFailed();
+								hasRunningThreads |= t.isAlive();
+							}
+							int totalCount = numberOfAccountsWithoutEmailAddress + numberOfActivitiesCreated + numberOfActivitiesUpdated + numberOfActivitiesSkipped;
+							if(totalCount > lastTotalCount + 100) {
+								this.createLogEntry(
+									"Report @" + new Date(),
+									wfProcessInstance, 
+									numberOfActivities,
+									numberOfAccountsWithoutEmailAddress,
+									numberOfActivitiesCreated, 
+									numberOfActivitiesUpdated,
+									numberOfActivitiesSkipped,
+									numberFailed
+								);								
+								lastTotalCount = totalCount;
+							}
+							try {
+								Thread.sleep(1000L);
+							} catch(Exception ignore) {}
+						}
+					}
+					// Join and final report
+					{
+	            		numberOfAccountsWithoutEmailAddress = 0;
+	            		numberOfActivitiesCreated = 0;
+	            		numberOfActivitiesUpdated = 0;
+	            		numberOfActivitiesSkipped = 0;
+	            		numberFailed = 0;
+						for(ActivityCreatorThread t: activityCreatorThreads) {
+							try {
+								t.join();
+							} catch(Exception ignore) {}
+							numberOfAccountsWithoutEmailAddress += t.getNumberOfAccountsWithoutEmailAddress();
+							numberOfActivitiesCreated += t.getNumberOfActivitiesCreated();
+							numberOfActivitiesUpdated += t.getNumberOfActivitiesUpdated();
+							numberOfActivitiesSkipped += t.getNumberOfActivitiesSkipped();
+							numberFailed += t.getNumberFailed();
+						}
+	    				this.createLogEntry(
+	    					"Report - Complete",
+	    					wfProcessInstance, 
+	    					numberOfActivities, 
+	    					numberOfAccountsWithoutEmailAddress, 
+	    					numberOfActivitiesCreated, 
+	    					numberOfActivitiesUpdated,
+							numberOfActivitiesSkipped,
+							numberFailed
+	    				);
+            		}
     			} else if(
     				creationType == CreationType.CREATE ||
     				creationType == CreationType.CREATE_TEST
     			) {
     				this.createLogEntry(
     					"Report - Complete",
-    					wfProcessInstance, 
-    					accountAndAddressXris.size() 
+    					wfProcessInstance,
+    					queryExecutionTime,
+    					QUERY_EXECUTION_TIME_LIMIT,
+    					numberOfActivities 
     				);
     			}
             }
@@ -1173,9 +1349,9 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
     //-----------------------------------------------------------------------
 	public static final int NUM_OF_TEST_ACTIVITIES = 3;
 	public static final int MAX_THREADS = 5;
-	public static final int THREAD_BATCH_SIZE = 20;
 	private static final long REFRESH_PERIOD_MILLIS = 60000L;
-
+	private static final long QUERY_EXECUTION_TIME_LIMIT = 5000L;
+	
     public static final String OPTION_LOCALE = "locale";
     public static final String OPTION_DEFAULT_PLACEHOLDERS = "defaultPlaceHolders";
     public static final String OPTION_ACCOUNTS_SELECTOR = "accountsSelector";

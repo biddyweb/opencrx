@@ -11,10 +11,10 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:contact" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
                     <_object>
                       <label>
-                        <_item>Účty</_item>
+                        <_item>»Účty</_item>
                       </label>
                       <toolTip>
                         <_item>Účty</_item>
@@ -73,17 +73,6 @@
                       </label>
                       <toolTip>
                         <_item>Osobné údaje</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Obrázok</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Obrázok</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -315,6 +304,28 @@
                       </label>
                       <toolTip>
                         <_item>Uprednostňuje písanie jazykom (akým)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closingCode" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Uzatvarajúci kód</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Osobný uzatvarajúci kód</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:closing" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Uzatvorenie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Osobné uzatvorenei (použi toto pole ak žiadny uzatvarajúci kód nie je vhodný</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -561,6 +572,14 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:dateOfDeath" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Dátum/čas smrti osoby (miestny čas smrti!)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
                     <_object>
                       <label>
@@ -590,28 +609,6 @@
                       </label>
                       <toolTip>
                         <_item>Štátne občianstvo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Obrázok</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Obrázok</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nadpis / Zdroj</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nadpis / Zdroj</_item>
                       </toolTip>
                     </_object>
                     <_content/>

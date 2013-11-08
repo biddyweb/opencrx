@@ -746,10 +746,32 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedFieldContainer:localizedField" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Lokalizované polia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lokalizované polia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Adresáre</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresáre</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:attachedDocument" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dokumenty</_item>
+                        <_item>»Dokumenty</_item>
                       </label>
                       <toolTip>
                         <_item>Pripojené dokumenty</_item>
@@ -764,6 +786,17 @@
                       </label>
                       <toolTip>
                         <_item>Pripojené médiá</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:assignedTimer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Časovače</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Časovače</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -797,17 +830,6 @@
                       </label>
                       <toolTip>
                         <_item>Nastavenie sád vlastností</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Note:identity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Titul / Autor</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Titul / Autor</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -856,6 +878,72 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Lokalizované pole</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lokalizované pole</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Národné</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Národné</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:usage" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Použitie</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Použitie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:LocalizedField:localizedValue" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Lokalizovaná hodnota</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Lokalizovaná hodnota</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment" _operation="create">
                     <_object>
                       <label>
@@ -867,13 +955,21 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:Pane:Attr:Tab:0:Group:0" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:name" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:description" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dokument</_item>
+                        <_item>Popis</_item>
                       </label>
                       <toolTip>
-                        <_item>Dokument</_item>
+                        <_item>Popis prílohy dokumentu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -889,13 +985,35 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Priradenie adresára</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Priradenie adresára</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentFolderAssignment:description" _operation="create">
                     <_object>
                       <label>
                         <_item>Popis</_item>
                       </label>
                       <toolTip>
-                        <_item>Popis prílohy dokumentu</_item>
+                        <_item>Popis</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -981,6 +1099,14 @@
                       </label>
                       <toolTip>
                         <_item>Hodnotenie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Rating:name" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Meno</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1381,6 +1507,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dodatočná externá linka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dodatočná externá linka</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:Pane:Attr:Tab:0:Group:0" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rozsah</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rozsah</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="Pane:Op:100" _operation="create">
                     <_object>
                       <label>
@@ -1634,6 +1804,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:locale" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Národné</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Národné</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:forClass" _operation="create">
                     <_object>
                       <label>
@@ -1641,6 +1822,17 @@
                       </label>
                       <toolTip>
                         <_item>Triedy</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExportProfile:exportParams" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Parametre exportu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Parametre exportu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1997,6 +2189,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:workflow" _operation="create">
                     <_object>
                       <label>
@@ -2070,6 +2273,17 @@
                       </label>
                       <toolTip>
                         <_item>Cieľový objekt XRI</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:parentProcessInstance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nadriadený pracovný tok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nadriadený pracovný tok</_item>
                       </toolTip>
                     </_object>
                     <_content/>

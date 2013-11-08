@@ -251,6 +251,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:creationContext" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Obsah</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Obsah</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone" _operation="create">
                     <_object>
                       <label>
@@ -331,10 +342,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:sumEstimateEffortHours" _operation="create">
                     <_object>
                       <label>
-                        <_item>hh (odhad časových nákladov)</_item>
+                        <_item>Σ hh (odhad časových nákladov)</_item>
                       </label>
                       <toolTip>
-                        <_item>hh (odhad časových nákladov)</_item>
+                        <_item>Σ hh (odhad časových nákladov)</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -342,10 +353,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:sumEstimateEffortMinutes" _operation="create">
                     <_object>
                       <label>
-                        <_item>mm (odhad časových nákladov)</_item>
+                        <_item>Σ mm (odhad časových nákladov)</_item>
                       </label>
                       <toolTip>
-                        <_item>mm (odhad časových nákladov)</_item>
+                        <_item>Σ mm (odhad časových nákladov)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -157,10 +157,18 @@ public class DoFollowUpAction extends BpiAction {
 		        		resp.setCharacterEncoding("UTF-8");
 		        		resp.setContentType("application/json");
 		        		PrintWriter pw = resp.getWriter();
-		        		plugIn.printObject(pw, plugIn.toBpiActivityFollowUp(result.getFollowUp(), plugIn.newBpiActivityFollowUp()));
+		        		plugIn.printObject(
+		        			pw, 
+		        			plugIn.toBpiActivityFollowUp(
+		        				result.getFollowUp(), 
+		        				plugIn.newBpiActivityFollowUp(),
+		        				this.getFetchGroup(req)
+		        			)
+		        		);
 		        		resp.setStatus(HttpServletResponse.SC_OK);
 		    		}
 	    		} catch(Exception e) {
+	        		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);	    			
 	    			new ServiceException(e).log();
 	    			try {
 	    				pm.currentTransaction().rollback();

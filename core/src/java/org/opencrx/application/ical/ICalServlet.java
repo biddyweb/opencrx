@@ -76,7 +76,6 @@ import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Accounts;
-import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.utils.AccountQueryHelper;
@@ -247,82 +246,6 @@ public class ICalServlet extends FreeBusyServlet {
         	"&amp;parameter=" + selectActivityAction.getParameterEncoded(); 
     }
     
-    /**
-     * Print ICAL for given activity.
-     * 
-     * @param activity
-     * @param p
-     * @param req
-     * @param index
-     */
-    protected void printICal(
-    	Activity activity,
-    	PrintWriter p,
-    	HttpServletRequest req,
-    	int index
-    ) throws ServiceException {
-        String ical = activity.getIcal();
-        ical = ical.replace("\r\n", "\n"); // Remove \r just in case
-        if(ical.indexOf("BEGIN:VEVENT") >= 0) {
-            int start = ical.indexOf("BEGIN:VEVENT");
-            int end = ical.indexOf("END:VEVENT");
-            String vevent;
-            if(end < start) {
-            	vevent = ical.substring(start).replace("BEGIN:VEVENTBEGIN:VCALENDAR", "BEGIN:VEVENT");
-            	SysLog.warning("Activity has invalid ical", activity.refGetPath());
-            } else {
-            	vevent = ical.substring(start, end).replace("BEGIN:VEVENTBEGIN:VCALENDAR", "BEGIN:VEVENT");            	
-            }
-            p.write(vevent);
-            SysLog.detail("VEVENT #", index);
-            SysLog.detail(vevent);           
-            if(vevent.indexOf("TRANSP:") < 0) {
-	        	try {
-	        		String transp = "OPAQUE";
-	        		if(transp != null) {
-	        			p.write("TRANSP:" + transp + "\n");
-	        		}
-	        	} catch(Exception e) {}
-            }
-            if(vevent.indexOf("URL:") < 0) {
-            	String url = null;
-            	try {
-            		url = Base.getInstance().getAccessUrl(req, "-ical-", activity);
-            	} catch(Exception e) {}
-            	if(url != null) {
-            		p.write("URL:" + url + "\n");
-            	}
-            }
-            Activities.getInstance().printAlarms(p, activity);
-            p.write("END:VEVENT\n");
-        }
-        else if(ical.indexOf("BEGIN:VTODO") >= 0) {
-            int start = ical.indexOf("BEGIN:VTODO");
-            int end = ical.indexOf("END:VTODO");
-            String vtodo;
-            if(end < start) {
-            	vtodo = ical.substring(start).replace("BEGIN:VTODOBEGIN:VCALENDAR", "BEGIN:VTODO");
-            	SysLog.warning("Activity has invalid ical", activity.refGetPath());
-            } else {
-            	vtodo = ical.substring(start, end).replace("BEGIN:VTODOBEGIN:VCALENDAR", "BEGIN:VTODO");            	
-            }
-            p.write(vtodo);
-            SysLog.detail("VTODO #", index);
-            SysLog.detail(vtodo);
-            if(vtodo.indexOf("URL:") < 0) {
-            	String url = null;
-            	try {
-            		url = Base.getInstance().getAccessUrl(req, "-ical-", activity);
-            	} catch(Exception e) {}
-            	if(url != null) {
-            		p.write("URL:" + url + "\n");
-            	}
-            }
-            Activities.getInstance().printAlarms(p, activity);
-            p.write("END:VTODO\n");                        
-        }
-    }
-
     /**
      * Print given calendar of given type for given accounts.
      * 
@@ -534,12 +457,12 @@ public class ICalServlet extends FreeBusyServlet {
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);
         if(req.getRequestURI().endsWith("/ical") || req.getRequestURI().endsWith("/activities")) {        
-	        ActivityQueryHelper activitiesHelper = this.getActivitiesHelper(
+	        ActivityQueryHelper activitiesQueryHelper = this.getActivitiesQueryHelper(
 	            pm, 
 	            filterId,
 	            isDisabledFilter
 	        );
-	        if(activitiesHelper.getActivitySegment() != null) {
+	        if(activitiesQueryHelper.getActivitySegment() != null) {
 	            // Locale
 	            String loc = req.getParameter(PARAMETER_NAME_USER_LOCALE);
 	            Locale locale = loc == null ? 
@@ -567,7 +490,7 @@ public class ICalServlet extends FreeBusyServlet {
 	            dateFormatEnUs.setTimeZone(timeZone);
 	            org.opencrx.kernel.admin1.jmi1.ComponentConfiguration componentConfiguration = 
 	                this.getComponentConfiguration(
-	                    activitiesHelper.getActivitySegment().refGetPath().get(2),
+	                    activitiesQueryHelper.getActivitySegment().refGetPath().get(2),
 	                    rootPm
 	                );
 	            String maxActivitiesValue = componentConfiguration == null ? 
@@ -588,13 +511,14 @@ public class ICalServlet extends FreeBusyServlet {
 	                resp.setStatus(HttpServletResponse.SC_OK);
 	                resp.setContentType("text/calendar");
 	                ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
-	                if(activitiesHelper.isDisabledFilter()) {
+	                if(activitiesQueryHelper.isDisabledFilter()) {
 	                    activityQuery.thereExistsDisabled().isTrue();                    
-	                }
-	                else {
+	                } else {
 	                    activityQuery.forAllDisabled().isFalse();                    
 	                }
 	                activityQuery.ical().isNonNull();
+	                // No recurring events here. They will be generated by printCalendar() below
+	                activityQuery.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);	                
 	                PrintWriter p = resp.getWriter();
 	                p.write("BEGIN:VCALENDAR\n");
 	                p.write("VERSION:2.0\n");
@@ -605,7 +529,7 @@ public class ICalServlet extends FreeBusyServlet {
 	                // Event serving as calendar guard. Required to allow
 	                // creation of events in doPut
 	                p.write("BEGIN:VEVENT\n");
-	                BasicObject source = activitiesHelper.getSource();
+	                BasicObject source = activitiesQueryHelper.getSource();
 	                p.write("UID:" + (source == null ? "-" : source.refGetPath().getBase()) + "\n");
 	                p.write("CLASS:PUBLIC\n");
 	                p.write("DTSTART:19000101T000000Z\n");
@@ -615,14 +539,18 @@ public class ICalServlet extends FreeBusyServlet {
 	                p.write("SUMMARY:" + filterId + "\n");
 	                p.write("END:VEVENT\n");
 	                int n = 0;
-	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
+	                for(Activity activity: activitiesQueryHelper.getFilteredActivities(activityQuery)) {
 	                	try {
-		                	this.printICal(
-		                		activity, 
-		                		p, 
-		                		req, 
-		                		n
-		                	);
+	                        SysLog.detail("VEVENT #", n);
+	                    	ICalendar.getInstance().printCalendar(
+	                    		p, 
+	                    		activity, 
+	                    		activitiesQueryHelper, 
+	                    		null, // runAs 
+	                    		true, // eventsOnly 
+	                    		req, 
+	                    		"-ical-"
+	                    	);
 	                	} catch(Exception e) {
 	                		new ServiceException(e).log();
 	                	}
@@ -641,18 +569,19 @@ public class ICalServlet extends FreeBusyServlet {
 	                resp.setStatus(HttpServletResponse.SC_OK);
 	                resp.setContentType("text/xml");
 	                ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
-	                if(activitiesHelper.isDisabledFilter()) {
+	                if(activitiesQueryHelper.isDisabledFilter()) {
 	                    activityQuery.thereExistsDisabled().isTrue();                    
-	                }
-	                else {
+	                } else {
 	                    activityQuery.forAllDisabled().isFalse();                    
 	                }
 	                activityQuery.scheduledStart().isNonNull();
+	                // No recurring events here. They will be generated by printCalendar() below
+	                activityQuery.forAllExternalLink().startsNotWith(ICalendar.ICAL_RECURRENCE_ID_SCHEMA);	                
 	                PrintWriter p = resp.getWriter();
 	                p.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 	                p.write("<data>\n");
 	                int n = 0;
-	                for(Activity activity: activitiesHelper.getFilteredActivities(activityQuery)) {
+	                for(Activity activity: activitiesQueryHelper.getFilteredActivities(activityQuery)) {
 	                    p.write("<event start=\"" + dateFormatEnUs.format(activity.getScheduledStart()) + "\" end=\"" + dateFormatEnUs.format(activity.getScheduledEnd() == null ? activity.getScheduledStart() : activity.getScheduledEnd()) + "\" link=\"" + this.getActivityUrl(req, activity) + "\" title=\"" + XMLEncoder.encode((activity.getActivityNumber() == null ? "" : activity.getActivityNumber().trim() + ": " ) + activity.getName()) + "\">");
 	                    String description = (activity.getDescription() == null) || (activity.getDescription().trim().length() == 0) ? 
 	                        activity.getName() : 
@@ -844,7 +773,7 @@ public class ICalServlet extends FreeBusyServlet {
         }        
         String filterId = req.getParameter(PARAMETER_NAME_ID);
         String isDisabledFilter = req.getParameter(PARAMETER_NAME_DISABLED);        
-        ActivityQueryHelper activitiesHelper = this.getActivitiesHelper(
+        ActivityQueryHelper activitiesHelper = this.getActivitiesQueryHelper(
             pm, 
             filterId,
             isDisabledFilter

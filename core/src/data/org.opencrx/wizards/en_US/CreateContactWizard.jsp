@@ -3,7 +3,7 @@
 <%
 /*
  * ====================================================================
- * Project:     openCRX/Core, http://www.openmdx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: CreateContact wizard
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
@@ -86,7 +86,7 @@ org.openmdx.base.naming.*
 -->
 <%
 	final String FORM_NAME = "ContactForm";
-	final String MEMBERSHIP_FORM_NAME = "MembershipForm";
+	final String MEMBERSHIP_FORM_NAME = "ContactMembershipForm";
 	CreateContactWizardController wc = new CreateContactWizardController();
 %>
 	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
@@ -110,8 +110,10 @@ org.openmdx.base.naming.*
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
 	<input type="hidden" id="Para0" name="Para0" value="" />
-	<input type="hidden" name="accountMembershipXri" id="accountMembershipXri" value="<%= wc.getAccountMembershipXri() == null ? "" : wc.getAccountMembershipXri() %>" />
+	<input type="hidden" name="accountXri" id="accountXri" value="<%= wc.getAccount() == null ? "" : wc.getAccount().refGetPath().toXRI() %>" />
 	<input type="checkbox" style="display:none;" name="isAddMembershipMode" id="isAddMembershipMode" <%= Boolean.TRUE.equals(wc.getIsAddMembershipMode()) ? "checked" : "" %> />
+	<input type="hidden" name="membershipXri" id="membershipXri" value="<%= wc.getMembershipXri() == null ? "" : wc.getMembershipXri() %>" />
+	<input type="hidden" name="copyAndLinkAddressXri" id="copyAndLinkAddressXri" value="" />
 	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
@@ -119,15 +121,15 @@ org.openmdx.base.naming.*
 <%
 					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
 					viewPort.flush();
-					if(wc.getContact() != null) {
-						// list existing memberships
-
+					if(wc.getAccount() != null) {
+						//
+						// Manage memberships
+						//
 %>
-						<div class="fieldGroupName">&nbsp;</div>
+						<div class="fieldGroupName"><%= app.getLabel("org:opencrx:kernel:account1:AccountMembership") %></div>
 						<table class="fieldGroup">
 							<tr>
 								<td class="label">
-									<%= app.getLabel("org:opencrx:kernel:account1:AccountMembership") %><br>
 									<input type="submit" name="AddMembership" id="AddMembership.Button" tabindex="<%= tabIndex++ %>" title="<%= app.getTexts().getNewText() + " " + app.getLabel("org:opencrx:kernel:account1:AccountMembership") %>" value="+" onclick="javascript:$('Command').value=this.name;$('isAddMembershipMode').checked=true;" />
 								</td>
 								<td>
@@ -135,54 +137,44 @@ org.openmdx.base.naming.*
 										<tr class="gridTableHeaderFull">
 											<td/>
 											<td><strong><%= wc.getFieldLabel("org:opencrx:kernel:account1:AccountMembership", "accountFrom", app.getCurrentLocaleAsIndex()) %></strong></td>
-											<td><strong><%= wc.getFieldLabel("org:opencrx:kernel:account1:AccountMembership", "accountTo", app.getCurrentLocaleAsIndex()) %></strong></td>
 											<td><strong><%= wc.getFieldLabel("org:opencrx:kernel:account1:AccountMembership", "memberRole", app.getCurrentLocaleAsIndex()) %></strong></td>
 											<td/>
 										</tr>
 <%
 										try {
-											org.opencrx.kernel.account1.cci2.AccountMembershipQuery accountMembershipFilter = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
-											accountMembershipFilter.distance().equalTo(
-												new Short((short)-1) // only direct/immediate memberships are of interest
-											);
-											accountMembershipFilter.orderByCreatedAt().ascending();
-											accountMembershipFilter.forAllDisabled().isFalse();
-											for(
-												Iterator am = wc.getContact().getAccountMembership(accountMembershipFilter).iterator();
-												am.hasNext();
-											) {
-												org.opencrx.kernel.account1.jmi1.AccountMembership accountMembership =
-													(org.opencrx.kernel.account1.jmi1.AccountMembership)am.next();
+											org.opencrx.kernel.account1.cci2.MemberQuery membershipQuery = (org.opencrx.kernel.account1.cci2.MemberQuery)org.openmdx.base.persistence.cci.PersistenceHelper.newQuery(
+									    		pm.getExtent(org.opencrx.kernel.account1.jmi1.Member.class),
+									    		accountSegment.refGetPath().getDescendant("account", ":*", "member", ":*")
+									    	);
+											membershipQuery.thereExistsAccount().equalTo(wc.getAccount());
+											membershipQuery.forAllDisabled().isFalse();
+											membershipQuery.orderByCreatedAt().ascending();											
+											for(org.opencrx.kernel.account1.jmi1.Member membership: accountSegment.<org.opencrx.kernel.account1.jmi1.Member>getExtent(membershipQuery)) {
 												try {
-													org.opencrx.kernel.account1.jmi1.Member member = accountMembership.getMember();
-													org.opencrx.kernel.account1.jmi1.Account accountFrom = accountMembership.getAccountFrom();
+													org.opencrx.kernel.account1.jmi1.Account accountFrom = (org.opencrx.kernel.account1.jmi1.Account)wc.getPm().getObjectById(membership.refGetPath().getParent().getParent());
 													String accountHref = "";
 													Action action = new ObjectReference(accountFrom, app).getSelectObjectAction();
-													accountHref = action.getEncodedHRef();
 													//memberOfList.add(accountFrom.getFullName());
 													String rolesText = "";
-													for(Iterator roles = accountMembership.getMemberRole().iterator(); roles.hasNext(); ) {
+													for(Iterator roles = membership.getMemberRole().iterator(); roles.hasNext(); ) {
 														if (rolesText.length() > 0) {
 																rolesText += ";";
 														}
 														rolesText += wc.getCodes().getLongTextByCode("memberRole", app.getCurrentLocaleAsIndex(), true).get(new Short(((Short)roles.next()).shortValue()));
 													}
 %>
-													<tr class="gridTableRow" <%= wc.getAccountMembershipXri() != null && wc.getAccountMembershipXri().equals(accountMembership.refGetPath().toXRI()) ? "style='background-color:#E4FF79;'" : "" %> >
+													<tr class="gridTableRow" <%= wc.getMembershipXri() != null && wc.getMembershipXri().equals(membership.refGetPath().toXRI()) ? "style='background-color:#E4FF79;'" : "" %> >
 														<td class="addon">
-															<button type="submit" name="EditMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getEditTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('accountMembershipXri').value='<%= accountMembership.refGetPath().toXRI() %>';" ><img src="images/edit.gif" /></button>
+															<button type="submit" name="EditMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getEditTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('membershipXri').value='<%= membership.refGetPath().toXRI() %>';" ><img src="images/edit.gif" /></button>
 														</td>
-														<td><a href="<%= accountHref %>" target="_blank"><%= app.getHtmlEncoder().encode(new ObjectReference(accountMembership.getAccountFrom(), app).getTitle(), false) %></a></td>
-														<td><%= app.getHtmlEncoder().encode(new ObjectReference(accountMembership.getAccountTo(), app).getTitle(), false) %></td>
+														<td><a href="<%= action.getEncodedHRef() %>" target="_blank"><%= app.getHtmlEncoder().encode(action.getTitle(), false) %></a></td>
 														<td style="overflow:hidden;text-overflow:ellipsis;"><%= rolesText %></td>
 														<td class="addon">
-															<button type="submit" name="DisableMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('accountMembershipXri').value='';$('Command').value=this.name;$('Para0').value='<%= member.refGetPath().toXRI() %>';" ><img src="images/deletesmall.gif" /></button>
+															<button type="submit" name="DisableMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('membershipXri').value='';$('Command').value=this.name;$('Para0').value='<%= membership.refGetPath().toXRI() %>';" ><img src="images/deletesmall.gif" /></button>
 														</td>
 													</tr>
 <%
-												} catch(Exception em) {
-													new ServiceException(em).log();
-												}
+												} catch(Exception ignore) {}
 											}
 										} catch(Exception e) {
 											new ServiceException(e).log();
@@ -194,9 +186,62 @@ org.openmdx.base.naming.*
 							</tr>
 						</table>
 <%
-						if(Boolean.TRUE.equals(wc.getIsAddMembershipMode()) || wc.getAccountMembershipXri() != null) {
+						if(Boolean.TRUE.equals(wc.getIsAddMembershipMode()) || wc.getMembershipXri() != null) {
 							wc.getForms().get(MEMBERSHIP_FORM_NAME).paint(viewPort, null, true);
 							viewPort.flush();
+						}
+						// Copy-and-link addresses
+						Map<String,List<org.opencrx.kernel.account1.jmi1.AccountAddress>> copyAndLinkAddresses = wc.getCopyAndLinkAddresses();
+						if(!copyAndLinkAddresses.isEmpty()) {
+							for(String addressType: copyAndLinkAddresses.keySet()) {
+%>
+								<br />
+								<div class="fieldGroupName">Copy-and-Link Addresses (<%= addressType %>)</div>
+								<table class="fieldGroup">
+									<tr>
+										<td class="label">
+											&nbsp;
+										</td>
+										<td>
+											<table class="gridTableFull">
+												<tr class="gridTableHeaderFull">
+													<td/>
+													<td><strong><%= wc.getFieldLabel("org:opencrx:kernel:account1:AccountAddress", "identity", app.getCurrentLocaleAsIndex()) %></strong></td>
+													<td><strong><%= wc.getFieldLabel("org:opencrx:kernel:account1:AccountAddress", "usage", app.getCurrentLocaleAsIndex()) %></strong></td>
+													<td><strong><%= wc.getFieldLabel("org:opencrx:kernel:account1:AccountAddress", "isMain", app.getCurrentLocaleAsIndex()) %></strong></td>
+												</tr>
+<%
+												try {
+													Map<Short,String> textsUsageAddress = wc.getCodes().getLongTextByCode("usageaddress", app.getCurrentLocaleAsIndex(), true);
+													for(org.opencrx.kernel.account1.jmi1.AccountAddress address: copyAndLinkAddresses.get(addressType)) {
+														String usagesText = "";
+														for(Short usage: address.getUsage()) {
+															usagesText +=
+																(usagesText.isEmpty() ? "" : ";") +														
+																textsUsageAddress.get(new Short(usage));
+														}
+%>
+														<tr class="gridTableRow">
+															<td class="addon">
+																<button type="submit" name="CopyAndLinkAddress<%= addressType.replace("|", "") %>" tabindex="<%= tabIndex++ %>" value="&mdash;" title="Copy Address" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('copyAndLinkAddressXri').value='<%= address.refGetPath().toXRI() %>';" ><img src="images/next.gif" /></button>
+															</td>
+															<td><%= app.getHtmlEncoder().encode(new ObjectReference(address, app).getTitle(), false) %></td>
+															<td><%= app.getHtmlEncoder().encode(usagesText, false) %></td>
+															<td><%= address.isMain() ? "<img alt='checked' src='./images/checked_r.gif'>" : "" %></td>
+														</tr>
+<%
+													}
+												} catch(Exception e) {
+													new ServiceException(e).log();
+												}
+%>
+											</table>
+										</td>
+										<td class="addon"/>
+									</tr>
+								</table>
+<%
+							}
 						}
 					}
 %>
@@ -217,49 +262,59 @@ org.openmdx.base.naming.*
 				<input type="submit" name="Search" id="Search.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
 				<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPath() + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
 <%
-				if(wc.getContact() != null) {
+				if(wc.getAccount() != null) {
+					if(wc.isCreateContractButtonsEnabled()) {
 %>
-					<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getContact().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
-					<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getContact().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
-					<input style='display:none;' type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getContact().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getContact().refGetPath().toXRI(), "UTF-8") %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
+						<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
+						<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
 <%
-					// prepare href to open new tab with activity segment and then call inline wizard to create new activity
-					String createActivityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getContact().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getContact().refGetPath().toXRI(), "UTF-8") + "', {evalScripts: true});";
-					QuickAccessor createActivityAccessor = new QuickAccessor(
-					    activitySegment.refGetPath(), // target
-					    "New Activity", // name
-					    "New Activity", // description
-					    "Task.gif", // iconKey
-					    Action.MACRO_TYPE_JAVASCRIPT, // actionType
-					    createActivityScript,
-					    Collections.<String>emptyList() // actionParams
+					}
+					if(wc.isCreateActivityButtonEnabled()) {
+%>						
+						<input style='display:none;' type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
+<%
+						// prepare href to open new tab with activity segment and then call inline wizard to create new activity
+						String createActivityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "', {evalScripts: true});";
+						QuickAccessor createActivityAccessor = new QuickAccessor(
+						    activitySegment.refGetPath(), // target
+						    "New Activity", // name
+						    "New Activity", // description
+						    "Task.gif", // iconKey
+						    Action.MACRO_TYPE_JAVASCRIPT, // actionType
+						    createActivityScript,
+						    Collections.<String>emptyList() // actionParams
+							);
+						Action newActivityAction =	createActivityAccessor.getAction(accountSegment.refGetPath());
+						String newActivityHref = newActivityAction.getEncodedHRef(wc.getRequestId());
+%>
+						<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
+<%	
+					}
+					if(wc.isCreateLegalEntityButtonEnabled()) {
+						// prepare href to open new tab with account segment and then call inline wizard to create new legal entity
+						String createLegalEntityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + wc.getServletPathPrefix() + "CreateLegalEntityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() + "', {evalScripts: true});";
+						
+						QuickAccessor createLegalEntityAccessor = new QuickAccessor(
+						    accountSegment.refGetPath(), // target
+						    "New LegalEntity", // name
+						    "New LegalEntity", // description
+						    "LegalEntity.gif", // iconKey
+						    Action.MACRO_TYPE_JAVASCRIPT, // actionType
+						    createLegalEntityScript,
+						    Collections.<String>emptyList() // actionParams
 						);
-					Action newActivityAction =	createActivityAccessor.getAction(accountSegment.refGetPath());
-					String newActivityHref = newActivityAction.getEncodedHRef(wc.getRequestId());
+						Action newLegalEntityAction =	createLegalEntityAccessor.getAction(accountSegment.refGetPath());
+						String newLegalEntityHref = newLegalEntityAction.getEncodedHRef(wc.getRequestId());
 %>
-					<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
-<%										
-					// prepare href to open new tab with account segment and then call inline wizard to create new legal entity
-					String createLegalEntityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + wc.getServletPathPrefix() + "CreateLegalEntityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() + "', {evalScripts: true});";
-					
-					QuickAccessor createLegalEntityAccessor = new QuickAccessor(
-					    accountSegment.refGetPath(), // target
-					    "New LegalEntity", // name
-					    "New LegalEntity", // description
-					    "LegalEntity.gif", // iconKey
-					    Action.MACRO_TYPE_JAVASCRIPT, // actionType
-					    createLegalEntityScript,
-					    Collections.<String>emptyList() // actionParams
-					);
-					Action newLegalEntityAction =	createLegalEntityAccessor.getAction(accountSegment.refGetPath());
-					String newLegalEntityHref = newLegalEntityAction.getEncodedHRef(wc.getRequestId());
-%>
-					<a href="<%= newLegalEntityHref %>" target="_blank"><button type="button" name="newLegalEntity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %>"><%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %></button></a>
+						<a href="<%= newLegalEntityHref %>" target="_blank"><button type="button" name="newLegalEntity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %>"><%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %></button></a>
+<%
+					}
+%>						
 					<input type="submit" name="OK" id="OK.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 <%
 				}
 				else {
-				    if(wc.getMachingContacts() != null) {
+				    if(wc.getMatchingAccounts() != null) {
 %>
 						<input type="submit" name="Create" id="Create.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 <%
@@ -269,7 +324,7 @@ org.openmdx.base.naming.*
 				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 				</div>
 <%
-				if(wc.getMachingContacts() != null) {
+				if(wc.getMatchingAccounts() != null) {
 %>
 					<div>&nbsp;</div>
 					<table class="gridTableFull">
@@ -287,7 +342,7 @@ org.openmdx.base.naming.*
 						</tr>
 <%
 						int count = 0;
-						for(Iterator i = wc.getMachingContacts().iterator(); i.hasNext(); ) {
+						for(Iterator i = wc.getMatchingAccounts().iterator(); i.hasNext(); ) {
 						    org.opencrx.kernel.account1.jmi1.Contact contact = ( org.opencrx.kernel.account1.jmi1.Contact)i.next();
 						    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getInstance().getMainAddresses(contact);
 %>

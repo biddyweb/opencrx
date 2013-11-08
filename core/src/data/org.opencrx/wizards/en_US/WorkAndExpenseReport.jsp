@@ -376,6 +376,7 @@ org.apache.poi.hssf.util.*
 	boolean actionSelectDateN = command != null && command.startsWith("SelectDateN.");
 	boolean actionCancel = command != null && command.startsWith("cancel.");
 	boolean actionEvictAndReload = command != null && command.startsWith("EVICT_RELOAD");
+	boolean actionShowReport = command != null && command.startsWith("ShowReport.");
 
 	if (actionEvictAndReload) {
 			app.resetPmData();
@@ -1599,7 +1600,11 @@ org.apache.poi.hssf.util.*
 							<td>
 								<input type="submit" id="EVICT_RELOAD" name="EVICT_RELOAD" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="<%= SUBMIT_HANDLER %>" />
 								<input type="submit" id="reload.button" name="reload.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="<%= SUBMIT_HANDLER %>" style="display:none;" />
-								<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>" />
+								<input type="submit" id="cancel.button" name="cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>" /><br /><br />
+								<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
+								<div id="SubmitArea" style="float:left;display:none;">
+									<input type="submit" id="ShowReport.button" name="ShowReport.button" tabindex="<%= tabIndex++ %>" value="Show Report" onclick="<%= SUBMIT_HANDLER %>;$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';" />
+								</div>
 							</td>
 						</tr>
 					</table>
@@ -1608,6 +1613,7 @@ org.apache.poi.hssf.util.*
 
 <!-- REPORT -->
 <%
+				if (actionShowReport) {
 					Map selectedActivities = null;
 					if (allFilteredActivities) {
 						if ((ACTIVITY_FILTER_SEGMENT.compareTo(activityFilter) != 0) && (activitiesList != null)) {
@@ -3691,10 +3697,13 @@ org.apache.poi.hssf.util.*
 							os.flush();
 							os.close();
 					} /* doReportCalculation */
+				}
 %>
 				</form>
 				<br>
 				<script language="javascript" type="text/javascript">
+						$('WaitIndicator').style.display='none';
+						$('SubmitArea').style.display='block';
 						function setFocus(id) {
 							try {
 								$(id).focus();

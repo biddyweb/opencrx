@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/3.0.0/UML" xmi:id="_vvFywN8HEdmKapscEl8OLg" name="admin1">
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_vvFywN8HEdmKapscEl8OLg" name="admin1">
   <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D4167132701FAPPP" name="org">
     <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D4167132701FAPP" name="opencrx">
       <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D4167132701FAP" name="kernel">
@@ -9,8 +9,8 @@
               <general xmi:type="uml:Class" href="org.opencrx.uml#_kAemwPtpEduZnKmt1dsSSQ"/>
             </generalization>
             <ownedAttribute xmi:id="_c7Hm8TIhEdulbMY4C1wdZw" name="configuration" type="_agleMDIhEdulbMY4C1wdZw" aggregation="composite" association="_c7Hm8DIhEdulbMY4C1wdZw">
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c7Hm9DIhEdulbMY4C1wdZw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_c7Hm8zIhEdulbMY4C1wdZw"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_c7Hm9DIhEdulbMY4C1wdZw" value="1"/>
               <qualifier xmi:id="_jKzcUDIhEdulbMY4C1wdZw" name="id" visibility="private">
                 <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
@@ -50,8 +50,8 @@
             </ownedAttribute>
             <ownedAttribute xmi:id="_3C7B8A60016D4165D0D801B6" name="statusMessage">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_INQMod7NEdmKapscEl8OLg" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_INQMoN7NEdmKapscEl8OLg"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_INQMod7NEdmKapscEl8OLg" value="1"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_NTd94EcXEdqY8s66EvOcjQ" name="ImportLoginPrincipalsParams">
@@ -60,18 +60,18 @@
             </eAnnotations>
             <ownedAttribute xmi:id="_jZgn8EcXEdqY8s66EvOcjQ" name="item">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3E0F6F8900AB"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_CILrAUc0EdqY8s66EvOcjQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_CILrAEc0EdqY8s66EvOcjQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_CILrAUc0EdqY8s66EvOcjQ" value="1"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_kEllQEcXEdqY8s66EvOcjQ" name="itemMimeType">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_C3jScUc0EdqY8s66EvOcjQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_C3jScEc0EdqY8s66EvOcjQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_C3jScUc0EdqY8s66EvOcjQ" value="1"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_k3Mt8EcXEdqY8s66EvOcjQ" name="itemName">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_DXpHwUc0EdqY8s66EvOcjQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_DXpHwEc0EdqY8s66EvOcjQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_DXpHwUc0EdqY8s66EvOcjQ" value="1"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_O52F0EcXEdqY8s66EvOcjQ" name="ImportLoginPrincipalsResult">
@@ -80,8 +80,8 @@
             </eAnnotations>
             <ownedAttribute xmi:id="_pjkWcEcXEdqY8s66EvOcjQ" name="statusMessage">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ElGZYUc0EdqY8s66EvOcjQ" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_ElGZYEc0EdqY8s66EvOcjQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_ElGZYUc0EdqY8s66EvOcjQ" value="1"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_agleMDIhEdulbMY4C1wdZw" name="ComponentConfiguration">
@@ -99,8 +99,8 @@
             </ownedAttribute>
             <ownedAttribute xmi:id="_05To8DIiEdulbMY4C1wdZw" name="description">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
-              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6962wTIiEdulbMY4C1wdZw" value="1"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_6962wDIiEdulbMY4C1wdZw"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_6962wTIiEdulbMY4C1wdZw" value="1"/>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_c7Hm8DIhEdulbMY4C1wdZw" name="SegmentContainsComponentConfiguration" memberEnd="_c7Hm8TIhEdulbMY4C1wdZw _c7Hm8jIhEdulbMY4C1wdZw">

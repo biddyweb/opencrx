@@ -19,6 +19,7 @@
 												<_item>org:opencrx:kernel:account1:Contact:preferredSpokenLanguage</_item>
 												<_item>org:opencrx:kernel:contract1:AbstractContract:contractLanguage</_item>
 												<_item>org:opencrx:kernel:document1:Document:contentLanguage</_item>
+												<_item>org:opencrx:kernel:document1:DocumentLanguageFilterProperty:contentLanguage</_item>
 												<_item>org:opencrx:kernel:generic:Description:language</_item>
 											</name>
 										</_object>
@@ -27,10 +28,10 @@
 												<org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="set">
 													<_object>
 														<shortText>
-															<_item>NA</_item>
+															<_item>--none--</_item>
 														</shortText>
 														<longText>
-															<_item> N/A</_item>
+															<_item>--none--</_item>
 														</longText>
 													</_object>
 													<_content/>

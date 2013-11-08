@@ -32,15 +32,18 @@
 										<_content>
 											<entry>
 <!--
-source: http://www.nationsonline.org/oneworld/country_code_list.htm
+sources: http://www.nationsonline.org/oneworld/country_code_list.htm
+         http://www.iso.org/iso/support/country_codes/iso_3166_code_lists/iso-3166-1_decoding_table.htm#BQ
+         ISO ALPHA-2 code
+         ISO Numeric code UN M49 
 -->											
 												<org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="set">
 													<_object>
 														<shortText>
-															<_item>NA</_item>
+															<_item>--none--</_item>
 														</shortText>
 														<longText>
-															<_item> N/A</_item>
+															<_item>--none--</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -51,7 +54,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AF</_item>
 														</shortText>
 														<longText>
-															<_item>Afghanistan [AF]</_item>
+															<_item>Afghanistan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -62,7 +65,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AX</_item>
 														</shortText>
 														<longText>
-															<_item>ÅLAND ISLANDS [AX]</_item>
+															<_item>ÅLAND ISLANDS</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -73,7 +76,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AL</_item>
 														</shortText>
 														<longText>
-															<_item>Albania [AL]</_item>
+															<_item>Albania</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -84,7 +87,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>DZ</_item>
 														</shortText>
 														<longText>
-															<_item>Algeria [DZ]</_item>
+															<_item>Algeria</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -95,7 +98,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AS</_item>
 														</shortText>
 														<longText>
-															<_item>American Samoa [AS]</_item>
+															<_item>American Samoa</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -106,7 +109,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AD</_item>
 														</shortText>
 														<longText>
-															<_item>Andorra [AD]</_item>
+															<_item>Andorra</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -117,7 +120,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AO</_item>
 														</shortText>
 														<longText>
-															<_item>Angola [AO]</_item>
+															<_item>Angola</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -128,7 +131,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AI</_item>
 														</shortText>
 														<longText>
-															<_item>Anguilla [AI]</_item>
+															<_item>Anguilla</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -139,7 +142,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AQ</_item>
 														</shortText>
 														<longText>
-															<_item>Antarctica [AQ]</_item>
+															<_item>Antarctica</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -150,7 +153,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AG</_item>
 														</shortText>
 														<longText>
-															<_item>Antigua and Barbuda [AG]</_item>
+															<_item>Antigua and Barbuda</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -161,7 +164,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AR</_item>
 														</shortText>
 														<longText>
-															<_item>Argentina [AR]</_item>
+															<_item>Argentina</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -172,7 +175,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AM</_item>
 														</shortText>
 														<longText>
-															<_item>Armenia [AM]</_item>
+															<_item>Armenia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -183,7 +186,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AW</_item>
 														</shortText>
 														<longText>
-															<_item>Aruba [AW]</_item>
+															<_item>Aruba</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -194,7 +197,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AU</_item>
 														</shortText>
 														<longText>
-															<_item>Australia [AU]</_item>
+															<_item>Australia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -205,7 +208,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AT</_item>
 														</shortText>
 														<longText>
-															<_item>Austria [AT]</_item>
+															<_item>Austria</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -216,7 +219,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AZ</_item>
 														</shortText>
 														<longText>
-															<_item>Azerbaijan [AZ]</_item>
+															<_item>Azerbaijan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -227,7 +230,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BS</_item>
 														</shortText>
 														<longText>
-															<_item>Bahamas [BS]</_item>
+															<_item>Bahamas</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -238,7 +241,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BH</_item>
 														</shortText>
 														<longText>
-															<_item>Bahrain [BH]</_item>
+															<_item>Bahrain, The Kingdom of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -249,7 +252,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BD</_item>
 														</shortText>
 														<longText>
-															<_item>Bangladesh [BD]</_item>
+															<_item>Bangladesh</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -260,7 +263,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BB</_item>
 														</shortText>
 														<longText>
-															<_item>Barbados [BB]</_item>
+															<_item>Barbados</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -271,7 +274,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BY</_item>
 														</shortText>
 														<longText>
-															<_item>Belarus [BY]</_item>
+															<_item>Belarus</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -282,7 +285,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BE</_item>
 														</shortText>
 														<longText>
-															<_item>Belgium [BE]</_item>
+															<_item>Belgium</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -293,7 +296,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BZ</_item>
 														</shortText>
 														<longText>
-															<_item>Belize [BZ]</_item>
+															<_item>Belize</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -304,7 +307,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BJ</_item>
 														</shortText>
 														<longText>
-															<_item>Benin [BJ]</_item>
+															<_item>Benin</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -315,7 +318,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BM</_item>
 														</shortText>
 														<longText>
-															<_item>Bermuda [BM]</_item>
+															<_item>Bermuda</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -326,7 +329,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BT</_item>
 														</shortText>
 														<longText>
-															<_item>Bhutan [BT]</_item>
+															<_item>Bhutan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -337,7 +340,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BO</_item>
 														</shortText>
 														<longText>
-															<_item>Bolivia [BO]</_item>
+															<_item>Bolivia, Plurinational State of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -348,7 +351,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BQ</_item>
 														</shortText>
 														<longText>
-															<_item>Bonaire, Sint Eustatius and Saba [Bq]</_item>
+															<_item>Bonaire, Sint Eustatius and Saba</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -359,7 +362,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BA</_item>
 														</shortText>
 														<longText>
-															<_item>Bosnia and Herzegovina [BA]</_item>
+															<_item>Bosnia and Herzegovina</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -370,7 +373,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BW</_item>
 														</shortText>
 														<longText>
-															<_item>Botswana [BW]</_item>
+															<_item>Botswana</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -381,7 +384,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BV</_item>
 														</shortText>
 														<longText>
-															<_item>Bouvet Island [BV]</_item>
+															<_item>Bouvet Island</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -392,7 +395,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BR</_item>
 														</shortText>
 														<longText>
-															<_item>Brazil [BR]</_item>
+															<_item>Brazil</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -403,7 +406,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IO</_item>
 														</shortText>
 														<longText>
-															<_item>British Indian Ocean Territory [IO]</_item>
+															<_item>British Indian Ocean Territory</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -414,7 +417,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BN</_item>
 														</shortText>
 														<longText>
-															<_item>Brunei Darussalam [BN]</_item>
+															<_item>Brunei Darussalam</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -425,7 +428,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BG</_item>
 														</shortText>
 														<longText>
-															<_item>Bulgaria [BG]</_item>
+															<_item>Bulgaria</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -436,7 +439,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BF</_item>
 														</shortText>
 														<longText>
-															<_item>Burkina Faso [BF]</_item>
+															<_item>Burkina Faso</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -447,7 +450,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BI</_item>
 														</shortText>
 														<longText>
-															<_item>Burundi [BI]</_item>
+															<_item>Burundi</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -458,7 +461,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KH</_item>
 														</shortText>
 														<longText>
-															<_item>Cambodia [KH]</_item>
+															<_item>Cambodia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -469,7 +472,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CM</_item>
 														</shortText>
 														<longText>
-															<_item>Cameroon [CM]</_item>
+															<_item>Cameroon</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -480,7 +483,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CA</_item>
 														</shortText>
 														<longText>
-															<_item>Canada [CA]</_item>
+															<_item>Canada</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -491,7 +494,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CV</_item>
 														</shortText>
 														<longText>
-															<_item>Cape Verde [CV]</_item>
+															<_item>Cape Verde</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -502,7 +505,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KY</_item>
 														</shortText>
 														<longText>
-															<_item>Cayman Islands [KY]</_item>
+															<_item>Cayman Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -513,7 +516,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CF</_item>
 														</shortText>
 														<longText>
-															<_item>Central African Republic [CF]</_item>
+															<_item>Central African Republic</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -524,7 +527,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TD</_item>
 														</shortText>
 														<longText>
-															<_item>Chad [TD]</_item>
+															<_item>Chad</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -535,7 +538,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CL</_item>
 														</shortText>
 														<longText>
-															<_item>Chile [CL]</_item>
+															<_item>Chile</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -546,7 +549,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CN</_item>
 														</shortText>
 														<longText>
-															<_item>China [CN]</_item>
+															<_item>China</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -557,7 +560,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CX</_item>
 														</shortText>
 														<longText>
-															<_item>Christmas Island [CX]</_item>
+															<_item>Christmas Island</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -568,7 +571,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CC</_item>
 														</shortText>
 														<longText>
-															<_item>Cocos (Keeling) Islands [CC]</_item>
+															<_item>Cocos (Keeling) Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -579,7 +582,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CO</_item>
 														</shortText>
 														<longText>
-															<_item>Colombia [CO]</_item>
+															<_item>Colombia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -590,7 +593,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KM</_item>
 														</shortText>
 														<longText>
-															<_item>Comoros [KM]</_item>
+															<_item>Comoros</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -601,7 +604,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CG</_item>
 														</shortText>
 														<longText>
-															<_item>Congo [CG]</_item>
+															<_item>Congo</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -612,7 +615,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CD</_item>
 														</shortText>
 														<longText>
-															<_item>Congo, The Democratic Replublic of the (was Zaire) [CD]</_item>
+															<_item>Congo, Democratic Replublic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -623,7 +626,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CK</_item>
 														</shortText>
 														<longText>
-															<_item>Cook Islands [CK]</_item>
+															<_item>Cook Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -634,7 +637,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CR</_item>
 														</shortText>
 														<longText>
-															<_item>Costa Rica [CR]</_item>
+															<_item>Costa Rica</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -645,7 +648,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CI</_item>
 														</shortText>
 														<longText>
-															<_item>Côte d'Ivoire [CI]</_item>
+															<_item>Côte d'Ivoire</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -656,7 +659,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>HR</_item>
 														</shortText>
 														<longText>
-															<_item>Croatia [HR]</_item>
+															<_item>Croatia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -667,7 +670,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CU</_item>
 														</shortText>
 														<longText>
-															<_item>Cuba [CU]</_item>
+															<_item>Cuba</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -678,7 +681,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CW</_item>
 														</shortText>
 														<longText>
-															<_item>Curaçao [CW]</_item>
+															<_item>Curaçao</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -689,7 +692,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CY</_item>
 														</shortText>
 														<longText>
-															<_item>Cyprus [CY]</_item>
+															<_item>Cyprus</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -700,7 +703,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CZ</_item>
 														</shortText>
 														<longText>
-															<_item>Czech Republic [CZ]</_item>
+															<_item>Czech Republic</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -711,7 +714,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>DK</_item>
 														</shortText>
 														<longText>
-															<_item>Denmark [DK]</_item>
+															<_item>Denmark</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -722,7 +725,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>DJ</_item>
 														</shortText>
 														<longText>
-															<_item>Djibouti [DJ]</_item>
+															<_item>Djibouti</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -733,7 +736,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>DM</_item>
 														</shortText>
 														<longText>
-															<_item>Dominica [DM]</_item>
+															<_item>Dominica</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -744,7 +747,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>DO</_item>
 														</shortText>
 														<longText>
-															<_item>Dominican Republic [DO]</_item>
+															<_item>Dominican Republic</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -755,7 +758,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TL</_item>
 														</shortText>
 														<longText>
-															<_item>Timor-Leste [TL]</_item>
+															<_item>Timor-Leste, Democratic Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -766,7 +769,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>EC</_item>
 														</shortText>
 														<longText>
-															<_item>Ecuador [EC]</_item>
+															<_item>Ecuador</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -777,7 +780,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>EG</_item>
 														</shortText>
 														<longText>
-															<_item>Egypt [EG]</_item>
+															<_item>Egypt</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -788,7 +791,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SV</_item>
 														</shortText>
 														<longText>
-															<_item>El Salvador [SV]</_item>
+															<_item>El Salvador</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -799,7 +802,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GQ</_item>
 														</shortText>
 														<longText>
-															<_item>Equatorial Guinea [GQ]</_item>
+															<_item>Equatorial Guinea</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -810,7 +813,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ER</_item>
 														</shortText>
 														<longText>
-															<_item>Eritrea [ER]</_item>
+															<_item>Eritrea</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -821,7 +824,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>EE</_item>
 														</shortText>
 														<longText>
-															<_item>Estonia [EE]</_item>
+															<_item>Estonia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -832,7 +835,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ET</_item>
 														</shortText>
 														<longText>
-															<_item>Ethiopia [ET]</_item>
+															<_item>Ethiopia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -843,7 +846,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>FK</_item>
 														</shortText>
 														<longText>
-															<_item>Falkland Islands (Islas Malvinas) [FK]</_item>
+															<_item>Falkland Islands (Islas Malvinas)</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -854,7 +857,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>FO</_item>
 														</shortText>
 														<longText>
-															<_item>Faroe Islands [FO]</_item>
+															<_item>Faroe Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -865,7 +868,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>FJ</_item>
 														</shortText>
 														<longText>
-															<_item>Fiji [FJ]</_item>
+															<_item>Fiji</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -876,7 +879,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>FI</_item>
 														</shortText>
 														<longText>
-															<_item>Finland [FI]</_item>
+															<_item>Finland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -887,7 +890,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>FR</_item>
 														</shortText>
 														<longText>
-															<_item>France [FR]</_item>
+															<_item>France</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -898,7 +901,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GF</_item>
 														</shortText>
 														<longText>
-															<_item>French Guiana [GF]</_item>
+															<_item>French Guiana</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -909,7 +912,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PF</_item>
 														</shortText>
 														<longText>
-															<_item>French Polynesia [PF]</_item>
+															<_item>French Polynesia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -920,7 +923,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TF</_item>
 														</shortText>
 														<longText>
-															<_item>French Southern Territories [TF]</_item>
+															<_item>French Southern Territories</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -931,7 +934,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GA</_item>
 														</shortText>
 														<longText>
-															<_item>Gabon [GA]</_item>
+															<_item>Gabon</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -942,7 +945,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GM</_item>
 														</shortText>
 														<longText>
-															<_item>Gambia [GM]</_item>
+															<_item>Gambia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -953,7 +956,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GE</_item>
 														</shortText>
 														<longText>
-															<_item>Georgia [GE]</_item>
+															<_item>Georgia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -964,7 +967,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>DE</_item>
 														</shortText>
 														<longText>
-															<_item>Germany [DE]</_item>
+															<_item>Germany</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -975,7 +978,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GH</_item>
 														</shortText>
 														<longText>
-															<_item>Ghana [GH]</_item>
+															<_item>Ghana</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -986,7 +989,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GI</_item>
 														</shortText>
 														<longText>
-															<_item>Gibraltar [GI]</_item>
+															<_item>Gibraltar</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -997,7 +1000,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GR</_item>
 														</shortText>
 														<longText>
-															<_item>Greece [GR]</_item>
+															<_item>Greece</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1008,7 +1011,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GL</_item>
 														</shortText>
 														<longText>
-															<_item>Greenland [GL]</_item>
+															<_item>Greenland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1019,7 +1022,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GD</_item>
 														</shortText>
 														<longText>
-															<_item>Grenada [GD]</_item>
+															<_item>Grenada</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1030,7 +1033,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GP</_item>
 														</shortText>
 														<longText>
-															<_item>Guadeloupe [GP]</_item>
+															<_item>Guadeloupe</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1041,7 +1044,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GU</_item>
 														</shortText>
 														<longText>
-															<_item>Guam [GU]</_item>
+															<_item>Guam</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1052,7 +1055,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GT</_item>
 														</shortText>
 														<longText>
-															<_item>Guatemala [GT]</_item>
+															<_item>Guatemala</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1063,7 +1066,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GG</_item>
 														</shortText>
 														<longText>
-															<_item>Guernsey [GG]</_item>
+															<_item>Guernsey</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1074,7 +1077,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GN</_item>
 														</shortText>
 														<longText>
-															<_item>Guinea [GN]</_item>
+															<_item>Guinea</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1085,7 +1088,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GW</_item>
 														</shortText>
 														<longText>
-															<_item>Guinea-Bissau [GW]</_item>
+															<_item>Guinea-Bissau</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1096,7 +1099,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GY</_item>
 														</shortText>
 														<longText>
-															<_item>Guyana [GY]</_item>
+															<_item>Guyana</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1107,7 +1110,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>HT</_item>
 														</shortText>
 														<longText>
-															<_item>Haiti [HT]</_item>
+															<_item>Haiti</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1118,7 +1121,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>HM</_item>
 														</shortText>
 														<longText>
-															<_item>Heard Island and McDonalds Islands [HM]</_item>
+															<_item>Heard Island and McDonalds Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1129,7 +1132,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VA</_item>
 														</shortText>
 														<longText>
-															<_item>Holy See (Vatican City State) [VA]</_item>
+															<_item>Holy See (Vatican City State)</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1140,7 +1143,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>HN</_item>
 														</shortText>
 														<longText>
-															<_item>Honduras [HN]</_item>
+															<_item>Honduras</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1151,7 +1154,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>HK</_item>
 														</shortText>
 														<longText>
-															<_item>Hong Kong [HK]</_item>
+															<_item>Hong Kong</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1162,7 +1165,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>HU</_item>
 														</shortText>
 														<longText>
-															<_item>Hungary [HU]</_item>
+															<_item>Hungary</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1173,7 +1176,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IS</_item>
 														</shortText>
 														<longText>
-															<_item>Iceland [IS]</_item>
+															<_item>Iceland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1184,7 +1187,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IN</_item>
 														</shortText>
 														<longText>
-															<_item>India [IN]</_item>
+															<_item>India</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1195,7 +1198,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ID</_item>
 														</shortText>
 														<longText>
-															<_item>Indonesia [ID]</_item>
+															<_item>Indonesia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1206,7 +1209,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IR</_item>
 														</shortText>
 														<longText>
-															<_item>Iran, Islamic Republic of [IR]</_item>
+															<_item>Iran, Islamic Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1217,7 +1220,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IQ</_item>
 														</shortText>
 														<longText>
-															<_item>Iraq [IQ]</_item>
+															<_item>Iraq</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1228,7 +1231,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IE</_item>
 														</shortText>
 														<longText>
-															<_item>Ireland [IE]</_item>
+															<_item>Ireland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1239,7 +1242,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IL</_item>
 														</shortText>
 														<longText>
-															<_item>Israel [IL]</_item>
+															<_item>Israel</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1250,7 +1253,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IT</_item>
 														</shortText>
 														<longText>
-															<_item>Italy [IT]</_item>
+															<_item>Italy</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1261,7 +1264,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KV</_item>
 														</shortText>
 														<longText>
-															<_item>Kosovo [KV]</_item>
+															<_item>Kosovo, Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1272,7 +1275,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>JM</_item>
 														</shortText>
 														<longText>
-															<_item>Jamaica [JM]</_item>
+															<_item>Jamaica</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1283,7 +1286,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>JP</_item>
 														</shortText>
 														<longText>
-															<_item>Japan [JP]</_item>
+															<_item>Japan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1294,7 +1297,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>JE</_item>
 														</shortText>
 														<longText>
-															<_item>Jersey [JE]</_item>
+															<_item>Jersey</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1305,7 +1308,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>JO</_item>
 														</shortText>
 														<longText>
-															<_item>Jordan [JO]</_item>
+															<_item>Jordan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1316,7 +1319,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KZ</_item>
 														</shortText>
 														<longText>
-															<_item>Kazakstan [KZ]</_item>
+															<_item>Kazakstan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1327,7 +1330,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KE</_item>
 														</shortText>
 														<longText>
-															<_item>Kenya [KE]</_item>
+															<_item>Kenya</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1338,7 +1341,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KI</_item>
 														</shortText>
 														<longText>
-															<_item>Kiribati [KI]</_item>
+															<_item>Kiribati</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1349,7 +1352,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KP</_item>
 														</shortText>
 														<longText>
-															<_item>Korea, Democratic People's Republic of [KP]</_item>
+															<_item>Korea, Democratic People's Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1360,7 +1363,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KR</_item>
 														</shortText>
 														<longText>
-															<_item>Korea, Republic of [KR]</_item>
+															<_item>Korea, Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1371,7 +1374,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KW</_item>
 														</shortText>
 														<longText>
-															<_item>Kuwait [KW]</_item>
+															<_item>Kuwait</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1382,7 +1385,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KG</_item>
 														</shortText>
 														<longText>
-															<_item>Kyrgyzstan [KG]</_item>
+															<_item>Kyrgyz Republic</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1393,7 +1396,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LA</_item>
 														</shortText>
 														<longText>
-															<_item>Lao People's Democratic Republic [LA]</_item>
+															<_item>Lao People's Democratic Republic</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1404,7 +1407,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LV</_item>
 														</shortText>
 														<longText>
-															<_item>Latvia [LV]</_item>
+															<_item>Latvia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1415,7 +1418,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LB</_item>
 														</shortText>
 														<longText>
-															<_item>Lebanon [LB]</_item>
+															<_item>Lebanon</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1426,7 +1429,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LS</_item>
 														</shortText>
 														<longText>
-															<_item>Lesotho [LS]</_item>
+															<_item>Lesotho</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1437,7 +1440,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LR</_item>
 														</shortText>
 														<longText>
-															<_item>Liberia [LR]</_item>
+															<_item>Liberia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1448,7 +1451,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LY</_item>
 														</shortText>
 														<longText>
-															<_item>Libyan Arab Jamahiriya [LY]</_item>
+															<_item>Libyan, State of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1459,7 +1462,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LI</_item>
 														</shortText>
 														<longText>
-															<_item>Liechtenstein [LI]</_item>
+															<_item>Liechtenstein</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1470,7 +1473,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LT</_item>
 														</shortText>
 														<longText>
-															<_item>Lithuania [LT]</_item>
+															<_item>Lithuania</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1481,7 +1484,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LU</_item>
 														</shortText>
 														<longText>
-															<_item>Luxembourg [LU]</_item>
+															<_item>Luxembourg</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1492,7 +1495,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MO</_item>
 														</shortText>
 														<longText>
-															<_item>Macau [MO]</_item>
+															<_item>Macau</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1503,7 +1506,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MK</_item>
 														</shortText>
 														<longText>
-															<_item>Macedonia, The Former Yugoslav Republic of [MK]</_item>
+															<_item>Macedonia, Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1514,7 +1517,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MG</_item>
 														</shortText>
 														<longText>
-															<_item>Madagascar [MG]</_item>
+															<_item>Madagascar</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1525,7 +1528,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MW</_item>
 														</shortText>
 														<longText>
-															<_item>Malawi [MW]</_item>
+															<_item>Malawi</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1536,7 +1539,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MY</_item>
 														</shortText>
 														<longText>
-															<_item>Malaysia [MY]</_item>
+															<_item>Malaysia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1547,7 +1550,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MV</_item>
 														</shortText>
 														<longText>
-															<_item>Maldives [MV]</_item>
+															<_item>Maldives</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1558,7 +1561,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ML</_item>
 														</shortText>
 														<longText>
-															<_item>Mali [ML]</_item>
+															<_item>Mali</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1569,7 +1572,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MT</_item>
 														</shortText>
 														<longText>
-															<_item>Malta [MT]</_item>
+															<_item>Malta</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1580,7 +1583,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MH</_item>
 														</shortText>
 														<longText>
-															<_item>Marshall Islands [MH]</_item>
+															<_item>Marshall Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1591,7 +1594,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MQ</_item>
 														</shortText>
 														<longText>
-															<_item>Martinique [MQ]</_item>
+															<_item>Martinique</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1602,7 +1605,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MR</_item>
 														</shortText>
 														<longText>
-															<_item>Mauritania [MR]</_item>
+															<_item>Mauritania</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1613,7 +1616,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MU</_item>
 														</shortText>
 														<longText>
-															<_item>Mauritius [MU]</_item>
+															<_item>Mauritius</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1624,7 +1627,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>YT</_item>
 														</shortText>
 														<longText>
-															<_item>Mayotte [YT]</_item>
+															<_item>Mayotte</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1635,7 +1638,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MX</_item>
 														</shortText>
 														<longText>
-															<_item>Mexico [MX]</_item>
+															<_item>Mexico</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1646,7 +1649,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>FM</_item>
 														</shortText>
 														<longText>
-															<_item>Micronesia, Federated States of [FM]</_item>
+															<_item>Micronesia, Federated States of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1657,7 +1660,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MD</_item>
 														</shortText>
 														<longText>
-															<_item>Moldova, Republic of [MD]</_item>
+															<_item>Moldova, Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1668,7 +1671,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MC</_item>
 														</shortText>
 														<longText>
-															<_item>Monaco [MC]</_item>
+															<_item>Monaco</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1679,7 +1682,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MN</_item>
 														</shortText>
 														<longText>
-															<_item>Mongolia [MN]</_item>
+															<_item>Mongolia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1690,7 +1693,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ME</_item>
 														</shortText>
 														<longText>
-															<_item>Montenegro [ME]</_item>
+															<_item>Montenegro</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1701,7 +1704,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MS</_item>
 														</shortText>
 														<longText>
-															<_item>Montserrat [MS]</_item>
+															<_item>Montserrat</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1712,7 +1715,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MA</_item>
 														</shortText>
 														<longText>
-															<_item>Morocco [MA]</_item>
+															<_item>Morocco</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1723,7 +1726,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MZ</_item>
 														</shortText>
 														<longText>
-															<_item>Mozambique [MZ]</_item>
+															<_item>Mozambique</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1734,7 +1737,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MM</_item>
 														</shortText>
 														<longText>
-															<_item>Myanmar [MM]</_item>
+															<_item>Myanmar</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1745,7 +1748,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NA</_item>
 														</shortText>
 														<longText>
-															<_item>Namibia [NA]</_item>
+															<_item>Namibia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1756,7 +1759,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NR</_item>
 														</shortText>
 														<longText>
-															<_item>Nauru [NR]</_item>
+															<_item>Nauru</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1767,7 +1770,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NP</_item>
 														</shortText>
 														<longText>
-															<_item>Nepal [NP]</_item>
+															<_item>Nepal</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1778,7 +1781,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NL</_item>
 														</shortText>
 														<longText>
-															<_item>Netherlands [NL]</_item>
+															<_item>Netherlands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1789,7 +1792,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AN</_item>
 														</shortText>
 														<longText>
-															<_item>Netherlands Antilles [AN]</_item>
+															<_item>Netherlands Antilles</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1800,7 +1803,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NC</_item>
 														</shortText>
 														<longText>
-															<_item>New Caledonia [NC]</_item>
+															<_item>New Caledonia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1811,7 +1814,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NZ</_item>
 														</shortText>
 														<longText>
-															<_item>New Zealand [NZ]</_item>
+															<_item>New Zealand</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1822,7 +1825,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NI</_item>
 														</shortText>
 														<longText>
-															<_item>Nicaragua [NI]</_item>
+															<_item>Nicaragua</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1833,7 +1836,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NE</_item>
 														</shortText>
 														<longText>
-															<_item>Niger [NE]</_item>
+															<_item>Niger</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1844,7 +1847,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NG</_item>
 														</shortText>
 														<longText>
-															<_item>Nigeria [NG]</_item>
+															<_item>Nigeria</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1855,7 +1858,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NU</_item>
 														</shortText>
 														<longText>
-															<_item>Niue [NU]</_item>
+															<_item>Niue</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1866,7 +1869,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NF</_item>
 														</shortText>
 														<longText>
-															<_item>Norfolk Island [NF]</_item>
+															<_item>Norfolk Island</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1877,7 +1880,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MP</_item>
 														</shortText>
 														<longText>
-															<_item>Northern Mariana Islands [MP]</_item>
+															<_item>Northern Mariana Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1888,7 +1891,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>NO</_item>
 														</shortText>
 														<longText>
-															<_item>Norway [NO]</_item>
+															<_item>Norway</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1899,7 +1902,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>OM</_item>
 														</shortText>
 														<longText>
-															<_item>Oman [OM]</_item>
+															<_item>Oman</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1910,7 +1913,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PK</_item>
 														</shortText>
 														<longText>
-															<_item>Pakistan [PK]</_item>
+															<_item>Pakistan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1921,7 +1924,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PW</_item>
 														</shortText>
 														<longText>
-															<_item>Palau [PW]</_item>
+															<_item>Palau</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1932,7 +1935,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PS</_item>
 														</shortText>
 														<longText>
-															<_item>Palestinian Territory, Occupied [PS]</_item>
+															<_item>Palestine, State of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1943,7 +1946,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PA</_item>
 														</shortText>
 														<longText>
-															<_item>Panama [PA]</_item>
+															<_item>Panama</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1954,7 +1957,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PG</_item>
 														</shortText>
 														<longText>
-															<_item>Papua New Guinea [PG]</_item>
+															<_item>Papua New Guinea</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1965,7 +1968,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PY</_item>
 														</shortText>
 														<longText>
-															<_item>Paraguay [PY]</_item>
+															<_item>Paraguay</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1976,7 +1979,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PE</_item>
 														</shortText>
 														<longText>
-															<_item>Peru [PE]</_item>
+															<_item>Peru</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1987,7 +1990,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PH</_item>
 														</shortText>
 														<longText>
-															<_item>Philippines [PH]</_item>
+															<_item>Philippines</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -1998,7 +2001,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PN</_item>
 														</shortText>
 														<longText>
-															<_item>Pitcairn [PN]</_item>
+															<_item>Pitcairn</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2009,7 +2012,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PL</_item>
 														</shortText>
 														<longText>
-															<_item>Poland [PL]</_item>
+															<_item>Poland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2020,7 +2023,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PT</_item>
 														</shortText>
 														<longText>
-															<_item>Portugal [PT]</_item>
+															<_item>Portugal</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2031,7 +2034,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PR</_item>
 														</shortText>
 														<longText>
-															<_item>Puerto Rico [PR]</_item>
+															<_item>Puerto Rico</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2042,7 +2045,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>QA</_item>
 														</shortText>
 														<longText>
-															<_item>Qatar [QA]</_item>
+															<_item>Qatar</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2053,7 +2056,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>RE</_item>
 														</shortText>
 														<longText>
-															<_item>Reunion [RE]</_item>
+															<_item>Reunion</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2064,7 +2067,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>RO</_item>
 														</shortText>
 														<longText>
-															<_item>Romania [RO]</_item>
+															<_item>Romania</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2075,7 +2078,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>RU</_item>
 														</shortText>
 														<longText>
-															<_item>Russian Federation [RU]</_item>
+															<_item>Russian Federation</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2086,7 +2089,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>RW</_item>
 														</shortText>
 														<longText>
-															<_item>Rwanda [RW]</_item>
+															<_item>Rwanda</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2097,7 +2100,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>BL</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Barthélemy [BL]</_item>
+															<_item>Saint Barthélemy</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2108,7 +2111,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SH</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Helena [SH]</_item>
+															<_item>Saint Helena</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2119,7 +2122,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KN</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Kitts and Nevis [KN]</_item>
+															<_item>Saint Kitts and Nevis</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2130,7 +2133,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LC</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Lucia [LC]</_item>
+															<_item>Saint Lucia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2141,7 +2144,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>MF</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Martin (French part) [MF]</_item>
+															<_item>Saint Martin (French part)</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2152,7 +2155,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>PM</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Pierre and Miquelon [PM]</_item>
+															<_item>Saint Pierre and Miquelon</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2163,7 +2166,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VC</_item>
 														</shortText>
 														<longText>
-															<_item>Saint Vincent and The Grenadines [VC]</_item>
+															<_item>Saint Vincent and The Grenadines</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2174,7 +2177,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>WS</_item>
 														</shortText>
 														<longText>
-															<_item>Samoa [WS]</_item>
+															<_item>Samoa</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2185,7 +2188,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SM</_item>
 														</shortText>
 														<longText>
-															<_item>San Marino [SM]</_item>
+															<_item>San Marino</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2196,7 +2199,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ST</_item>
 														</shortText>
 														<longText>
-															<_item>Sao Tome and Principe [ST]</_item>
+															<_item>Sao Tome and Principe</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2207,7 +2210,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SA</_item>
 														</shortText>
 														<longText>
-															<_item>Saudia Arabia [SA]</_item>
+															<_item>Saudia Arabia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2218,7 +2221,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SN</_item>
 														</shortText>
 														<longText>
-															<_item>Senegal [SN]</_item>
+															<_item>Senegal</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2229,7 +2232,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>RS</_item>
 														</shortText>
 														<longText>
-															<_item>Serbia [RS]</_item>
+															<_item>Serbia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2240,7 +2243,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SC</_item>
 														</shortText>
 														<longText>
-															<_item>Seychelles [SC]</_item>
+															<_item>Seychelles</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2251,7 +2254,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SL</_item>
 														</shortText>
 														<longText>
-															<_item>Sierra Leone [SL]</_item>
+															<_item>Sierra Leone</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2262,7 +2265,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SG</_item>
 														</shortText>
 														<longText>
-															<_item>Singapore [SG]</_item>
+															<_item>Singapore</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2273,7 +2276,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SX</_item>
 														</shortText>
 														<longText>
-															<_item>Sint Maarten (Dutch part) [SX]</_item>
+															<_item>Sint Maarten (Dutch part)</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2284,7 +2287,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SK</_item>
 														</shortText>
 														<longText>
-															<_item>Slovakia [SK]</_item>
+															<_item>Slovakia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2295,7 +2298,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SI</_item>
 														</shortText>
 														<longText>
-															<_item>Slovenia [SI]</_item>
+															<_item>Slovenia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2306,7 +2309,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SB</_item>
 														</shortText>
 														<longText>
-															<_item>Solomon Islands [SB]</_item>
+															<_item>Solomon Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2317,7 +2320,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SO</_item>
 														</shortText>
 														<longText>
-															<_item>Somalia [SO]</_item>
+															<_item>Somalia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2328,7 +2331,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ZA</_item>
 														</shortText>
 														<longText>
-															<_item>South Africa [ZA]</_item>
+															<_item>South Africa</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2339,7 +2342,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GS</_item>
 														</shortText>
 														<longText>
-															<_item>South Georgia and South Sandwich Islands [GS]</_item>
+															<_item>South Georgia and South Sandwich Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2350,7 +2353,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ES</_item>
 														</shortText>
 														<longText>
-															<_item>Spain [ES]</_item>
+															<_item>Spain</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2361,7 +2364,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>LK</_item>
 														</shortText>
 														<longText>
-															<_item>Sri Lanka [LK]</_item>
+															<_item>Sri Lanka</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2375,7 +2378,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SD</_item>
 														</shortText>
 														<longText>
-															<_item>Sudan [SD]</_item>
+															<_item>Sudan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2386,7 +2389,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SS</_item>
 														</shortText>
 														<longText>
-															<_item>South Sudan [SS]</_item>
+															<_item>South Sudan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2397,7 +2400,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SD</_item>
 														</shortText>
 														<longText>
-															<_item>Sudan [SD]</_item>
+															<_item>Sudan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2408,7 +2411,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SR</_item>
 														</shortText>
 														<longText>
-															<_item>Suriname [SR]</_item>
+															<_item>Suriname</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2419,7 +2422,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SJ</_item>
 														</shortText>
 														<longText>
-															<_item>Svalbard and Jan Mayen [SJ]</_item>
+															<_item>Svalbard and Jan Mayen</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2430,7 +2433,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SZ</_item>
 														</shortText>
 														<longText>
-															<_item>Swaziland [SZ]</_item>
+															<_item>Swaziland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2441,7 +2444,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SE</_item>
 														</shortText>
 														<longText>
-															<_item>Sweden [SE]</_item>
+															<_item>Sweden</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2452,7 +2455,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CH</_item>
 														</shortText>
 														<longText>
-															<_item>Switzerland [CH]</_item>
+															<_item>Switzerland</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2463,7 +2466,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SY</_item>
 														</shortText>
 														<longText>
-															<_item>Syrian Arab Republic [SY]</_item>
+															<_item>Syrian Arab Republic</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2474,7 +2477,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TW</_item>
 														</shortText>
 														<longText>
-															<_item>Taiwan, Province of China [TW]</_item>
+															<_item>Taiwan, Republic of China</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2485,7 +2488,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TJ</_item>
 														</shortText>
 														<longText>
-															<_item>Tajikistan [TJ]</_item>
+															<_item>Tajikistan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2496,7 +2499,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TZ</_item>
 														</shortText>
 														<longText>
-															<_item>Tanzania, United Republic of [TZ]</_item>
+															<_item>Tanzania, United Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2507,7 +2510,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TH</_item>
 														</shortText>
 														<longText>
-															<_item>Thailand [TH]</_item>
+															<_item>Thailand</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2518,7 +2521,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TG</_item>
 														</shortText>
 														<longText>
-															<_item>Togo [TG]</_item>
+															<_item>Togo</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2529,7 +2532,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TK</_item>
 														</shortText>
 														<longText>
-															<_item>Tokelau [TK]</_item>
+															<_item>Tokelau</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2540,7 +2543,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TO</_item>
 														</shortText>
 														<longText>
-															<_item>Tonga [TO]</_item>
+															<_item>Tonga</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2551,7 +2554,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TT</_item>
 														</shortText>
 														<longText>
-															<_item>Trinidad and Tobago [TT]</_item>
+															<_item>Trinidad and Tobago</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2562,7 +2565,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TN</_item>
 														</shortText>
 														<longText>
-															<_item>Tunisia [TN]</_item>
+															<_item>Tunisia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2573,7 +2576,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TR</_item>
 														</shortText>
 														<longText>
-															<_item>Turkey [TR]</_item>
+															<_item>Turkey</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2584,7 +2587,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TM</_item>
 														</shortText>
 														<longText>
-															<_item>Turkmenistan [TM]</_item>
+															<_item>Turkmenistan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2595,7 +2598,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TC</_item>
 														</shortText>
 														<longText>
-															<_item>Turks and Caicos Islands [TC]</_item>
+															<_item>Turks and Caicos Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2606,7 +2609,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>TV</_item>
 														</shortText>
 														<longText>
-															<_item>Tuvalu [TV]</_item>
+															<_item>Tuvalu</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2617,7 +2620,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>UG</_item>
 														</shortText>
 														<longText>
-															<_item>Uganda [UG]</_item>
+															<_item>Uganda</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2628,7 +2631,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>UA</_item>
 														</shortText>
 														<longText>
-															<_item>Ukraine [UA]</_item>
+															<_item>Ukraine</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2639,7 +2642,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>AE</_item>
 														</shortText>
 														<longText>
-															<_item>United Arab Emirates [AE]</_item>
+															<_item>United Arab Emirates</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2650,7 +2653,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>GB</_item>
 														</shortText>
 														<longText>
-															<_item>United Kingdom [GB]</_item>
+															<_item>United Kingdom</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2661,7 +2664,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>IM</_item>
 														</shortText>
 														<longText>
-															<_item>Isle of Man [IM]</_item>
+															<_item>Isle of Man</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2672,7 +2675,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>US</_item>
 														</shortText>
 														<longText>
-															<_item>United States of America [US]</_item>
+															<_item>United States of America</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2683,7 +2686,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>UM</_item>
 														</shortText>
 														<longText>
-															<_item>United States Minor Outlying Islands [UM]</_item>
+															<_item>United States Minor Outlying Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2694,7 +2697,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>UY</_item>
 														</shortText>
 														<longText>
-															<_item>Uruguay [UY]</_item>
+															<_item>Uruguay</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2705,7 +2708,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>UZ</_item>
 														</shortText>
 														<longText>
-															<_item>Uzbekistan [UZ]</_item>
+															<_item>Uzbekistan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2716,7 +2719,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VU</_item>
 														</shortText>
 														<longText>
-															<_item>Vanatu [VU]</_item>
+															<_item>Vanatu</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2727,7 +2730,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VE</_item>
 														</shortText>
 														<longText>
-															<_item>Venezuela [VE]</_item>
+															<_item>Venezuela, Bolivarian Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2738,7 +2741,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VN</_item>
 														</shortText>
 														<longText>
-															<_item>Viet Nam [VN]</_item>
+															<_item>Viet Nam</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2749,7 +2752,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VI</_item>
 														</shortText>
 														<longText>
-															<_item>Virgin Islands, U.S. [VI]</_item>
+															<_item>United States Virgin Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2760,7 +2763,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VG</_item>
 														</shortText>
 														<longText>
-															<_item>Virgin Islands. British [VG]</_item>
+															<_item>British Virgin Islands</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2771,7 +2774,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>WF</_item>
 														</shortText>
 														<longText>
-															<_item>Wallis and Futuna [WF]</_item>
+															<_item>Wallis and Futuna</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2782,7 +2785,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>EH</_item>
 														</shortText>
 														<longText>
-															<_item>Western Sahara [EH]</_item>
+															<_item>Western Sahara</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2793,7 +2796,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>YE</_item>
 														</shortText>
 														<longText>
-															<_item>Yemen [YE]</_item>
+															<_item>Yemen</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2807,7 +2810,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>YU</_item>
 														</shortText>
 														<longText>
-															<_item>Yugoslavia [YU]</_item>
+															<_item>Yugoslavia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2818,7 +2821,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ZM</_item>
 														</shortText>
 														<longText>
-															<_item>Zambia [ZM]</_item>
+															<_item>Zambia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2829,7 +2832,7 @@ source: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>ZW</_item>
 														</shortText>
 														<longText>
-															<_item>Zimbabwe [ZW]</_item>
+															<_item>Zimbabwe</_item>
 														</longText>
 													</_object>
 													<_content/>

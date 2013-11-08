@@ -108,10 +108,24 @@ org.openmdx.base.naming.*
       			<td class="cellObject">
       				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
 <%
+						if(wc.getErrorMessage() != null) {
+%>
+							<table class="tableError">
+							  <tbody><tr>
+							    <td class="cellErrorLeft">Error</td>
+							    <td class="cellErrorRight"><%= new Date() %></td>
+							  </tr>
+							  <tr>
+							    <td class="cellErrorLeft"></td>
+							    <td class="cellErrorRight"><%= wc.getErrorMessage() %></td>
+							  </tr>
+							</tbody></table>
+<%							
+						}
 						wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
       					viewPort.flush();
 %>
-						<div class="fieldGroupName">&nbsp;</div>
+						<div class="fieldGroupName">&nbsp;</div>					
 						<table class="fieldGroup">
 							<tr>
 								<td class="label">

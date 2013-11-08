@@ -214,6 +214,7 @@ org.openmdx.base.naming.*
 						</td>
 						<td>
 							<select id="processTransitionXri1" name="processTransitionXri1" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('Refresh.Button').click();" >
+								<option value=""> </option>
 <%
 								if(wc.getSelectableProcessTransitions2() != null) {
 									for(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition processTransition: wc.getSelectableProcessTransitions2()) {
@@ -314,7 +315,7 @@ org.openmdx.base.naming.*
 								<span class="nw"><%= wc.getFieldLabel(BulkActivityFollowUpWizardController.TIMER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
 							</td>
 							<td>
-								<input type="text" class="valueL lightUp" name="timerName" id="timerName" maxlength="50" tabindex="<%= tabIndex++ %>" value="<%= wc.getTimerName().replaceAll("\"", "&quot;") %>" />
+								<input type="text" class="valueL lightUp" name="timerName" id="timerName" maxlength="50" tabindex="<%= tabIndex++ %>" value="<%= wc.getTimerName() == null ? "" : wc.getTimerName().replaceAll("\"", "&quot;") %>" />
 							</td>
 							<td class="addon"></td>
 						</tr>

@@ -66,6 +66,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCallRecipient:emailHint" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-Mailová nápoveda</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-Mailová nápoveda</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCallRecipient:partyType" _operation="create">
                     <_object>
                       <label>
@@ -73,6 +84,17 @@
                       </label>
                       <toolTip>
                         <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCallRecipient:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -110,6 +132,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:PhoneCallRecipientGroup:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractPhoneCallRecipient:party" _operation="create">
                     <_object>
                       <label>
@@ -128,6 +161,17 @@
                       </label>
                       <toolTip>
                         <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractPhoneCallRecipient:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
                       </toolTip>
                     </_object>
                     <_content/>

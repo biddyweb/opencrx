@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -66,14 +66,26 @@ import org.opencrx.application.uses.net.sf.webdav.fromcatalina.XMLWriter;
 import org.opencrx.kernel.home1.jmi1.SyncProfile;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 
+/**
+ * DoPropfind
+ *
+ */
 public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.methods.DoPropfind {
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param store
+	 */
 	public DoPropfind(
 		WebDavStore store 
 	) {
 	    super(store);
     }
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.methods.DoPropfind#getNamespaces()
+	 */
 	@Override
     protected Map<String, String> getNamespaces(
     ) {
@@ -83,6 +95,9 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
     }
 
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.methods.DoPropfind#writeCollectionType(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.fromcatalina.XMLWriter, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
     protected void writeCollectionType(
     	RequestContext requestContext, 
@@ -94,24 +109,18 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 		}
     }
 
-	@Override
-    protected int getDepth(
-    	RequestContext requestContext,
-    	Resource res
-    ) {
-		int depth = super.getDepth(requestContext, res);
-		if(res instanceof AccountCollectionResource) {
-			depth = 1;
-		}
-		return depth;
-    }
-
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.methods.WebDavMethod#getVersion()
+	 */
 	@Override
     protected String getVersion(
     ) {
     	return "1, 2, addressbook";
     }
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.methods.DoPropfind#handleExtension(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.fromcatalina.XMLWriter, java.lang.String, org.opencrx.application.uses.net.sf.webdav.Resource, java.lang.String)
+	 */
 	@Override
     protected boolean handleExtension(
     	RequestContext requestContext,
@@ -137,16 +146,14 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 	            writer.writeElement("DAV::href", XMLWriter.CLOSING);
 	            writer.writeElement("urn:ietf:params:xml:ns:carddav:principal-address", XMLWriter.CLOSING);
 	            return true;
-			}		
-			else if(property.indexOf("addressbook-home-set") > 0) {
+			} else if(property.indexOf("addressbook-home-set") > 0) {
 	            writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-home-set", XMLWriter.OPENING);
 	            writer.writeElement("DAV::href", XMLWriter.OPENING);
 	            writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + providerName + "/" + segmentName + "/" + userHome.refGetPath().getBase() + "/" + res.getName(), true)));
 	            writer.writeElement("DAV::href", XMLWriter.CLOSING);
 	            writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-home-set", XMLWriter.CLOSING);
 	            return true;
-			}
-			else if(property.indexOf("principal-URL") > 0) {
+			} else if(property.indexOf("principal-URL") > 0) {
 	            writer.writeElement("DAV::principal-URL", XMLWriter.OPENING);
 	            writer.writeElement("DAV::href", XMLWriter.OPENING);
 	            writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + providerName + "/" + segmentName + "/user/" + userHome.refGetPath().getBase() + "/profile/" + syncProfile.getName(), true)));
@@ -157,8 +164,7 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 			else {
 				return false;
 			}
-		}
-		else if(res instanceof AccountCollectionResource) {
+		} else if(res instanceof AccountCollectionResource) {
 			if(property.indexOf("addressbook-description") > 0) {
 				writer.writeElement("urn:ietf:params:xml:ns:carddav:addressbook-description", XMLWriter.OPENING);
 	            writer.writeData(res.getDisplayName());				
@@ -177,8 +183,7 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
 			} else {
 				return false;
 			}
-		}
-		else if(res instanceof AccountResource) {
+		} else if(res instanceof AccountResource) {
 			if(property.indexOf("getctag") > 0) {
 				writer.writeElement("http://calendarserver.org/ns/:getctag", XMLWriter.OPENING);
 	            writer.writeText(this.getETag(res));				

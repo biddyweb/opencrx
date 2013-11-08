@@ -33,6 +33,25 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contact" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Kontakty</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:groupAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridelené skupiny</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridelené skupiny</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:competitor" _operation="create">
                     <_object>
                       <label>
@@ -73,6 +92,17 @@
                       </label>
                       <toolTip>
                         <_item>Vstupné prepojenie</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:GenericContract" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Všeobecná zmluva</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Všeobecná zmluva</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -285,6 +315,25 @@
                       </label>
                       <toolTip>
                         <_item>Uzavreté k</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:lastAppliedCreator" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Tvorca kontraktu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:contractType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ kontraktu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ kontraktu</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -560,6 +609,50 @@
                       </label>
                       <toolTip>
                         <_item>Rola</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reapplyContractCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Odpovedať tvorcovi kontraktu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Odpovedať tvorcovi kontraktu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reapplyContractCreator:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ReapplyContractCreatorParams:contractCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Tvorca kontraktu</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Tvorca kontraktu</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:AbstractContract:Pane:Op:Tab:reapplyContractCreator:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Výsledok</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Výsledok</_item>
                       </toolTip>
                     </_object>
                     <_content/>

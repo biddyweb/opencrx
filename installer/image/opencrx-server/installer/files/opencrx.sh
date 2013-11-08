@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# RUN or STOP openCRX Server
-# ----------------------------
+# Run/Stop openCRX Server
+# -----------------------
 
 if [ "$1" = "run" ] ; then
 
   # Start HSQLDB
-  if [ -e $INSTALL_PATH/data/crx/startdb.sh ] ; then 
-    $INSTALL_PATH/data/crx/startdb.sh START &
+  if [ -e $INSTALL_PATH/data/hsqldb/db.sh ] ; then 
+    $INSTALL_PATH/data/hsqldb/db.sh run &
     sleep 3
   fi
 
@@ -24,8 +24,8 @@ fi
 if [ "$1" = "stop" ] ; then
 
   # Stop HSQLDB
-  if [ -e $INSTALL_PATH/data/crx/startdb.sh ] ; then 
-    $INSTALL_PATH/data/crx/startdb.sh STOP
+  if [ -e $INSTALL_PATH/data/hsqldb/db.sh ] ; then 
+    $INSTALL_PATH/data/hsqldb/db.sh stop
   fi
   
   # Stop TomEE

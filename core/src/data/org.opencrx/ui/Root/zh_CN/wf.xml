@@ -99,6 +99,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:WfProcess:wfProcessInstance" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>延期/已完成工作流</_item>
+                      </label>
+                      <toolTip>
+                        <_item>延期/已完成工作流</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:workflow1:ExternalTask" _operation="create">
                     <_object>
                       <label>

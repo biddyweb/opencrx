@@ -1,462 +1,493 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
-	<_object/>
+	<_object />
 	<_content>
 		<provider>
 			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
-				<_object/>
-				<_content>				
+				<_object />
+				<_content>
 					<segment>
 						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
-							<_object/>
+							<_object />
 							<_content>
 
-<!-- File -->
+								<!-- File -->
 								<featureDefinition>
 
-                <!-- Wizard CreateContactWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:createContact">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateContactWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:createContact">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:createContact">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:createContact">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateLegalEntityWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:createLegalEntity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateLegalEntityWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:createLegalEntity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:createLegalEntity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:createLegalEntity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateActivityWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createActivity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityCreator:createActivity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityTracker:createActivity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:createActivity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateActivityWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createActivity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityCreator:createActivity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityTracker:createActivity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:createActivity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateAgendaWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createAgenda">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateAgendaWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createAgenda">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateBugTrackerWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createBugTracker">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateBugTrackerWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createBugTracker">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateCampaignWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createCampaign">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateCampaignWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createCampaign">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateProjectWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createProject">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateProjectWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createProject">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateLeadWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createLead">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateLeadWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createLead">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createOpportunity">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createOpportunity">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createQuote">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createQuote">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createSalesOrder">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createSalesOrder">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createInvoice">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:contract1:Segment:createInvoice">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard CreateProductWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:Segment:createProduct">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard CreateProductWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:Segment:createProduct">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard ImportAccountsFromXLS.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:importAccountsFromXLS">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:importAccountsFromXLS">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ImportAccountsFromXLS.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Segment:importAccountsFromXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:importAccountsFromXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard ImportPropertiesFromXLS.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:importPropertiesFromXLS">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-                <!-- Wizard ImportPropertiesFromXLS.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:base:PropertySet:importPropertiesFromXLS">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-                <!-- Wizard ImportPropertiesFromXLS.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:Segment:importPropertiesFromXLS">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-                <!-- Wizard ImportPropertiesFromXLS.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:ProductConfigurationTypeSet:importPropertiesFromXLS">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ExportAccountsToXLS.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AccountFilterGlobal:exportAccountsToXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:exportAccountsToXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:exportAccountsToXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:exportAccountsToXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:vcard">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ImportPropertiesFromXLS.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:importPropertiesFromXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ImportPropertiesFromXLS.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:base:PropertySet:importPropertiesFromXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ImportPropertiesFromXLS.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:Segment:importPropertiesFromXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ImportPropertiesFromXLS.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:product1:ProductConfigurationTypeSet:importPropertiesFromXLS">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:vcard">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:vcard">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:vcard">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:vcard">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:UnspecifiedAccount:vcard">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:vcard">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AccountFilterGlobal:vcard">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:UnspecifiedAccount:vcard">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AccountFilterGlobal:vcard">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityTracker:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityCategory:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityTracker:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityMilestone:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityCategory:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFilterGlobal:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityMilestone:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFilterGroup:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFilterGlobal:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Resource:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityFilterGroup:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:ical">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Resource:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-<!-- Edit -->
-                <!-- Wizard UserSettings.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:userSettings">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:ical">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard EnableCrxObject.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:enable">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Edit -->
+									<!-- Wizard UserSettings.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:userSettings">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard DisableCrxObject.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:disable">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard EnableCrxObject.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:enable">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-<!-- Security -->
-                <!-- Wizard ChangePasswordManaged.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:changePasswordManaged">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard DisableCrxObject.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:disable">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-<!-- View -->
+									<!-- Security -->
+									<!-- Wizard ChangePasswordManaged.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:changePasswordManaged">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-<!-- Tools -->
-                <!-- Wizard MailMerge.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:UnspecifiedAccount:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AccountFilterGlobal:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:PostalAddress:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AddressFilterGlobal:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:AddressGroup:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Mailing:mailMerge">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- View -->
 
-                <!-- Wizard ScheduleEventWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:scheduleEvent">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:EMail:scheduleEvent">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Tools -->
+									<!-- Wizard QRencoder.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:qrEncode">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard MailMerge.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Group:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:Contact:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:LegalEntity:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:UnspecifiedAccount:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AccountFilterGlobal:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:PostalAddress:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:account1:AddressFilterGlobal:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:AddressGroup:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Mailing:mailMerge">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-<!-- Action -->
-                <!-- Wizard CreateActivityFollowUpWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:createActivityFollowUp">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-                <!-- Wizard MarkAsAllDayEventWizard.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:markAsAllDayEventWizard">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard ScheduleEventWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:scheduleEvent">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:EMail:scheduleEvent">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard UploadMedia.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:uploadMedia">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:document1:Document:uploadMedia">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:uploadMedia">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Action -->
+									<!-- Wizard CreateActivityFollowUpWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:createActivityFollowUp">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard MarkAsAllDayEventWizard.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:markAsAllDayEventWizard">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
-                <!-- Wizard SetTimerOnCrxObject.jsp -->
-								  <org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:setTimer">
-								    <_object>
-								      <isQuery>true</isQuery>
-								    </_object>
-								    <_content/>
-								  </org.openmdx.ui1.OperationDefinition>
+									<!-- Wizard UploadMedia.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:uploadMedia">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:document1:Document:uploadMedia">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:uploadMedia">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
+									<!-- Wizard SetTimerOnCrxObject.jsp -->
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:setTimer">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
 								</featureDefinition>
 
-
-<!-- File -->
+								<!-- File -->
 								<elementDefinition>
 
-                <!-- Wizard CreateContactWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createContact">
+									<!-- Wizard CreateContactWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createContact">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -471,29 +502,13 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateContactWizard.jsp -->
-                  <!--
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>New Contact</_item>
-											</toolTip>
-											<label>
-												<_item>New Contact</_item>
-											</label>
-											<order>
-												<_item>100</_item>
-												<_item>0</_item>
-												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition> -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact">
+									<!-- Wizard CreateContactWizard.jsp -->
+									<!-- <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact"> <_object> <active>true</active> <toolTip> <_item>New Contact</_item> </toolTip> <label> <_item>New Contact</_item> </label> <order> <_item>100</_item> 
+										<_item>0</_item> <_item>1000</_item> </order> </_object> <_content/> </org.openmdx.ui1.ElementDefinition> -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:createContact">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -508,12 +523,11 @@
 												<_item>101</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-
-                <!-- Wizard CreateLegalEntityWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createLegalEntity">
+									<!-- Wizard CreateLegalEntityWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:createLegalEntity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -528,11 +542,11 @@
 												<_item>105</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateLegalEntityWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:createLegalEntity">
+									<!-- Wizard CreateLegalEntityWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:createLegalEntity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -547,11 +561,11 @@
 												<_item>101</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateActivityWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createActivity">
+									<!-- Wizard CreateActivityWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createActivity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -566,9 +580,9 @@
 												<_item>1000</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:createActivity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:createActivity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -583,9 +597,9 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:createActivity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCreator:Pane:Op:Tab:createActivity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -600,9 +614,9 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivity">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -617,11 +631,11 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateAgendaWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createAgenda">
+									<!-- Wizard CreateAgendaWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createAgenda">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -636,11 +650,11 @@
 												<_item>1010</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateBugTrackerWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createBugTracker">
+									<!-- Wizard CreateBugTrackerWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createBugTracker">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -655,11 +669,11 @@
 												<_item>1020</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateCampaignWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createCampaign">
+									<!-- Wizard CreateCampaignWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createCampaign">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -674,11 +688,11 @@
 												<_item>1030</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateProjectWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createProject">
+									<!-- Wizard CreateProjectWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createProject">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -693,11 +707,11 @@
 												<_item>1040</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateLeadWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createLead">
+									<!-- Wizard CreateLeadWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createLead">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -712,11 +726,11 @@
 												<_item>1000</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createOpportunity">
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createOpportunity">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -731,11 +745,11 @@
 												<_item>1010</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createQuote">
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createQuote">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -750,11 +764,11 @@
 												<_item>1020</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createSalesOrder">
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createSalesOrder">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -769,11 +783,11 @@
 												<_item>1030</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateContractWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createInvoice">
+									<!-- Wizard CreateContractWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Segment:Pane:Op:Tab:createInvoice">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -788,11 +802,11 @@
 												<_item>1040</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard CreateProductWizard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:createProduct">
+									<!-- Wizard CreateProductWizard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:createProduct">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -807,11 +821,11 @@
 												<_item>1000</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard ImportAccountsFromXLS.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importAccountsFromXLS">
+									<!-- Wizard ImportAccountsFromXLS.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importAccountsFromXLS">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -826,9 +840,9 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:importAccountsFromXLS">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:importAccountsFromXLS">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -843,11 +857,81 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard ImportPropertiesFromXLS.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:importPropertiesFromXLS">
+									<!-- Wizard ExportAccountsToXLS.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:exportAccountsToXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Accounts to Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Export Accounts to Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>210</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:exportAccountsToXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Accounts to Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Export Accounts to Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>210</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:exportAccountsToXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Contact to Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Export Contact to Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>210</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:exportAccountsToXLS">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Export Legal Entity to Excel File</_item>
+											</toolTip>
+											<label>
+												<_item>Export Legal Entity to Excel File</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>210</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- Wizard ImportPropertiesFromXLS.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:importPropertiesFromXLS">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -862,9 +946,9 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:Pane:Op:Tab:importPropertiesFromXLS">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:PropertySet:Pane:Op:Tab:importPropertiesFromXLS">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -879,9 +963,9 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:importPropertiesFromXLS">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:Segment:Pane:Op:Tab:importPropertiesFromXLS">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -896,9 +980,9 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:Pane:Op:Tab:importPropertiesFromXLS">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:ProductConfigurationTypeSet:Pane:Op:Tab:importPropertiesFromXLS">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -913,11 +997,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:vcard">
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:vcard">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -932,11 +1016,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:vcard">
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:vcard">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -951,11 +1035,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:vcard">
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:vcard">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -970,11 +1054,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:vcard">
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:vcard">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -989,11 +1073,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard vCard.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:vcard">
+									<!-- Wizard vCard.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:vcard">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1008,11 +1092,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1027,11 +1111,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityTracker:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1046,11 +1130,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCategory:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityCategory:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1065,11 +1149,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityMilestone:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1084,11 +1168,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1103,11 +1187,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGroup:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1122,11 +1206,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1141,11 +1225,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SaveAsICal.jsp -->
-								  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:ical">
+									<!-- Wizard SaveAsICal.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:ical">
 										<_object>
 											<active>true</active>
 											<toolTip>
@@ -1160,11 +1244,11 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-<!-- Edit -->
-                <!-- Wizard UserSettings.jsp -->
+									<!-- Edit -->
+									<!-- Wizard UserSettings.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:userSettings">
 										<_object>
 											<active>true</active>
@@ -1180,10 +1264,10 @@
 												<_item>1000</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard EnableCrxObject.jsp -->
+									<!-- Wizard EnableCrxObject.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable">
 										<_object>
 											<active>true</active>
@@ -1199,10 +1283,10 @@
 												<_item>145</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard DisableCrxObject.jsp -->
+									<!-- Wizard DisableCrxObject.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable">
 										<_object>
 											<active>true</active>
@@ -1218,13 +1302,31 @@
 												<_item>148</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-<!-- View 300 -->
+									<!-- View 300 -->
 
-<!-- Tools -->
-                <!-- Wizard MailMerge.jsp -->
+									<!-- Tools -->
+									<!-- Wizard QRencoder.jsp -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:qrEncode">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>QR encode</_item>
+											</toolTip>
+											<label>
+												<_item>QR encode</_item>
+											</label>
+											<order>
+												<_item>400</_item>
+												<_item>0</_item>
+												<_item>300</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Wizard MailMerge.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Group:Pane:Op:Tab:mailMerge">
 										<_object>
 											<active>true</active>
@@ -1240,7 +1342,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1257,7 +1359,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1274,7 +1376,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:UnspecifiedAccount:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1291,7 +1393,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountFilterGlobal:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1308,7 +1410,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1325,7 +1427,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AddressFilterGlobal:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1342,7 +1444,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AddressGroup:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1359,7 +1461,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Mailing:Pane:Op:Tab:mailMerge">
 										<_object>
@@ -1376,10 +1478,10 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard ScheduleEvent.jsp -->
+									<!-- Wizard ScheduleEvent.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:scheduleEvent">
 										<_object>
 											<active>true</active>
@@ -1395,7 +1497,7 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:EMail:Pane:Op:Tab:scheduleEvent">
 										<_object>
@@ -1412,10 +1514,10 @@
 												<_item>200</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-<!-- Action -->
+									<!-- Action -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:createActivityFollowUp">
 										<_object>
 											<active>true</active>
@@ -1431,7 +1533,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Op:Tab:markAsAllDayEventWizard">
 										<_object>
@@ -1448,7 +1550,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:uploadMedia">
@@ -1466,7 +1568,7 @@
 												<_item>8999</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:uploadMedia">
 										<_object>
@@ -1483,7 +1585,7 @@
 												<_item>8999</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:uploadMedia">
 										<_object>
@@ -1500,10 +1602,10 @@
 												<_item>8999</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-                <!-- Wizard SetTimerOnCrxObject.jsp -->
+									<!-- Wizard SetTimerOnCrxObject.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:setTimer">
 										<_object>
 											<active>true</active>
@@ -1519,11 +1621,11 @@
 												<_item>690</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
-<!-- Security -->
-                <!-- Wizard ChangePasswordManaged.jsp -->
+									<!-- Security -->
+									<!-- Wizard ChangePasswordManaged.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePasswordManaged">
 										<_object>
 											<active>true</active>
@@ -1539,9 +1641,8 @@
 												<_item>101</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 
 								</elementDefinition>
 

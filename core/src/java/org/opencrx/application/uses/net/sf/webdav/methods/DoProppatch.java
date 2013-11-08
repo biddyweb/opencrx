@@ -191,7 +191,8 @@ public class DoProppatch extends WebDavMethod {
                 tochange.addAll(toremove);
             }
             resp.setStatus(WebdavStatus.SC_MULTI_STATUS);
-            resp.setContentType("text/xml; charset=UTF-8");
+            resp.setContentType("application/xml");
+            resp.setCharacterEncoding("UTF-8");
 
             // Create multistatus object
             XMLWriter writer = new XMLWriter(resp.getWriter(), namespaces);

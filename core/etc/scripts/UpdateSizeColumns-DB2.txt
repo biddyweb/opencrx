@@ -1,1 +1,0 @@
-ant -Ddb.jdbc.url="jdbc:db2://localhost:50000/CRX" -Ddb.jdbc.driver="com.ibm.db2.jcc.DB2Driver" -Ddb.jdbc.driver.classpath="..\opt\ibm\jre-1.5\db2-9\db2jcc.jar;..\jre-1.5\db2-9\db2jcc_license_cu.jar" -Ddb.username="CRX" -Ddb.password="manager" update-size-columns-1_11_0

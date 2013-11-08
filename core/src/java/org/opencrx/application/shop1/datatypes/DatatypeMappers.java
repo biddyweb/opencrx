@@ -2347,8 +2347,10 @@ public class DatatypeMappers {
 	            media.getContentName()
 	        ),
             Datatypes.member(
-	        	DocumentT.Member.contentLanguage, 
-	            new Integer(document.getContentLanguage())
+	        	DocumentT.Member.contentLanguage,
+	        	document.getContentLanguage().isEmpty() 
+	        		? 0
+	        		: new Integer(document.getContentLanguage().get(0))
 	        ),
             Datatypes.member(
 	        	DocumentT.Member.contentMimeType, 

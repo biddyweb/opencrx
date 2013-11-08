@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: CalDavStore
+ * Description: CardDavStore
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -92,16 +92,30 @@ import org.openmdx.kernel.log.SysLog;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
+/**
+ * CardDavStore
+ *
+ */
 public class CardDavStore implements WebDavStore {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 * @param pmf
+	 */
 	public CardDavStore(
 		PersistenceManagerFactory pmf
 	) {
 		this.pmf = pmf;
 	}
 	
-	//-----------------------------------------------------------------------
+    /**
+     * Get persistence manager for this store.
+     * 
+     * @param req
+     * @param pmf
+     * @return
+     */
     public static PersistenceManager getPersistenceManager(
         HttpServletRequest req,
         PersistenceManagerFactory pmf
@@ -114,7 +128,9 @@ public class CardDavStore implements WebDavStore {
             );
     }
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#begin(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public RequestContext begin(
     	HttpServletRequest req,
@@ -124,7 +140,9 @@ public class CardDavStore implements WebDavStore {
 		return requestContext;
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#commit(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+	 */
 	@Override
 	public void commit(
 		RequestContext requestContext
@@ -142,7 +160,9 @@ public class CardDavStore implements WebDavStore {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#createCollection(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
 	public void createCollection(
 		RequestContext requestContext, 
@@ -151,7 +171,9 @@ public class CardDavStore implements WebDavStore {
 		throw new WebdavException("Not supported by CalDAV");
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getChildren(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public Collection<Resource> getChildren(
 		RequestContext requestContext, 
@@ -164,7 +186,9 @@ public class CardDavStore implements WebDavStore {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public BinaryLargeObject getResourceContent(
 		RequestContext requestContext, 
@@ -177,11 +201,9 @@ public class CardDavStore implements WebDavStore {
 		}
 	}
 
-	//-----------------------------------------------------------------------
 	/**
 	 * Path is of the form:
-	 * - Format 1: {provider.id} "/" {segment.id} "/user/" {user.id} "/profile/" {profile.name}
-	 * - Format 2: {provider.id} "/" {segment.id} "/" {user.id} "/" {profile.id} "/" {feed.id} "/" {account.id}
+	 * - Format 1: {provider.id} "/" {segment.id} "/" ["user" "/"] {user.id} "/" ["profile" "/"] {profile.id} "/" {feed.id} "/" {account.id}
 	 */
 	@Override
 	public Resource getResourceByPath(
@@ -192,6 +214,8 @@ public class CardDavStore implements WebDavStore {
 		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
+		path = path.replace("/user/", "/");
+		path = path.replace("/profile/", "/");		
 		String[] components = path.split("/");
 		// Strip extra components (sent by iOS)
 		{
@@ -208,59 +232,49 @@ public class CardDavStore implements WebDavStore {
 				List<String> strippedComponents = new ArrayList<String>(Arrays.asList(components));
 				components = strippedComponents.subList(0, posStripped).toArray(new String[posStripped]);
 			}
-		}
-		// Format 1
-		if(components.length == 6 && "user".equals(components[2]) && "profile".equals(components[4])) {
-    		UserHome userHome = (UserHome)pm.getObjectById(
-    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[3])
+		}		
+		if(components.length >= 3) {
+			UserHome userHome = (UserHome)pm.getObjectById(
+    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[2])
     		);
-        	CardProfile syncProfile = null;
-        	CardProfileQuery cardProfileQuery = (CardProfileQuery)pm.newQuery(CardProfile.class);
-        	cardProfileQuery.name().equalTo(components[5]);
-        	List<CardProfile> cardProfiles = userHome.getSyncProfile(cardProfileQuery);
-        	if(!cardProfiles.isEmpty()) {
-        		syncProfile = cardProfiles.iterator().next();
-	    		return new CardProfileResource(
-	    			requestContext, 
-	    			syncProfile
-	    		);
-        	}
-		}
-		// Format 2
-		else if(components.length >= 3) {
-			// UserHome
 			if(components.length == 3) {
-				UserHome userHome = (UserHome)pm.getObjectById(
-	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[2])
-	    		);
-	    		return new UserHomeResource(
-	    			requestContext, 
-	    			userHome
-	    		);
-			}	
-			// CardProfile
-			else if(components.length == 4) {
-	    		CardProfile cardProfile = (CardProfile)pm.getObjectById(
-	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[2], "syncProfile", components[3])
-	    		);
-	    		return new CardProfileResource(
-	    			requestContext, 
-	    			cardProfile
-	    		);
+				if(userHome == null) {
+					return null;
+				} else {
+		    		return new UserHomeResource(
+		    			requestContext, 
+		    			userHome
+		    		);
+				}
 			}
-			// SyncFeed
-			else if(components.length == 5) {
-				String id = components[4];
-				ContactsFeed contactsFeed = (ContactsFeed)pm.getObjectById(
-	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[2], "syncProfile", components[3], "feed", id)
-	    		);
+        	CardProfile cardProfile = null;
+        	String profileId = components[3];
+        	try {
+	    		cardProfile = (CardProfile)userHome.getSyncProfile(profileId);
+        	} catch(Exception ignore) {}
+        	if(cardProfile == null) {
+	        	CardProfileQuery cardProfileQuery = (CardProfileQuery)pm.newQuery(CardProfile.class);
+	        	cardProfileQuery.name().equalTo(profileId);
+	        	List<CardProfile> cardProfiles = userHome.getSyncProfile(cardProfileQuery);
+	        	cardProfile = cardProfiles.isEmpty() ? null : cardProfiles.iterator().next();
+        	}
+        	if(components.length == 4) {
+        		if(cardProfile == null) {
+        			return null;
+        		} else {
+		    		return new CardProfileResource(
+		    			requestContext, 
+		    			cardProfile
+		    		);
+        		}
+        	} else if(components.length == 5) {
+				String feedId = components[4];
+				ContactsFeed contactsFeed = (ContactsFeed)cardProfile.getFeed(feedId);
 	    		return new AccountCollectionResource(
 	    			requestContext,
 	    			contactsFeed
 	    		);
-			}
-			// Account
-			else if(components.length == 6) {
+			} else if(components.length == 6) {
 				AccountCollectionResource parent = (AccountCollectionResource)this.getResourceByPath(
 		   			requestContext, 
 		   			components[0] + "/" + components[1] + "/" + components[2] + "/" + components[3] + "/" + components[4]
@@ -294,7 +308,9 @@ public class CardDavStore implements WebDavStore {
 		return null;		
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#removeResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public void removeResource(
 		RequestContext requestContext, 
@@ -314,7 +330,9 @@ public class CardDavStore implements WebDavStore {
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#moveResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource, java.lang.String, java.lang.String)
+	 */
 	@Override
     public MoveResourceStatus moveResource(
     	RequestContext requestContext, 
@@ -325,7 +343,9 @@ public class CardDavStore implements WebDavStore {
 		throw new WebdavException("Not supported by CardDAV");	    
     }
 		
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#rollback(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+	 */
 	@Override
 	public void rollback(
 		RequestContext requestContext
@@ -339,7 +359,9 @@ public class CardDavStore implements WebDavStore {
 		} catch(Exception e) {}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getMimeType(org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
     public String getMimeType(
     	Resource res
@@ -347,11 +369,16 @@ public class CardDavStore implements WebDavStore {
 		if(res instanceof CardDavResource) {
 			return ((CardDavResource)res).getMimeType();
 		} else {
-			return "text/xml";
+			return "application/xml";
 		}
     }
 	
-	//-----------------------------------------------------------------------	
+    /**
+     * Get parent of given path.
+     * 
+     * @param path
+     * @return
+     */
     protected String getParentPath(
     	String path
     ) {
@@ -362,7 +389,9 @@ public class CardDavStore implements WebDavStore {
         return null;
     }
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#putResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.io.InputStream, java.lang.String)
+	 */
 	@Override
     public PutResourceStatus putResource(
     	RequestContext requestContext, 
@@ -428,15 +457,16 @@ public class CardDavStore implements WebDavStore {
 		    	} else {
 		    		return PutResourceStatus.FORBIDDEN;
 		    	}
-	    	}
-	    	catch(Exception e) {
+	    	} catch(Exception e) {
 	    		new ServiceException(e).log();
 	    	}
 		}
 	    return null;
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getLocksByPath(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
     public List<Lock> getLocksByPath(
     	RequestContext requestContext, 
@@ -445,7 +475,9 @@ public class CardDavStore implements WebDavStore {
 		return Collections.emptyList();
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#lock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int)
+	 */
 	@Override
     public Lock lock(
     	RequestContext requestContext, 
@@ -459,7 +491,9 @@ public class CardDavStore implements WebDavStore {
 	    return null;
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#setLockTimeout(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, int)
+	 */
 	@Override
     public void setLockTimeout(
     	RequestContext requestContext, 
@@ -468,7 +502,9 @@ public class CardDavStore implements WebDavStore {
     ) {	    
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#unlock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
     public boolean unlock(
     	RequestContext requestContext, 

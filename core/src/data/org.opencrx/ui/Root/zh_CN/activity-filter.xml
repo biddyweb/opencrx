@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:activitiesSource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>源</_item>
+                      </label>
+                      <toolTip>
+                        <_item>源</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
@@ -304,6 +315,50 @@
                       </label>
                       <toolTip>
                         <_item>负责人</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>搜索条件-由联系人报告</_item>
+                      </label>
+                      <toolTip>
+                        <_item>搜索条件-由联系人报告</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>报告者</_item>
+                      </label>
+                      <toolTip>
+                        <_item>报告者</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>搜索条件-由账号报告</_item>
+                      </label>
+                      <toolTip>
+                        <_item>搜索条件-由账号报告</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty:account" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>报告者</_item>
+                      </label>
+                      <toolTip>
+                        <_item>报告者</_item>
                       </toolTip>
                     </_object>
                     <_content/>

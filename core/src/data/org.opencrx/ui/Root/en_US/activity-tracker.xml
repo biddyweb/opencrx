@@ -31,7 +31,29 @@
 										</_object>
                     <_content>
                       <additionalElementDefinition>
-
+												<org.openmdx.ui1.AdditionalElementDefinition id="10" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Campaigns</_item>
+														</toolTip>
+														<label>
+															<_item>Campaigns</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>12</_item>
+														</order>
+                            <maxMember>3</maxMember>
+                            <showMaxMember>3</showMaxMember>
+                            <showMemberRange>
+                              <_item>0:0:10-0:0:10</_item>
+                              <_item>0:0:20-0:0:20</_item>
+                              <_item>10:0:30-10:0:30</_item>
+                            </showMemberRange>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
 												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
 													<_object>
 														<toolTip>
@@ -231,6 +253,42 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityGroupRelationship">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Involved Activity Groups</_item>
+											</toolTip>
+											<label>
+												<_item>Involved Activity Groups</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+											<maxMember>4</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:assignedAccount">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Account Assignments</_item>
+											</toolTip>
+											<label>
+												<_item>Account Assignments</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+											<maxMember>6</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityNote">
 										<_object>
 											<active>true</active>
@@ -243,7 +301,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>30</_item>
+												<_item>50</_item>
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
@@ -261,7 +319,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>40</_item>
+												<_item>60</_item>
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
@@ -346,6 +404,23 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:activityGroupType">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Type</_item>
+											</toolTip>
+											<label>
+												<_item>Type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:defaultCreator">
 										<_object>
 											<active>true</active>
@@ -363,6 +438,40 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:mainActivity">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Main activity</_item>
+											</toolTip>
+											<label>
+												<_item>Main activity</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:targetGroupAccounts">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Target group accounts (for campaigns, events, etc.)</_item>
+											</toolTip>
+											<label>
+												<_item>Target group accounts</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:creationContext">
 										<_object>
 											<active>true</active>
@@ -375,7 +484,7 @@
 											<order>
 												<_item>10</_item>
 												<_item>0</_item>
-												<_item>20</_item>
+												<_item>30</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -596,6 +705,185 @@
 												<_item>0</_item>
 												<_item>11</_item>
 											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityGroupRelationship -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity Group Relationship</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Group Relationship</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>ActivityGroupRelationship</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Grid Tabs -->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definition Contact-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:relationshipType">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Relationship type</_item>
+											</toolTip>
+											<label>
+												<_item>Type</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>8</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroupRelationship:activityGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Activity group</_item>
+											</toolTip>
+											<label>
+												<_item>Activity group</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>5</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- AccountAssignmentActivityGroup -->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Account Assignment</_item>
+											</toolTip>
+											<label>
+												<_item>Account Assignment</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<iconKey>AccountAssignmentActivityGroup</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Grid Tabs -->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definition Contact-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup:accountRole">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Role</_item>
+											</toolTip>
+											<label>
+												<_item>Role</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AccountAssignmentActivityGroup:description">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

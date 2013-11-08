@@ -779,6 +779,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:involvedObject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Obiecte implicate</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Obiecte implicate</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
@@ -1003,6 +1014,61 @@
                       </label>
                       <toolTip>
                         <_item>descriere ataşament media</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Obiect implicat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Obiect implicat</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Nume</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Nume</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Descriere</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Descriere</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:involvedRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rol</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rol</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:involved" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Obiect implicat</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Obiect implicat</_item>
                       </toolTip>
                     </_object>
                     <_content/>

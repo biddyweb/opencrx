@@ -114,6 +114,9 @@ org.openmdx.base.naming.*
           <td>
             <a href="<%= googleMapsUrl[0] %>" target="_blank"><%= googleMapsUrl[1] %></a><br />
           </td>
+          <td>
+          	<input type="button" name="clip" value="Clipboard" onClick='javascript:window.prompt("Copy to clipboard: Ctrl+C, Enter", "<%= googleMapsUrl[1].replace("<br />", "\\r\\n").replace("'" , "&#39;") %>");' />
+          </td>
         </tr>
 <%
       }

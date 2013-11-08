@@ -1,1 +1,0 @@
-ant -Ddb.jdbc.url="jdbc:postgresql://localhost/CRX" -Ddb.jdbc.driver="org.postgresql.Driver" -Ddb.jdbc.driver.classpath="..\opt\postgresql\jre-1.5\postgresql-8\lib\postgresql-8.1-409.jdbc3.jar" -Ddb.username="postgres" -Ddb.password="manager99" update-size-columns-1_11_0

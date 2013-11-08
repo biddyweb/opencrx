@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -67,9 +67,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.opencrx.kernel.backend.Exporter;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
@@ -77,27 +83,56 @@ import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ViewsCache;
 import org.openmdx.portal.servlet.action.ActionPerformResult;
 import org.openmdx.portal.servlet.action.BoundAction;
+import org.openmdx.portal.servlet.attribute.AttributeValue;
 import org.openmdx.portal.servlet.attribute.ObjectReferenceValue;
+import org.openmdx.portal.servlet.control.GridControl;
 import org.openmdx.portal.servlet.view.Grid;
 import org.openmdx.portal.servlet.view.ObjectView;
 import org.openmdx.portal.servlet.view.ReferencePane;
 import org.openmdx.portal.servlet.view.ShowObjectView;
 
+/**
+ * GridExportObjectsAction
+ *
+ */
 public abstract class GridExportObjectsAction extends BoundAction {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * GridExporter
+	 *
+	 */
 	public interface GridExporter {
 		
+		/**
+		 * Export grid starting from given object.
+		 * 
+		 * @param startFrom
+		 * @return
+		 * @throws ServiceException
+		 */
 		Object[] exportItem(
 			RefObject_1_0 startFrom
 		) throws ServiceException ;
 		
 	}
-	
-	//-----------------------------------------------------------------------
-	static class DefaultGridExporter extends Exporter implements GridExporter {
 
-		public DefaultGridExporter(
+	/**
+	 * ModelBasedGridExporter. Grid exporter which exports all attributes of the
+	 * selected grid objects according the model information.
+	 *
+	 */
+	static class ModelBasedGridExporter extends Exporter implements GridExporter {
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param grid
+		 * @param selectedObjectIdentities
+		 * @param mimeType
+		 * @param referenceFilter
+		 * @param maxItems
+		 */
+		public ModelBasedGridExporter(
 			Grid grid,
 			List<Path> selectedObjectIdentities,
 			String mimeType,
@@ -111,6 +146,9 @@ public abstract class GridExportObjectsAction extends BoundAction {
 	        this.maxItems = maxItems;
         }
 		
+		/* (non-Javadoc)
+		 * @see org.opencrx.kernel.portal.action.GridExportObjectsAction.GridExporter#exportItem(org.openmdx.base.accessor.jmi.cci.RefObject_1_0)
+		 */
 		@Override
         public Object[] exportItem(
         	RefObject_1_0 startFrom 
@@ -123,6 +161,9 @@ public abstract class GridExportObjectsAction extends BoundAction {
 			);
         }
 		
+		/* (non-Javadoc)
+		 * @see org.opencrx.kernel.backend.Exporter#getContent(org.opencrx.kernel.backend.Exporter.TraversedObject, java.lang.String)
+		 */
 		@Override
         protected Collection<?> getContent(
         	TraversedObject startingFrom, 
@@ -142,9 +183,8 @@ public abstract class GridExportObjectsAction extends BoundAction {
 							pm.getObjectById(identity)
 						);
 					}
-				}
-				// Export objects of current page
-				else {
+				} else {
+					// Export objects of current page
 					Object[] rows = this.grid.getRows(pm);
 					for(Object row: rows) {
 						if(row instanceof Object[]) {
@@ -162,12 +202,12 @@ public abstract class GridExportObjectsAction extends BoundAction {
 		        	startingFrom, 
 		        	referenceName
 		        );
-				int n = 0;
+				int count = 0;
 				for(Object obj: objs) {
 					content.add(obj);
-					n++;
+					count++;
 					// Do not export more than maxItems objects
-					if(n > this.maxItems) break;
+					if(count > this.maxItems) break;
 				}
 			}
 			return content;
@@ -180,14 +220,217 @@ public abstract class GridExportObjectsAction extends BoundAction {
 		private final int maxItems;
 	}
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * WysiwygBasedGridExporter. Export which exports the UI customized grid columns.
+	 *
+	 */
+	static class WysiwygBasedGridExporter implements GridExporter {
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param grid
+		 * @param selectedObjectIdentities
+		 * @param mimeType
+		 * @param referenceFilter
+		 * @param maxItems
+		 */
+		public WysiwygBasedGridExporter(
+			Grid grid,
+			List<Path> selectedObjectIdentities,
+			String mimeType,
+			boolean allColumns,
+			int maxItems
+		) {
+	        this.grid = grid;
+	        this.selectedObjectIdentities = selectedObjectIdentities;
+	        this.mimeType = mimeType;
+	        this.allColumns = allColumns;
+	        this.maxItems = maxItems;
+        }
+
+		/**
+		 * Export grid row and append to sheet.
+		 * 
+		 * @param sheet
+		 * @param rowNum
+		 * @param cells
+		 * @throws ServiceException
+		 */
+		protected void exportRow(
+			HSSFSheet sheet,
+			int rowNum,
+			Object[] cells
+		) throws ServiceException {
+			GridControl gridControl = this.grid.getGridControl();
+			// Prepare heading
+			if(rowNum == 0) {
+				// Prepare heading
+				{
+					HSSFRow heading = sheet.createRow(0);
+					// XRI
+					{
+						HSSFCell cell = heading.createCell(0);
+						cell.setCellValue(new HSSFRichTextString("XRI"));					
+					}
+					for(int i = 1; i < cells.length; i++) {
+						Action columnOrderAction = gridControl.getColumnOrderActions()[i];
+						HSSFCell cell = heading.createCell(i);
+						cell.setCellValue(new HSSFRichTextString(columnOrderAction.getToolTip()));
+					}
+				}
+			}
+			HSSFRow row = sheet.createRow(rowNum + 1);
+			// XRI
+			{
+				RefObject_1_0 object = (RefObject_1_0)((ObjectReferenceValue)cells[0]).getObject();
+				HSSFCell cell = row.createCell(0);
+				cell.setCellValue(new HSSFRichTextString(object.refGetPath().toXRI()));				
+			}
+			for(int i = 1; i < cells.length; i++) {
+				AttributeValue valueHolder = (AttributeValue)cells[i];
+				HSSFCell cell = row.createCell(i);
+				String stringifiedValue = valueHolder == null ? null : valueHolder.toString();
+				stringifiedValue = stringifiedValue == null ? "" : stringifiedValue;
+				// Remove brackets for collections
+				if(stringifiedValue.startsWith("[") && stringifiedValue.endsWith("]")) {
+					stringifiedValue = stringifiedValue.substring(1, stringifiedValue.length() - 1);
+				}
+				cell.setCellValue(
+					new HSSFRichTextString(stringifiedValue)
+				);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see org.opencrx.kernel.portal.action.GridExportObjectsAction.GridExporter#exportItem(org.openmdx.base.accessor.jmi.cci.RefObject_1_0)
+		 */
+		@Override
+        public Object[] exportItem(
+        	RefObject_1_0 startFrom
+        ) throws ServiceException {
+			PersistenceManager pm = JDOHelper.getPersistenceManager(startFrom);
+			HSSFWorkbook wb = new HSSFWorkbook();
+			HSSFSheet sheet = wb.createSheet(this.grid.getGridControl().getObjectContainer().getToolTip().get(0));
+			// Export (selected) objects of current grid page
+			if(
+				this.maxItems < Short.MAX_VALUE ||
+				(this.selectedObjectIdentities != null && !this.selectedObjectIdentities.isEmpty())
+			) {
+				Object[] rows = this.grid.getRows(
+					pm, 
+					this.allColumns
+				);
+				int rowNum = 0;
+				for(Object row: rows) {
+					if(row instanceof Object[]) {
+						Object[] cells = (Object[])row;
+						if(cells != null && cells.length > 0) {
+							RefObject_1_0 object = (RefObject_1_0)((ObjectReferenceValue)cells[0]).getObject();
+							if(
+								this.selectedObjectIdentities == null ||
+								this.selectedObjectIdentities.isEmpty() ||
+								this.selectedObjectIdentities.contains(object.refGetPath())
+							) {
+								try {
+									this.exportRow(
+										sheet, 
+										rowNum, 
+										cells
+									);
+								} catch(Exception ignore) {}
+								rowNum++;
+							}
+						}
+					}
+				}
+			} else {
+				// Export objects starting from page 0 up to maxItems
+				boolean showRows = this.grid.getShowRows();
+				int pageSize = this.grid.getPageSize();
+				this.grid.setShowRows(true);
+				int currentPage = 0;
+				int rowNum = 0;
+				while(true) {
+					this.grid.setPage(
+						currentPage, 
+						Grid.MAX_PAGE_SIZE
+					);
+					Object[] rows = this.grid.getRows(
+						pm, 
+						this.allColumns
+					);
+					for(Object row: rows) {
+						if(row instanceof Object[]) {
+							Object[] cells = (Object[])row;
+							if(cells != null && cells.length > 0) {
+								try {
+									this.exportRow(
+										sheet, 
+										rowNum, 
+										cells
+									);
+									rowNum++;
+								} catch(Exception ignore) {}
+							}
+						}
+					}
+					// Done when exported more than maxItems rows or
+					// page has less then page size rows					
+					if(
+						rows.length < this.grid.getPageSize() || 
+						rowNum > this.maxItems
+					) {
+						break;
+					}
+					currentPage++;
+				}
+				this.grid.setPage(
+					0, 
+					pageSize
+				);
+				this.grid.setShowRows(showRows);
+			}
+			QuotaByteArrayOutputStream bs = new QuotaByteArrayOutputStream(Exporter.class.getName());
+			try {
+				wb.write(bs);
+				bs.close();
+			} catch(Exception ignore) {}
+			String contentMimeType = this.mimeType;
+			String contentName = "Export" + Exporter.FILE_EXT_XLS;
+			return new Object[] {
+			    contentName, 
+			    contentMimeType, 
+			    bs.toByteArray()
+			};
+        }
+
+		private final Grid grid;
+		private final List<Path> selectedObjectIdentities;
+		private final String mimeType;
+		private final boolean allColumns;
+		private final int maxItems;
+
+	}
+
+	/**
+	 * Get grid exporter. Must be implemented by concrete sub-class.
+	 * 
+	 * @param grid
+	 * @param selectedObjectIdentities
+	 * @param maxItems
+	 * @return
+	 * @throws ServiceException
+	 */
 	protected abstract GridExporter getGridExporter(
 		Grid grid,
 		List<Path> selectedObjectIdentities,
 		int maxItems
 	) throws ServiceException;
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.action.BoundAction#perform(org.openmdx.portal.servlet.view.ObjectView, javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.lang.String, javax.servlet.http.HttpSession, java.util.Map, org.openmdx.portal.servlet.ViewsCache, org.openmdx.portal.servlet.ViewsCache)
+	 */
 	@Override
     public ActionPerformResult perform(
         ObjectView view,
@@ -253,14 +496,12 @@ public abstract class GridExportObjectsAction extends BoundAction {
 			    		}
 	                }
 	            }
-	    	}
-		    catch (Exception e) {
+	    	} catch (Exception e) {
 	            ServiceException e0 = new ServiceException(e);
 	            SysLog.warning(e0.getMessage(), e0.getCause());
 	            try {
 	                pm.currentTransaction().rollback();
-	            }
-	            catch(Exception e1) {}
+	            } catch(Exception e1) {}
 	        }	        
 	        pm.close();
         }
@@ -268,5 +509,6 @@ public abstract class GridExportObjectsAction extends BoundAction {
         	ActionPerformResult.StatusCode.DONE
         );
     }
+
 	
 }

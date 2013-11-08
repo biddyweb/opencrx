@@ -60,7 +60,6 @@ import javax.jdo.listener.StoreCallback;
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.contract1.cci2.SalesOrderQuery;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;

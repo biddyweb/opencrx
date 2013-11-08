@@ -234,6 +234,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Attivita&apos;</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Attivita&apos;</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:name" _operation="create">
                     <_object>
                       <label>
@@ -741,61 +752,6 @@
                       </label>
                       <toolTip>
                         <_item>Riferimento Prodotto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Oggetto Coinvolto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Oggetto Coinvolto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nome</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nome</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Descrizione</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Descrizione</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involvedRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ruolo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ruolo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:InvolvedObject:involved" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Oggetto coinvolto</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Oggetto coinvolto</_item>
                       </toolTip>
                     </_object>
                     <_content/>

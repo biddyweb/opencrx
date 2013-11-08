@@ -59,7 +59,7 @@ import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.ICalendar;
-import org.opencrx.kernel.backend.Importer;
+import org.opencrx.kernel.backend.XmlImporter;
 import org.opencrx.kernel.backend.VCard;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
@@ -112,8 +112,8 @@ public class ImporterImpl
 	            		report
 	            	);
             	}
-            } else if(Importer.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(Importer.FILE_EXTENSION)) {
-                importedObject = (BasicObject)Importer.getInstance().importItem(
+            } else if(XmlImporter.MIME_TYPE.equals(itemMimeType) || itemName.endsWith(XmlImporter.FILE_EXTENSION)) {
+                importedObject = (BasicObject)XmlImporter.getInstance().importItem(
                 	item,
                 	locale,
                 	(BasicObject)this.sameObject(),

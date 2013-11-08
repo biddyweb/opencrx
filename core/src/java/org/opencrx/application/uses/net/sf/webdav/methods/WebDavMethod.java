@@ -242,7 +242,7 @@ public abstract class WebDavMethod {
     }
 
     /**
-     * reads the depth header from the request and returns it as a int
+     * Reads the depth header from the request and returns it as a int.
      * 
      * @param req
      * @return the depth from the depth header
@@ -252,14 +252,12 @@ public abstract class WebDavMethod {
     	Resource res
     ) {
     	HttpServletRequest req = requestContext.getHttpServletRequest();
-        int depth = INFINITY;
+        int depth = 1; // default is 1
         String depthStr = req.getHeader("Depth");
-        if (depthStr != null) {
-            if (depthStr.equals("0")) {
-                depth = 0;
-            } else if (depthStr.equals("1")) {
-                depth = 1;
-            }
+        if(depthStr != null) {
+        	try {
+        		depth = Integer.parseInt(depthStr);
+        	} catch(Exception ignore) {}
         }
         return depth;
     }

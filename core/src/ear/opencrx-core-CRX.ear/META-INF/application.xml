@@ -76,6 +76,12 @@
 			<context-root>opencrx-bpi-CRX</context-root>
 		</web>
 	</module>
+	<module id="opencrx-calendar-CRX">
+		<web>
+			<web-uri>opencrx-calendar-CRX.war</web-uri>
+			<context-root>opencrx-calendar-CRX</context-root>
+		</web>
+	</module>
 	<security-role id="SecurityRole_OpenCrxUser">
 		<description>openCRX Standard Users</description>
 		<role-name>OpenCrxUser</role-name>

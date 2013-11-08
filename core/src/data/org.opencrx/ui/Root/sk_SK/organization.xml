@@ -77,13 +77,13 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:name" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:name" _operation="create">
                     <_object>
                       <label>
                         <_item>Meno</_item>
                       </label>
                       <toolTip>
-                        <_item>Meno organizácie</_item>
+                        <_item>Názov organizačného kontainera</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -99,18 +99,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:Pane:Attr:Tab:0:Group:10" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:Pane:Attr:Tab:0:Group:10" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dodatočné informácie</_item>
+                        <_item>Ďalšie informácie</_item>
                       </label>
                       <toolTip>
-                        <_item>Dodatočné informácie</_item>
+                        <_item>Ďalšie informácie</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Organization:description" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractOrganizationalUnit:description" _operation="create">
                     <_object>
                       <label>
                         <_item>Popis</_item>

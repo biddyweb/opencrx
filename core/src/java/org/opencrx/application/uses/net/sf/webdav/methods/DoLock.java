@@ -225,7 +225,8 @@ public class DoLock extends WebDavMethod {
             }
         } else {
         	try {
-	            resp.setContentType("text/xml; charset=UTF-8");
+	            resp.setContentType("application/xml");
+	            resp.setCharacterEncoding("UTF-8");
 	            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         	} catch(Exception e) {
         		new ServiceException(e).log();
@@ -395,7 +396,8 @@ public class DoLock extends WebDavMethod {
 	        namespaces.put("DAV:", "D");
 	
 	        resp.setStatus(HttpServletResponse.SC_OK);
-	        resp.setContentType("text/xml; charset=UTF-8");
+	        resp.setContentType("application/xml");
+	        resp.setCharacterEncoding("UTF-8");
 	
 	        XMLWriter generatedXML = new XMLWriter(resp.getWriter(), namespaces);
 	        generatedXML.writeXMLHeader();

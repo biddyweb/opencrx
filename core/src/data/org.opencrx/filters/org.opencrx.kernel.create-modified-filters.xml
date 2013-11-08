@@ -2,7 +2,7 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="128">
+			<array class="java.lang.String" length="135">
 
 				<void index="0">
 					<string>org:opencrx:kernel:activity1:Incident:workReportEntry</string>
@@ -398,6 +398,29 @@
 				</void>
 				<void index="127">
 					<string>org:opencrx:kernel:product1:Segment:productFilter</string>
+				</void>
+				
+				<void index="128">
+					<string>org:opencrx:kernel:account1:AccountFilterGlobal:filteredAccount</string>
+				</void>
+				<void index="129">
+					<string>org:opencrx:kernel:account1:AddressFilterGlobal:filteredAddress</string>
+				</void>
+				<void index="130">
+					<string>org:opencrx:kernel:product1:ProductFilterGlobal:filteredProduct</string>
+				</void>
+
+				<void index="131">
+					<string>org:opencrx:kernel:activity1:Segment:resource</string>
+				</void>
+				<void index="132">
+					<string>org:opencrx:kernel:activity1:Segment:addressGroup</string>
+				</void>
+				<void index="133">
+					<string>org:opencrx:kernel:activity1:Segment:activityProcess</string>
+				</void>
+				<void index="134">
+					<string>org:opencrx:kernel:product1:Segment:productClassification</string>
 				</void>
 			</array>
 		</void>

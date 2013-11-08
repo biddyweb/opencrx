@@ -44,6 +44,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Segment:document" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Dokumenty (deaktivované)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Dokumenty (deaktivované)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder" _operation="create">
                     <_object>
                       <label>
@@ -88,6 +106,24 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderEntry" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Dokumenty (deaktivované)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Dokumenty (deaktivované)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:name" _operation="create">
                     <_object>
                       <label>
@@ -121,6 +157,138 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktivovaný</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objekt je deaktivovaný</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresárová položka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresárová položka</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:AssignmentBasedFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresárová položka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresárová položka (Priradenie)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentBasedFolderEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Adresárová položka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Adresátová položka (Dokument)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:document" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Dokument</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Dokument</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:assignmentRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rola</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rola</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Platné od</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Platné od</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Platné od</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Platné od</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:basedOn" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vstup na základe</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vstup na základe</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderEntry:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktivované</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objekt je deaktivovaný</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document" _operation="create">
                     <_object>
                       <label>
@@ -143,6 +311,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>»Zložky</_item>
+                      </label>
+                      <toolTip>
+                        <_item>»Zložky</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:revision" _operation="create">
                     <_object>
                       <label>
@@ -157,7 +336,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:propertySet" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nastaviť vlastnosť</_item>
+                        <_item>»Nastaviť vlastnosť</_item>
                       </label>
                       <toolTip>
                         <_item>Nastaviť vlastnosť</_item>
@@ -168,7 +347,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:link" _operation="create">
                     <_object>
                       <label>
-                        <_item>Spojenia</_item>
+                        <_item>»Spojenia</_item>
                       </label>
                       <toolTip>
                         <_item>Spojenia</_item>
@@ -179,7 +358,7 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:lock" _operation="create">
                     <_object>
                       <label>
-                        <_item>Zablokovaný</_item>
+                        <_item>»Zablokovaný</_item>
                       </label>
                       <toolTip>
                         <_item>Zablokovaný</_item>
@@ -491,6 +670,50 @@
                       </label>
                       <toolTip>
                         <_item>CMS meta</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktivované</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objekt je deaktivovaný</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Priradenie zložky</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Priradenie zložky</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:FolderAssignment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -810,6 +1033,61 @@
                       </label>
                       <toolTip>
                         <_item>Verzia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:documentFolder" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zložka</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zložka</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:assignmentRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rola</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rola</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Platné od</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Platné od</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:validTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Platné do</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Platné do</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderAssignment:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktivované</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Objekt je deaktivovaný</_item>
                       </toolTip>
                     </_object>
                     <_content/>

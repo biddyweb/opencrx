@@ -54,30 +54,45 @@ package org.opencrx.kernel.backend;
 
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.building1.jmi1.AbstractBuildingUnit;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 
+/**
+ * Buildings
+ *
+ */
 public class Buildings extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 *  Register Buildings backend.
+	 *  
+	 */
 	public static void register(
 	) {
 		registerImpl(new Buildings());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get current Buildings backend.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Buildings getInstance(
 	) throws ServiceException {
 		return getInstance(Buildings.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	protected Buildings(
 	) {
 		
 	}
-	    
-    //-----------------------------------------------------------------------
+	
     /**
      * @return Returns the buildings segment.
      */
@@ -90,5 +105,30 @@ public class Buildings extends AbstractImpl {
             new Path("xri://@openmdx*org.opencrx.kernel.building1").getDescendant("provider", providerName, "segment", segmentName)
         );
     }	
+    
+    /**
+     * jdoPrestore() callback. Override for custom-specific behavior.
+     * 
+     * @param buildingUnit
+     * @throws ServiceException
+     */
+    public void updateAbstractBuildingUnit(
+    	AbstractBuildingUnit buildingUnit
+    ) throws ServiceException {
+    }
+    
+    /**
+     * jdoPreDelete() callback. Override for custom-specific behavior.
+     * 
+     * @param buildingUnit
+     * @param preDelete
+     * @throws ServiceException
+     */
+    public void removeAbstractBuildingUnit(
+    	AbstractBuildingUnit buildingUnit,
+    	boolean preDelete    	
+    ) throws ServiceException {
+    	
+    }
     
 }

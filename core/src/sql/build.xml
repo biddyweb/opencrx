@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!--
  * =======================================================================
- * = Name:        $Id: build.xml,v 1.39 2012/03/07 16:34:54 wfro Exp $
  * = Description: openCRX/sql build.xml
- * = Revision:    $Revision: 1.39 $
- * = Date:        $Date: 2012/03/07 16:34:54 $
- * = Copyright:   (c) 2003-2012 CRIXP AG
+ * = Copyright:   (c) 2003-2013 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -57,10 +54,10 @@
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.10-to-2.11.sql migrate-from-2.10-to-2.11.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.11-to-2.12.sql migrate-from-2.11-to-2.12.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.10-to-2.11.sql drop-from-2.10-to-2.11.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.11-to-2.12.sql drop-from-2.11-to-2.12.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/delete-segment.sql delete-segment.tsql"/>

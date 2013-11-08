@@ -59,12 +59,16 @@ import java.util.List;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.document1.cci2.DocumentQuery;
+import org.opencrx.kernel.document1.jmi1.AbstractFilterDocument;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 
 /**
  * Default documents backend class.
@@ -268,6 +272,26 @@ public class Documents extends AbstractImpl {
 		}
 		return null;
 	}
+
+    /**
+     * Count documents of given document filter.
+     * 
+     * @param documentFilter
+     * @return
+     * @throws ServiceException
+     */
+    public int countFilteredDocument(
+        AbstractFilterDocument documentFilter
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(documentFilter);
+    	DocumentQuery query = (DocumentQuery)pm.newQuery(Document.class);
+    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	queryExtension.setClause(
+    		Database_1_Attributes.HINT_COUNT + "(1=1)"
+    	);
+    	List<Document> documents = documentFilter.getFilteredDocument(query);
+        return documents.size();
+    }
 
 	//-------------------------------------------------------------------------
 	// Members

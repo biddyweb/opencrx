@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: CalDavStore
+ * Description: WebDavStore
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -72,34 +72,44 @@ import org.opencrx.application.uses.net.sf.webdav.exceptions.LockFailedException
 import org.opencrx.application.uses.net.sf.webdav.exceptions.WebdavException;
 import org.opencrx.kernel.document1.cci2.DocumentBasedFolderEntryQuery;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
+import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.jmi1.Document;
+import org.opencrx.kernel.document1.jmi1.DocumentFilterGlobal;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.opencrx.kernel.document1.jmi1.DocumentFolderEntry;
 import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
-import org.opencrx.kernel.home1.cci2.DocumentFeedQuery;
 import org.opencrx.kernel.home1.cci2.DocumentProfileQuery;
-import org.opencrx.kernel.home1.jmi1.DocumentFeed;
 import org.opencrx.kernel.home1.jmi1.DocumentProfile;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
-import org.openmdx.kernel.id.cci.UUIDGenerator;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
+/**
+ * WebDavStore
+ *
+ */
 public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.WebDavStore {
 
-	//-----------------------------------------------------------------------
+	/**
+	 * @param pmf
+	 */
 	public WebDavStore(
 		PersistenceManagerFactory pmf
 	) {
 		this.pmf = pmf;
 	}
-	
-	//-----------------------------------------------------------------------
+
+    /**
+     * @param req
+     * @param pmf
+     * @return
+     */
     public static PersistenceManager getPersistenceManager(
         HttpServletRequest req,
         PersistenceManagerFactory pmf
@@ -111,8 +121,10 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
                 null
             );
     }
-	
-	//-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#begin(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+	 */
 	@Override
 	public RequestContext begin(
     	HttpServletRequest req,
@@ -122,7 +134,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		return requestContext;
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#commit(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+	 */
 	@Override
 	public void commit(
 		RequestContext requestContext
@@ -140,7 +154,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#createCollection(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
 	public void createCollection(
 		RequestContext requestContext, 
@@ -156,37 +172,42 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 			if(parent != null) {
 				String name = path.substring(pos + 1);
 				PersistenceManager pm = JDOHelper.getPersistenceManager(parent.getObject());
-				DocumentFolder parentFolder = parent.getObject();
-				// Do not create if folder with same name exists
-				DocumentFolderQuery query = (DocumentFolderQuery)pm.newQuery(DocumentFolder.class);
-				query.name().equalTo(name);
-				List<DocumentFolder> folders = parentFolder.getSubFolder(query);
-				if(folders.isEmpty()) {				
-					org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
-						(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
-							parentFolder.refGetPath().getPrefix(5)
+				if(parent.getObject() instanceof DocumentFolder) {
+					DocumentFolder parentFolder = (DocumentFolder)parent.getObject();
+					// Do not create if folder with same name exists
+					DocumentFolderQuery query = (DocumentFolderQuery)pm.newQuery(DocumentFolder.class);
+					query.name().equalTo(name);
+					List<DocumentFolder> folders = parentFolder.getSubFolder(query);
+					if(folders.isEmpty()) {				
+						org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
+							(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
+								parentFolder.refGetPath().getPrefix(5)
+							);
+						pm.currentTransaction().begin();
+						DocumentFolder newFolder = pm.newInstance(DocumentFolder.class);
+						newFolder.setName(name);
+						newFolder.setParent(parentFolder);
+						newFolder.getOwningGroup().addAll(parentFolder.getOwningGroup());
+						documentSegment.addFolder(
+							UUIDConversion.toUID(UUIDs.newUUID()),					
+							newFolder
 						);
-					pm.currentTransaction().begin();
-					DocumentFolder newFolder = pm.newInstance(DocumentFolder.class);
-					newFolder.setName(name);
-					newFolder.setParent(parentFolder);
-					newFolder.getOwningGroup().addAll(parentFolder.getOwningGroup());
-					documentSegment.addFolder(
-						UUIDConversion.toUID(UUIDs.newUUID()),					
-						newFolder
-					);
-					pm.currentTransaction().commit();
+						pm.currentTransaction().commit();
+					}
+				} else {
+					throw new WebdavException("Unable to create folder. Parent folder >" + path + "< not a document folder");					
 				}
 			} else {
 				throw new WebdavException("Unable to create folder. Parent folder >" + path + "< not found");				
 			}
-		}
-		else {
+		} else {
 			throw new WebdavException("Unable to create folder. Invalid path >" + path + "<");
 		}
 	}
-	
-	//-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getChildren(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public Collection<Resource> getChildren(
 		RequestContext requestContext, 
@@ -199,7 +220,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public BinaryLargeObject getResourceContent(
 		RequestContext requestContext, 
@@ -212,10 +235,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		}
 	}
 
-	//-----------------------------------------------------------------------
 	/**
 	 * Path is of the form:
-	 * {provider.id} "/" {segment.id} "/user/" {user.id} "/profile/" {profile.name} "/" {feed.name} ["/" {folder.name} ]* "/" {document.name}
+	 * {provider.id} "/" {segment.id} ["/user/"] {user.id} ["/profile/"] {profile.name} "/" {feed.name} ["/" {folder.name} ]* "/" {document.name}
 	 */
 	@Override
 	public Resource getResourceByPath(
@@ -229,13 +251,16 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		if(path.endsWith("/")) {
 			path = path.substring(0, path.length() - 1);
 		}
+		path = path.replace("/user/", "/");
+		path = path.replace("/profile/", "/");
 		String[] components = path.split("/");
-		if(components.length >= 6 && "user".equals(components[2]) && "profile".equals(components[4])) {
+		if(components.length >= 4) {
     		UserHome userHome = (UserHome)pm.getObjectById(
-    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[3])
+    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", components[0], "segment", components[1], "userHome", components[2])
     		);
+    		String profileName = components[3];
         	DocumentProfileQuery documentProfileQuery = (DocumentProfileQuery)pm.newQuery(DocumentProfile.class);
-        	documentProfileQuery.name().equalTo(components[5]);
+        	documentProfileQuery.name().equalTo(profileName);
         	List<DocumentProfile> documentProfiles = userHome.getSyncProfile(documentProfileQuery);
         	if(documentProfiles.isEmpty()) return null;
     		DocumentProfileResource documentProfileResource = new DocumentProfileResource(
@@ -243,74 +268,112 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
     			documentProfiles.iterator().next()
     		);
     		// DocumentProfile
-    		if(components.length == 6) {
+    		if(components.length == 4) {
     			return documentProfileResource;
         	}
-    		// DocumentFeed
-			DocumentFeedQuery feedQuery = (DocumentFeedQuery)pm.newQuery(DocumentFeed.class);
-			feedQuery.thereExistsDocumentFolder().name().equalTo(components[6]);
-			List<DocumentFeed> documentFeeds = documentProfileResource.getObject().getFeed(feedQuery);
-			if(documentFeeds.isEmpty()) return null;
-			DocumentCollectionResource documentCollectionResource = new DocumentFeedResource(
-				requestContext,
-				documentFeeds.iterator().next()
-			);
-			// Document and DocumentFolder
-			for(int i = 7; i < components.length; i++) {
+    		// Find document collection resource matching name components[4]
+    		String feedName = components[4];
+    		DocumentCollectionResource documentCollectionResource = null;    		
+    		for(Resource resource: documentProfileResource.getChildren()) {
+    			if(resource instanceof DocumentFolderFeedResource) {
+    				DocumentFolderFeedResource documentFeedResource = (DocumentFolderFeedResource)resource;
+    				if(documentFeedResource.getName().equals(feedName)) {
+    					documentCollectionResource = documentFeedResource;
+    					break;
+    				}
+    			} else if(resource instanceof DocumentFilterFeedResource) {
+    				DocumentFilterFeedResource documentFilterFeedResource = (DocumentFilterFeedResource)resource;
+    				if(documentFilterFeedResource.getName().equals(feedName)) {
+    					documentCollectionResource = documentFilterFeedResource;
+    					break;
+    				}    				
+    			}
+    		}
+    		if(documentCollectionResource == null) {
+    			return null;
+    		}
+			// Recursively walk path starting from components[5]
+			for(int i = 5; i < components.length; i++) {
 				String name = components[i];
-				// Is it a folder?
-				DocumentFolderQuery folderQuery = documentCollectionResource.getFolderQuery();
-				folderQuery.name().equalTo(name);
-				List<DocumentFolder> documentFolders = documentCollectionResource.getObject().getSubFolder(folderQuery);
-				if(!documentFolders.isEmpty()) {
-					documentCollectionResource = new DocumentFolderResource(
-						requestContext,
-						documentFolders.iterator().next()
-					);
-				}
-				// It must be a document? 
-				else {					
-					DocumentBasedFolderEntryQuery folderEntryQuery = documentCollectionResource.getFolderEntryQuery();
-					folderEntryQuery.name().equalTo(name);
-					List<DocumentFolderEntry> entries = documentCollectionResource.getObject().getFolderEntry(folderEntryQuery);
-					return entries.isEmpty() ?
-						null :
-							new DocumentResource(
+				if(documentCollectionResource.getObject() instanceof DocumentFolder) {
+					DocumentFolder documentFolder = (DocumentFolder)documentCollectionResource.getObject();
+					// Test for folder
+					DocumentFolderQuery folderQuery = documentCollectionResource.getFolderQuery();
+					folderQuery.name().equalTo(name);
+					List<DocumentFolder> documentFolders = documentFolder.getSubFolder(folderQuery);
+					// Is resource with given name a folder?
+					if(!documentFolders.isEmpty()) {
+						documentCollectionResource = new DocumentFolderResource(
+							requestContext,
+							documentFolders.iterator().next()
+						);
+					} else {					
+						// No, it must be a document
+						DocumentBasedFolderEntryQuery folderEntryQuery = documentCollectionResource.getFolderEntryQuery();
+						folderEntryQuery.name().equalTo(name);
+						List<DocumentFolderEntry> entries = documentFolder.getFolderEntry(folderEntryQuery);
+						return entries.isEmpty() 
+							? null 
+							: new DocumentResource(
 								requestContext, 
 								(Document)entries.iterator().next().getDocument(), 
 								documentCollectionResource
-							);										
+							);
+					}
+				} else if(documentCollectionResource instanceof DocumentFilterFeedResource) {
+					DocumentFilterFeedResource filterFeedResource = (DocumentFilterFeedResource)documentCollectionResource;
+					DocumentQuery documentQuery = documentCollectionResource.getDocumentQuery();
+					documentQuery.name().equalTo(name);
+					List<Document> entries = filterFeedResource.getObject().getFilteredDocument(documentQuery);
+					return entries.isEmpty()
+						? null 
+						: new DocumentResource(
+							requestContext, 
+							entries.iterator().next(), 
+							documentCollectionResource
+						);
 				}
 			}
 			return documentCollectionResource;
 		}
 		return null;		
 	}
-	
-	//-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#removeResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
 	public void removeResource(
 		RequestContext requestContext, 
 		Resource res
 	) {
-		PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();
+		PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();		
 		if(res instanceof DocumentResource) {
 			Document document = ((DocumentResource)res).getObject();
 			DocumentCollectionResource documentCollectionResource = ((DocumentResource)res).getDocumentCollectionResource();
 			pm.currentTransaction().begin();
-			document.getFolder().remove(documentCollectionResource.getObject());
+			if(documentCollectionResource.getObject() instanceof DocumentFolder) {
+				DocumentFolder documentFolder = (DocumentFolder)documentCollectionResource.getObject();
+				document.getFolder().remove(documentFolder);
+			}
+			// Disable document only if it is not contained in any folder
 			if(document.getFolder().isEmpty()) {
 				document.setDisabled(true);
 			}
-			pm.currentTransaction().commit();				
+			pm.currentTransaction().commit();
 		} else if(res instanceof DocumentCollectionResource) {
-			pm.currentTransaction().begin();
-			((DocumentCollectionResource)res).getObject().setDisabled(true);
-			pm.currentTransaction().commit();			
+			BasicObject documentCollection = ((DocumentCollectionResource)res).getObject();
+			if(documentCollection instanceof DocumentFolder) {
+				pm.currentTransaction().begin();
+				((DocumentFolder)documentCollection).setDisabled(true);
+				pm.currentTransaction().commit();
+			}
 		}
 	}
-	
-	//-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#moveResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource, java.lang.String, java.lang.String)
+	 */
 	@Override
     public MoveResourceStatus moveResource(
     	RequestContext requestContext, 
@@ -318,73 +381,92 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
     	String sourcePath,
     	String destinationPath
     ) {
-        Resource destRes = this.getResourceByPath(requestContext, destinationPath);
-        // Destination does not exist
-        if(destRes == null) {
-			int posSource = sourcePath.lastIndexOf("/");
-			int posDestination = destinationPath.lastIndexOf("/");
-			String sourcePrefix = sourcePath.substring(0, posSource);
-			String destinationPrefix = destinationPath.substring(0, posDestination);
+    	if(sourcePath.endsWith("/")) {
+    		sourcePath = sourcePath.substring(0, sourcePath.length() - 1);
+    	}
+    	if(destinationPath.endsWith("/")) {
+    		destinationPath = destinationPath.substring(0, destinationPath.length() - 1);
+    	}
+		String sourceFolderName = this.getParentPath(sourcePath);
+		String destFolderName = this.getParentPath(destinationPath);
+		String newName = destinationPath.substring(destFolderName.length() + 1);
+    	// Move DocumentResource
+    	if(sourceRes instanceof DocumentResource) {
+           	Resource destRes = this.getResourceByPath(requestContext, this.getParentPath(destinationPath));
 			// Rename
-			if(sourcePrefix.equals(destinationPrefix)) {
+			if(sourceFolderName.equals(destFolderName)) {
 				PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();
-				String newName = destinationPath.substring(posDestination + 1);
-				if(sourceRes instanceof DocumentCollectionResource) {
-					DocumentFolder folder = ((DocumentCollectionResource)sourceRes).getObject();
-					pm.currentTransaction().begin();
-					folder.setName(newName);
-					pm.currentTransaction().commit();
-				} else if(sourceRes instanceof DocumentResource) {
-					Document document = ((DocumentResource)sourceRes).getObject();
-					pm.currentTransaction().begin();
-					document.setName(newName);
-					document.setTitle(newName);
-					Collection<DocumentRevision> revisions = document.getRevision();
-					for(DocumentRevision revision: revisions) {
-						revision.setName(newName);
-						if(revision instanceof MediaContent) {
-							((MediaContent)revision).setContentName(newName);
-						}
+				Document document = ((DocumentResource)sourceRes).getObject();
+				pm.currentTransaction().begin();
+				document.setName(newName);
+				document.setTitle(newName);
+				Collection<DocumentRevision> revisions = document.getRevision();
+				for(DocumentRevision revision: revisions) {
+					revision.setName(newName);
+					if(revision instanceof MediaContent) {
+						((MediaContent)revision).setContentName(newName);
 					}
-					pm.currentTransaction().commit();
 				}
+				pm.currentTransaction().commit();
 				return MoveResourceStatus.CREATED;
-			} else {
-				throw new WebdavException("Move only supportes rename of resources. source=>" + sourcePrefix + "< destination=>" + destinationPrefix + "<");
+			} else if(destRes instanceof DocumentCollectionResource) {
+				PutResourceStatus status = null;
+	        	try {
+		        	status = this.putResource(
+		        		requestContext, 
+		        		destinationPath, 
+		        		// Put content of source
+		        		this.getResourceContent(
+		            		requestContext, 
+		            		sourceRes
+		            	).getContent(),
+		            	// keep mimeType of destination
+		        		this.getMimeType(
+		        			destRes
+		        		)
+		        	);
+	        	} catch(Exception e) {
+					throw new WebdavException("Unable to put source content to destination. source=>" + sourcePath + "< destination=>" + destinationPath + "<");        		
+	        	}
+	        	if(status == PutResourceStatus.FORBIDDEN) {
+	        		return MoveResourceStatus.FORBIDDEN;
+	        	} else {
+	        		PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();        		
+	    			Document document = ((DocumentResource)sourceRes).getObject();
+	    			pm.currentTransaction().begin();
+	    			document.setDisabled(true);
+	    			pm.currentTransaction().commit();
+		        	return MoveResourceStatus.CREATED;
+	        	}
 			}
-        }
-        // Destination exists. Overwrite destination with 
-        // content of source and remove source
-        else {
-        	try {
-	        	this.putResource(
-	        		requestContext, 
-	        		destinationPath, 
-	        		// Put content of source
-	        		this.getResourceContent(
-	            		requestContext, 
-	            		sourceRes
-	            	).getContent(),
-	            	// keep mimeType of destination
-	        		this.getMimeType(
-	        			destRes
-	        		)
-	        	);
-        	} catch(Exception e) {
-				throw new WebdavException("Unable to put source content of to destination. source=>" + sourcePath + "< destination=>" + destinationPath + "<");        		
-        	}
-        	if(sourceRes instanceof DocumentResource) {
-        		PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();        		
-    			Document document = ((DocumentResource)sourceRes).getObject();
-    			pm.currentTransaction().begin();
-    			pm.deletePersistent(document);
-    			pm.currentTransaction().commit();
-        	}
-        	return MoveResourceStatus.MOVED;
-        }
+    	} else if(sourceRes instanceof DocumentCollectionResource) {
+        	// Move CollectionResource
+			if(sourceFolderName.equals(destFolderName)) {
+				PersistenceManager pm = ((WebDavRequestContext)requestContext).getPersistenceManager();
+				BasicObject documentCollection = ((DocumentCollectionResource)sourceRes).getObject();
+				if(documentCollection instanceof DocumentFolder) {
+					pm.currentTransaction().begin();
+					((DocumentFolder)documentCollection).setName(newName);
+					pm.currentTransaction().commit();
+					return MoveResourceStatus.CREATED;
+				} else if(documentCollection instanceof DocumentFilterGlobal) {
+					pm.currentTransaction().begin();
+					((DocumentFilterGlobal)documentCollection).setName(newName);
+					pm.currentTransaction().commit();
+					return MoveResourceStatus.CREATED;					
+				} else {
+					return MoveResourceStatus.FORBIDDEN;
+				}
+			} else {
+				throw new WebdavException("Move only supports rename of resources. source=>" + sourceFolderName + "< destination=>" + destFolderName + "<");				
+			}
+    	}
+		throw new WebdavException("Unsupported move operation. source=>" + sourceFolderName + "< destination=>" + destFolderName + "<");    		
     }
-	
-	//-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#rollback(org.opencrx.application.uses.net.sf.webdav.RequestContext)
+	 */
 	@Override
 	public void rollback(
 		RequestContext requestContext
@@ -398,7 +480,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		} catch(Exception e) {}
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getMimeType(org.opencrx.application.uses.net.sf.webdav.Resource)
+	 */
 	@Override
     public String getMimeType(
     	Resource res
@@ -406,11 +490,14 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		if(res instanceof WebDavResource) {
 			return ((WebDavResource)res).getMimeType();
 		} else {
-			return "text/xml";
+			return "application/xml";
 		}
     }
 	
-	//-----------------------------------------------------------------------	
+    /**
+     * @param path
+     * @return
+     */
     protected String getParentPath(
     	String path
     ) {
@@ -421,7 +508,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
         return null;
     }
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#putResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.io.InputStream, java.lang.String)
+	 */
 	@Override
     public PutResourceStatus putResource(
     	RequestContext requestContext, 
@@ -437,80 +526,85 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		if(parent instanceof DocumentCollectionResource) {
 	    	try {
 	    		DocumentCollectionResource documentCollectionResource = (DocumentCollectionResource)parent;
-	    		PutResourceStatus status = PutResourceStatus.UPDATED;
-	    		DocumentFolder documentFolder = documentCollectionResource.getObject();
-	    		PersistenceManager pm = JDOHelper.getPersistenceManager(documentFolder);
-	    		org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
-	    			(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
-	    				documentFolder.refGetPath().getParent().getParent()
-	    			);
-	    		DocumentBasedFolderEntryQuery query = documentCollectionResource.getFolderEntryQuery();
-	    		String name = path.substring(path.lastIndexOf("/") + 1);
-	    		if(contentType == null) {
-	    			contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(name);
-	    		}
-	    		query.name().equalTo(name);	    		
-	    		List<DocumentFolderEntry> entries = documentFolder.getFolderEntry(query);
-	    		Document document = null;
-	    		pm.currentTransaction().begin();
-	    		if(entries.isEmpty()) {
-	    			document = pm.newInstance(Document.class);
-	    			document.setName(name);
-	    			document.setTitle(name);
-	    			document.setContentType(contentType);
-	    			document.getOwningGroup().addAll(
-	    				documentFolder.getOwningGroup()
-	    			);
-	    			documentSegment.addDocument(
-	    				UUIDConversion.toUID(UUIDs.newUUID()),
-	    				document
-	    			);
-	    			document.getFolder().add(
-	    				documentFolder
-	    			);
-	    			status = PutResourceStatus.CREATED;
+	    		if(documentCollectionResource.getObject() instanceof DocumentFolder) {
+		    		PutResourceStatus status = PutResourceStatus.UPDATED;
+		    		DocumentFolder documentFolder = (DocumentFolder)documentCollectionResource.getObject();
+		    		PersistenceManager pm = JDOHelper.getPersistenceManager(documentFolder);
+		    		org.opencrx.kernel.document1.jmi1.Segment documentSegment = 
+		    			(org.opencrx.kernel.document1.jmi1.Segment)pm.getObjectById(
+		    				documentFolder.refGetPath().getParent().getParent()
+		    			);
+		    		DocumentBasedFolderEntryQuery query = documentCollectionResource.getFolderEntryQuery();
+		    		String name = path.substring(path.lastIndexOf("/") + 1);
+		    		if(contentType == null) {
+		    			contentType = MimetypesFileTypeMap.getDefaultFileTypeMap().getContentType(name);
+		    		}
+		    		query.name().equalTo(name);	    		
+		    		List<DocumentFolderEntry> entries = documentFolder.getFolderEntry(query);
+		    		Document document = null;
+		    		pm.currentTransaction().begin();
+		    		if(entries.isEmpty()) {
+		    			document = pm.newInstance(Document.class);
+		    			document.setName(name);
+		    			document.setTitle(name);
+		    			document.setContentType(contentType);
+		    			document.getOwningGroup().addAll(
+		    				documentFolder.getOwningGroup()
+		    			);
+		    			documentSegment.addDocument(
+		    				UUIDConversion.toUID(UUIDs.newUUID()),
+		    				document
+		    			);
+		    			document.getFolder().add(
+		    				documentFolder
+		    			);
+		    			status = PutResourceStatus.CREATED;
+		    		} else {
+		    			document = (Document)entries.iterator().next().getDocument();
+		    		}
+		    		MediaContent revision = pm.newInstance(MediaContent.class);
+		    		revision.setName(name);
+		    		revision.setContentName(name);
+		    		revision.setContentMimeType(contentType);
+		    		ByteArrayOutputStream contentAsBytes = new ByteArrayOutputStream();
+		    		BinaryLargeObjects.streamCopy(
+		    			content, 
+		    			0L, 
+		    			contentAsBytes
+		    		);
+		    		contentAsBytes.close();
+		    		revision.setContent(BinaryLargeObjects.valueOf(contentAsBytes.toByteArray()));
+		    		revision.getOwningGroup().addAll(
+		    			documentFolder.getOwningGroup()
+		    		);
+		    		Integer version = 0;
+		    		if(document.getHeadRevision() != null) {
+		    			try {
+		    				version = Integer.valueOf(document.getHeadRevision().getVersion());
+		    				version += 1;
+		    			} catch(Exception e) {}
+		    		}
+	    			revision.setVersion(Integer.toString(version));
+		    		document.addRevision(
+		    			UUIDConversion.toUID(UUIDs.newUUID()),
+		    			revision
+		    		);
+		    		document.setHeadRevision(revision);
+		    		pm.currentTransaction().commit();
+		    		return status;
 	    		} else {
-	    			document = (Document)entries.iterator().next().getDocument();
+	    			return WebDavStore.PutResourceStatus.FORBIDDEN;	    			
 	    		}
-	    		MediaContent revision = pm.newInstance(MediaContent.class);
-	    		revision.setName(name);
-	    		revision.setContentName(name);
-	    		revision.setContentMimeType(contentType);
-	    		ByteArrayOutputStream contentAsBytes = new ByteArrayOutputStream();
-	    		BinaryLargeObjects.streamCopy(
-	    			content, 
-	    			0L, 
-	    			contentAsBytes
-	    		);
-	    		contentAsBytes.close();
-	    		revision.setContent(BinaryLargeObjects.valueOf(contentAsBytes.toByteArray()));
-	    		revision.getOwningGroup().addAll(
-	    			documentFolder.getOwningGroup()
-	    		);
-	    		Integer version = 0;
-	    		if(document.getHeadRevision() != null) {
-	    			try {
-	    				version = Integer.valueOf(document.getHeadRevision().getVersion());
-	    				version += 1;
-	    			} catch(Exception e) {}
-	    		}
-    			revision.setVersion(Integer.toString(version));
-	    		document.addRevision(
-	    			UUIDConversion.toUID(UUIDs.newUUID()),
-	    			revision
-	    		);
-	    		document.setHeadRevision(revision);
-	    		pm.currentTransaction().commit();
-	    		return status;
-	    	}
-	    	catch(Exception e) {
+	    	} catch(Exception e) {
 	    		new ServiceException(e).log();
 	    	}
 		}
 	    return null;
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getLocksByPath(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
     public List<Lock> getLocksByPath(
     	RequestContext requestContext, 
@@ -519,7 +613,10 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		return Collections.emptyList();
     }
 
-	//-----------------------------------------------------------------------
+	/**
+	 * LockImpl
+	 *
+	 */
 	private static class LockImpl implements Lock {
 
 		public LockImpl(
@@ -584,7 +681,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		
 	}
 	
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#lock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.lang.String, java.lang.String, java.lang.String, int, int)
+	 */
 	@Override
     public Lock lock(
     	RequestContext requestContext, 
@@ -605,7 +704,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		);
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#setLockTimeout(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, int)
+	 */
 	@Override
     public void setLockTimeout(
     	RequestContext requestContext, 
@@ -614,7 +715,9 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
     ) {	    
     }
 
-	//-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#unlock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
+	 */
 	@Override
     public boolean unlock(
     	RequestContext requestContext, 

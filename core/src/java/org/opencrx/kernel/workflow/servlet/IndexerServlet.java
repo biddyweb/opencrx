@@ -83,7 +83,6 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.exception.BasicException;
-import org.openmdx.kernel.id.UUIDs;
 
 /**
  * The IndexerServlet 'listens' for object modifications on incoming

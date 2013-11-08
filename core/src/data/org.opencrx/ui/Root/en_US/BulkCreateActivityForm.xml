@@ -40,14 +40,6 @@
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
-															<org.openmdx.ui1.FormFieldDefinition id="locale">
-																<_object>
-																	<forClass>org:opencrx:kernel:generic:LocalizedField</forClass>
-																	<featureName>locale</featureName>
-																	<order>110</order>
-																</_object>
-																<_content />
-															</org.openmdx.ui1.FormFieldDefinition>
 														</formFieldDefinition>
 													</_content>
 												</org.openmdx.ui1.FormFieldGroupDefinition>
@@ -100,7 +92,7 @@
 											</toolTip>
 										</_object>
 										<_content>
-											<formFieldGroupDefinition>										
+											<formFieldGroupDefinition>
 												<org.openmdx.ui1.FormFieldGroupDefinition name="Activity">
 													<_object>
 														<label>
@@ -291,7 +283,6 @@
 											</formFieldGroupDefinition>
 										</_content>
 									</org.openmdx.ui1.FormDefinition>
-
 									<!-- TestRecipientsAccounts -->
 									<org.openmdx.ui1.FormDefinition name="BulkCreateActivityFormRecipient">
 										<_object>
@@ -327,7 +318,6 @@
 											</formFieldGroupDefinition>
 										</_content>
 									</org.openmdx.ui1.FormDefinition>
-
 								</formDefinition>
 							</_content>
 						</org.openmdx.ui1.Segment>

@@ -741,6 +741,11 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				}
 			}
 			if(object != null) {
+				// In order to prevent concurrent modification exceptions
+				// refresh object before amending it
+				try {
+					pm.refresh(object);
+				} catch(Exception ignore) {}
 				pm.currentTransaction().begin();
 				this.datatypeMapper.toObject(
 					data,

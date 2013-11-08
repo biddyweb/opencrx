@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: BpiContact
+ * Description: BpiAddress
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -53,8 +53,10 @@
 package org.opencrx.application.bpi.datatype;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -62,7 +64,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 /**
- * BpiContact
+ * BpiAddress
  *
  */
 public class BpiAddress extends BpiObject {
@@ -73,6 +75,17 @@ public class BpiAddress extends BpiObject {
 	 */
 	public static class BpiAddressDeserializer implements JsonDeserializer<BpiAddress> {
 		
+		/**
+		 * Constructor.
+		 * 
+		 * @param gsonBuilder
+		 */
+		public BpiAddressDeserializer(
+			GsonBuilder gsonBuilder
+		) {
+			this.gsonBuilder = gsonBuilder;
+		}
+		
 		/* (non-Javadoc)
 		 * @see com.google.gson.JsonDeserializer#deserialize(com.google.gson.JsonElement, java.lang.reflect.Type, com.google.gson.JsonDeserializationContext)
 		 */
@@ -81,7 +94,7 @@ public class BpiAddress extends BpiObject {
 			Type typeOfT, 
 			JsonDeserializationContext context
 		) throws JsonParseException {
-			Gson gson = new Gson();
+			Gson gson = this.gsonBuilder.create();
 			if(json instanceof JsonObject) {
 				JsonObject jsonObject = (JsonObject)json;
 				if(jsonObject.has("emailAddress")) {
@@ -95,6 +108,35 @@ public class BpiAddress extends BpiObject {
 				return null;
 			}
 		}
+		
+		private final GsonBuilder gsonBuilder;
 	}
 	
+	/**
+	 * @return the usage
+	 */
+	public List<Short> getUsage() {
+		return usage;
+	}
+	/**
+	 * @param usage the usage to set
+	 */
+	public void setUsage(List<Short> usage) {
+		this.usage = usage;
+	}
+	/**
+	 * @return the isMain
+	 */
+	public boolean isMain() {
+		return isMain;
+	}
+	/**
+	 * @param isMain the isMain to set
+	 */
+	public void setMain(boolean isMain) {
+		this.isMain = isMain;
+	}
+	
+	private List<Short> usage;
+	private boolean isMain;
 }

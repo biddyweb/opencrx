@@ -88,17 +88,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableClass" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Clase Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Clase Editable</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:CollectionType" _operation="create">
                     <_object>
                       <label>
@@ -128,50 +117,6 @@
                       </label>
                       <toolTip>
                         <_item>Restricción</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableAttribute" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Atributo Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Atributo Editable</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableOperation" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Operación Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Operación Editable</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableOperationTag" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Etiqueta de Operación Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Etiqueta de Operación Editable</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableParameter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Parametro Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Parametro Editable</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -231,17 +176,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditablePackage" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Paquete Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Paquete Editable</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Parameter" _operation="create">
                     <_object>
                       <label>
@@ -293,17 +227,6 @@
                       </label>
                       <toolTip>
                         <_item>Estructura</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableStructureType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo de Estructura Editable</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tipo de Estructura Editable</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -521,193 +444,6 @@
                       </label>
                       <toolTip>
                         <_item>Paquete / Clase</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableElement:name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nombre</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableElement:elementOrder" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Orden de los elementos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Orden de los elementos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableElement:annotation" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Anotación</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Anotación</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableElement:basedOn" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Detalles de Elementos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Detalles de Elementos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableTypedElement:typeName" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nombre de tipo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nombre de tipo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableTypedElement:type" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipo</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tipo</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableAttribute:multiplicity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Multiplicidad</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Multiplicidad</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableAttribute:upperBound" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Limite superior</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Limite superior</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableAttribute:maxLength" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Longitud máxima</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Longitud máxima</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableStructureField:multiplicity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Multiplicidad</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Multiplicidad</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableStructureField:upperBound" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Limite superior</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Limite superior</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableStructureField:maxLength" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Longitud máxima</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Longitud máxima</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableOperation:signature" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Firma</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Firma</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableOperationTag:tagValue" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Valor del tag</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Valor del tag</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableParameter:upperBound" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Limite superior</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Limite superior</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableParameter:multiplicity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Multiplicidad</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Multiplicidad</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:EditableParameter:direction" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Dirección</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Dirección</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -932,39 +668,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Package:package" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Paquete</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Paquete</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Package:class" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Clases</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Clases</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Package:structureType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tipos Estructurados</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tipos Estructurados</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Classifier:classifies" _operation="create">
                     <_object>
                       <label>
@@ -983,39 +686,6 @@
                       </label>
                       <toolTip>
                         <_item>Es derivada</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:StructureType:field" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Campos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Campos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Class:attribute" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Atributos</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Atributos</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Class:operation" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Operaciones</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Operaciones</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1291,28 +961,6 @@
                       </label>
                       <toolTip>
                         <_item>Fin expuesto</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Operation:parameter" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Parametros</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Parametros</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:model1:Operation:operationTag" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Etiquetas de Operaciones</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Etiquetas de Operaciones</_item>
                       </toolTip>
                     </_object>
                     <_content/>

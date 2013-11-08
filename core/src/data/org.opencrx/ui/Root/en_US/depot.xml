@@ -29,7 +29,7 @@
 											</order>
 											<iconKey>BookingEngine</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:entity">
@@ -48,7 +48,7 @@
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:entityRelationship">
 										<_object>
@@ -66,7 +66,7 @@
 											</order>
 											<maxMember>5</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:depotType">
 										<_object>
@@ -89,7 +89,7 @@
 											</orderObjectContainer>
 											<maxMember>4</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:cb">
 										<_object>
@@ -109,7 +109,7 @@
 											<maxMember>11</maxMember>
 											<showMaxMember>10</showMaxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:booking">
 										<_object>
@@ -128,7 +128,7 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Segment:simpleBooking">
 										<_object>
@@ -146,10 +146,10 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotEntity -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity">
 										<_object>
 											<active>true</active>
@@ -161,7 +161,7 @@
 											</label>
 											<iconKey>DepotEntity</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:depot">
@@ -180,7 +180,7 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:depotGroup">
 										<_object>
@@ -198,7 +198,7 @@
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:depotHolder">
 										<_object>
@@ -216,7 +216,7 @@
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:bookingPeriod">
 										<_object>
@@ -234,7 +234,7 @@
 											</order>
 											<maxMember>7</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:bookingText">
 										<_object>
@@ -252,9 +252,9 @@
 											</order>
 											<maxMember>7</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:name">
 										<_object>
@@ -271,7 +271,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:depotEntityNumber">
 										<_object>
@@ -289,7 +289,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:description">
 										<_object>
@@ -307,10 +307,10 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotEntityRelationship -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship">
 										<_object>
 											<active>true</active>
@@ -322,9 +322,9 @@
 											</label>
 											<iconKey>DepotEntityRelationship</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship:name">
 										<_object>
@@ -341,7 +341,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship:relationshipType">
 										<_object>
@@ -358,7 +358,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship:entity1">
 										<_object>
@@ -376,7 +376,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship:entity2">
 										<_object>
@@ -393,7 +393,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntityRelationship:description">
 										<_object>
@@ -411,10 +411,10 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotType -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType">
 										<_object>
 											<active>true</active>
@@ -426,7 +426,7 @@
 											</label>
 											<iconKey>DepotType</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType:compatibleTo">
@@ -445,9 +445,9 @@
 											</order>
 											<maxMember>4</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType:name">
 										<_object>
@@ -464,7 +464,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType:allowDebitBookings">
 										<_object>
@@ -482,7 +482,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType:allowCreditBookings">
 										<_object>
@@ -499,7 +499,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotType:description">
 										<_object>
@@ -517,7 +517,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Booking -->
 									<!-- disable operation "Clone" -->
@@ -525,23 +525,23 @@
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- disable operation "Clone" -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreditBooking:Pane:Op:Tab:clone">
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- disable operation "Clone" -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:Pane:Op:Tab:clone">
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DebitBooking">
 										<_object>
 											<active>true</active>
@@ -559,7 +559,7 @@
 											</order>
 											<iconKey>DebitBooking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreditBooking">
 										<_object>
@@ -578,10 +578,10 @@
 											</order>
 											<iconKey>CreditBooking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:name">
 										<_object>
@@ -598,7 +598,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:position">
 										<_object>
@@ -615,7 +615,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:bookingStatus">
 										<_object>
@@ -632,7 +632,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DebitBooking:quantityDebit">
 										<_object>
@@ -650,7 +650,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreditBooking:quantityCredit">
 										<_object>
@@ -673,7 +673,7 @@
 												<_item>85</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:bookingType">
 										<_object>
@@ -690,7 +690,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:bookingDate">
 										<_object>
@@ -707,7 +707,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:valueDate">
 										<_object>
@@ -724,7 +724,7 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:description">
 										<_object>
@@ -742,9 +742,44 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:originContext">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Origins</_item>
+											</toolTip>
+											<label>
+												<_item>Origins</_item>
+											</label>
+											<order>
+												<_item>10</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+											<maxMember>6</maxMember>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Booking:originContextParams">
+										<_object>
+											<active>true</active>
+											<spanRow>2</spanRow>
+											<toolTip>
+												<_item>Origin context parameters</_item>
+											</toolTip>
+											<label>
+												<_item>Origin context parameters</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>110</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
 									<!-- SingleBooking -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:cb">
 										<_object>
@@ -761,7 +796,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SingleBooking:origin">
 										<_object>
@@ -778,11 +813,11 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- SimpleBooking -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking">
 										<_object>
 											<active>true</active>
@@ -799,32 +834,14 @@
 											</order>
 											<iconKey>SimpleBooking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContext">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Origins</_item>
-											</toolTip>
-											<label>
-												<_item>Origins</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<maxMember>6</maxMember>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantity">
 										<_object>
-                      <columnBreak>true</columnBreak>
+											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Quantity</_item>
@@ -838,7 +855,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantityUom">
 										<_object>
@@ -855,7 +872,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originId">
 										<_object>
@@ -872,25 +889,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContextParams">
-										<_object>
-											<active>true</active>
-											<spanRow>2</spanRow>
-											<toolTip>
-												<_item>Origin context parameters</_item>
-											</toolTip>
-											<label>
-												<_item>Origin context parameters</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>110</_item>
-											</order>
-										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- CompoundBooking -->
@@ -899,9 +898,9 @@
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking">
 										<_object>
 											<active>true</active>
@@ -913,7 +912,7 @@
 											</label>
 											<iconKey>CompoundBooking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:booking">
@@ -932,9 +931,9 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:name">
 										<_object>
@@ -951,7 +950,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:bookingStatus">
 										<_object>
@@ -968,7 +967,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:lockingReason">
 										<_object>
@@ -985,7 +984,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:bookingDate">
 										<_object>
@@ -1003,7 +1002,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:bookingType">
 										<_object>
@@ -1020,7 +1019,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:isLocked">
 										<_object>
@@ -1042,7 +1041,7 @@
 												<_item>25</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:lockModifiedAt">
 										<_object>
@@ -1064,7 +1063,7 @@
 												<_item>26</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:description">
 										<_object>
@@ -1082,7 +1081,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:wfProcess">
 										<_object>
@@ -1104,7 +1103,7 @@
 												<_item>95</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:reversalOf">
 										<_object>
@@ -1126,7 +1125,7 @@
 												<_item>100</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:acceptedBy">
 										<_object>
@@ -1144,10 +1143,10 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotHolder -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder">
 										<_object>
 											<active>true</active>
@@ -1159,7 +1158,7 @@
 											</label>
 											<iconKey>DepotHolder</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:depot">
@@ -1179,9 +1178,9 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:name">
 										<_object>
@@ -1198,7 +1197,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:depotHolderNumber">
 										<_object>
@@ -1216,7 +1215,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:description">
 										<_object>
@@ -1234,11 +1233,11 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- Warehouse -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Warehouse">
 										<_object>
 											<active>true</active>
@@ -1250,7 +1249,7 @@
 											</label>
 											<iconKey>Warehouse</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- Site -->
@@ -1265,30 +1264,10 @@
 											</label>
 											<iconKey>Site</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!-- Grid -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:depot">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Depots</_item>
-											</toolTip>
-											<label>
-												<_item>Depots</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-											<maxMember>10</maxMember>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-
 									<!-- DepotContract -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotContract">
 										<_object>
 											<active>true</active>
@@ -1300,14 +1279,14 @@
 											</label>
 											<iconKey>DepotContract</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 
 									<!-- Depot -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot">
 										<_object>
 											<active>true</active>
@@ -1319,7 +1298,7 @@
 											</label>
 											<iconKey>Depot</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:position">
@@ -1339,7 +1318,7 @@
 											</order>
 											<maxMember>7</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:depotType">
 										<_object>
@@ -1357,7 +1336,7 @@
 											</order>
 											<maxMember>4</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:report">
 										<_object>
@@ -1376,9 +1355,9 @@
 											</order>
 											<maxMember>4</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:name">
 										<_object>
@@ -1395,7 +1374,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:depotGroup">
 										<_object>
@@ -1412,7 +1391,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:openingDate">
 										<_object>
@@ -1429,7 +1408,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:closingDate">
 										<_object>
@@ -1446,7 +1425,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:depotNumber">
 										<_object>
@@ -1469,7 +1448,7 @@
 												<_item>15</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:isDefault">
 										<_object>
@@ -1486,7 +1465,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:isLocked">
 										<_object>
@@ -1503,7 +1482,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:allowPositionAutoCreate">
 										<_object>
@@ -1520,7 +1499,7 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:description">
 										<_object>
@@ -1538,7 +1517,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:latestReport">
 										<_object>
@@ -1560,11 +1539,11 @@
 												<_item>5</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- DepotPosition -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition">
 										<_object>
 											<active>true</active>
@@ -1576,7 +1555,7 @@
 											</label>
 											<iconKey>DepotPosition</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:booking">
@@ -1595,7 +1574,7 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:simpleBooking">
 										<_object>
@@ -1613,9 +1592,9 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:name">
 										<_object>
@@ -1632,7 +1611,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:isLocked">
 										<_object>
@@ -1649,7 +1628,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:qualifier">
 										<_object>
@@ -1666,7 +1645,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:openingDate">
 										<_object>
@@ -1684,7 +1663,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:closingDate">
 										<_object>
@@ -1701,7 +1680,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:description">
 										<_object>
@@ -1719,7 +1698,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ProductDepotPosition">
@@ -1734,11 +1713,11 @@
 											<iconKey>ProductDepotPosition</iconKey>
 											<backColor>#DDDDFF</backColor>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- BookingPeriod -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod">
 										<_object>
 											<active>true</active>
@@ -1750,10 +1729,10 @@
 											</label>
 											<iconKey>BookingPeriod</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:name">
 										<_object>
@@ -1770,7 +1749,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:isFinal">
 										<_object>
@@ -1787,7 +1766,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:periodStartsAt">
 										<_object>
@@ -1805,7 +1784,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:periodEndsAtExclusive">
 										<_object>
@@ -1822,7 +1801,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:isClosed">
 										<_object>
@@ -1839,7 +1818,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:closingBookingTypeThreshold">
 										<_object>
@@ -1857,7 +1836,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:description">
 										<_object>
@@ -1875,10 +1854,10 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- BookingText -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText">
 										<_object>
 											<active>true</active>
@@ -1890,10 +1869,10 @@
 											</label>
 											<iconKey>BookingText</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:Pane:Attr:Tab:0:Group:10">
 										<_object>
 											<active>true</active>
@@ -1904,7 +1883,7 @@
 												<_item>Booking Texts</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:Pane:Attr:Tab:0:Group:15">
 										<_object>
@@ -1916,7 +1895,7 @@
 												<_item>Compound Booking Texts</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:name">
@@ -1934,7 +1913,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:debitBookingNameInfix">
 										<_object>
@@ -1951,7 +1930,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:creditBookingNameInfix">
 										<_object>
@@ -1969,7 +1948,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:cbNameInfix1">
 										<_object>
@@ -1986,7 +1965,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:cbNameInfix2">
 										<_object>
@@ -2004,7 +1983,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:creditFirst">
 										<_object>
@@ -2021,7 +2000,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingText:description">
 										<_object>
@@ -2039,10 +2018,10 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotGroup -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotGroup">
 										<_object>
 											<active>true</active>
@@ -2054,7 +2033,7 @@
 											</label>
 											<iconKey>DepotGroup</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotGroup:depotGroup">
@@ -2073,7 +2052,7 @@
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotGroup:depot">
 										<_object>
@@ -2091,9 +2070,9 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotGroup:name">
 										<_object>
@@ -2110,7 +2089,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotGroup:parent">
 										<_object>
@@ -2128,7 +2107,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotGroup:description">
 										<_object>
@@ -2146,7 +2125,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotReport -->
 									<!-- disable operation "Clone" -->
@@ -2154,9 +2133,9 @@
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport">
 										<_object>
 											<active>true</active>
@@ -2169,7 +2148,7 @@
 											</label>
 											<iconKey>DepotReport</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:itemPosition">
@@ -2189,9 +2168,9 @@
 											</order>
 											<maxMember>6</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:name">
 										<_object>
@@ -2208,7 +2187,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:bookingPeriod">
 										<_object>
@@ -2225,7 +2204,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:isDraft">
 										<_object>
@@ -2243,7 +2222,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:bookingStatusThreshold">
 										<_object>
@@ -2260,7 +2239,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:description">
 										<_object>
@@ -2278,7 +2257,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- DepotReportItemPosition -->
 									<!-- disable operation "Clone" -->
@@ -2286,9 +2265,9 @@
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition">
 										<_object>
 											<active>true</active>
@@ -2306,7 +2285,7 @@
 											</order>
 											<iconKey>DepotReportItemPosition</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:singleBooking">
@@ -2325,7 +2304,7 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:simpleBooking">
 										<_object>
@@ -2343,9 +2322,9 @@
 											</order>
 											<maxMember>10</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:10">
 										<_object>
 											<active>true</active>
@@ -2356,16 +2335,16 @@
 												<_item>Begin of Period</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:15">
 										<_object>
 											<active>true</active>
-                      <label>
-                        <_item>&amp;nbsp;&amp;nbsp;&amp;nbsp;Simple Bookings</_item>
-                      </label>
+											<label>
+												<_item>&amp;nbsp;&amp;nbsp;&amp;nbsp;Simple Bookings</_item>
+											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:20">
 										<_object>
@@ -2377,16 +2356,16 @@
 												<_item>End of Period</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:Pane:Attr:Tab:0:Group:25">
 										<_object>
 											<active>true</active>
-                      <label>
-                        <_item>&amp;nbsp;&amp;nbsp;&amp;nbsp;Simple Bookings</_item>
-                      </label>
+											<label>
+												<_item>&amp;nbsp;&amp;nbsp;&amp;nbsp;Simple Bookings</_item>
+											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:positionName">
@@ -2404,7 +2383,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:position">
 										<_object>
@@ -2421,7 +2400,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:valueDate">
 										<_object>
@@ -2444,7 +2423,7 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceDebitBop">
 										<_object>
@@ -2466,7 +2445,7 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceCreditBop">
 										<_object>
@@ -2489,7 +2468,7 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceBop">
 										<_object>
@@ -2506,7 +2485,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimpleBop">
 										<_object>
@@ -2524,7 +2503,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceDebit">
 										<_object>
@@ -2541,7 +2520,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceCredit">
 										<_object>
@@ -2559,7 +2538,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balance">
 										<_object>
@@ -2576,7 +2555,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReportItemPosition:balanceSimple">
 										<_object>
@@ -2594,11 +2573,11 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- DepotReferenceHolder -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<!-- Grid -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReferenceHolder:depotReference">
 										<_object>
@@ -2617,13 +2596,13 @@
 											</order>
 											<maxMember>5</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 
 									<!-- DepotReference -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference">
 										<_object>
 											<active>true</active>
@@ -2635,10 +2614,10 @@
 											</label>
 											<iconKey>DepotReference</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid -->
-									<!--FieldGroups in General Tab-->
+									<!--FieldGroups in General Tab -->
 									<!--Element Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference:name">
 										<_object>
@@ -2655,7 +2634,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference:description">
 										<_object>
@@ -2672,7 +2651,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference:holderQualifiesPosition">
 										<_object>
@@ -2689,7 +2668,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference:depot">
 										<_object>
@@ -2707,7 +2686,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReference:depotUsage">
 										<_object>
@@ -2724,7 +2703,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- Operations -->
@@ -2744,7 +2723,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotReport:Pane:Op:Tab:refreshReport:Group:result">
 										<_object>
@@ -2756,7 +2735,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:acceptCb">
 										<_object>
@@ -2774,7 +2753,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:acceptCb:Group:result">
 										<_object>
@@ -2786,7 +2765,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:finalizeCb">
 										<_object>
@@ -2804,7 +2783,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:finalizeCb:Group:result">
 										<_object>
@@ -2816,7 +2795,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:cancelCb">
 										<_object>
@@ -2834,7 +2813,7 @@
 											</order>
 											<iconKey>Booking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:cancelCb:Group:in">
 										<_object>
@@ -2851,7 +2830,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:cancelCb:Group:result">
 										<_object>
@@ -2863,7 +2842,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CancelCompoundBookingResult:cancelBooking">
 										<_object>
@@ -2880,7 +2859,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CancelCompoundBookingResult:status">
 										<_object>
@@ -2897,7 +2876,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CancelCompoundBookingResult:statusMessage">
 										<_object>
@@ -2914,7 +2893,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:lockCb">
 										<_object>
@@ -2932,7 +2911,7 @@
 											</order>
 											<iconKey>Booking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:lockCb:Group:in">
 										<_object>
@@ -2949,7 +2928,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:LockCompoundBookingParams:lockingReason">
 										<_object>
@@ -2966,7 +2945,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:lockCb:Group:result">
 										<_object>
@@ -2978,7 +2957,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:unlockCb">
 										<_object>
@@ -2996,7 +2975,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CompoundBooking:Pane:Op:Tab:unlockCb:Group:result">
 										<_object>
@@ -3008,7 +2987,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPosition">
 										<_object>
@@ -3026,7 +3005,7 @@
 											</order>
 											<iconKey>Booking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPosition:Group:in">
 										<_object>
@@ -3043,7 +3022,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:positionDebit">
 										<_object>
@@ -3060,7 +3039,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:positionCredit">
 										<_object>
@@ -3077,7 +3056,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:quantity">
 										<_object>
@@ -3094,7 +3073,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:valueDate">
 										<_object>
@@ -3111,7 +3090,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:bookingTextName">
 										<_object>
@@ -3128,7 +3107,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:bookingText">
 										<_object>
@@ -3145,7 +3124,7 @@
 												<_item>60</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:bookingType">
 										<_object>
@@ -3162,7 +3141,7 @@
 												<_item>70</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:origin">
 										<_object>
@@ -3179,7 +3158,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionParams:reversalOf">
 										<_object>
@@ -3196,7 +3175,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPosition:Group:result">
 										<_object>
@@ -3208,7 +3187,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingResult:compoundBooking">
 										<_object>
@@ -3225,7 +3204,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingResult:status">
 										<_object>
@@ -3242,7 +3221,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingResult:statusMessage">
 										<_object>
@@ -3259,7 +3238,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPositionName">
 										<_object>
@@ -3277,7 +3256,7 @@
 											</order>
 											<iconKey>Booking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPositionName:Group:in">
 										<_object>
@@ -3294,7 +3273,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:positionName">
 										<_object>
@@ -3311,7 +3290,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:depotNumberDebit">
 										<_object>
@@ -3328,7 +3307,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:depotDebit">
 										<_object>
@@ -3345,7 +3324,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:depotNumberCredit">
 										<_object>
@@ -3362,7 +3341,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:depotCredit">
 										<_object>
@@ -3379,7 +3358,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:quantity">
 										<_object>
@@ -3396,7 +3375,7 @@
 												<_item>60</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:valueDate">
 										<_object>
@@ -3413,7 +3392,7 @@
 												<_item>70</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:bookingTextName">
 										<_object>
@@ -3430,7 +3409,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:bookingText">
 										<_object>
@@ -3447,7 +3426,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:bookingType">
 										<_object>
@@ -3464,7 +3443,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:origin">
 										<_object>
@@ -3481,7 +3460,7 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByPositionNameParams:reversalOf">
 										<_object>
@@ -3498,7 +3477,7 @@
 												<_item>120</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByPositionName:Group:result">
 										<_object>
@@ -3510,7 +3489,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByProduct">
 										<_object>
@@ -3528,7 +3507,7 @@
 											</order>
 											<iconKey>Booking</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByProduct:Group:in">
 										<_object>
@@ -3545,7 +3524,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:product">
 										<_object>
@@ -3562,7 +3541,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:depotNumberDebit">
 										<_object>
@@ -3579,7 +3558,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:depotDebit">
 										<_object>
@@ -3596,7 +3575,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:depotNumberCredit">
 										<_object>
@@ -3613,7 +3592,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:depotCredit">
 										<_object>
@@ -3630,7 +3609,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:quantity">
 										<_object>
@@ -3647,7 +3626,7 @@
 												<_item>60</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:valueDate">
 										<_object>
@@ -3664,7 +3643,7 @@
 												<_item>70</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:bookingTextName">
 										<_object>
@@ -3681,7 +3660,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:bookingText">
 										<_object>
@@ -3698,7 +3677,7 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:bookingType">
 										<_object>
@@ -3715,7 +3694,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:origin">
 										<_object>
@@ -3732,7 +3711,7 @@
 												<_item>110</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CreateBookingByProductParams:reversalOf">
 										<_object>
@@ -3749,7 +3728,7 @@
 												<_item>120</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotEntity:Pane:Op:Tab:createBookingByProduct:Group:result">
 										<_object>
@@ -3761,7 +3740,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:closePeriod">
 										<_object>
@@ -3779,7 +3758,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:closePeriod:Group:in">
 										<_object>
@@ -3796,7 +3775,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:ClosePeriodParams:periodEndsAtExclusive">
 										<_object>
@@ -3813,7 +3792,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:closePeriod:Group:result">
 										<_object>
@@ -3825,7 +3804,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod">
 										<_object>
@@ -3843,7 +3822,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:in">
 										<_object>
@@ -3860,7 +3839,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:BookingPeriod:Pane:Op:Tab:finalizePeriod:Group:result">
 										<_object>
@@ -3872,7 +3851,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:assertReports">
 										<_object>
@@ -3890,7 +3869,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:assertReports:Group:in">
 										<_object>
@@ -3907,7 +3886,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:AssertReportsParams:bookingStatusThreshold">
 										<_object>
@@ -3924,7 +3903,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:assertReports:Group:result">
 										<_object>
@@ -3936,7 +3915,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:openDepot">
 										<_object>
@@ -3954,7 +3933,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:openDepot:Group:in">
 										<_object>
@@ -3971,7 +3950,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:openingDate">
 										<_object>
@@ -3988,7 +3967,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:name">
 										<_object>
@@ -4005,7 +3984,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:description">
 										<_object>
@@ -4023,7 +4002,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:depotNumber">
 										<_object>
@@ -4040,7 +4019,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:depotType">
 										<_object>
@@ -4057,7 +4036,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotParams:depotGroup">
 										<_object>
@@ -4074,7 +4053,7 @@
 												<_item>60</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:Pane:Op:Tab:openDepot:Group:result">
 										<_object>
@@ -4086,7 +4065,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotResult:depot">
 										<_object>
@@ -4103,7 +4082,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotResult:status">
 										<_object>
@@ -4120,7 +4099,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotResult:statusMessage">
 										<_object>
@@ -4137,7 +4116,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:assertReports">
 										<_object>
@@ -4155,7 +4134,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:assertReports:Group:in">
 										<_object>
@@ -4172,7 +4151,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:assertReports:Group:result">
 										<_object>
@@ -4184,7 +4163,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:openDepotPosition">
 										<_object>
@@ -4202,7 +4181,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:openDepotPosition:Group:in">
 										<_object>
@@ -4219,7 +4198,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionParams:openingDate">
 										<_object>
@@ -4236,7 +4215,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionParams:name">
 										<_object>
@@ -4253,7 +4232,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionParams:description">
 										<_object>
@@ -4270,7 +4249,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionParams:qualifier">
 										<_object>
@@ -4287,7 +4266,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionParams:product">
 										<_object>
@@ -4304,7 +4283,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionParams:productRole">
 										<_object>
@@ -4321,7 +4300,7 @@
 												<_item>60</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:openDepotPosition:Group:result">
 										<_object>
@@ -4333,7 +4312,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionResult:depotPosition">
 										<_object>
@@ -4350,7 +4329,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionResult:status">
 										<_object>
@@ -4367,7 +4346,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:OpenDepotPositionResult:statusMessage">
 										<_object>
@@ -4384,7 +4363,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:closeDepot">
 										<_object>
@@ -4402,7 +4381,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:closeDepot:Group:in">
 										<_object>
@@ -4419,7 +4398,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotParams:closingDate">
 										<_object>
@@ -4436,7 +4415,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:Depot:Pane:Op:Tab:closeDepot:Group:result">
 										<_object>
@@ -4448,7 +4427,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotResult:status">
 										<_object>
@@ -4465,7 +4444,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotResult:statusMessage">
 										<_object>
@@ -4482,7 +4461,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:Pane:Op:Tab:closeDepotPosition">
 										<_object>
@@ -4500,7 +4479,7 @@
 											</order>
 											<iconKey></iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:Pane:Op:Tab:closeDepotPosition:Group:in">
 										<_object>
@@ -4517,7 +4496,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotPositionParams:closingDate">
 										<_object>
@@ -4534,7 +4513,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotPosition:Pane:Op:Tab:closeDepotPosition:Group:result">
 										<_object>
@@ -4546,7 +4525,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotPositionResult:status">
 										<_object>
@@ -4563,7 +4542,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:CloseDepotPositionResult:statusMessage">
 										<_object>
@@ -4580,7 +4559,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 								</elementDefinition>
 							</_content>

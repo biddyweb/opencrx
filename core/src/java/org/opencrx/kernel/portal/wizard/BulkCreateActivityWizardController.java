@@ -71,16 +71,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.AccountFilterGlobal;
+import org.opencrx.kernel.account1.jmi1.AddressFilterGlobal;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
+import org.opencrx.kernel.account1.jmi1.Group;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.EMailRecipientQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroupRelationship;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
+import org.opencrx.kernel.activity1.jmi1.AddressGroup;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.Workflows;
@@ -88,6 +93,8 @@ import org.opencrx.kernel.home1.cci2.WfActionLogEntryQuery;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.portal.DateTimePropertyDataBinding;
+import org.opencrx.kernel.portal.IntegerPropertyDataBinding;
 import org.opencrx.kernel.portal.StringPropertyDataBinding;
 import org.opencrx.kernel.workflow.BulkCreateActivityWorkflow;
 import org.opencrx.kernel.workflow.BulkCreateActivityWorkflow.CreationType;
@@ -99,6 +106,7 @@ import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.portal.servlet.AbstractWizardController;
+import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
@@ -137,9 +145,10 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	    RefObject_1_0 obj = this.getObject();
 		if(
 			obj instanceof AccountFilterGlobal ||
-			obj instanceof org.opencrx.kernel.account1.jmi1.Group ||
-			obj instanceof org.opencrx.kernel.account1.jmi1.AddressFilterGlobal ||
-			obj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroup
+			obj instanceof Group ||
+			obj instanceof AddressFilterGlobal ||
+			obj instanceof AddressGroup ||
+			obj instanceof ActivityGroup
 		) {
 			return true;
 		} else {
@@ -264,7 +273,7 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				{
 					org.opencrx.kernel.base.jmi1.IntegerProperty integerProperty = pm.newInstance(org.opencrx.kernel.base.jmi1.IntegerProperty.class);
 					integerProperty.setName(BulkCreateActivityWorkflow.OPTION_LOCALE);
-					integerProperty.setIntegerValue(this.locale == null ? 0 : this.locale.intValue());
+					integerProperty.setIntegerValue(this.selectedLocale == null ? 0 : this.selectedLocale.intValue());
 					wfProcessInstance.addProperty(
 						Base.getInstance().getUidAsString(),
 						integerProperty
@@ -288,20 +297,10 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 						stringProperty
 					);
 				}
-				BasicObject accounts = null;
-				if(this.accountFilter != null) {
-					accounts = this.accountFilter;
-				} else if(this.group != null) {
-					accounts = this.group;
-				} else if(this.addressFilter != null) {
-					accounts = this.addressFilter;
-				} else if(this.addressGroup != null) {
-					accounts = this.addressGroup;
-				}					
-				if(accounts != null) {
+				if(this.selectedTargetGroup != null) {
 					org.opencrx.kernel.base.jmi1.ReferenceProperty referenceProperty = pm.newInstance(org.opencrx.kernel.base.jmi1.ReferenceProperty.class);
 					referenceProperty.setName(BulkCreateActivityWorkflow.OPTION_ACCOUNTS_SELECTOR);
-					referenceProperty.setReferenceValue(accounts);
+					referenceProperty.setReferenceValue(this.selectedTargetGroup);
 					wfProcessInstance.addProperty(
 						Base.getInstance().getUidAsString(),
 						referenceProperty
@@ -502,6 +501,44 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	}
 
 	/**
+	 * Init wizard settings for given activity creator and locale.
+	 * 
+	 * @param activityCreator
+	 * @param locale
+	 * @throws ServiceException
+	 */
+	public static void initSettings(
+		ActivityCreator activityCreator, 
+		short locale
+	) throws ServiceException {
+		StringPropertyDataBinding stringPropertyDataBinding = new StringPropertyDataBinding();				
+    	stringPropertyDataBinding.setValue(
+			activityCreator, 
+			":" + PROPERTY_SET_NAME_SETTINS + "." + locale + "!name",
+			activityCreator.getName() == null 
+				? "@TODO"
+				: activityCreator.getName().indexOf("-") > 0 
+					? activityCreator.getName().substring(0, activityCreator.getName().indexOf("-"))
+					: activityCreator.getName()
+		);
+	}
+
+	/**
+	 * Get exit action after doCreateConfirmed was processed successfully.
+	 * 
+	 * @param targetObject
+	 * @return
+	 */
+	protected Action getAfterCreateConfirmedExitAction(
+		RefObject_1_0 targetObject
+	) {
+		return new ObjectReference(
+			targetObject, 
+			this.getApp()
+		).getSelectObjectAction();
+	}
+
+	/**
 	 * OK action.
 	 * 
 	 * @param isInitialized
@@ -512,11 +549,15 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doOK(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		this.doRefresh(
 			isInitialized,
-			excludeNoBulkEMail, 
+			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 	}
@@ -532,11 +573,15 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doCreate(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		this.doRefresh(
 			isInitialized,
-			excludeNoBulkEMail, 
+			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.createActivities(CreationType.CREATE);
@@ -553,16 +598,31 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doCreateConfirmed(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		this.doRefresh(
 			isInitialized,
-			excludeNoBulkEMail, 
+			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.createActivities(CreationType.CREATE_CONFIRMED);
+		RefObject_1_0 targetObject = this.getObject() instanceof ActivityGroup
+			? this.getObject()
+			: Activities.getInstance().getMainActivityTracker(
+				this.getActivityCreator().<ActivityGroup>getActivityGroup()
+			  );
+		if(targetObject != null) {
+			Action exitAction = this.getAfterCreateConfirmedExitAction(targetObject);
+			if(exitAction != null) {
+				this.setExitAction(exitAction);
+			}
+		}
 	}
-	
+
 	/**
 	 * CreateTest action.
 	 * 
@@ -574,11 +634,15 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doCreateTest(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		this.doRefresh(
 			isInitialized,
-			excludeNoBulkEMail, 
+			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.createActivities(CreationType.CREATE_TEST);
@@ -595,11 +659,15 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doCreateTestConfirmed(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		this.doRefresh(
 			isInitialized,
 			excludeNoBulkEMail, 
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.createActivities(CreationType.CREATE_TEST_CONFIRMED);
@@ -616,12 +684,16 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doSave(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		PersistenceManager pm = this.getPm();
 		this.doRefresh(
 			isInitialized,
 			excludeNoBulkEMail, 
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		String text = (String)formFields.get("org:opencrx:kernel:base:Note:text");
@@ -656,28 +728,50 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 			);
 		} catch(Exception ignore) {}
 		// Save as properties on activity creator
-		if(this.activityCreator != null && this.locale != null) {
+		if(this.activityCreator != null && this.selectedLocale != null) {
 			try {
 				pm.currentTransaction().begin();
-				StringPropertyDataBinding dataBinding = new StringPropertyDataBinding();
-				dataBinding.setValue(
+				StringPropertyDataBinding stringPropertyDataBinding = new StringPropertyDataBinding();
+				DateTimePropertyDataBinding dateTimePropertyDataBinding = new DateTimePropertyDataBinding();
+				IntegerPropertyDataBinding integerPropertyDataBinding = new IntegerPropertyDataBinding();
+				stringPropertyDataBinding.setValue(
 					this.activityCreator, 
-					":BulkCreateActivityWizardSettings." + this.locale + "!name", 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!name", 
 					formFields.get("org:opencrx:kernel:activity1:Activity:name")
 				);
-				dataBinding.setValue(
+				stringPropertyDataBinding.setValue(
 					this.activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!description", 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!description", 
 					formFields.get("org:opencrx:kernel:activity1:Activity:description")
 				);
-				dataBinding.setValue(
+				stringPropertyDataBinding.setValue(
 					this.activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!detailedDescription", 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!detailedDescription", 
 					formFields.get("org:opencrx:kernel:activity1:Activity:detailedDescription")
 				);
-				dataBinding.setValue(
+				dateTimePropertyDataBinding.setValue(
 					this.activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!messageSubject", 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!scheduledStart", 
+					formFields.get("org:opencrx:kernel:activity1:Activity:scheduledStart")
+				);
+				dateTimePropertyDataBinding.setValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!scheduledEnd", 
+					formFields.get("org:opencrx:kernel:activity1:Activity:scheduledEnd")
+				);
+				dateTimePropertyDataBinding.setValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!dueBy", 
+					formFields.get("org:opencrx:kernel:activity1:Activity:dueBy")
+				);
+				integerPropertyDataBinding.setValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!priority", 
+					formFields.get("org:opencrx:kernel:activity1:Activity:priority")
+				);
+				stringPropertyDataBinding.setValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!messageSubject", 
 					formFields.get("org:opencrx:kernel:activity1:EMail:messageSubject")
 				);
 				// split messageBody into pieces of 2048 chars
@@ -685,9 +779,9 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				int idx = 0;
 				for(int i = 0; i < messageBodyParts.size(); i++) {
 					try {
-						dataBinding.setValue(
+						stringPropertyDataBinding.setValue(
 							this.activityCreator, 
-							":BulkCreateActivityWizardSettings." + locale + "!messageBody" + i, 
+							":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!messageBody" + i, 
 							messageBodyParts.get(i)
 						);
 						idx++;
@@ -697,10 +791,10 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				}
 				// reset unused messageBody properties if they exist
 				try {
-					while (dataBinding.getValue(this.activityCreator, ":BulkCreateActivityWizardSettings." + locale + "!messageBody" + idx) != null) {
-						org.opencrx.kernel.base.jmi1.Property property = dataBinding.findProperty(
+					while (stringPropertyDataBinding.getValue(this.activityCreator, ":" + PROPERTY_SET_NAME_SETTINS + "." + selectedLocale + "!messageBody" + idx) != null) {
+						org.opencrx.kernel.base.jmi1.Property property = stringPropertyDataBinding.findProperty(
 							activityCreator, 
-							":BulkCreateActivityWizardSettings." + locale + "!messageBody" + idx
+							":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!messageBody" + idx
 						);
 						property.refDelete();
 						idx++;
@@ -708,27 +802,29 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				} catch (Exception e) {
 					new ServiceException(e).log();
 				}				
-				dataBinding.setValue(
+				stringPropertyDataBinding.setValue(
 					this.activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!placeHolders", 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!placeHolders", 
 					formFields.get("org:opencrx:kernel:base:Note:text")
 				);
 				Path senderPath = (Path)formFields.get("org:opencrx:kernel:activity1:EMail:sender");
-				dataBinding.setValue(
+				stringPropertyDataBinding.setValue(
 					this.activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!sender", 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!sender", 
 					(senderPath == null ? null : senderPath.toXRI())
 				);
 				int i = 0;
 				@SuppressWarnings("unchecked")
-                List<Short> usages = (List<Short>)formFields.get("org:opencrx:kernel:address1:Addressable:usage");
-				for(Short usage: usages) {
-					dataBinding.setValue(
-						activityCreator,
-						":BulkCreateActivityWizardSettings." + locale + "!usage." + i,
-						usage.toString()
-					);
-					i++;
+                List<Short> emailAddressUsages = (List<Short>)formFields.get("org:opencrx:kernel:address1:Addressable:usage");
+				if(emailAddressUsages != null) {
+					for(Short usage: emailAddressUsages) {
+						stringPropertyDataBinding.setValue(
+							activityCreator,
+							":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!usage." + i,
+							usage.toString()
+						);
+						i++;
+					}
 				}
 				pm.currentTransaction().commit();
 			} catch(Exception e) {
@@ -738,7 +834,30 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				} catch(Exception e0) {}
 			}
 		}
-	}		
+	}
+
+	/**
+	 * Return true if target group is defined.
+	 * 
+	 * @return
+	 */
+	public boolean hasTargetGroupAccounts(
+	) {
+		return this.selectedTargetGroup != null;
+	}
+
+	/**
+	 * Return true if either e-mail sender is set or 
+	 * class of activities to be created is not ActivityClass.EMAIL.
+	 * 
+	 * @return
+	 */
+	public boolean hasEMailSender(
+	) {
+		return 
+			this.sender != null || 
+			this.activityType.getActivityClass() != Activities.ActivityClass.EMAIL.getValue();		
+	}
 
 	/**
 	 * Refresh action.
@@ -751,6 +870,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doRefresh(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		PersistenceManager pm = this.getPm();
@@ -761,14 +882,31 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 		} else {
 			this.excludeNoBulkEMail = excludeNoBulkEMail;
 		}
-		if(obj instanceof AccountFilterGlobal) {
-			this.accountFilter = (AccountFilterGlobal)obj;
-		} else if(obj instanceof org.opencrx.kernel.account1.jmi1.Group) {
-			this.group = (org.opencrx.kernel.account1.jmi1.Group)obj;
-		} else if(obj instanceof org.opencrx.kernel.account1.jmi1.AddressFilterGlobal) {
-			this.addressFilter = (org.opencrx.kernel.account1.jmi1.AddressFilterGlobal)obj;
-		} else if(obj instanceof org.opencrx.kernel.activity1.jmi1.AddressGroup) {
-			this.addressGroup = (org.opencrx.kernel.activity1.jmi1.AddressGroup)obj;
+		if(selectedTargetGroupXri != null && !selectedTargetGroupXri.isEmpty()) {
+			this.selectedTargetGroup = (BasicObject)pm.getObjectById(
+				new Path(selectedTargetGroupXri)
+			);
+		} else if(
+			obj instanceof AccountFilterGlobal ||
+			obj instanceof Group ||
+			obj instanceof AddressFilterGlobal ||
+			obj instanceof AddressGroup
+		) {
+			this.selectedTargetGroup = (BasicObject)obj;
+		} else if(obj instanceof ActivityGroup) {
+			ActivityGroup activityGroup = (ActivityGroup)obj;
+			if(activityGroup.getTargetGroupAccounts() instanceof AccountFilterGlobal) { 
+				this.selectedTargetGroup = (AccountFilterGlobal)activityGroup.getTargetGroupAccounts();
+			}
+			if(
+				this.formFields.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") == null &&
+				!activityGroup.getActivityCreator().isEmpty()
+			) {
+				this.formFields.put(
+					"org:opencrx:kernel:activity1:Activity:lastAppliedCreator",
+					activityGroup.<ActivityCreator>getActivityCreator().iterator().next().refGetPath()
+				);
+			}
 		}
 		// Initialize formFields on first call
 		this.activityCreator = this.formFields.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") != null
@@ -776,7 +914,7 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 			   	formFields.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator")
 			  )
 			: null;
-		this.locale = (Number)formFields.get("org:opencrx:kernel:generic:LocalizedField:locale");
+		this.selectedLocale = selectedLocale == null ? null : Short.parseShort(selectedLocale);
 		this.sender = null;
 		try {
 			Path senderPath = null;
@@ -802,7 +940,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 		this.canCreate = 
 			this.activityCreator != null && 
 			this.activityType != null &&
-			(this.sender != null || this.activityType.getActivityClass() != Activities.ActivityClass.EMAIL.getValue());
+			this.hasTargetGroupAccounts() &&
+			this.hasEMailSender();			
 	}
 
 	/**
@@ -816,100 +955,141 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doReload(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields		
 	) throws ServiceException {
 		PersistenceManager pm = this.getPm();
 		this.doRefresh(
 			isInitialized,
-			excludeNoBulkEMail, 
+			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		if(this.activityCreator != null) {
-			org.opencrx.kernel.generic.cci2.PropertySetQuery propertySetFilter = 
-				(org.opencrx.kernel.generic.cci2.PropertySetQuery)pm.newQuery(org.opencrx.kernel.generic.jmi1.PropertySet.class);
-			propertySetFilter.name().equalTo("BulkCreateActivityWizardSettings." + this.locale);
-			boolean needsInit = !this.activityCreator.getPropertySet(propertySetFilter).iterator().hasNext();
-			StringPropertyDataBinding dataBinding = new StringPropertyDataBinding();
+			// Set default locale to first selectable locale
+			List<Short> selectableLocales = this.getSelectableLocales();
+			this.selectedLocale = selectedLocale == null || selectedLocale.isEmpty() || !selectableLocales.contains(Short.parseShort(selectedLocale))
+				? selectableLocales.get(0)
+				: Short.parseShort(selectedLocale);
+			org.opencrx.kernel.generic.cci2.PropertySetQuery propertySetQuery = (org.opencrx.kernel.generic.cci2.PropertySetQuery)pm.newQuery(org.opencrx.kernel.generic.jmi1.PropertySet.class);
+			propertySetQuery.name().equalTo(PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale);
+			boolean needsInit = !this.activityCreator.getPropertySet(propertySetQuery).iterator().hasNext();
+			StringPropertyDataBinding stringPropertyDataBinding = new StringPropertyDataBinding();
+			DateTimePropertyDataBinding dateTimePropertyDataBinding = new DateTimePropertyDataBinding();
+			IntegerPropertyDataBinding integerPropertyDataBinding = new IntegerPropertyDataBinding();
 			this.formFields.put(
 				"org:opencrx:kernel:activity1:Activity:name",
 				needsInit
 					? this.activityCreator.getName()
-					: dataBinding.getValue(
-							activityCreator, 
-							":BulkCreateActivityWizardSettings." + locale + "!name"
-						)
+					: stringPropertyDataBinding.getValue(
+						this.activityCreator, 
+						":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!name"
+					  )
 			);
 			this.formFields.put(
 				"org:opencrx:kernel:activity1:Activity:description",
-				dataBinding.getValue(
-					activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!description"
+				stringPropertyDataBinding.getValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!description"
 				)					
 			);
 			this.formFields.put(
 				"org:opencrx:kernel:activity1:Activity:detailedDescription",
-				dataBinding.getValue(
-					activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!detailedDescription"
+				stringPropertyDataBinding.getValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!detailedDescription"
 				)					
 			);
 			this.formFields.put(
+				"org:opencrx:kernel:activity1:Activity:scheduledStart",
+				dateTimePropertyDataBinding.getValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!scheduledStart"
+				)
+			);
+			this.formFields.put(
+				"org:opencrx:kernel:activity1:Activity:scheduledEnd",
+				dateTimePropertyDataBinding.getValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!scheduledEnd"
+				)	
+			);
+			this.formFields.put(
+				"org:opencrx:kernel:activity1:Activity:dueBy",
+				dateTimePropertyDataBinding.getValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!dueBy"
+				)	
+			);
+			Number priority = (Number)integerPropertyDataBinding.getValue(
+				this.activityCreator, 
+				":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!priority"
+			);
+			this.formFields.put(
+				"org:opencrx:kernel:activity1:Activity:priority",
+				priority == null ? null : priority.shortValue()
+			);
+			this.formFields.put(
 				"org:opencrx:kernel:activity1:EMail:messageSubject",
-				dataBinding.getValue(
-					activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!messageSubject"
+				stringPropertyDataBinding.getValue(
+					this.activityCreator, 
+					":" + PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocale + "!messageSubject"
 				)					
 			);
 			// get messageBodyPieces
 			String tempMessageBody = "";
 			int idx = 0;
 			try {
-				while (dataBinding.getValue(activityCreator, ":BulkCreateActivityWizardSettings." + locale + "!messageBody" + idx) != null) {
-					tempMessageBody += dataBinding.getValue(activityCreator, ":BulkCreateActivityWizardSettings." + locale + "!messageBody" + idx);
+				while (stringPropertyDataBinding.getValue(this.activityCreator, ":BulkCreateActivityWizardSettings." + this.selectedLocale + "!messageBody" + idx) != null) {
+					tempMessageBody += stringPropertyDataBinding.getValue(this.activityCreator, ":BulkCreateActivityWizardSettings." + this.selectedLocale + "!messageBody" + idx);
 					idx++;
 				}
-			} catch (Exception e) {}
+			} catch (Exception ignore) {}
 			this.formFields.put(
 				"org:opencrx:kernel:activity1:EMail:messageBody",
 				tempMessageBody					
 			);
 			this.formFields.put(
 				"org:opencrx:kernel:base:Note:text",
-				dataBinding.getValue(
-					activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!placeHolders"
+				stringPropertyDataBinding.getValue(
+					this.activityCreator, 
+					":BulkCreateActivityWizardSettings." + this.selectedLocale + "!placeHolders"
 				)
 			);
 			this.formFields.put(
 				"org:opencrx:kernel:activity1:EMail:sender",
-				dataBinding.getValue(
-					activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!sender"
+				stringPropertyDataBinding.getValue(
+					this.activityCreator, 
+					":BulkCreateActivityWizardSettings." + this.selectedLocale + "!sender"
 				)
 			);
-			List<Short> usagesList = new ArrayList<Short>();
+			List<Short> emailAddressUsages = new ArrayList<Short>();
 			if (needsInit) {
-					usagesList.add(Short.valueOf((String)"500")); // default Usage: Business
+				emailAddressUsages.add(Addresses.USAGE_BUSINESS); // default Usage: Business
 			}
 			for(int i = 0; i < 10; i++) {
-				Object usage = dataBinding.getValue(
-					activityCreator, 
-					":BulkCreateActivityWizardSettings." + locale + "!usage." + i
+				Object usage = stringPropertyDataBinding.getValue(
+					this.activityCreator, 
+					":BulkCreateActivityWizardSettings." + this.selectedLocale + "!usage." + i
 				);
 				if(usage != null) {
-					usagesList.add(Short.valueOf((String)usage));
+					emailAddressUsages.add(Short.valueOf((String)usage));
 				}
 			}
 			this.formFields.put(
 				"org:opencrx:kernel:address1:Addressable:usage",
-				usagesList
+				emailAddressUsages
 			);
 			this.doRefresh(
 				isInitialized, 
-				excludeNoBulkEMail, 
+				excludeNoBulkEMail,
+				this.selectedLocale.toString(),
+				null, // selectedTargetGroupXri
 				this.formFields
 			);
-		}		
+		}
 	}
 
 	/**
@@ -924,6 +1104,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doCountActivities(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,		
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@RequestParameter(name = "activityGroupXri") String activityGroupXri,
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields				
 	) throws ServiceException {
@@ -931,6 +1113,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 		this.doRefresh(
 			isInitialized,
 			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.activityGroup = activityGroupXri != null && !activityGroupXri.isEmpty()
@@ -959,6 +1143,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doDeleteActivities(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@RequestParameter(name = "activityGroupXri") String activityGroupXri,
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields				
 	) throws ServiceException {
@@ -966,6 +1152,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 		this.doRefresh(
 			isInitialized,
 			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.activityGroup = activityGroupXri != null && !activityGroupXri.isEmpty()
@@ -1012,13 +1200,17 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public void doConfirmDeleteActivities(
 		@RequestParameter(name = "isInitialized") Boolean isInitialized,
 		@RequestParameter(name = "excludeNoBulkEMail") Boolean excludeNoBulkEMail,
+		@RequestParameter(name = "selectedLocale") String selectedLocale,		
 		@RequestParameter(name = "activityGroupXri") String activityGroupXri,
+		@RequestParameter(name = "selectedTargetGroupXri") String selectedTargetGroupXri,		
 		@FormParameter(forms = {"BulkCreateActivityFormCreator", "BulkCreateActivityFormPlaceHolders", "BulkCreateActivityFormActivity", "BulkCreateActivityFormEMail", "BulkCreateActivityFormEMailTo", "BulkCreateActivityFormRecipient"}) Map<String,Object> formFields				
 	) throws ServiceException {
 		PersistenceManager pm = this.getPm();
 		this.doRefresh(
 			isInitialized,
 			excludeNoBulkEMail,
+			selectedLocale,
+			selectedTargetGroupXri,
 			formFields
 		);
 		this.activityGroup = activityGroupXri != null && !activityGroupXri.isEmpty()
@@ -1037,6 +1229,68 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 		this.setExitAction(
 			new ObjectReference(this.getObject(), this.getApp()).getSelectObjectAction()
 		);
+	}
+
+	/**
+	 * Get selectable locales.
+	 * 
+	 * @return
+	 */
+	public List<Short> getSelectableLocales(
+	) {
+		PersistenceManager pm = this.getPm();
+		List<Short> selectableLocales = new ArrayList<Short>();
+		if(this.activityCreator != null) {
+			org.opencrx.kernel.generic.cci2.PropertySetQuery propertySetQuery = (org.opencrx.kernel.generic.cci2.PropertySetQuery)pm.newQuery(org.opencrx.kernel.generic.jmi1.PropertySet.class);
+			propertySetQuery.name().like(PROPERTY_SET_NAME_SETTINS + "\\..*");
+			List<org.opencrx.kernel.generic.jmi1.PropertySet> settings = this.activityCreator.getPropertySet(propertySetQuery);
+			for(org.opencrx.kernel.generic.jmi1.PropertySet setting: settings) {
+				try {
+					String settingName = setting.getName();
+					selectableLocales.add(
+						Short.parseShort(settingName.substring(settingName.lastIndexOf(".") + 1))
+					);
+				} catch(Exception ignore) {}
+			}
+		}
+		if(selectableLocales.isEmpty()) {
+			selectableLocales.add((short)0);
+		}
+		return selectableLocales;
+	}
+
+	/**
+	 * Get selectable target groups for accounts.
+	 * 
+	 * @return
+	 */
+	public List<BasicObject> getSelectableTargetGroups(
+	) {
+		RefObject_1_0 obj = this.getObject();
+		List<BasicObject> selectableTargetGroups = new ArrayList<BasicObject>();
+		if(
+			obj instanceof AccountFilterGlobal ||
+			obj instanceof Group ||
+			obj instanceof AddressFilterGlobal ||
+			obj instanceof AddressGroup
+		) {
+			selectableTargetGroups.add((BasicObject)obj);
+		} else if(obj instanceof ActivityGroup) {
+			ActivityGroup activityGroup = (ActivityGroup)obj;
+			if(activityGroup.getTargetGroupAccounts() != null) {
+				selectableTargetGroups.add((BasicObject)activityGroup.getTargetGroupAccounts());				
+			}
+			for(ActivityGroupRelationship activityGroupRelationship: activityGroup.<ActivityGroupRelationship>getActivityGroupRelationship()) {
+				if(
+					activityGroupRelationship.getActivityGroup() != null && 
+					activityGroupRelationship.getActivityGroup().getTargetGroupAccounts() != null &&
+					(this.activityCreator == null || this.activityCreator.getActivityGroup().contains(activityGroupRelationship.getActivityGroup()))
+				) {
+					selectableTargetGroups.add((BasicObject)activityGroupRelationship.getActivityGroup().getTargetGroupAccounts());
+				}
+			}
+		}
+		return selectableTargetGroups;
 	}
 
 	/**
@@ -1120,6 +1374,20 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	}
 
 	/**
+	 * @return the locale
+	 */
+	public Number getSelectedLocale() {
+		return selectedLocale;
+	}
+	
+	/**
+	 * @return the selectedTargetGroup
+	 */
+	public BasicObject getSelectedTargetGroup() {
+		return selectedTargetGroup;
+	}
+
+	/**
 	 * @return the formFields
 	 */
 	public Map<String, Object> getFormFields(
@@ -1170,6 +1438,7 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	public static final String CONTACT_CLASS = "org:opencrx:kernel:account1:Contact";
 	public static final String TIMER_CLASS = "org:opencrx:kernel:home1:Timer";
 	public static final int NUM_OF_TEST_ACTIVITIES = 3;
+	public static final String PROPERTY_SET_NAME_SETTINS = "BulkCreateActivityWizardSettings";
 
 	private Map<String,Object> formFields;
 	private ViewPort viewPort;
@@ -1183,11 +1452,8 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 	private ActivityCreator activityCreator;
 	private ActivityType activityType;
 	private AccountAddress sender;
-	private Number locale;
+	private Number selectedLocale;
 	private List<String> executionReport = null;
-	private AccountFilterGlobal accountFilter;
-	private org.opencrx.kernel.account1.jmi1.Group group;
-	private org.opencrx.kernel.account1.jmi1.AddressFilterGlobal addressFilter;
-	private org.opencrx.kernel.activity1.jmi1.AddressGroup addressGroup;
+	private BasicObject selectedTargetGroup;
 	
 }

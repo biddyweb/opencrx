@@ -58,9 +58,9 @@ DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_TO COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_FR COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -811,20 +811,9 @@ FROM
 
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(a.object_id, 'activity/', 'activityLinkFrom/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(a.object_id, 'activity/', 'activityLinkFrom/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     a.object_id AS P_PARENT,
-    'org:opencrx:kernel:activity1:ActivityLinkFrom'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    'org:opencrx:kernel:activity1:ActivityLinkFrom' AS dtype,
     l.modified_at, 
     l.created_at,
     l.created_by_,
@@ -860,26 +849,15 @@ FROM
 
 CREATE VIEW OOCKE1_TOBJ_CONTRACTLNKFROM AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
     STRCAT_PREFIX CASE 
         WHEN (STRSUB(c.object_id,1,5) = 'lead/') THEN REPLACE(c.object_id, 'lead/', 'linkFromLead/') 
         WHEN (STRSUB(c.object_id,1,12) = 'opportunity/') THEN REPLACE(c.object_id, 'opportunity/', 'linkFromOpportunity/') 
         WHEN (STRSUB(c.object_id,1,6) = 'quote/') THEN REPLACE(c.object_id, 'quote/', 'linkFromQuote/') 
         WHEN (STRSUB(c.object_id,1,11) = 'salesOrder/') THEN REPLACE(c.object_id, 'salesOrder/', 'linkFromSalesOrder/') 
         WHEN (STRSUB(c.object_id,1,8) = 'invoice/') THEN REPLACE(c.object_id, 'invoice/', 'linkFromInvoice/') 
-    END STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    END STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     c.object_id AS P_PARENT,
-    'org:opencrx:kernel:contract1:ContractLinkFrom'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif    
-    AS dtype,
+    'org:opencrx:kernel:contract1:ContractLinkFrom' AS dtype,
     l.modified_at, 
     l.created_at,
     l.created_by_,
@@ -917,20 +895,9 @@ FROM
 
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE AS
 SELECT     
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(c.P_PARENT, 'contracts/', 'contractRole/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dhn.object_id, '/', ':') STRCAT_INFIX ':' STRCAT_INFIX REPLACE(c.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(c.P_PARENT, 'contracts/', 'contractRole/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dhn.object_id, '/', ':') STRCAT_INFIX ':' STRCAT_INFIX REPLACE(c.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     c.P_PARENT AS P_PARENT, 
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype, 
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype, 
     c.modified_at, 
     c.modified_by_,
     c.created_at,
@@ -956,20 +923,9 @@ ON
 UNION ALL
 
 SELECT     
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(c.P_PARENT, 'contracts/', 'contractRole/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dgn.object_id, '/', ':') STRCAT_INFIX ':' STRCAT_INFIX REPLACE(c.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(c.P_PARENT, 'contracts/', 'contractRole/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dgn.object_id, '/', ':') STRCAT_INFIX ':' STRCAT_INFIX REPLACE(c.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     c.P_PARENT AS P_PARENT, 
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype, 
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype, 
     c.modified_at, 
     c.modified_by_,
     c.created_at,
@@ -995,20 +951,9 @@ ON
 UNION ALL
 
 SELECT     
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(c.P_PARENT, 'contracts/', 'contractRole/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dn.object_id, '/', ':') STRCAT_INFIX ':' STRCAT_INFIX REPLACE(c.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(c.P_PARENT, 'contracts/', 'contractRole/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dn.object_id, '/', ':') STRCAT_INFIX ':' STRCAT_INFIX REPLACE(c.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     c.P_PARENT AS P_PARENT, 
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype, 
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype, 
     c.modified_at, 
     c.modified_by_,
     c.created_at, 
@@ -1039,31 +984,16 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype
 FROM
     OOCKE1_CONTRACT_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(d_.folder, 'docFolder/', 'folderEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(d.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(d_.folder, 'docFolder/', 'folderEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(d.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     d_.folder AS P_PARENT,
-    'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    'org:opencrx:kernel:document1:DocumentBasedFolderEntry' AS dtype,
     d.modified_at,
     d.modified_by_,
     d.created_at,
@@ -1091,20 +1021,9 @@ ON
 UNION
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dfa.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(dfa.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     dfa.document_folder AS P_PARENT, 
-    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype, 
+    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry' AS dtype, 
     dfa.modified_at, 
     dfa.modified_by_,
     dfa.created_at, 
@@ -1134,11 +1053,7 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype
+    'org:opencrx:kernel:document1:DocumentBasedFolderEntry' AS dtype
 FROM
     OOCKE1_DOCUMENT_ d_
     
@@ -1150,25 +1065,47 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype
+    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry' AS dtype
 FROM
     OOCKE1_DOCUMENTFOLDERASS_ dfa_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
+CREATE VIEW OOCKE1_TOBJ_DOCREFERENCE AS
+SELECT
+    STRCAT_PREFIX REPLACE(da.document, 'doc/', 'docReference/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(da.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
+    da.document AS P_PARENT,
+    'org:opencrx:kernel:document1:DocumentReference' AS dtype,
+    da.modified_at,
+    da.modified_by_,
+    da.created_at,
+    da.created_by_,
+    da.access_level_browse,
+    da.access_level_update,
+    da.access_level_delete,
+    da.owner_,
+    da.name AS name,
+    da.description AS description,
+    P_PARENT AS object,
+    da.object_id AS based_on
+FROM
+    OOCKE1_DOCUMENTATTACHMENT da COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_DOCREFERENCE_ AS
+SELECT
+    da_.object_id,
+    da_.idx,
+    da_.created_by,
+    da_.modified_by,
+    da_.owner,
+    'org:opencrx:kernel:document1:DocumentReference' AS dtype
+FROM
+    OOCKE1_DOCUMENTATTACHMENT_ da_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.P_PARENT) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*1' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.P_PARENT) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*1' STRCAT_SUFFIX AS object_id,
     ass0.P_PARENT AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -1178,11 +1115,7 @@ SELECT DISTINCT
     ass0.created_by_,
     CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -1243,14 +1176,7 @@ WHERE
 UNION ALL
 
 SELECT DISTINCT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.account) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.account) STRCAT_INFIX '*' STRCAT_INFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX AS object_id,
     ass0.account AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -1260,11 +1186,7 @@ SELECT DISTINCT
     ass0.created_by_,
     CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,  
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -1386,14 +1308,7 @@ WITH RECURSIVE TEMP (
     distance
 ) AS (
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*+1' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*+1' STRCAT_SUFFIX AS object_id,
     ass0.P_PARENT AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -1403,11 +1318,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership'),
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1464,14 +1375,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass1.object_id) STRCAT_INFIX '*+' STRCAT_INFIX (TEMP.distance + 1) STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass1.object_id) STRCAT_INFIX '*+' STRCAT_INFIX (TEMP.distance + 1) STRCAT_SUFFIX AS object_id,
     TEMP.P_PARENT AS P_PARENT,
     ass1.P_PARENT AS account_from,
     ass1.P_PARENT AS account_from_id,
@@ -1481,11 +1385,7 @@ SELECT
     ass1.created_by_,
     ass1.modified_at,
     ass1.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    REPLACE(ass1.dtype, 'Member', 'AccountMembership'),
     ass1.access_level_browse,
     ass1.access_level_update,
     ass1.access_level_delete,
@@ -1608,14 +1508,7 @@ WITH RECURSIVE TEMP (
     distance
 ) AS (
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX AS object_id,
     ass0.account AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -1625,11 +1518,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership'),
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1686,14 +1575,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (TEMP.distance - 1) STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (TEMP.distance - 1) STRCAT_SUFFIX AS object_id,
     TEMP.P_PARENT AS P_PARENT,
     ass1.P_PARENT AS account_from,
     ass1.P_PARENT AS account_from_id,
@@ -1703,11 +1585,7 @@ SELECT
     ass1.created_by_,
     ass1.modified_at,
     ass1.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif
-    AS dtype,
+    REPLACE(ass1.dtype, 'Member', 'AccountMembership'),
     ass1.access_level_browse,
     ass1.access_level_update,
     ass1.access_level_delete,
@@ -1768,22 +1646,15 @@ WHERE
 SELECT * FROM TEMP COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT AS
 SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_TO
 UNION ALL
 SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_FR COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT AS
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*1' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*1' STRCAT_SUFFIX AS object_id,
     ass0.P_PARENT AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -1793,11 +1664,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -1854,14 +1721,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*-1' STRCAT_SUFFIX AS object_id,
     ass0.account AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -1871,11 +1731,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -1932,14 +1788,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*2A' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*2A' STRCAT_SUFFIX AS object_id,
     ass1.P_PARENT AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT As account_from_id,
@@ -1949,11 +1798,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -2014,14 +1859,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass2.object_id) STRCAT_INFIX '*2B' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass2.object_id) STRCAT_INFIX '*2B' STRCAT_SUFFIX AS object_id,
     ass2.P_PARENT AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT As account_from_id,
@@ -2031,11 +1869,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -2100,14 +1934,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*-2A' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*-2A' STRCAT_SUFFIX AS object_id,
     ass1.account AS P_PARENT,
     ass0.P_PARENT AS account_from,
     ass0.P_PARENT AS account_from_id,
@@ -2117,11 +1944,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
@@ -2182,14 +2005,7 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass2.object_id) STRCAT_INFIX '*-2B' STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX (ass0.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass1.object_id) STRCAT_INFIX '*' STRCAT_INFIX (ass2.object_id) STRCAT_INFIX '*-2B' STRCAT_SUFFIX AS object_id,
     ass1.account AS P_PARENT,
     ass1.P_PARENT AS account_from,
     ass1.P_PARENT AS account_from_id,
@@ -2199,18 +2015,13 @@ SELECT
     ass0.created_by_,
     ass0.modified_at, 
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse, 
     ass0.access_level_update, 
     ass0.access_level_delete,
     ass0.owner_,
     ass0.name, 
-    ass0.description, 
-    
+    ass0.description,
     ass0.quality,
     ass0.for_use_by_,
     ass0.valid_from, 
@@ -2293,24 +2104,13 @@ ON
 
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(l.link_to, 'facility/', 'itemLinkFrom/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(l.link_to, 'facility/', 'itemLinkFrom/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     l.link_to AS P_PARENT,
     l.created_at, 
     l.created_by_,
     l.modified_at, 
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse, 
     l.access_level_update, 
     l.access_level_delete,
@@ -2332,24 +2132,13 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(l.link_to, 'facility1/', 'itemLinkFrom1/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(l.link_to, 'facility1/', 'itemLinkFrom1/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     l.link_to AS P_PARENT,
     l.created_at, 
     l.created_by_,
     l.modified_at, 
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse, 
     l.access_level_update, 
     l.access_level_delete,
@@ -2371,24 +2160,13 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(l.link_to, 'facility2/', 'itemLinkFrom2/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(l.link_to, 'facility2/', 'itemLinkFrom2/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     l.link_to AS P_PARENT,
     l.created_at, 
     l.created_by_,
     l.modified_at, 
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif 
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse, 
     l.access_level_update, 
     l.access_level_delete,
@@ -2410,24 +2188,13 @@ WHERE
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(l.link_to, 'inventoryItem/', 'itemLinkFrom3/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(l.link_to, 'inventoryItem/', 'itemLinkFrom3/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     l.link_to AS P_PARENT,
     l.created_at, 
     l.created_by_,
     l.modified_at, 
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse, 
     l.access_level_update, 
     l.access_level_delete,
@@ -2463,11 +2230,7 @@ CREATE VIEW OOCKE1_TOBJ_PRICELISTENTRY AS
 SELECT
     bp.object_id AS object_id,
     p.P_PARENT AS P_PARENT,
-    'org:opencrx:kernel:product1:PriceListEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    'org:opencrx:kernel:product1:PriceListEntry' AS dtype,
     bp.modified_at, 
     bp.modified_by_,
     bp.created_at,
@@ -2521,27 +2284,13 @@ ON
 
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    REPLACE(p.object_id, 'p2/', 'propertySetEntry1/')
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    REPLACE(p.object_id, 'p2/', 'propertySetEntry1/') AS object_id,
     ps.P_PARENT AS P_PARENT,
     p.created_at, 
     p.created_by_,
     p.modified_at, 
     p.modified_by_,
-#if defined(DB2_8)
-    CAST(
-#endif
-    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS dtype,    
+    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry') AS dtype,    
     p.access_level_browse, 
     p.access_level_update, 
     p.access_level_delete,
@@ -2569,27 +2318,13 @@ ON
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    REPLACE(p.object_id, 'p3/', 'propertySetEntry2/')
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    REPLACE(p.object_id, 'p3/', 'propertySetEntry2/') AS object_id,
     ps.P_PARENT AS P_PARENT,
     p.created_at, 
     p.created_by_,
     p.modified_at, 
     p.modified_by_,
-#if defined(DB2_8)
-    CAST(
-#endif
-    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS dtype,    
+    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry') AS dtype,    
     p.access_level_browse, 
     p.access_level_update, 
     p.access_level_delete,
@@ -2629,20 +2364,9 @@ FROM
 
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY AS
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(act.P_PARENT, 'accounts/', 'searchIndexEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(act.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(act.P_PARENT, 'accounts/', 'searchIndexEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(act.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     act.P_PARENT AS P_PARENT,
-    'org:opencrx:kernel:account1:SearchIndexEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    'org:opencrx:kernel:account1:SearchIndexEntry' AS dtype,
     act.modified_at, 
     act.modified_by_,
     act.created_at,
@@ -2660,20 +2384,9 @@ FROM
 UNION ALL
 
 SELECT
-#if defined(DB2_8)
-    CAST(
-#endif
-    STRCAT_PREFIX REPLACE(act.P_PARENT, 'accounts/', 'searchIndexEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(adr.object_id, '/', ':') STRCAT_SUFFIX
-#if defined(DB2_8)
-    AS VARCHAR(250))
-#endif
-    AS object_id,
+    STRCAT_PREFIX REPLACE(act.P_PARENT, 'accounts/', 'searchIndexEntry/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(adr.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
     act.P_PARENT AS P_PARENT,
-    'org:opencrx:kernel:account1:SearchIndexEntry'
-#if defined(POSTGRESQL_8)
-    ::text
-#endif     
-    AS dtype,
+    'org:opencrx:kernel:account1:SearchIndexEntry' AS dtype,
     act.modified_at, 
     act.modified_by_,
     act.created_at,

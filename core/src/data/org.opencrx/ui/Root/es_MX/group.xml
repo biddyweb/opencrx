@@ -66,17 +66,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Rol</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Rol</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:description" _operation="create">
                     <_object>
                       <label>
@@ -84,6 +73,17 @@
                       </label>
                       <toolTip>
                         <_item>Descripción</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Member:memberRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Rol</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Rol</_item>
                       </toolTip>
                     </_object>
                     <_content/>

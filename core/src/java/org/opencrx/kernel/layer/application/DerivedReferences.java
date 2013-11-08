@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -50,7 +50,6 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-
 package org.opencrx.kernel.layer.application;
 
 import java.util.ArrayList;
@@ -59,7 +58,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.MappedRecord;
@@ -95,9 +93,17 @@ import org.openmdx.base.rest.spi.Query_2Facade;
 import org.w3c.format.DateTimeFormat;
 import org.w3c.spi2.Datatypes;
 
+/**
+ * DerivedReferences
+ *
+ */
 public class DerivedReferences {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param backend
+     */
     public DerivedReferences(
         RequestHelper backend
     ) {
@@ -178,7 +184,15 @@ public class DerivedReferences {
     	return this.remapFindRequest(request, reference, additionalFilterProperties, null);
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Get reply.
+     * 
+     * @param header
+     * @param request
+     * @param reply
+     * @return
+     * @throws ServiceException
+     */
     public boolean getReply(
         ServiceHeader header,
         DataproviderRequest request,
@@ -199,14 +213,11 @@ public class DerivedReferences {
 	        		Model_1_0 model = this.requestHelper.getModel();
 		        	if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:ActivityGroup")) {
 		        		reference = activitiesSourceIdentity.getChild("filteredActivity");		        		
-		        	} 
-		        	else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:Segment")) {
+		        	} else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:Segment")) {
 		        		reference = activitiesSourceIdentity.getChild("activity");		        		
-		        	} 
-		        	else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:home1:UserHome")) {
+		        	} else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:home1:UserHome")) {
 		        		reference = activitiesSourceIdentity.getChild("assignedActivity");		        		
-		        	} 
-		        	else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:account1:Account")) {
+		        	} else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:account1:Account")) {
 		        		reference = activitiesSourceIdentity.getChild("assignedActivity");
 		        	}
 	        	}
@@ -245,9 +256,7 @@ public class DerivedReferences {
 	            return true;
 	        }
 	        // GlobalFilterIncludesAddress
-	        if(
-	            request.path().isLike(GLOBAL_FILTER_INCLUDES_ADDRESS)
-	        ) {
+	        if(request.path().isLike(GLOBAL_FILTER_INCLUDES_ADDRESS)) {
 	        	DataproviderRequest findRequest =  this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("address"),
@@ -262,11 +271,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ActivityFilterIncludesActivity
-	        else if(
-	            request.path().isLike(ACTIVITY_FILTER_INCLUDES_ACTIVITY)
-	        ) {
+	        } else if(request.path().isLike(ACTIVITY_FILTER_INCLUDES_ACTIVITY)) {
+		        // ActivityFilterIncludesActivity
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
@@ -288,11 +294,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ContractFilterIncludesContract
-	        else if(
-	            request.path().isLike(CONTRACT_FILTER_INCLUDES_CONTRACT)
-	        ) {
+	        } else if(request.path().isLike(CONTRACT_FILTER_INCLUDES_CONTRACT)) {
+		        // ContractFilterIncludesContract
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
@@ -314,11 +317,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // GlobalFilterIncludesContract
-	        if(
-	            request.path().isLike(GLOBAL_FILTER_INCLUDES_CONTRACT)
-	        ) {
+	        } else if(request.path().isLike(GLOBAL_FILTER_INCLUDES_CONTRACT)) {
+		        // GlobalFilterIncludesContract
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path(),
@@ -333,11 +333,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // GlobalFilterIncludesProduct
-	        if(
-	            request.path().isLike(GLOBAL_FILTER_INCLUDES_PRODUCT)
-	        ) {
+	        } else if(request.path().isLike(GLOBAL_FILTER_INCLUDES_PRODUCT)) {
+		        // GlobalFilterIncludesProduct
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("product"),
@@ -353,11 +350,24 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // PriceLevelHasFilteredAccount
-	        else if(
-	            request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT)
-	        ) {
+	        } else if(request.path().isLike(GLOBAL_FILTER_INCLUDES_DOCUMENT)) {
+		        // GlobalFilterIncludesDocument
+	        	DataproviderRequest findRequest = this.remapFindRequest(
+	                request,
+	                request.path().getPrefix(5).getChild("document"),
+	                this.getDocumentFilterProperties(
+	                    request.path().getPrefix(request.path().size() - 1),
+	                    this.requestHelper.getDelegatingInteraction()
+	                )
+	            );
+	            this.requestHelper.getDelegatingInteraction().find(
+	                findRequest.getInteractionSpec(),
+	                Query_2Facade.newInstance(findRequest.object()),
+	                reply.getResult()
+	            );
+	            return true;
+	        } else if(request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT)) {
+		        // PriceLevelHasFilteredAccount
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
@@ -380,12 +390,11 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // FilterIncludesProduct
-	        else if(
+	        } else if(
 	            request.path().isLike(PRODUCT_PRICE_LEVEL_INCLUDES_FILTERED_PRODUCT) ||
 	            request.path().isLike(SALES_VOLUME_BUDGET_POSITION_INCLUDES_FILTERED_PRODUCT)
 	        ) {
+		        // FilterIncludesProduct
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
@@ -409,11 +418,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // PriceLevelHasAssignedPriceListEntry
-	        else if(
-	            request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY)
-	        ) {
+	        } else if(request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY)) {
+		        // PriceLevelHasAssignedPriceListEntry
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.add(
 	                new FilterProperty(
@@ -436,9 +442,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // CompoundBookingHasBooking
-	        else if(request.path().isLike(COMPOUND_BOOKING_HAS_BOOKINGS)) {
+	        } else if(request.path().isLike(COMPOUND_BOOKING_HAS_BOOKINGS)) {
+		        // CompoundBookingHasBooking
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("booking"),
@@ -457,9 +462,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // DepotPositionHasBooking
-	        else if(request.path().isLike(DEPOT_POSITION_HAS_BOOKINGS)) {
+	        } else if(request.path().isLike(DEPOT_POSITION_HAS_BOOKINGS)) {
+		        // DepotPositionHasBooking
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("booking"),
@@ -478,9 +482,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // DepotPositionHasSimpleBooking
-	        else if(request.path().isLike(DEPOT_POSITION_HAS_SIMPLE_BOOKINGS)) {
+	        } else if(request.path().isLike(DEPOT_POSITION_HAS_SIMPLE_BOOKINGS)) {
+		        // DepotPositionHasSimpleBooking
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("simpleBooking"),
@@ -499,9 +502,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ClassifierClassifiesTypedElement
-	        else if(request.path().isLike(CLASSIFIER_CLASSIFIES_TYPED_ELEMENT)) {
+	        } else if(request.path().isLike(CLASSIFIER_CLASSIFIES_TYPED_ELEMENT)) {
+		        // ClassifierClassifiesTypedElement
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("element"),
@@ -520,9 +522,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // DepotReportItemHasBookingItem
-	        else if(request.path().isLike(DEPOT_REPORT_ITEM_HAS_BOOKING_ITEMS)) {
+	        } else if(request.path().isLike(DEPOT_REPORT_ITEM_HAS_BOOKING_ITEMS)) {
+		        // DepotReportItemHasBookingItem
 	        	MappedRecord itemPosition = this.requestHelper.retrieveObject(request.path().getParent());
 	            try {
 	            	DataproviderRequest findRequest = this.remapFindRequest(
@@ -543,13 +544,11 @@ public class DerivedReferences {
 	                    reply.getResult()
 	                );
 	                return true;
-	            }
-	            catch (ResourceException e) {
+	            } catch (ResourceException e) {
 	            	throw new ServiceException(e);
 	            }
-	        }
-	        // DepotContainsDepot
-	        else if(request.path().isLike(DEPOT_GROUP_CONTAINS_DEPOTS)) {
+	        } else if(request.path().isLike(DEPOT_GROUP_CONTAINS_DEPOTS)) {
+		        // DepotContainsDepot
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("extent"),
@@ -574,9 +573,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // DepotContainsDepotGroup
-	        else if(request.path().isLike(DEPOT_GROUP_CONTAINS_DEPOT_GROUPS)) {
+	        } else if(request.path().isLike(DEPOT_GROUP_CONTAINS_DEPOT_GROUPS)) {
+		        // DepotContainsDepotGroup
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(request.path().size()-2),
@@ -595,9 +593,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // DepotEntityContainsDepot
-	        else if(request.path().isLike(DEPOT_ENTITY_CONTAINS_DEPOTS)) {
+	        } else if(request.path().isLike(DEPOT_ENTITY_CONTAINS_DEPOTS)) {
+		        // DepotEntityContainsDepot
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("extent"),
@@ -616,9 +613,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // FolderContainsFolder
-	        else if(request.path().isLike(FOLDER_CONTAINS_FOLDERS)) {
+	        } else if(request.path().isLike(FOLDER_CONTAINS_FOLDERS)) {
+		        // FolderContainsFolder
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("folder"),
@@ -637,9 +633,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryActivity
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY)) {
+		        // ObjectFinderSelectsIndexEntryActivity
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:activity1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -661,9 +656,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryAccount
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACCOUNT)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACCOUNT)) {
+		        // ObjectFinderSelectsIndexEntryAccount
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:account1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -685,9 +679,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryContract
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_CONTRACT)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_CONTRACT)) {
+		        // ObjectFinderSelectsIndexEntryContract
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:contract1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -709,9 +702,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryProduct
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_PRODUCT)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_PRODUCT)) {
+		        // ObjectFinderSelectsIndexEntryProduct
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:product1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -733,9 +725,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryDocument
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT)) {
+		        // ObjectFinderSelectsIndexEntryDocument
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:document1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -757,9 +748,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryBuilding
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING)) {
+		        // ObjectFinderSelectsIndexEntryBuilding
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:building1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -781,9 +771,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ObjectFinderSelectsIndexEntryDepot
-	        else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT)) {
+	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT)) {
+		        // ObjectFinderSelectsIndexEntryDepot
 	            Path segmentIdentity = new Path(
 	                new String[]{"org:opencrx:kernel:depot1", "provider", request.path().get(2), "segment", request.path().get(4)}
 	            );
@@ -805,9 +794,8 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // NamespaceContainsElement
-	        else if(request.path().isLike(MODEL_NAMESPACE_CONTAINS_ELEMENTS)) {
+	        } else if(request.path().isLike(MODEL_NAMESPACE_CONTAINS_ELEMENTS)) {
+		        // NamespaceContainsElement
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(5).getChild("element"),
@@ -826,12 +814,11 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }
-	        // ContractPositionHasModification
-	        else if(
+	        } else if(
 	            request.path().isLike(CONTRACT_POSITION_HAS_MODIFICATION) ||
 	            request.path().isLike(REMOVED_CONTRACT_POSITION_HAS_MODIFICATION)
 	        ) {
+		        // ContractPositionHasModification
 	        	DataproviderRequest findRequest = this.remapFindRequest(
 	                request,
 	                request.path().getPrefix(7).getChild("positionModification"),
@@ -850,15 +837,14 @@ public class DerivedReferences {
 	                reply.getResult()
 	            );
 	            return true;
-	        }            
-	        else {
+	        } else {
 	        	return false;
 	        }
     	} catch(ResourceException e) {
     		throw new ServiceException(e);
     	}
     }
-    
+
     /**
      * Map object finder to query.
      * 
@@ -1061,23 +1047,21 @@ public class DerivedReferences {
 	                        )
 	                    );
 	                    hasQueryFilterClause = true;
-	                }
-	                // Attribute filter
-	                else {
+	                } else {
+		                // Attribute filter
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty()
 	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
 	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty()
 	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
 	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
-	                    
 	                    if("org:opencrx:kernel:product1:ProductClassificationFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1282,23 +1266,21 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                }
-	                // Attribute filter
-	                else {
+	                } else {
+		                // Attribute filter
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty()
 	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
 	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty()
 	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
 	                        ? Quantifier.THERE_EXISTS.code()
 	                        : filterQuantor;
-	                    
 	                    if("org:opencrx:kernel:contract1:ContractTypeFilterProperty".equals(filterPropertyClass)) {
 	                        filter.add(
 	                            new FilterProperty(
@@ -1508,17 +1490,16 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                }
-	                // Attribute filter
-	                else {
+	                } else {
+		                // Attribute filter
 	                    // Get filterOperator, filterQuantor
-	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").size() == 0
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty()
 	                        ? ConditionType.IS_IN.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
 	                    filterOperator = filterOperator == 0
 	                        ? ConditionType.IS_IN.code()
 	                        : filterOperator;
-	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").size() == 0
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty()
 	                        ? Quantifier.THERE_EXISTS.code()
 	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
 	                    filterQuantor = filterQuantor == 0
@@ -1669,6 +1650,212 @@ public class DerivedReferences {
     }
 
     /**
+     * Map DocumentFilter to query.
+     * 
+     * @param documentFilterIdentity
+     * @param delegatingInteraction
+     * @return
+     * @throws ServiceException
+     */
+    public FilterProperty[] getDocumentFilterProperties(
+        Path documentFilterIdentity,
+        LayerInteraction delegatingInteraction
+    ) throws ServiceException {
+    	try {
+	    	DataproviderRequest findRequest = new DataproviderRequest(
+	            Query_2Facade.newInstance(documentFilterIdentity.getChild("filterProperty")).getDelegate(),
+	            DataproviderOperations.ITERATION_START,
+	            null,
+	            0, 
+	            Integer.MAX_VALUE,
+	            SortOrder.ASCENDING.code(),
+	            AttributeSelectors.ALL_ATTRIBUTES,
+	            null
+	    	);
+	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
+	    	delegatingInteraction.find(
+	    		findRequest.getInteractionSpec(), 
+	    		Query_2Facade.newInstance(findRequest.object()), 
+	    		findReply.getResult()
+	    	);
+	        MappedRecord[] filterProperties = findReply.getObjects();
+	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
+	        for(MappedRecord filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
+	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
+	            if((isActive != null) && isActive.booleanValue()) {
+	                // Query filter
+	                if("org:opencrx:kernel:document1:DocumentQueryFilterProperty".equals(filterPropertyClass)) {     
+	                    String queryFilterContext = SystemAttributes.CONTEXT_PREFIX + Activities.getInstance().getUidAsString() + ":";
+	                    // Clause and class
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
+	                            ConditionType.codeOf(null),
+	                            resolveQueryClause(
+	                            	(String)filterPropertyFacade.attributeValue("clause"), 
+	                            	documentFilterIdentity.getParent(),
+	                            	"filterProperty",
+	                            	delegatingInteraction
+	                            )	                            	                            
+	                        )
+	                    );
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + SystemAttributes.OBJECT_CLASS,
+	                            ConditionType.codeOf(null),
+	                            Database_1_Attributes.QUERY_EXTENSION_CLASS
+	                        )
+	                    );
+	                    // stringParam
+	                    List<Object> values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM);
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_STRING_PARAM,
+	                            ConditionType.codeOf(null),
+	                            values.toArray()
+	                        )
+	                    );
+	                    // integerParam
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM);
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_INTEGER_PARAM,
+	                            ConditionType.codeOf(null),
+	                            values.toArray()
+	                        )
+	                    );
+	                    // decimalParam
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM);
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DECIMAL_PARAM,
+	                            ConditionType.codeOf(null),
+	                            values.toArray()
+	                        )
+	                    );
+	                    // booleanParam
+	                    values = filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM);
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_BOOLEAN_PARAM,
+	                            ConditionType.codeOf(null),
+	                            values.toArray()
+	                        )
+	                    );
+	                    // dateParam
+	                    values = new ArrayList<Object>();
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM)) {
+	                        values.add(Datatypes.create(XMLGregorianCalendar.class, value));
+	                    }
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATE_PARAM,
+	                            ConditionType.codeOf(null),
+	                            values.toArray()
+	                        )
+	                    );
+	                    // dateTimeParam
+	                    values = new ArrayList<Object>();
+	                    for(Object value: filterPropertyFacade.attributeValuesAsList(Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM)) {
+	                        values.add(Datatypes.create(Date.class, value));
+	                    }
+	                    filter.add(
+	                        new FilterProperty(
+	                            Quantifier.codeOf(null),
+	                            queryFilterContext + Database_1_Attributes.QUERY_EXTENSION_DATETIME_PARAM,
+	                            ConditionType.codeOf(null),
+	                            values.toArray()
+	                        )
+	                    );
+	                } else {
+		                // Attribute filter
+	                    // Get filterOperator, filterQuantor
+	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty()
+	                        ? ConditionType.IS_IN.code()
+	                        : ((Number)filterPropertyFacade.attributeValue("filterOperator")).shortValue();
+	                    filterOperator = filterOperator == 0
+	                        ? ConditionType.IS_IN.code()
+	                        : filterOperator;
+	                    short filterQuantor = filterPropertyFacade.attributeValuesAsList("filterQuantor").isEmpty()
+	                        ? Quantifier.THERE_EXISTS.code()
+	                        : ((Number)filterPropertyFacade.attributeValue("filterQuantor")).shortValue();
+	                    filterQuantor = filterQuantor == 0
+	                        ? Quantifier.THERE_EXISTS.code()
+	                        : filterQuantor;
+	                    if("org:opencrx:kernel:document1:DocumentStateFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "documentState",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("documentState").toArray()
+	                            )
+	                        );
+	                    } else if("org:opencrx:kernel:document1:DocumentTypeFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "documentType",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("documentType").toArray()
+	                            )                    
+	                        );
+	                    } else if("org:opencrx:kernel:document1:DocumentFolderFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "folder",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("documentFolder").toArray()
+	                            )
+	                        );
+	                    } else if("org:opencrx:kernel:document1:DocumentNameFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "name",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("namePattern").toArray()
+	                            )
+	                        );
+	                    } else if("org:opencrx:kernel:document1:DocumentLanguageFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "contentLanguage",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("contentLanguage").toArray()
+	                            )
+	                        );
+	                    } else if("org:opencrx:kernel:document1:DisabledFilterProperty".equals(filterPropertyClass)) {
+	                        filter.add(
+	                            new FilterProperty(
+	                                filterQuantor,
+	                                "disabled",
+	                                filterOperator,
+	                                filterPropertyFacade.attributeValuesAsList("disabled").toArray()
+	                            )
+	                        );
+	                    }
+	                }
+	            }
+	        }
+	        return filter.toArray(new FilterProperty[filter.size()]);
+    	} catch(ResourceException e) {
+    		throw new ServiceException(e);
+    	}
+    }
+
+    /**
      * Map AddressFilter to query.
      * 
      * @param addressFilterIdentity
@@ -1795,9 +1982,8 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                }
-	                // Attribute filter
-	                else {
+	                } else {
+		                // Attribute filter
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() 
 	                    	? ConditionType.IS_IN.code() 
@@ -1927,15 +2113,11 @@ public class DerivedReferences {
     			break;
     		}
     		String replacement = "(null=null)";
-    		StringTokenizer placeHolder = new StringTokenizer(
-    			clause.substring(placeHolderStart + 2, placeHolderEnd),
-    			".",
-    			false
-    		);
+    		String placeHolder[] = clause.substring(placeHolderStart + 2, placeHolderEnd).split("(?<!\\\\)\\.");
     		// Place holder is of the form ${"filter name"."filter property name"} or {filter id.filter property id}
     		// Lookup a filter and filter property with given names or ids
-    		if(placeHolder.countTokens() == 2) {
-    			String filterName = placeHolder.nextToken();
+    		if(placeHolder.length == 2) {
+    			String filterName = placeHolder[0].replace("\\.", ".");
     			Object_2Facade filter = null;
     			if(filterName.startsWith("\"")) {
     				filterName = filterName.substring(1);
@@ -1972,7 +2154,7 @@ public class DerivedReferences {
     				} catch(Exception ignore) {}
     			}
     	    	if(filter != null) {
-        			String filterPropertyName = placeHolder.nextToken();
+        			String filterPropertyName = placeHolder[1].replace("\\.", ".");
         			Object_2Facade filterProperty = null;
         			if(filterPropertyName.startsWith("\"")) {
             			filterPropertyName = filterPropertyName.substring(1);
@@ -2158,9 +2340,8 @@ public class DerivedReferences {
 	                            values.toArray()
 	                        )
 	                    );
-	                }
-	                // Attribute filter
-	                else {
+	                } else {
+		                // Attribute filter
 	                    // Get filterOperator, filterQuantor
 	                    short filterOperator = filterPropertyFacade.attributeValuesAsList("filterOperator").isEmpty() 
 	                    	? ConditionType.IS_IN.code() 
@@ -2260,6 +2441,7 @@ public class DerivedReferences {
     private static final Path GLOBAL_FILTER_INCLUDES_ADDRESS = new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/:*/segment/:*/addressFilter/:*/filteredAddress");
     private static final Path GLOBAL_FILTER_INCLUDES_CONTRACT = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/contractFilter/:*/filteredContract");
     private static final Path GLOBAL_FILTER_INCLUDES_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/productFilter/:*/filteredProduct");
+    private static final Path GLOBAL_FILTER_INCLUDES_DOCUMENT = new Path("xri://@openmdx*org.opencrx.kernel.document1/provider/:*/segment/:*/documentFilter/:*/filteredDocument");
     private static final Path ACTIVITY_FILTER_INCLUDES_ACTIVITY = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/:*/:*/activityFilter/:*/filteredActivity");
     private static final Path CONTRACT_FILTER_INCLUDES_CONTRACT = new Path("xri://@openmdx*org.opencrx.kernel.contract1/provider/:*/segment/:*/contractGroup/:*/contractFilter/:*/filteredContract");
     private static final Path PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT = new Path("xri://@openmdx*org.opencrx.kernel.product1/provider/:*/segment/:*/priceLevel/:*/filteredAccount");

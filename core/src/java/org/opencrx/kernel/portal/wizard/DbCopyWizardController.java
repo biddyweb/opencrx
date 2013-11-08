@@ -59,7 +59,6 @@ import org.opencrx.kernel.utils.DbSchemaUtils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.portal.servlet.AbstractWizardController;
-import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 
 /**

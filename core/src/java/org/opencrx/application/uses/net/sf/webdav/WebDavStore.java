@@ -244,9 +244,11 @@ public interface WebDavStore {
 
     public enum MoveResourceStatus {
 
-    	CREATED, MOVED
+    	CREATED, 
+    	MOVED, 
+    	FORBIDDEN
     }
-    
+
     /** 
      * Moves the resource from sourcePath to destinationPath
      * 

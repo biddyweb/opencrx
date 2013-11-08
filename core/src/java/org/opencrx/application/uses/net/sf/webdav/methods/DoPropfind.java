@@ -163,7 +163,7 @@ public class DoPropfind extends WebDavMethod {
             res = _store.getResourceByPath(requestContext, path);
             if(res == null) {
             	resp.setCharacterEncoding("UTF-8");
-                resp.setContentType("text/xml");
+                resp.setContentType("application/xml");
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
                 return;
             }
@@ -202,7 +202,7 @@ public class DoPropfind extends WebDavMethod {
             }
             resp.setStatus(WebdavStatus.SC_MULTI_STATUS);
             resp.setCharacterEncoding("UTF-8");
-            resp.setContentType("text/xml");
+            resp.setContentType("application/xml ");
             resp.addHeader("DAV", this.getVersion());
             // Create multistatus object
             XMLWriter writer = new XMLWriter(resp.getWriter(), namespaces);

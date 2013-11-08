@@ -55,7 +55,6 @@ package org.opencrx.kernel.activity1.aop2;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.ICalendar.ICalClass;
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;

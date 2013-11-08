@@ -66,7 +66,7 @@ public class GridExportAsXlsAction extends GridExportObjectsAction {
     	List<Path> selectedObjectIdentities,
     	int maxItems
     ) {
-		return new DefaultGridExporter(
+		return new ModelBasedGridExporter(
 			grid,
 			selectedObjectIdentities,
 			Exporter.MIME_TYPE_EXCEL,

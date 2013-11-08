@@ -110,17 +110,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>图形报表</_item>
-                      </label>
-                      <toolTip>
-                        <_item>图形报表</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30" _operation="create">
                     <_object>
                       <label>
@@ -139,17 +128,6 @@
                       </label>
                       <toolTip>
                         <_item>日历</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>图形</_item>
-                      </label>
-                      <toolTip>
-                        <_item>图形</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -206,146 +184,6 @@
                       <toolTip>
                         <_item>工作周</_item>
                       </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart0" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>标题 / 来源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>标题 / 来源</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME类型</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>名称</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>描述</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart1" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>标题 / 来源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>标题 / 来源</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME类型</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>名称</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>描述</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart2" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>标题 / 来源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>标题 / 来源</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME类型</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>名称</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>描述</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart3" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>标题 / 来源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>标题 / 来源</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME类型</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>名称</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>描述</_item>
-                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -543,6 +381,149 @@
                       </label>
                       <toolTip>
                         <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>定时器</_item>
+                      </label>
+                      <toolTip>
+                        <_item>定时器</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>名称</_item>
+                      </label>
+                      <toolTip>
+                        <_item>名称</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:action" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>定时器动作</_item>
+                      </label>
+                      <toolTip>
+                        <_item>定时器动作</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerStartAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>开始时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>开始时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerEndAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结束时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结束时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>描述</_item>
+                      </label>
+                      <toolTip>
+                        <_item>描述</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:target" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>目标</_item>
+                      </label>
+                      <toolTip>
+                        <_item>目标</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>状态</_item>
+                      </label>
+                      <toolTip>
+                        <_item>状态</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>禁用</_item>
+                      </label>
+                      <toolTip>
+                        <_item>禁用</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>创建时间</_item>
+                      </label>
+                      <toolTip>
+                        <_item>创建时间</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerRepeat" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>重复X次</_item>
+                      </label>
+                      <toolTip>
+                        <_item>重复X次</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerIntervalMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>每X分钟重复</_item>
+                      </label>
+                      <toolTip>
+                        <_item>每X分钟重复</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:lastTriggerAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>收藏</_item>
+                      </label>
+                      <toolTip>
+                        <_item>收藏</_item>
                       </toolTip>
                     </_object>
                     <_content/>

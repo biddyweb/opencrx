@@ -81,6 +81,7 @@ import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.backend.Exporter;
 import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.code1.jmi1.AbstractEntry;
 import org.opencrx.kernel.code1.jmi1.CodeValueContainer;
@@ -94,12 +95,14 @@ import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderTy
 import org.opencrx.kernel.portal.action.GridExportAsXlsAction;
 import org.opencrx.kernel.portal.action.GridExportAsXmlAction;
 import org.opencrx.kernel.portal.action.GridExportIncludingCompositesAsXmlAction;
+import org.opencrx.kernel.portal.action.GridExportWysiwygAllColumnsAsXlsAction;
+import org.opencrx.kernel.portal.action.GridExportWysiwygAsXlsAction;
 import org.opencrx.kernel.portal.wizard.ChangePasswordWizardExtension;
-import org.opencrx.kernel.portal.wizard.CreateContactWizardExtension;
+import org.opencrx.kernel.portal.wizard.CreateAccountWizardExtension;
 import org.opencrx.kernel.portal.wizard.FileBrowserWizardExtension;
+import org.opencrx.kernel.utils.QueryBuilderUtil;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
-import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.accessor.jmi.spi.RefMetaObject_1;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
@@ -134,10 +137,21 @@ import org.openmdx.security.realm1.jmi1.Principal;
  * PortalExtension
  *
  */
-public class PortalExtension 
-    extends DefaultPortalExtension
-    implements Serializable {
+public class PortalExtension extends DefaultPortalExtension implements Serializable {
 
+	/**
+	 * Constructor.
+	 * 
+	 */
+	public PortalExtension(
+	) {
+		super();
+	}
+
+	/**
+	 * CachedPermission
+	 *
+	 */
 	static class CachedPermission implements Comparable<CachedPermission> {
 		
 		public CachedPermission(
@@ -169,6 +183,10 @@ public class PortalExtension
 
 	}
 	
+	/**
+	 * PermissionsCache
+	 *
+	 */
 	static class PermissionsCache {
 	
 		public PermissionsCache(
@@ -222,14 +240,12 @@ public class PortalExtension
         try {
             Model_1_0 model = application.getModel();
             ModelElement_1_0 parentDef = ((RefMetaObject_1)context.refMetaObject()).getElementDef();                
-            ModelElement_1_0 referenceDef = 
-                (ModelElement_1_0)((Map<?,?>)parentDef.objGetValue("reference")).get(referenceName);
+            ModelElement_1_0 referenceDef = (ModelElement_1_0)parentDef.objGetMap("reference").get(referenceName);
             if(referenceDef != null) {
                 ModelElement_1_0 referencedType = model.getElement(referenceDef.objGetValue("type"));                
                 excludeDisabled = model.getAttributeDefs(referencedType, true, false).containsKey("disabled");
             }
-        } 
-        catch(Exception e) {}
+        } catch(Exception e) {}
         if(excludeDisabled) {
             baseFilter.add(
                 new IsInCondition(
@@ -505,22 +521,67 @@ public class PortalExtension
     	return filter;
     }
     
+    /**
+     * Get predicate for case-insensitive match of account's fullName.
+     * 
+     * @param qualifiedFeatureName
+     * @param negate
+     * @param s0
+     * @param s1
+     * @return
+     */
+    protected QueryBuilderUtil.Predicate getAccountFullNameMatchesPredicate(
+    	String qualifiedFeatureName,
+    	boolean negate,
+    	String... params
+    ) {
+		return new QueryBuilderUtil.ReferencePredicate(
+			Utils.getUidAsString(),
+			null, // description
+			qualifiedFeatureName,
+			QueryBuilderUtil.ReferencePredicate.Condition.EXISTS,
+			new QueryBuilderUtil.OrPredicate(
+				Utils.getUidAsString(), 
+				null, // description
+				negate // negate
+			).or(
+				new QueryBuilderUtil.SingleValuedAttributePredicate(
+					Utils.getUidAsString(), 
+    				null, // description
+					"UPPER(fullName)",
+					"org:opencrx:kernel:account1:Account:fullName", 
+					QueryBuilderUtil.SingleValuedAttributePredicate.Condition.IS_LIKE, 
+					"UPPER(" + params[0] + ")"
+				)
+			).or(
+				new QueryBuilderUtil.SingleValuedAttributePredicate(
+					Utils.getUidAsString(), 
+    				null, // description
+					"UPPER(fullName)",
+					"org:opencrx:kernel:account1:Account:fullName", 
+					QueryBuilderUtil.SingleValuedAttributePredicate.Condition.IS_LIKE, 
+					params[1]
+				)
+			)
+	    );
+    }
+
     /* (non-Javadoc)
      * @see org.openmdx.portal.servlet.DefaultPortalExtension#getQuery(org.openmdx.ui1.jmi1.ValuedField, java.lang.String, int, org.openmdx.portal.servlet.ApplicationContext)
      */
     @Override
     public org.openmdx.base.query.Filter getQuery(
-    	org.openmdx.ui1.jmi1.ValuedField field,
+    	String qualifiedFeatureName,
     	String filterValue,
     	int queryFilterStringParamCount,
     	ApplicationContext app
-    ) {
-    	String qualifiedReferenceName = field.getQualifiedFeatureName();
-    	ConditionParser conditionParser = this.getConditionParser(
-    		field, 
+    ) throws ServiceException {
+    	String featureName = qualifiedFeatureName.substring(qualifiedFeatureName.lastIndexOf(":") + 1);
+    	QueryConditionParser conditionParser = this.getQueryConditionParser(
+    		qualifiedFeatureName,
 			new IsLikeCondition(
 				Quantifier.THERE_EXISTS,
-				field.getFeatureName(),
+				featureName,
 				true,
 				(Object[])null
 			)
@@ -529,7 +590,7 @@ public class PortalExtension
     	filterValue = filterValue.substring(conditionParser.getOffset());
     	if(condition instanceof IsLikeCondition) {
 	    	String clause = null;
-    		String negate = ((IsLikeCondition)condition).isFulfil() ? "" : "NOT";
+    		boolean negate = !((IsLikeCondition)condition).isFulfil();
 	    	int paramCount = queryFilterStringParamCount;
 	    	String s0 = "?s" + paramCount++;
 	    	String s1 = "?s" + paramCount++;
@@ -537,85 +598,139 @@ public class PortalExtension
 	        String stringParam = app.getWildcardFilterValue(filterValue);
 	        String stringParam0 = stringParam.startsWith("(?i)") ? stringParam.substring(4) : stringParam;
 	        String stringParam1 = stringParam.startsWith("(?i)") ? stringParam.substring(4).toUpperCase() : stringParam.toUpperCase();
-	        if("org:opencrx:kernel:contract1:SalesContract:salesRep".equals(qualifiedReferenceName)) {
-	            clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.sales_rep = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";
+	        if(
+	        	"org:opencrx:kernel:contract1:SalesContract:salesRep".equals(qualifiedFeatureName) ||
+	        	"org:opencrx:kernel:contract1:SalesContract:customer".equals(qualifiedFeatureName) ||
+	        	"org:opencrx:kernel:contract1:SalesContract:supplier".equals(qualifiedFeatureName)	        	
+	        ) {
+        		clause = this.getAccountFullNameMatchesPredicate(
+        			qualifiedFeatureName, 
+        			negate, 
+        			s0, s1
+        		).toSql(
+	        		"", 
+	        		new Path("xri://@openmdx*org:opencrx.kernel.contract1").getDescendant("provider", ":*", "segment", ":*", "salesOrder"), 
+	        		"v"
+	        	);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:contract1:SalesContract:customer".equals(qualifiedReferenceName)) {
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.customer = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
+	        } else if(
+	        	"org:opencrx:kernel:activity1:Activity:assignedTo".equals(qualifiedFeatureName) ||
+	        	"org:opencrx:kernel:activity1:Activity:reportingContact".equals(qualifiedFeatureName) ||
+	        	"org:opencrx:kernel:activity1:Activity:reportingAccount".equals(qualifiedFeatureName)	        	
+	        ) {
+        		clause = this.getAccountFullNameMatchesPredicate(
+        			qualifiedFeatureName, 
+        			negate, 
+        			s0, s1
+        		).toSql(
+	        		"", 
+	        		new Path("xri://@openmdx*org:opencrx.kernel.activity1").getDescendant("provider", ":*", "segment", ":*", "activity"), 
+	        		"v"
+	        	);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:contract1:SalesContract:supplier".equals(qualifiedReferenceName)) {
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.supplier = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";             
+	        } else if("org:opencrx:kernel:product1:PriceListEntry:product".equals(qualifiedFeatureName)) {
+	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND " + (negate ? "NOT" : "") + " (UPPER(p.name) LIKE UPPER(" + s0 + ") OR UPPER(p.name) LIKE " + s1 + "))";
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
+	        } else if("org:opencrx:kernel:home1:UserHome:contact".equals(qualifiedFeatureName)) {
+        		clause = this.getAccountFullNameMatchesPredicate(
+        			qualifiedFeatureName, 
+        			negate, 
+        			s0, s1
+        		).toSql(
+	        		"", 
+	        		new Path("xri://@openmdx*org:opencrx.kernel.home1").getDescendant("provider", ":*", "segment", ":*", "userHome"), 
+	        		"v"
+	        	);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:activity1:Activity:assignedTo".equals(qualifiedReferenceName)) {
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.assigned_to = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:activity1:Activity:reportingContact".equals(qualifiedReferenceName)) {
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.rep_contact = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:activity1:Activity:reportingAccount".equals(qualifiedReferenceName)) {
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.rep_acct = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                         
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:product1:PriceListEntry:product".equals(qualifiedReferenceName)) {
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND " + negate + " (UPPER(p.name) LIKE UPPER(" + s0 + ") OR UPPER(p.name) LIKE " + s1 + "))";
+	        } else if("org:opencrx:kernel:account1:AccountAssignment:account".equals(qualifiedFeatureName)) {            
+        		clause = this.getAccountFullNameMatchesPredicate(
+        			qualifiedFeatureName, 
+        			negate, 
+        			s0, s1
+        		).toSql(
+	        		"", 
+	        		new Path("xri://@openmdx*org:opencrx.kernel.account1").getDescendant("provider", ":*", "segment", ":*", "account", ":*", "member"), 
+	        		"v"
+	        	);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:home1:UserHome:contact".equals(qualifiedReferenceName)) {            
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.contact = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:account1:AccountAssignment:account".equals(qualifiedReferenceName)) {            
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:contract1:ContractRole:account".equals(qualifiedReferenceName)) {            
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:account1:AccountMembership:accountFrom".equals(qualifiedReferenceName)) {            
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_from = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
-	        } else if("org:opencrx:kernel:account1:AccountMembership:accountTo".equals(qualifiedReferenceName)) {            
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.account_to = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+	        } else if("org:opencrx:kernel:contract1:ContractRole:account".equals(qualifiedFeatureName)) {
+        		clause = this.getAccountFullNameMatchesPredicate(
+        			qualifiedFeatureName, 
+        			negate, 
+        			s0, s1
+        		).toSql(
+	        		"", 
+	        		new Path("xri://@openmdx*org:opencrx.kernel.contract1").getDescendant("provider", ":*", "segment", ":*", "contractRole"), 
+	        		"v"
+	        	);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedReferenceName)) {            
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.for_use_by = a.object_id AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";                                     
+	        } else if(
+	        	"org:opencrx:kernel:account1:AccountMembership:accountFrom".equals(qualifiedFeatureName) ||
+	        	"org:opencrx:kernel:account1:AccountMembership:accountTo".equals(qualifiedFeatureName) ||
+	        	"org:opencrx:kernel:account1:AccountMembership:forUseBy".equals(qualifiedFeatureName)
+	        ) {
+        		clause = this.getAccountFullNameMatchesPredicate(
+        			qualifiedFeatureName, 
+        			negate, 
+        			s0, s1
+        		).toSql(
+	        		"", 
+	        		new Path("xri://@openmdx*org:opencrx.kernel.account1").getDescendant("provider", ":*", "segment", ":*", "account", ":*", "accountMembership"), 
+	        		"v"
+	        	);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:activity1:AddressGroupMember:address".equals(qualifiedReferenceName)) {   
-	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a WHERE v.address = a.object_id AND " + negate + " (UPPER(a.postal_address_line_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_2) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_2) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE UPPER(" + s0 + ")))";  
+	        } else if("org:opencrx:kernel:activity1:AddressGroupMember:address".equals(qualifiedFeatureName)) {   
+	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a WHERE v.address = a.object_id AND " + (negate ? "NOT" : "") + " (UPPER(a.postal_address_line_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_address_line_2) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_0) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_1) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_street_2) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE UPPER(" + s0 + ")))";  
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:contract1:AbstractContract:account".equals(qualifiedReferenceName)) {
-		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNTASSIGNMENT aa INNER JOIN OOCKE1_ACCOUNT a ON aa.account = a.object_id WHERE v.object_id = aa.p$$parent AND " + negate + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";
+	        } else if("org:opencrx:kernel:contract1:AbstractContract:account".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ACCOUNTASSIGNMENT aa INNER JOIN OOCKE1_ACCOUNT a ON aa.account = a.object_id WHERE v.object_id = aa.p$$parent AND " + (negate ? "NOT" : "") + " (UPPER(a.full_name) LIKE UPPER(" + s0 + ") OR UPPER(a.full_name) LIKE " + s1 + "))";
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-		    } else if(field instanceof org.openmdx.ui1.jmi1.ObjectReferenceField) {
-	            clause = "(" + qualifiedReferenceName.substring(qualifiedReferenceName.lastIndexOf(":") + 1) + negate + " LIKE " + s0 + ")";
+	        } else if("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull".equals(field.getQualifiedFeatureName())) {
-		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + negate + " (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
+		    } else if("org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_MOBILE + ")";
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-		    } else if("org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull".equals(field.getQualifiedFeatureName())) {
-		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + negate + " (UPPER(a.phone_number_full) LIKE UPPER(" + s0 + ") OR UPPER(a.phone_number_full) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_MOBILE + ")";
+		    } else if("org:opencrx:kernel:account1:Account:address*Business!emailAddress".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (UPPER(a.email_address) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-		    } else if("org:opencrx:kernel:account1:Account:address*Business!emailAddress".equals(field.getQualifiedFeatureName())) {
-		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + negate + " (UPPER(a.email_address) LIKE UPPER(" + s0 + ") OR UPPER(a.email_address) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
+		    } else if("org:opencrx:kernel:account1:Account:address*Business!postalCity".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (UPPER(a.postal_city) LIKE UPPER(" + s0 + ") OR UPPER(a.postal_city) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
+		    } else if("org:opencrx:kernel:account1:Account:address*Business!region1".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (UPPER(a.region1) LIKE UPPER(" + s0 + ") OR UPPER(a.region1) LIKE " + s1 + ") AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
+		    } else if("org:opencrx:kernel:activity1:Activity:identity".equals(qualifiedFeatureName)) {
+		    	String s2 = "?s" + paramCount++;
+		    	String s3 = "?s" + paramCount++;
+		    	String s4 = "?s" + paramCount++;
+		    	String s5 = "?s" + paramCount++;		    	
+		    	clause = (negate ? "NOT" : "") + " (UPPER(v.name) LIKE UPPER(" + s0 + ") OR UPPER(v.name) LIKE " + s1 + " OR UPPER(v.description) LIKE UPPER(" + s2 + ") OR UPPER(v.description) LIKE " + s3 + " OR UPPER(v.detailed_description) LIKE UPPER(" + s4 + ") OR UPPER(v.detailed_description) LIKE " + s5 + ")";
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
+		    } else if("org:opencrx:kernel:account1:Account:address*Business!postalCountry".equals(qualifiedFeatureName)) {
+		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (a.postal_country IN (" + filterValue + ")) AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
 		    } else {
 	            return super.getQuery(
-	            	field, 
+	            	qualifiedFeatureName, 
 	            	filterValue, 
 	            	queryFilterStringParamCount,
 	            	app
@@ -623,16 +738,16 @@ public class PortalExtension
 		    }
 	        return this.getQueryConditions(
 	        	clause,
-	        	stringParams, 
+	        	stringParams,
 	        	app
 	        );
     	} else {
             return super.getQuery(
-            	field,
+            	qualifiedFeatureName,
             	filterValue,
             	queryFilterStringParamCount,
             	app
-            );    		
+            );
     	}
     }
 
@@ -683,11 +798,10 @@ public class PortalExtension
     public Autocompleter_1_0 getAutocompleter(
         ApplicationContext app,
         RefObject_1_0 context,
-        String qualifiedFeatureName
+        String qualifiedFeatureName,
+        String restrictToType
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(context);
-    	// org:opencrx:kernel:contract1:CreateContractParams:contractType
-    	// org:opencrx:kernel:contract1:CreateSalesContractParams:contractType
         if(
         	"org:opencrx:kernel:contract1:CreateContractParams:contractType".equals(qualifiedFeatureName) ||
         	"org:opencrx:kernel:contract1:CreateSalesContractParams:contractType".equals(qualifiedFeatureName)        	
@@ -703,13 +817,10 @@ public class PortalExtension
                     );            		
             	}
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition
-    	// org:opencrx:kernel:activity1:LinkToAndFollowUpParams:transition
-        else if(
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if(
         	"org:opencrx:kernel:activity1:ActivityDoFollowUpParams:transition".equals(qualifiedFeatureName) ||
         	"org:opencrx:kernel:activity1:LinkToAndFollowUpParams:transition".equals(qualifiedFeatureName)        	
         ) {
@@ -721,7 +832,7 @@ public class PortalExtension
                 try {
                     activityType = activity.getActivityType();
                     processState = activity.getProcessState();
-                } catch(Exception e) {}
+                } catch(Exception ignore) {}
                 if((activityType != null) && (processState != null)) {
                     selectableValues = new ArrayList<ObjectReference>();
                     org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = activityType.getControlledBy();
@@ -738,12 +849,10 @@ public class PortalExtension
                     }
                 }
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:activity1:ActivityAssignToParams:resource
-        else if("org:opencrx:kernel:activity1:ActivityAssignToParams:resource".equals(qualifiedFeatureName)) {
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if("org:opencrx:kernel:activity1:ActivityAssignToParams:resource".equals(qualifiedFeatureName)) {
             List<ObjectReference> selectableValues = null;
             if(context instanceof Activity) {
                 Activity activity = (Activity)context;
@@ -771,15 +880,12 @@ public class PortalExtension
 	                if(count >= 20) {
 	                    selectableValues = null;
 	                }
-	            } catch(Exception e) {}
+	            } catch(Exception ignore) {}
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:activity1:ResourceAddWorkRecordByPeriodParams:activity
-        // org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity
-        else if(
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if(
             "org:opencrx:kernel:activity1:ResourceAddWorkRecordByPeriodParams:activity".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:activity".equals(qualifiedFeatureName)
         ) {
@@ -806,22 +912,20 @@ public class PortalExtension
                     selectableValues = null;
                 }
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:base:Property:....
-        else if(
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if(
             "org:opencrx:kernel:base:StringProperty:stringValue".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:base:IntegerProperty:integerValue".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:base:BooleanProperty:booleanValue".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:base:UriProperty:uriValue".equals(qualifiedFeatureName) ||
             "org:opencrx:kernel:base:DecimalProperty:decimalValue".equals(qualifiedFeatureName)
         ) {
+            // org:opencrx:kernel:base:Property:....
             List<String> selectableValues = null;
             if(context instanceof org.opencrx.kernel.base.jmi1.Property) {
-                org.opencrx.kernel.base.jmi1.Property property = 
-                    (org.opencrx.kernel.base.jmi1.Property)context;
+                org.opencrx.kernel.base.jmi1.Property property = (org.opencrx.kernel.base.jmi1.Property)context;
                 try {
                     if(property.getDomain() != null) {
                         selectableValues = new ArrayList<String>();
@@ -829,32 +933,28 @@ public class PortalExtension
                         Collection<AbstractEntry> entries = domain.getEntry();
                         for(AbstractEntry entry: entries) {
                             selectableValues.add(
-                                entry.getEntryValue() != null ? 
-                                	entry.getEntryValue()
+                                entry.getEntryValue() != null 
+                                	? entry.getEntryValue()
                                     // get qualifier as value if no entryValue is specified
                                     : new Path(entry.refMofId()).getBase()
                             );
                         }
                     }
-                } catch(Exception e) {}
+                } catch(Exception ignore) {}
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:base:ExportItemParams:itemMimeType
-        else if(
-            "org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType".equals(qualifiedFeatureName)
-        ) {
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if("org:opencrx:kernel:base:ExportItemAdvancedParams:itemMimeType".equals(qualifiedFeatureName)) {
+            // org:opencrx:kernel:base:ExportItemParams:itemMimeType
             List<String> selectableValues = new ArrayList<String>();
             selectableValues.add("application/x-excel");
-            selectableValues.add("text/xml");
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:base:ExportItemParams:exportProfile
-        else if("org:opencrx:kernel:base:ExportItemParams:exportProfile".equals(qualifiedFeatureName)) {
+            selectableValues.add(Exporter.MIME_TYPE_XML);
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if("org:opencrx:kernel:base:ExportItemParams:exportProfile".equals(qualifiedFeatureName)) {
+            // org:opencrx:kernel:base:ExportItemParams:exportProfile
             List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.base.jmi1.Exporter) {
                 String providerName = context.refGetPath().get(2);
@@ -882,8 +982,7 @@ public class PortalExtension
                             }
                         }
                     }
-                } 
-                catch(Exception e) {}
+                } catch(Exception e) {}
                 // Collect shared export profiles from segment admin
                 try {
                     if(!currentPrincipal.equals(adminPrincipal)) {
@@ -907,15 +1006,13 @@ public class PortalExtension
                             }
                         }
                     }
-                }
-                catch(Exception e) {}
+                } catch(Exception ignore) {}
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(selectableValues);
-        }
-        // org:opencrx:kernel:address1:Addressable:tz
-        else if("org:opencrx:kernel:address1:Addressable:tz".equals(qualifiedFeatureName)) {
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(selectableValues);
+        } else if("org:opencrx:kernel:address1:Addressable:tz".equals(qualifiedFeatureName)) {
+            // org:opencrx:kernel:address1:Addressable:tz
         	Set<String> selectableValues = new TreeSet<String>();
         	selectableValues.add("");
             String[] timezones = java.util.TimeZone.getAvailableIDs();
@@ -923,15 +1020,15 @@ public class PortalExtension
             	String timezoneID = timezones[i].trim();
             	selectableValues.add(timezoneID);
             }
-            return selectableValues == null ? 
-            	null : 
-            		new ValueListAutocompleter(new ArrayList<String>(selectableValues));
-        }
-        else {
+            return selectableValues == null 
+            	? null 
+            	: new ValueListAutocompleter(new ArrayList<String>(selectableValues));
+        } else {
             return super.getAutocompleter(
                 app,
                 context,
-                qualifiedFeatureName
+                qualifiedFeatureName,
+                restrictToType
             );
         }
     }
@@ -945,9 +1042,9 @@ public class PortalExtension
         ModelElement_1_0 lookupType, 
         RefObject_1_0 startFrom, 
         String filterValues,
-        ApplicationContext application
+        ApplicationContext app
     ) throws ServiceException {
-        Model_1_0 model = application.getModel();
+        Model_1_0 model = app.getModel();
         // start from customer if the current object is a contract and the 
         // lookup type is AccountAddress
         if(startFrom instanceof SalesContract) {
@@ -955,8 +1052,7 @@ public class PortalExtension
             org.opencrx.kernel.account1.jmi1.Account customer = null;
             try {
                 customer = contract.getCustomer();
-            } 
-            catch(Exception e) {}
+            } catch(Exception e) {}
             if(
                 (customer != null) &&
                 model.isSubtypeOf("org:opencrx:kernel:account1:AccountAddress", lookupType)
@@ -968,18 +1064,17 @@ public class PortalExtension
                 lookupType, 
                 startFrom, 
                 filterValues,
-                application
+                app
             );
             return view;
-        }
-        // Default lookup
-        else {
+        } else {
+            // Default lookup
             return super.getLookupView(
                 id, 
                 lookupType, 
                 startFrom, 
                 filterValues,
-                application
+                app
             );
         }
     }
@@ -1006,7 +1101,7 @@ public class PortalExtension
         String value,
         boolean asWiki
     ) throws ServiceException {
-        ApplicationContext application = p.getApplicationContext();
+        ApplicationContext app = p.getApplicationContext();
         // Process Tag activity:#
         if(
             (p.getView() instanceof ObjectView) && 
@@ -1016,11 +1111,6 @@ public class PortalExtension
             PersistenceManager pm = JDOHelper.getPersistenceManager(object);
             String providerName = object.refGetPath().get(2);
             String segmentName = object.refGetPath().get(4);
-            RefPackage_1_0 rootPkg = (RefPackage_1_0)object.refOutermostPackage();            
-            org.opencrx.kernel.activity1.jmi1.Activity1Package activityPkg = 
-                (org.opencrx.kernel.activity1.jmi1.Activity1Package)rootPkg.refPackage(
-                    org.opencrx.kernel.activity1.jmi1.Activity1Package.class.getName()
-                );
             Path activitySegmentIdentity = 
                 new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
@@ -1046,28 +1136,26 @@ public class PortalExtension
                 // corresponding activity number
                 if(end > start) {
                     String activityNumber = value.substring(start, end);
-                    org.opencrx.kernel.activity1.cci2.ActivityQuery filter = activityPkg.createActivityQuery();
-                    filter.thereExistsActivityNumber().equalTo(
+                    ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
+                    activityQuery.thereExistsActivityNumber().equalTo(
                         activityNumber
                     );
-                    Collection<org.opencrx.kernel.activity1.jmi1.Activity> activities = activitySegment.getActivity(filter);
+                    Collection<Activity> activities = activitySegment.getActivity(activityQuery);
                     if(activities.size() == 1) {
                         ObjectReference objRef = new ObjectReference(
                             activities.iterator().next(),
-                            application
+                            app
                         );
                         Action action = objRef.getSelectObjectAction();
-                      	p.write("<a href=\"\" onclick=\"javascript:this.href=", p.getEvalHRef(action), ";\">", application.getHtmlEncoder().encode(action.getTitle(), false), "</a>");
-                    }
-                    else {
+                      	p.write("<a href=\"\" onclick=\"javascript:this.href=", p.getEvalHRef(action), ";\">", app.getHtmlEncoder().encode(action.getTitle(), false), "</a>");
+                    } else {
                         super.renderTextValue(
                             p,
                             value.substring(newPos, end),
                             asWiki
                         );
                     }
-                }
-                else {
+                } else {
                     super.renderTextValue(
                         p,
                         value.substring(newPos, end),
@@ -1081,8 +1169,7 @@ public class PortalExtension
                 value.substring(currentPos),
                 asWiki
             );
-        }
-        else {
+        } else {
             super.renderTextValue(
                 p, 
                 value,
@@ -1235,9 +1322,29 @@ public class PortalExtension
 		ApplicationContext app = view.getApplicationContext();
 	    List<Action> actions = new ArrayList<Action>(super.getGridActions(view, grid));
 	    org.openmdx.ui1.jmi1.Element uiExport = app.getUiElement("org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem");
-	    String lExport = app.getCurrentLocaleAsIndex() < uiExport.getToolTip().size() ?
-	    	uiExport.getToolTip().get(app.getCurrentLocaleAsIndex()) :
-	    		uiExport.getToolTip().get(0);
+	    String lExport = app.getCurrentLocaleAsIndex() < uiExport.getToolTip().size() 
+	    	? uiExport.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+	    	: uiExport.getToolTip().get(0);
+	    Action exportWysiwygAsXlsAction = new Action(
+            GridExportWysiwygAsXlsAction.EVENT_ID, 
+            new Action.Parameter[]{
+                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+            },
+            lExport + " --> XLS (wysiwyg)", 
+            true
+        );
+	    actions.add(exportWysiwygAsXlsAction);
+	    Action exportWysiwygAllColumnsAsXlsAction = new Action(
+            GridExportWysiwygAllColumnsAsXlsAction.EVENT_ID, 
+            new Action.Parameter[]{
+                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
+                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+            },
+            lExport + " --> XLS (wysiwyg+)", 
+            true
+        );
+	    actions.add(exportWysiwygAllColumnsAsXlsAction);
 	    Action exportAsXmlAction = new Action(
             GridExportAsXmlAction.EVENT_ID, 
             new Action.Parameter[]{
@@ -1264,7 +1371,7 @@ public class PortalExtension
                 new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
                 new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
             },
-            lExport + "+ --> XML", 
+            lExport + " --> XML+", 
             true
         );
 	    actions.add(exportIncludingCompositesAsXmlAction);
@@ -1505,8 +1612,8 @@ public class PortalExtension
     public Object getExtension(
     	String name
     ) {
-        if((name != null) && name.startsWith(CreateContactWizardExtension.class.getName())) {
-        	return new CreateContactWizardExtension();
+        if((name != null) && name.startsWith(CreateAccountWizardExtension.class.getName())) {
+        	return new CreateAccountWizardExtension();
         } else if((name != null) && name.startsWith(ChangePasswordWizardExtension.class.getName())) {
         	return new ChangePasswordWizardExtension();
         } else if((name != null) && name.startsWith(FileBrowserWizardExtension.class.getName())) {

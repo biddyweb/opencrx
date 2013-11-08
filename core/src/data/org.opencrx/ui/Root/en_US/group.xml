@@ -644,7 +644,7 @@
 											<active>true</active>
 											<sortable>false</sortable>
 											<spanRow>2</spanRow>
-											<changeable>false</changeable>
+											<changeable>true</changeable>
 											<toolTip>
 												<_item>Roles</_item>
 											</toolTip>

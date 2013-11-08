@@ -58,7 +58,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.11.0"/>
+	<property name="openmdx.version" value="2.12.7"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -155,6 +155,7 @@
 		<pathelement location="../twitter4j/${build.target.platform}/twitter4j/lib/twitter4j-core.jar"/>
 		<pathelement location="../jivesoftware/${build.target.platform}/smack/lib/smack.jar"/>
 		<pathelement location="../google/${build.target.platform}/gson/lib/gson.jar"/>
+		<pathelement location="../google/${build.target.platform}/zxing/lib/zxing-core.jar"/>
 	</path>
 	<path id="project.bin.classpath">
 		<path refid="project.lib.classpath"/>
@@ -244,6 +245,7 @@
 			<replacestring from="opencrx-ldap-CRX" to="opencrx-ldap-${web.application.name}"/>
 			<replacestring from="opencrx-airsync-CRX" to="opencrx-airsync-${web.application.name}"/>
 			<replacestring from="opencrx-bpi-CRX" to="opencrx-bpi-${web.application.name}"/>
+			<replacestring from="opencrx-calendar-CRX" to="opencrx-calendar-${web.application.name}"/>
 			<replacestring from="org.opencrx.kernel.aop2.Configuration" to="${configuration.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1" to="${kernel.interception.plugin.class.name}"/>
 			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.type.Strict_1" to="${kernel.type.plugin.class.name}"/>
@@ -280,12 +282,12 @@
 		<!-- JDO files of thirdparty libraries -->
 		<unzip src="${openmdx.home}/${build.target.platform}/core/lib/openmdx-base.jar" dest="${build.dir}/src/resource">
 		  <patternset>
-				<include name="org/openmdx/base/**/*.jdo"/>
+				<include name="org/openmdx/base/**/*.openmdxjdo"/>
 			</patternset>
 		</unzip>
 		<unzip src="${openmdx.home}/${build.target.platform}/security/lib/openmdx-security.jar" dest="${build.dir}/src/resource">
 		  <patternset>
-				<include name="org/openmdx/security/**/*.jdo"/>
+				<include name="org/openmdx/security/**/*.openmdxjdo"/>
 				<exclude name="org/openmdx/security/**/ModelReferencePrivilege.jdo"/>
 		  </patternset>
     </unzip>    		
@@ -311,10 +313,6 @@
 		name="deliverables" 
 		description="Populate the project's deliverables directory" 
 		depends="deliverables-init,java-archives,source-archives">
-		<java classname="org.openmdx.base.mof.spi.Model_1Dumper" fork="true" classpathref="project.bin.classpath">
-			<arg value="${build.dir}/model/openmdxmof.wbxml" />
-			<sysproperty key="java.protocol.handler.pkgs" value="org.openmdx.kernel.url.protocol" />
-		</java>
 	</target>
 	<!-- ******************************************************************* -->
 	<!-- * distribution -->
@@ -540,6 +538,8 @@
 			<param name="airsync.target.name" value="opencrx-airsync-${web.application.name}"/>
 			<param name="bpi.source.name" value="opencrx-bpi-CRX"/>
 			<param name="bpi.target.name" value="opencrx-bpi-${web.application.name}"/>
+			<param name="calendar.source.name" value="opencrx-calendar-CRX"/>
+			<param name="calendar.target.name" value="opencrx-calendar-${web.application.name}"/>
 		</antcall>
 	</target>
 	<!-- ******************************************************************* -->
@@ -1268,6 +1268,59 @@
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
+		<!-- opencrx-calendar-CRX.war -->
+		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${calendar.target.name}.war" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} Calendar WAR"/>
+				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
+			</manifest>
+			<zipfileset dir="${data.home}/src/data/${data.dir}.calendar/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>			
+			<!-- WEB-INF -->
+			<zipfileset dir="src/data/${data.dir.generic}.calendar/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<zipfileset dir="src/ear/${app.source.name}.ear/${calendar.source.name}.war/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="tomcat-6.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- META-INF -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}.calendar/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.calendar/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/${data.dir.generic}.calendar/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/org.opencrx.calendar">
+				<include name="**/*.manifest"/>
+				<include name="**/*.js"/>
+				<include name="**/*.gif"/>
+				<include name="**/*.png"/>
+				<include name="**/*.svg"/>
+				<include name="**/*.css"/>
+				<include name="**/*.html"/>
+				<include name="**/*.txt"/>
+			</zipfileset>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>
 		<!-- opencrx-resources.jar -->
 		<openmdx:archive format="jar" destfile="${build.dir}/lib/${app.target.name}/opencrx-resources.jar">
 			<zipfileset src="${opencrx.home}/${build.target.platform}/core/lib/opencrx-resources.jar"/>
@@ -1287,6 +1340,7 @@
 			<!-- Libs -->
 			<zipfileset dir="${deliver.dir}/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>
+				<exclude name="opencrx-client.jar"/>
 			</zipfileset>
 			<zipfileset dir="${opencrx.home}/${build.target.platform}/core/lib" prefix="APP-INF/lib">
 				<include name="opencrx-kernel.jar"/>
@@ -1325,6 +1379,9 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="../google/${build.target.platform}/gson/lib" prefix="APP-INF/lib">
+				<include name="*.jar"/>
+			</zipfileset>
+			<zipfileset dir="../google/${build.target.platform}/zxing/lib" prefix="APP-INF/lib">
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset dir="${openmdx.home}/osgi/${build.target.platform}/extension/lib" prefix="APP-INF/lib">

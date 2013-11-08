@@ -475,6 +475,24 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentReference">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Document References</_item>
+											</toolTip>
+											<label>
+												<_item>»Document References</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>1000</_item>
+											</order>
+											<maxMember>4</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:documentFolderAssignment">
 										<_object>
 											<active>true</active>
@@ -740,7 +758,6 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:contentType">
 										<_object>
-											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Content type</_item>
@@ -751,14 +768,16 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>80</_item>
+												<_item>30</_item>
 											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:contentLanguage">
 										<_object>
+											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<spanRow>3</spanRow>
 											<toolTip>
 												<_item>Content language</_item>
 											</toolTip>
@@ -768,7 +787,7 @@
 											<order>
 												<_item>0</_item>
 												<_item>10</_item>
-												<_item>90</_item>
+												<_item>80</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -1159,6 +1178,95 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 									<!--see document.xml for Document details-->
+
+									<!--  DocumentReference -->
+									<!-- Inspector Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Document Reference</_item>
+											</toolTip>
+											<label>
+												<_item>Document Reference</_item>
+											</label>
+											<iconKey>DocumentReference</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- Grid -->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:description">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:basedOn">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Based on attachment</_item>
+											</toolTip>
+											<label>
+												<_item>Based on attachment</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentReference:object">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Referenced by</_item>
+											</toolTip>
+											<label>
+												<_item>Referenced by</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- DocumentRevision-->
 									<!-- Inspector -->

@@ -228,7 +228,11 @@ org.apache.poi.hssf.util.*
     cell = row.createCell(nCell++);
     cell.setCellStyle(topAlignedStyle);
     if (contact != null) {
-        if (contact.getSalutationCode() != 0) {cell.setCellValue((String)(codes.getShortText("salutationCode", app.getCurrentLocaleAsIndex(), true, true).get(contact.getSalutationCode())));}
+        if (contact.getSalutationCode() != 0) {
+        	cell.setCellValue((String)(codes.getShortText("salutationCode", app.getCurrentLocaleAsIndex(), true, true).get(contact.getSalutationCode())));
+        } else if (contact.getSalutation() != null) {
+        	cell.setCellValue(contact.getSalutation());
+        }
     }
 
     //FirstName
@@ -1388,7 +1392,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
       </div> <!-- header -->
 
 	    <div id="content-wrap">
-	    	<div id="content" style="padding:21.5em 0.5em 0px 0.5em;">
+	    	<div id="content" style="padding:13.5em 0.5em 0px 0.5em;">
 
         <table style="background:white;"><tr><td>
         <table id="resultTable" class="gridTableFull">
@@ -1436,7 +1440,11 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 				                  account = (org.opencrx.kernel.account1.jmi1.Account)pm.getObjectById(new Path(crxObject.refMofId()).getParent().getParent());
 				                  infoAddr = (org.opencrx.kernel.account1.jmi1.PostalAddress)crxObject;
 				              } else {
-				                  account = ((org.opencrx.kernel.account1.jmi1.Member)crxObject).getAccount();
+				              		try {
+				                  	account = ((org.opencrx.kernel.account1.jmi1.Member)crxObject).getAccount();
+				                  } catch (Exception e) {
+				                  	new ServiceException(e).log();
+				                  }
 				              }
 				          } catch (Exception e) {
 				              new ServiceException(e).log();

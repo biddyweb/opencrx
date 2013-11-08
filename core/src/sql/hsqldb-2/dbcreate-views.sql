@@ -70,8 +70,8 @@ DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY ;
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY_ ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_TO ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_FR ;
-DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT ;
+DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 ;
 DROP VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTLNKFROM ;
@@ -680,11 +680,9 @@ FROM
   OOCKE1_WFPROCESSINSTANCE wfp ;
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM AS
 SELECT
-    REPLACE(a.object_id, 'activity/', 'activityLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':')
-    AS object_id,
+    REPLACE(a.object_id, 'activity/', 'activityLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
     a.object_id AS "P$$PARENT",
-    'org:opencrx:kernel:activity1:ActivityLinkFrom'
-    AS dtype,
+    'org:opencrx:kernel:activity1:ActivityLinkFrom' AS dtype,
     l.modified_at,
     l.created_at,
     l.created_by_,
@@ -722,11 +720,9 @@ SELECT
         WHEN (SUBSTRING(c.object_id,1,6) = 'quote/') THEN REPLACE(c.object_id, 'quote/', 'linkFromQuote/')
         WHEN (SUBSTRING(c.object_id,1,11) = 'salesOrder/') THEN REPLACE(c.object_id, 'salesOrder/', 'linkFromSalesOrder/')
         WHEN (SUBSTRING(c.object_id,1,8) = 'invoice/') THEN REPLACE(c.object_id, 'invoice/', 'linkFromInvoice/')
-    END || '/' || REPLACE(l.object_id, '/', ':')
-    AS object_id,
+    END || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
     c.object_id AS "P$$PARENT",
-    'org:opencrx:kernel:contract1:ContractLinkFrom'
-    AS dtype,
+    'org:opencrx:kernel:contract1:ContractLinkFrom' AS dtype,
     l.modified_at,
     l.created_at,
     l.created_by_,
@@ -760,11 +756,9 @@ FROM
     OOCKE1_CONTRACTLINK_ ;
 CREATE VIEW OOCKE1_TOBJ_CONTRACTROLE AS
 SELECT
-    REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dhn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
-    AS object_id,
+    REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dhn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':') AS object_id,
     c."P$$PARENT" AS "P$$PARENT",
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-    AS dtype,
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype,
     c.modified_at,
     c.modified_by_,
     c.created_at,
@@ -788,11 +782,9 @@ ON
     (c.customer = a.object_id)
 UNION ALL
 SELECT
-    REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dgn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
-    AS object_id,
+    REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dgn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':') AS object_id,
     c."P$$PARENT" AS "P$$PARENT",
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-    AS dtype,
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype,
     c.modified_at,
     c.modified_by_,
     c.created_at,
@@ -816,11 +808,9 @@ ON
     (c.customer = a.object_id)
 UNION ALL
 SELECT
-    REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':')
-    AS object_id,
+    REPLACE(c."P$$PARENT", 'contracts/', 'contractRole/') || '/' || REPLACE(dn.object_id, '/', ':') || ':' || REPLACE(c.object_id, '/', ':') AS object_id,
     c."P$$PARENT" AS "P$$PARENT",
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-    AS dtype,
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype,
     c.modified_at,
     c.modified_by_,
     c.created_at,
@@ -849,17 +839,14 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:contract1:CustomerContractRole'
-    AS dtype
+    'org:opencrx:kernel:contract1:CustomerContractRole' AS dtype
 FROM
     OOCKE1_CONTRACT_ ;
 CREATE VIEW OOCKE1_TOBJ_DOCFLDENTRY AS
 SELECT
-    REPLACE(d_.folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(d.object_id, '/', ':')
-    AS object_id,
+    REPLACE(d_.folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(d.object_id, '/', ':') AS object_id,
     d_.folder AS "P$$PARENT",
-    'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
-    AS dtype,
+    'org:opencrx:kernel:document1:DocumentBasedFolderEntry' AS dtype,
     d.modified_at,
     d.modified_by_,
     d.created_at,
@@ -885,11 +872,9 @@ ON
     (d_.folder IS NOT NULL)
 UNION
 SELECT
-    REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(dfa.object_id, '/', ':')
-    AS object_id,
+    REPLACE(dfa.document_folder, 'docFolder/', 'folderEntry/') || '/' || REPLACE(dfa.object_id, '/', ':') AS object_id,
     dfa.document_folder AS "P$$PARENT",
-    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
-    AS dtype,
+    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry' AS dtype,
     dfa.modified_at,
     dfa.modified_by_,
     dfa.created_at,
@@ -917,8 +902,7 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:document1:DocumentBasedFolderEntry'
-    AS dtype
+    'org:opencrx:kernel:document1:DocumentBasedFolderEntry' AS dtype
 FROM
     OOCKE1_DOCUMENT_ d_
 UNION
@@ -928,14 +912,41 @@ SELECT
     created_by,
     modified_by,
     owner,
-    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry'
-    AS dtype
+    'org:opencrx:kernel:document1:AssignmentBasedFolderEntry' AS dtype
 FROM
     OOCKE1_DOCUMENTFOLDERASS_ dfa_ ;
+CREATE VIEW OOCKE1_TOBJ_DOCREFERENCE AS
+SELECT
+    REPLACE(da.document, 'doc/', 'docReference/') || '/' || REPLACE(da.object_id, '/', ':') AS object_id,
+    da.document AS "P$$PARENT",
+    'org:opencrx:kernel:document1:DocumentReference' AS dtype,
+    da.modified_at,
+    da.modified_by_,
+    da.created_at,
+    da.created_by_,
+    da.access_level_browse,
+    da.access_level_update,
+    da.access_level_delete,
+    da.owner_,
+    da.name AS name,
+    da.description AS description,
+    "P$$PARENT" AS object,
+    da.object_id AS based_on
+FROM
+    OOCKE1_DOCUMENTATTACHMENT da ;
+CREATE VIEW OOCKE1_TOBJ_DOCREFERENCE_ AS
+SELECT
+    da_.object_id,
+    da_.idx,
+    da_.created_by,
+    da_.modified_by,
+    da_.owner,
+    'org:opencrx:kernel:document1:DocumentReference' AS dtype
+FROM
+    OOCKE1_DOCUMENTATTACHMENT_ da_ ;
 CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP1 AS
 SELECT DISTINCT
-    (ass0."P$$PARENT") || '*' || (ass0.object_id) || '*1'
-    AS object_id,
+    (ass0."P$$PARENT") || '*' || (ass0.object_id) || '*1' AS object_id,
     ass0."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -945,8 +956,7 @@ SELECT DISTINCT
     ass0.created_by_,
     CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1005,8 +1015,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT DISTINCT
-    (ass0.account) || '*' || (ass0.object_id) || '*-1'
-    AS object_id,
+    (ass0.account) || '*' || (ass0.object_id) || '*-1' AS object_id,
     ass0.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -1016,8 +1025,7 @@ SELECT DISTINCT
     ass0.created_by_,
     CASE WHEN ass0.modified_at > acct.modified_at THEN ass0.modified_at ELSE acct.modified_at END AS modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1137,8 +1145,7 @@ WITH RECURSIVE TEMP (
     distance
 ) AS (
 SELECT
-    (ass0.object_id) || '*+1'
-    AS object_id,
+    (ass0.object_id) || '*+1' AS object_id,
     ass0."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -1148,8 +1155,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership'),
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1204,8 +1210,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass1.object_id) || '*+' || (TEMP.distance + 1)
-    AS object_id,
+    (ass1.object_id) || '*+' || (TEMP.distance + 1) AS object_id,
     TEMP."P$$PARENT" AS "P$$PARENT",
     ass1."P$$PARENT" AS account_from,
     ass1."P$$PARENT" AS account_from_id,
@@ -1215,8 +1220,7 @@ SELECT
     ass1.created_by_,
     ass1.modified_at,
     ass1.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass1.dtype, 'Member', 'AccountMembership'),
     ass1.access_level_browse,
     ass1.access_level_update,
     ass1.access_level_delete,
@@ -1337,8 +1341,7 @@ WITH RECURSIVE TEMP (
     distance
 ) AS (
 SELECT
-    (ass0.object_id) || '*-1'
-    AS object_id,
+    (ass0.object_id) || '*-1' AS object_id,
     ass0.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -1348,8 +1351,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership'),
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1404,8 +1406,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass1.object_id) || '*' || (TEMP.distance - 1)
-    AS object_id,
+    (ass1.object_id) || '*' || (TEMP.distance - 1) AS object_id,
     TEMP."P$$PARENT" AS "P$$PARENT",
     ass1."P$$PARENT" AS account_from,
     ass1."P$$PARENT" AS account_from_id,
@@ -1415,8 +1416,7 @@ SELECT
     ass1.created_by_,
     ass1.modified_at,
     ass1.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass1.dtype, 'Member', 'AccountMembership'),
     ass1.access_level_browse,
     ass1.access_level_update,
     ass1.access_level_delete,
@@ -1475,14 +1475,13 @@ WHERE
     TEMP.distance > -5
 )
 SELECT * FROM TEMP ;
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT AS
 SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_TO
 UNION ALL
 SELECT * FROM OOCKE1_TOBJ_ACCTMEMBERSHIP_FR ;
-CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP_ALT AS
+CREATE VIEW OOCKE1_TOBJ_ACCTMEMBERSHIP AS
 SELECT
-    (ass0.object_id) || '*1'
-    AS object_id,
+    (ass0.object_id) || '*1' AS object_id,
     ass0."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -1492,8 +1491,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1548,8 +1546,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass0.object_id) || '*-1'
-    AS object_id,
+    (ass0.object_id) || '*-1' AS object_id,
     ass0.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -1559,8 +1556,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1615,8 +1611,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass0.object_id) || '*' || (ass1.object_id) || '*2A'
-    AS object_id,
+    (ass0.object_id) || '*' || (ass1.object_id) || '*2A' AS object_id,
     ass1."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" As account_from_id,
@@ -1626,8 +1621,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1686,8 +1680,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass0.object_id) || '*' || (ass1.object_id) || '*' || (ass2.object_id) || '*2B'
-    AS object_id,
+    (ass0.object_id) || '*' || (ass1.object_id) || '*' || (ass2.object_id) || '*2B' AS object_id,
     ass2."P$$PARENT" AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" As account_from_id,
@@ -1697,8 +1690,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1761,8 +1753,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass0.object_id) || '*' || (ass1.object_id) || '*-2A'
-    AS object_id,
+    (ass0.object_id) || '*' || (ass1.object_id) || '*-2A' AS object_id,
     ass1.account AS "P$$PARENT",
     ass0."P$$PARENT" AS account_from,
     ass0."P$$PARENT" AS account_from_id,
@@ -1772,8 +1763,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1832,8 +1822,7 @@ WHERE
     ass0.object_id LIKE 'accountMember%'
 UNION ALL
 SELECT
-    (ass0.object_id) || '*' || (ass1.object_id) || '*' || (ass2.object_id) || '*-2B'
-    AS object_id,
+    (ass0.object_id) || '*' || (ass1.object_id) || '*' || (ass2.object_id) || '*-2B' AS object_id,
     ass1.account AS "P$$PARENT",
     ass1."P$$PARENT" AS account_from,
     ass1."P$$PARENT" AS account_from_id,
@@ -1843,8 +1832,7 @@ SELECT
     ass0.created_by_,
     ass0.modified_at,
     ass0.modified_by_,
-    'org:opencrx:kernel:account1:AccountMembership'
-    AS dtype,
+    REPLACE(ass0.dtype, 'Member', 'AccountMembership') AS dtype,
     ass0.access_level_browse,
     ass0.access_level_update,
     ass0.access_level_delete,
@@ -1929,15 +1917,13 @@ ON
    (ass_.object_id = ass.object_id) ;
 CREATE VIEW OOCKE1_TOBJ_LNKITEMLNKFROM AS
 SELECT
-    REPLACE(l.link_to, 'facility/', 'itemLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':')
-    AS object_id,
+    REPLACE(l.link_to, 'facility/', 'itemLinkFrom/') || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
     l.created_by_,
     l.modified_at,
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse,
     l.access_level_update,
     l.access_level_delete,
@@ -1957,15 +1943,13 @@ WHERE
     l.link_to LIKE 'facility/%'
 UNION ALL
 SELECT
-    REPLACE(l.link_to, 'facility1/', 'itemLinkFrom1/') || '/' || REPLACE(l.object_id, '/', ':')
-    AS object_id,
+    REPLACE(l.link_to, 'facility1/', 'itemLinkFrom1/') || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
     l.created_by_,
     l.modified_at,
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse,
     l.access_level_update,
     l.access_level_delete,
@@ -1985,15 +1969,13 @@ WHERE
     l.link_to LIKE 'facility1/%'
 UNION ALL
 SELECT
-    REPLACE(l.link_to, 'facility2/', 'itemLinkFrom2/') || '/' || REPLACE(l.object_id, '/', ':')
-    AS object_id,
+    REPLACE(l.link_to, 'facility2/', 'itemLinkFrom2/') || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
     l.created_by_,
     l.modified_at,
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse,
     l.access_level_update,
     l.access_level_delete,
@@ -2013,15 +1995,13 @@ WHERE
     l.link_to LIKE 'facility2/%'
 UNION ALL
 SELECT
-    REPLACE(l.link_to, 'inventoryItem/', 'itemLinkFrom3/') || '/' || REPLACE(l.object_id, '/', ':')
-    AS object_id,
+    REPLACE(l.link_to, 'inventoryItem/', 'itemLinkFrom3/') || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
     l.link_to AS "P$$PARENT",
     l.created_at,
     l.created_by_,
     l.modified_at,
     l.modified_by_,
-    'org:opencrx:kernel:building1:LinkableItemLinkFrom'
-    AS dtype,
+    'org:opencrx:kernel:building1:LinkableItemLinkFrom' AS dtype,
     l.access_level_browse,
     l.access_level_update,
     l.access_level_delete,
@@ -2053,8 +2033,7 @@ CREATE VIEW OOCKE1_TOBJ_PRICELISTENTRY AS
 SELECT
     bp.object_id AS object_id,
     p."P$$PARENT" AS "P$$PARENT",
-    'org:opencrx:kernel:product1:PriceListEntry'
-    AS dtype,
+    'org:opencrx:kernel:product1:PriceListEntry' AS dtype,
     bp.modified_at,
     bp.modified_by_,
     bp.created_at,
@@ -2104,15 +2083,13 @@ ON
     (bp_.object_id = bp.object_id) ;
 CREATE VIEW OOCKE1_TOBJ_PROPERTYSETENTRY AS
 SELECT
-    REPLACE(p.object_id, 'p2/', 'propertySetEntry1/')
-    AS object_id,
+    REPLACE(p.object_id, 'p2/', 'propertySetEntry1/') AS object_id,
     ps."P$$PARENT" AS "P$$PARENT",
     p.created_at,
     p.created_by_,
     p.modified_at,
     p.modified_by_,
-    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
-    AS dtype,
+    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry') AS dtype,
     p.access_level_browse,
     p.access_level_update,
     p.access_level_delete,
@@ -2138,15 +2115,13 @@ ON
     (p."P$$PARENT" = ps.object_id)
 UNION ALL
 SELECT
-    REPLACE(p.object_id, 'p3/', 'propertySetEntry2/')
-    AS object_id,
+    REPLACE(p.object_id, 'p3/', 'propertySetEntry2/') AS object_id,
     ps."P$$PARENT" AS "P$$PARENT",
     p.created_at,
     p.created_by_,
     p.modified_at,
     p.modified_by_,
-    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry')
-    AS dtype,
+    REPLACE(REPLACE(p.dtype, 'org:opencrx:kernel:base:', 'org:opencrx:kernel:generic:'), 'Property', 'PropertySetEntry') AS dtype,
     p.access_level_browse,
     p.access_level_update,
     p.access_level_delete,
@@ -2182,11 +2157,9 @@ FROM
     OOCKE1_PROPERTY_ ;
 CREATE VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY AS
 SELECT
-    REPLACE(act."P$$PARENT", 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(act.object_id, '/', ':')
-    AS object_id,
+    REPLACE(act."P$$PARENT", 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(act.object_id, '/', ':') AS object_id,
     act."P$$PARENT" AS "P$$PARENT",
-    'org:opencrx:kernel:account1:SearchIndexEntry'
-    AS dtype,
+    'org:opencrx:kernel:account1:SearchIndexEntry' AS dtype,
     act.modified_at,
     act.modified_by_,
     act.created_at,
@@ -2202,11 +2175,9 @@ FROM
     OOCKE1_ACCOUNT act
 UNION ALL
 SELECT
-    REPLACE(act."P$$PARENT", 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(adr.object_id, '/', ':')
-    AS object_id,
+    REPLACE(act."P$$PARENT", 'accounts/', 'searchIndexEntry/') || '/' || REPLACE(adr.object_id, '/', ':') AS object_id,
     act."P$$PARENT" AS "P$$PARENT",
-    'org:opencrx:kernel:account1:SearchIndexEntry'
-    AS dtype,
+    'org:opencrx:kernel:account1:SearchIndexEntry' AS dtype,
     act.modified_at,
     act.modified_by_,
     act.created_at,

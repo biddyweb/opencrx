@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,7 +52,6 @@
  */
 package org.opencrx.application.bpi.datatype;
 
-import java.util.List;
 
 /**
  * BpiContact
@@ -78,15 +77,37 @@ public class BpiContact extends BpiAccount {
 	public void setJobTitle(String jobTitle) {
 		this.jobTitle = jobTitle;
 	}
-	public List<BpiAddress> getBusinessAddress() {
-		return businessAddress;
+	
+	/**
+	 * @return the salutationCode
+	 */
+	public Short getSalutationCode() {
+		return salutationCode;
 	}
-	public void setBusinessAddress(List<BpiAddress> businessAddress) {
-		this.businessAddress = businessAddress;
+	/**
+	 * @param salutationCode the salutationCode to set
+	 */
+	public void setSalutationCode(Short salutationCode) {
+		this.salutationCode = salutationCode;
 	}
+	/**
+	 * @return the salutation
+	 */
+	public String getSalutation() {
+		return salutation;
+	}
+	/**
+	 * @param salutation the salutation to set
+	 */
+	public void setSalutation(String salutation) {
+		this.salutation = salutation;
+	}
+
 	private String firstName;
 	private String lastName;
+	private Short salutationCode;
+	private String salutation;
 	private String jobTitle;
-	private List<BpiAddress> businessAddress;
+
 	
 }

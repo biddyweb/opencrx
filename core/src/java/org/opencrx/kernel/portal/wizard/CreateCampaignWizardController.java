@@ -61,8 +61,21 @@ import java.util.Map;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery;
+import org.opencrx.kernel.account1.jmi1.AbstractFilterAccount;
+import org.opencrx.kernel.account1.jmi1.AccountFilterGlobal;
+import org.opencrx.kernel.account1.jmi1.AccountQueryFilterProperty;
+import org.opencrx.kernel.activity1.cci2.ActivityGroupRelationshipQuery;
+import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
+import org.opencrx.kernel.activity1.jmi1.ActivityGroupRelationship;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.activity1.jmi1.ActivityType;
+import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Cloneable;
+import org.opencrx.kernel.utils.QueryBuilderUtil;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
@@ -95,13 +108,17 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 	 * @throws ServiceException
 	 */
 	public static ActivityTracker createCampaign(
-		org.opencrx.kernel.activity1.jmi1.ActivityType activityType,
+		ActivityType activityType,
 		String name,
-		String description		
+		String description,
+		AbstractFilterAccount targetGroupAccountsSelector,
+		ActivityTracker campaignTrackerMain,
+		boolean initCampaignActivityCreator
 	) throws ServiceException {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(activityType);
 		String providerName = activityType.refGetPath().get(2);
-		String segmentName = activityType.refGetPath().get(4);		
+		String segmentName = activityType.refGetPath().get(4);
+		org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
 		org.opencrx.security.realm1.jmi1.PrincipalGroup usersPrincipalGroup =
 			(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
 				"Users",
@@ -123,28 +140,165 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 		List<org.opencrx.security.realm1.jmi1.PrincipalGroup> allUsers = new ArrayList<org.opencrx.security.realm1.jmi1.PrincipalGroup>();
 		allUsers.add(usersPrincipalGroup);
 		allUsers.add(administratorsPrincipalGroup);
-        org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.getInstance().initActivityTracker(
+        ActivityTracker campaignTracker = Activities.getInstance().initActivityTracker(
             name,
             allUsers,
-            pm,
-            providerName,
-            segmentName
+            activitySegment
         );
     	// ActivityCreator for specified activityType
-    	org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = Activities.getInstance().initActivityCreator(
-    	    name + " - " + activityType.getName(),
-    	    activityType,
-    	    Arrays.asList(new org.opencrx.kernel.activity1.jmi1.ActivityGroup[]{activityTracker}),
-    	    allUsers
-    	);
-    	// Update tracker
+        ActivityCreator campaignActivityCreator = null;
+        if(initCampaignActivityCreator) {
+	    	campaignActivityCreator = Activities.getInstance().initActivityCreator(
+	    	    name + " - " + activityType.getName(),
+	    	    activityType,
+	    	    campaignTrackerMain == null 
+	    	    	? Arrays.asList(new ActivityGroup[]{campaignTracker})
+	    	    	: Arrays.asList(new ActivityGroup[]{campaignTracker, campaignTrackerMain}),
+	    	    allUsers
+	    	);
+        }
+    	// Update creator / tracker
         pm.currentTransaction().begin();
-    	activityTracker.setDescription(description);
-    	if(activityTracker.getDefaultCreator() == null) {
-    		activityTracker.setDefaultCreator(activityCreator);
+    	campaignTracker.setDescription(description);
+    	campaignTracker.setActivityGroupType(Activities.ActivityGroupType.CAMPAIGN.getValue());    	
+    	if(campaignTracker.getDefaultCreator() == null) {
+    		campaignTracker.setDefaultCreator(campaignActivityCreator);
     	}
+    	campaignTracker.setTargetGroupAccounts(targetGroupAccountsSelector);
     	pm.currentTransaction().commit();
-    	return activityTracker;
+    	return campaignTracker;
+	}
+
+	/**
+	 * Get selectable locale codes for campaign.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
+	public Map<Short,String> getLocaleCodes(
+	) throws ServiceException {
+		return this.getCodes().getLongTextByCode("locale", (short)0, true);
+	}
+
+	/**
+	 * Map locale to language code.
+	 * 
+	 * @param locale
+	 * @return
+	 */
+	public short mapLocaleToLanguageCode(
+		short locale
+	) {
+		String localeShortText = this.getCodes().getShortTextByCode("locale", (short)0, true).get(locale);
+		return this.getCodes().findCodeFromValue("[" + localeShortText.substring(0, 2), "language");
+	}
+
+	/**
+	 * Get predicate which restricts accounts to locale[index]. By default
+	 * a predicate of the form 'preferredWrittenLanguage = locale[index].language'
+	 * is returned.
+	 * 
+	 * @param index
+	 * @param locales
+	 * @return
+	 * @throws ServiceException
+	 */
+	public QueryBuilderUtil.Predicate getRestrictAccountsToLocalePredicate(
+		int index,
+		List<Short> locales
+	) throws ServiceException {
+		if(locales.size() <= 1) {
+			return null;			
+		} else if(index > 0) {
+			return new QueryBuilderUtil.SingleValuedAttributePredicate(
+				Utils.getUidAsString(), 
+				null, // description 
+				"org:opencrx:kernel:account1:Contact:preferredWrittenLanguage", 
+				QueryBuilderUtil.SingleValuedAttributePredicate.Condition.IS_IN,
+				"(" + this.mapLocaleToLanguageCode(locales.get(index)) + ")"
+			);
+		} else {
+			String otherLanguages = Short.toString(this.mapLocaleToLanguageCode(locales.get(1)));
+			for(int i = 2; i < locales.size(); i++) {
+				otherLanguages += "," + this.mapLocaleToLanguageCode(locales.get(i));
+			}
+			return new QueryBuilderUtil.SingleValuedAttributePredicate(
+				Utils.getUidAsString(), 
+				null, // description 
+				"org:opencrx:kernel:account1:Contact:preferredWrittenLanguage", 
+				QueryBuilderUtil.SingleValuedAttributePredicate.Condition.IS_NOT_IN,
+				"(" + otherLanguages + ")"
+			);
+		}
+	}
+
+	/**
+	 * Init target group accounts selector for given locale based on existing targetGroupAccountsSelector.
+	 * 
+	 * @param accountSegment
+	 * @param targetGroupAccountsSelector
+	 * @param localeIndex
+	 * @param selectedLocales
+	 * @return
+	 * @throws ServiceException
+	 */
+	public AccountFilterGlobal initTargetGroupAccountsSelector(
+		org.opencrx.kernel.account1.jmi1.Segment accountSegment,
+		AbstractFilterAccount targetGroupAccountsSelector,
+		int localeIndex,
+		List<Short> selectedLocales
+	) throws ServiceException {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(accountSegment);
+		AccountFilterGlobal targetGroupAccountsSelectorByLocale = null;		
+		if(targetGroupAccountsSelector instanceof AccountFilterGlobal) {
+			short locale = selectedLocales.get(localeIndex);
+			Map<Short,String> localeShortTexts = this.getCodes().getShortTextByCode("locale", (short)0, true);			
+			AccountFilterGlobal source = (AccountFilterGlobal)targetGroupAccountsSelector;
+			String targetGroupAccountsSelectorByLocaleName = source.getName() + " [" + localeShortTexts.get(locale) + "]";
+			AccountFilterGlobalQuery accountFilterQuery = (AccountFilterGlobalQuery)pm.newQuery(AccountFilterGlobal.class);
+			accountFilterQuery.name().equalTo(targetGroupAccountsSelectorByLocaleName);
+			List<AccountFilterGlobal> accountFilters = accountSegment.getAccountFilter(accountFilterQuery);
+			if(accountFilters.isEmpty()) {
+    			// Clone the targetGroupAccountsSelector and add a predicate which restricts to locale
+    			pm.currentTransaction().begin();
+    			targetGroupAccountsSelectorByLocale = (AccountFilterGlobal)Cloneable.getInstance().cloneObject(
+    	    		source, 
+    	    		accountSegment, 
+    	    		source.refGetPath().getParent().getBase(), 
+    	    		null, // objectMarshallers
+    	    		null, // referenceFilterAsString
+    	    		source.getOwningUser(), 
+    	    		source.getOwningGroup()
+    	    	);
+    			pm.currentTransaction().commit();
+    			pm.currentTransaction().begin();
+    			targetGroupAccountsSelectorByLocale.setName(targetGroupAccountsSelectorByLocaleName);
+    			QueryBuilderUtil.Predicate restrictAccountsToLocalePredicate = this.getRestrictAccountsToLocalePredicate(
+    				localeIndex,
+    				selectedLocales
+    			);
+    			if(restrictAccountsToLocalePredicate != null) {
+	    			AccountQueryFilterProperty restrictAccountsToLocaleFilterProperty = pm.newInstance(AccountQueryFilterProperty.class);
+	    			restrictAccountsToLocaleFilterProperty.setName("Restrict to locale " + localeShortTexts.get(locale));
+	    			restrictAccountsToLocaleFilterProperty.setActive(true);
+	    			restrictAccountsToLocaleFilterProperty.setClause(
+	    				restrictAccountsToLocalePredicate.toSql(
+	    					"", 
+	    					accountSegment.refGetPath().getDescendant("account"), 
+	    					"v"
+	    				)
+	    			);
+	    			targetGroupAccountsSelectorByLocale.addAccountFilterProperty(
+	    				Utils.getUidAsString(),
+	    				restrictAccountsToLocaleFilterProperty
+	    			);
+    			}
+    			pm.currentTransaction().commit();
+			} else {
+				targetGroupAccountsSelectorByLocale = accountFilters.iterator().next();
+			}
+		}
+		return targetGroupAccountsSelectorByLocale;
 	}
 
 	/**
@@ -154,26 +308,150 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 	 * @throws ServiceException
 	 */
 	public void doOK(
-		@FormParameter(forms = "CreateCampaignForm") Map<String,Object> formFields			
+		@RequestParameter(name = "locale0") String locale0,
+		@RequestParameter(name = "locale1") String locale1,		
+		@RequestParameter(name = "locale2") String locale2,		
+		@RequestParameter(name = "locale3") String locale3,		
+		@RequestParameter(name = "locale4") String locale4,
+		@FormParameter(forms = "CreateCampaignForm") Map<String,Object> formFields
 	) throws ServiceException {
 		PersistenceManager pm = this.getPm();
 		ApplicationContext app = this.getApp();
 		this.formFields = formFields;
 	    String name = (String)formFields.get("org:opencrx:kernel:activity1:ActivityGroup:name");
+	    name = name == null ? null : name.trim();
 	    String description = (String)formFields.get("org:opencrx:kernel:activity1:ActivityGroup:description");
-	    org.opencrx.kernel.activity1.jmi1.ActivityType activityType = formFields.get("org:opencrx:kernel:activity1:ActivityCreator:activityType") != null ?
-   	    	(org.opencrx.kernel.activity1.jmi1.ActivityType)pm.getObjectById(
+	    ActivityType activityType = formFields.get("org:opencrx:kernel:activity1:ActivityCreator:activityType") != null ?
+   	    	(ActivityType)pm.getObjectById(
      	    	formFields.get("org:opencrx:kernel:activity1:ActivityCreator:activityType")
      	    ) : null;
+	    AbstractFilterAccount targetGroupAccountsSelector = formFields.get("org:opencrx:kernel:activity1:ActivityGroup:targetGroupAccounts") != null ?
+   	    	(AbstractFilterAccount)pm.getObjectById(
+     	    	formFields.get("org:opencrx:kernel:activity1:ActivityGroup:targetGroupAccounts")
+     	    ) : null;
+    	this.selectedLocales = new ArrayList<Short>(); // language 0 is the default language
+    	if(locale0 != null) {
+    		try {
+    			this.selectedLocales.add(Short.parseShort(locale0));
+    		} catch(Exception ignore) {}
+    	}
+    	if(locale1 != null) {
+    		try {
+    			this.selectedLocales.add(Short.parseShort(locale1));
+    		} catch(Exception ignore) {}
+    	}
+    	if(locale2 != null) {
+    		try {
+    			this.selectedLocales.add(Short.parseShort(locale2));
+    		} catch(Exception ignore) {}
+    	}
+    	if(locale3 != null) {
+    		try {
+    			this.selectedLocales.add(Short.parseShort(locale3));
+    		} catch(Exception ignore) {}
+    	}
+    	if(locale4 != null) {
+    		try {
+    			this.selectedLocales.add(Short.parseShort(locale4));
+    		} catch(Exception ignore) {}
+    	}
+    	if(this.selectedLocales.isEmpty()) {
+    		this.selectedLocales.add((short)0); // en_US
+    	}
 	    if(name != null && !name.isEmpty() && activityType != null) {
-	    	ActivityTracker activityTracker = createCampaign(
-	    		activityType,
-	    		name,
-	    		description
+	    	Map<Short,String> localeShortTexts = this.getCodes().getShortTextByCode("locale", (short)0, true);
+	    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(
+	    		pm, 
+	    		this.getProviderName(), 
+	    		this.getSegmentName()
 	    	);
-	    	// Forward to tracker
+	    	ActivityTracker campaignTrackerMain = null;
+	    	if(this.selectedLocales.size() > 1) {
+	    		campaignTrackerMain = createCampaign(
+		    		activityType,
+		    		name,
+		    		description,
+		    		null, // targetGroupAccountsSelector
+		    		null, // campaignTrackerMain
+		    		false // initCampaignActivityCreator
+		    	);
+	    	}
+	    	// A campaign is created for each locale. This includes an activity tracker, activity creator
+	    	// and target group selector.
+	    	for(int i = 0; i < this.selectedLocales.size(); i++) {
+	    		short locale = this.selectedLocales.get(i);
+	    		ActivityTracker campaignTracker = null;
+	    		if(this.selectedLocales.size() == 1) {
+			    	campaignTracker = createCampaign(
+			    		activityType,
+			    		name,
+			    		description,
+			    		targetGroupAccountsSelector,
+			    		null, // campaignTrackerMain
+			    		true // initActivityCreator
+			    	);
+			    	campaignTrackerMain = campaignTracker;
+	    		} else {
+		    		AccountFilterGlobal targetGroupAccountsSelectorByLocale = this.initTargetGroupAccountsSelector(
+		    			accountSegment, 
+		    			targetGroupAccountsSelector, 
+		    			i, 
+		    			this.selectedLocales
+		    		);
+			    	campaignTracker = createCampaign(
+			    		activityType,
+			    		name + " [" + localeShortTexts.get(locale) + "]",
+			    		description,
+			    		targetGroupAccountsSelectorByLocale,
+			    		campaignTrackerMain,
+			    		true // initActivityCreator
+			    	);
+			    	// Relationships main campaign <-> campaign
+			    	{
+			    		// Relationship main campaign --> campaign
+			    		ActivityGroupRelationshipQuery activityGroupRelationshipQuery = (ActivityGroupRelationshipQuery)pm.newQuery(ActivityGroupRelationship.class);
+			    		activityGroupRelationshipQuery.thereExistsActivityGroup().equalTo(campaignTracker);
+			    		if(campaignTrackerMain.getActivityGroupRelationship(activityGroupRelationshipQuery).isEmpty()) {
+			    			ActivityGroupRelationship activityGroupRelationship = pm.newInstance(ActivityGroupRelationship.class);
+			    			activityGroupRelationship.setName(campaignTracker.getName());
+			    			activityGroupRelationship.setRelationshipType((short)0); // none
+			    			activityGroupRelationship.setActivityGroup(campaignTracker);
+			    			pm.currentTransaction().begin();
+			    			campaignTrackerMain.addActivityGroupRelationship(
+			    				Utils.getUidAsString(),
+			    				activityGroupRelationship
+			    			);
+			    			pm.currentTransaction().commit();
+			    		}
+			    		// Relationship campaign --> main campaign
+			    		activityGroupRelationshipQuery = (ActivityGroupRelationshipQuery)pm.newQuery(ActivityGroupRelationship.class);
+			    		activityGroupRelationshipQuery.thereExistsActivityGroup().equalTo(campaignTrackerMain);
+			    		if(campaignTracker.getActivityGroupRelationship(activityGroupRelationshipQuery).isEmpty()) {
+			    			ActivityGroupRelationship activityGroupRelationship = pm.newInstance(ActivityGroupRelationship.class);
+			    			activityGroupRelationship.setName(campaignTrackerMain.getName());
+			    			activityGroupRelationship.setRelationshipType((short)0); // none
+			    			activityGroupRelationship.setActivityGroup(campaignTrackerMain);
+			    			pm.currentTransaction().begin();
+			    			campaignTracker.addActivityGroupRelationship(
+			    				Utils.getUidAsString(),
+			    				activityGroupRelationship
+			    			);
+			    			pm.currentTransaction().commit();
+			    		}
+			    	}
+	    		}
+		    	if(campaignTracker.getDefaultCreator() != null) {
+		    		pm.currentTransaction().begin();
+			    	BulkCreateActivityWizardController.initSettings(
+			    		campaignTracker.getDefaultCreator(), 
+			    		locale
+			    	);
+			    	pm.currentTransaction().commit();
+		    	}
+	    	}
+	    	// Forward to main tracker
 	    	this.setExitAction(
-		    	new ObjectReference(activityTracker, app).getSelectObjectAction()
+		    	new ObjectReference(campaignTrackerMain, app).getSelectObjectAction()
 		    );
 			return;
 	    }
@@ -238,10 +516,17 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 	    }
     }
 
-    //-----------------------------------------------------------------------
+	/**
+	 * @return the selectedLocales
+	 */
+	public List<Short> getSelectedLocales() {
+		return selectedLocales;
+	}
+	
+	//-----------------------------------------------------------------------
 	// Members
 	//-----------------------------------------------------------------------	
 	private Map<String,Object> formFields;
 	private ViewPort viewPort;
-	
+	private List<Short> selectedLocales;
 }

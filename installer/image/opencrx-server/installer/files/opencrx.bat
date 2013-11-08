@@ -1,7 +1,7 @@
 @echo off
 
-rem RUN or STOP openCRX Server
-rem ----------------------------
+rem Run/Stop openCRX Server
+rem -----------------------
 
 if ""%1"" == ""run"" goto run
 if ""%1"" == ""stop"" goto stop
@@ -17,8 +17,8 @@ set JAVA_HOME=$JDKPath
 set JAVA_HOME=%JAVA_HOME:/=\%
 
 rem Start HSQLDB
-if exist "$INSTALL_PATH\data\crx\startdb.bat" (
-  start "HSQLDB" "$INSTALL_PATH\data\crx\startdb.bat" START
+if exist "$INSTALL_PATH\data\hsqldb\db.bat" (
+  start "HSQLDB" "$INSTALL_PATH\data\hsqldb\db.bat" run
   ping 127.0.0.1 > nul  
 )
 
@@ -35,9 +35,9 @@ set JAVA_HOME=$JDKPath
 set JAVA_HOME=%JAVA_HOME:/=\%
 
 rem Stop HSQLDB
-if exist "$INSTALL_PATH\data\crx\startdb.bat" (
-	start "HSQLDB" "$INSTALL_PATH\data\crx\startdb.bat" STOP
-  	ping 127.0.0.1 > nul  
+if exist "$INSTALL_PATH\data\hsqldb\db.bat" (
+	start "HSQLDB" "$INSTALL_PATH\data\hsqldb\db.bat" stop
+  	ping 127.0.0.1 > nul
 )
 
 rem Stop TomEE

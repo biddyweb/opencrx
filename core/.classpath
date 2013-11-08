@@ -19,5 +19,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Apache XmlBeans (jre-1.6)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Jivesoftware Smack (jre-1.6)"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Google GSON (jre-1.6)"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/openCRX Thirdparty ~ Google ZXing (jre-1.6)"/>
 	<classpathentry kind="output" path="build/jre-1.6/eclipse"/>
 </classpath>

@@ -147,11 +147,14 @@ public class DoPut extends WebDavMethod {
                 	resp.sendError(HttpServletResponse.SC_FORBIDDEN);
                 } else {
 	                resp.setCharacterEncoding("UTF-8");
-		            resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));            
+	                if(putResult != WebDavStore.PutResourceStatus.CREATED) {
+	                	// Some DAV clients (e.g. CalDavZAP) require reload after creation of resource
+	                	resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));
+	                }
 		            resp.setStatus(
-		            	putResult == WebDavStore.PutResourceStatus.CREATED ? 
-		            		HttpServletResponse.SC_CREATED : 
-		            			HttpServletResponse.SC_OK
+		            	putResult == WebDavStore.PutResourceStatus.CREATED 
+		            		? HttpServletResponse.SC_CREATED 
+		            		: HttpServletResponse.SC_OK
 		            );
                 }
             } catch (AccessDeniedException e) {

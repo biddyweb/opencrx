@@ -174,12 +174,14 @@ public class DoDelete extends WebDavMethod {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
         if (!_readOnly) {
-            if (so.isCollection()) {
-                deleteCollectionContent(requestContext, path, so, errorList);
-                _store.removeResource(requestContext, so);
-            } else {
-                _store.removeResource(requestContext, so);
-            }
+        	if(so != null) {
+	            if (so.isCollection()) {
+	                deleteCollectionContent(requestContext, path, so, errorList);
+	                _store.removeResource(requestContext, so);
+	            } else {
+	                _store.removeResource(requestContext, so);
+	            }
+        	}
         } else {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
         }

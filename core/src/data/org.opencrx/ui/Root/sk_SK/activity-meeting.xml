@@ -77,6 +77,50 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractActivityParty:emailHint" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-Mailová nápoveda</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-Mailová nápoveda</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractActivityParty:partyType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractActivityParty:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:emailHint" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-Mailová nápoveda</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-Mailová nápoveda</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:partyType" _operation="create">
                     <_object>
                       <label>
@@ -84,6 +128,17 @@
                       </label>
                       <toolTip>
                         <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:MeetingParty:partyStatus" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
                       </toolTip>
                     </_object>
                     <_content/>

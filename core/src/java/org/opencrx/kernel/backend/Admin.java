@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -74,34 +74,61 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.kernel.log.SysLog;
 
+/**
+ * Admin backend class.
+ *
+ */
 public class Admin extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register backend.
+	 * 
+	 */
 	public static void register(
 	) {
 		registerImpl(new Admin());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get admin backend instance.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Admin getInstance(		
 	) throws ServiceException {
 		return getInstance(Admin.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	protected Admin(
 	) {
 		
 	}
 	
-    //-----------------------------------------------------------------------
+	/**
+	 * PrincipalType
+	 *
+	 */
 	public enum PrincipalType {
 		PRINCIPAL,
 		USER,
 		GROUP
 	}
 	
-    //-----------------------------------------------------------------------
+    /**
+     * Create segment.
+     * 
+     * @param provider
+     * @param segment
+     * @param segmentName
+     * @param owningUser
+     * @param owningGroup
+     * @param errors
+     */
     public void createSegment(
     	org.openmdx.base.jmi1.Provider provider,
         org.openmdx.base.jmi1.Segment segment,
@@ -113,8 +140,7 @@ public class Admin extends AbstractImpl {
     	org.openmdx.base.jmi1.Segment test = null;
 	    try {
 	        test = provider.getSegment(segmentName);
-	    }
-	    catch(Exception e) {}
+	    } catch(Exception e) {}
 	    if(test == null) {
 	        if(segment instanceof org.opencrx.kernel.base.jmi1.SecureObject) {
 		        ((org.opencrx.kernel.base.jmi1.SecureObject)segment).setOwningUser(owningUser);
@@ -125,12 +151,10 @@ public class Admin extends AbstractImpl {
 	        }
 	        try {
 	        	provider.addSegment(
-	        		false,
 	        		segmentName,
 	        		segment
 	        	);
-	        }
-	        catch(Exception e0) {
+	        } catch(Exception e0) {
 	            ServiceException e1 = new ServiceException(e0);
 	            SysLog.warning(e1.getMessage(), e1.getCause());
 	            errors.add("Unable to create segment " + segment);
@@ -139,7 +163,17 @@ public class Admin extends AbstractImpl {
 	    }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Create contact.
+     * 
+     * @param adminSegment
+     * @param segmentName
+     * @param principalName
+     * @param owningUser
+     * @param owningGroups
+     * @param errors
+     * @return
+     */
     public Contact createContact(
         org.opencrx.kernel.admin1.jmi1.Segment adminSegment,
         String segmentName,
@@ -156,15 +190,13 @@ public class Admin extends AbstractImpl {
     	Contact contact = null;
         try {
         	contact = (Contact)accountSegment.getAccount(principalName);
-        }
-        catch(Exception e) {}
+        } catch(Exception e) {}
         if(contact == null) {
         	contact = pm.newInstance(Contact.class);
             contact.setLastName(principalName);
             contact.setOwningUser(owningUser);
             contact.getOwningGroup().addAll(owningGroups);
             accountSegment.addAccount(
-            	false,
             	principalName,
             	contact
             );
@@ -172,7 +204,15 @@ public class Admin extends AbstractImpl {
         return contact;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Create subject.
+     * 
+     * @param identitySegment
+     * @param subjectName
+     * @param subjectDescription
+     * @param errors
+     * @return
+     */
     public org.opencrx.security.identity1.jmi1.Subject createSubject(
     	org.opencrx.security.identity1.jmi1.Segment identitySegment,
         String subjectName,
@@ -195,7 +235,18 @@ public class Admin extends AbstractImpl {
         return subject;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Create or update principal. In case the principal already exists only the
+     * group memberships are updated.
+     * 
+     * @param principalName
+     * @param principalDescription
+     * @param realm
+     * @param principalType
+     * @param memberOfGroups
+     * @param subject
+     * @return
+     */
     public org.openmdx.security.realm1.jmi1.Principal createPrincipal(
         String principalName,
         String principalDescription,
@@ -207,16 +258,13 @@ public class Admin extends AbstractImpl {
         PersistenceManager pm = JDOHelper.getPersistenceManager(realm);
         org.openmdx.security.realm1.jmi1.Principal principal = realm.getPrincipal(principalName);
         if(principal != null) {
-            Set<org.openmdx.security.realm1.jmi1.Group> mergedGroups = new LinkedHashSet<org.openmdx.security.realm1.jmi1.Group>();
-            List<org.openmdx.security.realm1.jmi1.Group> principalIsMemberOf = principal.getIsMemberOf();
-            mergedGroups.addAll(principalIsMemberOf);
+            Set<org.openmdx.security.realm1.jmi1.Group> mergedGroups = new LinkedHashSet<org.openmdx.security.realm1.jmi1.Group>(
+            	principal.<org.openmdx.security.realm1.jmi1.Group>getIsMemberOf()
+            );
             mergedGroups.addAll(memberOfGroups);
             principal.getIsMemberOf().clear();
-            principal.getIsMemberOf().addAll(
-                mergedGroups
-            );
-        }
-        else {
+            principal.getIsMemberOf().addAll(mergedGroups);
+        } else {
         	switch(principalType) {
 	        	case USER: 
 	        		principal = pm.newInstance(org.opencrx.security.realm1.jmi1.User.class);
@@ -235,11 +283,10 @@ public class Admin extends AbstractImpl {
             );
             principal.setDisabled(Boolean.FALSE);
             principal.getIsMemberOf().addAll(
-                memberOfGroups
+            	new LinkedHashSet<org.openmdx.security.realm1.jmi1.Group>(memberOfGroups)
             );
             principal.setSubject(subject);
             realm.addPrincipal(
-            	false,
             	principalName,
             	principal
             );
@@ -247,7 +294,14 @@ public class Admin extends AbstractImpl {
         return principal;
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Create policy.
+     * 
+     * @param pm
+     * @param providerName
+     * @param segmentName
+     * @return
+     */
     public org.openmdx.security.authorization1.jmi1.Policy createPolicy(
     	PersistenceManager pm,
     	String providerName,
@@ -275,10 +329,17 @@ public class Admin extends AbstractImpl {
         return policy;
     }
     
-    //-----------------------------------------------------------------------
-    /*
+    /**
      * Creates a new segment and segment administrators. <segmentName>:ADMIN_PRINCIPAL 
-     * is the owner of all created objects. 
+     * is the owner of all created objects.
+     *  
+     * @param adminSegment
+     * @param segmentName
+     * @param principalName
+     * @param initialPassword
+     * @param initialPasswordVerification
+     * @param errors
+     * @throws ServiceException
      */
     public void createAdministrator(
         org.opencrx.kernel.admin1.jmi1.Segment adminSegment,
@@ -309,8 +370,7 @@ public class Admin extends AbstractImpl {
 	    	if(loginRealm.getPrincipal(principalName) != null) {
 	            try {
 	            	segmentAdminSubject = loginRealm.getPrincipal(principalName).getSubject();
-	            }
-	            catch(Exception e) {}
+	            } catch(Exception ignore) {}
 	    	}
 	        if(segmentAdminSubject == null) {
 	            // Create segment administrator if it does not exist
@@ -366,7 +426,7 @@ public class Admin extends AbstractImpl {
 	        org.openmdx.security.realm1.jmi1.Realm realm = null;
 	        try {
 	        	realm = (org.openmdx.security.realm1.jmi1.Realm)pmRoot.getObjectById(realmIdentity);
-	        } catch(Exception e) {}
+	        } catch(Exception ignore) {}
 	        if(realm == null) {
 	            org.openmdx.security.realm1.jmi1.Segment realmSegment = 
 	            	(org.openmdx.security.realm1.jmi1.Segment)pmRoot.getObjectById(
@@ -572,12 +632,21 @@ public class Admin extends AbstractImpl {
 	            true,
 	            initialPassword,
 	            initialPasswordVerification,
+	            null, // eMailAddress
+	            null, // timezone
 	            errors
 	        );
         }
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Import login principals.
+     * 
+     * @param adminSegment
+     * @param item
+     * @return
+     * @throws ServiceException
+     */
     public String importLoginPrincipals(
         org.opencrx.kernel.admin1.jmi1.Segment adminSegment,
         byte[] item
@@ -588,13 +657,12 @@ public class Admin extends AbstractImpl {
 	        reader = new BufferedReader(
 	            new InputStreamReader(new ByteArrayInputStream(item), "UTF-8")
 	        );
-        }
-        catch (UnsupportedEncodingException e) {}
+        } catch (UnsupportedEncodingException e) {}
         org.openmdx.security.realm1.jmi1.Realm loginRealm = (org.openmdx.security.realm1.jmi1.Realm)pm.getObjectById(
         	SecureObject.getInstance().getLoginRealmIdentity(adminSegment.refGetPath().get(2))
         );
         org.opencrx.security.identity1.jmi1.Segment identitySegment = (org.opencrx.security.identity1.jmi1.Segment)pm.getObjectById( 
-            new Path("xri:@openmdx:org.opencrx.security.identity1/provider/" + adminSegment.refGetPath().get(2) + "/segment/Root")
+            new Path("xri://@openmdx*org.opencrx.security.identity1").getDescendant("provider", adminSegment.refGetPath().get(2), "segment", "Root")
         );
         int nCreatedPrincipals = 0;
         int nExistingPrincipals = 0;
@@ -615,8 +683,7 @@ public class Admin extends AbstractImpl {
                     org.openmdx.security.realm1.jmi1.Principal principal = null;
                     try {
                     	principal = loginRealm.getPrincipal(principalName);
-                    }
-                    catch(Exception e) {}
+                    } catch(Exception e) {}
                     if(principal == null) {
                         try {
                         	principal = this.createPrincipal(
@@ -628,13 +695,11 @@ public class Admin extends AbstractImpl {
                         		identitySegment.getSubject(subjectName)
                         	);
                             nCreatedPrincipals++;
-                        }
-                        catch(Exception e) {
+                        } catch(Exception e) {
                             new ServiceException(e).log();
                             nFailedPrincipals++;
                         }
-                    }
-                    else {
+                    } else {
                         nExistingPrincipals++;
                     }
                     if(principal != null) {
@@ -648,8 +713,7 @@ public class Admin extends AbstractImpl {
                             }
                         }
                     }
-                }
-                else if(l.indexOf("Subject") >= 0) {
+                } else if(l.indexOf("Subject") >= 0) {
                     StringTokenizer t = new StringTokenizer(l, ";");
                     t.nextToken();
                     String subjectName = t.nextToken();
@@ -657,8 +721,7 @@ public class Admin extends AbstractImpl {
                     org.opencrx.security.identity1.jmi1.Subject subject = null;
                     try {
                     	subject = identitySegment.getSubject(subjectName);
-                    }
-                    catch(Exception e) {}
+                    } catch(Exception e) {}
                     if(subject == null) {
                         try {
                         	subject = this.createSubject(
@@ -668,19 +731,16 @@ public class Admin extends AbstractImpl {
                         		new ArrayList<String>()
                         	);
                             nCreatedSubjects++;
-                        }
-                        catch(Exception e) {
+                        } catch(Exception e) {
                             new ServiceException(e).log();
                             nFailedSubjects++;
                         }
-                    }
-                    else {
+                    } else {
                         nExistingSubjects++;
                     }
                 }
             }
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
             new ServiceException(e).log();
         }
         return 

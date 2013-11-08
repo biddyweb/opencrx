@@ -337,7 +337,23 @@ public class ManageChangeRequestsWizardController extends AbstractWizardControll
 			default: return "none";
 		}				
 	}
-	
+
+	/**
+	 * @return the postRenderChangeRequestScript
+	 */
+	public StringBuilder getPostRenderChangeRequestScript() {
+		return this.postRenderChangeRequestScript;
+	}
+
+	/**
+	 * Reset postRenderChangeRequestScript.
+	 * 
+	 */
+	public void resetPostRenderChangeRequestScript(
+	) {
+		this.postRenderChangeRequestScript.setLength(0);
+	}
+
 	//-----------------------------------------------------------------------
 	// Members
 	//-----------------------------------------------------------------------
@@ -346,5 +362,6 @@ public class ManageChangeRequestsWizardController extends AbstractWizardControll
 	public static final String PARAMETER_PROCESS_TRANSITION_XRI = "processTransitionXri";
 
 	protected Activity selectedChangeRequest;
+	protected StringBuilder postRenderChangeRequestScript = new StringBuilder();
 
 }

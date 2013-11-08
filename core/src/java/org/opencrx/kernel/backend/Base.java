@@ -81,13 +81,13 @@ import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
+import org.opencrx.kernel.activity1.jmi1.ActivityLinkFrom;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.activity1.jmi1.AddressGroupMember;
 import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipient;
 import org.opencrx.kernel.activity1.jmi1.EMailRecipientGroup;
 import org.opencrx.kernel.activity1.jmi1.IncidentParty;
-import org.opencrx.kernel.activity1.jmi1.InvolvedObject;
 import org.opencrx.kernel.activity1.jmi1.MailingRecipient;
 import org.opencrx.kernel.activity1.jmi1.MailingRecipientGroup;
 import org.opencrx.kernel.activity1.jmi1.MeetingParty;
@@ -117,6 +117,7 @@ import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.jmi1.CrxObject;
+import org.opencrx.kernel.generic.jmi1.InvolvedObject;
 import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.home1.cci2.AlertQuery;
 import org.opencrx.kernel.home1.jmi1.Alert;
@@ -757,6 +758,17 @@ public class Base extends AbstractImpl {
     			} else {
     				return this.toPlain(document.getDocumentNumber());
     			}
+    		} else if(refObj instanceof org.opencrx.kernel.generic.jmi1.DocumentAttachment) {
+    			org.opencrx.kernel.generic.jmi1.DocumentAttachment documentAttachment = (org.opencrx.kernel.generic.jmi1.DocumentAttachment)refObj;
+    			if(documentAttachment.getName() == null || documentAttachment.getName().isEmpty()) {
+    				if(documentAttachment.getDocument() == null) {
+    					return "NA";
+    				} else {
+    					return this.getTitle(documentAttachment.getDocument(), codeMapper, locale, asShortTitle);
+    				}
+    			} else {
+    				return this.toPlain(documentAttachment.getName());
+    			}
     		} else if(refObj instanceof Member) {
     			return (refObj.refGetValue("account") == null ? this.toPlain("Untitled") : 
     				this.getTitle((RefObject_1_0)refObj.refGetValue("account"), codeMapper, locale, asShortTitle));
@@ -859,7 +871,13 @@ public class Base extends AbstractImpl {
     				return this.toPlain(((DocumentRevision)refObj).getName());
     			}
     		} else if(refObj instanceof InventoryItem) {
-				return this.toPlain(((InventoryItem)refObj).getName());    			
+				return this.toPlain(((InventoryItem)refObj).getName());   
+    		} else if(refObj instanceof ActivityLinkFrom) {
+    			ActivityLinkFrom linkFrom = (ActivityLinkFrom)refObj;
+    			return 
+    				this.toPlain(linkFrom.getName()) + this.toPlain(" (") + 
+    				this.getTitle(linkFrom.getLinkFrom(), codeMapper, locale, asShortTitle) + 
+    				this.toPlain(")");
     		} else {
     			return null;
     		}

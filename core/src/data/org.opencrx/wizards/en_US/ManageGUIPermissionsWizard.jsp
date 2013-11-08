@@ -136,7 +136,7 @@ org.openmdx.base.naming.*
 <%
 					ManageGUIPermissionsWizardController.WizardViewState viewState = wc.getWizardState() == null
 						? null
-						: wc.getWizardState().viewStates.get(wc.getViewName());
+						: wc.getWizardState().getViewStates().get(wc.getViewName());
 					if(viewState != null) {
 %>
 						<table>

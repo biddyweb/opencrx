@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
-  <_object/>
-  <_content>
-    <provider>
-      <org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
-        <_object/>
-        <_content>
-          <segment>
-            <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
-              <_object/>
-              <_content>
+	<_object />
+	<_content>
+		<provider>
+			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
+				<_object />
+				<_content>
+					<segment>
+						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
+							<_object />
+							<_content>
 								<formDefinition>
 									<org.openmdx.ui1.FormDefinition name="ContactForm">
 										<_object>
@@ -39,7 +39,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>salutationCode</featureName>
-																	<order>100</order>														
+																	<order>100</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -47,7 +47,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>salutation</featureName>
-																	<order>200</order>														
+																	<order>200</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -55,7 +55,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>firstName</featureName>
-																	<order>300</order>														
+																	<order>300</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -63,7 +63,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>middleName</featureName>
-																	<order>400</order>														
+																	<order>400</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -71,7 +71,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>lastName</featureName>
-																	<order>500</order>														
+																	<order>500</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -79,7 +79,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>aliasName</featureName>
-																	<order>600</order>														
+																	<order>600</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -87,7 +87,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>jobTitle</featureName>
-																	<order>900</order>														
+																	<order>900</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -95,7 +95,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>jobRole</featureName>
-																	<order>1000</order>														
+																	<order>1000</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -103,7 +103,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>organization</featureName>
-																	<order>1100</order>														
+																	<order>1100</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -111,7 +111,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>department</featureName>
-																	<order>1200</order>														
+																	<order>1200</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -119,7 +119,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>doNotPhone</featureName>
-																	<order>1400</order>														
+																	<order>1400</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -127,7 +127,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Account</forClass>
 																	<featureName>address*Business!phoneNumberFull</featureName>
-																	<order>1600</order>														
+																	<order>1600</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -135,7 +135,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Account</forClass>
 																	<featureName>address*Mobile!phoneNumberFull</featureName>
-																	<order>1700</order>														
+																	<order>1700</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -143,15 +143,15 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!phoneNumberFull</featureName>
-																	<order>1800</order>														
+																	<order>1800</order>
 																</_object>
 																<_content />
-															</org.openmdx.ui1.FormFieldDefinition>												
+															</org.openmdx.ui1.FormFieldDefinition>
 															<org.openmdx.ui1.FormFieldDefinition id="businessEmailAddress">
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!emailAddress</featureName>
-																	<order>1900</order>														
+																	<order>1900</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -159,15 +159,15 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!emailAddress</featureName>
-																	<order>2000</order>														
+																	<order>2000</order>
 																</_object>
 																<_content />
-															</org.openmdx.ui1.FormFieldDefinition>												
+															</org.openmdx.ui1.FormFieldDefinition>
 															<org.openmdx.ui1.FormFieldDefinition id="birthdate">
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>birthdate</featureName>
-																	<order>2100</order>														
+																	<order>2100</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -181,8 +181,8 @@
 														</label>
 														<order>20</order>
 														<columnBreakAtElement>
-															<_item>6</_item>
-															<_item>12</_item>
+															<_item>7</_item>
+															<_item>14</_item>
 														</columnBreakAtElement>
 													</_object>
 													<_content>
@@ -192,7 +192,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalAddressLine</featureName>
-																	<order>100</order>														
+																	<order>100</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -200,7 +200,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalStreet</featureName>
-																	<order>200</order>														
+																	<order>200</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -208,7 +208,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalCity</featureName>
-																	<order>300</order>														
+																	<order>300</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -216,7 +216,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalState</featureName>
-																	<order>400</order>														
+																	<order>400</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -224,7 +224,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalCode</featureName>
-																	<order>500</order>														
+																	<order>500</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -232,17 +232,25 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address*Business!postalCountry</featureName>
-																	<order>600</order>														
+																	<order>600</order>
 																	<skipRow>0</skipRow>
 																</_object>
 																<_content />
-															</org.openmdx.ui1.FormFieldDefinition>											
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="businessPostalAuthority">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
+																	<featureName>address*Business!authority</featureName>
+																	<order>650</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>															
 															<!-- Home -->
 															<org.openmdx.ui1.FormFieldDefinition id="homePostalAddressLine">
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalAddressLine</featureName>
-																	<order>700</order>														
+																	<order>700</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -250,7 +258,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalStreet</featureName>
-																	<order>800</order>														
+																	<order>800</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -258,7 +266,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalCity</featureName>
-																	<order>900</order>														
+																	<order>900</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -266,7 +274,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalState</featureName>
-																	<order>1000</order>														
+																	<order>1000</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -274,7 +282,7 @@
 																<_object>
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalCode</featureName>
-																	<order>1100</order>														
+																	<order>1100</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
@@ -283,11 +291,19 @@
 																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
 																	<featureName>address!postalCountry</featureName>
 																	<order>1200</order>
-																	<skipRow>0</skipRow>														
+																	<skipRow>0</skipRow>
 																</_object>
 																<_content />
-															</org.openmdx.ui1.FormFieldDefinition>											
-														</formFieldDefinition>										
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="homePostalAuthority">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:Contact</forClass>
+																	<featureName>address!authority</featureName>
+																	<order>1300</order>																	<skipRow>0</skipRow>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>															
+														</formFieldDefinition>
 													</_content>
 												</org.openmdx.ui1.FormFieldGroupDefinition>
 												<org.openmdx.ui1.FormFieldGroupDefinition name="DescriptionInformation">
@@ -307,69 +323,68 @@
 																	<forClass>org:opencrx:kernel:account1:Account</forClass>
 																	<featureName>description</featureName>
 																	<spanRow>6</spanRow>
-																	<order>100</order>														
+																	<order>100</order>
 																</_object>
 																<_content />
 															</org.openmdx.ui1.FormFieldDefinition>
-														</formFieldDefinition>										
+														</formFieldDefinition>
 													</_content>
 												</org.openmdx.ui1.FormFieldGroupDefinition>
-		                  </formFieldGroupDefinition>
-		                </_content>
-		              </org.openmdx.ui1.FormDefinition>
-
-			            <org.openmdx.ui1.FormDefinition name="MembershipForm">
-			              <_object>
-			                <title>
-			                  <_item>Memberships</_item>
-			                </title>
-			                <toolTip>
-			                  <_item>Memberships</_item>
-			                </toolTip>
-			              </_object>
-			              <_content>
-			                <formFieldGroupDefinition>
-			                  <org.openmdx.ui1.FormFieldGroupDefinition name="Membership">
-			                    <_object>
-			                      <label>
-			                        <_item>&amp;nbsp;</_item>
-			                      </label>
-			                      <order>10</order>
-			                      <columnBreakAtElement>
-			                        <_item>1</_item>
-			                      </columnBreakAtElement>
-			                    </_object>
-			                    <_content>
-			                      <formFieldDefinition>
-			                        <org.openmdx.ui1.FormFieldDefinition id="accountFrom">
-			                          <_object>
-			                            <forClass>org:opencrx:kernel:account1:AccountAssignment</forClass>
-			                            <featureName>account</featureName>
-			                            <order>100</order>
-			                          </_object>
-			                          <_content/>
-			                        </org.openmdx.ui1.FormFieldDefinition>
-			                        <org.openmdx.ui1.FormFieldDefinition id="memberRole">
-			                          <_object>
-			                            <forClass>org:opencrx:kernel:account1:Member</forClass>
-			                            <featureName>memberRole</featureName>
+											</formFieldGroupDefinition>
+										</_content>
+									</org.openmdx.ui1.FormDefinition>
+									<org.openmdx.ui1.FormDefinition name="ContactMembershipForm">
+										<_object>
+											<title>
+												<_item>Memberships</_item>
+											</title>
+											<toolTip>
+												<_item>Memberships</_item>
+											</toolTip>
+										</_object>
+										<_content>
+											<formFieldGroupDefinition>
+												<org.openmdx.ui1.FormFieldGroupDefinition name="Membership">
+													<_object>
+														<label>
+															<_item>&amp;nbsp;</_item>
+														</label>
+														<order>10</order>
+														<columnBreakAtElement>
+															<_item>1</_item>
+														</columnBreakAtElement>
+													</_object>
+													<_content>
+														<formFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="accountFrom">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:AccountAssignment</forClass>
+																	<featureName>account</featureName>
+																	<order>100</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+															<org.openmdx.ui1.FormFieldDefinition id="memberRole">
+																<_object>
+																	<forClass>org:opencrx:kernel:account1:AccountMembership</forClass>
+																	<featureName>memberRole</featureName>
 																	<spanRow>2</spanRow>
-			                            <order>200</order>
-			                          </_object>
-			                          <_content/>
-			                        </org.openmdx.ui1.FormFieldDefinition>
-			                      </formFieldDefinition>
-			                    </_content>
-			                  </org.openmdx.ui1.FormFieldGroupDefinition>
-			                </formFieldGroupDefinition>
-			              </_content>
+																	<order>200</order>
+																</_object>
+																<_content />
+															</org.openmdx.ui1.FormFieldDefinition>
+														</formFieldDefinition>
+													</_content>
+												</org.openmdx.ui1.FormFieldGroupDefinition>
+											</formFieldGroupDefinition>
+										</_content>
 									</org.openmdx.ui1.FormDefinition>
 								</formDefinition>
-              </_content>
-            </org.openmdx.ui1.Segment>
-          </segment>
-        </_content>
-      </org.openmdx.base.Provider>
-    </provider>
-  </_content>
+							</_content>
+						</org.openmdx.ui1.Segment>
+					</segment>
+				</_content>
+			</org.openmdx.base.Provider>
+		</provider>
+	</_content>
 </org.openmdx.base.Authority>

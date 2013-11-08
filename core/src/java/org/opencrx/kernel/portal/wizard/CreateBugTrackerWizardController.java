@@ -128,9 +128,7 @@ public class CreateBugTrackerWizardController extends org.openmdx.portal.servlet
         org.opencrx.kernel.activity1.jmi1.ActivityTracker activityTracker = Activities.getInstance().initActivityTracker(
             name,
             allUsers,
-            pm,
-            providerName,
-            segmentName
+            activitySegment
         );
     	// ActivityCreator Incident
     	org.opencrx.kernel.activity1.jmi1.ActivityCreator defaultCreator = Activities.getInstance().initActivityCreator(
@@ -138,8 +136,7 @@ public class CreateBugTrackerWizardController extends org.openmdx.portal.servlet
 	    	Activities.getInstance().initActivityType(
 	    	    Activities.getInstance().findActivityProcess(
 	    	        Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING,
-	    	        activitySegment,
-	    	        pm
+	    	        activitySegment
 	    	    ),
 	    	    Activities.ACTIVITY_CREATOR_NAME_INCIDENTS,
 	    	    Activities.ActivityClass.INCIDENT.getValue(),
@@ -155,8 +152,7 @@ public class CreateBugTrackerWizardController extends org.openmdx.portal.servlet
 	    	Activities.getInstance().initActivityType(
 	    	    Activities.getInstance().findActivityProcess(
 	    	        Activities.ACTIVITY_PROCESS_NAME_EMAILS,
-	    	        activitySegment,
-	    	        pm
+	    	        activitySegment
 	    	    ),
 	    	    Activities.ACTIVITY_TYPE_NAME_EMAILS,
 	    	    Activities.ActivityClass.EMAIL.getValue(),
@@ -170,6 +166,7 @@ public class CreateBugTrackerWizardController extends org.openmdx.portal.servlet
         pm.currentTransaction().begin();
     	activityTracker.setDescription(description);
     	activityTracker.setDefaultCreator(defaultCreator);
+    	activityTracker.setActivityGroupType(Activities.ActivityGroupType.BUG_TRACKER.getValue());    	
     	pm.currentTransaction().commit();
     	return activityTracker;
 	}

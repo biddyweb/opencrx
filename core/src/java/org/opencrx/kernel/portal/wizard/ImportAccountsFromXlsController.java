@@ -59,6 +59,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Writer;
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -70,6 +71,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import javax.jdo.JDOHelper;
@@ -96,6 +98,7 @@ import org.opencrx.kernel.account1.jmi1.UnspecifiedAccount;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
+import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.cci2.LocalizedFieldQuery;
 import org.opencrx.kernel.generic.cci2.NoteQuery;
@@ -109,6 +112,8 @@ import org.opencrx.kernel.portal.IntegerPropertyDataBinding;
 import org.opencrx.kernel.portal.PhoneNumberDataBinding;
 import org.opencrx.kernel.portal.PostalAddressDataBinding;
 import org.opencrx.kernel.portal.StringPropertyDataBinding;
+import org.opencrx.kernel.portal.wizard.ImportAccountsFromXlsController.MapFieldContext.DataBindingType;
+import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
@@ -126,6 +131,7 @@ import org.openmdx.portal.servlet.DataBinding;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.action.SelectObjectAction;
 import org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding;
+import org.openmdx.security.realm1.jmi1.Realm;
 import org.w3c.format.DateTimeFormat;
 
 /**
@@ -1256,23 +1262,48 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			try {
 				return DateTimeFormat.BASIC_UTC_FORMAT.parse(s);
 			} catch (Exception ignore) {}
-			try {
-				return new SimpleDateFormat("yyyyMMdd").parse(s);
+			try {				
+				DateFormat format = new SimpleDateFormat("yyyyMMdd");
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				return format.parse(s);
 			} catch (Exception ignore) {}
 			try {
-				return new SimpleDateFormat("MM/dd/yyyy").parse(s);
+				DateFormat format = new SimpleDateFormat("MM/dd/yyyy");
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				return format.parse(s);
 			} catch (Exception ignore) {}
 			try {
-				return new SimpleDateFormat("MM/dd/yy").parse(s);
+				DateFormat format = new SimpleDateFormat("MM/dd/yy");
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				return format.parse(s);
 			} catch (Exception ignore) {}
 			try {
-				return new SimpleDateFormat("dd-MM-yyyy").parse(s);
+				DateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));
+				return format.parse(s);
 			} catch (Exception ignore) {}
 			try {
-				return new SimpleDateFormat("dd-MM-yy").parse(s);
+				DateFormat format = new SimpleDateFormat("dd-MM-yy");
+				format.setTimeZone(TimeZone.getTimeZone("UTC"));				
+				return format.parse(s);
 			} catch (Exception ignore) {}
 		}
 		return null;
+    }
+
+    /**
+     * Normalize multi-line string.
+     * 
+     * @param s
+     * @return
+     */
+    public String normalizeMultiLineString(
+    	String s
+    ) {
+		String preparedString = s.toString().replace("\\n\\r", "\r\n");
+		preparedString = preparedString.replace("\\r\\n", "\r\n");
+		preparedString = preparedString.replace("\r\n\r\n", "\r\n");
+		return preparedString;
     }
 
     /**
@@ -1351,11 +1382,27 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
     		: new CompositeObjectDataBinding("type=" + type + ";disabled=(boolean)false;" + parameters + ";usage=(short)" + usage);
     }
 
-    /**
+	/**
      * MapFieldContext
      *
      */
-    public class MapFieldContext {
+    public static class MapFieldContext {
+    	
+    	public enum DataBindingType {
+    		POSTAL_HOME,
+    		POSTAL_BUSINESS,
+        	PHONE_HOME,
+        	PHONE_OTHER,
+        	PHONE_BUSINESS,
+        	PHONE_BUSINESS2,
+        	FAX_BUSINESS,
+        	PHONE_MOBILE,
+        	MAIL_BUSINESS,
+        	MAIL_HOME,
+        	MAIL_OTHER,
+        	MAIL_X500,
+        	WEB_BUSINESS    		
+    	};
     	
     	/**
 		 * @return the isOk
@@ -1369,33 +1416,22 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 		public void setIsOk(Boolean isOk) {
 			this.isOk = isOk;
 		}
-		/**
-		 * @return the postalAddressHomeDataBinding
-		 */
-		public DataBinding getPostalAddressHomeDataBinding() {
-			return postalAddressHomeDataBinding;
+		
+		public void setDataBinding(
+			DataBindingType dataBindingType,
+			DataBinding dataBinding
+		) {
+			this.dataBindings.put(dataBindingType, dataBinding);
 		}
-		/**
-		 * @param postalAddressHomeDataBinding the postalAddressHomeDataBinding to set
-		 */
-		public void setPostalAddressHomeDataBinding(DataBinding postalAddressHomeDataBinding) {
-			this.postalAddressHomeDataBinding = postalAddressHomeDataBinding;
+		
+		public DataBinding getDataBinding(
+			DataBindingType dataBindingType
+		) {
+			return this.dataBindings.get(dataBindingType);
 		}
-		/**
-		 * @return the postalAddressBusinessDataBinding
-		 */
-		public DataBinding getPostalAddressBusinessDataBinding() {
-			return postalAddressBusinessDataBinding;
-		}
-		/**
-		 * @param postalAddressBusinessDataBinding the postalAddressBusinessDataBinding to set
-		 */
-		public void setPostalAddressBusinessDataBinding(DataBinding postalAddressBusinessDataBinding) {
-			this.postalAddressBusinessDataBinding = postalAddressBusinessDataBinding;
-		}
+		
 		private Boolean isOk;
-    	private DataBinding postalAddressHomeDataBinding;
-    	private DataBinding postalAddressBusinessDataBinding;    	
+    	private Map<DataBindingType,DataBinding> dataBindings = new HashMap<DataBindingType,DataBinding>();
     }
 
     /**
@@ -1413,7 +1449,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
      * @param accountSegment
      * @param codes
      * @param app
-     * @param mapFieldContext
+     * @param context
      * @throws ServiceException
      */
     public void mapField(
@@ -1428,11 +1464,23 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
     	org.opencrx.kernel.account1.jmi1.Segment accountSegment,
     	Codes codes,
     	ApplicationContext app,
-    	MapFieldContext mapFieldContext
+    	MapFieldContext context
     ) throws ServiceException {
-    	Boolean isOk = mapFieldContext.getIsOk();
-    	DataBinding postalAddressHomeDataBinding = mapFieldContext.getPostalAddressHomeDataBinding();
-    	DataBinding postalAddressBusinessDataBinding = mapFieldContext.getPostalAddressBusinessDataBinding();
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+    	Boolean isOk = context.getIsOk();
+    	DataBinding postalAddressHomeDataBinding = context.getDataBinding(DataBindingType.POSTAL_HOME);
+    	DataBinding postalAddressBusinessDataBinding = context.getDataBinding(DataBindingType.POSTAL_BUSINESS);
+    	DataBinding phoneHomeDataBinding = context.getDataBinding(DataBindingType.PHONE_HOME);
+    	DataBinding phoneOtherDataBinding = context.getDataBinding(DataBindingType.PHONE_OTHER);
+    	DataBinding phoneBusinessDataBinding = context.getDataBinding(DataBindingType.PHONE_BUSINESS);
+    	DataBinding phoneBusiness2DataBinding = context.getDataBinding(DataBindingType.PHONE_BUSINESS2);
+    	DataBinding faxBusinessDataBinding = context.getDataBinding(DataBindingType.FAX_BUSINESS);
+    	DataBinding phoneMobileDataBinding = context.getDataBinding(DataBindingType.PHONE_MOBILE);
+    	DataBinding mailBusinessDataBinding = context.getDataBinding(DataBindingType.MAIL_BUSINESS);
+    	DataBinding mailHomeDataBinding = context.getDataBinding(DataBindingType.MAIL_HOME);
+    	DataBinding mailOtherDataBinding = context.getDataBinding(DataBindingType.MAIL_OTHER);
+    	DataBinding mailX500DataBinding = context.getDataBinding(DataBindingType.MAIL_X500);
+    	DataBinding webPageBusinessDataBinding = context.getDataBinding(DataBindingType.WEB_BUSINESS);
     	if(account instanceof Contact) {
     		Contact contact = (Contact)account;
 			if(fieldName.equalsIgnoreCase(this.ATTR_TITLE)) {
@@ -1660,7 +1708,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			}
     	} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEPHONE)) {
     		if(fieldValue != null) {
-				DataBinding phoneHomeDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_HOME, fieldParameters, null);
+				phoneHomeDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_HOME, fieldParameters, phoneHomeDataBinding);
 				phoneHomeDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Contact:address!phoneNumberFull",
@@ -1668,13 +1716,35 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
     		}
+    	} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEPHONE_AUTHORITY)) {
+    		if(fieldValue instanceof String) {
+				phoneHomeDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_HOME, fieldParameters, phoneHomeDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				phoneHomeDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Contact:address!authority",
+					authority
+				);
+				isOk = true;
+    		}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEPHONE2)) {
 			if(fieldValue != null) {
-				DataBinding phoneOtherDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_OTHER, fieldParameters, null);
+				phoneOtherDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_OTHER, fieldParameters, phoneOtherDataBinding);
 				phoneOtherDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
 					fieldValue.toString()
+				);
+				isOk = true;
+			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEPHONE2_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				phoneOtherDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_OTHER, fieldParameters, phoneOtherDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				phoneOtherDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Other!authority",
+					authority
 				);
 				isOk = true;
 			}
@@ -1688,13 +1758,33 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEFAX_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				DataBinding faxHomeDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_HOME_FAX, fieldParameters, null);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				faxHomeDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Contact:address*Fax!authority",
+					authority
+				);
+				isOk = true;
+			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEPOSTAL_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				postalAddressHomeDataBinding = this.getPostalAddressDataBinding(Addresses.USAGE_HOME, fieldParameters, postalAddressHomeDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				postalAddressHomeDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Contact:address!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_HOMEADDRESSLINE)) {
 			postalAddressHomeDataBinding = this.getPostalAddressDataBinding(Addresses.USAGE_HOME, fieldParameters, postalAddressHomeDataBinding);
 			List<String> postalAddressLines = new ArrayList<String>();
 			if(fieldValue != null) {
-				String preparedString = fieldValue.toString().replace("\\n\\r", "\r\n");
-				preparedString = preparedString.replace("\\r\\n", "\r\n");
-				preparedString = preparedString.replace("\r\n\r\n", "\r\n");
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
 				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n", false);
 				while(tokenizer.hasMoreTokens()) {
 					postalAddressLines.add(tokenizer.nextToken());
@@ -1710,9 +1800,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			postalAddressHomeDataBinding = this.getPostalAddressDataBinding(Addresses.USAGE_HOME, fieldParameters, postalAddressHomeDataBinding);
 			List<String> postalStreetLines = new ArrayList<String>();
 			if(fieldValue != null) {
-				String preparedString = fieldValue.toString().replace("\\n\\r", "\r\n");
-				preparedString = preparedString.replace("\\r\\n", "\r\n");
-				preparedString = preparedString.replace("\r\n\r\n", "\r\n");
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
 				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n", false);
 				while(tokenizer.hasMoreTokens()) {
 					postalStreetLines.add(tokenizer.nextToken());
@@ -1784,9 +1872,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSTYPE)) {
 			List<Short> businessTypes = new ArrayList<Short>();
 			if(fieldValue != null) {
-				String preparedString = fieldValue.toString().replace("\\n\\r", "\r\n");
-				preparedString = preparedString.replace("\\r\\n", "\r\n");
-				preparedString = preparedString.replace("\r\n\r\n", "\r\n");
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
 				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n", false);
 				while(tokenizer.hasMoreTokens()) {
 					businessTypes.add(Short.parseShort(tokenizer.nextToken()));
@@ -1801,7 +1887,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSPHONE)) {
 			if(fieldValue != null) {
-				DataBinding phoneBusinessDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_BUSINESS, fieldParameters, null);
+				phoneBusinessDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_BUSINESS, fieldParameters, phoneBusinessDataBinding);
 				phoneBusinessDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*Business!phoneNumberFull",
@@ -1809,19 +1895,41 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSPHONE_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				phoneBusinessDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_BUSINESS, fieldParameters, phoneBusinessDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				phoneBusinessDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Business!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSPHONE2)) {
 			if(fieldValue != null) {
-				DataBinding phoneOtherDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_OTHER, fieldParameters, null);
-				phoneOtherDataBinding.setValue(
+				phoneBusiness2DataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_OTHER, fieldParameters, phoneBusiness2DataBinding);
+				phoneBusiness2DataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*Other!phoneNumberFull",
 					fieldValue.toString()
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSPHONE2_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				phoneBusiness2DataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_OTHER, fieldParameters, phoneBusiness2DataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				phoneBusiness2DataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Other!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSFAX)) {
 			if(fieldValue != null) {
-				DataBinding faxBusinessDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_BUSINESS_FAX, fieldParameters, null);
+				faxBusinessDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_BUSINESS_FAX, fieldParameters, faxBusinessDataBinding);
 				faxBusinessDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*BusinessFax!phoneNumberFull",
@@ -1829,9 +1937,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSFAX_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				faxBusinessDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_BUSINESS_FAX, fieldParameters, faxBusinessDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				faxBusinessDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*BusinessFax!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_MOBILEPHONE)) {
 			if(fieldValue != null) {
-				DataBinding phoneMobileDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_MOBILE, fieldParameters, null);
+				phoneMobileDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_MOBILE, fieldParameters, phoneMobileDataBinding);
 				phoneMobileDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*Mobile!phoneNumberFull",
@@ -1839,9 +1958,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_MOBILEPHONE_AUTHORITY)) {
+			if(fieldValue != null) {
+				phoneMobileDataBinding = this.getPhoneNumberDataBinding(Addresses.USAGE_MOBILE, fieldParameters, phoneMobileDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				phoneMobileDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Mobile!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_EMAILADDRESS)) {
 			if(fieldValue != null) {
-				DataBinding mailBusinessDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_BUSINESS, (short)1, fieldParameters, null);
+				mailBusinessDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_BUSINESS, (short)1, fieldParameters, mailBusinessDataBinding);
 				mailBusinessDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*Business!emailAddress",
@@ -1849,9 +1979,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_EMAILADDRESS_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				mailBusinessDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_BUSINESS, (short)1, fieldParameters, mailBusinessDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				mailBusinessDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Business!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_EMAIL2ADDRESS)) {
 			if(fieldValue != null) {
-				DataBinding mailHomeDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_HOME, (short)1, fieldParameters, null);
+				mailHomeDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_HOME, (short)1, fieldParameters, mailHomeDataBinding);
 				mailHomeDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Contact:address!emailAddress",
@@ -1859,9 +2000,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_EMAIL2ADDRESS_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				mailHomeDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_HOME, (short)1, fieldParameters, mailHomeDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				mailHomeDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Contact:address!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_EMAIL3ADDRESS)) {
 			if(fieldValue != null) {
-				DataBinding mailOtherDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_OTHER, (short)1, fieldParameters, null);
+				mailOtherDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_OTHER, (short)1, fieldParameters, mailOtherDataBinding);
 				mailOtherDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*Other!emailAddress",
@@ -1869,9 +2021,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_EMAIL3ADDRESS_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				mailOtherDataBinding = this.getEmailAddressDataBinding(Addresses.USAGE_OTHER, (short)1, fieldParameters, mailOtherDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				mailOtherDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Other!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_X500ADDRESS)) {
 			if(fieldValue != null) {
-				DataBinding mailX500DataBinding = this.getEmailAddressDataBinding((short)0, (short)2, fieldParameters, null);
+				mailX500DataBinding = this.getEmailAddressDataBinding((short)0, (short)2, fieldParameters, mailX500DataBinding);
 				mailX500DataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:Account:address*X500!emailAddress",
@@ -1879,9 +2042,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_X500ADDRESS_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				mailX500DataBinding = this.getEmailAddressDataBinding((short)0, (short)2, fieldParameters, mailX500DataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				mailX500DataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*X500!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_WEBPAGE)) {
 			if(fieldValue != null) {
-				DataBinding webPageBusinessDataBinding = this.getCompositeObjectDataBinding("org:opencrx:kernel:account1:WebAddress", Addresses.USAGE_BUSINESS, fieldParameters, null);
+				webPageBusinessDataBinding = this.getCompositeObjectDataBinding("org:opencrx:kernel:account1:WebAddress", Addresses.USAGE_BUSINESS, fieldParameters, webPageBusinessDataBinding);
 				webPageBusinessDataBinding.setValue(
 					account,
 					"org:opencrx:kernel:account1:LegalEntity:address!webUrl",
@@ -1889,13 +2063,33 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 				isOk = true;
 			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_WEBPAGE_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				webPageBusinessDataBinding = this.getCompositeObjectDataBinding("org:opencrx:kernel:account1:WebAddress", Addresses.USAGE_BUSINESS, fieldParameters, webPageBusinessDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				webPageBusinessDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:LegalEntity:address!authority",
+					authority
+				);
+				isOk = true;
+			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSPOSTAL_AUTHORITY)) {
+			if(fieldValue instanceof String) {
+				postalAddressBusinessDataBinding = this.getPostalAddressDataBinding(Addresses.USAGE_BUSINESS, fieldParameters, postalAddressBusinessDataBinding);
+				Account authority = this.findUniqueTargetAccount((String)fieldValue, accountSegment);
+				postalAddressBusinessDataBinding.setValue(
+					account,
+					"org:opencrx:kernel:account1:Account:address*Business!authority",
+					authority
+				);
+				isOk = true;
+			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_BUSINESSADDRESSLINE)) {
 			postalAddressBusinessDataBinding = this.getPostalAddressDataBinding(Addresses.USAGE_BUSINESS, fieldParameters, postalAddressBusinessDataBinding);
 			List<String> postalAddressLines = new ArrayList<String>();
 			if(fieldValue != null) {
-				String preparedString = fieldValue.toString().replace("\\n\\r", "\r\n");
-				preparedString = preparedString.replace("\\r\\n", "\r\n");
-				preparedString = preparedString.replace("\r\n\r\n", "\r\n");
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
 				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n", false);
 				while(tokenizer.hasMoreTokens()) {
 					postalAddressLines.add(tokenizer.nextToken());
@@ -1911,9 +2105,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			postalAddressBusinessDataBinding = this.getPostalAddressDataBinding(Addresses.USAGE_BUSINESS, fieldParameters, postalAddressBusinessDataBinding);
 			List<String> postalStreetLines = new ArrayList<String>();
 			if(fieldValue != null) {
-				String preparedString = fieldValue.toString().replace("\\n\\r", "\r\n");
-				preparedString = preparedString.replace("\\r\\n", "\r\n");
-				preparedString = preparedString.replace("\r\n\r\n", "\r\n");
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
 				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n", false);
 				while(tokenizer.hasMoreTokens()) {
 					postalStreetLines.add(tokenizer.nextToken());
@@ -2073,14 +2265,31 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_CATEGORIES)) {
 			if(fieldValue != null) {
-				String preparedString = fieldValue.toString().replace("\\n\\r", "\r\n");
-				preparedString = preparedString.replace("\\r\\n", "\r\n");
-				preparedString = preparedString.replace("\r\n\r\n", "\r\n");
-				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n", false);
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
+				// multiple values are delimited by newlines or semicolons
+				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n;", false);
 				while(tokenizer.hasMoreTokens()) {
 					String category = (String)tokenizer.nextToken();
 					if (!account.getCategory().contains(category)) {
 						account.getCategory().add(category);
+					}
+				}
+				isOk = true;
+			}
+		} else if(fieldName.equalsIgnoreCase(this.ATTR_GROUPS)) {
+			if(fieldValue != null) {
+				Realm realm = SecureObject.getInstance().getRealm(pm, this.getProviderName(), this.getSegmentName());
+				String preparedString = this.normalizeMultiLineString(fieldValue.toString());
+				// multiple values are delimited by newlines or semicolons
+				StringTokenizer tokenizer = new StringTokenizer(preparedString, "\r\n;", false);
+				while(tokenizer.hasMoreTokens()) {
+					String group = (String)tokenizer.nextToken();
+					org.openmdx.security.realm1.jmi1.Principal principal = SecureObject.getInstance().findPrincipal(group, realm);
+					if(
+						principal instanceof PrincipalGroup && 
+						!account.getOwningGroup().contains(principal)
+					) {
+						account.getOwningGroup().add((PrincipalGroup)principal);
 					}
 				}
 				isOk = true;
@@ -2248,9 +2457,20 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				" ok"
 			);
 		}
-		mapFieldContext.setIsOk(isOk);
-		mapFieldContext.setPostalAddressHomeDataBinding(postalAddressHomeDataBinding);
-		mapFieldContext.setPostalAddressBusinessDataBinding(postalAddressBusinessDataBinding);
+		context.setIsOk(isOk);
+    	context.setDataBinding(DataBindingType.POSTAL_HOME, postalAddressHomeDataBinding);
+    	context.setDataBinding(DataBindingType.POSTAL_BUSINESS, postalAddressBusinessDataBinding);
+    	context.setDataBinding(DataBindingType.PHONE_HOME, phoneHomeDataBinding);
+    	context.setDataBinding(DataBindingType.PHONE_OTHER, phoneOtherDataBinding);
+    	context.setDataBinding(DataBindingType.PHONE_BUSINESS, phoneBusinessDataBinding);
+    	context.setDataBinding(DataBindingType.PHONE_BUSINESS2, phoneBusiness2DataBinding);
+    	context.setDataBinding(DataBindingType.FAX_BUSINESS, faxBusinessDataBinding);
+    	context.setDataBinding(DataBindingType.PHONE_MOBILE, phoneMobileDataBinding);
+    	context.setDataBinding(DataBindingType.MAIL_BUSINESS, mailBusinessDataBinding);
+    	context.setDataBinding(DataBindingType.MAIL_HOME, mailHomeDataBinding);
+    	context.setDataBinding(DataBindingType.MAIL_OTHER, mailOtherDataBinding);
+    	context.setDataBinding(DataBindingType.MAIL_X500, mailX500DataBinding);
+    	context.setDataBinding(DataBindingType.WEB_BUSINESS, webPageBusinessDataBinding);
     }
 
     /**
@@ -2377,6 +2597,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			this.ATTR_ASSISTANTSNAME = "NameAssistent";
 			this.ATTR_MANAGERSNAME = "NamedesrVorgesetzten";
 			this.ATTR_CATEGORIES = "Kategorien";
+			this.ATTR_GROUPS = "Gruppen";
 		}
 		if(this.requiresAdminRole) {
 			String currentUserRole = app.getCurrentUserRole();
@@ -2650,7 +2871,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 										}
 									}
 								}
-								if (!accountRecord.isTypeExplicitlySet()) {
+								if(!accountRecord.isTypeExplicitlySet()) {
 									// try to find existing account to determine dtype
 									matchingContacts = this.findContact(
 										accountRecord.getFirstName(),
@@ -2660,7 +2881,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 										accountRecord.getExtString0(),
 										accountSegment
 									);
-									if (matchingContacts == null) {
+									if(matchingContacts == null && accountRecord.getExtString0() == null) {
 										// try again without aliasName
 										matchingContacts = this.findContact(
 											accountRecord.getFirstName(),
@@ -2671,7 +2892,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											accountSegment
 										);
 									}
-									if (matchingContacts == null) {
+									if(matchingContacts == null && accountRecord.getExtString0() == null) {
 										// try again without aliasName and without emailAddress
 										matchingContacts = this.findContact(
 											accountRecord.getFirstName(),
@@ -2682,7 +2903,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											accountSegment
 										);
 									}
-									if (matchingContacts != null) {
+									if(matchingContacts != null) {
 										accountRecord.setTypeExplicitlySet(true);
 									} else {
 										matchingAbstractGroups = this.findAbstractGroup(
@@ -2695,7 +2916,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											true,
 											accountSegment
 										);
-										if (matchingAbstractGroups == null) {
+										if(matchingAbstractGroups == null && accountRecord.getExtString0() == null) {
 											// try again without emailaddress
 											matchingAbstractGroups = this.findAbstractGroup(
 												accountRecord.getCompany(),
@@ -2708,7 +2929,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 												accountSegment
 											);
 										}
-										if (matchingAbstractGroups != null) {
+										if(matchingAbstractGroups != null) {
 											AbstractGroup matchingAbstractGroup = (AbstractGroup)(matchingAbstractGroups.iterator().next());
 											if (matchingAbstractGroup instanceof Group) {
 												accountRecord.setTypeExplicitlySet(true);
@@ -2723,7 +2944,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 										}
 									}
 								}
-								if (accountRecord.getAccountType() == AccountType.Contact) {
+								if(accountRecord.getAccountType() == AccountType.Contact) {
 									if (matchingContacts == null) {
 										matchingContacts = this.findContact(
 											accountRecord.getFirstName(),
@@ -2734,7 +2955,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											accountSegment
 										);
 									}
-									if (matchingContacts == null) {
+									if(matchingContacts == null && accountRecord.getExtString0() == null) {
 										// try again without aliasName
 										matchingContacts = this.findContact(
 											accountRecord.getFirstName(),
@@ -2745,7 +2966,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											accountSegment
 										);
 									}
-									if (matchingContacts == null) {
+									if(matchingContacts == null && accountRecord.getExtString0() == null) {
 										// try again without aliasName and without emailaddress
 										matchingContacts = this.findContact(
 											accountRecord.getFirstName(),
@@ -2756,7 +2977,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											accountSegment
 										);
 									}
-									if (matchingContacts != null) {
+									if(matchingContacts != null) {
 										// at least 1 match with existing contacts
 										updateExisting = true;
 										for(Iterator<Contact> c = matchingContacts.iterator(); c.hasNext(); ) {
@@ -2844,7 +3065,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											accountRecord.getAccountType() == AccountType.UnspecifiedAccount,
 											accountSegment
 										);
-										if (matchingAbstractGroups == null) {
+										if(matchingAbstractGroups == null && accountRecord.getExtString0() == null) {
 											// try again without emailaddress
 											matchingAbstractGroups = this.findAbstractGroup(
 												accountRecord.getCompany(),
@@ -2858,7 +3079,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											);
 										}
 									}
-									if (matchingAbstractGroups != null) {
+									if(matchingAbstractGroups != null) {
 										// at least 1 match with existing AbstractGroups
 										updateExisting = true;
 										for(Iterator<AbstractGroup> c = matchingAbstractGroups.iterator(); c.hasNext(); ) {
@@ -2927,7 +3148,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 												} catch(Exception e1) {}
 											}
 										}
-										if (account instanceof Group) {
+										if(account instanceof Group) {
 											nGroupsCreated += 1;
 											isCreation = true;
 										} else if (account instanceof LegalEntity) {
@@ -2941,7 +3162,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											appendErrorRow = "<tr class='gridTableRowFull'><td class='err' colspan='" + (maxCell+2) + "'>CREATION FAILED [<b>" + accountRecord.getAccountType() + "</b>]</td></tr>";
 										}
 									}
-									if (account != null) {
+									if(account != null) {
 										accountHref = this.getSelectObjectHref(account);
 										try {
 											pm.currentTransaction().begin();
@@ -2966,14 +3187,14 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							}
 							accountRecord.printImportStatus(importReport);
 							importReport.append("</tr>");
-							if (appendErrorRow != null) {
+							if(appendErrorRow != null) {
 								importReport.append(appendErrorRow);
 							}
-							if (isImportMembershipMode) {
+							if(isImportMembershipMode) {
 								importReport.append("<tr class='gridTableRowFull'>");
 								importReport.append("<td class=\"" + (hasErrors ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
 								importReport.append("MEMBER " + (hasErrors ? "FAILED" : "OK") + ":");
-								if (groupMember != null) {
+								if(groupMember != null) {
 									String memberHref = this.getSelectObjectHref(groupMember);
 									importReport.append("<a href=\"" + memberHref + "\" target=\"_blank\"><b>" + (new ObjectReference(groupMember, app)).getTitle() + "</b> [" + groupMember.refMofId() + "]</a>");
 								} else {
@@ -2982,15 +3203,15 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 								importReport.append("</td>");
 								importReport.append("</tr>");
 							} else {
-								if (isCreation) {
+								if(isCreation) {
 									importReport.append("<tr class='gridTableRowFull'>");
 									importReport.append("<td class=\"" + (hasErrors ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
 									importReport.append("CREATE " + (hasErrors ? "FAILED" : "OK") + "[<b>" + accountRecord.getAccountType() + "</b>]: <a href=\"" + accountHref + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b> [" + account.refMofId() + "]</a>");
 									importReport.append("</td>");
 									importReport.append("</tr>");
 								}
-								if (isUpdate) {
-									if (multiMatchList.length() > 0) {
+								if(isUpdate) {
+									if(!multiMatchList.isEmpty()) {
 										importReport.append("<tr class='gridTableRowFull'>");
 										importReport.append("<td class=\"err\" colspan=\"" + (maxCell+2) + "\">");
 										importReport.append("NO UPDATE [<b>" + accountRecord.getAccountType() + "</b>] - Multiple Matches:" + multiMatchList);
@@ -3112,8 +3333,31 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 	private String ATTR_DEPARTMENT = "DEPARTMENT";
 	private String ATTR_BIRTHDAY = "BIRTHDAY";
 	private String ATTR_HOMEPHONE = "HOMEPHONE";
+	private String ATTR_HOMEPHONE_AUTHORITY = "HOMEPHONE_AUTHORITY";
+	private String ATTR_BUSINESSPHONE = "BUSINESSPHONE";
+	private String ATTR_BUSINESSPHONE_AUTHORITY = "BUSINESSPHONE_AUTHORITY";
 	private String ATTR_HOMEPHONE2 = "HOMEPHONE2";
+	private String ATTR_HOMEPHONE2_AUTHORITY = "HOMEPHONE2_AUTHORITY";
+	private String ATTR_BUSINESSPHONE2 = "BUSINESSPHONE2";
+	private String ATTR_BUSINESSPHONE2_AUTHORITY = "BUSINESSPHONE2_AUTHORITY";
 	private String ATTR_HOMEFAX = "HOMEFAX";
+	private String ATTR_HOMEFAX_AUTHORITY = "HOMEFAX_AUTHORITY";
+	private String ATTR_BUSINESSFAX = "BUSINESSFAX";
+	private String ATTR_BUSINESSFAX_AUTHORITY = "BUSINESSFAX_AUTHORITY";
+	private String ATTR_MOBILEPHONE = "MOBILEPHONE";
+	private String ATTR_MOBILEPHONE_AUTHORITY = "MOBILEPHONE_AUTHORITY";
+	private String ATTR_EMAILADDRESS = "EMAILADDRESS";   // index attribute
+	private String ATTR_EMAILADDRESS_AUTHORITY = "EMAILADDRESS_AUTHORITY";
+	private String ATTR_EMAIL2ADDRESS = "EMAIL2ADDRESS";
+	private String ATTR_EMAIL2ADDRESS_AUTHORITY = "EMAIL2ADDRESS_AUTHORITY";
+	private String ATTR_EMAIL3ADDRESS = "EMAIL3ADDRESS";
+	private String ATTR_EMAIL3ADDRESS_AUTHORITY = "EMAIL3ADDRESS_AUTHORITY";
+	private String ATTR_X500ADDRESS = "X500ADDRESS";
+	private String ATTR_X500ADDRESS_AUTHORITY = "X500ADDRESS_AUTHORITY";
+	private String ATTR_WEBPAGE = "WEBPAGE";
+	private String ATTR_WEBPAGE_AUTHORITY = "WEBPAGE_AUTHORITY";
+	
+	private String ATTR_HOMEPOSTAL_AUTHORITY = "HOMEPOSTAL_AUTHORITY";
 	private String ATTR_HOMEADDRESSLINE = "HOMEADDRESSLINE";
 	private String ATTR_HOMESTREET = "HOMESTREET";
 	private String ATTR_HOMECITY = "HOMECITY";
@@ -3121,17 +3365,8 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 	private String ATTR_HOMESTATE = "HOMESTATE";
 	private String ATTR_HOMECOUNTRY = "HOMECOUNTRY";
 	private String ATTR_HOMECOUNTRYREGION = "HOMECOUNTRYREGION";
-	private String ATTR_NOTES = "NOTES";
 	
-	private String ATTR_BUSINESSPHONE = "BUSINESSPHONE";
-	private String ATTR_BUSINESSPHONE2 = "BUSINESSPHONE2";
-	private String ATTR_BUSINESSFAX = "BUSINESSFAX";
-	private String ATTR_MOBILEPHONE = "MOBILEPHONE";
-	private String ATTR_EMAILADDRESS = "EMAILADDRESS";   // index attribute
-	private String ATTR_EMAIL2ADDRESS = "EMAIL2ADDRESS";
-	private String ATTR_EMAIL3ADDRESS = "EMAIL3ADDRESS";
-	private String ATTR_X500ADDRESS = "X500ADDRESS";
-	private String ATTR_WEBPAGE = "WEBPAGE";
+	private String ATTR_BUSINESSPOSTAL_AUTHORITY = "BUSINESSPOSTAL_AUTHORITY";
 	private String ATTR_BUSINESSADDRESSLINE = "BUSINESSADDRESSLINE";
 	private String ATTR_BUSINESSSTREET = "BUSINESSSTREET";
 	private String ATTR_BUSINESSCITY = "BUSINESSCITY";
@@ -3139,11 +3374,14 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 	private String ATTR_BUSINESSSTATE = "BUSINESSSTATE";
 	private String ATTR_BUSINESSCOUNTRY = "BUSINESSCOUNTRY";
 	private String ATTR_BUSINESSCOUNTRYREGION = "BUSINESSCOUNTRYREGION";
+
+	private String ATTR_NOTES = "NOTES";
 	private String ATTR_ASSISTANTSNAME = "ASSISTANTSNAME";
 	private String ATTR_ASSISTANTSNAMEROLE = "ASSISTANTSNAMEROLE";
 	private String ATTR_MANAGERSNAME = "MANAGERSNAME";
 	private String ATTR_MANAGERSROLE = "MANAGERSROLE";
 	private String ATTR_CATEGORIES = "CATEGORIES";
+	private String ATTR_GROUPS = "GROUPS";
 	private String ATTR_BUSINESSTYPE = "BUSINESSTYPE";
 
 	private final boolean requiresAdminRole;

@@ -55,9 +55,18 @@ package org.opencrx.application.webdav;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 
+/**
+ * DocumentFolderResource
+ *
+ */
 public class DocumentFolderResource extends DocumentCollectionResource {
 	
-	//-----------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 * @param requestContext
+	 * @param documentFolder
+	 */
 	public DocumentFolderResource(
 		RequestContext requestContext,
 		DocumentFolder documentFolder

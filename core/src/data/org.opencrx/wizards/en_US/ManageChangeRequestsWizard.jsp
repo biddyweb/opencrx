@@ -146,12 +146,15 @@ org.openmdx.base.naming.*
 										wc.renderChangeRequest(wc.getSelectedChangeRequest(), ManageChangeRequestsWizardController.Format.MERGED_OBJECT, out);
 									%>
 									<div id="WaitIndicator2" style="display:none;width:50px;height:24px;" class="wait">&nbsp;</div>
-									<div id="SubmitArea2">
+									<div id="SubmitArea2" style="display:none;">
 										<input type="submit" name="Apply" tabindex="9010" value="<%= wc.getTexts().getSaveTitle() %>" onclick="javascript:$('WaitIndicator2').style.display='block';$('SubmitArea2').style.display='none';$('Command').value=this.name;" />
 									</div>
 								</td>
 							</tr>
 						</table>
+						<script type="text/javascript">
+							<%= wc.getPostRenderChangeRequestScript().toString() %>
+						</script>						
 <%
 					}
 %>

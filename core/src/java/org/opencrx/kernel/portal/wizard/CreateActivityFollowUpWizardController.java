@@ -67,6 +67,7 @@ import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityDoFollowUpParams;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
 import org.opencrx.kernel.activity1.jmi1.SubActivityTransition;
+import org.opencrx.kernel.generic.OpenCrxException;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -198,26 +199,36 @@ public class CreateActivityFollowUpWizardController extends org.openmdx.portal.s
 	    Short priority = (Short)formFields.get("org:opencrx:kernel:activity1:Activity:priority");
 	    Date dueBy = (Date)formFields.get("org:opencrx:kernel:activity1:Activity:dueBy");
 	    if(transition != null && this.getObject() instanceof Activity) {
-	    	Activity activity = (Activity)this.getObject();
-			ActivityDoFollowUpParams params = Structures.create(
-				ActivityDoFollowUpParams.class,
-				Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, assignTo),
-				Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, followUpText),
-				Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, followUpTitle),
-				Datatypes.member(ActivityDoFollowUpParams.Member.transition, transition)
-			);
-			pm.refresh(activity);
-			pm.currentTransaction().begin();
-			activity.doFollowUp(params);
-			activity.setAssignedTo(this.assignedTo);
-			activity.setDescription(description);
-			activity.setLocation(location);
-			activity.setPriority(priority);
-			activity.setDueBy(dueBy);
-			pm.currentTransaction().commit();
-			this.setExitAction(
-				new ObjectReference(obj, app).getSelectObjectAction()
-			);
+	    	try {
+		    	Activity activity = (Activity)this.getObject();
+				ActivityDoFollowUpParams params = Structures.create(
+					ActivityDoFollowUpParams.class,
+					Datatypes.member(ActivityDoFollowUpParams.Member.assignTo, assignTo),
+					Datatypes.member(ActivityDoFollowUpParams.Member.followUpText, followUpText),
+					Datatypes.member(ActivityDoFollowUpParams.Member.followUpTitle, followUpTitle),
+					Datatypes.member(ActivityDoFollowUpParams.Member.transition, transition)
+				);
+				pm.refresh(activity);
+				pm.currentTransaction().begin();
+				activity.doFollowUp(params);
+				activity.setAssignedTo(this.assignedTo);
+				activity.setDescription(description);
+				activity.setLocation(location);
+				activity.setPriority(priority);
+				activity.setDueBy(dueBy);
+				pm.currentTransaction().commit();
+				this.setExitAction(
+					new ObjectReference(obj, app).getSelectObjectAction()
+				);
+	    	} catch(Exception e) {
+	    		try {
+	    			pm.currentTransaction().rollback();
+	    		} catch(Exception ignore) {}
+	    		ServiceException e0 = new ServiceException(e);
+	    		e0.log();
+	    		org.openmdx.kernel.exception.BasicException b = e0.getCause(OpenCrxException.DOMAIN);
+	    		this.errorMessage = b.getDescription();
+	    	}
 	    }
 	}
 
@@ -328,6 +339,13 @@ public class CreateActivityFollowUpWizardController extends org.openmdx.portal.s
 		return this.viewPort;
 	}
 
+	/**
+	 * @return the errorMessage
+	 */
+	public String getErrorMessage() {
+		return errorMessage;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openmdx.portal.servlet.AbstractWizardController#close()
 	 */
@@ -348,6 +366,7 @@ public class CreateActivityFollowUpWizardController extends org.openmdx.portal.s
 	private Map<String,Object> formFields;
 	private List<ActivityProcessTransition> nextTransitions;
 	private Contact assignedTo;
+	private String errorMessage = null;
 	private ViewPort viewPort;
 
 }

@@ -11,17 +11,6 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContract:contact" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>联系人管理</_item>
-                      </label>
-                      <toolTip>
-                        <_item>联系人管理</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:contact" _operation="create">
                     <_object>
                       <label>
@@ -73,17 +62,6 @@
                       </label>
                       <toolTip>
                         <_item>个人信息</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:10:Group:10" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>图片</_item>
-                      </label>
-                      <toolTip>
-                        <_item>图片</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -418,6 +396,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:Pane:Attr:Tab:900100:Group:99" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>废弃</_item>
+                      </label>
+                      <toolTip>
+                        <_item>废弃</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:reportsTo" _operation="create">
                     <_object>
                       <label>
@@ -550,6 +539,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:dateOfDeath" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>死亡日期</_item>
+                      </label>
+                      <toolTip>
+                        <_item>死亡日期</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:anniversary" _operation="create">
                     <_object>
                       <label>
@@ -579,28 +579,6 @@
                       </label>
                       <toolTip>
                         <_item>公民关系</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:pictureContent" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>图片</_item>
-                      </label>
-                      <toolTip>
-                        <_item>图片</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:picture" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>标题 / 来源</_item>
-                      </label>
-                      <toolTip>
-                        <_item>标题 / 来源</_item>
                       </toolTip>
                     </_object>
                     <_content/>

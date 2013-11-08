@@ -58,7 +58,9 @@ import java.util.Date;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
-import org.openmdx.base.jmi1.BasicObject;
+import org.openmdx.base.jmi1.ContextCapable;
+import org.openmdx.base.jmi1.Creatable;
+import org.openmdx.base.jmi1.Modifiable;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
@@ -66,7 +68,7 @@ abstract class CalDavResource implements Resource {
 
 	public CalDavResource(
 		RequestContext requestContext,
-		BasicObject object
+		ContextCapable object
 	) {
 		this.requestContext = requestContext;
 		this.object = object;
@@ -75,20 +77,24 @@ abstract class CalDavResource implements Resource {
 	@Override
     public Date getCreationDate(
     ) {
-		return this.object.getCreatedAt();
+		return this.object instanceof Creatable
+			? ((Creatable)this.object).getCreatedAt()
+			: new Date();
     }
 
 	@Override
     public Date getLastModified(
     ) {
-		return this.object.getModifiedAt();
+		return this.object instanceof Modifiable
+			? ((Modifiable)this.object).getModifiedAt()
+			: new Date();
     }
 
-	public BasicObject getObject(
+	public ContextCapable getObject(
 	) {
 		return this.object;
 	}
-	
+
 	public <T extends Resource> Collection<T> getChildren(
 	) {
 		return Collections.emptyList();
@@ -107,7 +113,7 @@ abstract class CalDavResource implements Resource {
 
 	public String getMimeType(
 	) {
-		return "text/xml";
+		return "application/xml";
 	}
 	
 	public BinaryLargeObject getContent(
@@ -116,5 +122,5 @@ abstract class CalDavResource implements Resource {
 	}
 	
 	private final RequestContext requestContext;
-	private final BasicObject object;
+	private final ContextCapable object;
 }

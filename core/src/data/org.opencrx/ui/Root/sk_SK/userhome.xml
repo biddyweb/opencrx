@@ -44,6 +44,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:timer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Časovače</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Časovače</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
@@ -110,17 +121,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Grafy</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Grafy</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30" _operation="create">
                     <_object>
                       <label>
@@ -139,17 +139,6 @@
                       </label>
                       <toolTip>
                         <_item>Kalendár</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:20:Group:20" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Grafy</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Grafy</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -206,146 +195,6 @@
                       <toolTip>
                         <_item>Pracovný týždeň</_item>
                       </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart0" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nadpis / Zdroj</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nadpis / Zdroj</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME typ</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Meno</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart0Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Popis</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart1" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nadpis / Zdroj</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nadpis / Zdroj</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME typ</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Meno</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart1Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Popis</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart2" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nadpis / Zdroj</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nadpis / Zdroj</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME typ</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Meno</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart2Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Popis</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart3" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Nadpis / Zdroj</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Nadpis / Zdroj</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3MimeType" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>MIME typ</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Name" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Meno</_item>
-                      </label>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:favoriteChart3Description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Popis</_item>
-                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -543,6 +392,149 @@
                       </label>
                       <toolTip>
                         <_item>Výsledok</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Časovač</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Časovač</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Meno</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Meno</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:action" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Akcia časovača</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Akcia časovača</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerStartAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Čas začiatku</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Čas začiatku</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerEndAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Čaš ukončenia</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Čas ukončenia</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Popis</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Popis</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:target" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cieľ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cieľ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerState" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Stav</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Stav</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:disabled" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Deaktivované</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Deaktivované</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:createdAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Vytvorené</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Vytvorené</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerRepeat" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Opakované X krát</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Opakované X krát</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerIntervalMinutes" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Opakované každých X minút</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Opakované každých X minút</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:lastTriggerAt" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Čas bol spustený</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Čas bol spustený</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1223,6 +1215,9 @@
                       <label>
                         <_item>Vstup</_item>
                       </label>
+                      <toolTip>
+                        <_item>Vstup</_item>
+                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

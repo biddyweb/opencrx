@@ -459,17 +459,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCity" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Ciudad</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Ciudad</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCode" _operation="create">
                     <_object>
                       <label>
@@ -477,6 +466,17 @@
                       </label>
                       <toolTip>
                         <_item>Código Postal</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCity" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Ciudad</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Ciudad</_item>
                       </toolTip>
                     </_object>
                     <_content/>

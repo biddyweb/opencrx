@@ -121,55 +121,36 @@ org.openmdx.kernel.exception.*
 			color: white;
 			font-weight: bold;
 			vertical-align:middle;
-			border-top:1px solid #B3D7C3;
-			border-bottom:1px solid #B3D7C3;
-			border-left:1px solid #B3D7C3;
 			white-space:nowrap;
 			padding:5px;
 		}
 		.processTable TR.process TD {
-			background-color:#73C795;
+			background-color:#DDDDDD;
+			border-top:1px solid black;
 			vertical-align:middle;
 			font-weight: bold;
-			border-top:1px solid #B3D7C3;
-			border-bottom:1px solid #B3D7C3;
-			border-left:1px solid #B3D7C3;
 			white-space:nowrap;
 			padding:5px;
 		}
-		.processTable TR.log TD {
-			background-color:#FFFE70;
+		.processTable TR.log {
+			background-color:white;
+		}
+		.processTable TD.log {
+			background-color:#EEEEEE;
 			vertical-align:middle;
-			border-top:1px solid #B3D7C3;
-			border-right:1px solid #B3D7C3;
-			border-bottom:1px solid #B3D7C3;
 			white-space:nowrap;
 			padding:5px;
 			overflow:hidden;
 		}
-		.processTable TR.child TD {
+		.processTable TR.child {
+			background-color:white;
+		}
+		.processTable TD.child {
+			background-color:#EEEEEE;
 			vertical-align:middle;
-			border-top:1px solid #B3D7C3;
-			border-right:1px solid #B3D7C3;
-			border-bottom:1px solid #B3D7C3;
 			white-space:nowrap;
 			padding:5px;
 			overflow:hidden;
-		}
-		.NA {
-			background-color:#D3D5C2;
-		}
-		.PENDING_NOTYETSTARTED {
-			background-color:#E3C9FF;
-		}
-		.PENDING_STARTED {
-			background-color:#DBFA4E;
-		}
-		.COMPLETED_SUCCESS {
-			background-color:#6FFA4E;
-		}
-		.COMPLETED_FAILURE {
-			background-color:#FF9B86;
 		}
 	</style>
 
@@ -199,11 +180,15 @@ org.openmdx.kernel.exception.*
        <div id="content" style="padding:0px 0.5em 0px 0.5em;">
         <form name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
           <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
-            <h1>Bulk Monitor: <%= (new ObjectReference(obj, app)).getTitle() %> - <%= (new ObjectReference(obj, app)).getLabel() %></h1>
+			<input type="Submit" name="Refresh" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
+			<input type="Submit" name="Close" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
+			<br />          
+            <h1>Workflows for: <%= (new ObjectReference(obj, app)).getTitle() %> - <%= (new ObjectReference(obj, app)).getLabel() %></h1>
             <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI%>" value="<%= wc.getObjectIdentity().toXRI() %>" />
             <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID%>" value="<%= wc.getRequestId() %>" />
 			<table class="processTable">
 				<tr class="header">
+				    <td />
 					<td><%= wc.getFieldLabel(BulkActivityWorkflowMonitorController.WFPROCESSINSTANCE_CLASS, "name", app.getCurrentLocaleAsIndex()) %></td>
 					<td><%= wc.getFieldLabel(BulkActivityWorkflowMonitorController.WFPROCESSINSTANCE_CLASS, "lastActivityOn", app.getCurrentLocaleAsIndex()) %></td>
 					<td><%= wc.getFieldLabel(BulkActivityWorkflowMonitorController.WFPROCESSINSTANCE_CLASS, "startedOn", app.getCurrentLocaleAsIndex()) %></td>
@@ -229,8 +214,28 @@ org.openmdx.kernel.exception.*
 						SimpleDateFormat dtf = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", app.getCurrentLocale());
 						dtf.setTimeZone(TimeZone.getTimeZone(app.getCurrentTimeZone()));							
 						String processName = (wfProcessInstance.getProcess() != null ? wc.getLastElementOfName(wfProcessInstance.getProcess().getName()) : "?");
+						BulkActivityWorkflowMonitorController.ProcessState processState = wc.getState(wfProcessInstance);
+						String imageProcessState = null;
+						switch(processState) {
+							case NA:
+								imageProcessState = null;
+								break;
+							case PENDING_NOTYETSTARTED:
+								imageProcessState = "filter_all";
+								break;
+							case PENDING_STARTED:
+								imageProcessState = "filter_pending";
+								break;
+							case COMPLETED_FAILURE:
+								imageProcessState = "filter_notok";
+								break;
+							case COMPLETED_SUCCESS:
+								imageProcessState = "filter_ok";
+								break;
+						}
 %>
-						<tr class="process <%= wc.getState(wfProcessInstance)%>">
+						<tr class="process">
+						    <td width="40px" style="background-color:white;text-align:center;"><img src="../../images/<%= imageProcessState %>.gif"/></td>
 							<td><a href="<%= wfProcessInstanceHref %>" target="_blank"><%= wfProcessInstance.getName() == null ? "N/A" : wfProcessInstance.getName() %></a></td>
 							<td><a href="<%= wfProcessInstanceHref %>" target="_blank"><%= wfProcessInstance.getLastActivityOn() != null ? dtf.format(wfProcessInstance.getLastActivityOn()) : "" %></a></td>
 							<td><a href="<%= wfProcessInstanceHref %>" target="_blank"><%= wfProcessInstance.getStartedOn() != null ? dtf.format(wfProcessInstance.getStartedOn()) : "" %></a></td>
@@ -247,9 +252,10 @@ org.openmdx.kernel.exception.*
 %>
 								<tr class="log">
 									<td/>
-									<td><%= dtf.format(entry.getCreatedAt()) %></td>
-									<td><%= entry.getName() %></td>
-									<td colspan="3"><%= entry.getDescription() %></td>
+									<td/>
+									<td class="log"><%= dtf.format(entry.getCreatedAt()) %></td>
+									<td class="log"><%= entry.getName() %></td>
+									<td colspan="3" class="log"><%= entry.getDescription() %></td>
 								</tr>
 <%
 								counter--;
@@ -261,26 +267,18 @@ org.openmdx.kernel.exception.*
 						try {
 							if (!wfProcessInstance.getChildProcessInstance().isEmpty()) {
 								// child processes	
-								String childClass = "NA";
 								int countPending = wc.getCountChildrenPending(wfProcessInstance);
 								int countSuccess = wc.getCountChildrenSuccess(wfProcessInstance);
 								int countFailed = wc.getCountChildrenFailed(wfProcessInstance);
-								if (countPending > 0) {
-									childClass = "PENDING_STARTED";
-								} else if (countSuccess > 0) {
-									childClass = "COMPLETED_SUCCESS";
-								}
-								if (countFailed > 0) {
-									childClass = "COMPLETED_FAILURE";
-								}
 %>
 								<tr class="child">
-									<td>\</td>
-									<td class="<%= childClass %>">Child Processes</td>
-									<td class="<%= childClass %>"><%= countPending == 0 ? "Complete" : "in progress..." %></td>
-									<td class="<%= childClass %>" colspan="3">{Success: <%= countSuccess %>, Failed: <%= countFailed %>, Pending: <%= countPending %>, Total: <%= countSuccess+countFailed+countPending %>}</td>
+									<td/>
+									<td/>
+									<td class="child">Child Processes</td>
+									<td class="child"><%= countPending == 0 ? "Complete" : "in progress..." %></td>
+									<td colspan="3" class="child">{Success: <%= countSuccess %>, Failed: <%= countFailed %>, Pending: <%= countPending %>, Total: <%= countSuccess+countFailed+countPending %>}</td>
 								</tr>
-<%								
+<%
 							}
 						} catch(Exception e) {
 							new ServiceException(e).log();
@@ -291,6 +289,7 @@ org.openmdx.kernel.exception.*
 		    	}
 %>
 			</table>
+			<br />
 			<input type="Submit" name="Refresh" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
 			<input type="Submit" name="Close" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" /><br>
 		  </div>

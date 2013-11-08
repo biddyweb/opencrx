@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:91" _operation="create">
                     <_object>
                       <label>
-                        <_item>Účet / Používateľ</_item>
+                        <_item>Účet (klient) / Používateľ</_item>
                       </label>
                       <toolTip>
-                        <_item>Účet / Používateľ</_item>
+                        <_item>Účet (klient) / Používateľom definované polia</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -204,7 +204,7 @@
                         <_item>extNumber0</_item>
                       </label>
                       <toolTip>
-                        <_item>extNumber0</_item>
+                        <_item>ext</_item>
                       </toolTip>
                     </_object>
                     <_content/>

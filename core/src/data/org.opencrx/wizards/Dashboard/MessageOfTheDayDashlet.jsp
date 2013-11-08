@@ -1,7 +1,7 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%><%
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: MessageOfTheDayDashlet
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
  * ====================================================================
@@ -9,7 +9,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2009-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2009-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,6 +69,7 @@ org.openmdx.kernel.log.*
 " %>
 
 <%!
+	final static String DOCUMENT_PREFIX = "document:";
 
 	public org.opencrx.kernel.document1.jmi1.Document findDocument(
 		String documentName,
@@ -78,6 +79,50 @@ org.openmdx.kernel.log.*
 			documentName,
 			segment
 		);
+	}
+
+	public String documentContentToString(
+		org.opencrx.kernel.document1.jmi1.Document document,
+		List<String> documentNames,
+		org.opencrx.kernel.document1.jmi1.Segment documentSegment
+	) {
+		String content = "";
+		if (document != null) {
+			try {
+				org.opencrx.kernel.document1.jmi1.MediaContent headRevision =
+					(org.opencrx.kernel.document1.jmi1.MediaContent)document.getHeadRevision();
+				ByteArrayOutputStream bos = new ByteArrayOutputStream();
+				org.w3c.cci2.BinaryLargeObjects.streamCopy(
+					headRevision.getContent().getContent(),
+					0L,
+					bos
+				);
+				bos.close();
+				String[] pieces = (new String(bos.toByteArray(), "UTF-8")).split(DOCUMENT_PREFIX);
+				for(int idx = 0; pieces != null && idx < pieces.length;) {
+					content += pieces[idx++];
+					if (idx < pieces.length) {
+						// test for valid document reference (by document name)
+						int endPos = pieces[idx].indexOf("\\");
+						String documentName = (pieces[idx].substring(0, endPos)).trim();
+						if (!documentNames.contains(documentName)) { /* avoid endless recursion! */
+							documentNames.add(documentName);
+							org.opencrx.kernel.document1.jmi1.Document docToInclude = findDocument (
+								documentName,
+								documentSegment
+							);
+							content += documentContentToString(docToInclude, documentNames, documentSegment);
+						} else {
+							content += "(WARNING: DocumentRecursion!)";
+						}
+						pieces[idx] = pieces[idx].substring(endPos+1);
+					}
+				}
+			} catch (Exception e) {
+				new ServiceException(e).log();
+			}
+		}
+		return content;
 	}
 
 %><%
@@ -97,30 +142,23 @@ org.openmdx.kernel.log.*
 				RefObject_1_0 obj = (RefObject_1_0)pm.getObjectById(new Path(xri));
 				String providerName = obj.refGetPath().get(2);
 				String segmentName = obj.refGetPath().get(4);
-				
 				org.opencrx.kernel.document1.jmi1.Segment documentSegment = Documents.getInstance().getDocumentSegment(pm, providerName, segmentName);
-				
+				List<String> documentNames = new ArrayList<String>();
+				documentNames.add(MESSAGE_OF_THE_DAY_DOCUMENT_NAME);
 				String messageOfTheDay = "";
 				try {
 					org.opencrx.kernel.document1.jmi1.Document messageOfTheDayDoc = findDocument (
 						MESSAGE_OF_THE_DAY_DOCUMENT_NAME,
 						documentSegment
 					);
-					if (messageOfTheDayDoc != null) {
-						org.opencrx.kernel.document1.jmi1.MediaContent headRevision =
-							(org.opencrx.kernel.document1.jmi1.MediaContent)messageOfTheDayDoc.getHeadRevision();
-						ByteArrayOutputStream bos = new ByteArrayOutputStream();
-						org.w3c.cci2.BinaryLargeObjects.streamCopy(
-							headRevision.getContent().getContent(),
-							0L,
-							bos
-						);
-						bos.close();
-						messageOfTheDay += "<pre>" + headRevision.getModifiedAt() + "</pre>";
-						messageOfTheDay += new String(bos.toByteArray(), "UTF-8");
-						messageOfTheDay += "<br />";
-					}
-					if(messageOfTheDay.length() == 0) {
+					messageOfTheDay += "<pre>" + messageOfTheDayDoc.getModifiedAt() + "</pre>";
+					messageOfTheDay += documentContentToString(
+						messageOfTheDayDoc,
+						documentNames,
+						documentSegment
+				 	);
+					messageOfTheDay += "<br />";
+					if(messageOfTheDay.isEmpty()) {
 						messageOfTheDay += "<pre> no message as of " + new Date() + "</pre>";
 					}
 				} catch (Exception e) {
@@ -135,8 +173,7 @@ org.openmdx.kernel.log.*
 %>
 				<%= messageOfTheDay %>
 <%
-			}
-			else {
+			} else {
 %>
 				<p>
 			    <i>Dashlet invoked with missing or invalid parameters:</i>

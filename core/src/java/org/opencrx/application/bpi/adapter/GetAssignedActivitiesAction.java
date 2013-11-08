@@ -55,6 +55,7 @@ package org.opencrx.application.bpi.adapter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.jdo.PersistenceManager;
@@ -65,8 +66,12 @@ import org.opencrx.application.bpi.datatype.BpiActivity;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
+import org.opencrx.kernel.backend.Activities;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.Queries;
+import org.openmdx.base.rest.spi.Facades;
+import org.openmdx.base.rest.spi.Query_2Facade;
 
 /**
  * Get Contact's assigned activities action.
@@ -88,26 +93,55 @@ public class GetAssignedActivitiesAction extends BpiAction {
     	if(contacts == null || contacts.isEmpty()) {
     		resp.setStatus(HttpServletResponse.SC_NOT_FOUND); 
     	} else {
-    		Contact contact = contacts.iterator().next();
-    		List<BpiActivity> bpiAssignedActivities = new ArrayList<BpiActivity>();
-    		ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(Activity.class);
-    		activityQuery.orderByCreatedAt().descending();
-    		activityQuery.forAllDisabled().isFalse();
-    		int count = 0;
-    		for(Activity activity: contact.<Activity>getAssignedActivity(activityQuery)) {
-    			bpiAssignedActivities.add(
-    				plugIn.toBpiActivity(activity, plugIn.newBpiActivity(), false)
-    			);
-    			count++;
-    			if(count > 500) {
-    				break;
-    			}
+    		try {
+    			org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, path.get(2), path.get(4));    			
+	    		Contact contact = contacts.iterator().next();
+		        Query_2Facade queryFacade = Facades.newQuery(
+		        	activitySegment.refGetPath().getChild("activity")
+		        );
+		        queryFacade.setQueryType("org:opencrx:kernel:activity1:Activity");
+		        String query = req.getParameter("query"); 
+		        queryFacade.setQuery(query);
+		        String position = req.getParameter("position");
+		        queryFacade.setPosition(
+		            position == null ? Integer.valueOf(DEFAULT_POSITION) : Integer.valueOf(position)
+		        );
+		        String size = req.getParameter("size");
+		        queryFacade.setSize(
+		            Integer.valueOf(size == null ? DEFAULT_SIZE : Integer.parseInt(size))
+		        );
+		        ActivityQuery activityQuery = (ActivityQuery)pm.newQuery(
+		        	Queries.QUERY_LANGUAGE, 
+		        	queryFacade.getDelegate()
+		        );
+	    		List<BpiActivity> bpiAssignedActivities = new ArrayList<BpiActivity>();
+	    		int count = 0;
+	    		for(Iterator<Activity> i =  contact.<Activity>getAssignedActivity(activityQuery).listIterator(queryFacade.getPosition().intValue()); i.hasNext(); ) {
+	    			Activity activity = i.next();	    		
+	    			bpiAssignedActivities.add(
+	    				plugIn.toBpiActivity(
+	    					activity, 
+	    					plugIn.newBpiActivity(), 
+	    					this.getFetchGroup(req)
+	    				)
+	    			);
+	    			count++;
+	    			if(count > queryFacade.getSize()) {
+	    				break;
+	    			}
+	    		}
+	    		resp.setCharacterEncoding("UTF-8");
+	    		resp.setContentType("application/json");
+	    		PrintWriter pw = resp.getWriter();
+	    		plugIn.printObject(pw, bpiAssignedActivities);
+	    		resp.setStatus(HttpServletResponse.SC_OK);
+    		} catch(Exception e) {
+        		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);	    			
+    			new ServiceException(e).log();
+    			try {
+    				pm.currentTransaction().rollback();
+    			} catch(Exception ignore) {}
     		}
-    		resp.setCharacterEncoding("UTF-8");
-    		resp.setContentType("application/json");
-    		PrintWriter pw = resp.getWriter();
-    		plugIn.printObject(pw, bpiAssignedActivities);
-    		resp.setStatus(HttpServletResponse.SC_OK);
     	}
     }
 

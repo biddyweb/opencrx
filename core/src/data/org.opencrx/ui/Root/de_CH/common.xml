@@ -471,6 +471,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:involvedObject" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Involvierte Objekte</_item>
+											</toolTip>
+											<label>
+												<_item>»Involvierte Objekte</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:rating" _operation="create">
                     <_object>
                       <label>
@@ -630,21 +641,32 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dokumente</_item>
+                        <_item>Dokument</_item>
                       </label>
                       <toolTip>
-                        <_item>Dokumente</_item>
+                        <_item>Dokument</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:Pane:Attr:Tab:0:Group:0" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:name" _operation="create">
                     <_object>
                       <label>
-                        <_item>Dokument</_item>
+                        <_item>Name</_item>
                       </label>
                       <toolTip>
-                        <_item>Dokument</_item>
+                        <_item>Name</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beschreibung</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beschreibung</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -656,17 +678,6 @@
                       </label>
                       <toolTip>
                         <_item>Dokument</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:DocumentAttachment:description" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Beschreibung</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Beschreibung der Dokumentbeilage</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -759,6 +770,86 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject">
+										<_object>
+											<toolTip>
+												<_item>Involviertes Objekt</_item>
+											</toolTip>
+											<label>
+												<_item>Involviertes Objekt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:name">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:description">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:involvedRole">
+										<_object>
+											<toolTip>
+												<_item>Rolle</_item>
+											</toolTip>
+											<label>
+												<_item>Rolle</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:involved">
+										<_object>
+											<toolTip>
+												<_item>Involviertes Objekt</_item>
+											</toolTip>
+											<label>
+												<_item>Involviertes Objekt</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:validFrom">
+										<_object>
+											<toolTip>
+												<_item>Gültig ab</_item>
+											</toolTip>
+											<label>
+												<_item>Gültig ab</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:InvolvedObject:validTo">
+										<_object>
+											<toolTip>
+												<_item>Gültig bis</_item>
+											</toolTip>
+											<label>
+												<_item>Gültig bis</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Rating" _operation="create">
                     <_object>
                       <label>
@@ -810,6 +901,17 @@
                       </label>
                       <toolTip>
                         <_item>Bewertet von</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:Rating:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Name</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Name</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -1133,6 +1235,52 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Zusätzlicher Externer Link</_item>
+											</toolTip>
+											<label>
+												<_item>Zusätzlicher Externer Link</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:Pane:Attr:Tab:0:Group:0" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Extent</_item>
+											</toolTip>
+											<label>
+												<_item>Extent</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:name" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:AdditionalExternalLink:description" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="Pane:Op:100" _operation="create">
                     <_object>
                       <label>

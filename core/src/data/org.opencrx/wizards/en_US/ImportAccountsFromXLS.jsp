@@ -124,7 +124,7 @@ if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
 	<table class="gridTableFull" onmouseover="javascript:$('WaitIndicator').style.display='none';">
 <%
 		ImportAccountsFromXlsController.ProgressMeter progressMeter = new ImportAccountsFromXlsController.ProgressMeter();
-		session.setAttribute(wc.getWizardName(), progressMeter);
+		session.setAttribute(wc.getWizardName() + wc.getRequestId(), progressMeter);
 		wc.performImport(out, progressMeter); 
 %>
 	</table>
@@ -136,7 +136,7 @@ if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
 		<br />
 		<br />
 <%
-		ImportAccountsFromXlsController.ProgressMeter progressMeter = (ImportAccountsFromXlsController.ProgressMeter)session.getAttribute(wc.getWizardName());
+		ImportAccountsFromXlsController.ProgressMeter progressMeter = (ImportAccountsFromXlsController.ProgressMeter)session.getAttribute(wc.getWizardName() + wc.getRequestId());
 		if(progressMeter != null) {
 %>
 			<%= progressMeter.getCurrent() %> / <%= progressMeter.getTotal() %>

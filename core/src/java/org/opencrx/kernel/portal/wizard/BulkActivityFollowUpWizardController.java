@@ -72,6 +72,8 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcess;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
+import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
+import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.backend.Workflows;
@@ -80,10 +82,12 @@ import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.portal.servlet.AbstractWizardController;
+import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 
@@ -296,6 +300,21 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
         return selectableProcessTransitions;
 	}
 
+	/**
+	 * Get exit action after doOK was processed successfully.
+	 * 
+	 * @param targetObject
+	 * @return
+	 */
+	protected Action getAfterOKExitAction(
+		RefObject_1_0 targetObject
+	) {
+		return new ObjectReference(
+			targetObject, 
+			this.getApp()
+		).getSelectObjectAction();
+	}
+
 	/* (non-Javadoc)
 	 * @see org.openmdx.portal.servlet.AbstractWizardController#init(javax.servlet.http.HttpServletRequest, java.lang.String, boolean, boolean)
 	 */
@@ -326,7 +345,6 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 	public void doOK(
 		@RequestParameter(type = "Bean") FormFields formFields
 	) throws ServiceException {
-		ApplicationContext app = this.getApp();
 		PersistenceManager pm = this.getPm();
 		this.doRefresh(formFields);
 		final GregorianCalendar NOW = this.getLocalizedCalendar();
@@ -338,10 +356,7 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 			// Transition 1
 			if(
 				this.formFields.getProcessTransitionXri0() != null && 
-				!this.formFields.getProcessTransitionXri0().isEmpty() &&
-				this.formFields.getFollowUpTitle0() != null &&
-				!this.formFields.getFollowUpTitle0().isEmpty()
-				
+				!this.formFields.getProcessTransitionXri0().isEmpty()
 			) {
 				ActivityProcessTransition processTransition = null;
 				processTransitions.add(
@@ -355,9 +370,7 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 				// Transition 2
 				if(
 					this.formFields.getProcessTransitionXri1() != null && 
-					!this.formFields.getProcessTransitionXri1().isEmpty() &&
-					this.formFields.getFollowUpTitle1() != null &&
-					!this.formFields.getFollowUpTitle1().isEmpty()
+					!this.formFields.getProcessTransitionXri1().isEmpty()
 				) {
 					processTransitions.add(
 						processTransition = (ActivityProcessTransition)pm.getObjectById(
@@ -381,13 +394,15 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 	  				PropertySet executionTarget = null;
 	    	    	// Asynchronous execution, i.e. create timer
 					if(
-			    	    (this.timerName != null) &&
 		    	    	Boolean.TRUE.equals(this.formFields.getUseTimer()) &&
 						this.triggerAtDate != null &&
 						this.triggerAtDate.compareTo(NOW) > 0
 					) {
 						org.opencrx.kernel.home1.jmi1.Timer timer = pm.newInstance(org.opencrx.kernel.home1.jmi1.Timer.class);
-						timer.setName(transitionNames + ": " + this.timerName);
+						timer.setName(
+							(this.timerName == null || this.timerName.isEmpty() ? "" : this.timerName + ": ") +
+							this.activityGroup.getName() + " / " + transitionNames + " / " + currentUserHome.refGetPath().getBase() 
+						);
 						timer.setTimerStartAt(this.triggerAtDate.getTime());
 						try {
 							if (wfProcess != null) {
@@ -397,7 +412,7 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 							new ServiceException(e).log();
 						}
 						timer.setTriggerRepeat(1);
-						timer.setTriggerIntervalMinutes(1);
+						timer.setTriggerIntervalMinutes(5); /* note that this value MUST be bigger than the ping interval of the subscription handler */
 						timer.setDisabled(false);
 						timer.setTimerState(new Short((short)10)); // open
 						GregorianCalendar endAt = (GregorianCalendar)this.triggerAtDate.clone();
@@ -409,9 +424,8 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 							timer
 						);
 						executionTarget = timer;
-					}
-					// Create workflow instance
-					else {
+					} else {
+						// Create workflow instance
 						executionTarget = Workflows.getInstance().executeWorkflow(
 							this.activityGroup.getName() + " / " + transitionNames + " / " + currentUserHome.refGetPath().getBase(),
 							currentUserHome,
@@ -475,9 +489,10 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 						}
 					}
 					pm.currentTransaction().commit();
-					this.setExitAction(
-						new ObjectReference(wfProcess, app).getSelectObjectAction()
-					);
+					Action exitAction = this.getAfterOKExitAction(this.activityGroup);
+					if(exitAction != null) {
+						this.setExitAction(exitAction);
+					}
 				} catch(Exception e) {
 					try {
 						pm.currentTransaction().rollback();
@@ -506,6 +521,7 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 				? dateFormat.format(proposedTriggerAt.getTime()) 
 				: this.formFields.getTriggerAt()
 		);
+		this.timerName = this.formFields.getTimerName(); 
 		this.triggerAtDate = null;
 		try {
 			if ((this.formFields.getTriggerAt() != null) && (this.formFields.getTriggerAt().length() == 16)) {
@@ -519,21 +535,23 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 		} catch (Exception ignore) {}
 		if(this.getObject() instanceof Activity) {
 			this.activity = (Activity)this.getObject();
-			this.timerName = timerName == null 
-				? (this.activity.getName() != null ? this.activity.getName() : "--") + " (" + app.getLoginPrincipal() + ")" 
-				: timerName;
 			// Get identity of activities to be updated
 			this.activityCount = 0;
 			if(this.formFields.getActivityGroupXri() == null || this.formFields.getActivityGroupXri().isEmpty()) {
+				// Derive main tracker from activity group assignments
+				List<ActivityGroup> activityGroups = new ArrayList<ActivityGroup>();
 				for(ActivityGroupAssignment activityGroupAssignment: this.activity.<ActivityGroupAssignment>getAssignedGroup()) {
 					try {
 						if(activityGroupAssignment.getActivityGroup() != null) {
-							this.formFields.setActivityGroupXri(
-								activityGroupAssignment.getActivityGroup().refGetPath().toXRI()
-							);
-							break;
+							activityGroups.add(activityGroupAssignment.getActivityGroup());
 						}
-					} catch (Exception ignore) {}
+					} catch(Exception ignore) {}
+				}
+				ActivityTracker mainActivityTracker = Activities.getInstance().getMainActivityTracker(activityGroups);
+				if(mainActivityTracker != null) {
+					this.formFields.setActivityGroupXri(
+						mainActivityTracker.refGetPath().toXRI()
+					);					
 				}
 			}
 			this.activityGroup = null;
@@ -557,18 +575,20 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 				}
 			}
 			if(this.activity != null) {
-				this.selectableProcessTransitions1 = this.getSelectableProcessTransitions(
-					this.activity.getActivityType().getControlledBy(), 
-					this.activity.getProcessState()
-				);
-				if(this.formFields.getProcessTransitionXri0() != null && !this.formFields.getProcessTransitionXri0().isEmpty()) {
-					ActivityProcessTransition processTransition2 = (ActivityProcessTransition)pm.getObjectById(
-						new Path(this.formFields.getProcessTransitionXri0())
+				if(this.activity.getActivityType() != null) {
+					this.selectableProcessTransitions1 = this.getSelectableProcessTransitions(
+						this.activity.getActivityType().getControlledBy(), 
+						this.activity.getProcessState()
 					);
-					this.selectableProcessTransitions2 = this.getSelectableProcessTransitions(
-						this.activity.getActivityType().getControlledBy(),
-						processTransition2.getNextState()
-					);
+					if(this.formFields.getProcessTransitionXri0() != null && !this.formFields.getProcessTransitionXri0().isEmpty()) {
+						ActivityProcessTransition processTransition2 = (ActivityProcessTransition)pm.getObjectById(
+							new Path(this.formFields.getProcessTransitionXri0())
+						);
+						this.selectableProcessTransitions2 = this.getSelectableProcessTransitions(
+							this.activity.getActivityType().getControlledBy(),
+							processTransition2.getNextState()
+						);
+					}
 				}
 			}
 		}

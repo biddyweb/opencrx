@@ -88,6 +88,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityFilterGlobal:activitiesSource" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Zdroj</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Zdroj aktivít</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:AbstractFilterActivity:filterProperty" _operation="create">
                     <_object>
                       <label>
@@ -302,8 +313,58 @@
                       <label>
                         <_item>Pridelené k</_item>
                       </label>
+                      <shortLabel>
+                        <_item>Hlasené (kým) / Pridelené k</_item>
+                      </shortLabel>
                       <toolTip>
                         <_item>Pridelené k</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter - Hlasené kontaktom</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter - Hlasené kontaktom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByContactFilterProperty:contact" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hlasené (kým)</_item>
+                      </label>
+                      <shortLabel>
+                        <_item>Hlasené (kým) / Pridelené k</_item>
+                      </shortLabel>
+                      <toolTip>
+                        <_item>Hlasené (kým)</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Filter - Hlasené kontaktom</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Filter - Hlasené kontaktom</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ReportedByAccountFilterProperty:account" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Hlasené (kým)</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Hlasené (kým)</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -40,6 +40,35 @@
                       </additionalElementDefinition>
                     </_content>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>指定地址</_item>
+                      </label>
+                      <toolTip>
+                        <_item>指定地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:assignedAddress" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>指定地址(禁用)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>指定地址(禁用)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:building1:AbstractBuildingUnit:assignedAddress" _operation="create">
                     <_object>
                       <label>
@@ -91,6 +120,160 @@
                       </label>
                       <toolTip>
                         <_item>地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>合并到其他地址</_item>
+                      </label>
+                      <toolTip>
+                        <_item>合并到其他地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:updateRelationshipsSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>更新此后关系</_item>
+                      </label>
+                      <toolTip>
+                        <_item>更新此后关系</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:updateRelationshipsBefore" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>更新之前关系</_item>
+                      </label>
+                      <toolTip>
+                        <_item>更新之前关系</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressParams:targetAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>合并到地址</_item>
+                      </label>
+                      <toolTip>
+                        <_item>合并到地址</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressResult:count" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>引用更新</_item>
+                      </label>
+                      <toolTip>
+                        <_item>引用更新</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>移动地址到其他账号</_item>
+                      </label>
+                      <toolTip>
+                        <_item>移动地址到其他账号</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount:Group:in" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>输入</_item>
+                      </label>
+                      <toolTip>
+                        <_item>输入</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:updateRelationshipsSince" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>更新此后关系</_item>
+                      </label>
+                      <toolTip>
+                        <_item>更新此后关系</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:updateRelationshipsBefore" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>更新之前关系</_item>
+                      </label>
+                      <toolTip>
+                        <_item>更新之前关系</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountParams:targetAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>移动地址到账号</_item>
+                      </label>
+                      <toolTip>
+                        <_item>移动地址到账号</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddressToAccount:Group:result" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>结果</_item>
+                      </label>
+                      <toolTip>
+                        <_item>结果</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:MoveAddressToAccountResult:count" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>引用已更新</_item>
+                      </label>
+                      <toolTip>
+                        <_item>引用已更新</_item>
                       </toolTip>
                     </_object>
                     <_content/>

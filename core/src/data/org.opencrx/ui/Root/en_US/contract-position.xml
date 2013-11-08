@@ -1089,6 +1089,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Description</_item>
 											</toolTip>
@@ -1107,6 +1108,7 @@
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Detailed description</_item>
 											</toolTip>
@@ -1127,6 +1129,7 @@
 											<alternateElementDefinition>
 												<org.openmdx.ui1.AlternateElementDefinition id="0">
 													<_object>
+														<changeable>false</changeable>
 														<toolTip>
 															<_item>UOM (quantity)</_item>
 														</toolTip>
@@ -1148,6 +1151,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Description</_item>
 											</toolTip>
@@ -1166,6 +1170,7 @@
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Detailed description</_item>
 											</toolTip>
@@ -1186,6 +1191,7 @@
 											<alternateElementDefinition>
 												<org.openmdx.ui1.AlternateElementDefinition id="0">
 													<_object>
+														<changeable>false</changeable>
 														<toolTip>
 															<_item>UOM (price)</_item>
 														</toolTip>
@@ -1207,6 +1213,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Description</_item>
 											</toolTip>
@@ -1225,6 +1232,7 @@
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Detailed description</_item>
 											</toolTip>
@@ -1246,6 +1254,7 @@
 												<org.openmdx.ui1.AlternateElementDefinition id="0">
 													<_object>
 														<columnBreak>false</columnBreak>
+														<changeable>false</changeable>
 														<toolTip>
 															<_item>Sales tax type</_item>
 														</toolTip>
@@ -1267,6 +1276,7 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Description</_item>
 											</toolTip>
@@ -1285,6 +1295,7 @@
 										<_object>
 											<spanRow>20</spanRow>
 											<active>true</active>
+											<changeable>false</changeable>
 											<toolTip>
 												<_item>Detailed description</_item>
 											</toolTip>

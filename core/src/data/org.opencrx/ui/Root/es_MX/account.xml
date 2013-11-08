@@ -62,17 +62,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:externalLink" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Liga externa</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Liga externa</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:Pane:Attr:Tab:25" _operation="create">
                     <_object>
                       <label>
@@ -89,9 +78,6 @@
                       <label>
                         <_item>Cuenta</_item>
                       </label>
-                      <toolTip>
-                        <_item>Cuenta</_item>
-                      </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -223,17 +209,6 @@
                       </label>
                       <toolTip>
                         <_item>Válido hasta</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:Pane:Op:Tab:importItem" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Importar</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Importar Artículo</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -112,16 +112,11 @@
 											<label>
 												<_item>Detailed description</_item>
 											</label>
-											<orderFieldGroup>
+											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>30</_item>
-											</orderFieldGroup>
-											<orderObjectGroup>
-												<_item>99</_item>
-												<_item>0</_item>
-												<_item>0</_item>
-											</orderObjectGroup>
+											</order>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>

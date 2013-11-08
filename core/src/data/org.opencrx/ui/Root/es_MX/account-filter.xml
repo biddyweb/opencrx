@@ -11,17 +11,6 @@
               <_object/>
               <_content>
                 <elementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Cuentas Filtradas</_item>
-                      </label>
-                      <toolTip>
-                        <_item>todas las cuentas filtradas</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:accountFilterProperty" _operation="create">
                     <_object>
                       <label>
@@ -29,6 +18,17 @@
                       </label>
                       <toolTip>
                         <_item>todas las propiedades filtradas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:filteredAccount" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cuentas Filtradas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>todas las cuentas filtradas</_item>
                       </toolTip>
                     </_object>
                     <_content/>

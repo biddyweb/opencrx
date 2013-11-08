@@ -473,17 +473,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContext" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Začiatky</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Začiatky</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:quantity" _operation="create">
                     <_object>
                       <label>
@@ -513,17 +502,6 @@
                       </label>
                       <toolTip>
                         <_item>Začiatok id</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:SimpleBooking:originContextParams" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Parametre začiatku</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Parametre začiatku</_item>
                       </toolTip>
                     </_object>
                     <_content/>

@@ -7,7 +7,7 @@
 1. Create the file build.properties in your home directory with the 
    following content:
    
-   opencrx-test.core.datasource=jdbc:postgresql:\/\/localhost\/CRX_2_9?user=postgres&password=manager99&driver=org.postgresql.Driver
+   opencrx-test.core.datasource=jdbc:postgresql:\/\/localhost\/CRX?user=postgres&password=manager99&driver=org.postgresql.Driver
 
 2. Database configuration
    Amend the openCRX database configuration as follows:

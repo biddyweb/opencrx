@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.jdo.FetchGroup;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -85,12 +86,27 @@ public class GetActivityAction extends BpiAction {
     	if(activities == null || activities.isEmpty()) {
     		resp.setStatus(HttpServletResponse.SC_NOT_FOUND); 
     	} else {
-    		Activity activity = activities.iterator().next();
-    		resp.setCharacterEncoding("UTF-8");
-    		resp.setContentType("application/json");
-    		PrintWriter pw = resp.getWriter();
-    		plugIn.printObject(pw, plugIn.toBpiActivity(activity, plugIn.newBpiActivity()));
-    		resp.setStatus(HttpServletResponse.SC_OK);
+    		try {
+	    		Activity activity = activities.iterator().next();
+	    		resp.setCharacterEncoding("UTF-8");
+	    		resp.setContentType("application/json");
+	    		PrintWriter pw = resp.getWriter();
+	    		plugIn.printObject(
+	    			pw, 
+	    			plugIn.toBpiActivity(
+	    				activity, 
+	    				plugIn.newBpiActivity(),
+	    				FetchGroup.ALL
+	    			)
+	    		);
+	    		resp.setStatus(HttpServletResponse.SC_OK);
+    		} catch(Exception e) {
+        		resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);	    			
+    			new ServiceException(e).log();
+    			try {
+    				pm.currentTransaction().rollback();
+    			} catch(Exception ignore) {}
+    		}
     	}
     }
 

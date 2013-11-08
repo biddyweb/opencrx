@@ -61,12 +61,24 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.kernel.home1.cci2.DocumentFeedQuery;
+import org.opencrx.kernel.home1.cci2.DocumentFilterFeedQuery;
 import org.opencrx.kernel.home1.jmi1.DocumentFeed;
+import org.opencrx.kernel.home1.jmi1.DocumentFilterFeed;
 import org.opencrx.kernel.home1.jmi1.DocumentProfile;
 import org.opencrx.kernel.home1.jmi1.SyncProfile;
 
+/**
+ * DocumentProfileResource
+ *
+ */
 class DocumentProfileResource extends WebDavResource {
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param requestContext
+	 * @param syncProfile
+	 */
 	public DocumentProfileResource(
 		RequestContext requestContext,
 		DocumentProfile syncProfile
@@ -74,40 +86,64 @@ class DocumentProfileResource extends WebDavResource {
 		super(requestContext, syncProfile);
 	}
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.webdav.WebDavResource#getObject()
+	 */
 	@Override
     public DocumentProfile getObject(
     ) {
         return (DocumentProfile)super.getObject();
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#getDisplayName()
+	 */
+	@Override
 	public String getDisplayName(
 	) {
 		return this.getObject().getName();
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.uses.net.sf.webdav.Resource#isCollection()
+	 */
 	@Override
     public boolean isCollection(
     ) {
 		return true;
     }
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.webdav.WebDavResource#getChildren()
+	 */
 	@Override
 	public Collection<Resource> getChildren(
 	) {
 		SyncProfile syncProfile = this.getObject();
 		PersistenceManager pm = JDOHelper.getPersistenceManager(syncProfile);
-		DocumentFeedQuery query = (DocumentFeedQuery)pm.newQuery(DocumentFeed.class);
-		query.thereExistsIsActive().isTrue();
 		Collection<Resource> children = new ArrayList<Resource>();
-		Collection<DocumentFeed> documentFeeds = syncProfile.getFeed(query);
-		for(DocumentFeed documentFeed: documentFeeds) {
+		// DocumentFolder feeds
+		DocumentFeedQuery documentFeedQuery = (DocumentFeedQuery)pm.newQuery(DocumentFeed.class);
+		documentFeedQuery.thereExistsIsActive().isTrue();
+		for(DocumentFeed documentFeed: syncProfile.<DocumentFeed>getFeed(documentFeedQuery)) {
 			children.add(
-				new DocumentFeedResource(
+				new DocumentFolderFeedResource(
 					this.getRequestContext(),
 					documentFeed
 				)
 			);
 		}
+		// DocumentFilter feeds
+		DocumentFilterFeedQuery documentFilterFeedQuery = (DocumentFilterFeedQuery)pm.newQuery(DocumentFilterFeed.class);
+		documentFilterFeedQuery.thereExistsIsActive().isTrue();
+		for(DocumentFilterFeed documentFilterFeed: syncProfile.<DocumentFilterFeed>getFeed(documentFilterFeedQuery)) {
+			children.add(
+				new DocumentFilterFeedResource(
+					this.getRequestContext(),
+					documentFilterFeed
+				)
+			);
+		}		
 		return children;
 	}
 

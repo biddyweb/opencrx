@@ -174,21 +174,29 @@ public class AdapterConnectionHelper {
 				for(SyncFeed feed: calendarProfile.<SyncFeed>getFeed()) {
 					if(Boolean.TRUE.equals(feed.isActive())) {
 						if(feed instanceof ActivityFilterCalendarFeed) {
-							paths.addAll(
-								getCalendarPaths(
-									((ActivityFilterCalendarFeed)feed).getActivityFilter(),
-									isCollectionTypeTask,
-									suffix
-								)
-							);
+							try {
+								paths.addAll(
+									getCalendarPaths(
+										((ActivityFilterCalendarFeed)feed).getActivityFilter(),
+										isCollectionTypeTask,
+										suffix
+									)
+								);
+							} catch(Exception ignore) {
+								// In case of AUTHORIZATION_FAILUREs
+							}
 						} else if(feed instanceof ActivityGroupCalendarFeed) {
-							paths.addAll(
-								getCalendarPaths(
-									((ActivityGroupCalendarFeed)feed).getActivityGroup(),
-									isCollectionTypeTask,
-									suffix
-								)
-							);
+							try {
+								paths.addAll(
+									getCalendarPaths(
+										((ActivityGroupCalendarFeed)feed).getActivityGroup(),
+										isCollectionTypeTask,
+										suffix
+									)
+								);
+							} catch(Exception ignore) {
+								// In case of AUTHORIZATION_FAILUREs								
+							}
 						}
 					}
 				}
@@ -231,14 +239,18 @@ public class AdapterConnectionHelper {
 		    } else if(obj instanceof CardProfile) {
 		    	CardProfile cardProfile = (CardProfile)obj;
 				for(SyncFeed feed: cardProfile.<SyncFeed>getFeed()) {
-					if(Boolean.TRUE.equals(feed.isActive())) {					
-						if(feed instanceof ContactsFeed) {
-							paths.addAll(
-								getCardPaths(
-									((ContactsFeed)feed).getAccountGroup(),
-									suffix
-								)
-							);
+					if(Boolean.TRUE.equals(feed.isActive())) {
+						try {
+							if(feed instanceof ContactsFeed) {
+								paths.addAll(
+									getCardPaths(
+										((ContactsFeed)feed).getAccountGroup(),
+										suffix
+									)
+								);
+							}
+						} catch(Exception igore) {
+							// In case of AUTHORIZATION_FAILUREs							
 						}
 					}
 				}

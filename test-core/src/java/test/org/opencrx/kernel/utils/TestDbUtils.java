@@ -115,8 +115,10 @@ public class TestDbUtils {
 	    		conn.setAutoCommit(true);    		        	
 	        	DbSearchReplace.dbSearchReplace(
 	        		conn, 
-	        		"(.*)", // includes
-	        		"(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // excludes 
+	        		"(.*)", // table name includes
+	        		"(OOCKE1_ADDRESS.*)", // table name excludes
+	        		"(.*)", // column name includes
+	        		"(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // column name excludes 
 	        		"(/CRX/)",
 	        		"/MYCOMPANY/", 
 	        		true, // validateOnly 
@@ -124,8 +126,10 @@ public class TestDbUtils {
 	        	);
 	        	DbSearchReplace.dbSearchReplace(
 	        		conn, 
-	        		"(.*)", // includes
-	        		"(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // excludes 
+	        		"(.*)", // table name includes
+	        		"(OOCKE1_ADDRESS.*)", // table name excludes
+	        		"(.*)", // column name includes
+	        		"(TEXT)|(DESCRIPTION)|(DETAILED_DESCRIPTION)|(MESSAGE_BODY)|(STRING_VALUE)|(BEFORE_IMAGE)", // column name excludes 
 	        		"(guest)",
 	        		"newguest", 
 	        		true, // validateOnly 

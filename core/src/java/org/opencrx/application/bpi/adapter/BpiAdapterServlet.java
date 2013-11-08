@@ -130,6 +130,18 @@ public class BpiAdapterServlet extends HttpServlet {
         	new GetContactAction()
         );
         this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "contact"),
+        	new GetContactsAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "contact", ":*", "membership"),
+        	new GetContactMembershipsAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "organization"),
+        	new GetOrganizationsAction()
+        );
+        this.registerAction(
         	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "organization", ":*"),
         	new GetOrganizationAction()
         );
@@ -156,6 +168,30 @@ public class BpiAdapterServlet extends HttpServlet {
         this.registerAction(
         	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "contact", ":*", "assignedActivity"),
         	new GetAssignedActivitiesAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "addressGroup"),
+        	new GetAddressGroupsAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "addressGroup", ":*"),
+        	new GetAddressGroupAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "addressGroup", ":*", "member"),
+        	new GetAddressGroupMembersAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "accountFilter", ":*"),
+        	new GetAccountFilterAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "accountFilter", ":*", "contact"),
+        	new GetContactsAction()
+        );
+        this.registerAction(
+        	new Path("xri://@openmdx*org.opencrx.application.bpi1").getDescendant("provider", ":*", "segment", ":*", "accountFilter", ":*", "organization"),
+        	new GetOrganizationsAction()
         );
         this.plugIn = this.newPlugIn();
     }

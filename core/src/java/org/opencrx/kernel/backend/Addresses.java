@@ -84,35 +84,73 @@ public class Addresses extends AbstractImpl {
 		
 	}
 	
-    //-------------------------------------------------------------------------
-    public String mapToPostalCountryText(
+    /**
+     * Get short and long text for postal country code in locale = 0 (en_US)
+     * 
+     * @param countryCode
+     * @param codeSegment
+     * @return array with country long text at position 0 and short text at position 1. The array is of
+     *   	   length 1 if no short text is available. Returns null in case countryCode can not be mapped.
+     * @throws ServiceException
+     */
+    public String[] mapToPostalCountryText(
         short countryCode,
         org.opencrx.kernel.code1.jmi1.Segment codeSegment        
     ) throws ServiceException {
-    	String country = POSTAL_COUNTRIES_BY_CODE.get(Short.valueOf(countryCode));
-    	if(country != null) {
-    		return country;
-    	}
+    	return this.mapToPostalCountryText(
+    		countryCode, 
+    		(short)0, 
+    		codeSegment
+    	);
+    }
+
+    /**
+     * Get short and long text for postal country code.
+     * 
+     * @param countryCode
+     * @param locale
+     * @param codeSegment
+     * @return array with country long text at position 0 and short text at position 1. The array is of
+     *   	   length 1 if no short text is available. Returns null in case countryCode can not be mapped.
+     * @throws ServiceException
+     */
+    public String[] mapToPostalCountryText(
+        short countryCode,
+        short locale,
+        org.opencrx.kernel.code1.jmi1.Segment codeSegment        
+    ) throws ServiceException {
     	if(codeSegment != null) {
     		try {
 		    	Codes codes = new Codes(codeSegment);
-		    	country = (String)codes.getLongText(
+		    	String longTextCountry = (String)codes.getLongText(
 		    		"country", 
-		    		(short)0, 
+		    		locale, 
 		    		true, // codeAsKey 
 		    		true // includeAll
 		    	).get(countryCode);
-		    	if(country != null) {
+		    	if(locale == 0 && longTextCountry != null) {
 		    		POSTAL_COUNTRIES_BY_CODE.put(
 		    			countryCode,
-		    			country
+		    			longTextCountry
 		    		);
 		    	}
+		    	String shortTextCountry = (String)codes.getShortText(
+		    		"country", 
+		    		locale, 
+		    		true, // codeAsKey 
+		    		true // includeAll
+		    	).get(countryCode);
+		    	return new String[]{longTextCountry, shortTextCountry};
     		} catch(Exception e) {}    		
+    	} else {
+        	String longTextCountry = POSTAL_COUNTRIES_BY_CODE.get(Short.valueOf(countryCode));
+        	if(longTextCountry != null) {
+        		return new String[]{longTextCountry};
+        	}    		
     	}
     	return null;
     }
-    
+
     //-----------------------------------------------------------------------
     public short mapToPostalCountryCode(    	
         String country,
@@ -323,248 +361,248 @@ public class Addresses extends AbstractImpl {
     public static final Map<Short,Integer> PHONE_COUNTRIES = new HashMap<Short,Integer>();
     
     static {
-		POSTAL_COUNTRIES_BY_CODE.put((short)0, "N/A");
-		POSTAL_COUNTRIES_BY_CODE.put((short)4, "Afghanistan [AF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)8, "Albania [AL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)12, "Algeria [DZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)16, "American Samoa [AS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)20, "Andorra [AD]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)24, "Angola [AO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)660, "Anguilla [AI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)10, "Antarctica [AQ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)28, "Antigua and Barbuda [AG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)32, "Argentina [AR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)51, "Armenia [AM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)533, "Aruba [AW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)36, "Australia [AU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)40, "Austria [AT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)31, "Azerbaijan [AZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)44, "Bahamas [BS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)48, "Bahrain [BH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)50, "Bangladesh [BD]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)52, "Barbados [BB]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)112, "Belarus [BY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)56, "Belgium [BE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)84, "Belize [BZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)204, "Benin [BJ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)60, "Bermuda [BM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)64, "Bhutan [BT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)68, "Bolivia [BO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)70, "Bosnia and Herzegovina [BA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)72, "Botswana [BW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)74, "Bouvet Island [BV]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)76, "Brazil [BR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)86, "British Indian Ocean Territory [IO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)96, "Brunei Darussalam [BN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)100, "Bulgaria [BG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)854, "Burkina Faso [BF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)108, "Burundi [BI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)116, "Cambodia [KH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)120, "Cameroon [CM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)124, "Canada [CA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)132, "Cape Verde [CV]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)136, "Cayman Islands [KY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)140, "Central African Republic [CF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)148, "Chad [TD]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)152, "Chile [CL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)156, "China [CN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)162, "Christmas Island [CX]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)166, "Cocos (Keeling) Islands [CC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)170, "Colombia [CO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)174, "Comoros [KM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)178, "Congo [CG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)180, "Congo, The Democratic Replublic of the [CD]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)184, "Cook Islands [CK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)188, "Costa Rica [CR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)384, "Côte d'Ivoire [CI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)191, "Croatia [HR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)192, "Cuba [CU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)196, "Cyprus [CY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)203, "Czech Republic [CZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)208, "Denmark [DK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)262, "Djibouti [DJ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)212, "Dominica [DM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)214, "Dominican Republic [DO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)626, "East Timor [TP]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)218, "Ecuador [EC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)818, "Egypt [EG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)222, "El Salvador [SV]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)226, "Equatorial Guinea [GQ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)232, "Eritrea [ER]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)233, "Estonia [EE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)231, "Ethiopia [ET]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)238, "Falkland Islands (Islas Malvinas) [FK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)234, "Faroe Islands [FO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)242, "Fiji [FJ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)246, "Finland [FI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)249, "France [FR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)254, "French Guiana [GF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)258, "French Polynesia [PF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)260, "French Southern Territories [TF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)266, "Gabon [GA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)270, "Gambia [GM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)268, "Georgia [GE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)276, "Germany [DE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)288, "Ghana [GH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)292, "Gibraltar [GI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)300, "Greece [GR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)304, "Greenland [GL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)308, "Grenada [GD]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)312, "Guadeloupe [GP]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)316, "Guam [GU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)320, "Guatemala [GT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)324, "Guinea [GN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)624, "Guinea-Bissau [GW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)328, "Guyana [GY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)332, "Haiti [HT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)334, "Heard Island and McDonalds Islands [HM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)336, "Holy See (Vatican City State) [VA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)340, "Honduras [HN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)344, "Hong Kong [HK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)348, "Hungary [HU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)352, "Iceland [IS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)356, "India [IN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)360, "Indonesia [ID]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)364, "Iran, Islamic Republic of [IR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)368, "Iraq [IQ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)372, "Ireland [IE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)376, "Israel [IL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)380, "Italy [IT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)388, "Jamaica [JM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)392, "Japan [JP]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)400, "Jordan [JO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)398, "Kazakstan [KZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)404, "Kenya [KE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)296, "Kiribati [KI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)408, "Korea, Democratic People's Republic of [KP]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)410, "Korea, Republic of [KR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)414, "Kuwait [KW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)417, "Kyrgyzstan [KG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)418, "Lao People's Democratic Republic [LA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)428, "Latvia [LV]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)422, "Lebanon [LB]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)426, "Lesotho [LS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)430, "Liberia [LR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)434, "Libyan Arab Jamahiriya [LY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)438, "Liechtenstein [LI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)440, "Lithuania [LT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)442, "Luxembourg [LU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)446, "Macau [MO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)807, "Macedonia, The Former Yugoslav Republic of [MK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)450, "Madagascar [MG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)454, "Malawi [MW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)458, "Malaysia [MY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)462, "Maldives [MV]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)466, "Mali [ML]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)470, "Malta [MT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)584, "Marshall Islands [MH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)474, "Martinique [MQ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)478, "Mauritania [MR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)480, "Mauritius [MU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)175, "Mayotte [YT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)484, "Mexico [MX]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)583, "Micronesia, Federated States of [FM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)498, "Moldova, Republic of [MD]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)492, "Monaco [MC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)496, "Mongolia [MN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)500, "Montserrat [MS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)504, "Morocco [MA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)508, "Mozambique [MZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)104, "Myanmar [MM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)516, "Namibia [NA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)520, "Nauru [NR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)524, "Nepal [NP]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)528, "Netherlands [NL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)530, "Netherlands Antilles [AN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)540, "New Caledonia [NC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)554, "New Zealand [NZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)558, "Nicaragua [NI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)562, "Niger [NE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)566, "Nigeria [NG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)570, "Niue [NU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)574, "Norfolk Island [NF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)580, "Northern Mariana Islands [MP]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)578, "Norway [NO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)512, "Oman [OM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)586, "Pakistan [PK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)585, "Palau [PW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)275, "Palestinian Territory, Occupied [PS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)591, "Panama [PA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)598, "Papua New Guinea [PG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)600, "Paraguay [PY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)604, "Peru [PE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)608, "Philippines [PH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)612, "Pitcairn [PN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)616, "Poland [PL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)620, "Portugal [PT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)630, "Puerto Rico [PR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)634, "Qatar [QA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)638, "Reunion [RE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)642, "Romania [RO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)643, "Russian Federation [RU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)646, "Rwanda [RW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)654, "Saint Helena [SH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)659, "Saint Kitts and Nevis [KN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)662, "Saint Lucia [LC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)666, "Saint Pierre and Miquelon [PM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)670, "Saint Vincent and The Grenadines [VC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)882, "Samoa [WS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)674, "San Marino [SM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)678, "Sao Tome and Principe [ST]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)682, "Saudia Arabia [SA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)686, "Senegal [SN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)688, "Serbia [RS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)690, "Seychelles [SC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)694, "Sierra Leone [SL]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)702, "Singapore [SG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)703, "Slovakia [SK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)705, "Slovenia [SI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)90, "Solomon Islands [SB]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)706, "Somalia [SO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)710, "South Africa [ZA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)239, "South Georgia and South Sandwich Islands [GS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)728, "South Sudan [SS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)729, "Sudan [SS]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)724, "Spain [ES]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)144, "Sri Lanka [LK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)740, "Suriname [SR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)744, "Svalbard and Jan Mayen [SJ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)748, "Swaziland [SZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)752, "Sweden [SE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)756, "Switzerland [CH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)760, "Syrian Arab Republic [SY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)158, "Taiwan, Province of China [TW]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)762, "Tajikistan [TJ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)834, "Tanzania, United Republic of [TZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)764, "Thailand [TH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)768, "Togo [TG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)772, "Tokelau [TK]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)776, "Tonga [TO]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)780, "Trinidad and Tobago [TT]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)788, "Tunisia [TN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)792, "Turkey [TR]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)795, "Turkmenistan [TM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)796, "Turks and Caicos Islands [TC]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)798, "Tuvalu [TV]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)800, "Uganda [UG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)804, "Ukraine [UA]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)784, "United Arab Emirates [AE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)826, "United Kingdom [GB]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)840, "United States of America [US]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)581, "United States Minor Outlying Islands [UM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)858, "Uruguay [UY]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)860, "Uzbekistan [UZ]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)548, "Vanatu [VU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)862, "Venezuela [VE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)704, "Viet Nam [VN]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)850, "Virgin Islands, U.S. [VI]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)92, "Virgin Islands. British [VG]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)876, "Wallis and Futuna [WF]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)732, "Western Sahara [EH]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)887, "Yemen [YE]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)891, "Yugoslavia [YU]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)894, "Zambia [ZM]");
-		POSTAL_COUNTRIES_BY_CODE.put((short)716, "Zimbabwe [ZW]");
+		POSTAL_COUNTRIES_BY_CODE.put((short)0, "--none--");
+		POSTAL_COUNTRIES_BY_CODE.put((short)4, "Afghanistan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)8, "Albania");
+		POSTAL_COUNTRIES_BY_CODE.put((short)12, "Algeria");
+		POSTAL_COUNTRIES_BY_CODE.put((short)16, "American Samoa");
+		POSTAL_COUNTRIES_BY_CODE.put((short)20, "Andorra");
+		POSTAL_COUNTRIES_BY_CODE.put((short)24, "Angola");
+		POSTAL_COUNTRIES_BY_CODE.put((short)660, "Anguilla");
+		POSTAL_COUNTRIES_BY_CODE.put((short)10, "Antarctica");
+		POSTAL_COUNTRIES_BY_CODE.put((short)28, "Antigua and Barbuda");
+		POSTAL_COUNTRIES_BY_CODE.put((short)32, "Argentina");
+		POSTAL_COUNTRIES_BY_CODE.put((short)51, "Armenia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)533, "Aruba");
+		POSTAL_COUNTRIES_BY_CODE.put((short)36, "Australia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)40, "Austria");
+		POSTAL_COUNTRIES_BY_CODE.put((short)31, "Azerbaijan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)44, "Bahamas");
+		POSTAL_COUNTRIES_BY_CODE.put((short)48, "Bahrain");
+		POSTAL_COUNTRIES_BY_CODE.put((short)50, "Bangladesh");
+		POSTAL_COUNTRIES_BY_CODE.put((short)52, "Barbados");
+		POSTAL_COUNTRIES_BY_CODE.put((short)112, "Belarus");
+		POSTAL_COUNTRIES_BY_CODE.put((short)56, "Belgium");
+		POSTAL_COUNTRIES_BY_CODE.put((short)84, "Belize");
+		POSTAL_COUNTRIES_BY_CODE.put((short)204, "Benin");
+		POSTAL_COUNTRIES_BY_CODE.put((short)60, "Bermuda");
+		POSTAL_COUNTRIES_BY_CODE.put((short)64, "Bhutan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)68, "Bolivia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)70, "Bosnia and Herzegovina");
+		POSTAL_COUNTRIES_BY_CODE.put((short)72, "Botswana");
+		POSTAL_COUNTRIES_BY_CODE.put((short)74, "Bouvet Island");
+		POSTAL_COUNTRIES_BY_CODE.put((short)76, "Brazil");
+		POSTAL_COUNTRIES_BY_CODE.put((short)86, "British Indian Ocean Territory");
+		POSTAL_COUNTRIES_BY_CODE.put((short)96, "Brunei Darussalam");
+		POSTAL_COUNTRIES_BY_CODE.put((short)100, "Bulgaria");
+		POSTAL_COUNTRIES_BY_CODE.put((short)854, "Burkina Faso");
+		POSTAL_COUNTRIES_BY_CODE.put((short)108, "Burundi");
+		POSTAL_COUNTRIES_BY_CODE.put((short)116, "Cambodia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)120, "Cameroon");
+		POSTAL_COUNTRIES_BY_CODE.put((short)124, "Canada");
+		POSTAL_COUNTRIES_BY_CODE.put((short)132, "Cape Verde");
+		POSTAL_COUNTRIES_BY_CODE.put((short)136, "Cayman Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)140, "Central African Republic");
+		POSTAL_COUNTRIES_BY_CODE.put((short)148, "Chad");
+		POSTAL_COUNTRIES_BY_CODE.put((short)152, "Chile");
+		POSTAL_COUNTRIES_BY_CODE.put((short)156, "China");
+		POSTAL_COUNTRIES_BY_CODE.put((short)162, "Christmas Island");
+		POSTAL_COUNTRIES_BY_CODE.put((short)166, "Cocos (Keeling) Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)170, "Colombia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)174, "Comoros");
+		POSTAL_COUNTRIES_BY_CODE.put((short)178, "Congo");
+		POSTAL_COUNTRIES_BY_CODE.put((short)180, "Congo, The Democratic Replublic of the");
+		POSTAL_COUNTRIES_BY_CODE.put((short)184, "Cook Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)188, "Costa Rica");
+		POSTAL_COUNTRIES_BY_CODE.put((short)384, "Côte d'Ivoire");
+		POSTAL_COUNTRIES_BY_CODE.put((short)191, "Croatia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)192, "Cuba");
+		POSTAL_COUNTRIES_BY_CODE.put((short)196, "Cyprus");
+		POSTAL_COUNTRIES_BY_CODE.put((short)203, "Czech Republic");
+		POSTAL_COUNTRIES_BY_CODE.put((short)208, "Denmark");
+		POSTAL_COUNTRIES_BY_CODE.put((short)262, "Djibouti");
+		POSTAL_COUNTRIES_BY_CODE.put((short)212, "Dominica");
+		POSTAL_COUNTRIES_BY_CODE.put((short)214, "Dominican Republic");
+		POSTAL_COUNTRIES_BY_CODE.put((short)626, "East Timor");
+		POSTAL_COUNTRIES_BY_CODE.put((short)218, "Ecuador");
+		POSTAL_COUNTRIES_BY_CODE.put((short)818, "Egypt");
+		POSTAL_COUNTRIES_BY_CODE.put((short)222, "El Salvador");
+		POSTAL_COUNTRIES_BY_CODE.put((short)226, "Equatorial Guinea");
+		POSTAL_COUNTRIES_BY_CODE.put((short)232, "Eritrea");
+		POSTAL_COUNTRIES_BY_CODE.put((short)233, "Estonia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)231, "Ethiopia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)238, "Falkland Islands (Islas Malvinas)");
+		POSTAL_COUNTRIES_BY_CODE.put((short)234, "Faroe Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)242, "Fiji");
+		POSTAL_COUNTRIES_BY_CODE.put((short)246, "Finland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)249, "France");
+		POSTAL_COUNTRIES_BY_CODE.put((short)254, "French Guiana");
+		POSTAL_COUNTRIES_BY_CODE.put((short)258, "French Polynesia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)260, "French Southern Territories");
+		POSTAL_COUNTRIES_BY_CODE.put((short)266, "Gabon");
+		POSTAL_COUNTRIES_BY_CODE.put((short)270, "Gambia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)268, "Georgia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)276, "Germany");
+		POSTAL_COUNTRIES_BY_CODE.put((short)288, "Ghana");
+		POSTAL_COUNTRIES_BY_CODE.put((short)292, "Gibraltar");
+		POSTAL_COUNTRIES_BY_CODE.put((short)300, "Greece");
+		POSTAL_COUNTRIES_BY_CODE.put((short)304, "Greenland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)308, "Grenada");
+		POSTAL_COUNTRIES_BY_CODE.put((short)312, "Guadeloupe");
+		POSTAL_COUNTRIES_BY_CODE.put((short)316, "Guam");
+		POSTAL_COUNTRIES_BY_CODE.put((short)320, "Guatemala");
+		POSTAL_COUNTRIES_BY_CODE.put((short)324, "Guinea");
+		POSTAL_COUNTRIES_BY_CODE.put((short)624, "Guinea-Bissau");
+		POSTAL_COUNTRIES_BY_CODE.put((short)328, "Guyana");
+		POSTAL_COUNTRIES_BY_CODE.put((short)332, "Haiti");
+		POSTAL_COUNTRIES_BY_CODE.put((short)334, "Heard Island and McDonalds Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)336, "Holy See (Vatican City State)");
+		POSTAL_COUNTRIES_BY_CODE.put((short)340, "Honduras");
+		POSTAL_COUNTRIES_BY_CODE.put((short)344, "Hong Kong");
+		POSTAL_COUNTRIES_BY_CODE.put((short)348, "Hungary");
+		POSTAL_COUNTRIES_BY_CODE.put((short)352, "Iceland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)356, "India");
+		POSTAL_COUNTRIES_BY_CODE.put((short)360, "Indonesia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)364, "Iran, Islamic Republic of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)368, "Iraq");
+		POSTAL_COUNTRIES_BY_CODE.put((short)372, "Ireland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)376, "Israel");
+		POSTAL_COUNTRIES_BY_CODE.put((short)380, "Italy");
+		POSTAL_COUNTRIES_BY_CODE.put((short)388, "Jamaica");
+		POSTAL_COUNTRIES_BY_CODE.put((short)392, "Japan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)400, "Jordan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)398, "Kazakstan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)404, "Kenya");
+		POSTAL_COUNTRIES_BY_CODE.put((short)296, "Kiribati");
+		POSTAL_COUNTRIES_BY_CODE.put((short)408, "Korea, Democratic People's Republic of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)410, "Korea, Republic of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)414, "Kuwait");
+		POSTAL_COUNTRIES_BY_CODE.put((short)417, "Kyrgyzstan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)418, "Lao People's Democratic Republic");
+		POSTAL_COUNTRIES_BY_CODE.put((short)428, "Latvia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)422, "Lebanon");
+		POSTAL_COUNTRIES_BY_CODE.put((short)426, "Lesotho");
+		POSTAL_COUNTRIES_BY_CODE.put((short)430, "Liberia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)434, "Libyan Arab Jamahiriya");
+		POSTAL_COUNTRIES_BY_CODE.put((short)438, "Liechtenstein");
+		POSTAL_COUNTRIES_BY_CODE.put((short)440, "Lithuania");
+		POSTAL_COUNTRIES_BY_CODE.put((short)442, "Luxembourg");
+		POSTAL_COUNTRIES_BY_CODE.put((short)446, "Macau");
+		POSTAL_COUNTRIES_BY_CODE.put((short)807, "Macedonia, The Former Yugoslav Republic of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)450, "Madagascar");
+		POSTAL_COUNTRIES_BY_CODE.put((short)454, "Malawi");
+		POSTAL_COUNTRIES_BY_CODE.put((short)458, "Malaysia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)462, "Maldives");
+		POSTAL_COUNTRIES_BY_CODE.put((short)466, "Mali");
+		POSTAL_COUNTRIES_BY_CODE.put((short)470, "Malta");
+		POSTAL_COUNTRIES_BY_CODE.put((short)584, "Marshall Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)474, "Martinique");
+		POSTAL_COUNTRIES_BY_CODE.put((short)478, "Mauritania");
+		POSTAL_COUNTRIES_BY_CODE.put((short)480, "Mauritius");
+		POSTAL_COUNTRIES_BY_CODE.put((short)175, "Mayotte");
+		POSTAL_COUNTRIES_BY_CODE.put((short)484, "Mexico");
+		POSTAL_COUNTRIES_BY_CODE.put((short)583, "Micronesia, Federated States of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)498, "Moldova, Republic of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)492, "Monaco");
+		POSTAL_COUNTRIES_BY_CODE.put((short)496, "Mongolia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)500, "Montserrat");
+		POSTAL_COUNTRIES_BY_CODE.put((short)504, "Morocco");
+		POSTAL_COUNTRIES_BY_CODE.put((short)508, "Mozambique");
+		POSTAL_COUNTRIES_BY_CODE.put((short)104, "Myanmar");
+		POSTAL_COUNTRIES_BY_CODE.put((short)516, "Namibia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)520, "Nauru");
+		POSTAL_COUNTRIES_BY_CODE.put((short)524, "Nepal");
+		POSTAL_COUNTRIES_BY_CODE.put((short)528, "Netherlands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)530, "Netherlands Antilles");
+		POSTAL_COUNTRIES_BY_CODE.put((short)540, "New Caledonia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)554, "New Zealand");
+		POSTAL_COUNTRIES_BY_CODE.put((short)558, "Nicaragua");
+		POSTAL_COUNTRIES_BY_CODE.put((short)562, "Niger");
+		POSTAL_COUNTRIES_BY_CODE.put((short)566, "Nigeria");
+		POSTAL_COUNTRIES_BY_CODE.put((short)570, "Niue");
+		POSTAL_COUNTRIES_BY_CODE.put((short)574, "Norfolk Island");
+		POSTAL_COUNTRIES_BY_CODE.put((short)580, "Northern Mariana Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)578, "Norway");
+		POSTAL_COUNTRIES_BY_CODE.put((short)512, "Oman");
+		POSTAL_COUNTRIES_BY_CODE.put((short)586, "Pakistan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)585, "Palau");
+		POSTAL_COUNTRIES_BY_CODE.put((short)275, "Palestinian Territory, Occupied");
+		POSTAL_COUNTRIES_BY_CODE.put((short)591, "Panama");
+		POSTAL_COUNTRIES_BY_CODE.put((short)598, "Papua New Guinea");
+		POSTAL_COUNTRIES_BY_CODE.put((short)600, "Paraguay");
+		POSTAL_COUNTRIES_BY_CODE.put((short)604, "Peru");
+		POSTAL_COUNTRIES_BY_CODE.put((short)608, "Philippines");
+		POSTAL_COUNTRIES_BY_CODE.put((short)612, "Pitcairn");
+		POSTAL_COUNTRIES_BY_CODE.put((short)616, "Poland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)620, "Portugal");
+		POSTAL_COUNTRIES_BY_CODE.put((short)630, "Puerto Rico");
+		POSTAL_COUNTRIES_BY_CODE.put((short)634, "Qatar");
+		POSTAL_COUNTRIES_BY_CODE.put((short)638, "Reunion");
+		POSTAL_COUNTRIES_BY_CODE.put((short)642, "Romania");
+		POSTAL_COUNTRIES_BY_CODE.put((short)643, "Russian Federation");
+		POSTAL_COUNTRIES_BY_CODE.put((short)646, "Rwanda");
+		POSTAL_COUNTRIES_BY_CODE.put((short)654, "Saint Helena");
+		POSTAL_COUNTRIES_BY_CODE.put((short)659, "Saint Kitts and Nevis");
+		POSTAL_COUNTRIES_BY_CODE.put((short)662, "Saint Lucia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)666, "Saint Pierre and Miquelon");
+		POSTAL_COUNTRIES_BY_CODE.put((short)670, "Saint Vincent and The Grenadines");
+		POSTAL_COUNTRIES_BY_CODE.put((short)882, "Samoa");
+		POSTAL_COUNTRIES_BY_CODE.put((short)674, "San Marino");
+		POSTAL_COUNTRIES_BY_CODE.put((short)678, "Sao Tome and Principe");
+		POSTAL_COUNTRIES_BY_CODE.put((short)682, "Saudia Arabia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)686, "Senegal");
+		POSTAL_COUNTRIES_BY_CODE.put((short)688, "Serbia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)690, "Seychelles");
+		POSTAL_COUNTRIES_BY_CODE.put((short)694, "Sierra Leone");
+		POSTAL_COUNTRIES_BY_CODE.put((short)702, "Singapore");
+		POSTAL_COUNTRIES_BY_CODE.put((short)703, "Slovakia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)705, "Slovenia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)90, "Solomon Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)706, "Somalia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)710, "South Africa");
+		POSTAL_COUNTRIES_BY_CODE.put((short)239, "South Georgia and South Sandwich Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)728, "South Sudan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)729, "Sudan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)724, "Spain");
+		POSTAL_COUNTRIES_BY_CODE.put((short)144, "Sri Lanka");
+		POSTAL_COUNTRIES_BY_CODE.put((short)740, "Suriname");
+		POSTAL_COUNTRIES_BY_CODE.put((short)744, "Svalbard and Jan Mayen");
+		POSTAL_COUNTRIES_BY_CODE.put((short)748, "Swaziland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)752, "Sweden");
+		POSTAL_COUNTRIES_BY_CODE.put((short)756, "Switzerland");
+		POSTAL_COUNTRIES_BY_CODE.put((short)760, "Syrian Arab Republic");
+		POSTAL_COUNTRIES_BY_CODE.put((short)158, "Taiwan, Province of China");
+		POSTAL_COUNTRIES_BY_CODE.put((short)762, "Tajikistan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)834, "Tanzania, United Republic of");
+		POSTAL_COUNTRIES_BY_CODE.put((short)764, "Thailand");
+		POSTAL_COUNTRIES_BY_CODE.put((short)768, "Togo");
+		POSTAL_COUNTRIES_BY_CODE.put((short)772, "Tokelau");
+		POSTAL_COUNTRIES_BY_CODE.put((short)776, "Tonga");
+		POSTAL_COUNTRIES_BY_CODE.put((short)780, "Trinidad and Tobago");
+		POSTAL_COUNTRIES_BY_CODE.put((short)788, "Tunisia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)792, "Turkey");
+		POSTAL_COUNTRIES_BY_CODE.put((short)795, "Turkmenistan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)796, "Turks and Caicos Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)798, "Tuvalu");
+		POSTAL_COUNTRIES_BY_CODE.put((short)800, "Uganda");
+		POSTAL_COUNTRIES_BY_CODE.put((short)804, "Ukraine");
+		POSTAL_COUNTRIES_BY_CODE.put((short)784, "United Arab Emirates");
+		POSTAL_COUNTRIES_BY_CODE.put((short)826, "United Kingdom");
+		POSTAL_COUNTRIES_BY_CODE.put((short)840, "United States of America");
+		POSTAL_COUNTRIES_BY_CODE.put((short)581, "United States Minor Outlying Islands");
+		POSTAL_COUNTRIES_BY_CODE.put((short)858, "Uruguay");
+		POSTAL_COUNTRIES_BY_CODE.put((short)860, "Uzbekistan");
+		POSTAL_COUNTRIES_BY_CODE.put((short)548, "Vanatu");
+		POSTAL_COUNTRIES_BY_CODE.put((short)862, "Venezuela");
+		POSTAL_COUNTRIES_BY_CODE.put((short)704, "Viet Nam");
+		POSTAL_COUNTRIES_BY_CODE.put((short)850, "Virgin Islands, U.S.");
+		POSTAL_COUNTRIES_BY_CODE.put((short)92, "Virgin Islands. British");
+		POSTAL_COUNTRIES_BY_CODE.put((short)876, "Wallis and Futuna");
+		POSTAL_COUNTRIES_BY_CODE.put((short)732, "Western Sahara");
+		POSTAL_COUNTRIES_BY_CODE.put((short)887, "Yemen");
+		POSTAL_COUNTRIES_BY_CODE.put((short)891, "Yugoslavia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)894, "Zambia");
+		POSTAL_COUNTRIES_BY_CODE.put((short)716, "Zimbabwe");
 		for(Map.Entry<Short,String> entry: POSTAL_COUNTRIES_BY_CODE.entrySet()) {
 			POSTAL_COUNTRIES_BY_TEXT.put(
 				entry.getValue(),

@@ -52,7 +52,6 @@
  */
 package org.opencrx.kernel.base.aop2;
 
-import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.aop2.AbstractObject;

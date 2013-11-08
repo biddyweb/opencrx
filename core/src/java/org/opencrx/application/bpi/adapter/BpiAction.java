@@ -54,6 +54,7 @@ package org.opencrx.application.bpi.adapter;
 
 import java.io.IOException;
 
+import javax.jdo.FetchGroup;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,4 +85,23 @@ abstract public class BpiAction {
 		HttpServletResponse resp
 	) throws ServiceException, IOException;
 	
+	/**
+	 * Get fetchGroup parameter.
+	 * 
+	 * @param req
+	 * @return
+	 */
+	public String getFetchGroup(
+		HttpServletRequest req
+	) {
+		String fetchGroup = req.getParameter("fetchGroup");
+		if(fetchGroup == null) {
+			fetchGroup = FetchGroup.DEFAULT;
+		}
+		return fetchGroup;
+	}
+	
+    protected final static int DEFAULT_POSITION = 0;
+    protected final static int DEFAULT_SIZE = 25;
+    
 }

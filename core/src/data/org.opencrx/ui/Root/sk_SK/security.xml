@@ -110,41 +110,6 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <!--
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelClassPrivilege" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Právo modelovať triedy</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Právo modelovať triedy</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ModelReferencePrivilege" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Právo modelovať vzťahy</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Právo modelovať vzťahy</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authorization1:ResourcePrivilege" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Oprávnenie zdroja</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Oprávnenie zdroja</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  -->
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Privilege:Pane:Attr:Tab:0:Group:0" _operation="create">
                     <_object>
                       <label>
@@ -321,6 +286,150 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Užívateľ / Vedúci / Skupina vedúcich</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Užívateľ / Vedúci / Skupina vedúcich</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Užívateľ / Vedúci / Skupina vedúcich (deaktivované)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Užívateľ / Vedúci / Skupina vedúcich (deaktivované)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="0" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Užívatelia</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Užívatelia</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="10" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Vedúci</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Vedúci</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="20" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>Skupina vedúcich</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Skupina vedúcich</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="100" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Užívatelia (deaktivovaní)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Užívatelia (deaktivovaní)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="110" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Vedúci(deaktivovaní)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Vedúci(deaktivovaní)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:principal" _operation="null">
+                    <_object/>
+                    <_content>
+                      <additionalElementDefinition>
+                        <org.openmdx.ui1.AdditionalElementDefinition id="120" _operation="create">
+                          <_object>
+                            <label>
+                              <_item>»Skupina vedúcich(deaktivovaná)</_item>
+                            </label>
+                            <toolTip>
+                              <_item>Skupina vedúcich(deaktivovaná)</_item>
+                            </toolTip>
+                          </_object>
+                          <_content/>
+                        </org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Realm:securityContext" _operation="create">
                     <_object>
                       <label>
@@ -351,6 +460,14 @@
                       <toolTip>
                         <_item>Vedúci</_item>
                       </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:realm1:Principal:Pane:Attr:Tab:0:Group:10" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>&amp;nbsp;</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
@@ -453,6 +570,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:Principal:grantedRole" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Pridelené role</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Pridelené role</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup" _operation="create">
                     <_object>
                       <label>
@@ -487,17 +615,6 @@
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:PrincipalGroup:grantedRole" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Pridelené role</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Pridelené role</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:security:realm1:Principal:grantedRole" _operation="create">
                     <_object>
                       <label>
                         <_item>Pridelené role</_item>
