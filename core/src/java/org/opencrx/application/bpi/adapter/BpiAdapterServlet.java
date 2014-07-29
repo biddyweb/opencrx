@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2012-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -53,6 +53,7 @@
 package org.opencrx.application.bpi.adapter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -244,7 +245,11 @@ public class BpiAdapterServlet extends HttpServlet {
 		HttpServletResponse resp
 	) throws ServletException, IOException {
 		PersistenceManager pm = null;
+		long startedAt = System.currentTimeMillis();
 		try {
+			if(this.logRequests) {
+				System.out.println(new Date() + "  " + this.getClass().getSimpleName() + " Processing " + req.getRequestURL() + "?" + req.getQueryString());
+			}
 			Path path = this.getPath(req);
 			pm = this.getPersistenceManager(req);
 			boolean done = false;
@@ -267,6 +272,9 @@ public class BpiAdapterServlet extends HttpServlet {
 					pm.close();
 				} catch(Exception e) {}
 			}
+		}
+		if(logRequests) {
+			System.out.println(new Date() + "  " + this.getClass().getSimpleName() + " Execution time " + (System.currentTimeMillis() - startedAt) + " ms");
 		}
 	}
 
@@ -315,6 +323,7 @@ public class BpiAdapterServlet extends HttpServlet {
 
 	protected final Map<Path,BpiAction> actionRegistry = new HashMap<Path,BpiAction>();
 
+	protected boolean logRequests = false;
 	protected BpiPlugIn plugIn = null;
 	protected PersistenceManagerFactory pmf = null;
 

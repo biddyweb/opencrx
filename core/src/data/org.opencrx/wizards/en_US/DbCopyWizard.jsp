@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -94,7 +94,6 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:admin1:Segment">
 	<meta name="order" content="9999">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -105,11 +104,11 @@ org.openmdx.base.naming.*
 			<td class="cellObject">
 				<div id="contentArea">
 					<div id="SubmitArea" style="display:<%= "Copy".equals(wc.getCommand()) || isRefreshReport || Boolean.TRUE.equals(wc.isRunning()) ? "none" : "block" %>">
-						<h1>WARNING: all data in the TARGET database will be LOST.</h1>										
+						<h3>WARNING: all data in the TARGET database will be LOST.</h3>										
 						<table>
 							<tr>
 								<td colspan="2">
-									<h1>Source database:</h1>
+									<h3>Source database:</h3>
 								</td>
 							</tr>
 							<tr>
@@ -135,7 +134,7 @@ org.openmdx.base.naming.*
 							</tr>
 							<tr>
 								<td colspan="2">
-									<h1>Target database:</h1>
+									<h3>Target database:</h3>
 								</td>
 							</tr>
 							<tr>
@@ -152,7 +151,7 @@ org.openmdx.base.naming.*
 							</tr>
 							<tr>
 								<td colspan="2">
-									<h1>Options:</h1>
+									<h3>Options:</h3>
 								</td>
 							</tr>
 							<tr>
@@ -173,8 +172,8 @@ org.openmdx.base.naming.*
 							</tr>
 						</table>
 						<div style="float:left;">															
-							<input type="submit" name="Copy" id="Copy.Button" tabindex="9030" value="Copy" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';setTimeout('javascript:$(\'RefreshReportButton\').click();',2000);$('Command').value=this.name;" />
-							<input type="submit" name="Cancel" tabindex="9031" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
+							<input type="submit" name="Copy" id="Copy.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9030" value="Copy" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';setTimeout('javascript:$(\'RefreshReportButton\').click();',2000);$('Command').value=this.name;" />
+							<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9031" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
 						</div>
 					</div>
 					<div id="WaitIndicator" style="display:<%= isRefreshReport ? "block" : "none" %>" class="<%= Boolean.FALSE.equals(wc.isRunning()) ? "" : "wait" %>">
@@ -190,11 +189,11 @@ org.openmdx.base.naming.*
 						}
 %>						
 						<div id="SubmitArea2">
-							<input type="submit" id="RefreshReportButton" name="RefreshReport" style="display:none;" tabindex="9032" value="<%= wc.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
+							<input type="submit" id="RefreshReportButton" name="RefreshReport" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" style="display:none;" tabindex="9032" value="<%= wc.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
 <%
 							if(Boolean.FALSE.equals(wc.isRunning())) {
 %>						
-								<input type="submit" name="Clear" tabindex="9033" value="Clear" onclick="javascript:$('Command').value=this.name;" />
+								<input type="submit" name="Clear" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9033" value="Clear" onclick="javascript:$('Command').value=this.name;" />
 								<br />	
 <%
 							}
@@ -223,6 +222,7 @@ org.openmdx.base.naming.*
 		</tr>
 	</table>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

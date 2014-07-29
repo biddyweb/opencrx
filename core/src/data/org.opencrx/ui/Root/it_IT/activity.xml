@@ -297,9 +297,9 @@
                       <label>
                         <_item>Fase</_item>
                       </label>
-                      <shortLabel>
-                        <_item>Fase</_item>
-                      </shortLabel>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                       <toolTip>
                         <_item>Fase</_item>
                       </toolTip>

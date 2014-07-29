@@ -21,14 +21,40 @@
                       </toolTip>
                     </_object>
                     <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
+                  </org.openmdx.ui1.ElementDefinition>				  
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
                     <_object>
                       <label>
-                        <_item>Buscar Entrada en Index</_item>
+                        <_item>Direcciones</_item>
                       </label>
                       <toolTip>
-                        <_item>Buscar Entrada en Index</_item>
+                        <_item>Direcciones</_item>
+                      </toolTip>
+                    </_object>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Direcciones (canceladas)</_item>
+														</toolTip>
+														<label>
+															<_item>»Direcciones (canceladas)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
+	                <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:SearchIndexEntry" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Buscar entrada en índice</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Buscar entrada en índice</_item>
                       </toolTip>
                     </_object>
                     <_content/>

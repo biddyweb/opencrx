@@ -1,7 +1,39 @@
+/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
+   This file is part of the GNU C Library.
+
+   The GNU C Library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
+
+   The GNU C Library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, see
+   <http://www.gnu.org/licenses/>.  */
+/* This header is separate from features.h so that the compiler can
+   include it implicitly at the start of every compilation.  It must
+   not itself include <features.h> or any other header that includes
+   <features.h> because the implicit include comes before any feature
+   test macros that may be defined in a source file before it first
+   explicitly includes a system header.  GCC knows the name of this
+   header in order to preinclude it.  */
+/* glibc's intent is to support the IEC 559 math functionality, real
+   and complex.  If the GCC (4.9 and later) predefined macros
+   specifying compiler intent are available, use them to determine
+   whether the overall intent is to support these features; otherwise,
+   presume an older compiler has intent to support these features and
+   define these macros by default.  */
+/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
+   Unicode 6.0.  */
+/* We do not support C11 <threads.h>.  */
 -- This software is published under the BSD license
 -- as listed below.
 --
--- Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+-- Copyright (c) 2004-2013, CRIXP Corp., Switzerland
 -- All rights reserved.
 --
 -- Redistribution and use in source and binary forms, with or without
@@ -61,9 +93,11 @@ DROP VIEW OOCKE1_JOIN_FLDCONTAINSFLD ;
 DROP VIEW OOCKE1_JOIN_HOMEHASASSACT ;
 DROP VIEW OOCKE1_JOIN_NSCONTAINSELT ;
 DROP VIEW OOCKE1_JOIN_OBJHASASSTIMER ;
-DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM ;
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSFAC ;
+DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM ;
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ ;
+DROP VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP ;
+DROP VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP_ ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE ;
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE_ ;
 DROP VIEW OOCKE1_TOBJ_DOCFLDENTRY ;
@@ -84,6 +118,7 @@ DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY ;
 DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_ ;
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY ;
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ ;
+DROP VIEW OOCKE1_TOBJ_WORKRECORD ;
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR ;
 DROP VIEW OOCKE1_JOIN_ACCTHASASSCONTR ;
 DROP VIEW OOCKE1_JOIN_ACCTHASASSBUDGET ;
@@ -703,6 +738,66 @@ WHERE
     l.link_to = a.object_id AND
     l.object_id = l.object_id ;
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ AS
+SELECT
+    object_id,
+    idx,
+    created_by,
+    modified_by,
+    owner,
+    dtype
+FROM
+    OOCKE1_ACTIVITYLINK_ ;
+CREATE VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP AS
+SELECT
+    REPLACE(a.object_id, 'activity/', 'activityRelationship/') || '/' || REPLACE(l.object_id, '/', ':') AS object_id,
+    a.object_id AS "P$$PARENT",
+    'org:opencrx:kernel:activity1:ActivityRelationship' AS dtype,
+    l.modified_at,
+    l.created_at,
+    l.created_by_,
+    l.modified_by_,
+    l.access_level_browse,
+    l.access_level_update,
+    l.access_level_delete,
+    l.owner_,
+    100-l.activity_link_type AS activity_link_type,
+    l.name,
+    l.description,
+    l.object_id AS based_on,
+    l."P$$PARENT" AS activity_from,
+    l.link_to AS activity_to,
+    -1 AS distance
+FROM
+    OOCKE1_ACTIVITY a,
+    OOCKE1_ACTIVITYLINK l
+WHERE
+    l.link_to = a.object_id
+UNION ALL
+SELECT
+    REPLACE(l.object_id, 'activityLinkTo/', 'activityRelationship/') AS object_id,
+    a.object_id AS "P$$PARENT",
+    'org:opencrx:kernel:activity1:ActivityRelationship' AS dtype,
+    l.modified_at,
+    l.created_at,
+    l.created_by_,
+    l.modified_by_,
+    l.access_level_browse,
+    l.access_level_update,
+    l.access_level_delete,
+    l.owner_,
+    l.activity_link_type AS activity_link_type,
+    l.name,
+    l.description,
+    l.object_id AS based_on,
+    a.object_id AS activity_from,
+    l.link_to AS activity_to,
+    1 AS distance
+FROM
+    OOCKE1_ACTIVITY a,
+    OOCKE1_ACTIVITYLINK l
+WHERE
+    l."P$$PARENT" = a.object_id ;
+CREATE VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP_ AS
 SELECT
     object_id,
     idx,
@@ -2211,6 +2306,13 @@ SELECT
     dtype
 FROM
     OOCKE1_ACCOUNT_ ;
+CREATE VIEW OOCKE1_TOBJ_WORKRECORD AS
+SELECT
+  w.*,
+  (SELECT "P$$PARENT" FROM OOCKE1_RESOURCEASSIGNMENT ra WHERE w."P$$PARENT" = ra.object_id) AS activity,
+  (SELECT resrc FROM OOCKE1_RESOURCEASSIGNMENT ra WHERE w."P$$PARENT" = ra.object_id) AS resrc
+FROM
+  OOCKE1_WORKRECORD w ;
 CREATE VIEW OOMSE2_TOBJ_USERS AS
 SELECT
     p.name AS principal_name,

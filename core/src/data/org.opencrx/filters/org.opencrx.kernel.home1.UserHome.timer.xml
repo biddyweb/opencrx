@@ -10,7 +10,6 @@
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="8">
-
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -19,6 +18,16 @@
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Active and Open</string>
+								</void>
+								<void index="1">
+									<string>Aktiv und Offen</string>
+								</void>
+							</array>
+						</void>
 						<void property="condition">
 							<array class="org.openmdx.base.query.Condition" length="2">
 								<void index="0">
@@ -68,7 +77,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -77,6 +85,16 @@
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>All Active</string>
+								</void>
+								<void index="1">
+									<string>Alle Aktiven</string>
+								</void>
+							</array>
+						</void>
 						<void property="condition">
 							<array class="org.openmdx.base.query.Condition" length="1">
 								<void index="0">
@@ -106,8 +124,6 @@
 						</void>
 					</object>
 				</void>
-
-
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -116,6 +132,16 @@
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Timer start at [reverse chronological order] - Active and Open</string>
+								</void>
+								<void index="1">
+									<string>Timer startet um [umgekehrt chronologisch] - Aktiv und Offen</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
 								<void index="0">
@@ -189,7 +215,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -198,6 +223,16 @@
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Timer start at [chronological order] - Active and Open</string>
+								</void>
+								<void index="1">
+									<string>Timer startet um [chronologisch] - Aktiv und Offen</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
 								<void index="0">
@@ -271,7 +306,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="4">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -280,6 +314,16 @@
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Timer start at [reverse chronological order] - All Active</string>
+								</void>
+								<void index="1">
+									<string>Timer startet um [umgekehrt chronologisch] - Alle Aktiven</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
 								<void index="0">
@@ -333,7 +377,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="5">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -342,6 +385,16 @@
 						<void property="iconKey">
 							<string>filter_up_cal.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Timer start at [chronological order] - All Active</string>
+								</void>
+								<void index="1">
+									<string>Timer startet um [chronologisch] - Alle Aktiven</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
 								<void index="0">
@@ -395,7 +448,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="6">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -403,6 +455,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_disabled.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Timer start at [reverse chronological order] - Disabled</string>
+								</void>
+								<void index="1">
+									<string>Timer startet um [umgekehrt chronologisch] - Deaktiviert</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
@@ -457,7 +519,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="7">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -465,6 +526,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_disabled.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Timer start at [chronological order] - Disabled</string>
+								</void>
+								<void index="1">
+									<string>Timer startet um [chronologisch] - Deaktiviert</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
@@ -519,7 +590,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

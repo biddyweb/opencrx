@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: OpenOfficeToText
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,26 +52,42 @@
  */
 package org.opencrx.kernel.text;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.openmdx.base.exception.ServiceException;
+
+/**
+ * OpenOfficeToText
+ *
+ */
 public class OpenOfficeToText {
 
+    /**
+     * Extract text from open office document.
+     * 
+     * @param document
+     * @return
+     * @throws ServiceException
+     */
     public Reader parse(
         ZipInputStream document
-    ) throws IOException {
-        ZipEntry entry = null;
-        while((entry = document.getNextEntry()) != null) {
-            if(entry.getName().endsWith("content.xml")) {
-                return new InputStreamReader(
-                    document
-                );
-            }            
-        }
-        return null;
+    ) throws ServiceException {
+    	try {
+	        ZipEntry entry = null;
+	        while((entry = document.getNextEntry()) != null) {
+	            if(entry.getName().endsWith("content.xml")) {
+	                return new InputStreamReader(
+	                    document
+	                );
+	            }            
+	        }
+	        return null;
+    	} catch(Exception e) {
+    		throw new ServiceException(e);
+    	}
     }
     
 }

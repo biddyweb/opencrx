@@ -129,6 +129,260 @@
                   </org.openmdx.ui1.ElementDefinition>
 
 									<!-- Operations -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:checkForAutoUpdate">
+										<_object>
+											<toolTip>
+												<_item>Auto Update prüfen</_item>
+											</toolTip>
+											<label>
+												<_item>Auto Update prüfen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:checkForAutoUpdate:Group:in">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:checkForAutoUpdate:Group:result">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress1">
+										<_object>
+											<toolTip>
+												<_item>Adresskandidat Nr. 1</_item>
+											</toolTip>
+											<label>
+												<_item>Adresskandidat Nr. 1</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate1">
+										<_object>
+											<toolTip>
+												<_item>Auto Update möglich</_item>
+											</toolTip>
+											<label>
+												<_item>Auto Update möglich</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields1">
+										<_object>
+											<toolTip>
+												<_item>Felder identisch</_item>
+											</toolTip>
+											<label>
+												<_item>Felder identisch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields1">
+										<_object>
+											<toolTip>
+												<_item>Felder verschieden</_item>
+											</toolTip>
+											<label>
+												<_item>Felder verschieden</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress2">
+										<_object>
+											<toolTip>
+												<_item>Adresskandidat Nr. 2</_item>
+											</toolTip>
+											<label>
+												<_item>Adresskandidat Nr. 2</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate2">
+										<_object>
+											<toolTip>
+												<_item>Auto Update möglich</_item>
+											</toolTip>
+											<label>
+												<_item>Auto Update möglich</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields2">
+										<_object>
+											<toolTip>
+												<_item>Felder identisch</_item>
+											</toolTip>
+											<label>
+												<_item>Felder identisch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields2">
+										<_object>
+											<toolTip>
+												<_item>Felder verschieden</_item>
+											</toolTip>
+											<label>
+												<_item>Felder verschieden</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress3">
+										<_object>
+											<toolTip>
+												<_item>Adresskandidat Nr. 3</_item>
+											</toolTip>
+											<label>
+												<_item>Adresskandidat Nr. 3</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate3">
+										<_object>
+											<toolTip>
+												<_item>Auto Update möglich</_item>
+											</toolTip>
+											<label>
+												<_item>Auto Update möglich</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields3">
+										<_object>
+											<toolTip>
+												<_item>Felder identisch</_item>
+											</toolTip>
+											<label>
+												<_item>Felder identisch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields3">
+										<_object>
+											<toolTip>
+												<_item>Felder verschieden</_item>
+											</toolTip>
+											<label>
+												<_item>Felder verschieden</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress4">
+										<_object>
+											<toolTip>
+												<_item>Adresskandidat Nr. 4</_item>
+											</toolTip>
+											<label>
+												<_item>Adresskandidat Nr. 4</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate4">
+										<_object>
+											<toolTip>
+												<_item>Auto Update möglich</_item>
+											</toolTip>
+											<label>
+												<_item>Auto Update möglich</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields4">
+										<_object>
+											<toolTip>
+												<_item>Felder identisch</_item>
+											</toolTip>
+											<label>
+												<_item>Felder identisch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields4">
+										<_object>
+											<toolTip>
+												<_item>Felder verschieden</_item>
+											</toolTip>
+											<label>
+												<_item>Felder verschieden</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress5">
+										<_object>
+											<toolTip>
+												<_item>Adresskandidat Nr. 5</_item>
+											</toolTip>
+											<label>
+												<_item>Adresskandidat Nr. 5</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate5">
+										<_object>
+											<toolTip>
+												<_item>Auto Update möglich</_item>
+											</toolTip>
+											<label>
+												<_item>Auto Update möglich</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields5">
+										<_object>
+											<toolTip>
+												<_item>Felder identisch</_item>
+											</toolTip>
+											<label>
+												<_item>Felder identisch</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields5">
+										<_object>
+											<toolTip>
+												<_item>Felder verschieden</_item>
+											</toolTip>
+											<label>
+												<_item>Felder verschieden</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress">
 										<_object>
 											<toolTip>

@@ -65,6 +65,7 @@ import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.openmdx.base.accessor.rest.DirtyObjects;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.ApplicationContext;
@@ -238,6 +239,10 @@ public class SetTimerOnCrxObjectController extends AbstractWizardController {
 					Base.getInstance().getUidAsString(),
 					timer
 				);
+	  			pm.currentTransaction().commit();
+	  			// Touch in order to properly amend target object
+	  			pm.currentTransaction().begin();
+	  			DirtyObjects.touch(timer);
 	  			pm.currentTransaction().commit();
 	  			this.forward(
 	  				"Cancel", 

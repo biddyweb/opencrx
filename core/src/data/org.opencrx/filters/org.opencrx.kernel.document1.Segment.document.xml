@@ -2,15 +2,14 @@
 <java version="1.3.1_11" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="1">	
-				<void index="0">			
+			<array class="java.lang.String" length="1">
+				<void index="0">
 					<string>org:opencrx:kernel:document1:Segment:document</string>
 				</void>
 			</array>
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="2">
-
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -48,7 +47,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -86,7 +84,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

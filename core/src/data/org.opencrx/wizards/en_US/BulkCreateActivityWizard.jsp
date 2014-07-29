@@ -12,7 +12,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -108,7 +108,6 @@ org.openmdx.base.naming.*
 	RefObject_1_0 obj = wc.getObject();
 	ViewPort viewPort = wc.getViewPort(out);
 %>
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -120,110 +119,84 @@ org.openmdx.base.naming.*
 	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= FORM_NAME_CREATOR %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME_CREATOR %>" style="display:block;overflow:visible;">
 <%
 					wc.getForms().get(FORM_NAME_CREATOR).paint(viewPort, null, true);
 					viewPort.flush();
 					if(wc.getSelectedLocale() != null) {
 %>
-						<table class="fieldGroup">
-							<tr>
-								<td title="" class="label"><span class="nw">Locale:</span></td>
-								<td>
-								    <select name="selectedLocale" tabindex="2100" class="valueL">
+						<div class="container-fluid">
+							<div class="row">
+								<div class="col-lg-12">
+									<table class="fieldGroup">
+										<tr>
+											<td title="" class="<%= CssClass.fieldLabel %>"><span class="nw">Locale:</span></td>
+											<td>
+											    <select name="selectedLocale" tabindex="2100" class="valueL" onchange="javascript:$('Refresh.Button').click();">
 <%
-										for(Short locale: wc.getSelectableLocales()) {
-%>								    
-											<option value="<%= locale %>" <%= wc.getSelectedLocale() != null && locale.equals(wc.getSelectedLocale()) ? "selected" : "" %>> <%= wc.getCodes().getLongTextByCode("locale", app.getCurrentLocaleAsIndex(), true).get(locale) %></option>
-<%
-										}
+													for(Short locale: wc.getSelectableLocales()) {
 %>
-								    </select>
-								</td>
-								<td class="addon"></td>
-							</tr>
-							<tr>
-								<td title="" class="label"><span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityGroup", "targetGroupAccounts", app.getCurrentLocaleAsIndex()) %>:</span></td>
-								<td>
-								    <select tabindex="2110" name="selectedTargetGroupXri" class="valueL">
+														<option value="<%= locale %>" <%= wc.getSelectedLocale() != null && locale.equals(wc.getSelectedLocale()) ? "selected" : "" %>> <%= wc.getCodes().getLongTextByCode("locale", app.getCurrentLocaleAsIndex(), true).get(locale) %></option>
 <%
-										if(wc.getSelectedTargetGroup() == null) {
+													}
 %>
-											<option value=""></option>
-<%											
-										}
-										for(org.openmdx.base.jmi1.BasicObject targetGroup: wc.getSelectableTargetGroups()) {
-%>								    
-											<option value="<%= targetGroup.refGetPath().toXRI() %>" <%= wc.getSelectedTargetGroup() != null && wc.getSelectedTargetGroup().refGetPath().equals(targetGroup.refGetPath()) ? "selected" : ""%>><%= wc.getApp().getPortalExtension().getTitle(targetGroup, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), false, app) %></option>
+											    </select>
+											</td>
+											<td class="addon"></td>
+										</tr>
+										<tr>
+											<td title="" class="<%= CssClass.fieldLabel %>"><span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityGroup", "targetGroupAccounts", app.getCurrentLocaleAsIndex()) %>:</span></td>
+											<td>
+											    <select tabindex="2110" name="selectedTargetGroupXri" class="valueL" onchange="javascript:$('Refresh.Button').click();">
+													<option value=""></option>
 <%
-										}
-%>											
-								    </select>
-								</td>
-								<td class="addon"></td>
-							</tr>
-						</table>
+													List<org.openmdx.base.jmi1.BasicObject> selectableTargetGroups = wc.getSelectableTargetGroups();
+													for(org.openmdx.base.jmi1.BasicObject targetGroup: selectableTargetGroups) {
+%>
+														<option value="<%= targetGroup.refGetPath().toXRI() %>" <%= wc.getSelectedTargetGroup() != null && wc.getSelectedTargetGroup().refGetPath().equals(targetGroup.refGetPath()) ? "selected" : ""%>><%= wc.getApp().getPortalExtension().getTitle(targetGroup, app.getCurrentLocaleAsIndex(), app.getCurrentLocaleAsString(), false, app) %></option>
+<%
+													}
+%>
+											    </select>
+											</td>
+											<td class="addon"></td>
+										</tr>
+									</table>
+								</div>
+							</div>
+						</div>						
 <%
 					}
 %>						
 				</div>
+				<p>
 				<div id="SubmitArea1">
-					<input type="submit" name="Reload"  id="Reload.Button"  tabindex="8000" value="<%= wc.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('SubmitArea1').style.visibility='hidden';" />
-					<input type="submit" name="Refresh" id="Refresh.Button" tabindex="8001" value="<%= wc.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:if($('Command').value==''){$('Command').value=this.name;this.name='--'};$('SubmitArea1').style.visibility='hidden';" />
+					<input type="submit" name="Refresh" id="Refresh.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="8001" value="<%= wc.getTexts().getReloadText() %>" style="display:none;" onclick="javascript:if($('Command').value==''){$('Command').value=this.name;this.name='--'};$('SubmitArea1').style.visibility='hidden';" />
 				</div>
 <%
 				if(wc.getActivityCreator() != null) {
-%>						
-					<div class="panel" id="panel<%= FORM_NAME_ACTIVITY %>" style="display: block">
-<%
-						wc.getForms().get(FORM_NAME_ACTIVITY).paint(viewPort, null, true);
-						viewPort.flush();
 %>
-					</div>
-<%
-					try {
-						org.opencrx.kernel.activity1.jmi1.ActivityType actType = wc.getActivityCreator().getActivityType(); 
-						if(actType != null && actType.getActivityClass() == org.opencrx.kernel.backend.Activities.ActivityClass.EMAIL.getValue()) {
-%>							
-							<div class="panel" id="panel<%= FORM_NAME_EMAIL %>" style="display: block">
-<%
-								wc.getForms().get(FORM_NAME_EMAIL).paint(viewPort, null, true);
-								viewPort.flush();
-%>
-							</div>
-<%
-						}
-					} catch (Exception e) {
-						new ServiceException(e).log();
-					}
-%>								
-					<div class="panel" id="panel<%= FORM_NAME_PLACEHOLDERS %>" style="display: block">
-<%
-						wc.getForms().get(FORM_NAME_PLACEHOLDERS).paint(viewPort, null, true);
-						viewPort.flush();
-%>
-					</div>
+					<p>
 					<div id="WaitIndicator" style="display:none;float:left;">
-						Processing request - please wait...<br>
 						<img border="0" src='./images/progress_bar.gif' alt='please wait...' />
 					</div>
-					<div id="SubmitArea" style="padding-top:20px;float:left;">
-						<input type="submit" name="Save" id="Save.Button" tabindex="9000" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+					<div id="SubmitArea" style="float:left;">
 <%
 						if(Boolean.TRUE.equals(wc.getCanCreate())) {
 %>
-							<input type="submit" name="CreateTest" id="CreateTest.Button" tabindex="9010" value="Create/Update <%= BulkCreateActivityWizardController.NUM_OF_TEST_ACTIVITIES %> Test Activities" <%= wc.getCreationType() == CreationType.CREATE_TEST ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
-							<input type="submit" name="Create" id="Create.Button" tabindex="9030" value="Create/Update all Activities" <%= wc.getCreationType() == CreationType.CREATE ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+							<input type="submit" name="CreateTest" id="CreateTest.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="Create/Update <%= BulkCreateActivityWizardController.NUM_OF_TEST_ACTIVITIES %> Test Activities" <%= wc.getCreationType() == CreationType.CREATE_TEST ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+							<input type="submit" name="Create" id="Create.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9030" value="Create/Update Activities" <%= wc.getCreationType() == CreationType.CREATE ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
 <%
 						}
 %>
-						<input type="submit" name="Cancel" tabindex="9040" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('Command').value=this.name;" />
+						<input type="submit" name="Save" id="Save.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+						<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9040" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+						<p>
 <%						
 						if(!Boolean.TRUE.equals(wc.getCanCreate())) {							
 %>
-							<br />
-							<div style="padding:10px;margin:2px;background-color:#FF9900;">
-								Unable to create activities because some data is missing. Please check:
+							<div class="alert alert-danger">
+								Unable to proceed because some data is missing. Please check:
 								<ul>
 <%
 									if(wc.getActivityCreator() == null) {
@@ -247,17 +220,40 @@ org.openmdx.base.naming.*
 <%
 						}
 %>
-					</div><div style="clear:both;"></div>					
+					</div>
+					<div style="clear:both;"></div>
 <%
+					if(wc.getExecutionReport() != null && !wc.getExecutionReport().isEmpty()) {
+%>
+						<p>
+						<div class="fieldGroupName">Report</div>
+						<div class="alert alert-info">
+							<pre>
+<%
+								for(String line: wc.getExecutionReport()) {
+%><%= line %><br /><%
+								}
+%>
+							</pre>
+						</div>
+<%
+					}
+					org.opencrx.kernel.activity1.jmi1.ActivityType actType = null;
+					try {
+						actType = wc.getActivityCreator().getActivityType();						
+					} catch(Exception e) {
+						new ServiceException(e).log();
+					}
+					boolean isEMailType = actType != null && actType.getActivityClass() == org.opencrx.kernel.backend.Activities.ActivityClass.EMAIL.getValue();
 					if(Boolean.TRUE.equals(wc.getCanCreate())) {
 						try {
-							org.opencrx.kernel.activity1.jmi1.ActivityType actType = wc.getActivityCreator().getActivityType(); 
 							if(
-								actType != null && actType.getActivityClass() == org.opencrx.kernel.backend.Activities.ActivityClass.EMAIL.getValue() &&
-								!Boolean.TRUE.equals(wc.getSelectedAccountsOnly())
+								isEMailType &&
+								!Boolean.TRUE.equals(wc.getSelectedAccountsOnly()) &&
+								wc.getCreationType() == CreationType.CREATE_TEST
 							) {
 %>							
-								<div class="panel" id="panel<%= FORM_NAME_EMAILTO %>" style="display:<%= wc.getCreationType() == CreationType.CREATE_TEST ? "block" : "none" %>;">
+								<div class="panel" id="panel<%= FORM_NAME_EMAILTO %>" style="overflow:visible;">
 <%
 									wc.getForms().get(FORM_NAME_EMAIL).paint(viewPort, null, true);
 									viewPort.flush();
@@ -266,7 +262,7 @@ org.openmdx.base.naming.*
 <%
 							} else if (Boolean.TRUE.equals(wc.getSelectedAccountsOnly())) {
 %>							
-								<div class="panel" id="panel<%= FORM_NAME_RECIPIENT %>" style="display:<%= wc.getCreationType() == CreationType.CREATE_TEST ? "block" : "none" %>;">
+								<div class="panel" id="panel<%= FORM_NAME_RECIPIENT %>" style="display:<%= wc.getCreationType() == CreationType.CREATE_TEST ? "block" : "none" %>;overflow:visible;">
 <%
 									wc.getForms().get(FORM_NAME_RECIPIENT).paint(viewPort, null, true);
 									viewPort.flush();
@@ -282,7 +278,7 @@ org.openmdx.base.naming.*
 								wc.getCreationType() == CreationType.CREATE_TEST
 							) {
 %>
-							<div style="padding:10px;margin:2px;background-color:#FF9900;display:block;">
+							<div class="alert alert-warning">
 <%
 								if (
 									wc.getActivityType().getActivityClass() == Activities.ActivityClass.EMAIL.getValue()
@@ -293,12 +289,43 @@ org.openmdx.base.naming.*
 								}
 %>
 								Do you really want to create/update the activities listed in the report?&nbsp;&nbsp;
-								<input type="submit" name="CreateTestConfirmed" id="CreateTestConfirmed.Button" tabindex="9050" value="OK" <%= wc.getCreationType() == CreationType.CREATE_TEST ? "" : "style='display:none;'" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
-								<input type="submit" name="CreateConfirmed" id="CreateConfirmed.Button" tabindex="9060" value="OK" <%= wc.getCreationType() == CreationType.CREATE ? "" : "style='display:none;'" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
-								<input type="button" name="CancelCreate" id="CancelCreate.Button" tabindex="9070" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Refresh.Button').click();" />
+								<input type="submit" name="CreateTestConfirmed" id="CreateTestConfirmed.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9050" value="OK" <%= wc.getCreationType() == CreationType.CREATE_TEST ? "" : "style='display:none;'" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+								<input type="submit" name="CreateConfirmed" id="CreateConfirmed.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9060" value="OK" <%= wc.getCreationType() == CreationType.CREATE ? "" : "style='display:none;'" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+								<input type="button" name="CancelCreate" id="CancelCreate.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9070" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Refresh.Button').click();" />
 							</div>
 <%
 						}
+					}
+					if(isEMailType) {
+%>
+						<p>
+						<ul style="z-index:201;" class="nav nav-tabs nav-condensed">
+    						<li class="active"><a data-toggle="tab" href="#panel<%= FORM_NAME_EMAIL %>"><%= app.getLabel("org:opencrx:kernel:activity1:EMail") %></a></li>
+    						<li class=""><a data-toggle="tab" href="#panel<%= FORM_NAME_ACTIVITY %>"><%= app.getLabel("org:opencrx:kernel:activity1:Activity") %></a></li>
+  						</ul>
+  						<div class="tab-content" style="display:block">
+							<div class="panel tab-pane active" id="panel<%= FORM_NAME_EMAIL %>" style="overflow:visible;">
+<%
+								wc.getForms().get(FORM_NAME_EMAIL).paint(viewPort, null, true);
+								viewPort.flush();
+								wc.getForms().get(FORM_NAME_PLACEHOLDERS).paint(viewPort, null, true);
+								viewPort.flush();								
+%>
+							</div>
+<%
+					}
+%>
+					<div class="panel tab-pane" id="panel<%= FORM_NAME_ACTIVITY %>" style="overflow:visible;">
+<%
+						wc.getForms().get(FORM_NAME_ACTIVITY).paint(viewPort, null, true);
+						viewPort.flush();
+%>
+					</div>
+<%
+					if(isEMailType) {
+%>
+						</div>
+<%
 					}
 				}
 %>							
@@ -306,24 +333,8 @@ org.openmdx.base.naming.*
 		</tr>
 	</table>
 </form>
-<br>&nbsp;		
+<p>		
 <%
-if(wc.getExecutionReport() != null && !wc.getExecutionReport().isEmpty()) {
-%>
-	<div class="fieldGroupName">Execution report</div>
-	<div style="border:0px solid black;padding:10px;margin:2px;">
-		<pre>
-<%
-			for(String line: wc.getExecutionReport()) {
-%>
-				<%= line %>
-<%												
-			}
-%>				
-		</pre>
-	</div>
-<%
-}
 if(wc.getActivityCreator() != null) {
 	org.opencrx.kernel.activity1.cci2.ActivityQuery activityQuery = 
 		(org.opencrx.kernel.activity1.cci2.ActivityQuery)pm.newQuery(org.opencrx.kernel.activity1.jmi1.Activity.class);
@@ -336,16 +347,16 @@ if(wc.getActivityCreator() != null) {
 		<div class="fieldGroupName"><%= (new ObjectReference(activityGroup, app)).getLabel() + " " + activityGroup.getName() %></div>
 		<div style='padding:4px;'>
 			<h2>
-				<input type="button" name="CountActivities" id="CountActivities<%= ii %>.Button" tabindex="<%= tabIdx++ %>" value='Count Activities<%= isSelectedActivityGroup && wc.getNumberOfFilteredActivities() != null ? " (=" + wc.getNumberOfFilteredActivities() + ")" : "" %>' onclick="javascript:$('Command').value=this.name;this.name='--';$('activityGroupXri').value='<%= activityGroup.refGetPath().toXRI() %>';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';$('Refresh.Button').click();" />
-				<input type="button" name="ConfirmDeleteActivities" id="ConfirmDeleteActivities<%= ii %>.Button" tabindex="<%= tabIdx++ %>" value="<%= app.getTexts().getDeleteTitle() %> Activities" <%= isSelectedActivityGroup && Boolean.TRUE.equals(wc.getConfirmDeleteActivities()) ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('activityGroupXri').value='<%= activityGroup.refGetPath().toXRI() %>';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';$('Refresh.Button').click();" />
+				<input type="button" name="CountActivities" id="CountActivities<%= ii %>.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIdx++ %>" value='Count Activities<%= isSelectedActivityGroup && wc.getNumberOfFilteredActivities() != null ? " (=" + wc.getNumberOfFilteredActivities() + ")" : "" %>' onclick="javascript:$('Command').value=this.name;this.name='--';$('activityGroupXri').value='<%= activityGroup.refGetPath().toXRI() %>';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';$('Refresh.Button').click();" />
+				<input type="button" name="ConfirmDeleteActivities" id="ConfirmDeleteActivities<%= ii %>.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIdx++ %>" value="<%= app.getTexts().getDeleteTitle() %> Activities" <%= isSelectedActivityGroup && Boolean.TRUE.equals(wc.getConfirmDeleteActivities()) ? "disabled" : "" %> onclick="javascript:$('Command').value=this.name;this.name='--';$('activityGroupXri').value='<%= activityGroup.refGetPath().toXRI() %>';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';$('Refresh.Button').click();" />
 			</h2>
 <%
 			if(isSelectedActivityGroup && Boolean.TRUE.equals(wc.getConfirmDeleteActivities())) {
 %>
 				<div style="border:1px solid black;padding:10px;margin:2px;background-color:#FF9900;">
 					Do you really want to delete all activities assigned to this tracker?
-					<input type="button" name="DeleteActivities" id="DeleteActivities<%= ii %>.Button" tabindex="<%= tabIdx++ %>" value="<%= app.getTexts().getDeleteTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('activityGroupXri').value='<%= activityGroup.refGetPath().toXRI() %>';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';$('Refresh.Button').click();" />
-					<input type="button" name="CancelDelete.Button" tabindex="<%= tabIdx++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Refresh.Button').click();" />
+					<input type="button" name="DeleteActivities" id="DeleteActivities<%= ii %>.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIdx++ %>" value="<%= app.getTexts().getDeleteTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('activityGroupXri').value='<%= activityGroup.refGetPath().toXRI() %>';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';$('Refresh.Button').click();" />
+					<input type="button" name="CancelDelete.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIdx++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Refresh.Button').click();" />
 				</div>
 <%
 			}
@@ -363,6 +374,7 @@ if(wc.getActivityCreator() != null) {
 	}
 }
 %>
+<br />
 <script type="text/javascript">
   	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
   		$('<%= FORM_NAME %>').request({

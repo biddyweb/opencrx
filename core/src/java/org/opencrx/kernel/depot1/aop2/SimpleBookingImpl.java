@@ -56,6 +56,7 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
@@ -72,18 +73,19 @@ public class SimpleBookingImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Depots.getInstance().removeSimpleBooking(
-    			this.sameObject(),
+    		Depots.getInstance().preDelete(
+    			(CrxObject)this.sameObject(),
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,
@@ -91,5 +93,5 @@ public class SimpleBookingImpl
     		);
     	}
     }
-                
+
 }

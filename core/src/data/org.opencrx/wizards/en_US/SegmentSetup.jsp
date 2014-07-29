@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,13 +67,20 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
 " %>
+<!--
+	<meta name="label" content="Segment Setup">
+	<meta name="toolTip" content="Segment Setup">
+	<meta name="targetType" content="_inplace">
+	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
+	<meta name="order" content="2100">
+-->
 <%
-	final String WIZARD_NAME = "SegmentSetup.jsp";
+	final String FORM_NAME = "SegmentSetup.jsp";
 	SegmentSetupController wc = new SegmentSetupController();
 %>
 	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
@@ -87,89 +94,44 @@ org.openmdx.base.naming.*
 	String requestIdParam = Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId();
 	String xriParam = Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getObjectIdentity().toXRI(), "UTF-8");
 %>
-<head>
-	<style type="text/css" media="all">
-		body{
-		  font-family: "Open Sans", "DejaVu Sans Condensed", "lucida sans", tahoma, verdana, arial, sans-serif;
-			padding: 0; margin:0;}
-		h1{ margin: 0.5em 0em; font-size: 150%;}
-		h2{ font-size: 130%; margin: 0.5em 0em; text-align: left;}
-    textarea,
-    input[type='text'],
-    input[type='password']{
-    	width: 100%;
-    	margin: 0; border: 1px solid silver;
-    	padding: 0;
-    	font-size: 100%;
-		  font-family: "Open Sans", "DejaVu Sans Condensed", "lucida sans", tahoma, verdana, arial, sans-serif;
-    }
-    input.button{
-    	-moz-border-radius: 4px;
-    	-webkit-border-radius: 4px;
-    	width: 120px;
-    	border: 1px solid silver;
-    }
-		.col1,
-		.col2{float: left; width: 49.5%;}
-	</style>
-	<title>openCRX - Segment Setup Wizard</title>
-	<meta name="label" content="Segment Setup">
-	<meta name="toolTip" content="Segment Setup">
-	<meta name="targetType" content="_self">
-	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
-	<meta name="order" content="2100">
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link rel='shortcut icon' href='../../images/favicon.ico' />
-	<script type="text/javascript" src="../../javascript/portal-all.js"></script>	
-</head>
-<body>
-<div id="container">
-	<div id="wrap">
-		<div id="header" style="height:90px;">
-      <div id="logoTable">
-        <table id="headerlayout">
-          <tr id="headRow">
-            <td id="head" colspan="2">
-              <table id="info">
-                <tr>
-                  <td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
-                  <td id="headerCellSpacerLeft"></td>
-                  <td id="headerCellMiddle">&nbsp;</td>
-                  <td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    <div id="content-wrap">
-    	<div id="content" style="padding:10px 0.5em 0px 0.5em;">
-			<form method="post" action="<%= WIZARD_NAME %>">
-				<% wc.renderSetupReport(out); %>
-				<br />
-				<div class="buttons">
-					<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
-					<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
-					<input type="hidden" id="Command" name="Command" value="" /> 
+<div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
+<form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
+	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
+	<input type="hidden" id="Command" name="Command" value="" />
+	<div class="container" style="width:100%">
+		<% wc.renderSetupReport(out); %>
+	</div>
+	<div id="WaitIndicator" style="width:50px;height:24px;" class="wait">&nbsp;</div>
+	<div id="SubmitArea" style="display:none;">
 <%
-					if(wc.isCurrentUserIsAdmin()) {
-%>
-						<input type="Submit" name="Setup" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+		if(wc.isCurrentUserIsAdmin()) {
+%>	
+			<input type="Submit" name="Setup" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="Setup" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;$('Command').value=this.name;this.name='---';" />
 <%
-					}
+		} else {
+%>		
+			<div class="alert alert-warning">
+				<b>NOTE:</b> This wizard requires admin permissions.
+			</div>
+<%
+		}
 %>
-					<input type="Submit" name="Cancel" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('Command').value=this.name;" />
-					<%= wc.isCurrentUserIsAdmin() ? "" : "<h2>This wizard requires admin permissions.</h2>" %>
-					<br />
-				</div>
-			</form>
-			<br />
-      </div> <!-- content -->
-    </div> <!-- content-wrap -->
-  </div> <!-- wrap -->
-</div> <!-- container -->
-</body>
-</html>
-<t:wizardClose controller="<%= wc %>" />
+		<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9020" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+	</div>
+</form>
+<br />
+<script type="text/javascript">
+	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
+		$('<%= FORM_NAME %>').request({
+			onFailure: function() { },
+			onSuccess: function(t) {
+				$('UserDialog').update(t.responseText);
+			}
+		});
+		Event.stop(event);
+	});
+	$('WaitIndicator').style.display='none';
+	$('SubmitArea').style.display='block';	
+</script>
+<t:wizardClose controller="<%= wc %>" />		

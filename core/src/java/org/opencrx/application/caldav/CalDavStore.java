@@ -58,6 +58,7 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -171,6 +172,11 @@ public class CalDavStore implements WebDavStore {
 	) {
 		PersistenceManager pm = ((CalDavRequestContext)requestContext).getPersistenceManager();
 		HttpServletRequest req = requestContext.getHttpServletRequest();
+		if(this.pathMapping.containsKey(path)) {
+			String mappedPath = this.pathMapping.get(path);
+			this.pathMapping.remove(path);
+			path = mappedPath;
+		}
 		if(path.startsWith("/")) {
 			path = path.substring(1);
 		}
@@ -182,7 +188,8 @@ public class CalDavStore implements WebDavStore {
 			components = new String[]{components[0], components[1], req.getUserPrincipal().getName()};
 		}
 		if(components.length < 4) {
-			components = new String[]{components[0], components[1], components[2], "CalDAV"};			
+			// use default profile name DEFAULT_PROFILE_NAMES[0]
+			components = new String[]{components[0], components[1], components[2], DEFAULT_PROFILE_NAMES[0]};			
 		}
 		// Format 3
 		if(
@@ -200,11 +207,11 @@ public class CalDavStore implements WebDavStore {
 					path += "/" + components[i];
 				}
 			}
-			String activityId = null;
+			String resourceId = null;
 			if(path.endsWith(".ics")) {
 				int pos = path.lastIndexOf("/");
 				if(pos > 0) {
-					activityId = path.substring(pos + 1);
+					resourceId = path.substring(pos + 1);
 					path = path.substring(0, pos);
 				}
 			}
@@ -228,19 +235,10 @@ public class CalDavStore implements WebDavStore {
 					type,
 					runAs
 				);
-				if(activityId != null) {
-					if(activityId.endsWith(".ics")) {
-						activityId = activityId.substring(0, activityId.indexOf(".ics"));
-					}
-		    		if(this.uidMapping.containsKey(activityId)) {
-		    			String newId = this.uidMapping.get(activityId);
-		    			// old -> new mapping only available for one request
-		    			this.uidMapping.remove(activityId);
-		    			activityId = newId;
-		    		}
+				if(resourceId != null) {
 		    		try {
 			    		Activity activity = (Activity)activityCollectionResource.getQueryHelper().getPersistenceManager().getObjectById(
-			    			new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", components[0], "segment", components[1], "activity", activityId)
+			    			new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", components[0], "segment", components[1], "activity", resourceId.endsWith(".ics") ? resourceId.substring(0, resourceId.length() - 4) : resourceId)
 			    		);	    		
 						return new ActivityResource(
 							requestContext,
@@ -270,12 +268,16 @@ public class CalDavStore implements WebDavStore {
         	} catch(Exception ignore) {}
         	// Find sync profile by name
         	if(syncProfile == null) {
-	        	CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
-	        	calendarProfileQuery.name().equalTo(components[3]);
-	        	List<CalendarProfile> calendarProfiles = userHome.getSyncProfile(calendarProfileQuery);
-	        	if(!calendarProfiles.isEmpty()) {
-	        		syncProfile = calendarProfiles.iterator().next();
-	        	}
+        		// Try with default profile names
+        		for(String profileName: DEFAULT_PROFILE_NAMES) {        		
+		        	CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
+		        	calendarProfileQuery.name().equalTo(profileName);
+		        	List<CalendarProfile> calendarProfiles = userHome.getSyncProfile(calendarProfileQuery);
+		        	if(!calendarProfiles.isEmpty()) {
+		        		syncProfile = calendarProfiles.iterator().next();
+		        		break;
+		        	}
+        		}
         	}
         	if(syncProfile != null) {
 	    		String runAs = null;
@@ -313,12 +315,6 @@ public class CalDavStore implements WebDavStore {
     				if(id.endsWith(".ics")) {
     					id = id.substring(0, id.indexOf(".ics"));
     				}
-    	    		if(this.uidMapping.containsKey(id)) {
-    	    			String newId = this.uidMapping.get(id);
-    	    			// old -> new mapping only available for one request
-    	    			this.uidMapping.remove(id);
-    	    			id = newId;
-    	    		}			
     				// Get activity
     	    		try {
     		    		Activity activity = (Activity)pm.getObjectById(
@@ -388,15 +384,17 @@ public class CalDavStore implements WebDavStore {
 	@Override
 	public Collection<Resource> getChildren(
 		RequestContext requestContext, 
-		Resource res
+		Resource res,
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		if(res instanceof CalDavResource) {
-			return ((CalDavResource)res).getChildren();
+			return ((CalDavResource)res).getChildren(timeRangeStart, timeRangeEnd);
 		} else {
 			return Collections.emptyList();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
 	 */
@@ -431,31 +429,83 @@ public class CalDavStore implements WebDavStore {
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#removeResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
 	 */
 	@Override
-	public void removeResource(
-		RequestContext requestContext, 
+	public Status removeResource(
+		RequestContext requestContext,
+		String path,
 		Resource res
 	) {
-		if(res instanceof ActivityResource) {
-			PersistenceManager pm = ((CalDavRequestContext)requestContext).getPersistenceManager();		
-			pm.currentTransaction().begin();
-			((ActivityResource)res).getObject().setDisabled(true);
-			pm.currentTransaction().commit();
+		String parentPath = this.getParentPath(path); 
+		Resource parent = this.getResourceByPath(
+			requestContext, 
+			parentPath,
+			false // allowRunAs
+		);
+		if(
+			parent instanceof ActivityCollectionResource && 
+			res instanceof ActivityResource
+		) {
+			ActivityCollectionResource activityCollectionRes = (ActivityCollectionResource)parent;
+			if(activityCollectionRes.allowAddDelete()) {
+				PersistenceManager pm = ((CalDavRequestContext)requestContext).getPersistenceManager();
+				try {
+					pm.currentTransaction().begin();
+					((ActivityResource)res).getObject().setDisabled(true);
+					pm.currentTransaction().commit();
+					return Status.OK;
+				} catch(Exception e) {
+					new ServiceException(e).log();
+					try {
+						pm.currentTransaction().rollback();
+					} catch(Exception ignore) {}
+					return Status.FORBIDDEN;
+				}
+			} else {
+				return Status.FORBIDDEN;
+			}
+		} else {
+			return Status.FORBIDDEN;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#moveResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource, java.lang.String, java.lang.String)
 	 */
 	@Override
-    public MoveResourceStatus moveResource(
+    public Status moveResource(
     	RequestContext requestContext, 
     	Resource res, 
     	String sourcePath,
     	String destinationPath
     ) {
-		throw new WebdavException("Not supported by CalDAV");	    
+		try {
+			Status status = this.putResource(
+				requestContext, 
+				destinationPath,
+				this.getResourceContent(requestContext, res).getContent(),
+				this.getMimeType(res)
+			);
+			if(status != Status.FORBIDDEN) {
+				String mappedPath = pathMapping.get(destinationPath);
+				this.removeResource(
+					requestContext, 
+					sourcePath, 
+					res
+				);
+				// Refresh path mapping in case it was removed by removeSource()
+				if(mappedPath != null) {
+					pathMapping.put(
+						destinationPath,
+						mappedPath
+					);
+				}
+			}
+			return status;
+		} catch(Exception e) {
+			new ServiceException(e).log();
+			return Status.FORBIDDEN;
+		}
     }
-	
+
 	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#rollback(org.opencrx.application.uses.net.sf.webdav.RequestContext)
 	 */
@@ -523,12 +573,17 @@ public class CalDavStore implements WebDavStore {
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#putResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.io.InputStream, java.lang.String)
 	 */
 	@Override
-    public PutResourceStatus putResource(
+    public Status putResource(
     	RequestContext requestContext, 
     	String path, 
     	InputStream content, 
     	String contentType 
     ) {
+		if(this.pathMapping.containsKey(path)) {
+			String mappedPath = this.pathMapping.get(path);
+			this.pathMapping.remove(path);
+			path = mappedPath;
+		}
 		String parentPath = this.getParentPath(path); 
 		Resource parent = this.getResourceByPath(
 			requestContext, 
@@ -536,34 +591,42 @@ public class CalDavStore implements WebDavStore {
 			false // allowRunAs
 		);
 		if(parent instanceof ActivityCollectionResource) {
-			ActivityCollectionResource activityCollection = (ActivityCollectionResource)parent;
-			if(activityCollection.allowChange()) {
+			ActivityCollectionResource activityCollectionRes = (ActivityCollectionResource)parent;
+			if(activityCollectionRes.allowChange()) {
 		    	try {
 			    	BufferedReader reader = new BufferedReader(
 			    		new InputStreamReader(content, "UTF-8")
 			    	);
+	            	String resId = this.getBasePath(path);
+	            	if(resId != null && resId.endsWith(".ics")) {
+	            		resId = resId.substring(0, resId.length() - 4);
+	            	}
 		        	ICalendar.PutICalResult result = ICalendar.getInstance().putICal(
 		        		reader, 
-		        		activityCollection.getQueryHelper(),
-		        		true
+		        		activityCollectionRes.getQueryHelper(),
+		        		true,
+		        		resId
 		        	);
 		            if(result.getActivity() != null) {
-		            	String id = this.getBasePath(path);
-		            	if(id != null) {
-			            	this.uidMapping.put(
-			            		id.indexOf(".ics") >= 0 ? id.substring(0, id.indexOf(".ics")) : id, 
-			            		result.getActivity().refGetPath().getBase()
+		            	if(resId != null) {
+			            	this.pathMapping.put(
+			            		path, 
+			            		path.replace(resId, result.getActivity().refGetPath().getBase())
 			            	);
 		            	}
 		            }
-		        	return result.getStatus() == ICalendar.PutICalResult.Status.CREATED 
-		        		? PutResourceStatus.CREATED 
-		        		: PutResourceStatus.UPDATED;
+		            switch(result.getStatus()) {
+		            	case CREATED: return Status.OK_CREATED;
+		            	case UPDATED: return Status.OK;
+		            	case ERROR: return Status.FORBIDDEN;
+		            }
 		    	} catch(Exception e) {
+		    		// FORBIDDEN in case of a generic error
 		    		new ServiceException(e).log();
+	    			return Status.FORBIDDEN;
 		    	}
 			} else {
-				return PutResourceStatus.FORBIDDEN;
+				return Status.FORBIDDEN;
 			}
 		}
 	    return null;
@@ -623,8 +686,11 @@ public class CalDavStore implements WebDavStore {
     //-----------------------------------------------------------------------
 	protected static final Set<String> CALENDAR_TYPES =
 		new HashSet<String>(Arrays.asList("tracker", "milestone", "category", "home", "resource", "filter", "globalfilter"));
-			
+	public static final String[] DEFAULT_PROFILE_NAMES = new String[]{"CalDAV", "Calendars", "Calendar"};
 	protected PersistenceManagerFactory pmf = null;
-    protected final Map<String,String> uidMapping = new ConcurrentHashMap<String,String>();
+	// Path mappings are required for some clients such as iOS, Lightning. These clients perform 
+	// a PUT / GET immediately after having created a new resource ignoring a UID possibly rewritten by
+	// the server.
+    protected final Map<String,String> pathMapping = new ConcurrentHashMap<String,String>();
 	
 }

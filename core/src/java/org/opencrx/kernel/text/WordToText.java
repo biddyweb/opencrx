@@ -52,7 +52,6 @@
  */
 package org.opencrx.kernel.text;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -71,7 +70,6 @@ import org.openmdx.base.exception.ServiceException;
  */
 public class WordToText {
 
-    //-----------------------------------------------------------------------    
     /**
      * Get the text from the word file, as an array with one String
      *  per paragraph
@@ -90,8 +88,7 @@ public class WordToText {
                     ret[i] = ret[i] + "\n";
                 }
             }
-        } 
-        catch(Exception e) {
+        } catch(Exception e) {
             // Something's up with turning the text pieces into paragraphs
             // Fall back to ripping out the text pieces
             ret = new String[1];
@@ -100,7 +97,6 @@ public class WordToText {
         return ret;
     }
     
-    //-----------------------------------------------------------------------    
     /**
      * Grab the text out of the text pieces. Might also include various
      * bits of crud, but will work in cases where the text piece -> paragraph
@@ -133,7 +129,6 @@ public class WordToText {
         return text;
     }
 
-    //-----------------------------------------------------------------------    
     /**
      * Gets the text from a Word document.
      * 
@@ -141,16 +136,20 @@ public class WordToText {
      */
     public Reader parse(
         InputStream in
-    ) throws ServiceException, IOException {        
-        HWPFDocument doc = new HWPFDocument(
-            HWPFDocument.verifyAndBuildPOIFS(in)
-        );        
-        StringBuilder text = new StringBuilder();
-        String[] paragraphs = this.getParagraphText(doc);
-        for(String paragraph: paragraphs) {
-            text.append(paragraph);
-        }
-        return new StringReader(text.toString());
+    ) throws ServiceException {
+    	try {
+	        HWPFDocument doc = new HWPFDocument(
+	            HWPFDocument.verifyAndBuildPOIFS(in)
+	        );        
+	        StringBuilder text = new StringBuilder();
+	        String[] paragraphs = this.getParagraphText(doc);
+	        for(String paragraph: paragraphs) {
+	            text.append(paragraph);
+	        }
+	        return new StringReader(text.toString());
+    	} catch(Exception e) {
+    		throw new ServiceException(e);
+    	}
     }
 
 }

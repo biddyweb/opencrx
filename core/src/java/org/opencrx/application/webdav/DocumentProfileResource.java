@@ -54,6 +54,7 @@ package org.opencrx.application.webdav;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -118,6 +119,8 @@ class DocumentProfileResource extends WebDavResource {
 	 */
 	@Override
 	public Collection<Resource> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		SyncProfile syncProfile = this.getObject();
 		PersistenceManager pm = JDOHelper.getPersistenceManager(syncProfile);

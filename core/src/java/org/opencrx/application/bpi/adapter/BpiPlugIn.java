@@ -81,6 +81,7 @@ import org.opencrx.application.bpi.datatype.BpiOrganization;
 import org.opencrx.application.bpi.datatype.BpiParticipant;
 import org.opencrx.application.bpi.datatype.BpiPhoneNumber;
 import org.opencrx.application.bpi.datatype.BpiPostalAddress;
+import org.opencrx.application.bpi.datatype.BpiWebAddress;
 import org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery;
 import org.opencrx.kernel.account1.cci2.ContactQuery;
 import org.opencrx.kernel.account1.cci2.LegalEntityQuery;
@@ -94,6 +95,7 @@ import org.opencrx.kernel.account1.jmi1.LegalEntity;
 import org.opencrx.kernel.account1.jmi1.Member;
 import org.opencrx.kernel.account1.jmi1.PhoneNumber;
 import org.opencrx.kernel.account1.jmi1.PostalAddress;
+import org.opencrx.kernel.account1.jmi1.WebAddress;
 import org.opencrx.kernel.activity1.cci2.ActivityCreatorQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery;
@@ -120,6 +122,7 @@ import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 /**
@@ -127,6 +130,16 @@ import com.google.gson.Gson;
  *
  */
 public class BpiPlugIn {
+
+	/**
+	 * Create new instance of Gson. Override for custom-specific configuration.
+	 * 
+	 * @return
+	 */
+	protected GsonBuilder newGsonBuilder(
+	) {
+		return new GsonBuilder();
+	}
 
     /**
      * Stringify value.
@@ -138,7 +151,7 @@ public class BpiPlugIn {
     	PrintWriter pw,
     	Object value
     ) {
-    	Gson gson = new Gson();
+    	Gson gson = this.newGsonBuilder().create();
     	pw.println(gson.toJson(value));
     }
 
@@ -150,7 +163,24 @@ public class BpiPlugIn {
 	public String printObject(
     	Object value
     ) {
-    	Gson gson = new Gson();
+		return this.printObject(value, false);
+    }
+
+    /**
+     * Stringify value.
+     * 
+     * @param value
+     * @param prettyPrinting
+     */
+	public String printObject(
+    	Object value,
+    	boolean prettyPrinting
+    ) {
+		GsonBuilder gsonBuilder = this.newGsonBuilder();
+		if(prettyPrinting) {
+			gsonBuilder.setPrettyPrinting();
+		}
+    	Gson gson = gsonBuilder.create();
     	return gson.toJson(value);
     }
 
@@ -258,6 +288,16 @@ public class BpiPlugIn {
     public BpiPhoneNumber newBpiPhoneNumber(
     ) {
     	return new BpiPhoneNumber();
+    }
+
+    /**
+     * Get new instance of BpiWebAddress.
+     * 
+     * @return
+     */
+    public BpiWebAddress newBpiWebAddress(
+    ) {
+    	return new BpiWebAddress();
     }
 
     /**
@@ -484,6 +524,27 @@ public class BpiPlugIn {
 		);
 		bpiPhoneNumber.setPhoneNumberFull(phoneNumber.getPhoneNumberFull());
 		return bpiPhoneNumber;
+    }
+
+    /**
+     * Map WebAddress to BpiWebAddress.
+     * 
+     * @param webAddress
+     * @throws ServiceException
+     * @throws IOException
+     */
+	public BpiWebAddress toBpiWebAddress(
+		WebAddress webAddress,
+		String fetchGroup
+    ) throws ServiceException {
+		BpiWebAddress bpiWebAddress = newBpiWebAddress();
+		this.toBpiAddress(
+			webAddress, 
+			bpiWebAddress,
+			fetchGroup
+		);
+		bpiWebAddress.setWebAddress(webAddress.getWebUrl());
+		return bpiWebAddress;
     }
 
     /**
@@ -732,6 +793,22 @@ public class BpiPlugIn {
     			)
     		);
     	}
+    	if(mainAddresses[Accounts.WEB_BUSINESS] instanceof WebAddress) {
+    		bpiAccount.setWebBusiness(
+    			this.toBpiWebAddress(
+    				(WebAddress)mainAddresses[Accounts.WEB_BUSINESS], 
+    				fetchGroup
+    			)
+    		);
+    	}
+    	if(mainAddresses[Accounts.WEB_HOME] instanceof WebAddress) {
+    		bpiAccount.setWebBusiness(
+    			this.toBpiWebAddress(
+    				(WebAddress)mainAddresses[Accounts.WEB_HOME], 
+    				fetchGroup
+    			)
+    		);
+    	}
 		// Localized fields
     	if(!FetchGroup.BASIC.equals(fetchGroup)) {
 			List<BpiLocalizedField> bpiLocalizedFields = new ArrayList<BpiLocalizedField>();
@@ -879,26 +956,37 @@ public class BpiPlugIn {
     	bpiActivity.setProcessState(activity.getProcessState() == null ? null : activity.getProcessState().getName());
     	bpiActivity.setLocation(activity.getLocation());
     	bpiActivity.setCategory(activity.getCategory());
+    	if(!FetchGroup.BASIC.equals(fetchGroup)) {
+	    	if(activity.getReportingContact() instanceof Contact) {
+	    		bpiActivity.setReportingContact(
+	    			this.toBpiContact(
+	    				activity.getReportingContact(), 
+	    				this.newBpiContact(),
+	    				FetchGroup.DEFAULT
+	    			)
+	    		);
+	    	}
+	    	if(activity.getAssignedTo() instanceof Contact) {
+	    		bpiActivity.setAssignedTo(
+	    			this.toBpiContact(
+	    				activity.getAssignedTo(), 
+	    				this.newBpiContact(),
+	    				FetchGroup.DEFAULT
+	    			)
+	    		);
+	    	}
+	    	if(activity.getReportingAccount() instanceof Contact) {
+	    		bpiActivity.setReportingContact2(
+	    			this.toBpiContact(
+	    				(Contact)activity.getReportingAccount(), 
+	    				this.newBpiContact(),
+	    				FetchGroup.DEFAULT
+	    			)
+	    		);
+	    	}
+    	}
     	// Participants
     	if(FetchGroup.ALL.equals(fetchGroup)) {
-        	if(activity.getReportingContact() != null) {
-        		bpiActivity.setReportingContact(
-        			this.toBpiContact(
-        				activity.getReportingContact(), 
-        				this.newBpiContact(),
-        				FetchGroup.DEFAULT
-        			)
-        		);
-        	}
-        	if(activity.getAssignedTo() != null) {
-        		bpiActivity.setAssignedTo(
-        			this.toBpiContact(
-        				activity.getAssignedTo(), 
-        				this.newBpiContact(),
-        				FetchGroup.DEFAULT
-        			)
-        		);
-        	}
 	    	List<BpiParticipant> bpiParticipants = new ArrayList<BpiParticipant>();
 			for(AbstractActivityParty party: Activities.getInstance().getActivityParties(activity)) {
 				Account partyAccount = null;
@@ -1216,5 +1304,23 @@ public class BpiPlugIn {
     	activityQuery.forAllDisabled().isFalse();
     	return activitySegment.getActivity(activityQuery);    	
     }
-		
+
+    /**
+     * Merge an activity's detailed description with a new detailed description.
+     * The default implementation does an append of the form old + '~ ~ ~' + newText
+     * 
+     * @param oldText
+     * @param newText
+     * @return
+     */
+    public String mergeActivityDetailedDescription(
+    	String oldText,
+    	String newText
+    ) {
+    	return
+    		newText + "\n\n" +
+    		"~ ~ ~\n" +
+    		oldText;    		
+    }
+    
 }

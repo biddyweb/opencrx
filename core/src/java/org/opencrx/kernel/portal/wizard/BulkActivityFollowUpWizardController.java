@@ -431,9 +431,12 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 							currentUserHome,
 							wfProcess,
 							this.activityGroup,
-							null, // triggeredBy
-							null, // triggeredByEventId, 
-							null, // triggeredByEventType
+							null, // booleanParams
+							null, // stringParams
+							null, // integerParams 
+							null, // decimalParams
+							null, // dateTimeParams
+							null, // uriParams
 							null // parentProcessInstance
 						);
 					}

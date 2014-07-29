@@ -17,18 +17,7 @@
                         <_item>Actividades</_item>
                       </label>
                       <toolTip>
-                        <_item>todas las Actividades</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCreator" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Creadores de Actividades</_item>
-                      </label>
-                      <toolTip>
-                        <_item>todos los creadores de actividades</_item>
+                        <_item>Actividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -40,6 +29,44 @@
                       </label>
                       <toolTip>
                         <_item>todas las Actividades</_item>
+                      </toolTip>
+                    </_object>
+                    <_content>
+                      <additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Actividades</_item>
+														</toolTip>
+														<label>
+															<_item>Actividades</_item>
+														</label>														
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Actividades (desactivadas)</_item>
+														</toolTip>
+														<label>
+															<_item>»Actividades (desactivadas)</_item>
+														</label>														
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+                      </additionalElementDefinition>
+                    </_content>
+                  </org.openmdx.ui1.ElementDefinition>
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:activityCreator" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Creadores de Actividades</_item>
+                      </label>
+                      <toolTip>
+                        <_item>todos los creadores de actividades</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -179,10 +206,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>#</_item>
+                        <_item>Actividad-#</_item>
                       </label>
                       <toolTip>
-                        <_item>Número</_item>
+                        <_item>Número de actividad</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -217,6 +244,9 @@
                       <toolTip>
                         <_item>Estado</_item>
                       </toolTip>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

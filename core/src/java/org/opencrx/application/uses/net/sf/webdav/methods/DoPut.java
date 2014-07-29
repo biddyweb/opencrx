@@ -90,16 +90,13 @@ public class DoPut extends WebDavMethod {
     private static Logger LOG = Logger.getLogger(DoPut.class.getPackage().getName());
 
     private final WebDavStore _store;
-    private final boolean _readOnly;
     private final boolean _lazyFolderCreationOnPut;
 
     public DoPut(
     	WebDavStore store, 
-    	boolean readOnly,
         boolean lazyFolderCreationOnPut
     ) {
         _store = store;
-        _readOnly = readOnly;
         _lazyFolderCreationOnPut = lazyFolderCreationOnPut;
     }
 
@@ -110,62 +107,58 @@ public class DoPut extends WebDavMethod {
         LOG.finest("-- " + this.getClass().getName());
     	HttpServletRequest req = requestContext.getHttpServletRequest();
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	
-        if (!_readOnly) {
-            String path = getRelativePath(requestContext);
-            String parentPath = getParentPath(path);
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
-            if (!checkLocks(requestContext, _store, parentPath)) {
-                errorList.put(parentPath, WebdavStatus.SC_LOCKED);
-                sendReport(requestContext, errorList);
-                return; // parent is locked
-            }
-            if (!checkLocks(requestContext, _store, path)) {
-                errorList.put(path, WebdavStatus.SC_LOCKED);
-                sendReport(requestContext, errorList);
-                return; // resource is locked
-            }
-            Resource parentSo = null;
-            try {
-                parentSo = _store.getResourceByPath(requestContext, parentPath);
-                if (parentPath != null && parentSo != null && !parentSo.isCollection()) {
-                    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                    return;
-                } else if (parentPath != null && parentSo == null && _lazyFolderCreationOnPut) {
-                    _store.createCollection(requestContext, parentPath);
-                } else if (parentPath != null && parentSo == null && !_lazyFolderCreationOnPut) {
-                    errorList.put(parentPath, HttpServletResponse.SC_NOT_FOUND);
-                    sendReport(requestContext, errorList);
-                    return;
-                }
-                WebDavStore.PutResourceStatus putResult = _store.putResource(
-                	requestContext, 
-                	path, 
-                	req.getInputStream(), 
-                	req.getContentType() 
-                );
-                if(putResult == WebDavStore.PutResourceStatus.FORBIDDEN) {
-                	resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                } else {
-	                resp.setCharacterEncoding("UTF-8");
-	                if(putResult != WebDavStore.PutResourceStatus.CREATED) {
-	                	// Some DAV clients (e.g. CalDavZAP) require reload after creation of resource
-	                	resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));
-	                }
-		            resp.setStatus(
-		            	putResult == WebDavStore.PutResourceStatus.CREATED 
-		            		? HttpServletResponse.SC_CREATED 
-		            		: HttpServletResponse.SC_OK
-		            );
-                }
-            } catch (AccessDeniedException e) {
+        String path = getRelativePath(requestContext);
+        String parentPath = getParentPath(path);
+        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        if (!checkLocks(requestContext, _store, parentPath)) {
+            errorList.put(parentPath, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return; // parent is locked
+        }
+        if (!checkLocks(requestContext, _store, path)) {
+            errorList.put(path, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return; // resource is locked
+        }
+        Resource parentSo = null;
+        try {
+            parentSo = _store.getResourceByPath(requestContext, parentPath);
+            if (parentPath != null && parentSo != null && !parentSo.isCollection()) {
                 resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            } catch (WebdavException e) {
-            	new ServiceException(e).log();            	
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } finally {
+                return;
+            } else if (parentPath != null && parentSo == null && _lazyFolderCreationOnPut) {
+                _store.createCollection(requestContext, parentPath);
+            } else if (parentPath != null && parentSo == null && !_lazyFolderCreationOnPut) {
+                errorList.put(parentPath, HttpServletResponse.SC_NOT_FOUND);
+                sendReport(requestContext, errorList);
+                return;
             }
-        } else {
+            WebDavStore.Status putResult = _store.putResource(
+            	requestContext, 
+            	path, 
+            	req.getInputStream(),
+            	req.getContentType() 
+            );
+            if(putResult == WebDavStore.Status.FORBIDDEN) {
+            	resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            } else {
+                resp.setCharacterEncoding("UTF-8");
+                if(putResult != WebDavStore.Status.OK_CREATED) {
+                	// Some DAV clients (e.g. CalDavZAP) require reload after creation of resource
+                	resp.setHeader("ETag", Long.toString(System.currentTimeMillis()));
+                }
+	            resp.setStatus(
+	            	putResult == WebDavStore.Status.OK_CREATED 
+	            		? HttpServletResponse.SC_CREATED 
+	            		: HttpServletResponse.SC_OK
+	            );
+            }
+        } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } catch (WebdavException e) {
+        	new ServiceException(e).log();            	
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
         }
 
     }

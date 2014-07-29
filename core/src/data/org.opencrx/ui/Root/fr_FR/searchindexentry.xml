@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:address" _operation="create">
                     <_object>
                       <label>
-                        <_item>Recherche adresse</_item>
+                        <_item>Adresses</_item>
                       </label>
                       <toolTip>
-                        <_item>Recherche adresse</_item>
+                        <_item>Adresses</_item>
                       </toolTip>
                     </_object>
                     <_content/>

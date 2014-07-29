@@ -210,6 +210,393 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- Operations -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:checkForAutoUpdate">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Check for auto update</_item>
+											</toolTip>
+											<label>
+												<_item>Check for auto update</_item>
+											</label>
+											<order>
+												<_item>500</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:checkForAutoUpdate:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:checkForAutoUpdate:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress1">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Candidate address #1</_item>
+											</toolTip>
+											<label>
+												<_item>Candidate address #1</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate1">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Qualifies for auto update</_item>
+											</toolTip>
+											<label>
+												<_item>Qualifies for auto update</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields1">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields1">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields not matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields not matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress2">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Candidate address #2</_item>
+											</toolTip>
+											<label>
+												<_item>Candidate address #2</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate2">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Qualifies for auto update</_item>
+											</toolTip>
+											<label>
+												<_item>Qualifies for auto update</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>60</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields2">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>70</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields2">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields not matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields not matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress3">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Candidate address #3</_item>
+											</toolTip>
+											<label>
+												<_item>Candidate address #3</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate3">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Qualifies for auto update</_item>
+											</toolTip>
+											<label>
+												<_item>Qualifies for auto update</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields3">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>110</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields3">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields not matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields not matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress4">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Candidate address #4</_item>
+											</toolTip>
+											<label>
+												<_item>Candidate address #4</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>130</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate4">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Qualifies for auto update</_item>
+											</toolTip>
+											<label>
+												<_item>Qualifies for auto update</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>140</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields4">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields4">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields not matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields not matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>160</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateAddress5">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Candidate address #5</_item>
+											</toolTip>
+											<label>
+												<_item>Candidate address #5</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>170</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateQualifiesForAutoUpdate5">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Qualifies for auto update</_item>
+											</toolTip>
+											<label>
+												<_item>Qualifies for auto update</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>180</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateMatchingFields5">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>190</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CheckForAutoUpdateResult:candidateNonMatchingFields5">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Fields not matching</_item>
+											</toolTip>
+											<label>
+												<_item>Fields not matching</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AccountAddress:Pane:Op:Tab:moveAddress">
 										<_object>
 											<active>true</active>
@@ -222,7 +609,7 @@
 											<order>
 												<_item>500</_item>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>20</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -337,7 +724,7 @@
 											<order>
 												<_item>500</_item>
 												<_item>0</_item>
-												<_item>11</_item>
+												<_item>21</_item>
 											</order>
 										</_object>
 										<_content/>

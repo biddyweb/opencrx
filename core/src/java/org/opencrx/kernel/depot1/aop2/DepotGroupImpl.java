@@ -88,7 +88,7 @@ public class DepotGroupImpl
     public void jdoPreDelete(
     ) {
     	try {
-    		Depots.getInstance().removeDepotGroup(
+    		Depots.getInstance().preDelete(
     			this.sameObject(), 
     			true
     		);

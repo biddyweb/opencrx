@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
@@ -9,7 +9,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -61,7 +61,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -86,8 +86,10 @@ org.opencrx.kernel.backend.*
 	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCreator">
 	<meta name="order" content="8000">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
 	<style type="text/css" media="all">
@@ -230,7 +232,7 @@ org.opencrx.kernel.backend.*
 						fileIdx++;
 					}
 
-					// get unmatched/provided e-mail addresses and buld address map
+					// get unmatched/provided e-mail addresses and build address map
 					Map<String,String> addressMap = new TreeMap<String,String>(); // Mapping X.500 --> SMTP
 					int emailIdx = 0;
 					while ((String[])parameterMap.get("email-" + emailIdx) != null) {
@@ -324,7 +326,7 @@ org.opencrx.kernel.backend.*
 									}
 									if (isChecked) {
 										javax.mail.internet.MimeMessage msg = null;
-										//System.out.println("addressMap = " + addressMap);
+										System.out.println("addressMap = " + addressMap);
 										
 										// MSG
 										if(contentName != null && contentName.toUpperCase().endsWith(".MSG")) {
@@ -333,10 +335,11 @@ org.opencrx.kernel.backend.*
 												new FileInputStream(location),
 												accountSegment,
 												addressMap, //Collections.<String,String>emptyMap(),
-												true, // validateMappedAddresses
+												false, // validateMappedAddresses (note that missing SMTP-Addresses are created with admin-Standard)
 												newErrors
 											);
 											if (!newErrors.isEmpty()) {
+												System.out.println("errors: " + newErrors);
 												errors.addAll(newErrors);
 											}
 										}
@@ -401,6 +404,7 @@ org.opencrx.kernel.backend.*
 						viewsCache.getView(requestId)
 					);
 					pm.close();
+					
 %>
 					<form name="UploadEMail" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="UploadEMail.jsp">
 						<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
@@ -413,13 +417,13 @@ org.opencrx.kernel.backend.*
 								          <a href="../../helpJsCookie.html" target="_blank"><img class="popUpButton" src="../../images/help.gif" width="16" height="16" border="0" onclick="javascript:void(window.open('helpJsCookie.html', 'Help', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes,directories=no,location=no,width=400'));" alt="" /></a> <%= texts.getPageRequiresScriptText() %>
 								        </div>
 							      	</noscript>
-									<div id="etitle" style="height:20px;">
+									<div id="etitle" style="height:40px;">
 										<%= app.getLabel("org:opencrx:kernel:activity1:EMail") %>
 									</div>
 									<div class="col1"><fieldset>
 										<table class="fieldGroup">
 								 			<tr>
-								 				<td class="label"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:document1:Media", "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
+								 				<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:document1:Media", "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
 								 				<td >
 								 					<input name="<%= UPLOAD_FILE_FIELD_NAME %>" id="<%= UPLOAD_FILE_FIELD_NAME %>" style="border:1px solid #ddd;" title="drop files here" type="file" multiple="multiple" tabindex="200" onChange="javascript:makeFileList();" />
 														<div id="fileList"></div>
@@ -458,11 +462,26 @@ org.opencrx.kernel.backend.*
 <%
 											if (hasErrors) {
 												for (int idx = 0; idx < errors.size(); idx++) {
+													String providedValue = "";
+													if (addressMap.get(errors.get(idx)) != null) {
+														providedValue = (String)addressMap.get(errors.get(idx));
+													}
+													boolean isX500 = errors.get(idx) != null && errors.get(idx).startsWith("/");
 %>
 													<tr>
-										 				<td class="label"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:activity1:EMailRecipient", "party", app.getCurrentLocaleAsIndex()) %>:</span></td>
+										 				<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel("org:opencrx:kernel:activity1:EMailRecipient", "party", app.getCurrentLocaleAsIndex()) %>:</span></td>
 														<td nowrap>
-															<input type="text" name="email-<%= idx %>" size="20" value="" />
+<%
+															if (isX500) {
+%>
+																<input type="text" name="email-<%= idx %>" size="20" value="<%= providedValue %>" style="width:250px;" />
+<%
+															} else {
+%>
+																<input type="text" name="email-<%= idx %>" size="20" value="<%= errors.get(idx) %>"  style="width:250px;" />
+<%
+															}
+%>
 															<input type="hidden" name="unmatched-<%= idx %>" value="<%= errors.get(idx) %>" /> 
 											 				<span style="white-space:nowrap;overflow:hidden;" title="<%= errors.get(idx) %>"><%= errors.get(idx) %></span>
 														</td>
@@ -475,8 +494,8 @@ org.opencrx.kernel.backend.*
 											<tr>
 												<td colspan="3">
 													<br>
-													<input type="Submit" name="OK.Button" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
-													<input type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
+													<input type="Submit" name="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
+													<input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
 												</td>
 											</tr>
 										</table>

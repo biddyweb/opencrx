@@ -59,6 +59,7 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.model1.cci2.ParameterQuery;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 
@@ -130,8 +131,13 @@ public class Models extends AbstractImpl {
         return signature;
     }
     
-    //-------------------------------------------------------------------------
-    public void updateModelElement(
+    /**
+     * Update model element callback. Override for custom-specific behaviour.
+     * 
+     * @param element
+     * @throws ServiceException
+     */
+    protected void updateModelElement(
         org.opencrx.kernel.model1.jmi1.Element element
     ) throws ServiceException {
         org.opencrx.kernel.model1.jmi1.Namespace container = element.getContainer();
@@ -143,6 +149,30 @@ public class Models extends AbstractImpl {
         );
     }
             
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		if(object instanceof org.opencrx.kernel.model1.jmi1.Element) {
+			this.updateModelElement((org.opencrx.kernel.model1.jmi1.Element)object);
+		}
+	}
+
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

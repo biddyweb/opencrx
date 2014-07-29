@@ -111,7 +111,7 @@ import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.ViewPortFactory;
-import org.openmdx.portal.servlet.view.TransientObjectView;
+import org.openmdx.portal.servlet.component.TransientObjectView;
 
 /**
  * BulkCreateActivityWizardController
@@ -264,9 +264,12 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 					currentUserHome, 
 					wfProcess,
 					this.activityCreator,
-					null, // triggeredBy
-					null, // triggeredByEventId, 
-					null, // triggeredByEventType
+					null, // booleanParams
+					null, // stringParams
+					null, // integerParams 
+					null, // decimalParams
+					null, // dateTimeParams
+					null, // uriParams
 					null // parentProcessInstance
 				);
 				// Set BulkCreateActivityWorkflow parameters
@@ -1077,6 +1080,9 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				if(usage != null) {
 					emailAddressUsages.add(Short.valueOf((String)usage));
 				}
+			}
+			if(emailAddressUsages.isEmpty()) {
+				emailAddressUsages.add(Addresses.USAGE_BUSINESS); // default Usage: Business
 			}
 			this.formFields.put(
 				"org:opencrx:kernel:address1:Addressable:usage",

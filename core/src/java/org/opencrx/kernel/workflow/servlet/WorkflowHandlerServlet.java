@@ -382,7 +382,7 @@ public class WorkflowHandlerServlet extends HttpServlet {
         HttpServletRequest req, 
         HttpServletResponse res
     ) throws IOException {
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + id);
+        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + " " + id);
         SysLog.detail(WORKFLOW_NAME + " " + id);    
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
@@ -510,7 +510,7 @@ public class WorkflowHandlerServlet extends HttpServlet {
 	            		runningSegments.get(id).isInterrupted()
 	            	) {
 		            	Thread t = runningSegments.get(id);
-	            		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + id + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+	            		System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + id + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
 	            	}
             	}
             } else {

@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -109,7 +109,6 @@ org.openmdx.base.naming.*
   <meta name="order" content="org:opencrx:kernel:activity1:Mailing:mailMerge">
   <meta name="order" content="org:opencrx:kernel:activity1:AddressGroup:mailMerge">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
     <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
@@ -128,7 +127,7 @@ org.openmdx.base.naming.*
 %>
         <table class="fieldGroup">
 			<tr>
-				<td class="label"><span class="nw">Template:</span></td>
+				<td class="<%= CssClass.fieldLabel %>"><span class="nw">Template:</span></td>
 	            <td >
 					<select class="valueL" id="templateXri" name="templateXri" tabindex="100">
 <%
@@ -149,8 +148,8 @@ org.openmdx.base.naming.*
 		<br />
 		<div id="WaitIndicator" style="width:50px;height:24px;" class="wait">&nbsp;</div>
 		<div id="SubmitArea" style="display:none;">
-		    <input type="submit" name="OK" tabindex="1000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;"/>
-		    <input type="submit" name="Cancel" tabindex="2000" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+		    <input type="submit" name="OK" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;"/>
+		    <input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="2000" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 		</div>
 <%
 	} else {

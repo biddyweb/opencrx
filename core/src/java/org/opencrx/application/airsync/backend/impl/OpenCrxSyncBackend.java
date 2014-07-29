@@ -1375,7 +1375,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						syncFolder = new SyncFolder();
 						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.MEETING.getValue());
 						syncFolder.setFolderType(
-							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+							feed.getName().endsWith(Base.PRIVATE_SUFFIX) ?
 								FolderType.DEFAULT_CALENDAR_FOLDER :
 									FolderType.USER_CREATED_CALENDAR_FOLDER
 						);
@@ -1393,7 +1393,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						syncFolder = new SyncFolder();
 						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.TASK.getValue());
 						syncFolder.setFolderType(
-							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+							feed.getName().endsWith(Base.PRIVATE_SUFFIX) ?
 								FolderType.DEFAULT_TASKS_FOLDER :
 									FolderType.USER_CREATED_TASKS_FOLDER
 						);
@@ -1413,7 +1413,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								syncFolder = new SyncFolder();
 								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.MEETING.getValue());
 								syncFolder.setFolderType(
-									feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+									feed.getName().endsWith(Base.PRIVATE_SUFFIX) ?
 										FolderType.DEFAULT_CALENDAR_FOLDER :
 											FolderType.USER_CREATED_CALENDAR_FOLDER
 								);
@@ -1431,7 +1431,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 								syncFolder = new SyncFolder();
 								syncFolder.setServerId(this.datatypeMapper.toObjectId(feed) + "?type=" + ActivityClass.TASK.getValue());
 								syncFolder.setFolderType(
-									feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+									feed.getName().endsWith(Base.PRIVATE_SUFFIX) ?
 										FolderType.DEFAULT_TASKS_FOLDER :
 											FolderType.USER_CREATED_TASKS_FOLDER
 								);
@@ -1446,7 +1446,7 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						syncFolder = new SyncFolder();
 						syncFolder.setServerId(this.datatypeMapper.toObjectId(feed));
 						syncFolder.setFolderType(
-							feed.getName().endsWith(Activities.PRIVATE_GROUP_SUFFIX) ?
+							feed.getName().endsWith(Base.PRIVATE_SUFFIX) ?
 								FolderType.DEFAULT_CONTACTS_FOLDER :
 									FolderType.USER_CREATED_CONTACTS_FOLDER
 						);

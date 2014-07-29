@@ -54,6 +54,7 @@ package test.org.opencrx.kernel.api;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.List;
 
 import javax.jdo.PersistenceManagerFactory;
 import javax.naming.NamingException;
@@ -63,9 +64,22 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
+import org.opencrx.kernel.account1.cci2.ContactQuery;
+import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.Member;
+import org.opencrx.kernel.backend.Accounts;
+import org.opencrx.kernel.backend.SecureObject;
+import org.opencrx.kernel.backend.UserHomes;
+import org.opencrx.kernel.base.jmi1.CheckPermissionsParams;
+import org.opencrx.kernel.base.jmi1.CheckPermissionsResult;
+import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.jmi1.CreateUserParams;
+import org.opencrx.kernel.home1.jmi1.CreateUserResult;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 import test.org.opencrx.generic.AbstractTest;
 
@@ -105,10 +119,12 @@ public class TestApi {
         public void run(
         ) throws ServiceException, IOException, ParseException{
             this.testReflection();
+            this.testCheckPermissions();
+            this.testCreateUser();
         }
 		
 	    protected void testReflection(
-	    ) throws ServiceException{
+	    ) throws ServiceException {
 	        try {
 	        	// Test 1: set array
 	        	EMailAddress emailAddress = pm.newInstance(EMailAddress.class);
@@ -120,8 +136,61 @@ public class TestApi {
 	        }
 	    }
 
+	    protected void testCheckPermissions(
+	    ) throws ServiceException {
+	    	CheckPermissionsParams params = Structures.create(
+    			CheckPermissionsParams.class, 
+				Datatypes.member(CheckPermissionsParams.Member.principalName, "guest")
+			);
+	    	Contact contact = (Contact)pm.getObjectById(new Path("xri://@openmdx*org.opencrx.kernel.account1/provider/CRX/segment/Standard/account/admin-Standard"));
+	    	CheckPermissionsResult result = contact.checkPermissions(params);
+	    	System.out.print(result.isHasUpdatePermission());
+	    }
+	    
+	    protected void testCreateUser(
+	    ) throws ServiceException {
+	    	try {
+	    		org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+	    		org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup = 
+	    			(org.opencrx.security.realm1.jmi1.PrincipalGroup)SecureObject.getInstance().findPrincipal(
+	    				SecurityKeys.USER_GROUP_USERS, 
+	    				SecureObject.getRealmIdentity(providerName, segmentName),
+	    				pm
+	    			);
+	    		ContactQuery contactQuery = (ContactQuery)pm.newQuery(Contact.class);
+	    		contactQuery.thereExistsFullName().equalTo("test99");
+	    		List<Contact> contacts = Accounts.getInstance().getAccountSegment(
+	    			pm, providerName, segmentName
+	    		).getAccount(
+	    			contactQuery
+	    		);
+	    		if(!contacts.isEmpty()) {
+	    			Contact contact = contacts.iterator().next();
+		    		CreateUserParams params = Structures.create(
+		    			CreateUserParams.class,
+		    			Datatypes.member(CreateUserParams.Member.contact, contact),
+		    			Datatypes.member(CreateUserParams.Member.initialPassword, "changeit"),
+		    			Datatypes.member(CreateUserParams.Member.initialPasswordVerification, "changeit"),
+		    			Datatypes.member(CreateUserParams.Member.primaryUserGroup, primaryGroup),
+		    			Datatypes.member(CreateUserParams.Member.principalName, "test99")
+		    		);
+		    		try {
+		    			pm.currentTransaction().begin();
+		    			CreateUserResult result = userHomeSegment.createUser(params);
+		    			pm.currentTransaction().commit();
+		    			System.out.println("result.status=" + result.getStatus());
+		    			System.out.println("result.home=" + result.getCreatedUserHome());
+		    		} catch(Exception e) {
+		    			System.out.println("change password failed. Message=" + e.getMessage());
+		    			new ServiceException(e).log();
+		    		}
+	    		}
+	    	} catch(Exception e) {
+	    		new ServiceException(e).log();
+	    	}
+	    }
     }
-    
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

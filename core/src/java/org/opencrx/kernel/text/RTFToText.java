@@ -61,6 +61,8 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
 import javax.swing.text.rtf.RTFEditorKit;
 
+import org.openmdx.base.exception.ServiceException;
+
 /**
  * RTFToText
  *
@@ -77,19 +79,23 @@ public class RTFToText {
      */
     public static Reader toTextAsReader(
         InputStream document
-    ) throws IOException, BadLocationException {
-        DefaultStyledDocument styledDoc = new DefaultStyledDocument();
-        new RTFEditorKit().read(
-            document, 
-            styledDoc, 
-            0
-        );
-       return new StringReader(
-            styledDoc.getText(
-                0, 
-                styledDoc.getLength()
-            )
-        );    
+    ) throws ServiceException {
+    	try {
+	        DefaultStyledDocument styledDoc = new DefaultStyledDocument();
+	        new RTFEditorKit().read(
+	            document, 
+	            styledDoc, 
+	            0
+	        );
+	       return new StringReader(
+	            styledDoc.getText(
+	                0, 
+	                styledDoc.getLength()
+	            )
+	        );
+    	} catch(Exception e) {
+    		throw new ServiceException(e);
+    	}
     }
 
     /**
@@ -102,20 +108,21 @@ public class RTFToText {
      */
     public static String toTextAsString(
         InputStream document
-    ) throws IOException, BadLocationException {
-        DefaultStyledDocument styledDoc = new DefaultStyledDocument();
-        new RTFEditorKit().read(
-            document, 
-            styledDoc, 
-            0
-        );
-        return styledDoc.getText(
-            0, 
-            styledDoc.getLength()
-        );
+    ) throws ServiceException {
+    	try {
+	        DefaultStyledDocument styledDoc = new DefaultStyledDocument();
+	        new RTFEditorKit().read(
+	            document, 
+	            styledDoc, 
+	            0
+	        );
+	        return styledDoc.getText(
+	            0, 
+	            styledDoc.getLength()
+	        );
+    	} catch(Exception e) {
+    		throw new ServiceException(e);
+    	}
     }
 
-    //-----------------------------------------------------------------------
-    // Members
-    //-----------------------------------------------------------------------    
 }

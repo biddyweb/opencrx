@@ -52,8 +52,6 @@
  */
 package org.opencrx.kernel.contract1.aop2;
 
-import javax.jdo.JDOUserException;
-
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.contract1.jmi1.SalesContractPosition;
 import org.opencrx.kernel.depot1.jmi1.CompoundBooking;
@@ -175,26 +173,18 @@ public class SalesContractImpl
         }        	    	
     }
 	
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.contract1.aop2.AbstractContractImpl#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
-    	try {
-    		Contracts.getInstance().updateSalesContract(
-    			this.sameObject()
-    		);
-    		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
-    		throw new JDOUserException(
-    			"jdoPreStore failed",
-    			e,
-    			this.sameObject()
-    		);
-    	}
+   		super.jdoPreStore();
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.contract1.aop2.AbstractContractImpl#jdoPreDelete()
+	 */
 	@Override
     public void jdoPreDelete(
     ) {

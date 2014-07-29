@@ -123,6 +123,9 @@
                       <toolTip>
                         <_item>Status</_item>
                       </toolTip>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>

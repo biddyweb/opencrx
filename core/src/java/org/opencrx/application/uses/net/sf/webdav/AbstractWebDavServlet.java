@@ -104,7 +104,6 @@ public abstract class AbstractWebDavServlet extends HttpServlet {
 
 	private static Logger LOG = Logger.getLogger(AbstractWebDavServlet.class.getPackage().getName());
 
-    private static final boolean READ_ONLY = false;
     private WebDavStore _store;
     private HashMap<String, WebDavMethod> _methodMap = new HashMap<String, WebDavMethod>();
 
@@ -146,46 +145,40 @@ public abstract class AbstractWebDavServlet extends HttpServlet {
     }
     
     protected WebDavMethod newDoDelete(
-    	WebDavStore store,
-    	boolean readOnly
+    	WebDavStore store
     ) {    	
-    	return new DoDelete(store, readOnly);
+    	return new DoDelete(store);
     }
 
     protected WebDavMethod newDoCopy(
     	WebDavStore store,
-    	DoDelete doDelete,
-    	boolean readOnly
+    	DoDelete doDelete
     ) {    	
-    	return new DoCopy(store, doDelete, readOnly);
+    	return new DoCopy(store, doDelete);
     }
 
     protected WebDavMethod newDoLock(
-    	WebDavStore store,
-    	boolean readOnly
+    	WebDavStore store
     ) {    	
-    	return new DoLock(store, readOnly);
+    	return new DoLock(store);
     }
 
     protected WebDavMethod newDoUnlock(
-    	WebDavStore store,
-    	boolean readOnly
+    	WebDavStore store
     ) {    	
-    	return new DoUnlock(store, readOnly);
+    	return new DoUnlock(store);
     }
 
     protected WebDavMethod newDoMove(
-    	WebDavStore store,
-    	boolean readOnly
+    	WebDavStore store
     ) {    	
-    	return new DoMove(store, readOnly);
+    	return new DoMove(store);
     }
 
     protected WebDavMethod newDoMkcol(
-    	WebDavStore store,
-    	boolean readOnly
+    	WebDavStore store
     ) {    	
-    	return new DoMkcol(store, readOnly);
+    	return new DoMkcol(store);
     }
 
     protected WebDavMethod newDoOptions(
@@ -196,10 +189,9 @@ public abstract class AbstractWebDavServlet extends HttpServlet {
 
     protected WebDavMethod newDoPut(
     	WebDavStore store, 
-    	boolean lazyFolderCreationOnPut,
-    	boolean readOnly
+    	boolean lazyFolderCreationOnPut
     ) {    	
-    	return new DoPut(store, readOnly, lazyFolderCreationOnPut);
+    	return new DoPut(store, lazyFolderCreationOnPut);
     }
 
     protected WebDavMethod newDoPropfind(
@@ -209,10 +201,9 @@ public abstract class AbstractWebDavServlet extends HttpServlet {
     }
 
     protected WebDavMethod newDoProppatch(
-    	WebDavStore store,
-    	boolean readOnly
+    	WebDavStore store
     ) {    	
-    	return new DoProppatch(store, readOnly);
+    	return new DoProppatch(store);
     }
 
     public void init(
@@ -225,17 +216,17 @@ public abstract class AbstractWebDavServlet extends HttpServlet {
         register("GET", this.newDoGet(store));
         register("REPORT", this.newDoReport(store));
         register("HEAD", this.newDoHead(store));
-        DoDelete doDelete = (DoDelete) register("DELETE", this.newDoDelete(store, READ_ONLY));
-        register("COPY", this.newDoCopy(store, doDelete, READ_ONLY));
-        register("LOCK", this.newDoLock(store, READ_ONLY));
-        register("UNLOCK", this.newDoUnlock(store, READ_ONLY));
-        register("MOVE", this.newDoMove(store, READ_ONLY));
-        register("MKCOL", this.newDoMkcol(store, READ_ONLY));
+        DoDelete doDelete = (DoDelete) register("DELETE", this.newDoDelete(store));
+        register("COPY", this.newDoCopy(store, doDelete));
+        register("LOCK", this.newDoLock(store));
+        register("UNLOCK", this.newDoUnlock(store));
+        register("MOVE", this.newDoMove(store));
+        register("MKCOL", this.newDoMkcol(store));
         register("OPTIONS", this.newDoOptions(store));
-        register("PUT", this.newDoPut(store, READ_ONLY, lazyFolderCreationOnPut));
+        register("PUT", this.newDoPut(store, lazyFolderCreationOnPut));
         register("PROPFIND", this.newDoPropfind(store));
-        register("PROPPATCH", this.newDoProppatch(store, READ_ONLY));
-        register("*NO*IMPL*", new DoNotImplemented(READ_ONLY));
+        register("PROPPATCH", this.newDoProppatch(store));
+        register("*NO*IMPL*", new DoNotImplemented());
     }
 
     private WebDavMethod register(

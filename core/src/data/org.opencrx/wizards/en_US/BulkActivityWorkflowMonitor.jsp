@@ -67,7 +67,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -102,9 +102,11 @@ org.openmdx.kernel.exception.*
 	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
 	<meta name="order" content="100">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
 
 	<style type="text/css" media="all">
@@ -180,8 +182,8 @@ org.openmdx.kernel.exception.*
        <div id="content" style="padding:0px 0.5em 0px 0.5em;">
         <form name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
           <div style="background-color:#F4F4F4;border:1px solid #EBEBEB;padding:10px;margin-top:15px;">
-			<input type="Submit" name="Refresh" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
-			<input type="Submit" name="Close" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
+			<input type="Submit" name="Refresh" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
+			<input type="Submit" name="Close" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
 			<br />          
             <h1>Workflows for: <%= (new ObjectReference(obj, app)).getTitle() %> - <%= (new ObjectReference(obj, app)).getLabel() %></h1>
             <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI%>" value="<%= wc.getObjectIdentity().toXRI() %>" />
@@ -290,8 +292,8 @@ org.openmdx.kernel.exception.*
 %>
 			</table>
 			<br />
-			<input type="Submit" name="Refresh" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
-			<input type="Submit" name="Close" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" /><br>
+			<input type="Submit" name="Refresh" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
+			<input type="Submit" name="Close" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" /><br>
 		  </div>
         </form>
       </div> <!-- content -->

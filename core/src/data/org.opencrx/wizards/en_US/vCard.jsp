@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
@@ -64,7 +64,7 @@ org.openmdx.base.exception.*,
 org.openmdx.kernel.id.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -114,33 +114,32 @@ org.openmdx.kernel.log.*
 	javax.jdo.PersistenceManager pm = app.getNewPmData();
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
 <html>
-
 <head>
-  <title><%= app.getApplicationName() %> - vCard</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="UNUSEDlabel" content="vCard">
-  <meta name="UNUSEDtoolTip" content="vCard">
-  <meta name="targetType" content="_self">
-  <meta name="forClass" content="org:opencrx:kernel:account1:Group">
-  <meta name="forClass" content="org:opencrx:kernel:account1:Contact">
-  <meta name="forClass" content="org:opencrx:kernel:account1:LegalEntity">
-  <meta name="forClass" content="org:opencrx:kernel:account1:UnspecifiedAccount">
-  <meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal">
-  <meta name="order" content="org:opencrx:kernel:account1:Group:vcard">
-  <meta name="order" content="org:opencrx:kernel:account1:Contact:vcard">
-  <meta name="order" content="org:opencrx:kernel:account1:LegalEntity:vcard">
-  <meta name="order" content="org:opencrx:kernel:account1:UnspecifiedAccount:vcard">
-  <meta name="order" content="org:opencrx:kernel:account1:AccountFilterGlobal:vcard">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
+	<title><%= app.getApplicationName() %> - vCard</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="UNUSEDlabel" content="vCard">
+	<meta name="UNUSEDtoolTip" content="vCard">
+	<meta name="targetType" content="_self">
+	<meta name="forClass" content="org:opencrx:kernel:account1:Group">
+	<meta name="forClass" content="org:opencrx:kernel:account1:Contact">
+	<meta name="forClass" content="org:opencrx:kernel:account1:LegalEntity">
+	<meta name="forClass" content="org:opencrx:kernel:account1:UnspecifiedAccount">
+	<meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal">
+	<meta name="order" content="org:opencrx:kernel:account1:Group:vcard">
+	<meta name="order" content="org:opencrx:kernel:account1:Contact:vcard">
+	<meta name="order" content="org:opencrx:kernel:account1:LegalEntity:vcard">
+	<meta name="order" content="org:opencrx:kernel:account1:UnspecifiedAccount:vcard">
+	<meta name="order" content="org:opencrx:kernel:account1:AccountFilterGlobal:vcard">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
+	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
+	<link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
-
 <%
    final String FORM_ACTION = "vCard.jsp";
    final String MIMETYPE_VCARD = "text/x-vcard";

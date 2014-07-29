@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -93,7 +93,6 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:activity1:AddressGroup">
 	<meta name="order" content="9998">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="post" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -101,7 +100,7 @@ org.openmdx.base.naming.*
 	<input type="hidden" id="Command" name="Command" value="" />
 	<table class="fieldGroup">
 		<tr>
-			<td class="label">Address filter:</td>
+			<td class="<%= CssClass.fieldLabel %>">Address filter:</td>
 			<td>
 				<select id="addressFilterXri" class="valueL" tabindex="100" name="addressFilterXri">
 <%
@@ -118,15 +117,15 @@ org.openmdx.base.naming.*
 				</select>
 			</td>
 			<td class="addon"/>
-			<td class="label"/>
+			<td class="<%= CssClass.fieldLabel %>"/>
 			<td/>
 			<td class="addon"/>
 		</tr>
 		<tr>
-			<td class="label">Count limit:</td>
+			<td class="<%= CssClass.fieldLabel %>">Count limit:</td>
 			<td><input type="text" class="valueR" id="countLimit" name="countLimit" value="0"/></td>
 			<td class="addon"/></td>
-			<td class="label"/>
+			<td class="<%= CssClass.fieldLabel %>"/>
 			<td/>
 			<td class="addon"/>
 		</tr>
@@ -134,10 +133,11 @@ org.openmdx.base.naming.*
 	<br />
 	<div id="WaitIndicator" style="width:50px;height:24px;" class="wait">&nbsp;</div>
 	<div id="SubmitArea" style="display:none;">										    	    								
-		<input type="submit" name="OK" tabindex="9000" value="Import" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
-		<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+		<input type="submit" name="OK" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="Import" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
+		<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 	</div>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

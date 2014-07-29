@@ -108,6 +108,7 @@ public class DoOptions extends WebDavMethod {
             so = _store.getResourceByPath(requestContext, path);
             String methodsAllowed = determineMethodsAllowed(so);
             resp.addHeader("Allow", methodsAllowed);
+            resp.addHeader("Accept-Ranges", "bytes");
             resp.addHeader("MS-Author-Via", "DAV");                
         } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);

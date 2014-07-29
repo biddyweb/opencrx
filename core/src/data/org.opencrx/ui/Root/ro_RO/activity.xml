@@ -286,10 +286,10 @@
                       <label>
                         <_item>Statut</_item>
                       </label>
-                      <shortLabel>
-                        <_item> </_item>
-                      </shortLabel>
-                      <toolTip>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
+                     <toolTip>
                         <_item>Statut</_item>
                       </toolTip>
                     </_object>

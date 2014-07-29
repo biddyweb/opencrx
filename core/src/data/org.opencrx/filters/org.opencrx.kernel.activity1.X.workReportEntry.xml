@@ -3,7 +3,6 @@
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
 			<array class="java.lang.String" length="13">
-
 				<void index="0">
 					<string>org:opencrx:kernel:activity1:Resource:workReportEntry</string>
 				</void>
@@ -43,12 +42,10 @@
 				<void index="12">
 					<string>org:opencrx:kernel:activity1:Segment:workReportEntry</string>
 				</void>
-
 			</array>
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="2">
-
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -56,6 +53,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_down_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Started at v</string>
+								</void>
+								<void index="1">
+									<string>Begonnen um v</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
@@ -76,7 +83,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -84,6 +90,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Started at ^</string>
+								</void>
+								<void index="1">
+									<string>Begonnen um ^</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
@@ -99,7 +115,6 @@
 								</void>
 							</array>
 						</void>
-
 						<void property="groupName">
 							<string>Standard</string>
 						</void>

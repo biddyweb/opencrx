@@ -75,8 +75,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -87,10 +85,8 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.AddressException;
-import javax.mail.internet.HeaderTokenizer;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.InternetHeaders;
 import javax.mail.internet.MailDateFormat;
@@ -120,6 +116,7 @@ import org.opencrx.kernel.activity1.cci2.MailingRecipientQuery;
 import org.opencrx.kernel.activity1.cci2.MeetingPartyQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceAssignmentQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
+import org.opencrx.kernel.activity1.cci2.ResourceRateQuery;
 import org.opencrx.kernel.activity1.cci2.TaskPartyQuery;
 import org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecordQuery;
 import org.opencrx.kernel.activity1.jmi1.AbstractActivityParty;
@@ -164,6 +161,7 @@ import org.opencrx.kernel.activity1.jmi1.NewActivityResult;
 import org.opencrx.kernel.activity1.jmi1.PhoneCall;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
+import org.opencrx.kernel.activity1.jmi1.ResourceRate;
 import org.opencrx.kernel.activity1.jmi1.Segment;
 import org.opencrx.kernel.activity1.jmi1.SetActualEndAction;
 import org.opencrx.kernel.activity1.jmi1.SetActualStartAction;
@@ -184,6 +182,7 @@ import org.opencrx.kernel.depot1.jmi1.DepotReference;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.SecurityKeys.Action;
+import org.opencrx.kernel.generic.jmi1.Media;
 import org.opencrx.kernel.generic.jmi1.Note;
 import org.opencrx.kernel.generic.jmi1.PropertySet;
 import org.opencrx.kernel.home1.jmi1.UserHome;
@@ -194,6 +193,7 @@ import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.io.QuotaByteArrayOutputStream;
 import org.openmdx.base.jmi1.ContextCapable;
@@ -2539,9 +2539,12 @@ public class Activities extends AbstractImpl {
                                     userHome, // wfTarget
                                     wfAction.getWfProcess(), // wfProcess
                                     activity, // targetObject
-                                    null, // triggeredBy
-                                    null, // triggeredByEventId
-                                    null, // triggeredByEventType
+                                    null, // booleanParams
+                                    null, // stringParams
+                                    null, // integerParams
+                                    null, // decimalParams
+                                    null, // dateTimeParams
+                                    null, // uriParams
                                     parentProcessInstance
                                 );
                             SysLog.detail("Execution of workflow successful.", action);
@@ -2739,7 +2742,7 @@ public class Activities extends AbstractImpl {
      * @param workRecord
      * @throws ServiceException
      */
-    public void updateWorkAndExpenseRecord(
+    protected void updateWorkAndExpenseRecord(
     	WorkAndExpenseRecord workRecord
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(workRecord);
@@ -2984,14 +2987,14 @@ public class Activities extends AbstractImpl {
         	(rate == null) && 
         	(recordType == WorkRecordType.OVERTIME.getValue() || recordType ==  WorkRecordType.STANDARD.getValue())
         ) {
-            workRecord.setBillingCurrency(
-                resource.getRateCurrency()
-            );
-        	if(recordType == WorkRecordType.STANDARD.getValue()) {
-        		workRecord.setRate(resource.getStandardRate());
-        	} else if(recordType == WorkRecordType.OVERTIME.getValue()) {
-        		workRecord.setRate(resource.getOvertimeRate());
-        	}
+			ResourceRateQuery query = (ResourceRateQuery)pm.newQuery(ResourceRate.class);
+			query.rateType().equalTo(recordType);
+			List<ResourceRate> resourceRates = resource.getResourceRate(query);
+			if(!resourceRates.isEmpty()) {
+				ResourceRate resourceRate = resourceRates.iterator().next();
+				workRecord.setBillingCurrency(resourceRate.getRateCurrency());
+				workRecord.setRate(resourceRate.getRate());
+			}
         } else {
         	workRecord.setRate(rate);
             workRecord.setBillingCurrency(rateCurrency);
@@ -3027,7 +3030,7 @@ public class Activities extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeWorkRecord(
+    protected void removeWorkRecord(
     	WorkAndExpenseRecord workRecord,
         boolean preDelete
     ) throws ServiceException {
@@ -3050,7 +3053,7 @@ public class Activities extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeActivityGroup(
+    protected void removeActivityGroup(
         ActivityGroup activityGroup,
         boolean preDelete
     ) throws ServiceException {
@@ -3166,7 +3169,7 @@ public class Activities extends AbstractImpl {
      * @param activity
      * @throws ServiceException
      */
-    public void updateActivity(
+    protected void updateActivity(
         Activity activity
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(activity);
@@ -3333,7 +3336,7 @@ public class Activities extends AbstractImpl {
                     for(ActivityGroup activityGroup: activityGroups) {
                         List<PrincipalGroup> groups = activityGroup.getOwningGroup();
                         for(PrincipalGroup group: groups) {
-                            if(activityGroup.getName().endsWith(PRIVATE_GROUP_SUFFIX)) {
+                            if(activityGroup.getName().endsWith(Base.PRIVATE_SUFFIX)) {
                             	String activityGroupName = activityGroup.getName().substring(0, activityGroup.getName().indexOf("~"));
                             	if(group.getName().indexOf(".") >= 0) {
 	                            	String principalGroupName = group.getName().substring(0, group.getName().indexOf("."));
@@ -3869,6 +3872,7 @@ public class Activities extends AbstractImpl {
         );
         recipient.setParty(address);
         recipient.setPartyType(type.getValue());
+        recipient.setEmailHint(address.getEmailAddress());
         // 'copy' the email's owning groups
         recipient.getOwningGroup().addAll(
             emailActivity.getOwningGroup()
@@ -3877,7 +3881,7 @@ public class Activities extends AbstractImpl {
         	pm.currentTransaction().commit();
         }
     }
-    
+
     /**
      * Adds an email recipient to the currently processed email activity if
      * the email message contains an email address which is contained in an
@@ -4330,65 +4334,73 @@ public class Activities extends AbstractImpl {
     	String originalMessageMediaName1 = this.getOriginalMessageName1();
         String originalMessageMediaName2 = this.getOriginalMessageName2(email);
         InputStream originalMessageStream = null;
-        Multipart multipart = new MimeMultipart();
-        MimeBodyPart messageBodyPart = new MimeBodyPart();
         String text = email.getMessageBody();
         text = text == null ? "" : text;
-        if(text.startsWith("<!DOCTYPE html")) {
-            String charset = null;
-            if (!MimeUtils.isAllAscii(text)) {
-                charset = MimeUtility.getDefaultJavaCharset();
-            } else {
-                charset = "us-ascii";                
-            }
-            messageBodyPart.setContent(
-                text, 
-                "text/html; charset=" + MimeUtility.quote(charset, HeaderTokenizer.MIME)
-            );        
-        } else {
-            messageBodyPart.setText(text);            
-        }
-        multipart.addBodyPart(messageBodyPart);    
         Collection<org.opencrx.kernel.generic.jmi1.Media> medias = email.getMedia();
-        for(org.opencrx.kernel.generic.jmi1.Media media: medias) {
-            if(media.getContentName() != null) {
-                try {
-                    QuotaByteArrayOutputStream mediaContent = new QuotaByteArrayOutputStream(Activities.class.getName());
-                    try {
-                        InputStream is = media.getContent().getContent();
-                        BinaryLargeObjects.streamCopy(is, 0L, mediaContent);
-                    }
-                    catch(Exception e) {
-                    	SysLog.warning("Unable to get media content (see detail for more info)", e.getMessage());
-                    	SysLog.info(e.getMessage(), e.getCause());
-                    }
-                    mediaContent.close();
-                    // Test whether media is zipped original mail. 
-                    // If yes return as original message
-                    if(
-                    	originalMessageMediaName1.equals(media.getContentName()) || 
-                    	originalMessageMediaName2.equals(media.getContentName())
-                    ) {
-                        @SuppressWarnings("resource")
-                        ZipInputStream zippedMessageStream = new ZipInputStream(mediaContent.toInputStream());
-                        zippedMessageStream.getNextEntry();
-                        originalMessageStream = zippedMessageStream;
-                    }
-                    InternetHeaders headers = new InternetHeaders();
-                    headers.addHeader("Content-Type", media.getContentMimeType() + "; name=\"" + MimeUtility.encodeText(media.getContentName()) + "\"");
-                    headers.addHeader("Content-Disposition", "attachment");
-                    headers.addHeader("Content-Transfer-Encoding", "base64");
-                    messageBodyPart = new MimeBodyPart(                        
-                        headers,
-                        Base64.encode(mediaContent.getBuffer(), 0, mediaContent.size()).getBytes("US-ASCII")
-                    );
-                    multipart.addBodyPart(messageBodyPart);
-                } catch(Exception e) {
-                    new ServiceException(e).log();
-                }
-            }
+        if(medias.isEmpty()) {
+	        if(
+	        	text.regionMatches(true, 0, "<!DOCTYPE html", 0, 14) ||
+	        	text.regionMatches(true, 0, "<html>", 0, 6)
+	        ) {
+	        	message.setContent(text, "text/html; charset=utf-8");        	
+	        } else {
+	            message.setText(text);
+	        }
+        } else {
+	        MimeMultipart messageMultipart = new MimeMultipart("mixed");
+	        // Body
+	        if(
+	        	text.regionMatches(true, 0, "<!DOCTYPE html", 0, 14) || 
+	        	text.regionMatches(true, 0, "<html>", 0, 6)
+	        ) {
+		        MimeBodyPart htmlPart = new MimeBodyPart();
+		        htmlPart.setContent(text, "text/html; charset=UTF-8");
+		        messageMultipart.addBodyPart(htmlPart);
+	        } else {
+		        MimeBodyPart textPart = new MimeBodyPart();
+		        textPart.setText(text);
+		        messageMultipart.addBodyPart(textPart);
+	        }
+	        // Attachments
+	        for(Media media: medias) {
+	            if(media.getContentName() != null) {
+	                try {
+	                    QuotaByteArrayOutputStream mediaContent = new QuotaByteArrayOutputStream(Activities.class.getName());
+	                    try {
+	                        InputStream is = media.getContent().getContent();
+	                        BinaryLargeObjects.streamCopy(is, 0L, mediaContent);
+	                    } catch(Exception e) {
+	                    	SysLog.warning("Unable to get media content (see detail for more info)", e.getMessage());
+	                    	SysLog.info(e.getMessage(), e.getCause());
+	                    }
+	                    mediaContent.close();
+	                    // Test whether media is zipped original mail. 
+	                    // If yes return as original message
+	                    if(
+	                    	originalMessageMediaName1.equals(media.getContentName()) || 
+	                    	originalMessageMediaName2.equals(media.getContentName())
+	                    ) {
+	                        @SuppressWarnings("resource")
+	                        ZipInputStream zippedMessageStream = new ZipInputStream(mediaContent.toInputStream());
+	                        zippedMessageStream.getNextEntry();
+	                        originalMessageStream = zippedMessageStream;
+	                    }
+	                    InternetHeaders headers = new InternetHeaders();
+	                    headers.addHeader("Content-Type", media.getContentMimeType() + "; name=\"" + MimeUtility.encodeText(media.getContentName()) + "\"");
+	                    headers.addHeader("Content-Disposition", "attachment");
+	                    headers.addHeader("Content-Transfer-Encoding", "base64");
+	                    MimeBodyPart attachmentPart = new MimeBodyPart(                        
+	                        headers,
+	                        Base64.encode(mediaContent.getBuffer(), 0, mediaContent.size()).getBytes("US-ASCII")
+	                    );
+	                    messageMultipart.addBodyPart(attachmentPart);
+	                } catch(Exception e) {
+	                    new ServiceException(e).log();
+	                }
+	            }
+	        }
+	        message.setContent(messageMultipart);
         }
-        message.setContent(multipart);
         return originalMessageStream;
     }
 
@@ -4655,7 +4667,7 @@ public class Activities extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeActivity(
+    protected void removeActivity(
         Activity activity,
         boolean preDelete
     ) throws ServiceException {
@@ -4689,34 +4701,6 @@ public class Activities extends AbstractImpl {
     }
     
     /**
-     * Parse mime content type.
-     * 
-     * @param contentType
-     * @return
-     */
-    public String[] parseContentType(
-        String contentType
-    ) {
-        String[] result = new String[2];
-        contentType = contentType.replace("\t", " ");
-        contentType = contentType.replace("\r\n", "");
-        Pattern pattern = Pattern.compile("([0-9a-zA-Z/\\+\\-\\.]+)(?:;(?:[ \\r\\n\\t]*)name(?:[^\\=]*)\\=\"(.*)\")?");
-        Matcher matcher = pattern.matcher(contentType);
-        if(matcher.find()) {
-            result[0] = matcher.group(1);
-            try {
-            	result[1] = matcher.group(2) == null ? null : MimeUtility.decodeText(matcher.group(2));
-            } catch(Exception e) {
-            	result[1] = matcher.group(2);            	
-            }
-        } else {
-            result[0] = contentType;
-            result[1] = null;
-        }
-        return result;
-    }
-
-    /**
      * Add attachments to given email activity.
      * 
      * @param mimeMessage
@@ -4733,7 +4717,7 @@ public class Activities extends AbstractImpl {
             MimeMultipart multipart = (MimeMultipart)mimeMessage.getContent();
             for(int i = 1; i < multipart.getCount(); i++) {
                 MimeBodyPart part = (MimeBodyPart)multipart.getBodyPart(i);
-                String[] contentType = this.parseContentType(part.getContentType());
+                String[] contentType = MimeUtils.parseContentType(part.getContentType());
                 if(contentType[1] == null) contentType[1] = part.getContentID();
             	PersistenceManager pm = JDOHelper.getPersistenceManager(email);
             	boolean isTxLocal = !pm.currentTransaction().isActive();
@@ -4940,6 +4924,7 @@ public class Activities extends AbstractImpl {
             } else {
             	EMailRecipient recipient = recipients.iterator().next();
             	recipient.setParty(from);
+            	recipient.setEmailHint(from.getEmailAddress());
             }
         }
         this.mapAddressesToEMailRecipients(
@@ -5585,6 +5570,53 @@ public class Activities extends AbstractImpl {
 		     : firstTracker;		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+		PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+		if(object instanceof Activity) {
+			this.removeActivity((Activity)object, preDelete);
+		} else if(object instanceof ActivityGroup) {
+			this.removeActivityGroup((ActivityGroup)object, preDelete);
+		} else if(object instanceof WorkAndExpenseRecord) {
+			this.removeWorkRecord((WorkAndExpenseRecord)object, preDelete);
+		} else if(object instanceof AbstractActivityParty) {
+			Activity activity = (Activity)pm.getObjectById(object.refGetPath().getPrefix(7));
+			this.markActivityAsDirty(activity);
+		} else if(object instanceof ActivityGroupAssignment) {
+			Activity activity = (Activity)pm.getObjectById(object.refGetPath().getPrefix(7));
+			this.markActivityAsDirty(activity);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		PersistenceManager pm = JDOHelper.getPersistenceManager(object);
+		if(object instanceof Activity) {
+			this.updateActivity((Activity)object);
+		} else if(object instanceof AbstractActivityParty) {
+			Activity activity = (Activity)pm.getObjectById(object.refGetPath().getPrefix(7));
+			this.markActivityAsDirty(activity);
+		} else if(object instanceof ActivityGroupAssignment) {
+			Activity activity = (Activity)pm.getObjectById(object.refGetPath().getPrefix(7));
+			this.markActivityAsDirty(activity);
+		} else if(object instanceof WorkAndExpenseRecord) {
+			this.updateWorkAndExpenseRecord((WorkAndExpenseRecord)object);
+		}
+	}
+	
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
@@ -5880,8 +5912,6 @@ public class Activities extends AbstractImpl {
     public static final String ACTIVITY_TRACKER_NAME_MEETING_ROOMS = "Meeting Rooms";
 
     public static final String UNSPECIFIED_ADDRESS = "NO_ADDRESS_SPECIFIED";
-
-	public static final String PRIVATE_GROUP_SUFFIX = "~Private";
 
 	public static final String ORIGINAL_MESSAGE_MEDIA_NAME = "ORIGINAL";
 	

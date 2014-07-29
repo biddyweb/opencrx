@@ -3681,6 +3681,241 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enableCrxObject">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Enable</_item>
+											</toolTip>
+											<label>
+												<_item>Enable</_item>
+											</label>
+											<order>
+												<_item>200</_item>
+												<_item>0</_item>
+												<_item>145</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enableCrxObject:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectParams:reason">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reason</_item>
+											</toolTip>
+											<label>
+												<_item>Reason</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectParams:mode">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Mode</_item>
+											</toolTip>
+											<label>
+												<_item>Mode</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enableCrxObject:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectResult:status">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Status</_item>
+											</toolTip>
+											<label>
+												<_item>Status</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectResult:count">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Count</_item>
+											</toolTip>
+											<label>
+												<_item>Count</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disableCrxObject">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Disable</_item>
+											</toolTip>
+											<label>
+												<_item>Disable</_item>
+											</label>
+											<order>
+												<_item>200</_item>
+												<_item>0</_item>
+												<_item>148</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disableCrxObject:Group:in">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Input</_item>
+											</toolTip>
+											<label>
+												<_item>Input</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- already defined at operation enableCrxObject
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectParams:reason">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Reason</_item>
+											</toolTip>
+											<label>
+												<_item>Reason</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition> -->
+									<!-- already defined at operation enableCrxObject
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectParams:mode">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Mode</_item>
+											</toolTip>
+											<label>
+												<_item>Mode</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition> -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disableCrxObject:Group:result">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Result</_item>
+											</toolTip>
+											<label>
+												<_item>Result</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!-- already defined at operation enableCrxObject
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectResult:status">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Status</_item>
+											</toolTip>
+											<label>
+												<_item>Status</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition> -->
+									<!-- already defined at operation enableCrxObject
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:EnableDisableCrxObjectResult:count">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Count</_item>
+											</toolTip>
+											<label>
+												<_item>Count</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition> -->
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:WorkflowTarget:Pane:Op:Tab:executeWorkflow">
 										<_object>
 											<active>true</active>
@@ -3745,24 +3980,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:startAt">
-										<_object>
-											<active>false</active>
-											<toolTip>
-												<_item>Start at</_item>
-											</toolTip>
-											<label>
-												<_item>Start at</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>30</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:triggeredBySubscription">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:triggeredBy">
 										<_object>
 											<active>false</active>
 											<toolTip>
@@ -3830,23 +4048,6 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:targetObjectXri">
-										<_object>
-											<active>false</active>
-											<toolTip>
-												<_item>Target object XRI</_item>
-											</toolTip>
-											<label>
-												<_item>Target object XRI</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>80</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:parentProcessInstance">
 										<_object>
 											<active>false</active>
@@ -3864,6 +4065,211 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:booleanParamName">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>booleanParamName</_item>
+											</toolTip>
+											<label>
+												<_item>booleanParamName</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:booleanParamValue">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>booleanParamValue</_item>
+											</toolTip>
+											<label>
+												<_item>booleanParamValue</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>110</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:stringParamName">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>stringParamName</_item>
+											</toolTip>
+											<label>
+												<_item>stringParamName</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:stringParamValue">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>stringParamValue</_item>
+											</toolTip>
+											<label>
+												<_item>stringParamValue</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>120</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:integerParamName">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>integerParamName</_item>
+											</toolTip>
+											<label>
+												<_item>integerParamName</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>130</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:integerParamValue">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>integerParamValue</_item>
+											</toolTip>
+											<label>
+												<_item>integerParamValue</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>140</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:decimalParamName">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>decimalParamName</_item>
+											</toolTip>
+											<label>
+												<_item>decimalParamName</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>150</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:decimalParamValue">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>decimalParamValue</_item>
+											</toolTip>
+											<label>
+												<_item>decimalParamValue</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>160</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:uriParamName">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>uriParamName</_item>
+											</toolTip>
+											<label>
+												<_item>uriParamName</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>170</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:uriParamValue">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>uriParamValue</_item>
+											</toolTip>
+											<label>
+												<_item>uriParamValue</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>180</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:dateTimeParamName">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>dateTimeParamName</_item>
+											</toolTip>
+											<label>
+												<_item>dateTimeParamName</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>190</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:ExecuteWorkflowParams:dateTimeParamValue">
+										<_object>
+											<active>false</active>
+											<toolTip>
+												<_item>dateTimeParamValue</_item>
+											</toolTip>
+											<label>
+												<_item>dateTimeParamValue</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>200</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:base:WorkflowTarget:Pane:Op:Tab:ExecuteWorkflowResult:Group:result">
 										<_object>
 											<active>true</active>

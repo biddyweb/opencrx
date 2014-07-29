@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
@@ -63,7 +63,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -101,14 +101,15 @@ org.openmdx.base.query.*
   <meta name="forClass" content="org:opencrx:kernel:building1:Segment">
   <meta name="order" content="8500">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-
+  <link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+  <link rel="stylesheet" href="../../_style/colors.css">
+  <link rel="stylesheet" href="../../_style/n2default.css">
+  <link rel="stylesheet" href="../../_style/ssf.css">
+  <link rel="stylesheet" type="text/css" href="../../javascript/yui-ext/resources/css/ytheme-gray.css" >
+  <link rel='shortcut icon' href='../../images/favicon.ico' />
   <script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
   <script language="javascript" type="text/javascript" src="../../javascript/scriptaculous.js"></script>
-  <link rel="stylesheet" type="text/css" href="../../javascript/yui-ext/resources/css/ytheme-gray.css" >
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css" />
 
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 
 <body class="ytheme-gray">
@@ -144,7 +145,7 @@ org.openmdx.base.query.*
 %>
       <h1 style="padding:2px;">
         <%= app.getLabel(AccountAssignmentInventoryItem_CLASS) %>
-        <INPUT type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" />
+        <input type="Submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" />
       </h1>
 <%
     	Attribute accountAttr = null;
@@ -364,7 +365,7 @@ org.openmdx.base.query.*
   	}
 
 %>
-  <INPUT type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" />
+  <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="8020" value="X" onClick="javascript:window.close();" />
 </body>
 
 </html>

@@ -52,6 +52,7 @@
  */
 package org.opencrx.kernel.utils;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -66,8 +67,19 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.jdo.PersistenceManager;
+
+import org.opencrx.kernel.document1.jmi1.Media;
+import org.opencrx.kernel.layer.persistence.Media_1;
 import org.opencrx.kernel.tools.FastResultSet;
+import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.mof.cci.ModelElement_1_0;
+import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.naming.Path;
+import org.openmdx.kernel.log.SysLog;
+import org.w3c.cci2.BinaryLargeObject;
+import org.w3c.cci2.BinaryLargeObjects;
 
 /**
  * DbSchemaUtils
@@ -853,6 +865,182 @@ public class DbSchemaUtils {
 					"UPDATE OOCKE1_INVOLVEDOBJECT_ SET DTYPE = 'org:opencrx:kernel:generic:InvolvedObject' WHERE DTYPE = 'org:opencrx:kernel:activity1:InvolvedObject'"
 				)
 			),
+			new MigrationDefinition(
+				"2.12 -> 2.13",
+				"SELECT * FROM OOCKE1_RESOURCE r INNER JOIN OOCKE1_RESOURCERATE rr ON r.OBJECT_ID = rr.P$$PARENT WHERE r.STANDARD_RATE IS NOT NULL",
+				Arrays.asList(
+					// Migrate FX -> FR
+					"UPDATE OOCKE1_ADDRESS SET POSTAL_COUNTRY = 250 WHERE POSTAL_COUNTRY = 249",
+					// Migrate Resource::standardRate -> OOCKE1_RESOURCERATE 
+					"INSERT INTO OOCKE1_RESOURCERATE (" +
+					"  OBJECT_ID," + 
+					"  ACCESS_LEVEL_BROWSE," + 
+					"  ACCESS_LEVEL_DELETE," + 
+					"  ACCESS_LEVEL_UPDATE," + 
+					"  CATEGORY_," + 
+					"  CREATED_AT," + 
+					"  CREATED_BY_," + 
+					"  DESCRIPTION," + 
+					"  DISABLED," + 
+					"  DISABLED_REASON," + 
+					"  EXTERNAL_LINK_," + 
+					"  MODIFIED_BY_," + 
+					"  NAME," + 
+					"  OWNER_," + 
+					"  RATE," + 
+					"  RATE_CURRENCY," + 
+					"  RATE_TYPE," + 
+					"  P$$PARENT," + 
+					"  USER_BOOLEAN4_," + 
+					"  USER_CODE4_," + 
+					"  USER_DATE4_," + 
+					"  USER_DATE_TIME4_," + 
+					"  USER_NUMBER4_," + 
+					"  USER_STRING4_," + 
+					"  DTYPE," + 
+					"  MODIFIED_AT" + 
+					") " + 
+					"SELECT " + 
+					"  REPLACE(" + "r.OBJECT_ID, 'resource', 'resourceRate') || '/' || 'StandardRate'," + 
+					"  r.ACCESS_LEVEL_BROWSE," + 
+					"  r.ACCESS_LEVEL_DELETE," + 
+					"  r.ACCESS_LEVEL_UPDATE," + 
+					"  0," + 
+					"  r.CREATED_AT," + 
+					"  0," + 
+					"  NULL," + 
+					"  NULL," + 
+					"  NULL," + 
+					"  0," + 
+					"  0," + 
+					"  'Standard rate'," + 
+					"  0," + 
+					"  r.STANDARD_RATE," + 
+					"  r.RATE_CURRENCY," + 
+					"  1," + // 1=Work (Standard Rate)
+					"  r.OBJECT_ID," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  'org:opencrx:kernel:activity1:ResourceRate'," + 
+					"  r.MODIFIED_AT " + 
+					"FROM " + 
+					"  OOCKE1_RESOURCE r " + 
+					"WHERE " + 
+					"  r.STANDARD_RATE IS NOT NULL",
+					// Migrate Resource::standardRate -> OOCKE1_RESOURCERATE_					
+					"INSERT INTO OOCKE1_RESOURCERATE_ (" + 
+					"  OBJECT_ID," + 
+					"  IDX," + 
+					"  CREATED_BY," + 
+					"  MODIFIED_BY," + 
+					"  OWNER," + 
+					"  DTYPE" + 
+					") " + 
+					"SELECT" + 
+					"  REPLACE(r.OBJECT_ID, 'resource', 'resourceRate') || '/' || 'StandardRate'," + 
+					"  R_.IDX," + 
+					"  R_.CREATED_BY," + 
+					"  R_.MODIFIED_BY," + 
+					"  R_.OWNER," + 
+					"  'org:opencrx:kernel:activity1:ResourceRate'" + 
+					"FROM " + 
+					"  OOCKE1_RESOURCE_ r_ " + 
+					"INNER JOIN " + 
+					"  OOCKE1_RESOURCE r " + 
+					"ON " + 
+					"  r.OBJECT_ID = r_.OBJECT_ID " + 
+					"WHERE " + 
+					"  r.STANDARD_RATE IS NOT NULL",
+					// Migrate Resource::overtimeRate -> OOCKE1_RESOURCERATE
+					"INSERT INTO OOCKE1_RESOURCERATE (" +
+					"  OBJECT_ID," + 
+					"  ACCESS_LEVEL_BROWSE," + 
+					"  ACCESS_LEVEL_DELETE," + 
+					"  ACCESS_LEVEL_UPDATE," + 
+					"  CATEGORY_," + 
+					"  CREATED_AT," + 
+					"  CREATED_BY_," + 
+					"  DESCRIPTION," + 
+					"  DISABLED," + 
+					"  DISABLED_REASON," + 
+					"  EXTERNAL_LINK_," + 
+					"  MODIFIED_BY_," + 
+					"  NAME," + 
+					"  OWNER_," + 
+					"  RATE," + 
+					"  RATE_CURRENCY," + 
+					"  RATE_TYPE," + 
+					"  P$$PARENT," + 
+					"  USER_BOOLEAN4_," + 
+					"  USER_CODE4_," + 
+					"  USER_DATE4_," + 
+					"  USER_DATE_TIME4_," + 
+					"  USER_NUMBER4_," + 
+					"  USER_STRING4_," + 
+					"  DTYPE," + 
+					"  MODIFIED_AT" + 
+					") " + 
+					"SELECT " + 
+					"  REPLACE(" + "r.OBJECT_ID, 'resource', 'resourceRate') || '/' || 'OvertimeRate'," + 
+					"  r.ACCESS_LEVEL_BROWSE," + 
+					"  r.ACCESS_LEVEL_DELETE," + 
+					"  r.ACCESS_LEVEL_UPDATE," + 
+					"  0," + 
+					"  r.CREATED_AT," + 
+					"  0," + 
+					"  NULL," + 
+					"  NULL," + 
+					"  NULL," + 
+					"  0," + 
+					"  0," + 
+					"  'Overtime rate'," + 
+					"  0," + 
+					"  r.OVERTIME_RATE," + 
+					"  r.RATE_CURRENCY," + 
+					"  2," + // 2=Work (Overtime Rate)
+					"  r.OBJECT_ID," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  0," + 
+					"  'org:opencrx:kernel:activity1:ResourceRate'," + 
+					"  r.MODIFIED_AT " + 
+					"FROM " + 
+					"  OOCKE1_RESOURCE r " + 
+					"WHERE " + 
+					"  r.OVERTIME_RATE IS NOT NULL",
+					// Migrate Resource::overtimeRate -> OOCKE1_RESOURCERATE_					
+					"INSERT INTO OOCKE1_RESOURCERATE_ (" + 
+					"  OBJECT_ID," + 
+					"  IDX," + 
+					"  CREATED_BY," + 
+					"  MODIFIED_BY," + 
+					"  OWNER," + 
+					"  DTYPE" + 
+					") " + 
+					"SELECT" + 
+					"  REPLACE(r.OBJECT_ID, 'resource', 'resourceRate') || '/' || 'OvertimeRate'," + 
+					"  R_.IDX," + 
+					"  R_.CREATED_BY," + 
+					"  R_.MODIFIED_BY," + 
+					"  R_.OWNER," + 
+					"  'org:opencrx:kernel:activity1:ResourceRate'" + 
+					"FROM " + 
+					"  OOCKE1_RESOURCE_ r_ " + 
+					"INNER JOIN " + 
+					"  OOCKE1_RESOURCE r " + 
+					"ON " + 
+					"  r.OBJECT_ID = r_.OBJECT_ID " + 
+					"WHERE " + 
+					"  r.OVERTIME_RATE IS NOT NULL"
+				)
+			),
 		};
 		String targetDatabaseName = "";
 		try {
@@ -943,6 +1131,242 @@ public class DbSchemaUtils {
 				} catch(Exception e0) {}
 				// Schema is not valid for migration
 			}
+		}
+		return report;
+	}
+
+	/**
+	 * Get identity patterns for given class in case the class has references matching the 
+	 * referenceName and the identity pattern matches the segment authority.
+	 * 
+	 * @param classDef
+	 * @param segmentIdentity
+	 * @param referenceName
+	 * @return
+	 * @throws ServiceException
+	 */
+	protected static List<Path> getIdentityPatterns(
+		ModelElement_1_0 classDef,
+		Path segmentIdentity,
+		String referenceName
+	) throws ServiceException {
+		Model_1_0 model = classDef.getModel();
+		List<Path> xriPatterns = new ArrayList<Path>();
+		if(model.getFeatureDef(classDef, referenceName, false) != null) {
+            Path identityPattern = model.getIdentityPattern(classDef);
+            if(identityPattern == null) {
+            	// Get <<root>> class in case of an abstract model pattern
+            	ModelElement_1_0 compositeReference = model.getCompositeReference(classDef);
+            	List<String> suffix = new ArrayList<String>();
+            	while(compositeReference != null) {
+            		suffix.add((String)compositeReference.getName());
+            		suffix.add(":*");
+            		classDef = model.getElement(model.getElement(compositeReference.getExposedEnd()).getType());
+            		compositeReference = model.getCompositeReference(classDef);
+            	}
+            	// Include all sub-classes of the <<root>> class having an identity pattern
+            	for(Object subtype: classDef.objGetList("subtype")) {
+            		ModelElement_1_0 subClassDef = model.getElement(subtype);
+            		identityPattern = model.getIdentityPattern(subClassDef);
+            		if(identityPattern != null) {
+            			for(String component: suffix) {
+            				identityPattern = identityPattern.getChild(component);
+            			}
+        	            if(
+        	            	segmentIdentity.isLike(identityPattern.getPrefix(5)) &&
+        	            	identityPattern.size() < 15 // no persistence configuration of longer paths
+        	            ) {
+        	            	xriPatterns.add(
+        	            		segmentIdentity.getDescendant(identityPattern.getSuffix(5)).getDescendant(referenceName, ":*")
+        	            	);
+        	            }
+            		}    		
+            	}
+            } else if(identityPattern != null) {
+	            if(segmentIdentity.isLike(identityPattern.getPrefix(5))) {
+	            	xriPatterns.add(
+	            		segmentIdentity.getDescendant(identityPattern.getSuffix(5)).getDescendant(referenceName, ":*")
+	            	);
+	            }
+            }
+		}		
+		return xriPatterns;
+	}
+
+	/**
+	 * Recursiviley list files of dir.
+	 * 
+	 * @param dir
+	 * @return
+	 */
+	protected static Set<File> listFilesRecursively(
+		File dir
+	) {
+		Set<File> files = new TreeSet<File>();
+		if(dir.isDirectory()) {
+			if(!HIDDEN_FILES.contains(dir.getName())) {
+				for(File f: dir.listFiles()) {
+					if(f.isDirectory()) {
+						files.addAll(listFilesRecursively(f));
+					} else {
+						files.add(f);
+					}
+				}
+			}
+		}
+		return files;
+	}
+
+	/**
+	 * Migrate media to file system in case org.opencrx.mediadir.* is set.
+	 * 
+	 * @param segment
+	 * @throws ServiceException
+	 */
+	public static List<String> migrateMediaToFS(
+		String providerName,
+		PersistenceManager pm,
+		Connection connT,
+		boolean validateOnly
+	) throws ServiceException {
+		List<String> report = new ArrayList<String>();
+		if(System.getProperty("org.opencrx.mediadir." + providerName) != null) {
+	        File mediadir = new File(System.getProperty("org.opencrx.mediadir." + providerName));
+	        Set<File> existingMediaFiles = listFilesRecursively(mediadir);
+			Database_1 databasePlugIn = QueryBuilderUtil.getDatabasePlugIns()[0];
+			try {
+				PreparedStatement psT = connT.prepareStatement("SELECT object_id FROM OOCKE1_MEDIA ORDER BY object_id");
+				ResultSet rsT = psT.executeQuery();
+				int count = 0;
+				int countEmptyMedia = 0;
+				while(rsT.next()) {
+					String objectId = rsT.getString(1);
+					Path mediaIdentity = databasePlugIn.getReference(
+						connT, 
+						objectId
+					).getChild(
+						objectId.substring(objectId.lastIndexOf("/") + 1)
+					);
+					boolean unsupportedMediaIdentity = false;
+					for(int i = 1; i < mediaIdentity.size(); i++) {
+						if(mediaIdentity.get(i).indexOf(":") >= 0) {
+							unsupportedMediaIdentity = true;
+							break;
+						}
+					}
+					if(unsupportedMediaIdentity) {
+						report.add("ERROR: Unsupported media identity " + mediaIdentity.toXRI() + ". Qualifiers must not contain [:]");
+						SysLog.error("ERROR: Unsupported media identity " + mediaIdentity.toXRI() + ". Qualifiers must not contain [:]");						
+					} else {
+						File contentDir = Media_1.toContentDir(mediadir, mediaIdentity);
+						File contentFile = new File(contentDir, mediaIdentity.getBase());
+						if(validateOnly) {
+							if(!existingMediaFiles.contains(contentFile)) {
+								Media media = (Media)pm.getObjectById(mediaIdentity);
+								BinaryLargeObject mediaContent =  media.getContent();
+								long length = 0L;
+								try {
+									length = mediaContent == null ? 0 : mediaContent.getLength();
+								} catch(Exception e) {
+									throw new ServiceException(e);
+								}
+								if(length > 0) {
+									report.add("ERROR: Missing media file for " + media.refGetPath().toXRI() + ". Expected location " + contentFile);
+									SysLog.error("ERROR: Missing media file for " + media.refGetPath().toXRI() + ". Expected location " + contentFile);
+								} else {
+									countEmptyMedia++;
+								}
+							}
+						} else {
+							if(!contentFile.exists()) {
+								// Touching content if media file does not exist created content file
+								Media media = (Media)pm.getObjectById(mediaIdentity);
+								media.getContent();
+							}
+						}
+					}
+					count++;
+					if(count % 100 == 0) {
+						pm.evictAll();
+						if(validateOnly) {
+							System.out.println(new java.util.Date() + ": Validated " + count + " media objects");
+						} else {
+							System.out.println(new java.util.Date() + ": Migrated " + count + " media objects");							
+						}
+					}
+				}
+				rsT.close();
+				psT.close();
+				connT.close();
+				if(validateOnly) {
+					report.add("OK: Validated " + count + " media objects where " + countEmptyMedia + " are empty");
+					System.out.println(new java.util.Date() + ": Validated " + count + " media objects where " + countEmptyMedia + " are empty");
+				} else {
+					report.add("OK: Migrated " + count + " media objects");					
+					System.out.println(new java.util.Date() + ": Migrated " + count + " media objects");
+				}
+			} catch(Exception e) {
+				new ServiceException(e).log();
+				report.add("ERROR: Exception. Message is " + e.getMessage());
+			}
+		}
+		return report;
+	}
+
+	/**
+	 * Migrate media to file system in case org.opencrx.mediadir.* is set.
+	 * 
+	 * @param segment
+	 * @throws ServiceException
+	 */
+	public static List<String> migrateMediaToDB(
+		String providerName,
+		PersistenceManager pm
+	) throws ServiceException {
+		List<String> report = new ArrayList<String>();
+		if(System.getProperty("org.opencrx.mediadir." + providerName) != null) {
+	        File mediadir = new File(System.getProperty("org.opencrx.mediadir." + providerName));
+	        Set<File> mediaFiles = listFilesRecursively(mediadir);
+	        int count = 0;
+	        for(File mediaFile: mediaFiles) {	        	
+	        	List<String> components = new ArrayList<String>();
+	        	File contentFile = mediaFile;
+	        	while(!contentFile.equals(mediadir)) {
+	        		components.add(0, contentFile.getName());
+	        		contentFile = contentFile.getParentFile();
+	        	}
+	        	if(components.size() > 0) {
+	        		components.set(0, components.get(0).replace("_", ":"));
+	        	}
+	        	Path mediaIdentity = new Path(components.toArray(new String[components.size()]));
+	        	Media media = null;
+	        	try {
+	        		media = (Media)pm.getObjectById(mediaIdentity);
+	        	} catch(Exception e) {
+	        		new ServiceException(e).log();
+	        	}
+	        	if(media == null) {
+	        		report.add("ERROR: Missing media object " + mediaIdentity.toXRI() + " for file " + mediaFile);	        		
+	        	} else {
+	        		try {
+	        			pm.currentTransaction().begin();	        			
+		        		media.setContent(BinaryLargeObjects.valueOf(mediaFile));
+		        		pm.currentTransaction().commit();
+		        		report.add("OK: Migrated " + mediaIdentity.toXRI());
+		        		count++;
+		        		if(count % 100 == 0) {
+							System.out.println(new java.util.Date() + ": Migrated " + count + " media files to database");
+							pm.evictAll();
+		        		}
+	        		} catch(Exception e) {
+	        			try {
+	        				pm.currentTransaction().rollback();
+	        			} catch(Exception ignore) {}
+	        			new ServiceException(e).log();
+		        		report.add("ERROR: Error migrating media. Message is " + e.getMessage());
+	        		}
+	        	}  		        	
+	        }
 		}
 		return report;
 	}
@@ -1103,6 +1527,10 @@ public class DbSchemaUtils {
 	//-----------------------------------------------------------------------
 	// Members
 	//-----------------------------------------------------------------------
+	protected static final int FETCH_SIZE = 200;
+	protected static final Set<String> HIDDEN_FILES = new TreeSet<String>(
+		Arrays.asList(".git", ".cvs", ".svn")
+	);
 	public static final String CREATE_TABLE_PREFIX = "CREATE MEMORY TABLE PUBLIC.";
 	public static final String CREATE_VIEW_PREFIX = "CREATE VIEW PUBLIC.";
 	public static final String CREATE_SEQUENCE_PREFIX = "CREATE SEQUENCE PUBLIC.";

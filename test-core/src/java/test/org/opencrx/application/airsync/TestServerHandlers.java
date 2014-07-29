@@ -114,7 +114,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
-import org.openmdx.kernel.loading.Classes;
+import org.openmdx.kernel.loading.Resources;
 import org.w3c.dom.Document;
 
 import test.org.opencrx.generic.AbstractTest;
@@ -777,7 +777,7 @@ public class TestServerHandlers {
         	try {
 	        	FolderSyncHandler handler = new FolderSyncHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
 	        	SyncRequest request = new TestSyncRequest();
-	    		URL url = Classes.getApplicationResource(
+	    		URL url = Resources.getResource(
 	    			"test/org/opencrx/application/airsync/FolderHierarchyRequest.xml"
 	    		);
 	    		InputStream is = url.openStream();
@@ -806,7 +806,7 @@ public class TestServerHandlers {
 	    	try {
 		    	GetItemEstimateHandler handler = new GetItemEstimateHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
 	        	SyncRequest request = new TestSyncRequest();
-	    		URL url = Classes.getApplicationResource(
+	    		URL url = Resources.getResource(
 	    			"test/org/opencrx/application/airsync/GetItemEstimateRequest.xml"
 	    		);
 	    		InputStream is = url.openStream();
@@ -835,7 +835,7 @@ public class TestServerHandlers {
 	    	try {
 		    	MoveItemsHandler handler = new MoveItemsHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
 	        	SyncRequest request = new TestSyncRequest();
-	    		URL url = Classes.getApplicationResource(
+	    		URL url = Resources.getResource(
 	    			"test/org/opencrx/application/airsync/MoveItemsRequest.xml"
 	    		);
 	    		InputStream is = url.openStream();
@@ -865,7 +865,7 @@ public class TestServerHandlers {
 		    	PingHandler handler = new PingHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
 	        	SyncRequest request = new TestSyncRequest();
 	        	// PingRequest1
-	    		URL url = Classes.getApplicationResource(
+	    		URL url = Resources.getResource(
 	    			"test/org/opencrx/application/airsync/PingRequest1.xml"
 	    		);
 	    		InputStream is = url.openStream();
@@ -885,7 +885,7 @@ public class TestServerHandlers {
                 System.out.println();
                 System.out.println("=-=-=-= testPingHandler (1) =-=-=-=");	    		
 	        	// PingRequest2
-	    		url = Classes.getApplicationResource(
+	    		url = Resources.getResource(
 	    			"test/org/opencrx/application/airsync/PingRequest2.xml"
 	    		);
 	    		is = url.openStream();
@@ -914,7 +914,7 @@ public class TestServerHandlers {
 	    	try {
 		    	SyncHandler handler = new SyncHandler(syncBackend, DEFAULT_PROFILE_PREFIX);
 	        	SyncRequest request = new TestSyncRequest();
-	    		URL url = Classes.getApplicationResource(
+	    		URL url = Resources.getResource(
 	    			"test/org/opencrx/application/airsync/SyncRequest.xml"
 	    		);
 	    		InputStream is = url.openStream();

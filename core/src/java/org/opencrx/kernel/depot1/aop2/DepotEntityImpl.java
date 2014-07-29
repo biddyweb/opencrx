@@ -205,18 +205,19 @@ public class DepotEntityImpl
         }        
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Depots.getInstance().removeDepotEntity(
+    		Depots.getInstance().preDelete(
     			this.sameObject(), 
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,

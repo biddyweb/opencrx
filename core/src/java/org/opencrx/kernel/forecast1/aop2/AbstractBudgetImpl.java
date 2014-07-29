@@ -72,17 +72,18 @@ public class AbstractBudgetImpl
     	super(same, next);
     }
  
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		Forecasts.getInstance().updateBudget(
+    		Forecasts.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,

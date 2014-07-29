@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -102,7 +102,6 @@ org.openmdx.kernel.exception.*
 	RefObject_1_0 obj = wc.getObject();
 	ViewPort viewPort = wc.getViewPort(out);
 %>
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 <%
@@ -126,7 +125,7 @@ org.openmdx.kernel.exception.*
 	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display:block;overflow:visible;">
 <%
 					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
 					viewPort.flush();
@@ -152,7 +151,7 @@ org.openmdx.kernel.exception.*
 							<table style="display:none;">
 								<tr><td/><td/><td/></tr>
 								<tr id="toBeInserted">
-									<td class="label">
+									<td class="<%= CssClass.fieldLabel %>">
 										<span class="nw"><%= app.getLabel(CreateActivityWizardController.MEMBER_CLASS) %>:</span>
 									</td>
 									<td>
@@ -228,7 +227,7 @@ org.openmdx.kernel.exception.*
 						<table>
 							<tr><td/><td/><td/></tr>
 							<tr id="activityLink">
-								<td class="label">
+								<td class="<%= CssClass.fieldLabel %>">
 									<span class="nw"><%= wc.getFieldLabel(CreateActivityWizardController.ACTIVITYLINKTO_CLASS, "linkTo", app.getCurrentLocaleAsIndex()) %>:</span>
 								</td>
 								<td>
@@ -243,7 +242,7 @@ org.openmdx.kernel.exception.*
 				</div>
 				<table class="fieldGroup">
 					<tr>
-						<td class="label" />
+						<td class="<%= CssClass.fieldLabel %>" />
 						<td>
 <%
 							if (wc.getLastAppliedActivityCreator() != null) {
@@ -266,14 +265,15 @@ org.openmdx.kernel.exception.*
 				</table>
 				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
 				<div id="SubmitArea" style="float:left;display:none;">
-	 				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
-					<input type="submit" name="OK" id="OK.Button" tabindex="9010" value="<%= app.getTexts().getNewText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;this.name='---';" />
-					<input type="submit" name="Cancel" tabindex="9020" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+	 				<input type="submit" name="Refresh" id="Refresh.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+					<input type="submit" name="OK" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getNewText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;this.name='---';" />
+					<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9020" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
 				</div>
 			</td>
 		</tr>
 	</table>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

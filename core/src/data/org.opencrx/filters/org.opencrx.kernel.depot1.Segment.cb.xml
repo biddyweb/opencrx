@@ -18,6 +18,16 @@
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Pending [Booking Date]</string>
+								</void>
+								<void index="1">
+									<string>Pendent [Buchungsdatum]</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
 								<void index="0">
@@ -68,6 +78,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Final [Booking Date]</string>
+								</void>
+								<void index="1">
+									<string>Schluss [Buchungsdatum]</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">

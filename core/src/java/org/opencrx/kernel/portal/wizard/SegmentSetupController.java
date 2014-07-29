@@ -71,7 +71,9 @@ import org.opencrx.kernel.activity1.jmi1.ActivityFilterGlobal;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.Buildings;
 import org.opencrx.kernel.backend.Contracts;
+import org.opencrx.kernel.backend.Depots;
 import org.opencrx.kernel.backend.Documents;
 import org.opencrx.kernel.backend.Products;
 import org.opencrx.kernel.backend.SecureObject;
@@ -88,8 +90,9 @@ import org.openmdx.base.query.Quantifier;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
+import org.openmdx.portal.servlet.CssClass;
 import org.openmdx.portal.servlet.ObjectReference;
-import org.openmdx.portal.servlet.view.View;
+import org.openmdx.portal.servlet.component.View;
 
 /**
  * SegmentSetupController
@@ -724,462 +727,388 @@ public class SegmentSetupController extends AbstractWizardController {
 	public void renderSetupReport(
 		Writer out
 	) throws ServiceException, IOException {
-		PersistenceManager pm = this.getPm();
-		out.append("<div class=\"col1\">");
+		out.append("<div class=\"row\">");
 		out.append("<fieldset>");
-		out.append("<legend>Activity and Incident Management</legend>");
-		out.append("<table>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Activity and Incident Management</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Activity Processes</h2></td>");
+		out.append("		<th>Activity Processes</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityProcess(Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, this.getActivitySegment(), pm) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityProcess(Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_PROCESS_NAME_BUG_AND_FEATURE_TRACKING + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_PROCESS_NAME_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityProcess(Activities.ACTIVITY_PROCESS_NAME_EMAILS, this.getActivitySegment(), pm) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityProcess(Activities.ACTIVITY_PROCESS_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_PROCESS_NAME_EMAILS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_PROCESS_NAME_BULK_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityProcess(Activities.ACTIVITY_PROCESS_NAME_BULK_EMAILS, this.getActivitySegment(), pm) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityProcess(Activities.ACTIVITY_PROCESS_NAME_BULK_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_PROCESS_NAME_BULK_EMAILS + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
+		out.append("	<tr>");
+		out.append("		<th>Calendars</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Calendars</h2></td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findCalendar(Activities.CALENDAR_NAME_DEFAULT_BUSINESS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.CALENDAR_NAME_DEFAULT_BUSINESS + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
+		out.append("	<tr>");
+		out.append("		<th>Activity Types</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.CALENDAR_NAME_DEFAULT_BUSINESS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findCalendar(Activities.CALENDAR_NAME_DEFAULT_BUSINESS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Activity Types</h2></td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TYPE_NAME_EMAILS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_BUGS_AND_FEATURES, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TYPE_NAME_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TYPE_NAME_TASKS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_BULK_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TYPE_NAME_MEETINGS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TYPE_NAME_TASKS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Activity Trackers</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TYPE_NAME_MEETINGS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityType(Activities.ACTIVITY_TYPE_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_EMAILS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Activity Trackers</h2></td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_TASKS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_POLLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_POLLS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_TASKS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_MEETINGS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_POLLS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_POLLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_PUBLIC, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_TRACKER_NAME_PUBLIC + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Activity Creators</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_MEETINGS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td  class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_EMAILS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_TRACKER_NAME_PUBLIC + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityTracker(Activities.ACTIVITY_TRACKER_NAME_PUBLIC, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_TASKS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Activity Creators</h2></td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_POLLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_POLLS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_BUGS_AND_FEATURES, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_MEETINGS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_TASKS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_POLLS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_POLLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_MEETING_ROOMS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_MEETINGS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_EMAILS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_TASKS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS + "</td>");
-		out.append("		<td>" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Activities.getInstance().findActivityCreator(Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + Activities.ACTIVITY_CREATOR_NAME_PUBLIC_PHONE_CALLS + "</td>");
 		out.append("	</tr>");
 		out.append("</table>");
 		out.append("</fieldset>");
 		out.append("<fieldset>");
-		out.append("<legend>Workflows and Topics</legend>");
-		out.append("<table>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Workflows and Topics</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Topics</h2></td>");
+		out.append("		<th>Topics</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_ACCOUNT_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_ACTIVITY_FOLLOWUP_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_ACTIVITY_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_EMAIL + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER, this.getWorkflowSegment()) == null ? MISSING : OK)  + "\">" + Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_TWITTER + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_JABBER + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_JABBER, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_JABBER, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_ALERT_MODIFICATIONS_JABBER + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_BOOKING_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_COMPETITOR_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_COMPOUND_BOOKING_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_INVOICE_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_LEAD_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_LEAD_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_LEAD_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_LEAD_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_OPPORTUNITY_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_ORGANIZATION_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_PRODUCT_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_QUOTE_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_TIMER_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_TIMER_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_TIMER_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_TIMER_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td>" + Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Workflows</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_EXPORT_MAIL + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_EXPORT_MAIL, this.getWorkflowSegment()) == null && Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.ExportMailWorkflow", this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_PRINT_CONSOLE + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_PRINT_CONSOLE, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_SEND_ALERT + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_ALERT, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_SEND_MAIL + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MAIL, this.getWorkflowSegment()) == null && Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailWorkflow", this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION, this.getWorkflowSegment()) == null && Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_SEND_MESSAGE_TWITTER + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MESSAGE_TWITTER, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_SEND_MESSAGE_JABBER + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MESSAGE_JABBER, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + Workflows.WORKFLOW_NAME_BULK_CREATE_ACTIVITY + "</td>");
-		out.append("		<td>" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_BULK_CREATE_ACTIVITY, this.getWorkflowSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findTopic(Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.TOPIC_NAME_SALES_ORDER_MODIFICATIONS + "</td>");
 		out.append("	</tr>");
 		out.append("</table>");
-		out.append("</fieldset>");
-		out.append("</div>");
-		out.append("<div class=\"col2\">");
-		out.append("<fieldset>");
-		out.append("<legend>Products</legend>");
-		out.append("<table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Pricing Rules</h2></td>");
+		out.append("		<th>Workflows</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + Products.PRICING_RULE_NAME_LOWEST_PRICE + "</td>");
-		out.append("		<td>" + (Products.getInstance().findPricingRule(Products.PRICING_RULE_NAME_LOWEST_PRICE, this.getProductSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("</table>");
-		out.append("<table>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Sales Tax Types</h2></td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_EXPORT_MAIL, this.getWorkflowSegment()) == null && Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.ExportMailWorkflow", this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_EXPORT_MAIL + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.SALES_TAX_TYPE_NAME_8_5 + "</td>");
-		out.append("		<td>" + (this.findSalesTaxType(SegmentSetupController.SALES_TAX_TYPE_NAME_8_5, this.getProductSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_PRINT_CONSOLE, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_PRINT_CONSOLE + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_ALERT, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_SEND_ALERT + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MAIL, this.getWorkflowSegment()) == null && Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailWorkflow", this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_SEND_MAIL + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION, this.getWorkflowSegment()) == null && Workflows.getInstance().findWfProcess("org.opencrx.mail.workflow.SendMailNotificationWorkflow", this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_SEND_MAIL_NOTIFICATION + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MESSAGE_TWITTER, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_SEND_MESSAGE_TWITTER + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_SEND_MESSAGE_JABBER, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_SEND_MESSAGE_JABBER + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_BULK_ACTIVITY_FOLLOWUP + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (Workflows.getInstance().findWfProcess(Workflows.WORKFLOW_NAME_BULK_CREATE_ACTIVITY, this.getWorkflowSegment()) == null ? MISSING : OK) + "\">" + Workflows.WORKFLOW_NAME_BULK_CREATE_ACTIVITY + "</td>");
 		out.append("	</tr>");
 		out.append("</table>");
 		out.append("</fieldset>");
 		out.append("<fieldset>");
-		out.append("<legend>Contracts</legend>");
-		out.append("<table>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Products</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Calculation Rules</h2></td>");
+		out.append("		<th>Pricing Rules</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + Contracts.CALCULATION_RULE_NAME_DEFAULT + "</td>");
-		out.append("		<td>" + (Contracts.getInstance().findCalculationRule(Contracts.CALCULATION_RULE_NAME_DEFAULT, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Products.getInstance().findPricingRule(Products.PRICING_RULE_NAME_LOWEST_PRICE, this.getProductSegment()) == null ? MISSING : OK) + "\">" + Products.PRICING_RULE_NAME_LOWEST_PRICE + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
+		out.append("	<tr>");
+		out.append("		<th>Sales Tax Types</th>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findSalesTaxType(SegmentSetupController.SALES_TAX_TYPE_NAME_8_5, this.getProductSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.SALES_TAX_TYPE_NAME_8_5 + "</td>");
 		out.append("	</tr>");
 		out.append("</table>");
 		out.append("</fieldset>");
 		out.append("<fieldset>");
-		out.append("<legend>Documents</legend>");
-		out.append("<table>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Contracts</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Message of the day</h2></td>");
+		out.append("		<th>Calculation Rules</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.MESSAGE_OF_THE_DAY_DOCUMENT_NAME + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.MESSAGE_OF_THE_DAY_DOCUMENT_NAME, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("</table>");
-		out.append("</fieldset>");
-		out.append("<fieldset>");
-		out.append("<legend>Reports</legend>");
-		out.append("<table>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Account Filters</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.ACCOUNT_FILTER_NAME_ALL + "</td>");
-		out.append("		<td>" + (this.findAccountFilter(SegmentSetupController.ACCOUNT_FILTER_NAME_ALL, this.getAccountSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD + "</td>");
-		out.append("		<td>" + (this.findAccountFilter(SegmentSetupController.ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, this.getAccountSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.ADDRESS_FILTER_NAME_ALL + "</td>");
-		out.append("		<td>" + (this.findAddressFilter(SegmentSetupController.ADDRESS_FILTER_NAME_ALL, this.getAccountSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Contract Filters</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.CONTRACT_FILTER_NAME_LEAD_FORECAST + "</td>");
-		out.append("		<td>" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_LEAD_FORECAST, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST + "</td>");
-		out.append("		<td>" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.CONTRACT_FILTER_NAME_QUOTE_FORECAST + "</td>");
-		out.append("		<td>" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_QUOTE_FORECAST, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.CONTRACT_FILTER_NAME_WON_LEADS + "</td>");
-		out.append("		<td>" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_WON_LEADS, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.CONTRACT_FILTER_NAME_WON_OPPORTUNITIES + "</td>");
-		out.append("		<td>" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_WON_OPPORTUNITIES, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.CONTRACT_FILTER_NAME_WON_QUOTES + "</td>");
-		out.append("		<td>" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_WON_QUOTES, this.getContractSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Activity Filters</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.ACTIVITY_FILTER_NAME_PHONE_CALLS + "</td>");
-		out.append("		<td>" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.ACTIVITY_FILTER_NAME_MEETINGS + "</td>");
-		out.append("		<td>" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.ACTIVITY_FILTER_NAME_NEW_ACTIVITIES + "</td>");
-		out.append("		<td>" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_NEW_ACTIVITIES, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES + "</td>");
-		out.append("		<td>" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES, this.getActivitySegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Export Profiles</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_LIST + "</td>");
-		out.append("		<td>" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_LIST, this.getUserHome()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST + "</td>");
-		out.append("		<td>" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST, this.getUserHome()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_LIST + "</td>");
-		out.append("		<td>" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_LIST, this.getUserHome()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST + "</td>");
-		out.append("		<td>" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, this.getUserHome()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST + "</td>");
-		out.append("		<td>" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST, this.getUserHome()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_LIST + "</td>");
-		out.append("		<td>" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_LIST, this.getUserHome()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Mail Merge Templates</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LETTER + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LETTER, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LABEL + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LABEL, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Report Templates</h2></td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_LIST + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_LIST + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
-		out.append("	</tr>");
-		out.append("	<tr>");
-		out.append("		<td>" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_LIST + "</td>");
-		out.append("		<td>" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (Contracts.getInstance().findCalculationRule(Contracts.CALCULATION_RULE_NAME_DEFAULT, this.getContractSegment()) == null ? MISSING : OK) + "\">" + Contracts.CALCULATION_RULE_NAME_DEFAULT + "</td>");
 		out.append("	</tr>");
 		out.append("</table>");
 		out.append("</fieldset>");
 		out.append("<fieldset>");
-		out.append("<legend>Menues</legend>");
-		out.append("<table>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Documents</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
 		out.append("	<tr>");
-		out.append("		<td colspan=\"2\"><h2>Favorites</h2></td>");
+		out.append("		<th>Message of the day</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.FAVORITE_NAME_CREATE_ACTIVITY + "</td>");
-		out.append("		<td>" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_ACTIVITY, this.getUserHome()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.MESSAGE_OF_THE_DAY_DOCUMENT_NAME, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.MESSAGE_OF_THE_DAY_DOCUMENT_NAME + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("</fieldset>");
+		out.append("<fieldset>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Reports</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
+		out.append("	<tr>");
+		out.append("		<th>Account Filters</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.FAVORITE_NAME_CREATE_CONTACT + "</td>");
-		out.append("		<td>" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_CONTACT, this.getUserHome()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (this.findAccountFilter(SegmentSetupController.ACCOUNT_FILTER_NAME_ALL, this.getAccountSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ACCOUNT_FILTER_NAME_ALL + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.FAVORITE_NAME_CREATE_CONTRACT + "</td>");
-		out.append("		<td>" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_CONTRACT, this.getUserHome()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (this.findAccountFilter(SegmentSetupController.ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD, this.getAccountSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ACCOUNT_FILTER_NAME_NO_OR_BROKEN_VCARD + "</td>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.FAVORITE_NAME_CREATE_LEAD + "</td>");
-		out.append("		<td>" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_LEAD, this.getUserHome()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (this.findAddressFilter(SegmentSetupController.ADDRESS_FILTER_NAME_ALL, this.getAccountSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ADDRESS_FILTER_NAME_ALL + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Contract Filters</th>");
 		out.append("	</tr>");
 		out.append("	<tr>");
-		out.append("		<td width=\"400px\">" + SegmentSetupController.FAVORITE_NAME_SCHEDULE_EVENT + "</td>");
-		out.append("		<td>" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_SCHEDULE_EVENT, this.getUserHome()) == null ? MISSING : OK) + "</td>");
+		out.append("		<td class=\"" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_LEAD_FORECAST, this.getContractSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.CONTRACT_FILTER_NAME_LEAD_FORECAST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST, this.getContractSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.CONTRACT_FILTER_NAME_OPPORTUNITY_FORECAST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_QUOTE_FORECAST, this.getContractSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.CONTRACT_FILTER_NAME_QUOTE_FORECAST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_WON_LEADS, this.getContractSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.CONTRACT_FILTER_NAME_WON_LEADS + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_WON_OPPORTUNITIES, this.getContractSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.CONTRACT_FILTER_NAME_WON_OPPORTUNITIES + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findContractFilter(SegmentSetupController.CONTRACT_FILTER_NAME_WON_QUOTES, this.getContractSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.CONTRACT_FILTER_NAME_WON_QUOTES + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Activity Filters</th>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_PHONE_CALLS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ACTIVITY_FILTER_NAME_PHONE_CALLS + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_MEETINGS, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ACTIVITY_FILTER_NAME_MEETINGS + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_NEW_ACTIVITIES, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ACTIVITY_FILTER_NAME_NEW_ACTIVITIES + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findActivityFilter(SegmentSetupController.ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES, this.getActivitySegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.ACTIVITY_FILTER_NAME_OPEN_ACTIVITIES + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Export Profiles</th>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_LIST, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.EXPORT_PROFILE_NAME_CONTRACT_WITH_POSITION_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_LIST, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.EXPORT_PROFILE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_MEMBER_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findExportProfile(SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_LIST, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.EXPORT_PROFILE_NAME_ACCOUNT_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Mail Merge Templates</th>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LETTER, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LETTER + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LABEL, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.MAILMERGE_TEMPLATE_NAME_LABEL + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");		
+		out.append("	<tr>");
+		out.append("		<th>Report Templates</th>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.REPORT_TEMPLATE_NAME_CONTRACT_WITH_POSITION_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACTIVITY_WITH_FOLLOWUP_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_MEMBER_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findDocument(SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_LIST, this.getDocumentSegment()) == null ? MISSING : OK) + "\">" + SegmentSetupController.REPORT_TEMPLATE_NAME_ACCOUNT_LIST + "</td>");
+		out.append("	</tr>");
+		out.append("</table>");
+		out.append("</fieldset>");
+		out.append("<fieldset>");
+		out.append("<div class=\"" + CssClass.fieldGroupName + "\">Menues</div>");
+		out.append("<table class=\"table table-condensed\" style=\"width:100%\">");
+		out.append("	<tr>");
+		out.append("		<th>Favorites</th>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_ACTIVITY, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.FAVORITE_NAME_CREATE_ACTIVITY + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_CONTACT, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.FAVORITE_NAME_CREATE_CONTACT + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_CONTRACT, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.FAVORITE_NAME_CREATE_CONTRACT + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_CREATE_LEAD, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.FAVORITE_NAME_CREATE_LEAD + "</td>");
+		out.append("	</tr>");
+		out.append("	<tr>");
+		out.append("		<td class=\"" + (this.findFavorite(SegmentSetupController.FAVORITE_NAME_SCHEDULE_EVENT, this.getUserHome()) == null ? MISSING : OK) + "\">" + SegmentSetupController.FAVORITE_NAME_SCHEDULE_EVENT + "</td>");
 		out.append("	</tr>");
 		out.append("</table>");
 		out.append("</fieldset>");
@@ -1204,6 +1133,8 @@ public class SegmentSetupController extends AbstractWizardController {
 		this.contractSegment = Contracts.getInstance().getContractSegment(pm, this.getProviderName(), this.getSegmentName());
 		this.documentSegment = Documents.getInstance().getDocumentSegment(pm, this.getProviderName(), this.getSegmentName());
 		this.workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, this.getProviderName(), this.getSegmentName());
+		this.depotSegment = Depots.getInstance().getDepotSegment(pm, this.getProviderName(), this.getSegmentName());
+		this.buildingSegment = Buildings.getInstance().getBuildingSegment(pm, this.getProviderName(), this.getSegmentName());
 		this.userHome = (org.opencrx.kernel.home1.jmi1.UserHome)pm.getObjectById(
 			app.getUserHomeIdentityAsPath()
 		);
@@ -1361,65 +1292,49 @@ public class SegmentSetupController extends AbstractWizardController {
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_BUGS_AND_FEATURES,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker emailsTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_EMAILS,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker tasksTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_TASKS,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker pollsTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_POLLS,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker meetingRoomsTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_MEETING_ROOMS,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker meetingsTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_MEETINGS,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker phoneCallsTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_PHONE_CALLS,
 					allUsers,
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			org.opencrx.kernel.activity1.jmi1.ActivityTracker publicTracker =
 				Activities.getInstance().initActivityTracker(
 					Activities.ACTIVITY_TRACKER_NAME_PUBLIC,
 					Arrays.asList(new org.opencrx.security.realm1.jmi1.PrincipalGroup[]{publicPrincipalGroup}),
-					pm,
-					this.getProviderName(),
-					this.getSegmentName()
+					this.activitySegment
 				);
 			// Activity Creators
 			try {
@@ -1999,28 +1914,28 @@ public class SegmentSetupController extends AbstractWizardController {
 			    FAVORITE_NAME_CREATE_ACTIVITY,
 			    activitySegment,
 			    "ActivityManagement.gif",
-			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateActivityWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', {evalScripts: true});",
+			    "$('UserDialogWait').className='loading udwait';jQuery.ajax({type: 'get', url: './wizards/en_US/CreateActivityWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.activity1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});",
 				userHome
 			);
 			initFavorite(
 			    FAVORITE_NAME_CREATE_CONTACT,
 			    accountSegment,
 			    "Account.gif",
-			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateContactWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.account1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', {evalScripts: true});",
+			    "$('UserDialogWait').className='loading udwait';jQuery.ajax({type: 'get', url: './wizards/en_US/CreateContactWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.account1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});",
 				userHome
 			);
 			initFavorite(
 			    FAVORITE_NAME_CREATE_CONTRACT,
 			    contractSegment,
 			    "SalesOrder.gif",
-			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateContractWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', {evalScripts: true});",
+			    "$('UserDialogWait').className='loading udwait';jQuery.ajax({type: 'get', url: './wizards/en_US/CreateContractWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});",
 				userHome
 			);
 			initFavorite(
 			    FAVORITE_NAME_CREATE_LEAD,
 			    contractSegment,
 			    "Lead.gif",
-			    "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', './wizards/en_US/CreateLeadWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', {evalScripts: true});",
+			    "$('UserDialogWait').className='loading udwait';jQuery.ajax({type: 'get', url: './wizards/en_US/CreateLeadWizard.jsp?" + Action.PARAMETER_REQUEST_ID + "=" + View.REQUEST_ID_TEMPLATE + "&" + Action.PARAMETER_OBJECTXRI + "=xri:@openmdx:org.opencrx.kernel.contract1/provider/" + this.getProviderName() + "/segment/" + this.getSegmentName() + "', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});",
 				userHome
 			);
 			initFavorite(
@@ -2035,7 +1950,7 @@ public class SegmentSetupController extends AbstractWizardController {
 				pm.currentTransaction().rollback();
 			} catch(Exception e0) {}
 			new ServiceException(e).log();
-		}		
+		}
 	}
 
 	/**
@@ -2099,6 +2014,20 @@ public class SegmentSetupController extends AbstractWizardController {
 		return userHome;
 	}
 
+	/**
+	 * @return the depotSegment
+	 */
+	public org.opencrx.kernel.depot1.jmi1.Segment getDepotSegment() {
+		return depotSegment;
+	}
+	
+	/**
+	 * @return the buildingSegment
+	 */
+	public org.opencrx.kernel.building1.jmi1.Segment getBuildingSegment() {
+		return buildingSegment;
+	}
+	
 	//-----------------------------------------------------------------------
 	// Members
 	//-----------------------------------------------------------------------
@@ -2147,8 +2076,8 @@ public class SegmentSetupController extends AbstractWizardController {
 	public static final String FAVORITE_NAME_CREATE_LEAD = "Create Lead";
 	public static final String FAVORITE_NAME_SCHEDULE_EVENT = "Schedule Event";
 
-	public static final String OK = "<img src='../../images/checked.gif' />";
-	public static final String MISSING = "<img src='../../images/cancel.gif' />";
+	public static final String OK = "alert-success";
+	public static final String MISSING = "alert-danger";
 
 	private boolean currentUserIsAdmin;
 	private org.opencrx.kernel.account1.jmi1.Segment accountSegment;
@@ -2156,6 +2085,8 @@ public class SegmentSetupController extends AbstractWizardController {
 	private org.opencrx.kernel.product1.jmi1.Segment productSegment;
 	private org.opencrx.kernel.contract1.jmi1.Segment contractSegment;
 	private org.opencrx.kernel.document1.jmi1.Segment documentSegment;	
+	private org.opencrx.kernel.depot1.jmi1.Segment depotSegment;	
+	private org.opencrx.kernel.building1.jmi1.Segment buildingSegment;
 	private org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment;
 	private org.opencrx.kernel.home1.jmi1.UserHome userHome;
 }

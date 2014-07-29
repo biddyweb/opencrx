@@ -2,12 +2,12 @@
 <!--
  * =======================================================================
  * = Description: openCRX/Core Test build.xml
- * = Copyright:   (c) 2003-2013 CRIXP AG
+ * = Copyright:   (c) 2003-2014 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -58,7 +58,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.6"/>
 	<!-- openMDX libraries -->
-	<property name="openmdx.version" value="2.12.7"/>
+	<property name="openmdx.version" value="2.13.0"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml"/>
 	<!-- classpath -->
@@ -72,6 +72,8 @@
 		<pathelement location="../${build.java.platform}/core/lib/opencrx-resources.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/${build.java.platform}/security/lib/openmdx-security.jar"/>
 		<pathelement location="../opt/openmdx-${openmdx.version}/${build.java.platform}/portal/lib/openmdx-portal.jar"/>
+		<pathelement location="../openqa/${build.java.platform}/selenium/lib/selenium.jar"/>
+		<pathelement location="../openqa/${build.java.platform}/selenium/lib/guava.jar"/>
 	</path>
 	<path id="project.bin.classpath">
 		<path refid="project.lib.classpath"/>
@@ -79,18 +81,23 @@
 		<pathelement location="${build.dir}/bin"/>
 		<pathelement location="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip"/>
 		<pathelement location="../codehaus/${build.java.platform}/janino/lib/janino.jar"/>
-		<pathelement location="../apache/${build.java.platform}/poi/lib/poi.jar"/>
-		<pathelement location="../apache/${build.java.platform}/poi/lib/dom4j.jar"/>
-		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-excelant.jar"/>
-		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-ooxml.jar"/>
-		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-ooxml-schemas.jar"/>
-		<pathelement location="../apache/${build.java.platform}/poi/lib/poi-scratchpad.jar"/>
+		<path>
+			<fileset dir="../apache/${build.java.platform}/poi/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
+		<path>
+			<fileset dir="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
 		<pathelement location="../opt/postgresql/${build.java.platform}/postgresql-9/lib/postgresql-9.2.jdbc4.jar"/>
 		<pathelement location="../opt/hsqldb/${build.java.platform}/hsqldb-2/lib/hsqldb.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-lang.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/commons-collections-extendedproperties.jar"/>
-		<pathelement location="../opt/openmdx-${openmdx.version}/osgi/${build.java.platform}/extension/lib/serp.jar"/>
+		<path>
+			<fileset dir="../opt/xstream/${build.java.platform}/lib" erroronmissingdir="false">
+				<include name="*.jar"/>
+			</fileset>
+		</path>
 	</path>
 	<!-- Test Config -->
 	<property name="test.id.list" value="default/client" />

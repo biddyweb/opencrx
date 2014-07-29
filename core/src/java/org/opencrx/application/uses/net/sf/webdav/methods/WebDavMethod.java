@@ -70,7 +70,6 @@
 package org.opencrx.application.uses.net.sf.webdav.methods;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Enumeration;
@@ -425,31 +424,23 @@ public abstract class WebDavMethod {
     protected void sendReport(
     	RequestContext requestContext,
         Hashtable<String, Integer> errorList
-     ) {
+     ) throws IOException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
     	HttpServletRequest req = requestContext.getHttpServletRequest();
         resp.setStatus(WebdavStatus.SC_MULTI_STATUS);
-
         String absoluteUri = req.getRequestURI();
         // String relativePath = getRelativePath(req);
-
         HashMap<String, String> namespaces = new HashMap<String, String>();
         namespaces.put("DAV:", "D");
-
-        XMLWriter generatedXML = new XMLWriter(namespaces);
-        generatedXML.writeXMLHeader();
-
-        generatedXML.writeElement("DAV::multistatus", XMLWriter.OPENING);
-
+        XMLWriter writer = new XMLWriter(resp.getWriter(), namespaces);
+        writer.writeXMLHeader();
+        writer.writeElement("DAV::multistatus", XMLWriter.OPENING);
         Enumeration<String> pathList = errorList.keys();
         while (pathList.hasMoreElements()) {
-
             String errorPath = pathList.nextElement();
             int errorCode = errorList.get(errorPath);
-
-            generatedXML.writeElement("DAV::response", XMLWriter.OPENING);
-
-            generatedXML.writeElement("DAV::href", XMLWriter.OPENING);
+            writer.writeElement("DAV::response", XMLWriter.OPENING);
+            writer.writeElement("DAV::href", XMLWriter.OPENING);
             String toAppend = null;
             if (absoluteUri.endsWith(errorPath)) {
                 toAppend = absoluteUri;
@@ -457,23 +448,18 @@ public abstract class WebDavMethod {
                 int endIndex = absoluteUri.indexOf(errorPath) + errorPath.length();
                 toAppend = absoluteUri.substring(0, endIndex);
             }
-            if (!toAppend.startsWith("/") && !toAppend.startsWith("http:"))
+            if (!toAppend.startsWith("/") && !toAppend.startsWith("http:")) {
                 toAppend = "/" + toAppend;
-            generatedXML.writeText(errorPath);
-            generatedXML.writeElement("DAV::href", XMLWriter.CLOSING);
-            generatedXML.writeElement("DAV::status", XMLWriter.OPENING);
-            generatedXML.writeText("HTTP/1.1 " + errorCode);
-            generatedXML.writeElement("DAV::status", XMLWriter.CLOSING);
-            generatedXML.writeElement("DAV::response", XMLWriter.CLOSING);
+            }
+            writer.writeText(errorPath);
+            writer.writeElement("DAV::href", XMLWriter.CLOSING);
+            writer.writeElement("DAV::status", XMLWriter.OPENING);
+            writer.writeText("HTTP/1.1 " + errorCode);
+            writer.writeElement("DAV::status", XMLWriter.CLOSING);
+            writer.writeElement("DAV::response", XMLWriter.CLOSING);
         }
-        generatedXML.writeElement("DAV::multistatus", XMLWriter.CLOSING);
-        try {
-	        Writer writer = resp.getWriter();
-	        writer.write(generatedXML.toString());
-	        writer.close();
-        } catch(Exception e) {
-        	new ServiceException(e).log();
-        }
+        writer.writeElement("DAV::multistatus", XMLWriter.CLOSING);
+        writer.sendData();
     }
 
     protected String getNullResourceMethodsAllowed(
@@ -510,14 +496,13 @@ public abstract class WebDavMethod {
             if (so != null) {
                 if (so.isCollection()) {
                     return getResourceMethodsAllowed() + getFolderMethodsAllowed();
+                } else {
+                	return getResourceMethodsAllowed();
                 }
-                // else resource
-                return getResourceMethodsAllowed();
             }
         } catch (Exception e) {
             // we do nothing, just return default allowed methods
         }
-
         return getDefaultMethodsAllowed();
     }
 

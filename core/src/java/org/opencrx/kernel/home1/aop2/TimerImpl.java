@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: ActivityImpl
+ * Description: TimerImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,12 +60,24 @@ import org.opencrx.kernel.backend.UserHomes;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * TimerImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class TimerImpl
 	<S extends org.opencrx.kernel.home1.jmi1.Timer,N extends org.opencrx.kernel.home1.cci2.Timer,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public TimerImpl(
         S same,
         N next
@@ -73,30 +85,33 @@ public class TimerImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		UserHomes.getInstance().updateTimer(
+    		UserHomes.getInstance().preStore(
     			this.sameObject()
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
     			this.sameObject()
     		);
-    	}		
+    	}
     }
 
-    //-----------------------------------------------------------------------
-	@Override
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
+    @Override
     public void jdoPreDelete(
     ) {
-	    super.jdoPreDelete();
+   		super.jdoPreDelete();
     }
 
 }

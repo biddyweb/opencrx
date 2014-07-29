@@ -195,7 +195,7 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityLinkFrom">
 										<_object>
-											<active>true</active>
+											<active>false</active> <!-- replaced by activityRelationship -->
 											<toolTip>
 												<_item>Inbound Links</_item>
 											</toolTip>
@@ -211,6 +211,26 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityRelationship">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Activity Relationships</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Relationships</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>230</_item>
+											</order>
+											<maxMember>7</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedResource">
 										<_object>
 											<active>true</active>
@@ -419,6 +439,18 @@
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!--FieldGroups in General Tab-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Attr:Tab:0:Group:15">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item></_item>
+											</toolTip>
+											<label>
+												<_item>&amp;nbsp;</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:Pane:Attr:Tab:0:Group:40">
 										<_object>
 											<active>true</active>
@@ -477,30 +509,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:description">
-										<_object>
-											<active>true</active>
-											<spanRow>3</spanRow>
-											<toolTip>
-												<_item>Description</_item>
-											</toolTip>
-											<label>
-												<_item>Description</_item>
-											</label>
-											<orderFieldGroup>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>30</_item>
-											</orderFieldGroup>
-											<orderObjectContainer>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>115</_item>
-											</orderObjectContainer>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedTo">
+								<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedTo">
 										<_object>
 											<active>true</active>
 											<filterable>true</filterable>
@@ -514,12 +523,61 @@
 											<orderFieldGroup>
 												<_item>0</_item>
 												<_item>0</_item>
-												<_item>40</_item>
+												<_item>30</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>20</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingContact">
+										<_object>
+											<active>true</active>
+											<filterable>true</filterable>
+											<sortable>false</sortable>
+											<skipRow>1</skipRow>
+                      <toolTip>
+												<_item>Reporting contact</_item>
+											</toolTip>
+											<label>
+												<_item>Reporting contact</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>40</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>25</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount">
+										<_object>
+											<active>true</active>
+											<filterable>true</filterable>
+											<sortable>false</sortable>
+											<toolTip>
+												<_item>Reporting account</_item>
+											</toolTip>
+											<label>
+												<_item>Reporting account</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>50</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -681,6 +739,54 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:description">
+										<_object>
+											<active>true</active>
+											<spanRow>5</spanRow>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>115</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:detailedDescription">
+										<_object>
+											<active>true</active>
+											<sortable>false</sortable>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Detailed description</_item>
+											</toolTip>
+											<label>
+												<_item>Detailed description</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>116</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+	
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityType">
 										<_object>
 											<active>true</active>
@@ -693,7 +799,7 @@
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>15</_item>
 												<_item>10</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
@@ -719,7 +825,7 @@
 											</shortLabel>
 											<orderFieldGroup>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>15</_item>
 												<_item>20</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
@@ -747,7 +853,7 @@
 											</shortLabel>
 											<orderFieldGroup>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>15</_item>
 												<_item>30</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
@@ -773,7 +879,7 @@
 											</shortLabel>
 											<orderFieldGroup>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>15</_item>
 												<_item>80</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
@@ -795,7 +901,7 @@
 											</label>
 											<order>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>15</_item>
 												<_item>90</_item>
 											</order>
 										</_object>
@@ -812,56 +918,13 @@
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>
-												<_item>10</_item>
+												<_item>15</_item>
 												<_item>100</_item>
 											</orderFieldGroup>
 											<orderObjectContainer> <!-- calculation in grid is expensive!!! -->
 												<_item>99</_item>
 												<_item>0</_item>
 												<_item>0</_item>
-											</orderObjectContainer>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingAccount">
-										<_object>
-											<active>true</active>
-											<filterable>true</filterable>
-											<sortable>false</sortable>
-											<toolTip>
-												<_item>Reporting account</_item>
-											</toolTip>
-											<label>
-												<_item>Reporting account</_item>
-											</label>
-											<order>
-												<_item>0</_item>
-												<_item>20</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:reportingContact">
-										<_object>
-											<active>true</active>
-											<filterable>true</filterable>
-											<sortable>false</sortable>
-											<toolTip>
-												<_item>Reporting contact</_item>
-											</toolTip>
-											<label>
-												<_item>Reporting contact</_item>
-											</label>
-											<orderFieldGroup>
-												<_item>0</_item>
-												<_item>20</_item>
-												<_item>20</_item>
-											</orderFieldGroup>
-											<orderObjectContainer>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>25</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -965,30 +1028,6 @@
 												<_item>99</_item>
 												<_item>0</_item>
 												<_item>0</_item>
-											</orderObjectContainer>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:detailedDescription">
-										<_object>
-											<active>true</active>
-											<sortable>false</sortable>
-											<spanRow>10</spanRow>
-											<toolTip>
-												<_item>Detailed description</_item>
-											</toolTip>
-											<label>
-												<_item>Detailed description</_item>
-											</label>
-											<orderFieldGroup>
-												<_item>0</_item>
-												<_item>40</_item>
-												<_item>40</_item>
-											</orderFieldGroup>
-											<orderObjectContainer>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>116</_item>
 											</orderObjectContainer>
 										</_object>
 										<_content/>
@@ -1396,6 +1435,146 @@
 												<_item>0</_item>
 												<_item>10</_item>
 												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- ActivityRelationship-->
+									<!--Inspector Definitions-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship">
+										<_object>
+											<active>true</active>
+											<changeable>false</changeable>
+											<toolTip>
+												<_item>Activity Relationship</_item>
+											</toolTip>
+											<label>
+												<_item>Activity Relationship</_item>
+											</label>
+											<iconKey>ActivityRelationship</iconKey>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<!--Tab Definitions Pane1-->
+									<!--FieldGroups in General Tab-->
+									<!--Element Definitions -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:name">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:activityLinkType">
+										<_object>
+											<columnBreak>true</columnBreak>
+											<active>true</active>
+											<toolTip>
+												<_item>Type</_item>
+											</toolTip>
+											<label>
+												<_item>Type</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:activityFrom">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>From activity</_item>
+											</toolTip>
+											<label>
+												<_item>From activity</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:activityTo">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>To activity</_item>
+											</toolTip>
+											<label>
+												<_item>To activity</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:basedOn">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Based on</_item>
+											</toolTip>
+											<label>
+												<_item>Based on</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:distance">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Distance</_item>
+											</toolTip>
+											<label>
+												<_item>Distance</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>40</_item>
 											</order>
 										</_object>
 										<_content/>

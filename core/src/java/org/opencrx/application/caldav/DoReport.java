@@ -59,6 +59,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -77,6 +78,8 @@ import org.w3c.cci2.BinaryLargeObjects;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.format.DateTimeFormat;
 import org.xml.sax.InputSource;
 
 /**
@@ -118,6 +121,27 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
 	        return;
 	    }
         Element rootElement = document.getDocumentElement();
+        // Filter: time-range
+        Date timeRangeStart = null;
+        Date timeRangeEnd = null;
+        NodeList timeRangeNodes = rootElement.getElementsByTagNameNS("urn:ietf:params:xml:ns:caldav", "time-range");
+        if(timeRangeNodes != null) {
+	        for(int i = 0; i < timeRangeNodes.getLength(); i++) {
+	        	Node timeRangeNode = timeRangeNodes.item(i);
+	        	Node start = timeRangeNodes.item(i).getAttributes().getNamedItem("start");
+	        	if(start != null) {
+	        		try {
+	        			timeRangeStart = DateTimeFormat.BASIC_UTC_FORMAT.parse(start.getNodeValue());
+	        		} catch(Exception ignore) {}
+	        	}
+	        	Node end = timeRangeNode.getAttributes().getNamedItem("end");
+	        	if(end != null) {
+	        		try {
+	        			timeRangeEnd = DateTimeFormat.BASIC_UTC_FORMAT.parse(end.getNodeValue());
+	        		} catch(Exception ignore) {}        		
+	        	}
+	        }
+        }
         // href
     	Collection<Resource> resources = Collections.emptyList();
         List<Node> hrefNodes = XMLHelper.findSubElements(rootElement, "href");
@@ -140,7 +164,12 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
     		}
     	} else if(so instanceof ActivityCollectionResource) {
         	// Query
-    		resources = _store.getChildren(requestContext, so);
+    		resources = _store.getChildren(
+    			requestContext, 
+    			so, 
+    			timeRangeStart, 
+    			timeRangeEnd
+    		);
        	}
         // Properties
         Node propNode = XMLHelper.findSubElement(rootElement, "prop");

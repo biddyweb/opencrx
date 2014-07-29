@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: SegmentImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,23 +52,38 @@
  */
 package org.opencrx.kernel.admin1.aop2;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.backend.Admin;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.layer.persistence.Media_1;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.naming.Path;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * SegmentImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class SegmentImpl
 	<S extends org.opencrx.kernel.admin1.jmi1.Segment,N extends org.opencrx.kernel.admin1.cci2.Segment,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public SegmentImpl(
         S same,
         N next
@@ -76,7 +91,12 @@ public class SegmentImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Create new segment and segment administrator.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.admin1.jmi1.CreateAdministratorResult createAdministrator(
         org.opencrx.kernel.admin1.jmi1.CreateAdministratorParams params
     ) {
@@ -115,7 +135,12 @@ public class SegmentImpl
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Import login principals.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.admin1.jmi1.ImportLoginPrincipalsResult importLoginPrincipals(
         org.opencrx.kernel.admin1.jmi1.ImportLoginPrincipalsParams params
     ) {
@@ -131,6 +156,29 @@ public class SegmentImpl
         } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }               
+    }
+
+    /**
+     * Convert media XRI to media file path.
+     * 
+     * @param in
+     * @return
+     */
+    public org.opencrx.kernel.admin1.jmi1.ConvertMediaXriToPathResult convertMediaXriToPath(
+    	org.opencrx.kernel.admin1.jmi1.ConvertMediaXriToPathParams in
+    ) {
+    	File mediaFile = null;
+    	try {
+    		Path mediaIdentity = new Path(in.getMediaXri());
+    		File mediadir = Media_1.getMediaDir(mediaIdentity);
+    		if(mediadir != null) {
+    			mediaFile = new File(Media_1.toContentDir(mediadir, mediaIdentity), mediaIdentity.getBase());
+    		}
+    	} catch(Exception ignore) {}
+    	return Structures.create(
+    		org.opencrx.kernel.admin1.jmi1.ConvertMediaXriToPathResult.class,
+        	Datatypes.member(org.opencrx.kernel.admin1.jmi1.ConvertMediaXriToPathResult.Member.mediaPath, mediaFile == null ? null : mediaFile.getAbsolutePath())
+    	);
     }
 
 }

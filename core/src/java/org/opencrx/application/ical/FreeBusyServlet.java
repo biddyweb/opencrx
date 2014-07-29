@@ -483,15 +483,10 @@ public class FreeBusyServlet extends HttpServlet {
     protected final static String PARAMETER_NAME_ID = "id";
     protected final static String PARAMETER_NAME_DISABLED = "disabled";
     protected final static String PARAMETER_NAME_USER = "user";
-    protected final static String PARAMETER_NAME_USER_LOCALE = "user.locale";
-    protected final static String PARAMETER_NAME_USER_TZ = "user.tz";
     protected final static String PARAMETER_NAME_TYPE = "type";
     protected final static String PARAMETER_NAME_RESOURCE = "resource";
-    protected final static String PARAMETER_NAME_HEIGHT = "height";
 
     protected final static String RESOURCE_FORMAT_ICS = "ics";
-    protected final static String RESOURCE_FORMAT_HTML = "html";
-    protected final static String RESOURCE_FORMAT_XML = "xml";
 
     protected static final String PROPERTY_MAX_ACTIVITIES = "maxActivities";
     protected static final int DEFAULT_MAX_ACTIVITIES = 500;

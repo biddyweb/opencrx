@@ -20,6 +20,7 @@
 												<_item>org:opencrx:kernel:base:SetOwningUserParams:mode</_item>
 												<_item>org:opencrx:kernel:base:SetAccessLevelParams:mode</_item>
 												<_item>org:opencrx:kernel:base:SetAccessRightsParams:mode</_item>
+												<_item>org:opencrx:kernel:generic:EnableDisableCrxObjectParams:mode</_item>
 											</name>
 										</_object>
 										<_content>

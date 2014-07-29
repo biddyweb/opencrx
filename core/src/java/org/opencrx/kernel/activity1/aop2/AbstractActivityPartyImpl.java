@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: AbstractActivityPartyImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,17 +56,28 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
-import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.Activities;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * AbstractActivityPartyImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class AbstractActivityPartyImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.AbstractActivityParty,N extends org.opencrx.kernel.activity1.cci2.AbstractActivityParty,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public AbstractActivityPartyImpl(
         S same,
         N next
@@ -74,31 +85,18 @@ public class AbstractActivityPartyImpl
     	super(same, next);
     }
  
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.activity1.jmi1.Activity getActivity(
-    ) {
-    	try {
-	    	return (Activity)this.sameManager().getObjectById(
-	    		this.sameObject().refGetPath().getPrefix(7)
-	    	);
-    	}
-    	catch(Exception e) {
-    		return null;
-    	}
-    }
-
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
 		try {
-			// Mark activity as dirty updates ICal, ...
-			Activities.getInstance().markActivityAsDirty(
-				this.getActivity()
+			Activities.getInstance().preStore(
+				this.sameObject()
 			);
 			super.jdoPreStore();
-		}
-    	catch(ServiceException e) {
+		} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
@@ -107,18 +105,19 @@ public class AbstractActivityPartyImpl
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-			// Mark activity as dirty updates ICal, ...
-			Activities.getInstance().markActivityAsDirty(
-				this.getActivity()
+			Activities.getInstance().preDelete(
+				this.sameObject(),
+				true
 			);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,

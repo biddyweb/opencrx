@@ -19,7 +19,6 @@
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="1">
-
 				<!-- show only activities that are not disabled with an activity_group_assignment that is also not disabled -->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -29,8 +28,42 @@
 						<void property="iconKey">
 							<string>BooleanProperty.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>~ [Activity and Assignment active]</string>
+								</void>
+								<void index="1">
+									<string>~ [Aktivität und Zuweisung aktik]</string>
+								</void>
+							</array>
+						</void>
+						<void property="extension">
+							<array class="org.openmdx.base.query.Extension" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.persistence.spi.QueryExtension">
+										<void property="clause">
+											<string>EXISTS
+												(select 0 from oocke1_activitygroupass ass
+												where v.object_id = ass.p$$parent
+												and vj.activity_group = ass.activity_group
+												and (ass.disabled is null OR ass.disabled = ?b0)
+												)
+											</string>
+										</void>
+										<void property="booleanParam">
+											<array class="java.lang.Boolean" length="1">
+												<void index="0">
+													<boolean>false</boolean>
+												</void>
+											</array>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
 						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="3">
+							<array class="org.openmdx.base.query.Condition" length="1">
 								<void index="0">
 									<object class="org.openmdx.base.query.IsInCondition">
 										<void property="quantor">
@@ -51,55 +84,6 @@
 										</void>
 									</object>
 								</void>
-
-								<void index="1">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
-										</void>
-										<void property="feature">
-											<string>context:ActGroupAssignmentActive:object_class</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
-												<void index="0">
-													<string>org:openmdx:compatibility:datastore1:QueryFilter</string>
-												</void>
-											</array>
-										</void>
-									</object>
-								</void>
-								<void index="2">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
-										</void>
-										<void property="feature">
-											<string>context:ActGroupAssignmentActive:clause</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
-												<void index="0">
-													<string>EXISTS
-(select * from oocke1_activitygroupass ass
-where v.object_id = ass.p$$parent
-and vj.activity_group = ass.activity_group
-and (ass.disabled is null OR ass.disabled = '0')
-)</string>
-												</void>
-											</array>
-										</void>
-									</object>
-								</void>
-
 							</array>
 						</void>
 						<void property="groupName">
@@ -107,7 +91,6 @@ and (ass.disabled is null OR ass.disabled = '0')
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

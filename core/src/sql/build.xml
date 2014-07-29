@@ -54,10 +54,7 @@
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/dbcreate-views.sql dbcreate-views.tsql"/>
 		</exec>
 		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/migrate-from-2.11-to-2.12.sql migrate-from-2.11-to-2.12.tsql"/>
-		</exec>
-		<exec executable="gcc">
-		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.11-to-2.12.sql drop-from-2.11-to-2.12.tsql"/>
+		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/drop-from-2.12-to-2.13.sql drop-from-2.12-to-2.13.tsql"/>
 		</exec>
 		<exec executable="gcc">
 		  <arg line="-E -C -P -I. -xc -DHSQLDB_2 -ohsqldb-2/delete-segment.sql delete-segment.tsql"/>

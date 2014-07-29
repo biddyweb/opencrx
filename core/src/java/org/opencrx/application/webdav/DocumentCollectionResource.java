@@ -52,10 +52,9 @@
  */
 package org.opencrx.application.webdav;
 
-import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.Date;
 import java.util.Set;
 
 import javax.jdo.JDOHelper;
@@ -70,6 +69,7 @@ import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentBasedFolderEntry;
 import org.opencrx.kernel.document1.jmi1.DocumentFilterGlobal;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
+import org.opencrx.kernel.generic.ChainingCollection;
 import org.openmdx.base.collection.MarshallingCollection;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
@@ -226,74 +226,6 @@ public abstract class DocumentCollectionResource extends WebDavResource {
 	}
 	
 	/**
-	 * ChainingCollection
-	 *
-	 * @param <T>
-	 */
-	static class ChainingCollection<T> extends AbstractCollection<T> {
-
-		class ChainingIterator implements Iterator<T> {
-
-			public ChainingIterator(
-			) {
-				this.index = 0;
-				this.iterator = ChainingCollection.this.collections[0].iterator();
-			}
-
-			@Override
-            public boolean hasNext(
-            ) {
-				boolean hasNext = this.iterator.hasNext();
-				while(!hasNext && (this.index < ChainingCollection.this.collections.length - 1)) {
-					this.index++;
-					this.iterator = ChainingCollection.this.collections[this.index].iterator();
-					hasNext = this.iterator.hasNext();
-				}
-				return hasNext;
-            }
-
-			@Override
-            public T next(
-            ) {
-				return this.iterator.next();				
-            }
-
-			@Override
-            public void remove(
-            ) {
-				throw new UnsupportedOperationException();
-            }
-			
-			private Iterator<T> iterator;
-			private int index;
-		}
-			
-		public ChainingCollection(
-			Collection<T>... collections
-		) {
-			this.collections = collections;
-		}
-		
-		@Override
-        public Iterator<T> iterator(
-        ) {
-			return new ChainingIterator();
-        }
-
-		@Override
-        public int size(
-        ) {
-			int size = 0;
-			for(int i = 0; i < this.collections.length; i++) {
-				size += this.collections[i].size();
-			}
-	        return size;
-        }
-
-		protected final Collection<T>[] collections;
-	}
-	
-	/**
 	 * Constructor.
 	 * 
 	 * @param requestContext
@@ -411,6 +343,8 @@ public abstract class DocumentCollectionResource extends WebDavResource {
     @Override
     @SuppressWarnings("unchecked")
 	public Collection<Resource> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
     	BasicObject documentCollection = this.getObject();
     	if(documentCollection instanceof DocumentFolder) {

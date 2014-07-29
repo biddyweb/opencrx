@@ -439,11 +439,13 @@ public class VCard extends AbstractImpl {
         // NOTE
         String note = "";
         try {
-        	Note aNote = (Note)pm.getObjectById(
-        		account.refGetPath().getDescendant("note", "VCARD")
-        	);
-        	if(aNote != null) {
-        		note = aNote.getText();
+        	if(!JDOHelper.isNew(account)) {
+	        	Note aNote = (Note)pm.getObjectById(
+	        		account.refGetPath().getDescendant("note", "VCARD")
+	        	);
+	        	if(aNote != null) {
+	        		note = aNote.getText();
+	        	}
         	}
         } catch(Exception e) {}
         // ADR, TEL
@@ -1691,7 +1693,7 @@ public class VCard extends AbstractImpl {
     //-------------------------------------------------------------------------
     public static class PutVCardResult {
     	
-    	public enum Status { CREATED, UPDATED }
+    	public enum Status { CREATED, UPDATED, ERROR }
     	
     	public PutVCardResult(
     		Status status,
@@ -1816,15 +1818,13 @@ public class VCard extends AbstractImpl {
                             	);
                             }
                             status = PutVCardResult.Status.CREATED;
-	                    }
-	                    else {
+	                    } else {
 	                    	try {
 	                            oldCard = this.parseVCard(
 	                                new BufferedReader(new StringReader(account.getVcard())),
 	                                dummy
 	                            );
-	                    	} 
-	                    	catch(Exception e) {}
+	                    	} catch(Exception ignore) {}
 	                        oldCard.remove("LAST-MODIFIED");
 	                        oldCard.remove("DTSTAMP");                                   
 	                        oldCard.remove("CREATED");          
@@ -1852,16 +1852,18 @@ public class VCard extends AbstractImpl {
                                 }
                         	} catch(Exception e) {
 	                        	new ServiceException(e).log();
+	                        	status = PutVCardResult.Status.ERROR;
 	                            try {
 	                                pm.currentTransaction().rollback();
-	                            } catch(Exception e0) {}                                    
+	                            } catch(Exception ignore) {}                                    
 	                        }
                     	}
 	                }
 	            }
 	        }
         } catch (IOException e) {
-        	throw new ServiceException(e);
+        	status = PutVCardResult.Status.ERROR;
+        	new ServiceException(e).log();
         }
         return new PutVCardResult(
         	status,

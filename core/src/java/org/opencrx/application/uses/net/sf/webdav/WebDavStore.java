@@ -72,6 +72,7 @@ package org.opencrx.application.uses.net.sf.webdav;
 
 import java.io.InputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -196,12 +197,13 @@ public interface WebDavStore {
      * @throws WebdavException
      *      if something goes wrong on the store level
      */
-    public enum PutResourceStatus {
-
-    	CREATED, UPDATED, FORBIDDEN
+    public enum Status {
+    	OK, 
+    	OK_CREATED, 
+    	FORBIDDEN
     }
-    
-    PutResourceStatus putResource(
+
+    Status putResource(
     	RequestContext transaction, 
     	String path,
         InputStream content, 
@@ -217,13 +219,17 @@ public interface WebDavStore {
      *      transaction
      * @param path
      *      URI of the collection
+     * @param timeRangeStart include children starting from
+     * @param timeRangeEnd include children end at
      * @return a (possibly empty) list of children
      * @throws WebdavException
      *      if something goes wrong on the store level
      */
     Collection<Resource> getChildren(
     	RequestContext requestContext, 
-    	Resource res
+    	Resource res,
+    	Date timeRangeStart,
+    	Date timeRangeEnd
     );
 
     /**
@@ -237,17 +243,11 @@ public interface WebDavStore {
      * @throws WebdavException
      *      if something goes wrong on the store level
      */
-    void removeResource(
-    	RequestContext requestContext, 
+    Status removeResource(
+    	RequestContext requestContext,
+    	String path,
     	Resource res
     );
-
-    public enum MoveResourceStatus {
-
-    	CREATED, 
-    	MOVED, 
-    	FORBIDDEN
-    }
 
     /** 
      * Moves the resource from sourcePath to destinationPath
@@ -257,13 +257,13 @@ public interface WebDavStore {
      * @param sourcePath
      * @param destinationPath
      */
-    MoveResourceStatus moveResource(
+    Status moveResource(
     	RequestContext requestContext,
     	Resource res,
     	String sourcePath,
     	String destinationPath
     );
-    
+
     /**
      * Gets the storedObject specified by <code>uri</code>
      * 

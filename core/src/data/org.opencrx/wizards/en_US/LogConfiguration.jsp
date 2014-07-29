@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -93,15 +93,14 @@ org.openmdx.base.naming.*
   <meta name="forClass" content="org:opencrx:kernel:admin1:Segment">
   <meta name="order" content="110">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" name="Command" id="Command" value="" />
 	<div id="SubmitArea">										    	    
-		<input type="submit" name="OK" id="OK.Button" tabindex="1000" value="<%= wc.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
-		<input type="submit" name="Cancel" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('UserDialog').innerHTML='';return false;" />
+		<input type="submit" name="OK" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="<%= wc.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+		<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('UserDialog').innerHTML='';return false;" />
 	</div>
 	<div class="fieldGroupName">&nbsp;</div>
 	<table class="fieldGroup">
@@ -152,10 +151,11 @@ org.openmdx.base.naming.*
 	</table>
 	<div class="fieldGroupName">&nbsp;</div>
 	<div id="SubmitArea2">
-		<input type="Submit" name="OK" id="OK.Button" tabindex="1000" value="<%= wc.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
-		<input type="Submit" name="Cancel" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('UserDialog').innerHTML='';return false;" />
+		<input type="Submit" name="OK" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="<%= wc.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+		<input type="Submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('UserDialog').innerHTML='';return false;" />
 	</div>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

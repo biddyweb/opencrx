@@ -474,13 +474,13 @@ public class SecureObject extends AbstractImpl {
                 ).objGetMap("reference");
                 for(ModelElement_1_0 featureDef: references.values()) {
                     ModelElement_1_0 referencedEnd = model.getElement(
-                        featureDef.objGetValue("referencedEnd")
+                        featureDef.getReferencedEnd()
                     );                	
                     if(
                     	ModelHelper.isCompositeEnd(featureDef, false) &&
-                    	((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue()
+                    	((Boolean)referencedEnd.isChangeable()).booleanValue()
                     ) {
-                        String referenceName = (String)featureDef.objGetValue("name");
+                        String referenceName = (String)featureDef.getName();
                         RefContainer<?> container = (RefContainer<?>)obj.refGetValue(referenceName);
                         List<?> content = container.refGetAll(null);
                         for(Object contained: content) {

@@ -84,6 +84,7 @@ import org.opencrx.kernel.forecast1.jmi1.SalesVolumeBudgetPosition;
 import org.opencrx.kernel.forecast1.jmi1.ValueBasedSalesVolumeBudgetPosition;
 import org.opencrx.kernel.product1.cci2.ProductQuery;
 import org.opencrx.kernel.product1.jmi1.Product;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
@@ -340,6 +341,30 @@ public class Forecasts extends AbstractImpl {
 		);
 	}
 	
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		if(object instanceof AbstractBudget) {
+			this.updateBudget((AbstractBudget)object);
+		}
+	}
+
 	//-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

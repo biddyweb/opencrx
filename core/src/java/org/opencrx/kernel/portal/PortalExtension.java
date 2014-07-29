@@ -70,6 +70,8 @@ import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefStruct;
 
+import org.opencrx.kernel.account1.cci2.AccountQuery;
+import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.activity1.cci2.ActivityProcessTransitionQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.ResourceQuery;
@@ -78,6 +80,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
 import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
@@ -92,14 +95,16 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.ExportProfileQuery;
 import org.opencrx.kernel.home1.jmi1.ExportProfile;
 import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
-import org.opencrx.kernel.portal.action.GridExportAsXlsAction;
-import org.opencrx.kernel.portal.action.GridExportAsXmlAction;
-import org.opencrx.kernel.portal.action.GridExportIncludingCompositesAsXmlAction;
-import org.opencrx.kernel.portal.action.GridExportWysiwygAllColumnsAsXlsAction;
-import org.opencrx.kernel.portal.action.GridExportWysiwygAsXlsAction;
-import org.opencrx.kernel.portal.wizard.ChangePasswordWizardExtension;
-import org.opencrx.kernel.portal.wizard.CreateAccountWizardExtension;
-import org.opencrx.kernel.portal.wizard.FileBrowserWizardExtension;
+import org.opencrx.kernel.portal.action.CreateSubfolderAction;
+import org.opencrx.kernel.portal.action.InitUserHomesAction;
+import org.opencrx.kernel.portal.action.MarkAlertsAsAcceptedAction;
+import org.opencrx.kernel.portal.action.MarkAlertsAsReadAction;
+import org.opencrx.kernel.portal.action.MarkPriceLevelAsFinal;
+import org.opencrx.kernel.portal.action.UiGridExportAsXlsAction;
+import org.opencrx.kernel.portal.action.UiGridExportAsXmlAction;
+import org.opencrx.kernel.portal.action.UiGridExportIncludingCompositesAsXmlAction;
+import org.opencrx.kernel.portal.action.UiGridExportWysiwygAllColumnsAsXlsAction;
+import org.opencrx.kernel.portal.action.UiGridExportWysiwygAsXlsAction;
 import org.opencrx.kernel.utils.QueryBuilderUtil;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
@@ -117,7 +122,6 @@ import org.openmdx.base.query.IsLikeCondition;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
-import org.openmdx.portal.servlet.ActionFactory_1_0;
 import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.Autocompleter_1_0;
 import org.openmdx.portal.servlet.Codes;
@@ -127,10 +131,13 @@ import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ValueListAutocompleter;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.WebKeys;
+import org.openmdx.portal.servlet.action.AbstractAction;
+import org.openmdx.portal.servlet.attribute.AttributeValue;
+import org.openmdx.portal.servlet.component.Grid;
+import org.openmdx.portal.servlet.component.ObjectView;
+import org.openmdx.portal.servlet.component.ShowObjectView;
+import org.openmdx.portal.servlet.component.UiGrid;
 import org.openmdx.portal.servlet.control.Control;
-import org.openmdx.portal.servlet.view.Grid;
-import org.openmdx.portal.servlet.view.ObjectView;
-import org.openmdx.portal.servlet.view.ShowObjectView;
 import org.openmdx.security.realm1.jmi1.Principal;
 
 /**
@@ -146,6 +153,47 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 	public PortalExtension(
 	) {
 		super();
+	}
+
+	/**
+	 * CrxActionFactory
+	 *
+	 */
+	public static class CrxActionFactory extends DefaultActionFactory {
+
+		/* (non-Javadoc)
+		 * @see org.openmdx.portal.servlet.DefaultActionFactory#getAction(short)
+		 */
+		@Override
+	    public AbstractAction getAction(
+	    	short event
+	    ) {
+			switch(event) {
+				case UiGridExportAsXmlAction.EVENT_ID:
+					return new UiGridExportAsXmlAction();
+				case UiGridExportAsXlsAction.EVENT_ID:
+					return new UiGridExportAsXlsAction();
+				case UiGridExportIncludingCompositesAsXmlAction.EVENT_ID:
+					return new UiGridExportIncludingCompositesAsXmlAction();
+				case UiGridExportWysiwygAsXlsAction.EVENT_ID:
+					return new UiGridExportWysiwygAsXlsAction();
+				case UiGridExportWysiwygAllColumnsAsXlsAction.EVENT_ID:
+					return new UiGridExportWysiwygAllColumnsAsXlsAction();
+				case MarkAlertsAsReadAction.EVENT_ID:
+					return new MarkAlertsAsReadAction();
+				case MarkAlertsAsAcceptedAction.EVENT_ID:
+					return new MarkAlertsAsAcceptedAction();
+				case MarkPriceLevelAsFinal.EVENT_ID:
+					return new MarkPriceLevelAsFinal();
+				case CreateSubfolderAction.EVENT_ID:
+					return new CreateSubfolderAction();
+				case InitUserHomesAction.EVENT_ID:
+					return new InitUserHomesAction();
+				default:
+					return super.getAction(event);
+			}
+	    }
+		
 	}
 
 	/**
@@ -221,7 +269,48 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 		
 	}
 	
+	/**
+	 * CachedRoles
+	 *
+	 */
+	static class CachedRoles {
+	
+		public CachedRoles(
+			List<org.openmdx.security.realm1.jmi1.Role> roles			
+		) {
+			this.expiresAt = System.currentTimeMillis() + TTL;
+			this.roles = new ArrayList<Path>();
+			for(org.openmdx.security.realm1.jmi1.Role role: roles) {
+				this.roles.add(role.refGetPath());
+			}
+		}
+
+		public List<Path> getRoles(
+		) {
+			return this.roles;
+		}
+
+		public boolean isExpired(
+		) {
+			return System.currentTimeMillis() > this.expiresAt;
+		}
+		
+		private final List<Path> roles;
+		private final long expiresAt;
+		private static final long TTL = 60000;
+		
+	}
+
     /* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#newActionFactory()
+	 */
+	@Override
+	protected ActionFactory newActionFactory(
+	) {
+		return new CrxActionFactory();
+	}
+
+	/* (non-Javadoc)
      * @see org.openmdx.portal.servlet.DefaultPortalExtension#getFindObjectsBaseFilter(org.openmdx.portal.servlet.ApplicationContext, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, java.lang.String)
      */
     @Override
@@ -242,7 +331,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             ModelElement_1_0 parentDef = ((RefMetaObject_1)context.refMetaObject()).getElementDef();                
             ModelElement_1_0 referenceDef = (ModelElement_1_0)parentDef.objGetMap("reference").get(referenceName);
             if(referenceDef != null) {
-                ModelElement_1_0 referencedType = model.getElement(referenceDef.objGetValue("type"));                
+                ModelElement_1_0 referencedType = model.getElement(referenceDef.getType());                
                 excludeDisabled = model.getAttributeDefs(referencedType, true, false).containsKey("disabled");
             }
         } catch(Exception e) {}
@@ -302,30 +391,31 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             return "Untitled";
         }
         try {
+        	String title = null;
         	if(obj instanceof org.openmdx.base.jmi1.Segment) {
-        		return app.getLabel(obj.refClass().refMofId());
-        	}
-        	else {
+        		title = app.getLabel(obj.refClass().refMofId());
+        	} else {
         		final Codes codes = app.getCodes();
-        		String title = Base.getInstance().getTitle(
+        		title = Base.getInstance().getTitle(
         			obj,
         			this.getCodeMapper(codes),
         			locale, 
         			asShortTitle
         		);
-        		return title == null ?
-        			super.getTitle(obj, locale, localeAsString, asShortTitle, app) :
-        				title;
+        		title = title == null 
+        			? super.getTitle(obj, locale, localeAsString, asShortTitle, app) 
+        			: title;        		
         	}
+        	return title;
         } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             SysLog.info(e0.getMessage(), e0.getCause());
-            SysLog.info("can not evaluate. object", obj.refMofId());
+            SysLog.info("Unable to get object title", obj.refGetPath());
             return "#ERR (" + e.getMessage() + ")";
         }
     }
 
-    /**
+	/**
      * Returns true if principal has permission for the given permission / action.
      * 
      * @param principal
@@ -340,6 +430,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     	String specificPermission,
     	String action
     ) {
+		PersistenceManager pm = JDOHelper.getPersistenceManager(principal);
     	String actionGrant = null;
     	String actionRevoke = null;
     	if(action.startsWith(WebKeys.GRANT_PREFIX)) {
@@ -355,49 +446,56 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     		actionRevoke != null &&
     		principal instanceof org.opencrx.security.realm1.jmi1.Principal
     	) {
-    		org.opencrx.security.realm1.jmi1.Principal requestingPrincipal = (org.opencrx.security.realm1.jmi1.Principal)principal;
-    		List<org.openmdx.security.realm1.jmi1.Role> roles = requestingPrincipal.getGrantedRole();
-    		List<org.openmdx.security.realm1.jmi1.Role> validatedRoles = new ArrayList<org.openmdx.security.realm1.jmi1.Role>();
-    		for(Iterator<org.openmdx.security.realm1.jmi1.Role> i = roles.iterator(); i.hasNext(); ) {
-    			try {
-    				validatedRoles.add(i.next());
-    			} catch(Exception e) {
-    				SysLog.warning("Role can not be accessed. Ignoring.", e.getMessage());
-    				new ServiceException(e).log();
-    			}
+    		CachedRoles cachedRoles = cachedRolesByPrincipal.get(principal.refGetPath());
+    		if(cachedRoles == null || cachedRoles.isExpired()) {
+	    		List<org.openmdx.security.realm1.jmi1.Role> roles = ((org.opencrx.security.realm1.jmi1.Principal)principal).getGrantedRole();
+	    		List<org.openmdx.security.realm1.jmi1.Role> activeRoles = new ArrayList<org.openmdx.security.realm1.jmi1.Role>();
+	    		for(Iterator<org.openmdx.security.realm1.jmi1.Role> i = roles.iterator(); i.hasNext(); ) {
+	    			try {
+	    				org.openmdx.security.realm1.jmi1.Role role = i.next();
+	    				if(!Boolean.TRUE.equals(role.isDisabled())) {
+	    					activeRoles.add(role);
+	    				}
+	    			} catch(Exception e) {
+	    				SysLog.warning("Role can not be accessed. Ignoring.", e.getMessage());
+	    				new ServiceException(e).log();
+	    			}
+	    		}
+	    		cachedRolesByPrincipal.put(
+	    			principal.refGetPath(),
+	    			cachedRoles = new CachedRoles(activeRoles)
+	    		);
     		}
-    		for(org.openmdx.security.realm1.jmi1.Role role: validatedRoles) {
-    			if(!Boolean.TRUE.equals(role.isDisabled())) {
-	    			PermissionsCache cache = cachedPermissionsByRole.get(role.getName());
-	    			if(cache == null || cache.isExpired()) {
-		    			Collection<org.openmdx.security.realm1.jmi1.Permission> permissions = role.getPermission();
-	    				cachedPermissionsByRole.put(
-	    					role.getName(),
-	    					cache = new PermissionsCache(permissions)
-	    				);
-	    			}
-	    			if(cache.containsPermission(permission, actionGrant)) {
-	    				allow = true;
-	    			}
-	    			if(cache.containsPermission(permission, actionRevoke)) {
-	    				allow = false;
-	    			}
-	    			if(specificPermission != null) {
-	    				if(cache.containsPermission(specificPermission, actionGrant)) {
-	    					allow = true;
-	    				}
-	    				if(cache.containsPermission(specificPermission, actionRevoke)) {
-	    					allow = false;
-	    				}
-	    			}
+    		for(Path role: cachedRoles.getRoles()) {
+    			PermissionsCache permissionsCache = cachedPermissionsByRole.get(role);
+    			if(permissionsCache == null || permissionsCache.isExpired()) {
+	    			Collection<org.openmdx.security.realm1.jmi1.Permission> permissions = ((org.openmdx.security.realm1.jmi1.Role)pm.getObjectById(role)).getPermission();
+    				cachedPermissionsByRole.put(
+    					role,
+    					permissionsCache = new PermissionsCache(permissions)
+    				);
+    			}
+    			if(permissionsCache.containsPermission(permission, actionGrant)) {
+    				allow = true;
+    			}
+    			if(permissionsCache.containsPermission(permission, actionRevoke)) {
+    				allow = false;
+    			}
+    			if(specificPermission != null) {
+    				if(permissionsCache.containsPermission(specificPermission, actionGrant)) {
+    					allow = true;
+    				}
+    				if(permissionsCache.containsPermission(specificPermission, actionRevoke)) {
+    					allow = false;
+    				}
     			}
     		}
     	}
-    	return allow == null ? 
-    		false :
-    			action.startsWith(WebKeys.GRANT_PREFIX) ?
-    				allow :
-    					!allow;    
+    	return allow == null 
+    		? false 
+    		: action.startsWith(WebKeys.GRANT_PREFIX) 
+    			? allow 
+    			: !allow;    
     }
 
     /* (non-Javadoc)
@@ -428,34 +526,39 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
                 boolean isReversal = cb.getBookingType() == 30;
                 if("org:opencrx:kernel:depot1:CompoundBooking:cancelCb".equals(elementName)) {
                     return isProcessed && !isReversal;
-                }
-                else if("org:opencrx:kernel:depot1:CompoundBooking:acceptCb".equals(elementName)) {
+                } else if("org:opencrx:kernel:depot1:CompoundBooking:acceptCb".equals(elementName)) {
+                    return isPending;
+                } else if("org:opencrx:kernel:depot1:CompoundBooking:finalizeCb".equals(elementName)) {
                     return isPending;
                 }
-                else if("org:opencrx:kernel:depot1:CompoundBooking:finalizeCb".equals(elementName)) {
-                    return isPending;
-                }
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 ServiceException e0 = new ServiceException(e);
                 SysLog.warning(e0.getMessage(), e0.getCause());                
             }
         }
     	if(refObj != null) {
 	    	PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
-	    	String providerName = app.getUserHomeIdentityAsPath().get(2);
-	    	String segmentName = app.getUserHomeIdentityAsPath().get(4);
+	    	String providerName = app.getUserHomeIdentityAsPath().getSegment(2).toClassicRepresentation();
+	    	String segmentName = app.getUserHomeIdentityAsPath().getSegment(4).toClassicRepresentation();
 	    	org.openmdx.security.realm1.jmi1.Principal principal = Utils.getRequestingPrincipal(pm, providerName, segmentName);
+	    	String packageName = refObj.refClass().refImmediatePackage().refMofId();
 	    	String specificElementName = null;
 	    	if(elementName.indexOf(":") > 0) {
 	    		specificElementName = refObj.refClass().refMofId() + elementName.substring(elementName.lastIndexOf(":"));
 	    	}
-	    	boolean hasPermission = this.hasPermission(
-	    		principal, 
-	    		elementName, 
-	    		specificElementName, 
-	    		action
-	    	);
+	    	boolean hasPermission = 
+	    		this.hasPermission(
+		    		principal, 
+		    		elementName, 
+		    		specificElementName, 
+		    		action
+		    	) ||
+	    		this.hasPermission(
+		    		principal,
+		    		packageName, 
+		    		null, 
+		    		action
+		    	);
 	    	if(hasPermission) {
 	    		return true;
 	    	}
@@ -467,7 +570,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             action
         );
     }
-    
+
     /* (non-Javadoc)
      * @see org.openmdx.portal.servlet.DefaultPortalExtension#hasPermission(org.openmdx.portal.servlet.control.Control, org.openmdx.base.accessor.jmi.cci.RefObject_1_0, org.openmdx.portal.servlet.ApplicationContext, java.lang.String)
      */
@@ -480,8 +583,8 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     ) {
     	if(refObj != null) {
 	    	PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
-	    	String providerName = app.getUserHomeIdentityAsPath().get(2);
-	    	String segmentName = app.getUserHomeIdentityAsPath().get(4);
+	    	String providerName = app.getUserHomeIdentityAsPath().getSegment(2).toClassicRepresentation();
+	    	String segmentName = app.getUserHomeIdentityAsPath().getSegment(4).toClassicRepresentation();
 	    	org.openmdx.security.realm1.jmi1.Principal principal = Utils.getRequestingPrincipal(pm, providerName, segmentName);
 	    	boolean hasPermission = this.hasPermission(
 	    		principal, 
@@ -503,6 +606,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     
     /**
      * Return a filter with the given clause and parameters as query condition.
+     * 
      * @param clause
      * @param stringParams
      * @param app
@@ -634,18 +738,6 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 	        	clause = "EXISTS (SELECT 0 FROM OOCKE1_PRODUCT p WHERE v.product = p.object_id AND " + (negate ? "NOT" : "") + " (UPPER(p.name) LIKE UPPER(" + s0 + ") OR UPPER(p.name) LIKE " + s1 + "))";
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
-	        } else if("org:opencrx:kernel:home1:UserHome:contact".equals(qualifiedFeatureName)) {
-        		clause = this.getAccountFullNameMatchesPredicate(
-        			qualifiedFeatureName, 
-        			negate, 
-        			s0, s1
-        		).toSql(
-	        		"", 
-	        		new Path("xri://@openmdx*org:opencrx.kernel.home1").getDescendant("provider", ":*", "segment", ":*", "userHome"), 
-	        		"v"
-	        	);
-	            stringParams.add(stringParam0);
-	            stringParams.add(stringParam1);            	
 	        } else if("org:opencrx:kernel:account1:AccountAssignment:account".equals(qualifiedFeatureName)) {            
         		clause = this.getAccountFullNameMatchesPredicate(
         			qualifiedFeatureName, 
@@ -726,6 +818,16 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 	            stringParams.add(stringParam1);
 	            stringParams.add(stringParam0);
 	            stringParams.add(stringParam1);
+		    } else if("org:opencrx:kernel:home1:UserHome:identity".equals(qualifiedFeatureName)) {
+		    	String s2 = "?s" + paramCount++;
+		    	String s3 = "?s" + paramCount++;
+		    	String s4 = "?s" + paramCount++;
+		    	clause = "(v.object_id LIKE " + s0 + " OR EXISTS (SELECT 0 FROM OOCKE1_ACCOUNT a WHERE v.contact = a.object_id AND (UPPER(a.full_name) LIKE UPPER(" + s1 + ") OR UPPER(a.full_name) LIKE " + s2 + ")) OR EXISTS (SELECT 0 FROM OOCKE1_EMAILACCOUNT a WHERE a.p$$parent = v.object_id AND (UPPER(a.name) LIKE UPPER(" + s3 + ") OR UPPER(a.name) LIKE " + s4 + ")))";
+	            stringParams.add(stringParam0.endsWith(".*") ? stringParam0.substring(0, stringParam0.length() - 2) : stringParam0);
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
+	            stringParams.add(stringParam0);
+	            stringParams.add(stringParam1);
 		    } else if("org:opencrx:kernel:account1:Account:address*Business!postalCountry".equals(qualifiedFeatureName)) {
 		    	clause = "EXISTS (SELECT 0 FROM OOCKE1_ADDRESS a INNER JOIN OOCKE1_ADDRESS_ a_ ON a.object_id = a_.object_id WHERE v.object_id = a.p$$parent AND " + (negate ? "NOT" : "") + " (a.postal_country IN (" + filterValue + ")) AND a_.objusage = " + Addresses.USAGE_BUSINESS + ")";
 		    } else {
@@ -785,7 +887,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     public boolean isLookupType(
         ModelElement_1_0 classDef
     ) throws ServiceException {
-        String qualifiedName = (String)classDef.objGetValue("qualifiedName");
+        String qualifiedName = (String)classDef.getQualifiedName();
         return 
             !"org:opencrx:kernel:generic:CrxObject".equals(qualifiedName) &&
             super.isLookupType(classDef);
@@ -837,20 +939,26 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
                     selectableValues = new ArrayList<ObjectReference>();
                     org.opencrx.kernel.activity1.jmi1.ActivityProcess activityProcess = activityType.getControlledBy();
                     processState = activity.getProcessState();
-                    ActivityProcessTransitionQuery transitionFilter = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
-                    transitionFilter.orderByNewPercentComplete().ascending();
-                    List<org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition> transitions = activityProcess.getTransition(transitionFilter);
-                    for(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition: transitions) {
-                        if(transition.getPrevState().equals(processState)) {
-                            selectableValues.add(
-                                new ObjectReference(transition, app)
-                            );
-                        }
+                    if(processState != null) {
+	                    ActivityProcessTransitionQuery transitionFilter = (ActivityProcessTransitionQuery)pm.newQuery(ActivityProcessTransition.class);
+	                    transitionFilter.orderByNewPercentComplete().ascending();
+	                    List<org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition> transitions = activityProcess.getTransition(transitionFilter);
+	                    for(org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition transition: transitions) {
+	                    	if(transition.getPrevState() == null) {
+	                    		SysLog.warning("Transition has undefined previous state", transition);
+	                    	} else if(transition.getPrevState().equals(processState)) {
+	                            selectableValues.add(
+	                                new ObjectReference(transition, app)
+	                            );
+	                        }
+	                    }
+                    } else {
+                    	SysLog.warning("Activity has undefined process state", activity);
                     }
                 }
             }
-            return selectableValues == null 
-            	? null 
+            return selectableValues == null
+            	? null
             	: new ValueListAutocompleter(selectableValues);
         } else if("org:opencrx:kernel:activity1:ActivityAssignToParams:resource".equals(qualifiedFeatureName)) {
             List<ObjectReference> selectableValues = null;
@@ -859,8 +967,8 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             	try {
 	                org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(
 	                	pm, 
-	                	activity.refGetPath().get(2), 
-	                	activity.refGetPath().get(4)
+	                	activity.refGetPath().getSegment(2).toClassicRepresentation(), 
+	                	activity.refGetPath().getSegment(4).toClassicRepresentation()
 	                );
 	                ResourceQuery query = (ResourceQuery)pm.newQuery(Resource.class);
 	                query.forAllDisabled().isFalse();
@@ -936,7 +1044,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
                                 entry.getEntryValue() != null 
                                 	? entry.getEntryValue()
                                     // get qualifier as value if no entryValue is specified
-                                    : new Path(entry.refMofId()).getBase()
+                                    : new Path(entry.refMofId()).getLastSegment().toClassicRepresentation()
                             );
                         }
                     }
@@ -957,9 +1065,9 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             // org:opencrx:kernel:base:ExportItemParams:exportProfile
             List<ObjectReference> selectableValues = null;
             if(context instanceof org.opencrx.kernel.base.jmi1.Exporter) {
-                String providerName = context.refGetPath().get(2);
-                String segmentName = context.refGetPath().get(4);
-                String currentPrincipal = app.getUserHomeIdentityAsPath().getBase();
+                String providerName = context.refGetPath().getSegment(2).toClassicRepresentation();
+                String segmentName = context.refGetPath().getSegment(4).toClassicRepresentation();
+                String currentPrincipal = app.getUserHomeIdentityAsPath().getLastSegment().toClassicRepresentation();
                 String adminPrincipal = SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName;
                 // Collect export profiles from current user
                 try {
@@ -1098,19 +1206,56 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     @Override
     public void renderTextValue(
         ViewPort p,
+        AttributeValue attributeValue,
         String value,
         boolean asWiki
     ) throws ServiceException {
         ApplicationContext app = p.getApplicationContext();
-        // Process Tag activity:#
+        // Handle org:opencrx:kernel:activity1:EMail:messageBody 
         if(
+        	attributeValue != null && 
+        	attributeValue.getFieldDef() != null &&
+        	"org:opencrx:kernel:activity1:EMail:messageBody".equals(attributeValue.getFieldDef().qualifiedFeatureName)
+        ) {
+            String mailSubject = (String)attributeValue.getValue(false);
+            if(mailSubject != null) {
+            	// Remove scripts
+            	int start = mailSubject.indexOf("<script");
+            	while(start >= 0) {
+            		int end = mailSubject.indexOf("</script>");
+            		if(end > start) {
+            			mailSubject = mailSubject.substring(0, start) + mailSubject.substring(end + 9);
+            			start = mailSubject.indexOf("<script");
+            		} else {
+            			break;
+            		}
+            	}
+            	// Pre-format non-html mail subjects
+            	boolean isHtmlDoctype = mailSubject.regionMatches(true, 0, DOCTYPE_HTML, 0, DOCTYPE_HTML.length());
+            	String id = Utils.getUidAsString();
+	    		p.write("<iframe id=\"", id, "\" class=\"container well well-small\" style=\"width:100%\">");
+	    		p.write("</iframe>");
+	    		p.write("<div id=\"", id, "-content\" style=\"display:none\">");
+	    		p.write(mailSubject);
+	    		p.write("</div>");
+	    		p.write("<script type=\"text/javascript\">");
+	    		p.write("  // FF workaround. Init iframe with empty document");
+	    		p.write("  var target = jQuery('#", id, "').contents()[0];");
+	    		p.write("  target.open();");
+	    		p.write("  target.write('<!doctype html><html><head></head><body></body></html>');");
+	    		p.write("  target.close();");
+	    		p.write("  jQuery('#", id, "').contents().find('html').html(", (isHtmlDoctype ? "" : "'<pre>'+"), "jQuery('#", id, "-content').html()", (isHtmlDoctype ? "" : "+'</pre>'"), ");");
+	    		p.write("</script>");
+            }
+        } else if(
             (p.getView() instanceof ObjectView) && 
             (value.indexOf("activity:") >= 0)
         ) {
-            RefObject_1_0 object = ((ObjectView)p.getView()).getRefObject();
+            // Tag activity:#
+            RefObject_1_0 object = ((ObjectView)p.getView()).getObject();
             PersistenceManager pm = JDOHelper.getPersistenceManager(object);
-            String providerName = object.refGetPath().get(2);
-            String segmentName = object.refGetPath().get(4);
+            String providerName = object.refGetPath().getSegment(2).toClassicRepresentation();
+            String segmentName = object.refGetPath().getSegment(4).toClassicRepresentation();
             Path activitySegmentIdentity = 
                 new Path("xri://@openmdx*org.opencrx.kernel.activity1").getDescendant("provider", providerName, "segment", segmentName);
             org.opencrx.kernel.activity1.jmi1.Segment activitySegment = 
@@ -1120,6 +1265,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             while((newPos = value.indexOf("activity:", currentPos)) >= 0) {
                 super.renderTextValue(
                     p,
+                    attributeValue,
                     value.substring(currentPos, newPos),
                     asWiki
                 );
@@ -1151,6 +1297,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
                     } else {
                         super.renderTextValue(
                             p,
+                            attributeValue,
                             value.substring(newPos, end),
                             asWiki
                         );
@@ -1158,6 +1305,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
                 } else {
                     super.renderTextValue(
                         p,
+                        attributeValue,
                         value.substring(newPos, end),
                         asWiki
                     );
@@ -1166,12 +1314,14 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             }
             super.renderTextValue(
                 p,
+                attributeValue,
                 value.substring(currentPos),
                 asWiki
             );
         } else {
             super.renderTextValue(
                 p, 
+                attributeValue,
                 value,
                 asWiki
             );
@@ -1259,13 +1409,29 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             return new DocumentDataBinding();
         } else if(ContractHasAssignedActivitiesDataBinding.class.getName().equals(dataBindingName)) {
         	return new ContractHasAssignedActivitiesDataBinding();
+        } else if((dataBindingName != null) && dataBindingName.startsWith(LocalizedFieldDataBinding.class.getName())) {
+            return new LocalizedFieldDataBinding(
+            	dataBindingName.indexOf("?") < 0 ? "" : dataBindingName.substring(dataBindingName.indexOf("?") + 1)          		
+            );
+        } else if(UserHomeHasAssignedPrincipalDataBinding.class.getName().equals(dataBindingName)) {
+        	return new UserHomeHasAssignedPrincipalDataBinding();
+        } else if(UserHomeHasAssignedPrincipalGroupDataBinding.class.getName().equals(dataBindingName)) {
+        	return new UserHomeHasAssignedPrincipalGroupDataBinding();
+        } else if(UserHomeHasAssignedRoleDataBinding.class.getName().equals(dataBindingName)) {
+        	return new UserHomeHasAssignedRoleDataBinding();
+        } else if(UserHomeIsDisabledDataBinding.class.getName().equals(dataBindingName)) {
+        	return new UserHomeIsDisabledDataBinding();
+        } else if(UserHomeLastLoginAtDataBinding.class.getName().equals(dataBindingName)) {
+        	return new UserHomeLastLoginAtDataBinding();
+        } else if(UserHomeHasEMailAccountDataBinding.class.getName().equals(dataBindingName)) {
+        	return new UserHomeHasEMailAccountDataBinding();
         } else {
             return super.getDataBinding(
                 dataBindingName
             );
         }
     }
-    
+
     /* (non-Javadoc)
      * @see org.openmdx.portal.servlet.DefaultPortalExtension#handleOperationResult(org.openmdx.base.accessor.jmi.cci.RefObject_1_0, java.lang.String, javax.jmi.reflect.RefStruct, javax.jmi.reflect.RefStruct)
      */
@@ -1303,7 +1469,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     	Path requestedObjectIdentity
     ) {
     	// Do not change user role in case an object (Principals, Subjects, ...) in segment Root is requested
-    	if(requestedObjectIdentity != null && "Root".equals(requestedObjectIdentity.get(4))) {
+    	if(requestedObjectIdentity != null && "Root".equals(requestedObjectIdentity.getSegment(4).toClassicRepresentation())) {
     		return app.getCurrentUserRole();
     	} else {
     		return super.getNewUserRole(app, requestedObjectIdentity);
@@ -1311,7 +1477,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     }
     
 	/* (non-Javadoc)
-	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getGridActions(org.openmdx.portal.servlet.view.ObjectView, org.openmdx.portal.servlet.view.Grid)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getGridActions(org.openmdx.portal.servlet.component.ObjectView, org.openmdx.portal.servlet.component.Grid)
 	 */
 	@Override
     public List<Action> getGridActions(
@@ -1321,74 +1487,180 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 		final int MAX_SIZE = 500;
 		ApplicationContext app = view.getApplicationContext();
 	    List<Action> actions = new ArrayList<Action>(super.getGridActions(view, grid));
-	    org.openmdx.ui1.jmi1.Element uiExport = app.getUiElement("org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem");
-	    String lExport = app.getCurrentLocaleAsIndex() < uiExport.getToolTip().size() 
-	    	? uiExport.getToolTip().get(app.getCurrentLocaleAsIndex()) 
-	    	: uiExport.getToolTip().get(0);
-	    Action exportWysiwygAsXlsAction = new Action(
-            GridExportWysiwygAsXlsAction.EVENT_ID, 
-            new Action.Parameter[]{
-                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
-                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
-            },
-            lExport + " --> XLS (wysiwyg)", 
-            true
-        );
-	    actions.add(exportWysiwygAsXlsAction);
-	    Action exportWysiwygAllColumnsAsXlsAction = new Action(
-            GridExportWysiwygAllColumnsAsXlsAction.EVENT_ID, 
-            new Action.Parameter[]{
-                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
-                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
-            },
-            lExport + " --> XLS (wysiwyg+)", 
-            true
-        );
-	    actions.add(exportWysiwygAllColumnsAsXlsAction);
-	    Action exportAsXmlAction = new Action(
-            GridExportAsXmlAction.EVENT_ID, 
-            new Action.Parameter[]{
-                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                               
-                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
-            },
-            lExport + " --> XML", 
-            true
-	    );
-	    actions.add(exportAsXmlAction);
-	    Action exportAsXlsAction = new Action(
-            GridExportAsXlsAction.EVENT_ID, 
-            new Action.Parameter[]{
-                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
-                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
-            },
-            lExport + " --> XLS", 
-            true
-        );
-	    actions.add(exportAsXlsAction);
-	    Action exportIncludingCompositesAsXmlAction = new Action(
-            GridExportIncludingCompositesAsXmlAction.EVENT_ID, 
-            new Action.Parameter[]{
-                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getRefObject().refMofId()),                                                  
-                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
-            },
-            lExport + " --> XML+", 
-            true
-        );
-	    actions.add(exportIncludingCompositesAsXmlAction);
+	    // Alert-specific actions
+	    if(grid instanceof UiGrid) {
+	    	UiGrid uiGrid = (UiGrid)grid;
+	    	if("org:opencrx:kernel:home1:Alert".equals(uiGrid.getReferencedTypeName())) {
+	    		// markAsRead
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead");
+				    String label = uiElementDef == null
+				    	? "Mark as read"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: uiElementDef.getToolTip().get(0);
+				    Action markAlertsAsReadAction = new Action(
+			            MarkAlertsAsReadAction.EVENT_ID, 
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+			            },
+			            label, 
+			            true
+			        );
+				    actions.add(markAlertsAsReadAction);
+	    		}
+	    		// markAsAccepted
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted");
+				    String label = uiElementDef == null
+				    	? "Mark as accepted"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: uiElementDef.getToolTip().get(0);
+				    Action markAlertsAsAcceptedAction = new Action(
+			            MarkAlertsAsAcceptedAction.EVENT_ID, 
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+			            },
+			            label, 
+			            true
+			        );
+				    actions.add(markAlertsAsAcceptedAction);
+	    		}
+	    	}
+	    }
+	    // PriceLevel-specific actions
+	    if(grid instanceof UiGrid) {
+	    	UiGrid uiGrid = (UiGrid)grid;
+	    	if("org:opencrx:kernel:product1:AbstractPriceLevel".equals(uiGrid.getReferencedTypeName())) {
+	    		// isFinal=true
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:product1:AbstractPriceLevel:isFinal");
+				    String label = uiElementDef == null
+				    	? "Is final"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: uiElementDef.getToolTip().get(0);
+				    Action markPriceLevelsAsFinalAction = new Action(
+			            MarkPriceLevelAsFinal.EVENT_ID,
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+			            },
+			            label + " &#10004", 
+			            true
+			        );
+				    actions.add(markPriceLevelsAsFinalAction);
+	    		}
+	    	}
+	    }
+	    // DocumentFolder-specific actions
+	    if(grid instanceof UiGrid) {
+	    	UiGrid uiGrid = (UiGrid)grid;
+	    	if("org:opencrx:kernel:document1:DocumentFolder".equals(uiGrid.getReferencedTypeName())) {
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:document1:DocumentFolder");
+				    String label = uiElementDef == null
+				    	? app.getTexts().getNewText() + " " + "folder"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? app.getTexts().getNewText() + " " + uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: app.getTexts().getNewText() + " " + uiElementDef.getToolTip().get(0);
+				    Action createSubfolderAction = new Action(
+			            CreateSubfolderAction.EVENT_ID,
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId())                                                  
+			            },
+			            label,
+			            true
+			        );
+				    actions.add(createSubfolderAction);
+	    		}
+	    	}
+	    }
+	    // UserHome-specific actions
+	    if(grid instanceof UiGrid) {
+	    	UiGrid uiGrid = (UiGrid)grid;
+	    	if("org:opencrx:kernel:home1:UserHome".equals(uiGrid.getReferencedTypeName())) {
+	    		{
+				    Action initUserHomesAction = new Action(
+			            InitUserHomesAction.EVENT_ID,
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId())                                                  
+			            },
+			            "Init user homes",
+			            true
+			        );
+				    actions.add(initUserHomesAction);
+	    		}
+	    	}
+	    }
+	    // Generic grid actions
+	    {
+		    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem");
+		    String label = uiElementDef == null
+		    	? "Export"
+		    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+			    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+			    	: uiElementDef.getToolTip().get(0);
+		    Action exportWysiwygAsXlsAction = new Action(
+	            UiGridExportWysiwygAsXlsAction.EVENT_ID, 
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	            },
+	            label + " &#10137 XLS (wysiwyg)", 
+	            true
+	        );
+		    actions.add(exportWysiwygAsXlsAction);
+		    Action exportWysiwygAllColumnsAsXlsAction = new Action(
+	            UiGridExportWysiwygAllColumnsAsXlsAction.EVENT_ID, 
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	            },
+	            label + " &#10137 XLS (wysiwyg+)", 
+	            true
+	        );
+		    actions.add(exportWysiwygAllColumnsAsXlsAction);
+		    Action exportAsXmlAction = new Action(
+	            UiGridExportAsXmlAction.EVENT_ID, 
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                               
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	            },
+	            label + " &#10137 XML", 
+	            true
+		    );
+		    actions.add(exportAsXmlAction);
+		    Action exportAsXlsAction = new Action(
+	            UiGridExportAsXlsAction.EVENT_ID, 
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	            },
+	            label + " &#10137 XLS", 
+	            true
+	        );
+		    actions.add(exportAsXlsAction);
+		    Action exportIncludingCompositesAsXmlAction = new Action(
+	            UiGridExportIncludingCompositesAsXmlAction.EVENT_ID, 
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	            },
+	            label + " &#10137 XML+", 
+	            true
+	        );
+		    actions.add(exportIncludingCompositesAsXmlAction);
+	    }
 	    return actions;
-    }
-	
-	/* (non-Javadoc)
-	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getActionFactory()
-	 */
-	@Override
-    public ActionFactory_1_0 getActionFactory(
-    ) {
-		return this.actionFactory;
     }
 
     /**
      * Returns group memberships of given principal.
+     * 
      * @param loginPrincipal
      * @param realmName
      * @param pm
@@ -1400,7 +1672,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
         PersistenceManager pm
     ) {
         try {
-            String loginPrincipalName = new Path(loginPrincipal.refMofId()).getBase();            
+            String loginPrincipalName = new Path(loginPrincipal.refMofId()).getLastSegment().toClassicRepresentation();            
             Path loginPrincipalIdentity = loginPrincipal.refGetPath();
             SysLog.detail("Group membership for segment", realmName);
             SysLog.detail("Group membership for principal", loginPrincipalIdentity);
@@ -1465,7 +1737,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
             // Skip login realm
             if(!realm.equals(loginRealm)) {
                 for(org.openmdx.security.realm1.jmi1.Principal loginPrincipal: allLoginPrincipals) {
-                    String id = loginPrincipal.refGetPath().getBase();
+                    String id = loginPrincipal.refGetPath().getLastSegment().toClassicRepresentation();
                     List<String> principalIds = new ArrayList<String>();
                 	principalIds.add(id);
                     if(id.equals(principalChain.get(0)) && !id.equals(loginPrincipalName)) {
@@ -1507,7 +1779,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 	                                try {
 	                                    for(org.openmdx.security.realm1.jmi1.Group userGroup: groups) {
 	                                    	SysLog.detail("Checking group", userGroup);
-	                                        String userGroupIdentity = userGroup.refGetPath().getBase();
+	                                        String userGroupIdentity = userGroup.refGetPath().getLastSegment().toClassicRepresentation();
 	                                        if(SecurityKeys.PRINCIPAL_GROUP_ADMINISTRATORS.equals(userGroupIdentity)) {
 	                                            roleId = ADMIN_PRINCIPAL_PREFIX + realmName + "@" + realmName;
 	                                            if(!roleNames.contains(roleId)) {
@@ -1605,32 +1877,104 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 		}
     }
 
+	/**
+	 * AccountSearchFieldDef
+	 *
+	 */
+	static class AccountSearchFieldDef extends SearchFieldDef {
+
+		public AccountSearchFieldDef(
+			String qualifiedReferenceName,
+			String featureName
+		) {
+			super(qualifiedReferenceName, featureName);
+		}
+
+		@Override
+		public List<String> findValues(
+			Object object,
+			String pattern, 
+			ApplicationContext app
+		) throws ServiceException {
+			List<String> values = new ArrayList<String>();
+			if(object instanceof RefObject_1_0 && pattern != null && pattern.length() >= 1) {
+				RefObject_1_0 refObj = (RefObject_1_0)object;
+				PersistenceManager pm = JDOHelper.getPersistenceManager(refObj);
+				String providerName = refObj.refGetPath().getSegment(2).toClassicRepresentation();
+				String segmentName = refObj.refGetPath().getSegment(4).toClassicRepresentation();
+				org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
+				AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
+				accountQuery.forAllDisabled().isFalse();
+				accountQuery.thereExistsFullName().like("(?i).*" + pattern + ".*");
+				accountQuery.orderByFullName().ascending();
+				int count = 0;
+				for(Account account: accountSegment.<Account>getAccount(accountQuery)) {
+					values.add(
+						app.getPortalExtension().getTitle(
+							account, 
+							app.getCurrentLocaleAsIndex(), 
+							app.getCurrentLocaleAsString(), 
+							false, 
+							app
+						)
+					);
+					count++;
+					if(count > 30) break;
+				}
+			}
+			return values;
+		}
+
+	}
+
 	/* (non-Javadoc)
-	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getExtension(java.lang.String)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getSearchFieldDef(java.lang.Object, java.lang.String, java.lang.String, org.openmdx.portal.servlet.ApplicationContext)
 	 */
 	@Override
-    public Object getExtension(
-    	String name
-    ) {
-        if((name != null) && name.startsWith(CreateAccountWizardExtension.class.getName())) {
-        	return new CreateAccountWizardExtension();
-        } else if((name != null) && name.startsWith(ChangePasswordWizardExtension.class.getName())) {
-        	return new ChangePasswordWizardExtension();
-        } else if((name != null) && name.startsWith(FileBrowserWizardExtension.class.getName())) {
-        	return new FileBrowserWizardExtension();
-        } else {
-        	return super.getExtension(name);
-        }
-    }
+	public SearchFieldDef getSearchFieldDef(
+		String qualifiedReferenceName, 
+		String featureName,
+		ApplicationContext app
+	) throws ServiceException {
+		Model_1_0 model = app.getModel();
+		ModelElement_1_0 referenceDef = null;
+		try {
+			referenceDef = model.getElement(qualifiedReferenceName);
+		} catch(Exception ignore) {}
+		if(referenceDef != null && referenceDef.isReferenceType()) {
+			ModelElement_1_0 referencedType = model.getElement(referenceDef.getType());
+			ModelElement_1_0 featureDef = null;
+			try {
+				featureDef = model.getFeatureDef(referencedType, featureName, true);
+			} catch(Exception ignore) {}
+			if(featureDef != null && featureDef.isReferenceType()) {
+				ModelElement_1_0 featureType = model.getElement(featureDef.getType());
+				if(
+					featureType != null && 
+					featureType.isClassType() && 
+					model.isSubtypeOf(featureType, "org:opencrx:kernel:account1:Account")
+				) {
+					return new AccountSearchFieldDef(
+						qualifiedReferenceName, 
+						featureName
+					);
+				}
+			}
+		}
+		return super.getSearchFieldDef(
+			qualifiedReferenceName, 
+			featureName, 
+			app
+		);
+	}
 
 	//-------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------
     private static final long serialVersionUID = 3761691203816992816L;
-
-    private final ActionFactory_1_0 actionFactory = new ActionFactory();
-	
-    private static Map<String,PermissionsCache> cachedPermissionsByRole = new ConcurrentHashMap<String,PermissionsCache>();
+    private static final String DOCTYPE_HTML = "<!DOCTYPE HTML";
+    private static Map<Path,PermissionsCache> cachedPermissionsByRole = new ConcurrentHashMap<Path,PermissionsCache>();
+    private static Map<Path,CachedRoles> cachedRolesByPrincipal = new ConcurrentHashMap<Path,CachedRoles>();
     
     private static final Set<String> CLASSES_WITH_USER_DEFINABLE_QUALIFER =
         new HashSet<String>(Arrays.asList(

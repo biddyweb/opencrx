@@ -21,12 +21,12 @@ digraph "Diagram ActivityLink [Package org:opencrx:kernel:activity1]" {
 	{
 	  rank=same;
 	  LAYER0[style=invis];
-	  ${CLASS[name=org:opencrx:kernel:activity1:Activity,compartments=false,width=12]};
+	  ${CLASS[name=org:opencrx:kernel:activity1:Activity,compartments=false,width=15]};
 	}
 	{
 	  rank=same;
 	  LAYER1[style=invis];
-	  ${CLASS[name=org:opencrx:kernel:activity1:ActivityLinkFrom,compartments=true,width=4]};
+	  ${CLASS[name=org:opencrx:kernel:activity1:ActivityRelationship,compartments=true,width=6]};
 	  ${CLASS[name=org:opencrx:kernel:activity1:ActivityLinkTo,compartments=true,width=4]};
 	}
 	{
@@ -38,8 +38,8 @@ digraph "Diagram ActivityLink [Package org:opencrx:kernel:activity1]" {
 	LAYER0->LAYER1[style=invis];
 	LAYER1->LAYER2[style=invis];
 	
-	${ASSOCIATION[name=org:opencrx:kernel:activity1:ActivityContainsLinkFrom,minlen=3]}
-	${ASSOCIATION[name=org:opencrx:kernel:activity1:ActivityLinkFromIsBasedOnLink,minlen=7]}
+	${ASSOCIATION[name=org:opencrx:kernel:activity1:ActivityHasRelationship,minlen=3]}
+	${ASSOCIATION[name=org:opencrx:kernel:activity1:ActivityRelationshipIsBasedOnLink,minlen=9]}
 	${ASSOCIATION[name=*]}
 	${INSTANCE_OF}
 

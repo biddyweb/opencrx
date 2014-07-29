@@ -128,11 +128,16 @@ public class SegmentImpl
 	            errors
 	        );
 	        if((userHome == null) || !errors.isEmpty()) {
+	        	String statusMessage = "";
+	        	for(String error: errors) {
+	        		statusMessage += statusMessage.isEmpty() ? "" : "\n";
+	        		statusMessage += error;
+	        	}
 	            return Structures.create(
 	            	org.opencrx.kernel.home1.jmi1.CreateUserResult.class, 
 	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.createdUserHome, null),
 	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.status, (short)1),               	
-	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.statusMessage, errors.toString())                	
+	            	Datatypes.member(org.opencrx.kernel.home1.jmi1.CreateUserResult.Member.statusMessage, statusMessage)                	
 	            );	        	
 	        } else {
 	            return Structures.create(

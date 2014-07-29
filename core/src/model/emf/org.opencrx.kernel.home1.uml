@@ -1008,7 +1008,7 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Eo5MYUyjEd-WrsI8GuQqfA"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Eo5MYEyjEd-WrsI8GuQqfA" value="1"/>
               <qualifier xmi:id="_UzEU8EyjEd-WrsI8GuQqfA" name="id">
-                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedEnd>
           </packagedElement>
@@ -1022,7 +1022,7 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Ig7YcUykEd-WrsI8GuQqfA"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_Ig7YcEykEd-WrsI8GuQqfA" value="1"/>
               <qualifier xmi:id="_WX2E8EykEd-WrsI8GuQqfA" name="id">
-                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedEnd>
           </packagedElement>
@@ -1147,7 +1147,7 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_QcN4QZXJEeGQZfpt2-al3Q"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_QcN4QJXJEeGQZfpt2-al3Q" value="1"/>
               <qualifier xmi:id="_jBvQ0CWaEeG5FbAdNYK62g" name="id">
-                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedEnd>
           </packagedElement>
@@ -1212,7 +1212,7 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_i3qc4JXqEeGHsa8ljYUNgw"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_i3p10JXqEeGHsa8ljYUNgw" value="1"/>
               <qualifier xmi:id="_5HtM8JXpEeGHsa8ljYUNgw" name="index">
-                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
               </qualifier>
             </ownedAttribute>
           </packagedElement>

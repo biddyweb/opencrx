@@ -19,6 +19,16 @@
 						<void property="iconKey">
 							<string>filter_down_star.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Created at [reverse chronological order] - New</string>
+								</void>
+								<void index="1">
+									<string>Erstellt am [umgekehrt chronologisch] - Neu</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
 								<void index="0">
@@ -72,7 +82,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -80,6 +89,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_down_star.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Created at [reverse chronological order] - New / Read</string>
+								</void>
+								<void index="1">
+									<string>Erstellt am [umgekehrt chronologisch] - Neu / Gelesen</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
@@ -134,7 +153,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -142,6 +160,16 @@
 						</void>
 						<void property="iconKey">
 							<string>prio2_5.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Importance</string>
+								</void>
+								<void index="1">
+									<string>Wichtigkeit</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
@@ -172,7 +200,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -180,6 +207,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_down_star.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>Created at [reverse chronological order] - All</string>
+								</void>
+								<void index="1">
+									<string>Erstellt am [umgekehrt chronologisch] - Alle</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="2">
@@ -210,7 +247,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="4">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -218,6 +254,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_up_star.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Created At [all / chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Erstellt am [alle / chronologisch]</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
@@ -238,7 +284,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="5">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -246,6 +291,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_down_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Modified At [all / reverse chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Modifiziert am [alle / umgekehrt chronologisch]</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
@@ -266,7 +321,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="6">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -274,6 +328,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Modified At [all / chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Modifiziert am [alle / chronologisch]</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">

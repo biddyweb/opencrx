@@ -70,6 +70,215 @@ import org.w3c.spi2.Structures;
 public class ChangePasswordManagedController extends AbstractWizardController {
 
 	/**
+	 * ChangePasswordPolicy
+	 *
+	 */
+	public static class ChangePasswordPolicy {
+
+		/**
+		 * ValidationException
+		 *
+		 */
+		public static class ValidationException extends Exception {
+
+			public ValidationException(
+				String s
+			) {
+				super(s);
+			}
+			
+	        private static final long serialVersionUID = -4280012013952018121L;
+			
+		}
+		
+		/**
+		 * Constructor.
+		 * 
+		 */
+		public ChangePasswordPolicy(
+		) {
+			
+		}
+		
+		/**
+		 * Contains given characters only.
+		 * 
+		 * @param password
+		 * @param choiceStr
+		 * @return
+		 */
+		boolean containsOnlyCharsOf (
+			String password,
+			String choiceStr
+		) {
+			boolean isOk = true;
+			for(int i = 0; i < password.length() && isOk; i++) {
+				if (!choiceStr.contains(password.substring(i, i+1))) {
+					isOk = false;
+				}
+			}
+			return isOk;
+		}
+
+		/**
+		 * Contains given characters.
+		 * 
+		 * @param password
+		 * @param choiceStr
+		 * @return
+		 */
+		public boolean containsCharOf (
+			String password,
+			String choiceStr
+		) {
+			boolean isOk = false;
+			for(int i = 0; i < password.length() && !isOk; i++) {
+				if(choiceStr.contains(password.substring(i, i+1))) {
+					isOk = true;
+				}
+			}
+			return isOk;
+		}
+		
+		/**
+		 * Validate password length.
+		 * 
+		 * @param password
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validatePasswordLength(
+			String password,
+			ApplicationContext app		
+		) throws ValidationException {
+//			if(password.length() < 8) {
+//				throw new ValidationException("Password too short - minimal length is 8 characters");
+//			}
+		}
+		
+		/**
+		 * Contains user name.
+		 * 
+		 * @param password
+		 * @param username
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validateContainsUsername(
+			String password,
+			String username,
+			ApplicationContext app		
+		) throws ValidationException {
+//			if(password.contains(username)) {
+//				throw new ValidationException("Password contains user name");
+//			}
+		}
+
+		/**
+		 * Validate for at least one upper character.
+		 * 
+		 * @param password
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validateAtLeastOneUpperChar(
+			String password,
+			ApplicationContext app		
+		) throws ValidationException {
+//			if(!containsCharOf(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZ")) {
+//				throw new ValidationException("Password must contain at least 1 upper case character from ABCDE...XYZ");
+//			}
+		}
+
+		/**
+		 * Validate for at least one lower character.
+		 * 
+		 * @param password
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validateAtLeastOneLowerChar(
+			String password,
+			ApplicationContext app		
+		) throws ValidationException {
+//			if(!containsCharOf(password, "abcdefghijklmnopqrstuvwxyz")) {
+//				throw new ValidationException("Password must contain at least 1 lower case character from abcde...xyz");
+//			}
+		}
+
+		/**
+		 * Validate for at least one digit.
+		 * 
+		 * @param password
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validateAtLeastOneDigit(
+			String password,
+			ApplicationContext app		
+		) throws ValidationException {
+//			if(!containsCharOf(password, "0123456789")) {
+//				throw new ValidationException("Password must contain at least 1 digit from 0123456789");
+//			}
+		}
+
+		/**
+		 * Validate for at least one special character.
+		 * 
+		 * @param password
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validateAtLeastOneSpecialChar(
+			String password,
+			ApplicationContext app		
+		) throws ValidationException {
+//			if(!containsCharOf(password, "!$#%.")) {
+//				throw new ValidationException("Password must contain at least 1 special character ! $ # % or .");
+//			}
+		}
+
+		/**
+		 * Contains valid characters only.
+		 * 
+		 * @param password
+		 * @param app
+		 * @throws ValidationException
+		 */
+		protected void validateValidCharsOnly(
+			String password,
+			ApplicationContext app		
+		) throws ValidationException {
+			if(!this.containsOnlyCharsOf(password, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%&*()_+=-[]/<>\\|}{:;,.")) {
+				throw new ValidationException("Password contains illegal characters - allowed are alpha characters ABC..XYZ, digits 0..9, and ~!@#$%&*()_+=-[]/<>\\|}{:;,.");
+			}
+		}
+		
+		/**
+		 * Validate password.
+		 * 
+		 * @param password
+		 * @param username
+		 * @param app
+		 * @throws ValidationException
+		 */
+		public void validatePassword(
+			String password,
+			String username,
+			ApplicationContext app
+		) throws ValidationException {
+			this.validatePasswordLength(password, app);
+			this.validateContainsUsername(password, username, app);
+			this.validateAtLeastOneUpperChar(password, app);
+			this.validateAtLeastOneLowerChar(password, app);
+			this.validateAtLeastOneDigit(password, app);
+			this.validateAtLeastOneSpecialChar(password, app);
+			this.validateValidCharsOnly(password, app);
+		}
+
+	}
+	
+	/**
 	 * Constructor.
 	 * 
 	 */
@@ -78,6 +287,16 @@ public class ChangePasswordManagedController extends AbstractWizardController {
 		super();
 	}
 	
+	/**
+	 * Get change password policy. Override for custom-specific behavior.
+	 * 
+	 * @return
+	 */
+	protected ChangePasswordPolicy newChangePasswordPolicy(
+	) {
+		return new ChangePasswordPolicy();
+	}
+
 	/**
 	 * Refresh action.
 	 * 
@@ -126,12 +345,11 @@ public class ChangePasswordManagedController extends AbstractWizardController {
 			pwNew2,
 			showPasswords
 		);
-		org.opencrx.kernel.portal.wizard.ChangePasswordWizardExtension wizardExtension = 
-			(org.opencrx.kernel.portal.wizard.ChangePasswordWizardExtension)app.getPortalExtension().getExtension(org.opencrx.kernel.portal.wizard.ChangePasswordWizardExtension.class.getName());
+		ChangePasswordPolicy changePasswordPolicy = this.newChangePasswordPolicy(); 
 		if(this.getObject() instanceof UserHome) {
 			try {
 				UserHome userHome =  (UserHome)this.getObject();				
-				wizardExtension.validatePassword(pwNew1, this.principalName, app);
+				changePasswordPolicy.validatePassword(pwNew1, this.principalName, app);
 				try {
 					ChangePasswordParams params = Structures.create(
 						ChangePasswordParams.class,

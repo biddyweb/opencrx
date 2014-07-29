@@ -92,7 +92,7 @@ public class ProductBasePriceImpl
     public void jdoPreStore(
     ) {
     	try {
-    		Products.getInstance().updateProductBasePrice(
+    		Products.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
@@ -112,7 +112,7 @@ public class ProductBasePriceImpl
     public void jdoPreDelete(
     ) {
     	try {
-    		Products.getInstance().removeProductBasePrice(
+    		Products.getInstance().preDelete(
     			this.sameObject(),
     			true
     		);
@@ -124,6 +124,6 @@ public class ProductBasePriceImpl
     			this.sameObject()
     		);
     	}
-    }	
-	
+	}
+
 }

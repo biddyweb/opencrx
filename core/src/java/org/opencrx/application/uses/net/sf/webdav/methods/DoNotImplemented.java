@@ -80,10 +80,9 @@ import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 public class DoNotImplemented extends WebDavMethod {
 
     private static Logger LOG = Logger.getLogger(DoNotImplemented.class.getPackage().getName());
-    private final boolean _readOnly;
 
-    public DoNotImplemented(boolean readOnly) {
-        _readOnly = readOnly;
+    public DoNotImplemented(
+    ) {
     }
 
     @Override
@@ -93,10 +92,7 @@ public class DoNotImplemented extends WebDavMethod {
     	HttpServletRequest req = requestContext.getHttpServletRequest();
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	    	
         LOG.finest("-- " + req.getMethod());
-        if (_readOnly) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-        } else
-            resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
+        resp.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
     }
     
 }

@@ -1,4 +1,4 @@
-﻿<%@  page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %><%
+<%@  page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %><%
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
@@ -68,7 +68,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -771,9 +771,10 @@ org.apache.poi.hssf.util.*
   <meta name="forClass" content="org:opencrx:kernel:account1:UnspecifiedAccount">
   <meta name="order" content="9102">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/ssf.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+  <link rel="stylesheet" href="../../_style/colors.css">
+  <link rel="stylesheet" href="../../_style/n2default.css">
+  <link rel="stylesheet" href="../../_style/ssf.css">
   <!--[if lt IE 7]><script type="text/javascript" src="../../javascript/iehover-fix.js"></script><![endif]-->
   <script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
   <link rel="shortcut icon" href="../../images/favicon.ico" />
@@ -853,11 +854,10 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 			    </div>
 
 					<div id="topnavi">
-						<ul id="navigation" class="navigation" onmouseover="sfinit(this);">
+						<ul id="<%=CssClass.ssfNavigation %>" class="<%=CssClass.ssfNavigation %>" onmouseover="sfinit(this);">
 							<li class="<%= mode.compareTo("0")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='0';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Manage Members</span></a></li>
 							<li class="<%= mode.compareTo("1")==0 ? "selected" : "" %>"><a href="#" onclick="javascript:try{$('mode').value='1';}catch(e){};setTimeout('disableSubmit()', 10);$('Reload.Button').click();";><span>Add Members</span></a></li>
 						</ul>
-      
 <%
 						NumberFormat formatter = new DecimalFormat("0");
 
@@ -1305,9 +1305,9 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 <%
 			                if (accountSelectorType >= 100) {
 %>
-				              <INPUT type="text" name="searchString" id="searchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
-				              <INPUT type="hidden" name="previousSearchString" id="previousSearchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
-											<INPUT type="submit" name="go" id="go" title="<%= app.getTexts().getSearchText() %>" tabindex="<%= tabIndex++ %>" value=">>" onclick="setTimeout('disableSubmit()', 10);$('Reload.Button').click();" />
+				              <input type="text" name="searchString" id="searchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
+				              <inpput type="hidden" name="previousSearchString" id="previousSearchString" tabindex="<%= tabIndex++ %>" value="<%= searchString %>" />
+							  <input type="submit" name="go" id="go" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" title="<%= app.getTexts().getSearchText() %>" tabindex="<%= tabIndex++ %>" value=">>" onclick="setTimeout('disableSubmit()', 10);$('Reload.Button').click();" />
 <%
 				            } else {
 								if (!membersOnly) {
@@ -1325,10 +1325,9 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 							<table style="display:inline;">
 								<tr>
 									<td>
-										<INPUT type="Submit" id="Reload.Button" name="Reload.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
-										<!-- <INPUT type="Submit" id="DetectDuplicates.Button" name="DetectDuplicates.Button" tabindex="<%= tabIndex++ %>" value="Detect Duplicates" onmouseup="javascript:setTimeout('disableSubmit()', 10);" /> -->
-										<INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-										<INPUT type="Submit" name="ACTION.exportXLS" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+										<input type="Submit" id="Reload.Button" name="Reload.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
+										<input type="Button" name="Print.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+										<input type="Submit" name="ACTION.exportXLS" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="Export" onmouseup="javascript:setTimeout('disableSubmit()', 10);" />
 <%
 										if (downloadAction != null) {
 %>
@@ -1338,7 +1337,7 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
 <%
 										}
 %>
-										<INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
+										<input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
 									</td>
 									<td>
 										<input type="checkbox" name="detectDuplicates" id="detectDuplicates" <%= detectDuplicates ? "checked" : "" %> /> Detect Duplicates
@@ -1949,8 +1948,8 @@ String mode = (request.getParameter("mode") == null ? "0" : request.getParameter
         }
       </script>
       <br />
-      <INPUT type="Button" name="Print.Button" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
-      <INPUT type="Submit" name="Cancel.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
+      <input type="Button" name="Print.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="Print" onClick="javascript:window.print();return false;" />
+      <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onClick="javascript:window.close();" />
       <br />&nbsp;
 <%
       if (downloadAction != null) {

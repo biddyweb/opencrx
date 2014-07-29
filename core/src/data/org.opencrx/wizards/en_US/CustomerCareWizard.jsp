@@ -1,4 +1,4 @@
-﻿﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -101,9 +101,10 @@ org.openmdx.base.naming.*
 	<meta name="order" content="5555">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">	
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/ssf.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<script type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<script type="text/javascript" src="../../javascript/calendar/lang/calendar-en_US.js"></script>
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
@@ -120,7 +121,7 @@ org.openmdx.base.naming.*
 								<tr>
 									<td id="headerCellLeft"><img id="logoLeft" src="../../images/logoLeft.gif" alt="openCRX" title="" /></td>
 									<td id="headerCellSpacerLeft"></td>
-									<td id="headerCellMiddle" style="text-align:right;"><a class="abutton" href="#" onclick="javascript:new Effect.Pulsate(this,{pulses:1,duration:0.5});window.location.href='./'+getEncodedHRef(['../../ObjectInspectorServlet', 'requestId', '<%= wc.getRequestId() %>', 'event', '<%= org.openmdx.portal.servlet.action.LogoffAction.EVENT_ID %>']);">Logoff</a></td>
+									<td id="headerCellMiddle" style="text-align:right;"><a class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" href="#" onclick="javascript:new Effect.Pulsate(this,{pulses:1,duration:0.5});window.location.href='./'+getEncodedHRef(['../../ObjectInspectorServlet', 'requestId', '<%= wc.getRequestId() %>', 'event', '<%= org.openmdx.portal.servlet.action.LogoffAction.EVENT_ID %>']);">Logoff</a></td>
 									<td id="headerCellRight"><img id="logoRight" src="../../images/logoRight.gif" alt="" title="" /></td>
 								</tr>
 							</table>
@@ -139,21 +140,21 @@ org.openmdx.base.naming.*
 					<table cellspacing="8" class="tableLayout">
 						<tr>
 							<td class="cellObject">
-								<div class="panel" id="panelMain" style="display:block">
+								<div class="panel" id="panelMain" style="display:block;overflow:visible;">
 <%
 									if(wc.getForms().containsKey(CustomerCareWizardController.Form.CustomerCareSearchContactForm.name())) {
 %>										
 										<div>
-											<input type="submit" class="abutton" name="<%= CustomerCareWizardController.Command.SearchContact.name() %>" id="<%= CustomerCareWizardController.Command.SearchContact.name() %>.Button" tabindex="9010" value="<%= texts.getSearchText() %>" onclick="javascript:$('Command').value=this.name;" />
+											<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" name="<%= CustomerCareWizardController.Command.SearchContact.name() %>" id="<%= CustomerCareWizardController.Command.SearchContact.name() %>.Button" tabindex="9010" value="<%= texts.getSearchText() %>" onclick="javascript:$('Command').value=this.name;" />
 <%										
 											for(Path activityCreatorIdentity: wc.getWizardState().getAllowedActivityCreators()) {
 												org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(activityCreatorIdentity);
 %>										
-												<input type="submit" class="abutton" tabindex="9050" value="<%= texts.getNewText() + ": " + activityCreator.getName() %>" onclick="javascript:$('<%= CustomerCareWizardController.PARAMETER_SELECTED_OBJECT_XRI %>').value='<%= activityCreatorIdentity %>';$('Command').value='<%= CustomerCareWizardController.Command.NewActivity.name() %>';" />
+												<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9050" value="<%= texts.getNewText() + ": " + activityCreator.getName() %>" onclick="javascript:$('<%= CustomerCareWizardController.PARAMETER_SELECTED_OBJECT_XRI %>').value='<%= activityCreatorIdentity %>';$('Command').value='<%= CustomerCareWizardController.Command.NewActivity.name() %>';" />
 <%
 											}										
 %>
-											<input type="submit" class="abutton" name="<%= CustomerCareWizardController.Command.Cancel.name() %>" tabindex="9080" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
+											<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" name="<%= CustomerCareWizardController.Command.Cancel.name() %>" tabindex="9080" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;"/>
 										</div>
 <%
 									} else if(wc.getForms().containsKey(CustomerCareWizardController.Form.ContactForm.name())) {
@@ -163,11 +164,11 @@ org.openmdx.base.naming.*
 											for(Path activityCreatorIdentity: wc.getWizardState().getAllowedActivityCreatorsContact()) {
 												org.opencrx.kernel.activity1.jmi1.ActivityCreator activityCreator = (org.opencrx.kernel.activity1.jmi1.ActivityCreator)pm.getObjectById(activityCreatorIdentity);
 %>										
-												<input type="submit" class="abutton" tabindex="9050" value="<%= texts.getNewText() + ": " + activityCreator.getName() %>" onclick="javascript:$('<%= CustomerCareWizardController.PARAMETER_SELECTED_OBJECT_XRI %>').value='<%= activityCreatorIdentity %>';$('Command').value='<%= CustomerCareWizardController.Command.NewActivityContact.name() %>';" />
+												<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9050" value="<%= texts.getNewText() + ": " + activityCreator.getName() %>" onclick="javascript:$('<%= CustomerCareWizardController.PARAMETER_SELECTED_OBJECT_XRI %>').value='<%= activityCreatorIdentity %>';$('Command').value='<%= CustomerCareWizardController.Command.NewActivityContact.name() %>';" />
 <%
 											}
 %>
-											<input type="submit" class="abutton" tabIndex="9050" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToSearchContact.name() %>';"></a>
+											<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9050" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToSearchContact.name() %>';"></a>
 										</div>
 										<div>&nbsp;</div>
 										<div>
@@ -180,7 +181,7 @@ org.openmdx.base.naming.*
 											}
 											else {
 %>
-												<input type="image" name="<%= CustomerCareWizardController.Command.LockContact.name() %>" id="<%= CustomerCareWizardController.Command.LockContact.name() %>.Button" class="abutton" tabIndex="9060" src="../../images/PhoneCall.gif" onclick="javascript:$('Command').value=this.name;" /> 
+												<input type="image" name="<%= CustomerCareWizardController.Command.LockContact.name() %>" id="<%= CustomerCareWizardController.Command.LockContact.name() %>.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9060" src="../../images/PhoneCall.gif" onclick="javascript:$('Command').value=this.name;" /> 
 <%
 											}
 %>										
@@ -190,15 +191,15 @@ org.openmdx.base.naming.*
 										if(wc.getCommand().equals(CustomerCareWizardController.Command.NewActivityContact.name())) {
 %>
 											<div>
-												<input type="submit" class="abutton" name="<%= CustomerCareWizardController.Command.SaveAsNewActivityContact.name() %>" id="<%= CustomerCareWizardController.Command.SaveAsNewActivityContact.name() %>.Button" tabindex="9070" value="<%= texts.getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;" />
-												<input type="submit" class="abutton" tabIndex="9050" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToContact.name() %>';"></a>
+												<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" name="<%= CustomerCareWizardController.Command.SaveAsNewActivityContact.name() %>" id="<%= CustomerCareWizardController.Command.SaveAsNewActivityContact.name() %>.Button" tabindex="9070" value="<%= texts.getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+												<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9050" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToContact.name() %>';"></a>
 											</div>
 <%
 										} else if(wc.getCommand().equals(CustomerCareWizardController.Command.NewActivity.name())) {
 %>
 											<div>
-												<input type="submit" class="abutton" name="<%= CustomerCareWizardController.Command.SaveAsNewActivity.name() %>" id="<%= CustomerCareWizardController.Command.SaveAsNewActivity.name() %>.Button" tabindex="9070" value="<%= texts.getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;" />
-												<input type="submit" class="abutton" tabIndex="9050" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToSearchContact.name() %>';"></a>
+												<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" name="<%= CustomerCareWizardController.Command.SaveAsNewActivity.name() %>" id="<%= CustomerCareWizardController.Command.SaveAsNewActivity.name() %>.Button" tabindex="9070" value="<%= texts.getSaveTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+												<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9050" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToSearchContact.name() %>';"></a>
 											</div>
 <%											
 										}
@@ -208,7 +209,7 @@ org.openmdx.base.naming.*
 											if(selectedActivity.getActivityType() == null) {
 %>
 												<div id="transitions">
-													<input type="submit" class="abutton" tabIndex="9080" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToContact.name() %>';"></a>
+													<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9080" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToContact.name() %>';"></a>
 												</div>
 <%												
 											} else {
@@ -226,12 +227,12 @@ org.openmdx.base.naming.*
 														if(!transition.getNextState().equals(activityProcess.getStartState())) {
 															String transitionId = transition.refGetPath().getBase();
 %>
-															<input type="button" class="abutton" tabindex="9070" value="<%= transition.getName() %>..." onclick="javascript:$('<%= transitionId %>').style.display='block';$('<%= transitionId %>.Title').style.display='block';$('followUp').style.display='block';$('transitions').style.display='none';" />
+															<input type="button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9070" value="<%= transition.getName() %>..." onclick="javascript:$('<%= transitionId %>').style.display='block';$('<%= transitionId %>.Title').style.display='block';$('followUp').style.display='block';$('transitions').style.display='none';" />
 <%
 														}
 													}
 %>								
-													<input type="submit" class="abutton" tabIndex="9080" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToContact.name() %>';"></a>
+													<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9080" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('Command').value='<%= CustomerCareWizardController.Command.BackToContact.name() %>';"></a>
 												</div>
 <%											
 												// One title div for each transition
@@ -271,8 +272,8 @@ org.openmdx.base.naming.*
 														String transitionId = transition.refGetPath().getBase();
 %>
 														<div id='<%= transitionId %>' style='display:none;'>
-															<input type="submit" class="abutton" tabindex="9070" value="<%= texts.getOkTitle() %>" onclick="javascript:$('<%= CustomerCareWizardController.PARAMETER_SELECTED_OBJECT_XRI %>').value='<%= transition.refGetPath() %>';$('Command').value='<%= CustomerCareWizardController.Command.DoFollowUp.name() %>';" />
-															<input type="button" class="abutton" tabIndex="9080" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('<%= transitionId %>').style.display='none';$('<%= transitionId %>.Title').style.display='none';$('followUp').style.display='none';$('transitions').style.display='block';"></a>
+															<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9070" value="<%= texts.getOkTitle() %>" onclick="javascript:$('<%= CustomerCareWizardController.PARAMETER_SELECTED_OBJECT_XRI %>').value='<%= transition.refGetPath() %>';$('Command').value='<%= CustomerCareWizardController.Command.DoFollowUp.name() %>';" />
+															<input type="button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabIndex="9080" value="<%= texts.getCancelTitle() %>" onclick="javascript:$('<%= transitionId %>').style.display='none';$('<%= transitionId %>.Title').style.display='none';$('followUp').style.display='none';$('transitions').style.display='block';"></a>
 														</div>
 <%
 													}

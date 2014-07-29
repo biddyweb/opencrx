@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -95,7 +95,6 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
 	<meta name="order" content="9010">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -104,10 +103,10 @@ org.openmdx.base.naming.*
 	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display:block;overflow:visible;">
 					<table class="fieldGroup">
 						<tr>
-							<td title="" class="label"><span class="nw"><%= app.getLabel("org:opencrx:kernel:home1:TwitterAccount") %>:</span></td>
+							<td title="" class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel("org:opencrx:kernel:home1:TwitterAccount") %>:</span></td>
 							<td>
 							    <select tabindex="1000" class="valueL" name="serviceAccountId" id="serviceAccountId">
 <%
@@ -131,12 +130,13 @@ org.openmdx.base.naming.*
 					viewPort.flush();
 %>
 				</div>
-				<input type="submit" name="OK" id="OK.Button" tabindex="9000" value="Send" onclick="javascript:$('Command').value=this.name;" />
-				<input  type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+				<input type="submit" name="OK" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="Send" onclick="javascript:$('Command').value=this.name;" />
+				<input  type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 			</td>
 		</tr>
 	</table>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

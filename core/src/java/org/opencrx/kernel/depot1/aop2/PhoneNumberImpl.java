@@ -55,7 +55,8 @@ package org.opencrx.kernel.depot1.aop2;
 import javax.jdo.JDOUserException;
 import javax.jdo.listener.StoreCallback;
 
-import org.opencrx.kernel.backend.Addresses;
+import org.opencrx.kernel.backend.Depots;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
@@ -72,17 +73,18 @@ public class PhoneNumberImpl
     	super(same, next);
     }
  
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		Addresses.getInstance().updatePhoneNumber(
-    			this.sameObject() 
+    		Depots.getInstance().preStore(
+    			(CrxObject)this.sameObject() 
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,

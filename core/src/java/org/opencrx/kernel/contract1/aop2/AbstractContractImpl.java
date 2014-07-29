@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: AbstractContractImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,11 +59,23 @@ import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * AbstractContractImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class AbstractContractImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.AbstractContract,N extends org.opencrx.kernel.contract1.cci2.AbstractContract,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public AbstractContractImpl(
         S same,
         N next
@@ -71,7 +83,11 @@ public class AbstractContractImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Set contract state.
+     * 
+     * @param contractState
+     */
     public void setContractState(
         short contractState
     ) {
@@ -87,7 +103,12 @@ public class AbstractContractImpl
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Re-apply activity creator.
+     * 
+     * @param params
+     * @return
+     */
     public org.openmdx.base.jmi1.Void reapplyContractCreator(
         org.opencrx.kernel.contract1.jmi1.ReapplyContractCreatorParams params
     ) {
@@ -103,17 +124,18 @@ public class AbstractContractImpl
         }    	
     }
     
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		Contracts.getInstance().updateContract(
+    		Contracts.getInstance().preStore(
     			this.sameObject()
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
@@ -122,18 +144,19 @@ public class AbstractContractImpl
     	}
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+	 */
 	@Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Contracts.getInstance().removeContract(
+    		Contracts.getInstance().preDelete(
     			this.sameObject(),
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,

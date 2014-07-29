@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
@@ -10,7 +10,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -69,7 +69,7 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -343,21 +343,21 @@ public org.openmdx.security.realm1.jmi1.Role createOrUpdateRole(
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
 <head>
-  <title>Import Policy from XLS (Roles/Privileges/Permissions)</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="label" content="Import Policy from XLS (Roles/Privileges/Permissions)">
-  <meta name="toolTip" content="Import Policy from XLS (Roles/Privileges/Permissions)">
-  <meta name="targetType" content="_self">
-  <meta name="forClass" content="org:openmdx:security:authorization1:Policy">
-  <meta name="order" content="10">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css" />
+	<title>Import Policy from XLS (Roles/Privileges/Permissions)</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="label" content="Import Policy from XLS (Roles/Privileges/Permissions)">
+	<meta name="toolTip" content="Import Policy from XLS (Roles/Privileges/Permissions)">
+	<meta name="targetType" content="_self">
+	<meta name="forClass" content="org:openmdx:security:authorization1:Policy">
+	<meta name="order" content="10">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
-
 <body>
 <div id="container">
 	<div id="wrap">
@@ -438,7 +438,7 @@ public org.openmdx.security.realm1.jmi1.Role createOrUpdateRole(
           <span style="color:red;"><b><u>Warning:</u> <%= errorMessage %></b></span>
           <br />
           <br />
-          <INPUT type="Submit" name="Cancel.Button" tabindex="1" value="<%= app.getTexts().getContinueTitle() %>" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
+          <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1" value="<%= app.getTexts().getContinueTitle() %>" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
           <br />
           <br />
           <hr>
@@ -744,7 +744,7 @@ public org.openmdx.security.realm1.jmi1.Role createOrUpdateRole(
 	            </td></tr></table>
               <br />
               <br />
-              <INPUT type="Submit" name="Cancel.Button" tabindex="1" value="<%= app.getTexts().getContinueTitle() %>" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
+              <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1" value="<%= app.getTexts().getContinueTitle() %>" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
               <br />
               <br />
               <hr>
@@ -776,7 +776,7 @@ public org.openmdx.security.realm1.jmi1.Role createOrUpdateRole(
         </div>
       </noscript>
 
-      <div class="panel" id="panelObj0" style="display: block">
+      <div class="panel" id="panelObj0" style="display:block;overflow:visible;">
         <div class="fieldGroupName">
           <span style="font-size:9px;">Hint: Row #1 is skipped (labels)</span><br>
           <span style="font-size:9px;">Sheet 'Roles': XRI, name, description, disabled, permission.XRI, permission.name, permission.description, permission.privilege, permission.action</span><br>
@@ -784,16 +784,16 @@ public org.openmdx.security.realm1.jmi1.Role createOrUpdateRole(
         </div>
 	      <table class="fieldGroup">
     			<tr>
-    				<td class="label"><span class="nw">File:</span></td>
+    				<td class="<%= CssClass.fieldLabel %>"><span class="nw">File:</span></td>
     				<td >
     					<input type="file" class="valueL" size="100" name="<%= UPLOAD_FILE_FIELD_NAME %>" tabindex="500" />
     				</td>
     				<td class="addon" >
     			</tr>
     			<tr>
-	          <td class="label" colspan="3">
-	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="Import" />
-      			  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
+	          <td class="<%= CssClass.fieldLabel %>" colspan="3">
+	          	<input type="Submit" name="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="Import" />
+      			  <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
 	          </td>
 	          <td></td>
 	          <td></td>
@@ -819,7 +819,7 @@ public org.openmdx.security.realm1.jmi1.Role createOrUpdateRole(
       <span style="color:red;"><b><u>Warning:</u> cannot upload file (no permission?)</b></span>
       <br />
       <br />
-      <INPUT type="Submit" name="Continue.Button" tabindex="1" value="Continue" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
+      <input type="Submit" name="Continue.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1" value="Continue" onClick="javascript:location='<%= request.getContextPath() + "/" + nextAction.getEncodedHRef() %>';" />
       <br />
       <br />
       <hr>

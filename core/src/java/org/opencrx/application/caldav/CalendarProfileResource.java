@@ -54,6 +54,7 @@ package org.opencrx.application.caldav;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
@@ -93,6 +94,8 @@ class CalendarProfileResource extends CalDavResource {
 	
 	@Override
 	public Collection<Resource> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		SyncProfile syncProfile = this.getObject();
 		Collection<Resource> children = new ArrayList<Resource>();

@@ -87,8 +87,6 @@ import org.openmdx.application.dataprovider.cci.DataproviderReply;
 import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.FilterProperty;
 import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.AbstractDatabase_1;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.application.dataprovider.spi.Layer_1;
 import org.openmdx.base.accessor.cci.SystemAttributes;
@@ -109,7 +107,7 @@ import org.w3c.cci2.BinaryLargeObject;
 /**
  * This plugin indexes objects.
  */
-public class Indexed_1 extends Database_1 {
+public class Indexed_1 extends Media_1 {
 
     // --------------------------------------------------------------------------
     public Interaction getInteraction(
@@ -192,7 +190,13 @@ public class Indexed_1 extends Database_1 {
     	}
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Extract keywords from object.
+     * 
+     * @param obj
+     * @return
+     * @throws ServiceException
+     */
     protected Set<String> getKeywords(
     	MappedRecord obj
     ) throws ServiceException {
@@ -215,12 +219,10 @@ public class Indexed_1 extends Database_1 {
                     boolean isXml = false;
                     if(value instanceof String) {
                         text = new StringReader((String)value);
-                    }
-                    else if(value instanceof InputStream || value instanceof byte[] || value instanceof BinaryLargeObject) {
+                    } else if(value instanceof InputStream || value instanceof byte[] || value instanceof BinaryLargeObject) {
                     	if(value instanceof byte[]) {
                     		value = new ByteArrayInputStream((byte[])value);
-                    	}
-                    	else if(value instanceof BinaryLargeObject) {
+                    	} else if(value instanceof BinaryLargeObject) {
                     		try {
                     			value = ((BinaryLargeObject)value).getContent();
                     		} catch(Exception e) {}
@@ -228,7 +230,6 @@ public class Indexed_1 extends Database_1 {
                         String contentName = (String)objFacade.attributeValuesAsList(attribute + "Name").get(0);
                         String contentMimeType = (String)objFacade.attributeValuesAsList(attribute + "MimeType").get(0);
                         if(contentName != null) { 
-                            // text/rtf
                             if(
                                 "text/rtf".equals(contentMimeType) ||
                                 contentName.endsWith(".rtf")
@@ -237,13 +238,10 @@ public class Indexed_1 extends Database_1 {
                                      text = RTFToText.toTextAsReader(
                                          (InputStream)value
                                      );
-                                 }
-                                 catch(Exception e) {
+                                 } catch(Exception e) {
                                 	 SysLog.warning("Cannot extract text from a RTF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                  }
-                            }
-                            // application/pdf
-                            else if(
+                            } else if(
                                 "application/pdf".equals(contentMimeType) ||
                                 contentName.endsWith(".pdf")
                             ) {
@@ -251,13 +249,10 @@ public class Indexed_1 extends Database_1 {
                                     text = new PDFToText().parse(
                                         (InputStream)value
                                     );
-                                }
-                                catch(Exception e) {
+                                } catch(Exception e) {
                                 	SysLog.warning("Can not extract text from PDF document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
-                            }
-                            // application/vnd.ms-excel
-                            else if(
+                            } else if(
                                "application/vnd.ms-excel".equals(contentMimeType) ||
                                "application/ms-excel".equals(contentMimeType) ||
                                 contentName.endsWith(".xls")
@@ -266,13 +261,10 @@ public class Indexed_1 extends Database_1 {
                                     text = new ExcelToText().parse(
                                         (InputStream)value
                                     );
-                                }
-                                catch(Exception e) {
+                                } catch(Exception e) {
                                 	SysLog.warning("Can not extract text from Excel document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
-                            }
-                            // application/vnd.ms-word
-                            else if(
+                            } else if(
                                "application/vnd.ms-word".equals(contentMimeType) ||
                                "application/ms-word".equals(contentMimeType) ||
                                 contentName.endsWith(".doc")
@@ -281,13 +273,10 @@ public class Indexed_1 extends Database_1 {
                                     text = new WordToText().parse(
                                         (InputStream)value
                                     );
-                                }
-                                catch(Exception e) {
+                                } catch(Exception e) {
                                 	SysLog.warning("Can not extract text from Word document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
-                            }
-                            // application/vnd.openxmlformats
-                            else if(
+                            } else if(
                             	(contentMimeType != null && contentMimeType.startsWith("application/vnd.openxmlformats")) ||
                                 contentName.endsWith(".docx") ||
                                 contentName.endsWith(".dotx") ||
@@ -298,19 +287,10 @@ public class Indexed_1 extends Database_1 {
                                     text = new XmlDocToText().parse(
                                         (InputStream)value
                                     );
-                                }
-                                catch(Exception e) {
+                                } catch(Exception e) {
                                 	SysLog.warning("Can not extract text from XML document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
-                            }
-                            // application/vnd.sun.xml.writer
-                            // application/vnd.sun.xml.calc
-                            // application/vnd.sun.xml.draw
-                            // application/vnd.sun.xml.impress
-                            // application/vnd.sun.xml.chart
-                            // application/vnd.sun.xml.math
-                            // application/vnd.sun.xml.writer.global
-                            else if(
+                            } else if(
                                 contentName.endsWith(".odt") ||
                                 contentName.endsWith(".odp") ||
                                 contentName.endsWith(".ods")
@@ -321,20 +301,15 @@ public class Indexed_1 extends Database_1 {
                                         document
                                     );
                                     isXml = true;
-                                }
-                                catch(Exception e) {
+                                } catch(Exception e) {
                                 	SysLog.warning("Can not extract text from OpenOffice document", Arrays.asList(new String[]{contentName, e.getMessage()}));
                                 }
-                            }
-                            // text/plain
-                            else if(
+                            } else if(
                                 "text/plain".equals(contentMimeType) ||
                                 contentName.endsWith(".txt")
                             ) {
                                 text = new InputStreamReader((InputStream)value);                                
-                            }                            
-                            // text/html, text/xml
-                            else if(
+                            } else if(
                                 "text/html".equals(contentMimeType) ||
                                 "text/xml".equals(contentMimeType) ||
                                 "application/xml".equals(contentMimeType) ||
@@ -344,7 +319,7 @@ public class Indexed_1 extends Database_1 {
                             ) {
                                 text = new InputStreamReader((InputStream)value);           
                                 isXml = true;
-                            }                            
+                            }                           
                         }
                     }
                     if(text != null) {
@@ -376,20 +351,18 @@ public class Indexed_1 extends Database_1 {
                                 }
                                 if(!isKeyword && (!isXml || (ch != '<'))) {
                                     ch = text.read();
-                                }
-                                else if(
+                                } else if(
                                     (keyword.length() > MIN_KEYWORD_LENGTH) &&
                                     (keyword.length() < MAX_KEYWORD_LENGTH)
                                 ) {
                                     keywords.add(keyword.toString().toLowerCase());
                                 }
                             }
-                        } 
-                        catch(Exception e) {}
+                        } catch(Exception e) {}
                     }
                 }
             }
-        }       
+        }
         return keywords;
     }
 
@@ -405,7 +378,7 @@ public class Indexed_1 extends Database_1 {
     }
 
     // --------------------------------------------------------------------------
-    public class LayerInteraction extends AbstractDatabase_1.LayerInteraction {
+    public class LayerInteraction extends Media_1.LayerInteraction {
         
         //---------------------------------------------------------------------------
         public LayerInteraction(

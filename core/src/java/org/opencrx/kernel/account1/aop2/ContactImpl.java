@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: ContactImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,7 +60,12 @@ public class ContactImpl
 	extends AccountImpl<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public ContactImpl(
         S same,
         N next
@@ -68,14 +73,18 @@ public class ContactImpl
     	super(same, next);
     }
     
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.account1.aop2.AccountImpl#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
 		super.jdoPreStore();
 	}
 	
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.kernel.account1.aop2.AccountImpl#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {

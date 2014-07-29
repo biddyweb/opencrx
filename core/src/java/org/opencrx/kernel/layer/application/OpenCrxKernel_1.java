@@ -158,7 +158,7 @@ public class OpenCrxKernel_1 extends Standard_1 {
 	        }           
 	        if(
 	            (reference != null) &&
-	            !((Boolean)reference.objGetValue("isChangeable")).booleanValue()
+	            !((Boolean)reference.isChangeable()).booleanValue()
 	        ) {
 	            throw new ServiceException(
 	                OpenCrxException.DOMAIN,

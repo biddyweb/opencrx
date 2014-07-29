@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,6 +60,7 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
@@ -67,12 +68,24 @@ import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * ActivityGroupImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class ActivityGroupImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.ActivityGroup,N extends org.opencrx.kernel.activity1.cci2.ActivityGroup,C extends Void> 
 	extends AbstractObject<S,N,C>
 	implements DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public ActivityGroupImpl(
         S same,
         N next
@@ -80,7 +93,12 @@ public class ActivityGroupImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Calculate total quantity.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityResult calcTotalQuantity(
         org.opencrx.kernel.activity1.jmi1.CalcTotalQuantityParams params    	    	
     ) {
@@ -105,24 +123,25 @@ public class ActivityGroupImpl
         }            
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override    
 	public void jdoPreDelete(
 	) {
         try {
-            Activities.getInstance().removeActivityGroup(
+            Activities.getInstance().preDelete(
             	this.sameObject(),
             	true
             );
             super.jdoPreDelete();
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JDOUserException(
             	"Unable to preDelete()",
             	e,
             	this.sameObject()
             );
         }
-    }    
-	            
+    }
+
 }

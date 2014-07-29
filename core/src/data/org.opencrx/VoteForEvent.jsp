@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:	 openCRX/Core, http://www.opencrx.org/
@@ -611,7 +611,7 @@ java.text.*"
 			<div id="etitle" style="height:20px;">
 					<div id="printButton" style="background-color:transparent;" onClick="javascript:yuiPrint();">&nbsp;</div>
 					<div style="float:right;">
-						<ul dir="ltr" id="nav" class="nav" style="width:220px;" onmouseover="sfinit(this);">
+						<ul dir="ltr" id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" style="width:220px;" onmouseover="sfinit(this);">
 							<li id="flyout" style="border-top: solid 1px #DDDDDD;border-bottom: solid 1px #DDDDDD;"><a href="#"><img src="<%=request.getContextPath()%>/images/panel_down.gif" alt="" style="border:none 0px white;float:right;top:-20px;" /><%= localeStr %> - <%= textsLocale.get(localeStr) %>&nbsp;</a>
 								<ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
 <%
@@ -782,8 +782,8 @@ java.text.*"
  									<td align="left" nowrap title="<%= (app != null) ? " [" + app.getLoginPrincipal() + "]" : "" %>"><b><%= bundle.get("VoterLabel") %>:&nbsp;</b></td>
  									<td colspan="<%= nSlots %>">
 										<input type="text" size="40" <%= hasVoted ? "readonly" : "" %> maxlength="<%= MAXLEN_EMAILADDRESS %>" name="voter" id="voter" value="<%= request.getParameter("voter") == null ? (retrievedVoter == null ? ((userEMailAddress != null) && (userEMailAddress.getEmailAddress() != null) ? userEMailAddress.getEmailAddress() : "") : retrievedVoter) : request.getParameter("voter") %>" />
-										<input id="Vote.Button" name="Vote" type="submit" <%= hasVoted ? "disabled" : "class=\"abutton\"" %> tabindex="<%= tabIndex++ %>" value="<%= bundle.get("VoteLabel") %>" />
-										<input id="RemoveVote.Button" name="RemoveVote" type="submit" <%= hasVoted && allowEdit ? "" : "style='display:none;'" %> class="abutton" tabindex="<%= tabIndex++ %>" value="<%= bundle.get("RemoveVoteLabel") %>" />
+										<input id="Vote.Button" name="Vote" type="submit" <%= hasVoted ? "disabled" : "class=\"<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %>\"" %> tabindex="<%= tabIndex++ %>" value="<%= bundle.get("VoteLabel") %>" />
+										<input id="RemoveVote.Button" name="RemoveVote" type="submit" <%= hasVoted && allowEdit ? "" : "style='display:none;'" %> class="<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= bundle.get("RemoveVoteLabel") %>" />
  									</td>
  								</tr>
  							</table>
@@ -818,7 +818,7 @@ java.text.*"
  							<table cellspacing="1">
  								<tr>
  									<td />
- 									<th align="left"><input type="submit" id="Refresh" name="Refresh" class="abutton" value="<%= bundle.get("RefreshLabel") %>"/></th>
+ 									<th align="left"><input type="submit" id="Refresh" name="Refresh" class="<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %>" value="<%= bundle.get("RefreshLabel") %>"/></th>
 <%
  									// Table head for Dates
  									for(int i = 0; i < selectedDates.size(); i++) {

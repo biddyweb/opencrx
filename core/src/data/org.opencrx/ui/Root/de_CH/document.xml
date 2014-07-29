@@ -58,6 +58,63 @@
 											</additionalElementDefinition>
 										</_content>
                   </org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderShare">
+										<_object>
+											<toolTip>
+												<_item>Ordnerfreigaben</_item>
+											</toolTip>
+											<label>
+												<_item>Ordnerfreigaben</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderShare:name">
+										<_object>
+											<toolTip>
+												<_item>Name</_item>
+											</toolTip>
+											<label>
+												<_item>Name</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderShare:description">
+										<_object>
+											<toolTip>
+												<_item>Beschreibung</_item>
+											</toolTip>
+											<label>
+												<_item>Beschreibung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderShare:isActive">
+										<_object>
+											<toolTip>
+												<_item>Aktiv</_item>
+											</toolTip>
+											<label>
+												<_item>Aktiv</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolderShare:shareForUser">
+										<_object>
+											<toolTip>
+												<_item>Freigabe für Benutzer</_item>
+											</toolTip>
+											<label>
+												<_item>Freigabe für Benutzer</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder" _operation="create">
                     <_object>
                       <label>
@@ -80,6 +137,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:folderShare">
+										<_object>
+											<toolTip>
+												<_item>Freigaben</_item>
+											</toolTip>
+											<label>
+												<_item>Freigaben</_item>
+											</label>
+											<maxMember>4</maxMember>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:subFolder" _operation="create">
                     <_object>
                       <label>
@@ -1166,6 +1235,87 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
+									<!-- Operations -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:Pane:Op:Tab:createDefaultShare">
+										<_object>
+											<toolTip>
+												<_item>Freigabe (Voreinstellung) erstellen</_item>
+											</toolTip>
+											<label>
+												<_item>Freigabe (Voreinstellung) erstellen</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:Pane:Op:Tab:createDefaultShare:Group:in">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:Pane:Op:Tab:createDefaultShare:Group:result">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:CreateDefaultShareResult:folderShare">
+										<_object>
+											<toolTip>
+												<_item>Freigabe </_item>
+											</toolTip>
+											<label>
+												<_item>Freigabe</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:Pane:Op:Tab:removeDefaultShare">
+										<_object>
+											<toolTip>
+												<_item>Freigabe (Voreinstellung) deaktivieren</_item>
+											</toolTip>
+											<label>
+												<_item>Freigabe (Voreinstellung) deaktivieren</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:Pane:Op:Tab:removeDefaultShare:Group:in">
+										<_object>
+											<toolTip>
+												<_item>Eingabe</_item>
+											</toolTip>
+											<label>
+												<_item>Eingabe</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:DocumentFolder:Pane:Op:Tab:removeDefaultShare:Group:result">
+										<_object>
+											<toolTip>
+												<_item>Resultat</_item>
+											</toolTip>
+											<label>
+												<_item>Resultat</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+
 
                 </elementDefinition>
               </_content>

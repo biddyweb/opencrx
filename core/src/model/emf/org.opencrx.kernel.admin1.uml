@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_vvFywN8HEdmKapscEl8OLg" name="admin1">
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_vvFywN8HEdmKapscEl8OLg" name="admin1">
   <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D4167132701FAPPP" name="org">
     <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D4167132701FAPP" name="opencrx">
       <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D4167132701FAP" name="kernel">
@@ -22,6 +22,10 @@
             <ownedOperation xmi:id="_KoUmQEcXEdqY8s66EvOcjQ" name="importLoginPrincipals">
               <ownedParameter xmi:id="_GNouMEcYEdqY8s66EvOcjQ" name="ReturnResultParameter1" type="_O52F0EcXEdqY8s66EvOcjQ" direction="return"/>
               <ownedParameter xmi:id="_C70YIEcYEdqY8s66EvOcjQ" name="in" type="_NTd94EcXEdqY8s66EvOcjQ"/>
+            </ownedOperation>
+            <ownedOperation xmi:id="_UKH6cOW5EeOyE8SdjHxBeQ" name="convertMediaXriToPath">
+              <ownedParameter xmi:id="_oFgDwOW5EeOyE8SdjHxBeQ" name="in" type="_YP-8kOW5EeOyE8SdjHxBeQ"/>
+              <ownedParameter xmi:id="_r_emAOW5EeOyE8SdjHxBeQ" name="result" type="_gBPSYOW5EeOyE8SdjHxBeQ" direction="return"/>
             </ownedOperation>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4165D05A01DD" name="CreateAdministratorParams">
@@ -105,6 +109,32 @@
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_c7Hm8DIhEdulbMY4C1wdZw" name="SegmentContainsComponentConfiguration" memberEnd="_c7Hm8TIhEdulbMY4C1wdZw _c7Hm8jIhEdulbMY4C1wdZw">
             <ownedEnd xmi:id="_c7Hm8jIhEdulbMY4C1wdZw" name="segment" type="_3C7B8A60016D416713C40097" association="_c7Hm8DIhEdulbMY4C1wdZw"/>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_YP-8kOW5EeOyE8SdjHxBeQ" name="ConvertMediaXriToPathParams">
+            <eAnnotations xmi:id="_AbohIOW6EeOyE8SdjHxBeQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_BfbgcOW6EeOyE8SdjHxBeQ" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_s8UBsOW5EeOyE8SdjHxBeQ" name="mediaXri" visibility="public">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX 2 ~ Core (EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_t_adcOW5EeOyE8SdjHxBeQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_t_brkOW5EeOyE8SdjHxBeQ" value="1"/>
+              <defaultValue xmi:type="uml:LiteralString" xmi:id="_t_dgwOW5EeOyE8SdjHxBeQ">
+                <value xsi:nil="true"/>
+              </defaultValue>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_gBPSYOW5EeOyE8SdjHxBeQ" name="ConvertMediaXriToPathResult">
+            <eAnnotations xmi:id="_DO_ZkOW6EeOyE8SdjHxBeQ" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_D_ykYOW6EeOyE8SdjHxBeQ" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_vIJnIOW5EeOyE8SdjHxBeQ" name="mediaPath" visibility="public">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX 2 ~ Core (EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_wJ4w8OW5EeOyE8SdjHxBeQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_wJ5_EOW5EeOyE8SdjHxBeQ" value="1"/>
+              <defaultValue xmi:type="uml:LiteralString" xmi:id="_wJ70QOW5EeOyE8SdjHxBeQ">
+                <value xsi:nil="true"/>
+              </defaultValue>
+            </ownedAttribute>
           </packagedElement>
         </packagedElement>
       </packagedElement>

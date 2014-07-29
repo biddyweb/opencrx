@@ -20,8 +20,23 @@
                         <_item>Direcciones</_item>
                       </toolTip>
                     </_object>
-                    <_content/>
+										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Direcciones (canceladas)</_item>
+														</toolTip>
+														<label>
+															<_item>Direcciones (canceladas)</_item>
+														</label>
+													</_object>
+													<_content/>
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
+										</_content>
                   </org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:DepotHolder:address" _operation="create">
                     <_object>
                       <label>
@@ -113,10 +128,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefono</_item>
+                        <_item>Teléfono</_item>
                       </label>
                       <toolTip>
-                        <_item>Números telefonicos</_item>
+                        <_item>Números telefónicos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -168,10 +183,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefono</_item>
+                        <_item>Teléfono</_item>
                       </label>
                       <toolTip>
-                        <_item>Números telefonicos</_item>
+                        <_item>Números telefónicos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -234,10 +249,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefono</_item>
+                        <_item>Teléfono</_item>
                       </label>
                       <toolTip>
-                        <_item>Numeros telefonicos</_item>
+                        <_item>Numeros telefónicos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -278,10 +293,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PhoneNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Telefono</_item>
+                        <_item>Teléfono</_item>
                       </label>
                       <toolTip>
-                        <_item>Números telefonicos</_item>
+                        <_item>Números telefónicos</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -374,10 +389,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PhoneNumberAddressable:phoneCountryPrefix" _operation="create">
                     <_object>
                       <label>
-                        <_item>Prefijo del pais</_item>
+                        <_item>Prefijo del país</_item>
                       </label>
                       <toolTip>
-                        <_item>Prefijo del pais</_item>
+                        <_item>Prefijo del país</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -429,10 +444,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:RoomAddressable:roomNumber" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cuarto numero</_item>
+                        <_item>Cuarto número</_item>
                       </label>
                       <toolTip>
-                        <_item>Cuarto numero</_item>
+                        <_item>Cuarto número</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -484,10 +499,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddressable:postalCountry" _operation="create">
                     <_object>
                       <label>
-                        <_item>Pais/Region</_item>
+                        <_item>País/Región</_item>
                       </label>
                       <toolTip>
-                        <_item>Pais/Region</_item>
+                        <_item>País/Región</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -591,10 +606,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:PostalAddress:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -632,10 +647,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:depot1:PostalAddress:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -673,10 +688,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:PostalAddress:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -714,10 +729,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:product1:PostalAddress:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Title / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -755,10 +770,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:address1:PostalAddress:picture" _operation="create">
                     <_object>
                       <label>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </label>
                       <toolTip>
-                        <_item>Titulo / Origen</_item>
+                        <_item>Título / Origen</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -802,7 +817,7 @@
                         <_item>Dirección principal</_item>
                       </label>
                       <toolTip>
-                        <_item>verifica que esta sea la dirección principal de este tipo de dirección</_item>
+                        <_item>Verifica que esta sea la dirección principal de este tipo de dirección</_item>
                       </toolTip>
                     </_object>
                     <_content/>

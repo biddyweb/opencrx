@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -127,8 +127,7 @@ import org.w3c.spi2.Structures;
  *   <li>It monitors timers and executes the assigned workflows.
  * </ul>
  */  
-public class SubscriptionHandlerServlet 
-    extends HttpServlet {
+public class SubscriptionHandlerServlet extends HttpServlet {
 
     /* (non-Javadoc)
      * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
@@ -136,13 +135,10 @@ public class SubscriptionHandlerServlet
     public void init(
         ServletConfig config
     ) throws ServletException {
-
         super.init(config);
-        // data connection
         try {
             this.pmf = Utils.getPersistenceManagerFactory();
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             throw new ServletException("can not get connection to data provider", e);
         }
     }
@@ -164,6 +160,8 @@ public class SubscriptionHandlerServlet
     }
 
     /**
+     * Test whether subscription accepts given event type.
+     * 
      * @param subscription
      * @param eventType
      * @return
@@ -191,6 +189,8 @@ public class SubscriptionHandlerServlet
     }
     
     /**
+     * Test if message matches the given filter.
+     * 
      * @param filterName
      * @param filterValue
      * @param message
@@ -208,12 +208,10 @@ public class SubscriptionHandlerServlet
             if(message instanceof RefObject) {
                 try {
                     messageValue = ((RefObject)message).refGetValue(filterName);
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                 	SysLog.warning("Can not get filter value", e.getMessage());
                 }
-            }
-            else {
+            } else {
                 String messageAsString = message.toString();
                 String indexedFilterName = filterName + ":\n0: ";
                 int pos = -1;
@@ -231,8 +229,7 @@ public class SubscriptionHandlerServlet
             Collection<Object> messageValues = Collections.emptyList();
             if(messageValue instanceof Collection) {
                 messageValues = (Collection<Object>)messageValue;
-            }
-            else if(messageValue != null) {
+            } else if(messageValue != null) {
             	messageValues = Arrays.asList(messageValue);
             }
             boolean matches = false;
@@ -250,8 +247,7 @@ public class SubscriptionHandlerServlet
 	            			v.toString().equals(filterValue);		            			
 	            	matches |= negate ? !isEqual : isEqual;
 	            }
-            } 
-            catch(Exception e) {
+            } catch(Exception e) {
             	SysLog.detail(e.getMessage(), e.getCause());
             	SysLog.warning("Can not get filter value", Arrays.asList(filterName, e.getMessage()));            	
             }
@@ -261,6 +257,8 @@ public class SubscriptionHandlerServlet
     }
     
     /**
+     * Test if subscription accepts given message.
+     * 
      * @param subscription
      * @param auditEntry
      * @return
@@ -307,21 +305,17 @@ public class SubscriptionHandlerServlet
                     auditee = pm.getObjectById(
                         new Path(auditEntry.getAuditee())
                     );
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                 	SysLog.detail(e.getMessage(), e.getCause());
                 }
-            }
-            else if(auditEntry instanceof ObjectRemovalAuditEntry) {
+            } else if(auditEntry instanceof ObjectRemovalAuditEntry) {
                 auditee = ((ObjectRemovalAuditEntry)auditEntry).getBeforeImage();
-            }
-            else if(auditEntry instanceof ObjectCreationAuditEntry) {
+            } else if(auditEntry instanceof ObjectCreationAuditEntry) {
                 try {
                     auditee = pm.getObjectById(
                         new Path(auditEntry.getAuditee())
                     );
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                 	SysLog.detail(e.getMessage(), e.getCause());
                 }
             }   
@@ -389,19 +383,17 @@ public class SubscriptionHandlerServlet
             Path objectPath = new Path(objectXri);
             if(topicPattern.size() < 7) {
                 return false;
-            }
-            else {
+            } else {
                 return 
                     objectPath.isLike(topicPattern) &&
                     objectPath.get(2).equals(providerName) &&
                     objectPath.get(4).equals(segmentName);
             }
-        }
-        else {
+        } else {
             return false;
         }
-    }        
-    
+    }   
+
     /**
      * Find subscriptions for the audit entry's XRI.
      * 
@@ -544,6 +536,8 @@ public class SubscriptionHandlerServlet
     }
 
     /**
+     * Handle subscriptions.
+     * 
      * @param providerName
      * @param segmentName
      * @param pm
@@ -626,6 +620,8 @@ public class SubscriptionHandlerServlet
     }
 
     /**
+     * Handle subscriptions.
+     * 
      * @param id
      * @param providerName
      * @param segmentName
@@ -640,7 +636,7 @@ public class SubscriptionHandlerServlet
         HttpServletRequest req, 
         HttpServletResponse res        
     ) throws IOException {
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Subscriptions] " + providerName + "/" + segmentName);
+        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + "[Subscriptions] " + providerName + "/" + segmentName);
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
                 SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
@@ -663,7 +659,6 @@ public class SubscriptionHandlerServlet
             auditSegments.add(Models.getInstance().getModelSegment(pm, providerName, segmentName));
             auditSegments.add(Products.getInstance().getProductSegment(pm, providerName, segmentName));
             auditSegments.add(UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName));
-                                
             // Workflow segment
             org.opencrx.kernel.workflow1.jmi1.Segment workflowSegment = Workflows.getInstance().getWorkflowSegment(pm, providerName, segmentName);
             // User home segment
@@ -689,7 +684,7 @@ public class SubscriptionHandlerServlet
                     );
                 } catch(Exception e) {
                     new ServiceException(e).log();                    
-                    System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");                    
+                    System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");                    
                 }
             }
             try {
@@ -697,11 +692,13 @@ public class SubscriptionHandlerServlet
             } catch(Exception ignore) {}
         } catch(Exception e) {
             new ServiceException(e).log();
-            System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+            System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
         }        
     }
 
     /**
+     * Handle timers.
+     * 
      * @param id
      * @param providerName
      * @param segmentName
@@ -716,9 +713,7 @@ public class SubscriptionHandlerServlet
         HttpServletRequest req, 
         HttpServletResponse res        
     ) throws IOException {
-        
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + "[Timers] " + providerName + "/" + segmentName);
-
+        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + "[Timers] " + providerName + "/" + segmentName);
         PersistenceManager pmAdmin = null;
         try {
             pmAdmin = this.pmf.getPersistenceManager(
@@ -821,7 +816,7 @@ public class SubscriptionHandlerServlet
             }
         } catch(Exception e) {
             new ServiceException(e).log();
-            System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+            System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
             try {
             	pmAdmin.currentTransaction().rollback();
             } catch(Exception e0) {}
@@ -833,6 +828,8 @@ public class SubscriptionHandlerServlet
     }
 
     /**
+     * Handle ping request.
+     * 
      * @param req
      * @param res
      * @throws ServletException
@@ -868,20 +865,18 @@ public class SubscriptionHandlerServlet
 	                        req,
 	                        res
 	                    );
-	                }
-	                catch(Exception e) {
+	                } catch(Exception e) {
 	                    new ServiceException(e).log();
 	                }
 	                finally {
 	                    runningSegments.remove(id);
 	                }
-            	}
-            	else if(
+            	} else if(
             		!runningSegments.get(id).isAlive() || 
             		runningSegments.get(id).isInterrupted()
             	) {
 	            	Thread t = runningSegments.get(id);
-            		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+            		System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
             	}            	
             }
         }

@@ -286,9 +286,9 @@
                       <label>
                         <_item>ステータス</_item>
                       </label>
-                      <shortLabel>
-                        <_item>ステータス</_item>
-                      </shortLabel>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                       <toolTip>
                         <_item>ステータス</_item>
                       </toolTip>

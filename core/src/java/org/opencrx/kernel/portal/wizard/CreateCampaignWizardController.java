@@ -55,8 +55,10 @@ package org.opencrx.kernel.portal.wizard;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -81,7 +83,7 @@ import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.ViewPortFactory;
-import org.openmdx.portal.servlet.view.TransientObjectView;
+import org.openmdx.portal.servlet.component.TransientObjectView;
 
 /**
  * CreateCampaignWizardController
@@ -177,7 +179,17 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 	 */
 	public Map<Short,String> getLocaleCodes(
 	) throws ServiceException {
-		return this.getCodes().getLongTextByCode("locale", (short)0, true);
+		final Map<Short,String> locales = this.getCodes().getLongTextByCode("locale", (short)0, true);
+		Map<Short,String> sortedLocales = new TreeMap<Short,String>(
+			new Comparator<Short>(){
+				@Override
+				public int compare(Short o1, Short o2) {
+					return locales.get(o1).trim().compareTo(locales.get(o2).trim());
+				}			
+			}
+		);
+		sortedLocales.putAll(locales);
+		return sortedLocales;
 	}
 
 	/**
@@ -282,11 +294,13 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 	    			restrictAccountsToLocaleFilterProperty.setName("Restrict to locale " + localeShortTexts.get(locale));
 	    			restrictAccountsToLocaleFilterProperty.setActive(true);
 	    			restrictAccountsToLocaleFilterProperty.setClause(
+	    				"/* <pre> */ \n" +
 	    				restrictAccountsToLocalePredicate.toSql(
 	    					"", 
 	    					accountSegment.refGetPath().getDescendant("account"), 
 	    					"v"
-	    				)
+	    				) +
+	    				"/* </pre> */ \n"	    				
 	    			);
 	    			targetGroupAccountsSelectorByLocale.addAccountFilterProperty(
 	    				Utils.getUidAsString(),

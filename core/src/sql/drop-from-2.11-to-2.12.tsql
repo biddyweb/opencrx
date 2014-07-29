@@ -1,4 +1,0 @@
-#include "sql-definitions.tsql"
-
-ALTER TABLE OOCKE1_DOCUMENT DROP_COLUMN_BEGIN content_language DROP_COLUMN_END COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"

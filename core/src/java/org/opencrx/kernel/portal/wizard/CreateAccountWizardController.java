@@ -56,7 +56,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +71,7 @@ import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.portal.EmailAddressDataBinding;
 import org.opencrx.kernel.portal.PhoneNumberDataBinding;
 import org.opencrx.kernel.portal.PostalAddressDataBinding;
+import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
@@ -81,7 +81,7 @@ import org.openmdx.portal.servlet.DataBinding;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.ViewPortFactory;
-import org.openmdx.portal.servlet.view.TransientObjectView;
+import org.openmdx.portal.servlet.component.TransientObjectView;
 
 /**
  * CreateAccountWizardController
@@ -498,6 +498,14 @@ public abstract class CreateAccountWizardController extends AbstractWizardContro
 				new ServiceException(e).log();
 			}
 	    }
+	    // Touch account - this updates all derived information
+		try {
+			pm.currentTransaction().begin();
+			Utils.touchObject(account);
+			pm.currentTransaction().commit();
+		} catch (Exception e) {
+			new ServiceException(e).log();
+		}
 	}
 
 	abstract protected Account newAccountInstance(
@@ -562,7 +570,6 @@ public abstract class CreateAccountWizardController extends AbstractWizardContro
 		if(!app.getErrorMessages().isEmpty()) {
 			this.errorMsg = "";
 			int i = 0;
-			@SuppressWarnings("unchecked")
             Set<String> errorMessages = new HashSet<String>(app.getErrorMessages());
 			for(Object message: errorMessages) {
 				if(i > 0) {

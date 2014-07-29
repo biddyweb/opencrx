@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.openmdx.org/
@@ -9,7 +9,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2012, CRIXP AG, Switzerland
+ * Copyright (c) 2004-2014, CRIXP AG, Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -61,7 +61,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -77,27 +77,28 @@ org.openmdx.kernel.id.*
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
-  <title>openCRX - Upload Media</title>
-  <meta name="UNUSEDlabel" content="Upload Media">
-  <meta name="UNUSEDtoolTip" content="Upload Media">
-  <meta name="targetType" content="_self">
-  <meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
-  <meta name="forClass" content="org:opencrx:kernel:document1:Document">
-  <meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
-  <meta name="order" content="org:opencrx:kernel:generic:CrxObject:uploadMedia">
-  <meta name="order" content="org:opencrx:kernel:document1:Document:uploadMedia">
-  <meta name="order" content="org:opencrx:kernel:home1:UserHome:uploadMedia">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
+	<title>openCRX - Upload Media</title>
+	<meta name="UNUSEDlabel" content="Upload Media">
+	<meta name="UNUSEDtoolTip" content="Upload Media">
+	<meta name="targetType" content="_self">
+	<meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
+	<meta name="forClass" content="org:opencrx:kernel:document1:Document">
+	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
+	<meta name="order" content="org:opencrx:kernel:generic:CrxObject:uploadMedia">
+	<meta name="order" content="org:opencrx:kernel:document1:Document:uploadMedia">
+	<meta name="order" content="org:opencrx:kernel:home1:UserHome:uploadMedia">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
+	<link rel='shortcut icon' href='../../images/favicon.ico' />
  	<style type="text/css" media="all">
     /* Add/Edit page specific settings */
     .col1 {float: left; width: 99%;}
   </style>
 </head>
-
 <body>
 <div id="container">
 	<div id="wrap">
@@ -128,6 +129,8 @@ org.openmdx.kernel.id.*
 		final String MEDIACONTENT_CLASS = "org:opencrx:kernel:document1:MediaContent";
 		final String UPLOAD_FILE_FIELD_NAME = "uploadFile";
 		List filecb = new ArrayList();
+		String errorMsg = "";
+		String errorTitle = "";
 		try {
 
 			Map parameterMap = request.getParameterMap();
@@ -223,6 +226,12 @@ org.openmdx.kernel.id.*
 				);
 				return;
 			}
+			UserDefinedView userView = new UserDefinedView(
+					pm.getObjectById(new Path(objectXri)),
+					app,
+					viewsCache.getView(requestId)
+				);
+
 			if(actionCancel) {
 				Action nextAction = new ObjectReference(
 					(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
@@ -300,6 +309,10 @@ org.openmdx.kernel.id.*
 										media
 									);
 								}
+								if (obj instanceof org.opencrx.kernel.activity1.jmi1.Activity) {
+									// touch Activity to trigger change in modifiedAt
+									org.opencrx.kernel.utils.Utils.touchObject(obj);
+								}
 							}
 							// UserHome
 							else if (isChecked && obj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
@@ -375,10 +388,16 @@ org.openmdx.kernel.id.*
 
 							pm.currentTransaction().commit();
 							new File(location).delete();
-
 						}
 						catch(Exception e) {
 							try {
+								errorMsg = "ERROR - cannot upload " + app.getLabel(MEDIACONTENT_CLASS);
+								Throwable err = e;
+								while (err.getCause() != null) {
+									err = err.getCause();
+								}
+								errorTitle += "<pre>" + err.toString() + "</pre>";
+								errorMsg += "<br>" + errorTitle;
 								pm.currentTransaction().rollback();
 							} catch(Exception e0) {}
 						}
@@ -386,29 +405,35 @@ org.openmdx.kernel.id.*
 					fileCounter++;
 					location = app.getTempFileName(fileCounter + "." + UPLOAD_FILE_FIELD_NAME, "");
 				}
-				// return to calling object
-				Action nextAction = new ObjectReference(
-					(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
-					app
-				).getSelectObjectAction();
-				response.sendRedirect(
-					request.getContextPath() + "/" + nextAction.getEncodedHRef()
-				);
+				if (errorMsg.length() == 0) {
+					// return to calling object
+					Action nextAction = new ObjectReference(
+						(RefObject_1_0)pm.getObjectById(new Path(objectXri)),
+						app
+					).getSelectObjectAction();
+					response.sendRedirect(
+						request.getContextPath() + "/" + nextAction.getEncodedHRef()
+					);
+				}
 			}
 			else {
 				File uploadFile = new File(location);
 				System.out.println("UploadMedia: file " + location + " either does not exist or has size 0: exists=" + uploadFile.exists() + "; length=" + uploadFile.length());
 			}
-			UserDefinedView userView = new UserDefinedView(
-				pm.getObjectById(new Path(objectXri)),
-				app,
-				viewsCache.getView(requestId)
-			);
 			pm.close();
 %>
 <form name="UploadMedia" enctype="multipart/form-data" accept-charset="UTF-8" method="POST" action="UploadMedia.jsp">
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= objectXri %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= requestId %>" />
+<%
+				if (errorMsg.length() > 0) {
+%>
+					<div title="<%= errorTitle.replace("\"", "'") %>"  style="background-color:red;color:white;border:1px solid black;padding:10px;font-weight:bold;margin-top:10px;">
+						<%= errorMsg %>
+					</div>
+<%
+				}
+%>
 <table cellspacing="8" class="tableLayout">
   <tr>
     <td class="cellObject">
@@ -424,14 +449,14 @@ org.openmdx.kernel.id.*
       <div class="col1"><fieldset>
 	      <table class="fieldGroup">
 	        <tr>
-	          <td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
+	          <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
 	          <td>
 	            <input type="text" class="valueL" name="description" maxlength="50" tabindex="100" value="<%= description %>" />
 	          </td>
 	          <td class="addon"></td>
 	        </tr>
      			<tr>
-     				<td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
+     				<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
      				<td >
      					<input name="<%= UPLOAD_FILE_FIELD_NAME %>" id="<%= UPLOAD_FILE_FIELD_NAME %>" style="border:1px solid #ddd;" title="drop files here" type="file" multiple="multiple" tabindex="200" onChange="javascript:makeFileList();" />
      					&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ReplaceExisting.CheckBox" value="false" tabindex="300" />
@@ -479,8 +504,8 @@ org.openmdx.kernel.id.*
      			<tr>
 	          <td colspan="3">
 	          	<br>
-	          	<INPUT type="Submit" name="OK.Button" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
-      			  <INPUT type="Submit" name="Cancel.Button" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
+	          		<input type="Submit" name="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="<%= app.getTexts().getSaveTitle() %>" />
+      			  	<input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" />
 	          </td>
 	        </tr>
 	      </table>

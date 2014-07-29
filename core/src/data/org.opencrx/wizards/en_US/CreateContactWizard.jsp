@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -67,8 +67,7 @@ org.openmdx.kernel.id.*,
 org.openmdx.base.text.conversion.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
-org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.attribute.*,org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.databinding.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -103,7 +102,6 @@ org.openmdx.base.naming.*
 	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, wc.getProviderName(), wc.getSegmentName());
 	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm,  wc.getProviderName(), wc.getSegmentName());
 %>
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" action="<%= wc.getServletPath() %>" style="padding-top:8px;">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -117,7 +115,7 @@ org.openmdx.base.naming.*
 	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%= FORM_NAME %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME %>" style="display:block;overflow:visible;">
 <%
 					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
 					viewPort.flush();
@@ -129,8 +127,8 @@ org.openmdx.base.naming.*
 						<div class="fieldGroupName"><%= app.getLabel("org:opencrx:kernel:account1:AccountMembership") %></div>
 						<table class="fieldGroup">
 							<tr>
-								<td class="label">
-									<input type="submit" name="AddMembership" id="AddMembership.Button" tabindex="<%= tabIndex++ %>" title="<%= app.getTexts().getNewText() + " " + app.getLabel("org:opencrx:kernel:account1:AccountMembership") %>" value="+" onclick="javascript:$('Command').value=this.name;$('isAddMembershipMode').checked=true;" />
+								<td class="<%= CssClass.fieldLabel %>">
+									<input type="submit" name="AddMembership" id="AddMembership.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" title="<%= app.getTexts().getNewText() + " " + app.getLabel("org:opencrx:kernel:account1:AccountMembership") %>" value="+" onclick="javascript:$('Command').value=this.name;$('isAddMembershipMode').checked=true;" />
 								</td>
 								<td>
 									<table class="gridTableFull">
@@ -165,12 +163,12 @@ org.openmdx.base.naming.*
 %>
 													<tr class="gridTableRow" <%= wc.getMembershipXri() != null && wc.getMembershipXri().equals(membership.refGetPath().toXRI()) ? "style='background-color:#E4FF79;'" : "" %> >
 														<td class="addon">
-															<button type="submit" name="EditMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getEditTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('membershipXri').value='<%= membership.refGetPath().toXRI() %>';" ><img src="images/edit.gif" /></button>
+															<button type="submit" name="EditMembership" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getEditTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('membershipXri').value='<%= membership.refGetPath().toXRI() %>';" ><img src="images/edit.gif" /></button>
 														</td>
 														<td><a href="<%= action.getEncodedHRef() %>" target="_blank"><%= app.getHtmlEncoder().encode(action.getTitle(), false) %></a></td>
 														<td style="overflow:hidden;text-overflow:ellipsis;"><%= rolesText %></td>
 														<td class="addon">
-															<button type="submit" name="DisableMembership" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('membershipXri').value='';$('Command').value=this.name;$('Para0').value='<%= membership.refGetPath().toXRI() %>';" ><img src="images/deletesmall.gif" /></button>
+															<button type="submit" name="DisableMembership" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="&mdash;" title="<%= app.getTexts().getDeleteTitle() %>" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('membershipXri').value='';$('Command').value=this.name;$('Para0').value='<%= membership.refGetPath().toXRI() %>';" ><img src="images/deletesmall.gif" /></button>
 														</td>
 													</tr>
 <%
@@ -199,7 +197,7 @@ org.openmdx.base.naming.*
 								<div class="fieldGroupName">Copy-and-Link Addresses (<%= addressType %>)</div>
 								<table class="fieldGroup">
 									<tr>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											&nbsp;
 										</td>
 										<td>
@@ -223,7 +221,7 @@ org.openmdx.base.naming.*
 %>
 														<tr class="gridTableRow">
 															<td class="addon">
-																<button type="submit" name="CopyAndLinkAddress<%= addressType.replace("|", "") %>" tabindex="<%= tabIndex++ %>" value="&mdash;" title="Copy Address" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('copyAndLinkAddressXri').value='<%= address.refGetPath().toXRI() %>';" ><img src="images/next.gif" /></button>
+																<button type="submit" name="CopyAndLinkAddress<%= addressType.replace("|", "") %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="&mdash;" title="Copy Address" style="border:0;background:transparent;font-size:10px;font-weight:bold;cursor:pointer;" onclick="javascript:$('Command').value=this.name;$('copyAndLinkAddressXri').value='<%= address.refGetPath().toXRI() %>';" ><img src="images/next.gif" /></button>
 															</td>
 															<td><%= app.getHtmlEncoder().encode(new ObjectReference(address, app).getTitle(), false) %></td>
 															<td><%= app.getHtmlEncoder().encode(usagesText, false) %></td>
@@ -258,23 +256,23 @@ org.openmdx.base.naming.*
 				}
 %>
 				<div id="SubmitArea" style="float:left;display:none;">
-				<input type="submit" name="Refresh" id="Refresh.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
-				<input type="submit" name="Search" id="Search.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
-				<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPath() + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
+				<input type="submit" name="Refresh" id="Refresh.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+				<input type="submit" name="Search" id="Search.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSearchText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+				<input type="button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; jQuery.ajax({type: 'get', url: '<%= wc.getServletPath() + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() %>', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});" value="<%= app.getTexts().getNewText() %> <%= app.getTexts().getSearchText() %>" />
 <%
 				if(wc.getAccount() != null) {
 					if(wc.isCreateContractButtonsEnabled()) {
 %>
-						<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
-						<input type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
+						<input type="button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; jQuery.ajax({type: 'get', url: '<%= wc.getServletPathPrefix() + "CreateLeadWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:contract1:Lead") %>" />
+						<input type="button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; jQuery.ajax({type: 'get', url: '<%= wc.getServletPathPrefix() + "CreateContractWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() %>', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:contract1:ContractRole", "contract", app.getCurrentLocaleAsIndex()) %>" />
 <%
 					}
 					if(wc.isCreateActivityButtonEnabled()) {
 %>						
-						<input style='display:none;' type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; new Ajax.Updater('UserDialog', '<%= wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") %>', {evalScripts: true});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
+						<input style='display:none;' type="button" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; jQuery.ajax({type: 'get', url: '<%= wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") %>', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>" />
 <%
 						// prepare href to open new tab with activity segment and then call inline wizard to create new activity
-						String createActivityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "', {evalScripts: true});";
+						String createActivityScript = "$('UserDialogWait').className='loading udwait';jQuery.ajax({type: 'get', url: '" + wc.getServletPathPrefix() + "CreateActivityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" +  wc.getRequestId() + "&reportingAccount=" + java.net.URLEncoder.encode(wc.getAccount().refGetPath().toXRI(), "UTF-8") + "', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});";
 						QuickAccessor createActivityAccessor = new QuickAccessor(
 						    activitySegment.refGetPath(), // target
 						    "New Activity", // name
@@ -287,12 +285,12 @@ org.openmdx.base.naming.*
 						Action newActivityAction =	createActivityAccessor.getAction(accountSegment.refGetPath());
 						String newActivityHref = newActivityAction.getEncodedHRef(wc.getRequestId());
 %>
-						<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
+						<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
 <%	
 					}
 					if(wc.isCreateLegalEntityButtonEnabled()) {
 						// prepare href to open new tab with account segment and then call inline wizard to create new legal entity
-						String createLegalEntityScript = "$('UserDialogWait').className='loading udwait';new Ajax.Updater('UserDialog', '" + wc.getServletPathPrefix() + "CreateLegalEntityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() + "', {evalScripts: true});";
+						String createLegalEntityScript = "$('UserDialogWait').className='loading udwait';jQuery.ajax({type: 'get', url: '" + wc.getServletPathPrefix() + "CreateLegalEntityWizard.jsp?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(accountSegment.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() + "', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});";
 						
 						QuickAccessor createLegalEntityAccessor = new QuickAccessor(
 						    accountSegment.refGetPath(), // target
@@ -306,22 +304,22 @@ org.openmdx.base.naming.*
 						Action newLegalEntityAction =	createLegalEntityAccessor.getAction(accountSegment.refGetPath());
 						String newLegalEntityHref = newLegalEntityAction.getEncodedHRef(wc.getRequestId());
 %>
-						<a href="<%= newLegalEntityHref %>" target="_blank"><button type="button" name="newLegalEntity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %>"><%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %></button></a>
+						<a href="<%= newLegalEntityHref %>" target="_blank"><button type="button" name="newLegalEntity" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %>"><%= app.getTexts().getNewText() %> <%= app.getLabel("org:opencrx:kernel:account1:LegalEntity") %></button></a>
 <%
 					}
 %>						
-					<input type="submit" name="OK" id="OK.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
+					<input type="submit" name="OK" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getSaveTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 <%
 				}
 				else {
 				    if(wc.getMatchingAccounts() != null) {
 %>
-						<input type="submit" name="Create" id="Create.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
+						<input type="submit" name="Create" id="Create.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:Resource", "contact", app.getCurrentLocaleAsIndex()) %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 <%
 				    }
 				}
 %>
-				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
+				<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 				</div>
 <%
 				if(wc.getMatchingAccounts() != null) {
@@ -347,7 +345,7 @@ org.openmdx.base.naming.*
 						    org.opencrx.kernel.account1.jmi1.AccountAddress[] addresses = Accounts.getInstance().getMainAddresses(contact);
 %>
 							<tr class="gridTableRowFull">
-								<td><img style="cursor: pointer;" src="images/Contact.gif" onclick="javascript:new Ajax.Updater('UserDialog', '<%= wc.getServletPath() + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(contact.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() %>', {evalScripts: true});"/></td>
+								<td><img style="cursor: pointer;" src="images/Contact.gif" onclick="javascript:jQuery.ajax({type: 'get', url: '<%= wc.getServletPath() + "?" + Action.PARAMETER_OBJECTXRI + "=" + java.net.URLEncoder.encode(contact.refMofId(), "UTF-8") + "&" + Action.PARAMETER_REQUEST_ID + "=" + wc.getRequestId() %>', dataType: 'html', success: function(data){$('UserDialog').innerHTML=data;evalScripts(data);}});"/></td>
 								<td><%= contact.getFullName() == null ? "" : contact.getFullName() %></td>
 								<td><%= contact.getAliasName() == null ? "" : contact.getAliasName() %></td>
 								<td><%= new org.openmdx.portal.servlet.ObjectReference(addresses[Accounts.POSTAL_BUSINESS], app).getTitle() %></td>
@@ -369,6 +367,7 @@ org.openmdx.base.naming.*
 		</tr>
 	</table>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

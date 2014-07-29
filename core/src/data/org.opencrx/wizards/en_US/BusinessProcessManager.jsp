@@ -1,4 +1,4 @@
-﻿<%@page import="java.util.regex.Pattern"%>
+<%@page import="java.util.regex.Pattern"%>
 <%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8"%>
 <%
 /*
@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2005-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2005-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,7 +65,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -1471,26 +1471,23 @@ input.button {
 	vertical-align: top;
 	white-space: nowrap;
 }
-</style>
-<title>openCRX - Business Process Manager</title>
-<meta name="label" content="Business Process Manager">
-<meta name="toolTip" content="Business Process Manager">
-<meta name="targetType" content="_self">
-<meta name="forClass" content="org:opencrx:kernel:activity1:Activity">
-<meta name="order" content="20">
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-<link href="../../_style/calendar-small.css" rel="stylesheet"
-	type="text/css">
-<script language="javascript" type="text/javascript"
-	src="../../javascript/portal-all.js"></script>
-<!--[if lt IE 7]><script type="text/javascript" src="../../javascript/iehover-fix.js"></script><![endif]-->
-<script language="javascript" type="text/javascript"
-	src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script>
-<!-- calendar language -->
-<link rel="stylesheet" type="text/css" href="../../_style/ssf.css">
-<link rel="stylesheet" type="text/css" href="../../_style/n2default.css">
-<link rel='shortcut icon' href='../../images/favicon.ico' />
+	</style>
+	<title>openCRX - Business Process Manager</title>
+	<meta name="label" content="Business Process Manager">
+	<meta name="toolTip" content="Business Process Manager">
+	<meta name="targetType" content="_self">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:Activity">
+	<meta name="order" content="20">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
+	<link rel="stylesheet" href="../../_style/calendar-small.css">	
+	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
+	<!--[if lt IE 7]><script type="text/javascript" src="../../javascript/iehover-fix.js"></script><![endif]-->
+	<script language="javascript" type="text/javascript" src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script>
+	<link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 <body>
 <div id="container">
@@ -1548,7 +1545,7 @@ input.button {
 
 		// get additional parameters
 		boolean isFirstCall = request.getParameter("isFirstCall") == null; // used to properly initialize various options
-		doFollowUpForm.getFieldGroupControl();
+		doFollowUpForm.getChildren(UiFieldGroupControl.class);
 		if (isFirstCall) {
 			// populate form fields related to activity with activity's attribute values
 			formValues.put("org:opencrx:kernel:activity1:Activity:assignedTo", activity.getAssignedTo() == null ? null : activity.getAssignedTo().refGetPath());
@@ -1650,7 +1647,7 @@ input.button {
 		<table cellspacing="8" class="tableLayout">
 			<tr>
 				<td class="cellObject">
-				<div class="panel" id="panel<%= FORM_NAME_DOFOLLOWUP %>" style="display: block">
+				<div class="panel" id="panel<%= FORM_NAME_DOFOLLOWUP %>" style="display:block;overflow:visible;">
 <%
 					doFollowUpForm.paint(
 						p,
@@ -1662,7 +1659,7 @@ input.button {
 					<table class="fieldGroup">
 						<div class="fieldGroupName">&nbsp;</div>
 						<tr>
-							<td class="label"><span class="nw"><%= app.getLabel(RESOURCE_CLASS) %>:</span>
+							<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(RESOURCE_CLASS) %>:</span>
 							</td>
 							<td>
 								<input type="hidden" id="fetchResourceContact" name="fetchResourceContact" value="" />
@@ -1696,13 +1693,9 @@ input.button {
 							<td class="addon" />
 						</tr>
 					</table>
-	
 				</div>
-	
-				<input type="submit" name="OK.button" tabindex="<%= tabIndex++ %>"	value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:
-			      					  $('FOLLOWUPACTIVITY_XRI').value='<%= (activity == null ? "" : activity.refMofId()) %>';
-			          				$('Fcommand').value='CREATE_FOLLOWUP';this.name='--';" />
-				<input type="submit" name="Cancel.button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>"	onclick="javascript:$('Fcommand').value='CANCEL_FOLLOWUP';" />
+				<input type="submit" name="OK.button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>"	value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('FOLLOWUPACTIVITY_XRI').value='<%= (activity == null ? "" : activity.refMofId()) %>';$('Fcommand').value='CREATE_FOLLOWUP';this.name='--';" />
+				<input type="submit" name="Cancel.button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>"	onclick="javascript:$('Fcommand').value='CANCEL_FOLLOWUP';" />
 			</td>
 		</tr>
 	</table>
@@ -2007,7 +2000,7 @@ input.button {
 		<a href='<%= activityHref %>' target='_blank'><%= processNode.nodeActivity != null ? "#" + app.getHtmlEncoder().encode(new ObjectReference(processNode.nodeActivity, app).getTitle(), false) : "--" %></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<div onclick="javascript:$('command').value='LIST_ALL_DOCS';<%= CLICK_RELOAD %>"><img	src='../../images/Media.gif' /> <%= app.getLabel("org:opencrx:kernel:generic:DocumentAttachment") %> </div>&nbsp;
 		<div onclick="javascript:$('command').value='LIST_ALL_EMAILS';<%= CLICK_RELOAD %>"><img src='../../images/EMail.gif' /> <%= app.getLabel("org:opencrx:kernel:activity1:EMail") %>s </div>
-		<input type="button" value="<%= app.getTexts().getCloseText() %>"	tabindex="<%= tabIndex++ %>" style="float:right;" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=CANCEL" %>';" />
+		<input type="button" value="<%= app.getTexts().getCloseText() %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" style="float:right;" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=CANCEL" %>';" />
 	</div>
 <%
 	// render overview
@@ -2471,8 +2464,8 @@ if(command == Command.LIST_ALL_DOCS) {
 	<input type="hidden" name="TEXT" id="TEXT" value="" /> 
 	<input type="checkbox" style="display: none;" id="isFirstCallMain" name="isFirstCallMain" checked="true" />
 	<input type="Checkbox" name="showCompleteProcess" id="showCompleteProcess" <%= showCompleteProcess ? "checked" : "" %>	tabindex="<%= tabIndex++ %>" value="showCompleteProcess" /> <%= app.getTexts().getShowDetailsTitle() %>&nbsp;&nbsp;
-	<input type="submit" name="Reload" id="Reload" value="<%= app.getTexts().getReloadText() %>" tabindex="<%= tabIndex++ %>" />
-	<input type="button" value="<%= app.getTexts().getCloseText() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=CANCEL" %>';" />
+	<input type="submit" name="Reload" id="Reload" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= app.getTexts().getReloadText() %>" tabindex="<%= tabIndex++ %>" />
+	<input type="button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= app.getTexts().getCloseText() %>"	tabindex="<%= tabIndex++ %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=CANCEL" %>';" />
 	<div style="clear: both; height: 6px;"></div>
 	<div class="col1DISABLED">
 		<fieldset>
@@ -2491,15 +2484,6 @@ if(command == Command.LIST_ALL_DOCS) {
 		<div>&nbsp;</div>
 	</div>
 	<br />
-<!-- 
-		<div class="buttons">
-			<input type="submit" name="Setup" value="Setup" class="button" tabindex="<%= tabIndex++ %>"/>
-			<input type="submit" name="Reset" value="Reset" class="button" onclick="javascript:getElementById('command').value=this.name;" />
-			<input type="button" value="<%= app.getTexts().getCancelTitle() %>" tabindex="<%= tabIndex++ %>" onclick="javascript:location.href='<%= WIZARD_NAME + "?" + requestIdParam + "&" + xriParam + "&command=CANCEL" %>';" class="button" />
-			<br>
-			<br>
-		</div>
--->
 </form>
 </div>
 <!-- content --></div>

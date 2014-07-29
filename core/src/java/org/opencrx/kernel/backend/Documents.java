@@ -59,16 +59,20 @@ import java.util.List;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 
+import org.opencrx.kernel.document1.cci2.DocumentFolderShareQuery;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.jmi1.AbstractFilterDocument;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
+import org.opencrx.kernel.document1.jmi1.DocumentFolderShare;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
+import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.w3c.cci2.BinaryLargeObject;
 
 /**
  * Default documents backend class.
@@ -293,7 +297,108 @@ public class Documents extends AbstractImpl {
         return documents.size();
     }
 
-	//-------------------------------------------------------------------------
+    /**
+     * Add revision to document.
+     * 
+     * @param document
+     * @param contentName
+     * @param contentMimeType
+     * @param author
+     * @param content
+     */
+    public org.opencrx.kernel.document1.jmi1.MediaContent addRevision(
+    	Document document,
+    	String contentName,
+    	String contentMimeType,
+    	String author,
+    	BinaryLargeObject content    	
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(document);
+		// Add revision
+		Integer version = null;
+		if(document.getHeadRevision() == null) {
+			version = 0;
+		}
+		try {
+			version = Integer.valueOf(document.getHeadRevision().getVersion());
+		} catch(Exception ignore) {}
+		org.opencrx.kernel.document1.jmi1.MediaContent revision = pm.newInstance(org.opencrx.kernel.document1.jmi1.MediaContent.class);
+		revision.setName(contentName);
+		revision.setContentName(contentName);
+		revision.setContentMimeType(contentMimeType);
+		revision.setContent(content);
+		revision.setAuthor(author);
+		revision.setVersion(version == null ? null : Integer.toString(version + 1));
+		document.addRevision(
+			org.opencrx.kernel.utils.Utils.getUidAsString(),
+			revision
+		);
+		if(document.getContentType() == null) {
+			document.setContentType(contentMimeType);
+		}
+		if(document.getName() == null || document.getName().isEmpty()) {
+			document.setName(contentName);
+		}
+		// Set head revision
+		document.setHeadRevision(revision);
+		return revision;
+    }
+
+    /**
+     * Create default document folder share for current user and folder.
+     * 
+     * @param documentFolder
+     * @throws ServiceException
+     */
+    public DocumentFolderShare createDefaultShare(
+    	DocumentFolder documentFolder
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(documentFolder);
+    	UserHome userHome = UserHomes.getInstance().getUserHome(documentFolder.refGetPath(), pm);
+    	DocumentFolderShare defaultShare = null;
+    	if(userHome != null) {
+    		DocumentFolderShareQuery folderShareQuery = (DocumentFolderShareQuery)pm.newQuery(DocumentFolderShare.class);
+    		folderShareQuery.thereExistsShareForUser().equalTo(userHome);
+    		folderShareQuery.name().equalTo(documentFolder.getName());
+    		List<DocumentFolderShare> folderShares = documentFolder.getFolderShare(folderShareQuery);
+    		if(folderShares.isEmpty()) {
+    			defaultShare = pm.newInstance(DocumentFolderShare.class);
+    			defaultShare.setName(documentFolder.getName());
+    			defaultShare.setShareForUser(userHome);
+    			documentFolder.addFolderShare(
+    				this.getUidAsString(),
+    				defaultShare
+    			);
+    		} else {
+    			defaultShare = folderShares.iterator().next();
+    		}
+    		defaultShare.setActive(true);
+    	}
+    	return defaultShare;
+    }
+
+    /**
+     * Remove / Deactivate default document folder share.
+     * 
+     * @param documentFolder
+     * @throws ServiceException
+     */
+    public void removeDefaultShare(
+    	DocumentFolder documentFolder
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(documentFolder);
+    	UserHome userHome = UserHomes.getInstance().getUserHome(documentFolder.refGetPath(), pm);
+    	if(userHome != null) {
+    		DocumentFolderShareQuery folderShareQuery = (DocumentFolderShareQuery)pm.newQuery(DocumentFolderShare.class);
+    		folderShareQuery.thereExistsShareForUser().equalTo(userHome);
+    		folderShareQuery.name().equalTo(documentFolder.getName());
+    		for(DocumentFolderShare folderShare: documentFolder.getFolderShare(folderShareQuery)) {
+    			folderShare.setActive(false);
+    		}
+    	}
+    }
+
+    //-------------------------------------------------------------------------
 	// Members
 	//-------------------------------------------------------------------------
 	public static final String PRIVATE_DOCUMENTS_FOLDER_SUFFIX = "~Private";

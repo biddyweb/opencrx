@@ -1406,10 +1406,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:base:BasicObject:Pane:Op:Tab:navigateToParent" _operation="create">
                     <_object>
                       <label>
-                        <_item>Navegar hacia el padre</_item>
+                        <_item>Ir a un nivel superior</_item>
                       </label>
                       <toolTip>
-                        <_item>Navegar hacia el padre</_item>
+                        <_item>Ir a un nivel superior</_item>
                       </toolTip>
                     </_object>
                     <_content/>

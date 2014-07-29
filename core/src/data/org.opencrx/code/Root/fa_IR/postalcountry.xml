@@ -811,6 +811,14 @@
                        </org.opencrx.kernel.code1.CodeValueEntry>
                        <org.opencrx.kernel.code1.CodeValueEntry code="249" _operation="set">
                          <_object>
+                           <longText>
+                             <_item>فرانسه</_item>
+                           </longText>
+                         </_object>
+                         <_content/>
+                       </org.opencrx.kernel.code1.CodeValueEntry>
+                       <org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
+                         <_object>
                            <shortText>
                              <_item>فرانسه</_item>
                            </shortText>
@@ -2063,7 +2071,7 @@
                              <_item>SA</_item>
                            </shortText>
                            <longText>
-                             <_item>Saudia Arabia</_item>
+                             <_item>Saudi Arabia</_item>
                            </longText>
                          </_object>
                          <_content/>
@@ -2508,7 +2516,7 @@
                              <_item>VU</_item>
                            </shortText>
                            <longText>
-                             <_item>Vanatu</_item>
+                             <_item>Vanuatu</_item>
                            </longText>
                          </_object>
                          <_content/>

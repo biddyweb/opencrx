@@ -54,6 +54,7 @@ package org.opencrx.application.carddav;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -92,6 +93,8 @@ class UserHomeResource extends CardDavResource {
 	
 	@Override
 	public Collection<Resource> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		UserHome userHome = this.getObject();
 		PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);

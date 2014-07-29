@@ -286,9 +286,9 @@
                       <label>
                         <_item>Состояние</_item>
                       </label>
-                      <shortLabel>
-                        <_item>Состояние</_item>
-                      </shortLabel>
+ 											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                       <toolTip>
                         <_item>Состояние</_item>
                       </toolTip>

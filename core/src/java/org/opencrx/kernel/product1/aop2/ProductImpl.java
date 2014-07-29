@@ -114,12 +114,11 @@ public class ProductImpl
     public void jdoPreStore(
     ) {
     	try {
-    		Products.getInstance().updateProduct(
+    		Products.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
@@ -135,13 +134,12 @@ public class ProductImpl
     public void jdoPreDelete(
     ) {
     	try {
-    		Products.getInstance().removeProduct(
+    		Products.getInstance().preDelete(
     			this.sameObject(),
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,

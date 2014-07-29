@@ -68,7 +68,8 @@ class QueryBasedActivityCollectionResource extends ActivityCollectionResource {
         	queryHelper.getSource(), 
         	queryHelper, 
         	type,
-        	true, // allow updates for query based collections
+        	true, // allow updates for query-based collections
+        	true, // allow add/delete for query-based collections
         	null, // no color
         	runAs
         );

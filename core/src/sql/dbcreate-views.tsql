@@ -40,11 +40,15 @@ DROP VIEW OOCKE1_JOIN_NSCONTAINSELT COMMAND_TERMINATOR
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_OBJHASASSTIMER COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
-DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM COMMAND_TERMINATOR 
-#include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_SEGCONTAINSFAC COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP_ COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_CONTRACTROLE COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -85,6 +89,8 @@ DROP VIEW OOCKE1_TOBJ_PROPERTYSETENTRY_ COMMAND_TERMINATOR
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_TOBJ_SEARCHINDEXENTRY_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+DROP VIEW OOCKE1_TOBJ_WORKRECORD COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 DROP VIEW OOCKE1_JOIN_HOMEHASASSCONTR COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
@@ -836,6 +842,72 @@ WHERE
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOCKE1_TOBJ_ACTIVITYLINKFROM_ AS
+SELECT 
+    object_id,
+    idx,
+    created_by,
+    modified_by,
+    owner,
+    dtype
+FROM
+    OOCKE1_ACTIVITYLINK_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP AS
+SELECT
+    STRCAT_PREFIX REPLACE(a.object_id, 'activity/', 'activityRelationship/') STRCAT_INFIX '/' STRCAT_INFIX REPLACE(l.object_id, '/', ':') STRCAT_SUFFIX AS object_id,
+    a.object_id AS P_PARENT,
+    'org:opencrx:kernel:activity1:ActivityRelationship' AS dtype,
+    l.modified_at, 
+    l.created_at,
+    l.created_by_,
+    l.modified_by_,
+    l.access_level_browse, 
+    l.access_level_update, 
+    l.access_level_delete,
+    l.owner_,
+    100-l.activity_link_type AS activity_link_type, 
+    l.name, 
+    l.description,
+    l.object_id AS based_on,
+    l.P_PARENT AS activity_from,
+    l.link_to AS activity_to,
+    -1 AS distance
+FROM
+    OOCKE1_ACTIVITY a, 
+    OOCKE1_ACTIVITYLINK l
+WHERE
+    l.link_to = a.object_id 
+    
+UNION ALL
+
+SELECT
+    REPLACE(l.object_id, 'activityLinkTo/', 'activityRelationship/') AS object_id,
+    a.object_id AS P_PARENT,
+    'org:opencrx:kernel:activity1:ActivityRelationship' AS dtype,
+    l.modified_at, 
+    l.created_at,
+    l.created_by_,
+    l.modified_by_,
+    l.access_level_browse, 
+    l.access_level_update, 
+    l.access_level_delete,
+    l.owner_,
+    l.activity_link_type AS activity_link_type, 
+    l.name, 
+    l.description,
+    l.object_id AS based_on,
+    a.object_id AS activity_from,
+    l.link_to AS activity_to,
+    1 AS distance
+FROM
+    OOCKE1_ACTIVITY a, 
+    OOCKE1_ACTIVITYLINK l
+WHERE
+    l.P_PARENT = a.object_id COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_ACTIVITYRELSHIP_ AS
 SELECT 
     object_id,
     idx,
@@ -2422,6 +2494,15 @@ SELECT
     dtype
 FROM
     OOCKE1_ACCOUNT_ COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+CREATE VIEW OOCKE1_TOBJ_WORKRECORD AS
+SELECT
+  w.*,
+  (SELECT P_PARENT FROM OOCKE1_RESOURCEASSIGNMENT ra WHERE w.P_PARENT = ra.object_id) AS activity,
+  (SELECT resrc FROM OOCKE1_RESOURCEASSIGNMENT ra WHERE w.P_PARENT = ra.object_id) AS resrc
+FROM
+  OOCKE1_WORKRECORD w COMMAND_TERMINATOR 
 #include "sql-command-separator.tsql"
 
 CREATE VIEW OOMSE2_TOBJ_USERS AS

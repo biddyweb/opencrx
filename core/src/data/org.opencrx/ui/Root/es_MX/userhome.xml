@@ -14,10 +14,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment" _operation="create">
                     <_object>
                       <label>
-                        <_item>Páginas de inicio de Usuario</_item>
+                        <_item>Páginas de inicio de usuario</_item>
                       </label>
                       <toolTip>
-                        <_item>todos las páginas de inicio del usuario</_item>
+                        <_item>Todas las páginas de inicio de usuarios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -25,10 +25,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:userHome" _operation="create">
                     <_object>
                       <label>
-                        <_item>Inicios de Usuario</_item>
+                        <_item>Inicios de usuario</_item>
                       </label>
                       <toolTip>
-                        <_item>Inicios de Usuario</_item>
+                        <_item>Inicios de usuario</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -43,14 +43,25 @@
                       </toolTip>
                     </_object>
                     <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
+                  </org.openmdx.ui1.ElementDefinition>				  
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:timer" _operation="create">
+					<_object>						
+					  <toolTip>
+						<_item>Temporizadores</_item>
+					  </toolTip>
+					  <label>
+						<_item>Temporizadores</_item>
+					  </label>						
+					</_object>
+					<_content/>
+				  </org.openmdx.ui1.ElementDefinition>			 
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ultimo Acceso</_item>
+                        <_item>Ultimo acceso</_item>
                       </label>
                       <toolTip>
-                        <_item>Ultimo Acceso</_item>
+                        <_item>Ultimo acceso</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -76,14 +87,47 @@
                       </toolTip>
                     </_object>
                     <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
+                  </org.openmdx.ui1.ElementDefinition>				  
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder" _operation="create">
+					<_object>						
+					  <toolTip>
+						<_item>Buscadores de objetos</_item>
+					  </toolTip>
+					  <label>
+						<_item>»Buscadores de objetos</_item>
+					  </label>						
+					</_object>
+					<_content/>
+				  </org.openmdx.ui1.ElementDefinition>	
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile" _operation="create">
+					<_object>
+					  <toolTip>
+						<_item>Exportar Perfiles</_item>
+					  </toolTip>
+					  <label>
+						<_item>»Exportar Perfiles</_item>
+					  </label>						
+					</_object>
+					<_content/>
+				  </org.openmdx.ui1.ElementDefinition>
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile" _operation="create">
+					<_object>						
+					  <toolTip>
+						<_item>Exportar Perfile</_item>
+					  </toolTip>
+					  <label>
+						<_item>Exportar Perfile</_item>
+					  </label>						
+					</_object>
+					<_content/>
+				  </org.openmdx.ui1.ElementDefinition>				  
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome" _operation="create">
                     <_object>
                       <label>
-                        <_item>Mi Página de inicio</_item>
+                        <_item>Mi página de inicio</_item>
                       </label>
                       <toolTip>
-                        <_item>Mi Página de inicio</_item>
+                        <_item>Mi página de inicio</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -124,10 +168,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:10" _operation="create">
                     <_object>
                       <label>
-                        <_item>Configuración del Usuario</_item>
+                        <_item>Configuración de usuario</_item>
                       </label>
                       <toolTip>
-                        <_item>Configuración del Usuario</_item>
+                        <_item>Configuración de usuario</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -190,10 +234,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:primaryGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grupo Primario de Usuarios</_item>
+                        <_item>Grupo primario de usuarios</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupo Primario de Usuarios</_item>
+                        <_item>Grupo primario de usuarios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -201,10 +245,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:storeSettingsOnLogoff" _operation="create">
                     <_object>
                       <label>
-                        <_item>Guarda configuración al salir</_item>
+                        <_item>Guardar configuración al salir</_item>
                       </label>
                       <toolTip>
-                        <_item>Guarda configuración al salir</_item>
+                        <_item>Guardar configuración al salir</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -399,10 +443,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory" _operation="create">
                     <_object>
                       <label>
-                        <_item>Ultimo Acceso</_item>
+                        <_item>Ultimo acceso</_item>
                       </label>
                       <toolTip>
-                        <_item>Ultimo Acceso</_item>
+                        <_item>Ultimo acceso</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -531,10 +575,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nombre del Artículo</_item>
+                        <_item>Nombre del artículo</_item>
                       </label>
                       <toolTip>
-                        <_item>Nombre del Artículo</_item>
+                        <_item>Nombre del artículo</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -564,10 +608,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Mensaje de Estatus</_item>
+                        <_item>Mensaje de estatus</_item>
                       </label>
                       <toolTip>
-                        <_item>Mensaje de Estatus</_item>
+                        <_item>Mensaje de estatus</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -575,10 +619,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:importedObject" _operation="create">
                     <_object>
                       <label>
-                        <_item>Objeto Importado</_item>
+                        <_item>Objeto importado</_item>
                       </label>
                       <toolTip>
-                        <_item>Objeto Importado</_item>
+                        <_item>Objeto importado</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -586,10 +630,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser" _operation="create">
                     <_object>
                       <label>
-                        <_item>Crear Usuario</_item>
+                        <_item>Crear usuario</_item>
                       </label>
                       <toolTip>
-                        <_item>Crear Usuario</_item>
+                        <_item>Crear usuario</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -619,10 +663,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:principalName" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nombre Principal</_item>
+                        <_item>Nombre principal</_item>
                       </label>
                       <toolTip>
-                        <_item>Nombre Principal</_item>
+                        <_item>Nombre principal</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -641,10 +685,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:primaryUserGroup" _operation="create">
                     <_object>
                       <label>
-                        <_item>Grupo Primario de Usuarios</_item>
+                        <_item>Grupo primario de usuarios</_item>
                       </label>
                       <toolTip>
-                        <_item>Grupo Primario de Usuarios</_item>
+                        <_item>Grupo primario de usuarios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -652,10 +696,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Password Inicial</_item>
+                        <_item>Contraseña inicial</_item>
                       </label>
                       <toolTip>
-                        <_item>Password Inicial</_item>
+                        <_item>Contraseña inicial</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -663,10 +707,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPasswordVerification" _operation="create">
                     <_object>
                       <label>
-                        <_item>Repetir Password</_item>
+                        <_item>Repetir contraseña</_item>
                       </label>
                       <toolTip>
-                        <_item>Repetir Password</_item>
+                        <_item>Repetir contraseña</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -685,10 +729,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Mensaje de Estatus</_item>
+                        <_item>Mensaje de estatus</_item>
                       </label>
                       <toolTip>
-                        <_item>Mensaje de Estatus</_item>
+                        <_item>Mensaje de estatus</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -696,10 +740,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:createdUserHome" _operation="create">
                     <_object>
                       <label>
-                        <_item>Página de Inicio Creada</_item>
+                        <_item>Página de inicio creada</_item>
                       </label>
                       <toolTip>
-                        <_item>Página de Inicio Creada</_item>
+                        <_item>Página de inicio creada</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -707,10 +751,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers" _operation="create">
                     <_object>
                       <label>
-                        <_item>Importar Usuarios</_item>
+                        <_item>Importar usuarios</_item>
                       </label>
                       <toolTip>
-                        <_item>Importar Usuarios</_item>
+                        <_item>Importar usuarios</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -773,10 +817,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersResult:statusMessage" _operation="create">
                     <_object>
                       <label>
-                        <_item>Mensaje de Estatus</_item>
+                        <_item>Mensaje de estatus</_item>
                       </label>
                       <toolTip>
-                        <_item>Mensaje de Estatus</_item>
+                        <_item>Mensaje de estatus</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -784,10 +828,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems" _operation="create">
                     <_object>
                       <label>
-                        <_item>Refrescar</_item>
+                        <_item>Recalcular y actualizar pantalla</_item>
                       </label>
                       <toolTip>
-                        <_item>Refrescar</_item>
+                        <_item>Recalcular y actualizar pantalla</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -817,10 +861,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Cambiar Password</_item>
+                        <_item>Cambiar contraseña</_item>
                       </label>
                       <toolTip>
-                        <_item>Cambiar Password</_item>
+                        <_item>Cambiar contraseña</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -850,10 +894,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:oldPassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Viejo password</_item>
+                        <_item>Vieja contraseña</_item>
                       </label>
                       <toolTip>
-                        <_item>Viejo password</_item>
+                        <_item>Vieja contraseña</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -861,10 +905,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Nuevo password</_item>
+                        <_item>Nueva contraseña</_item>
                       </label>
                       <toolTip>
-                        <_item>Nuevo password</_item>
+                        <_item>Nueva contraseña</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -872,10 +916,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPasswordVerification" _operation="create">
                     <_object>
                       <label>
-                        <_item>Repetir Password</_item>
+                        <_item>Repetir contraseña</_item>
                       </label>
                       <toolTip>
-                        <_item>Repetir Password</_item>
+                        <_item>Repetir contraseña</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -890,7 +934,29 @@
                       </toolTip>
                     </_object>
                     <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
+				  </org.openmdx.ui1.ElementDefinition>
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:210">
+					<_object>
+						<toolTip>
+							<_item>Buscar</_item>
+						</toolTip>
+						<label>
+							<_item>Buscar</_item>
+						</label>
+					</_object>
+					<_content/>
+				  </org.openmdx.ui1.ElementDefinition>
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic">
+						<_object>
+							<toolTip>
+								<_item>Buscar</_item>
+							</toolTip>
+							<label>
+								<_item>Buscar</_item>
+							</label>											
+						</_object>
+						<_content/>
+				  </org.openmdx.ui1.ElementDefinition>							
                 </elementDefinition>
               </_content>
             </org.openmdx.ui1.Segment>

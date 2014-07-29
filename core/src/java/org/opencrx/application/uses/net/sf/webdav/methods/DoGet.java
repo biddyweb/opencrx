@@ -76,7 +76,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpServletRequest;
@@ -85,13 +84,23 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
+import org.opencrx.application.uses.net.sf.webdav.fromcatalina.HTMLWriter;
+import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
-
+/**
+ * DoGet
+ *
+ */
 public class DoGet extends DoHead {
 
     private static Logger LOG = Logger.getLogger(DoGet.class.getPackage().getName());
 
+    /**
+     * Constructor.
+     * 
+     * @param store
+     */
     public DoGet(
     	WebDavStore store 
     ) {
@@ -100,6 +109,9 @@ public class DoGet extends DoHead {
         );
     }
 
+    /* (non-Javadoc)
+     * @see org.opencrx.application.uses.net.sf.webdav.methods.DoHead#doBody(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+     */
     @Override
     protected void doBody(
     	RequestContext requestContext, 
@@ -107,9 +119,9 @@ public class DoGet extends DoHead {
     ) {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
         try {
-            resp.setStatus(HttpServletResponse.SC_OK);
             OutputStream out = resp.getOutputStream();
-            InputStream in = _store.getResourceContent(requestContext, res).getContent();
+            BinaryLargeObject resourceContent = _store.getResourceContent(requestContext, res);
+            InputStream in = resourceContent.getContent();
             String mimeType = _store.getMimeType(res);
             if(mimeType != null) {
 	            resp.setContentType(mimeType);
@@ -117,18 +129,67 @@ public class DoGet extends DoHead {
 	                resp.setCharacterEncoding("UTF-8");            	
 	            }
             }
-            long length = BinaryLargeObjects.streamCopy(
-            	in, 
-            	0L, 
-            	out
-            );
-            out.flush();   
-            resp.setContentLength((int)length);
+            String range = requestContext.getHttpServletRequest().getHeader("Range");
+            // No Range: option
+            if(range == null) {
+                resp.setStatus(HttpServletResponse.SC_OK);
+	            long contentLength = BinaryLargeObjects.streamCopy(in, 0L, out);
+	            resp.setContentLength((int)contentLength);
+            } else {
+            	// Range:
+            	if(range.startsWith("bytes=")) {
+            		range = range.substring(6);
+                	Long rangeFrom = null;
+                	Long rangeTo = null;
+            		String[] rangeParts = range.split("-");
+            		if(rangeParts.length > 0) {
+            			try {
+            				rangeFrom = Long.valueOf(rangeParts[0]);
+            			} catch(Exception ignore) {}
+            		}
+            		if(rangeParts.length > 1) {
+            			try {
+            				rangeTo = Long.valueOf(rangeParts[1]);
+            			} catch(Exception ignore) {}
+            		}
+            		if(rangeFrom != null) {
+            			// Prevent chunking!
+                        resp.setBufferSize((int)(resourceContent.getLength() - rangeFrom));
+            			long skipped = in.skip(rangeFrom);
+            			if(skipped == rangeFrom) {
+	            			long pos = rangeFrom;
+	            			long contentLength = 0;
+	            			int b;
+	            			while((b = in.read()) != -1) {
+            					out.write(b);
+	            				pos++;
+	            				contentLength++;
+	            				if(rangeTo != null && pos > rangeTo) {
+	            					break;
+	            				}
+	            			}
+	                        resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+	                        resp.setHeader("Content-Range", "bytes " + rangeFrom + "-" + (pos - 1) + "/" + resourceContent.getLength());
+	                        resp.setContentLength((int)contentLength);
+            			} else {
+                            resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);            			            				
+            			}
+            		} else {
+                        resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);            			
+            		}
+            	} else {
+                    resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);            		
+            	}
+            }
+            out.flush();
         } catch (Exception e) {
             LOG.finest(e.toString());
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.opencrx.application.uses.net.sf.webdav.methods.DoHead#folderBody(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
+     */
     @Override
     protected void folderBody(
     	RequestContext requestContext, 
@@ -141,145 +202,117 @@ public class DoGet extends DoHead {
         } else {
             resp.setStatus(HttpServletResponse.SC_OK);
             if (so.isCollection()) {
-                // TODO some folder response (for browsers, DAV tools
-                // use propfind) in html?
                 DateFormat shortDF = getDateTimeFormat(req.getLocale());
                 resp.setContentType("text/html");
                 resp.setCharacterEncoding("UTF-8");
-                OutputStream out = resp.getOutputStream();
-                Collection<Resource> children = _store.getChildren(requestContext, so);
-                StringBuilder childrenTemp = new StringBuilder();
-                childrenTemp.append("<html><head><title>Content of folder");
-                childrenTemp.append(so.getName());
-                childrenTemp.append("</title><style type=\"text/css\">");
-                childrenTemp.append(getCSS());
-                childrenTemp.append("</style></head>");
-                childrenTemp.append("<body>");
-                childrenTemp.append(getHeader(requestContext, so.getName()));
-                childrenTemp.append("<table>");
-                childrenTemp.append("<tr><th>Name</th><th>Size</th><th>Created</th><th>Modified</th></tr>");
-                childrenTemp.append("<tr>");
-                childrenTemp.append("<td colspan=\"4\"><a href=\"../\">Parent</a></td></tr>");
+                Collection<Resource> children = _store.getChildren(requestContext, so, null, null);
+                HTMLWriter writer = new HTMLWriter(resp.getWriter());
+                writer.writeText("<html><head><title>Content of folder");
+                writer.writeText(so.getName());
+                writer.writeText("</title><style type=\"text/css\">");
+                this.writeCSS(writer);                
+                writer.writeText("</style></head>");
+                writer.writeText("<body>");
+                this.writeHeader(writer, requestContext, so.getName());
+                writer.writeText("<table>");
+                writer.writeText("<tr><th>Name</th><th>Size</th><th>Created</th><th>Modified</th></tr>");
+                writer.writeText("<tr>");
+                writer.writeText("<td colspan=\"4\"><a href=\"../\">Parent</a></td></tr>");
                 boolean isEven= false;
                 for (Resource child: children) {
                     isEven= !isEven;
-                    childrenTemp.append("<tr class=\"");
-                    childrenTemp.append(isEven ? "even" : "odd");
-                    childrenTemp.append("\">");
-                    childrenTemp.append("<td>");
-                    childrenTemp.append("<a href=\"");
-                    childrenTemp.append(child.getName());
+                    writer.writeText("<tr class=\"");
+                    writer.writeText(isEven ? "even" : "odd");
+                    writer.writeText("\">");
+                    writer.writeText("<td>");
+                    writer.writeText("<a href=\"");
+                    writer.writeText(child.getName());
                     if (child.isCollection()) {
-                        childrenTemp.append("/");
+                    	writer.writeText("/");
                     }
-                    childrenTemp.append("\">");
-                    childrenTemp.append(child.getName());
-                    childrenTemp.append("</a></td>");
+                    writer.writeText("\">");
+                    writer.writeText(child.getName());
+                    writer.writeText("</a></td>");
                     if (child.isCollection()) {
-                        childrenTemp.append("<td>Folder</td>");
-                    }
-                    else {
-                        childrenTemp.append("<td>");
-                        childrenTemp.append(_store.getResourceContent(requestContext, child).getLength());
-                        childrenTemp.append(" Bytes</td>");
+                    	writer.writeText("<td>Folder</td>");
+                    } else {
+                    	writer.writeText("<td>");
+                    	writer.writeText(Long.toString(_store.getResourceContent(requestContext, child).getLength()));
+                    	writer.writeText(" Bytes</td>");
                     }
                     if (child.getCreationDate() != null) {
-                        childrenTemp.append("<td>");
-                        childrenTemp.append(shortDF.format(child.getCreationDate()));
-                        childrenTemp.append("</td>");
-                    }
-                    else {
-                        childrenTemp.append("<td></td>");
+                    	writer.writeText("<td>");
+                    	writer.writeText(shortDF.format(child.getCreationDate()));
+                    	writer.writeText("</td>");
+                    } else {
+                    	writer.writeText("<td></td>");
                     }
                     if(child.getLastModified() != null) {
-                        childrenTemp.append("<td>");
-                        childrenTemp.append(shortDF.format(child.getLastModified()));
-                        childrenTemp.append("</td>");
+                    	writer.writeText("<td>");
+                    	writer.writeText(shortDF.format(child.getLastModified()));
+                    	writer.writeText("</td>");
+                    } else {
+                    	writer.writeText("<td></td>");
                     }
-                    else {
-                        childrenTemp.append("<td></td>");
-                    }
-                    childrenTemp.append("</tr>");
+                    writer.writeText("</tr>");
                 }
-                childrenTemp.append("</table>");
-                childrenTemp.append(getFooter(requestContext, so.getName()));
-                childrenTemp.append("</body></html>");
-                out.write(childrenTemp.toString().getBytes("UTF-8"));
+                writer.writeText("</table>");
+                this.writeFooter(writer, requestContext, so.getName());
+                writer.writeText("</body></html>");
+                writer.sendData();
             }
         }
     }
 
     /**
-     * Return the CSS styles used to display the HTML representation
-     * of the webdav content.
+     * Write CSS.
      * 
-     * @return String returning the CSS style sheet used to display result in html format
+     * @param writer
      */
-    protected String getCSS()
-    {
-        // The default styles to use
-       String retVal= "body {\n"+
-                "	font-family: 'Open Sans', 'DejaVu Sans Condensed', 'lucida sans', tahoma, verdana, arial, sans-serif;\n"+
-                "}\n"+
-                "h1 {\n"+
-                "	font-size: 1.5em;\n"+
-                "}\n"+
-                "th {\n"+
-                "	background-color: #9DACBF;\n"+
-                "}\n"+
-                "table {\n"+
-                "	border-top-style: solid;\n"+
-                "	border-right-style: solid;\n"+
-                "	border-bottom-style: solid;\n"+
-                "	border-left-style: solid;\n"+
-                "}\n"+
-                "td {\n"+
-                "	margin: 0px;\n"+
-                "	padding-top: 2px;\n"+
-                "	padding-right: 5px;\n"+
-                "	padding-bottom: 2px;\n"+
-                "	padding-left: 5px;\n"+
-                "}\n"+
-                "tr.even {\n"+
-                "	background-color: #CCCCCC;\n"+
-                "}\n"+
-                "tr.odd {\n"+
-                "	background-color: #FFFFFF;\n"+
-                "}\n"+
-                "";
-        try
-        {
-            // Try loading one via class loader and use that one instead
-            ClassLoader cl = getClass().getClassLoader();
-            InputStream iStream = cl.getResourceAsStream("webdav.css");
-            if(iStream != null)
-            {
-                // Found css via class loader, use that one
-                StringBuilder out = new StringBuilder();
-                byte[] b = new byte[4096];
-                for (int n; (n = iStream.read(b)) != -1;)
-                {
-                    out.append(new String(b, 0, n));
-                }
-                retVal= out.toString();
-            }
-        }
-        catch (Exception ex)
-        {
-            LOG.log(Level.SEVERE, "Error in reading webdav.css", ex);
-        }
-
-        return retVal;
+    protected void writeCSS(
+    	HTMLWriter writer
+	) {
+    	writer.writeText(
+			"body {\n"+
+			"	font-family: 'Open Sans', 'DejaVu Sans Condensed', 'lucida sans', tahoma, verdana, arial, sans-serif;\n"+
+			"}\n"+
+			"h1 {\n"+
+			"	font-size: 1.5em;\n"+
+			"}\n"+
+			"th {\n"+
+			"	background-color: #9DACBF;\n"+
+			"}\n"+
+			"table {\n"+
+			"	border-top-style: solid;\n"+
+			"	border-right-style: solid;\n"+
+			"	border-bottom-style: solid;\n"+
+			"	border-left-style: solid;\n"+
+			"}\n"+
+			"td {\n"+
+			"	margin: 0px;\n"+
+			"	padding-top: 2px;\n"+
+			"	padding-right: 5px;\n"+
+			"	padding-bottom: 2px;\n"+
+			"	padding-left: 5px;\n"+
+			"}\n"+
+			"tr.even {\n"+
+			"	background-color: #CCCCCC;\n"+
+			"}\n"+
+			"tr.odd {\n"+
+			"	background-color: #FFFFFF;\n"+
+			"}"
+		);
     }
-
+    
     /**
      * Return this as the Date/Time format for displaying Creation + Modification dates
      * 
      * @param browserLocale
      * @return DateFormat used to display creation and modification dates
      */
-    protected DateFormat getDateTimeFormat(Locale browserLocale)
-    {
+    protected DateFormat getDateTimeFormat(
+    	Locale browserLocale
+    ) {
         return SimpleDateFormat.getDateTimeInstance(SimpleDateFormat.SHORT, SimpleDateFormat.MEDIUM, browserLocale);
     }
 
@@ -290,11 +323,12 @@ public class DoGet extends DoHead {
      * @param path
      * @return String representing the header to be display in front of the folder content
      */
-    protected String getHeader(
+    protected void writeHeader(
+    	HTMLWriter writer,
     	RequestContext requestContext, 
     	String name
     ) {
-        return "<h1>Content of folder " + name + "</h1>";
+        writer.writeText("<h1>Content of folder " + name + "</h1>");
     }
 
     /**
@@ -304,10 +338,12 @@ public class DoGet extends DoHead {
      * @param name
      * @return String representing the footer to be displayed after the folder content
      */
-    protected String getFooter(
+    protected void writeFooter(
+    	HTMLWriter writer,
     	RequestContext requestContext, 
     	String name
     ) {
-        return "";
+        writer.writeText("");
     }
+    
 }

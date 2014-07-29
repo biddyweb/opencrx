@@ -2,21 +2,26 @@
 <java version="1.4.2_06" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="3">
-          <void index="0">
-            <string>org:opencrx:kernel:home1:AirSyncProfile:feed</string>
-          </void>
-          <void index="1">
-            <string>org:opencrx:kernel:home1:AirSyncClientProfile:feed</string>
-          </void>
-          <void index="2">
-            <string>org:opencrx:kernel:home1:CalendarProfile:feed</string>
-          </void>
+			<array class="java.lang.String" length="5">
+				<void index="0">
+					<string>org:opencrx:kernel:home1:AirSyncProfile:feed</string>
+				</void>
+				<void index="1">
+					<string>org:opencrx:kernel:home1:AirSyncClientProfile:feed</string>
+				</void>
+				<void index="2">
+					<string>org:opencrx:kernel:home1:CalendarProfile:feed</string>
+				</void>
+				<void index="3">
+					<string>org:opencrx:kernel:home1:CardProfile:feed</string>
+				</void>
+				<void index="4">
+					<string>org:opencrx:kernel:home1:DocumentProfile:feed</string>
+				</void>
 			</array>
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="1">
-
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -25,51 +30,20 @@
 						<void property="iconKey">
 							<string>default.gif</string>
 						</void>
-						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="3">
+						<void property="extension">
+							<array class="org.openmdx.base.query.Extension" length="1">
 								<void index="0">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
-										</void>
-										<void property="feature">
-											<string>context:SPfeed0:object_class</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
-												<void index="0">
-													<string>org:openmdx:compatibility:datastore1:QueryFilter</string>
-												</void>
-											</array>
+									<object class="org.openmdx.base.persistence.spi.QueryExtension">
+										<void property="clause">
+											<string>EXISTS (SELECT 0 FROM OOCKE1_CALENDARFEED WHERE object_id = v.object_id AND (not ((activity_group is null) and (activity_filter is null) and (account_group is null) and (document_folder is null))))</string>
 										</void>
 									</object>
 								</void>
-								<void index="1">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
-										</void>
-										<void property="feature">
-											<string>context:SPfeed0:clause</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
-												<void index="0">
-													<string>EXISTS (SELECT 0 FROM OOCKE1_CALENDARFEED WHERE object_id = v.object_id AND (not ((activity_group is null) and (activity_filter is null) and (account_group is null) and (document_folder is null))))</string>
-												</void>
-											</array>
-										</void>
-									</object>
-								</void>
-								<void index="2">
+							</array>
+						</void>
+						<void property="condition">
+							<array class="org.openmdx.base.query.Condition" length="1">
+								<void index="0">
 									<object class="org.openmdx.base.query.IsInCondition">
 										<void property="quantor">
 											<short>2</short> <!-- there exists -->
@@ -96,7 +70,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

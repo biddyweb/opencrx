@@ -127,6 +127,7 @@ class SyncFeedBasedActivityCollectionResource extends ActivityCollectionResource
 			getQueryHelper(syncFeed),
 			type,
 			Boolean.TRUE.equals(syncFeed.isAllowChange()),
+			Boolean.TRUE.equals(syncFeed.isAllowAddDelete()),
 			syncFeed.getBackColor(),
 			runAs
 		);

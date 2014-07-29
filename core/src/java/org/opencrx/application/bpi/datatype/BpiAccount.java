@@ -376,6 +376,34 @@ public class BpiAccount extends BpiObject {
 		this.localizedField = localizedField;
 	}	
 
+	/**
+	 * @return the webBusiness
+	 */
+	public BpiWebAddress getWebBusiness() {
+		return webBusiness;
+	}
+
+	/**
+	 * @param webBusiness the webBusiness to set
+	 */
+	public void setWebBusiness(BpiWebAddress webBusiness) {
+		this.webBusiness = webBusiness;
+	}
+
+	/**
+	 * @return the webHome
+	 */
+	public BpiWebAddress getWebHome() {
+		return webHome;
+	}
+
+	/**
+	 * @param webHome the webHome to set
+	 */
+	public void setWebHome(BpiWebAddress webHome) {
+		this.webHome = webHome;
+	}
+
 	private String extString0;
 	private String aliasName;
 	private String fullName;
@@ -395,6 +423,8 @@ public class BpiAccount extends BpiObject {
 	private BpiPostalAddress postalBusiness2;
 	private BpiPostalAddress postalHome;
 	private BpiPhoneNumber mobile;
+	private BpiWebAddress webBusiness;
+	private BpiWebAddress webHome;
 	private List<BpiLocalizedField> localizedField;
 	
 }

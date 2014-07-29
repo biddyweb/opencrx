@@ -615,7 +615,7 @@ sources: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>CD</_item>
 														</shortText>
 														<longText>
-															<_item>Congo, Democratic Replublic of</_item>
+															<_item>Congo, Democratic Republic of</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -885,6 +885,19 @@ sources: http://www.nationsonline.org/oneworld/country_code_list.htm
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 												<org.opencrx.kernel.code1.CodeValueEntry code="249" _operation="set">
+													<_object>
+														<validFrom>1990-01-01T00:00:00.000Z</validFrom>
+														<validTo>2002-11-22T00:00:00.000Z</validTo>
+														<shortText>
+															<_item>FX</_item>
+														</shortText>
+														<longText>
+															<_item>France, Metropolitan</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="250" _operation="set">
 													<_object>
 														<shortText>
 															<_item>FR</_item>
@@ -1319,7 +1332,7 @@ sources: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>KZ</_item>
 														</shortText>
 														<longText>
-															<_item>Kazakstan</_item>
+															<_item>Kazakhstan</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2210,7 +2223,7 @@ sources: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>SA</_item>
 														</shortText>
 														<longText>
-															<_item>Saudia Arabia</_item>
+															<_item>Saudi Arabia</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -2719,7 +2732,7 @@ sources: http://www.nationsonline.org/oneworld/country_code_list.htm
 															<_item>VU</_item>
 														</shortText>
 														<longText>
-															<_item>Vanatu</_item>
+															<_item>Vanuatu</_item>
 														</longText>
 													</_object>
 													<_content/>

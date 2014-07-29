@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2013
+Copyright (C) 2011-2014
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -54,7 +54,10 @@ localization['cs_CZ']=	/* Jan Mate <jan.mate@inf-it.com> */
 	errHttp501: 'neimplementováno',
 
 	loadingResources: 'Načítaní prostředků (%act% z %total%) ...',
-	updateNotification: '%name% %new_ver% dostupný (používáte %curr_ver%) - %url%'
+	updateNotification: '%name% %new_ver% dostupný (používáte %curr_ver%) - %url%',
+
+	txtCacheText: 'Na serveru byla nalezena aktualizace, prosím znovu načtěte stránku!',
+	txtCacheButton: 'Znovu načíst'
 }
 
 localization['da_DK']=	/* thanks Niels Bo Andersen and Michael Rasmussen */
@@ -89,7 +92,10 @@ localization['da_DK']=	/* thanks Niels Bo Andersen and Michael Rasmussen */
 	errHttp501: 'ikke implementeret',
 
 	loadingResources: 'Henter ressourcer (%act% af %total%) ...',
-	updateNotification: '%name% %new_ver% er frigivet (du har %curr_ver%) - %url%'
+	updateNotification: '%name% %new_ver% er frigivet (du har %curr_ver%) - %url%',
+
+	txtCacheText: 'En opdatering er klar på serveren, genindlæs derfor siden!',
+	txtCacheButton: 'Genindlæs'
 }
 
 localization['de_DE']=	/* thanks Marten Gajda and Thomas Scheel */
@@ -124,7 +130,10 @@ localization['de_DE']=	/* thanks Marten Gajda and Thomas Scheel */
 	errHttp501: 'Nicht unterstützt',
 
 	loadingResources: 'Lade Ressourcen (%act% von %total%) ...',
-	updateNotification: '%name% %new_ver% verfügbar (Sie haben %curr_ver%) - %url%'
+	updateNotification: '%name% %new_ver% verfügbar (Sie haben %curr_ver%) - %url%',
+
+	txtCacheText: 'Auf dem Server ist ein Update verfügbar. Bitte laden Sie die Seite neu!',
+	txtCacheButton: 'Seite neu laden'
 }
 
 localization['en_US']=	/* Jan Mate <jan.mate@inf-it.com> */
@@ -159,7 +168,48 @@ localization['en_US']=	/* Jan Mate <jan.mate@inf-it.com> */
 	errHttp501: 'not implemented',
 
 	loadingResources: 'Loading resources (%act% of %total%) ...',
-	updateNotification: '%name% %new_ver% available (you have %curr_ver%) - %url%'
+	updateNotification: '%name% %new_ver% available (you have %curr_ver%) - %url%',
+
+	txtCacheText: 'There is an update available on the server, please reload the page!',
+	txtCacheButton: 'Reload'
+}
+
+localization['es_ES']=	/* Damian Vila <damianvila@gmail.com> */
+{
+	_name_: 'Español',
+	_default_datepicker_format_: 'dd-mm-yy',
+	_default_AMPM_format_: false,
+
+	altLogo: 'Logo',
+	altLogout: 'Desconectar',
+	buttonLogin: 'Iniciar sesión',
+	pholderUsername: 'Usuario',
+	pholderPassword: 'Contraseña',
+	txtResources: 'Recursos',
+	txtSearch: 'Buscar',
+	txtNote: 'Nota',
+
+	buttonEdit: 'Editar',
+	buttonSave: 'Guardar',
+	buttonDelete: 'Borrar',
+
+	unsupportedBrowser: 'Nota: ¡tu navegador no está soportado!',
+
+	errUnableSync: 'Error: \'imposible sincronizar con el recurso\': inténtelo más tarde!',
+	errHttpCommon: 'código de error %%',
+	errHttp401: 'no autorizado',
+	errHttp403: 'prohibido',
+	errHttp405: 'método no permitido',
+	errHttp408: 'petición caducada',
+	errHttp412: 'alguien lo ha cambiado ya en el servidor',
+	errHttp500: 'error interno de servidor',
+	errHttp501: 'no implementado',
+
+	loadingResources: 'Cargando recursos (%act% de %total%) ...',
+	updateNotification: '%name% %new_ver% disponible (tu versión es %curr_ver%) - %url%',
+
+	txtCacheText: 'Hay una actualización disponible en el servidor, por favor, recarga la página!',
+	txtCacheButton: 'Recargar'
 }
 
 localization['fr_FR']=	/* thanks John Fischer and Jean-Christophe Bach */
@@ -183,53 +233,21 @@ localization['fr_FR']=	/* thanks John Fischer and Jean-Christophe Bach */
 
 	unsupportedBrowser: 'Note : votre navigateur n\'est pas supporté !',
 
-	errUnableSync: 'Erreur : \'impossible de synchroniser la ressource\' : essayer à nouveau plus tard !',
+	errUnableSync: 'Erreur : \'impossible de synchroniser la ressource\' : réessayez plus tard !',
 	errHttpCommon: 'code d\'erreur %%',
 	errHttp401: 'non autorisé',
 	errHttp403: 'interdit',
-	errHttp405: 'methode non autorisée',
+	errHttp405: 'méthode non autorisée',
 	errHttp408: 'expiration du délai de la requête',
 	errHttp412: 'quelqu\'un d\'autre l\'a déjà modifié sur le serveur',
 	errHttp500: 'erreur interne du serveur',
 	errHttp501: 'non implémenté',
 
 	loadingResources: 'Chargement des ressources (%act% sur %total%)...',
-	updateNotification: '%name% %new_ver% est disponible (vous êtes actuellement en version %curr_ver%) - %url%'
-}
+	updateNotification: '%name% %new_ver% est disponible (vous êtes actuellement en version %curr_ver%) - %url%',
 
-localization['hu_HU']=	/* Jan Mate <jan.mate@inf-it.com> */
-{
-	_name_: 'Magyar',
-	_default_datepicker_format_: 'yy.mm.dd',
-	_default_AMPM_format_: false,
-
-	altLogo: 'Logó',
-	altLogout: 'Kijelentkezés',
-	buttonLogin: 'Bejelentkezés',
-	pholderUsername: 'Felhasználónév',
-	pholderPassword: 'Jelszó',
-	txtResources: 'Források',
-	txtSearch: 'Keresés',
-	txtNote: 'Jegyzetek',
-
-	buttonEdit: 'Szerkesztés',
-	buttonSave: 'Mentés',
-	buttonDelete: 'Törlés',
-
-	unsupportedBrowser: 'Figyelmeztetés: A böngészője nem támogatott!',
-
-	errUnableSync: 'Hiba: \'nem sikerült a forrás szinkronizálása\': próbálkozzon később!',
-	errHttpCommon: 'hiba kód %%',
-	errHttp401: 'nincs hitelesítve',
-	errHttp403: 'tiltva',
-	errHttp405: 'nem engedélyezett módszer',
-	errHttp408: 'kérelem időtúllépése',
-	errHttp412: 'valaki más már megváltoztatta a szerveren',
-	errHttp500: 'belső szerverhiba',
-	errHttp501: 'nincs megvalósítva',
-
-	loadingResources: 'Források betöltése (%act%/%total%) ...',
-	updateNotification: '%name% %new_ver% elérhető (jelenlegi verzió: %curr_ver%) - %url%'
+	txtCacheText: 'Il y a une mise à jour disponible sur le serveur, veuillez recharger la page s\'il vous plaît !',
+	txtCacheButton: 'Recharger'
 }
 
 localization['it_IT']=	/* thanks Luca Ferrario */
@@ -264,7 +282,48 @@ localization['it_IT']=	/* thanks Luca Ferrario */
 	errHttp501: 'non implementato',
 
 	loadingResources: 'Caricamento risorse (%act% di %total%) ...',
-	updateNotification: '%name% %new_ver% disponibile (versione attuale: %curr_ver%) - %url%'
+	updateNotification: '%name% %new_ver% disponibile (versione attuale: %curr_ver%) - %url%',
+
+	txtCacheText: 'La voce è stata aggiornata sul server, per favore ricarica la pagina!',
+	txtCacheButton: 'Reload'
+}
+
+localization['hu_HU']=	/* Jan Mate <jan.mate@inf-it.com> */
+{
+	_name_: 'Magyar',
+	_default_datepicker_format_: 'yy.mm.dd',
+	_default_AMPM_format_: false,
+
+	altLogo: 'Logó',
+	altLogout: 'Kijelentkezés',
+	buttonLogin: 'Bejelentkezés',
+	pholderUsername: 'Felhasználónév',
+	pholderPassword: 'Jelszó',
+	txtResources: 'Források',
+	txtSearch: 'Keresés',
+	txtNote: 'Jegyzetek',
+
+	buttonEdit: 'Szerkesztés',
+	buttonSave: 'Mentés',
+	buttonDelete: 'Törlés',
+
+	unsupportedBrowser: 'Figyelmeztetés: A böngészője nem támogatott!',
+
+	errUnableSync: 'Hiba: \'nem sikerült a forrás szinkronizálása\': próbálkozzon később!',
+	errHttpCommon: 'hiba kód %%',
+	errHttp401: 'nincs hitelesítve',
+	errHttp403: 'tiltva',
+	errHttp405: 'nem engedélyezett módszer',
+	errHttp408: 'kérelem időtúllépése',
+	errHttp412: 'valaki más már megváltoztatta a szerveren',
+	errHttp500: 'belső szerverhiba',
+	errHttp501: 'nincs megvalósítva',
+
+	loadingResources: 'Források betöltése (%act%/%total%) ...',
+	updateNotification: '%name% %new_ver% elérhető (jelenlegi verzió: %curr_ver%) - %url%',
+
+	txtCacheText: 'Frissítés elérhető a szerveren, kérjük töltse be újra az oldalt!',
+	txtCacheButton: 'Újratöltés'
 }
 
 localization['nl_NL']=	/* thanks Johan Vromans */
@@ -299,7 +358,10 @@ localization['nl_NL']=	/* thanks Johan Vromans */
 	errHttp501: 'niet geïmplementeerd',
 
 	loadingResources: 'Laden (%act% van %total%) ...',
-	updateNotification: 'Er is een nieuwe versie van %name% beschikbaar: %new_ver% (u heeft nu %curr_ver%) - %url%'
+	updateNotification: 'Er is een nieuwe versie van %name% beschikbaar: %new_ver% (u heeft nu %curr_ver%) - %url%',
+
+	txtCacheText: 'Er zijn updates beschikbaar op de server. Gelieve deze pagina te verversen.',
+	txtCacheButton: 'Verversen'
 }
 
 localization['sk_SK']=	/* Jan Mate <jan.mate@inf-it.com> */
@@ -334,7 +396,10 @@ localization['sk_SK']=	/* Jan Mate <jan.mate@inf-it.com> */
 	errHttp501: 'neimplementované',
 
 	loadingResources: 'Načítavanie prostriedkov (%act% z %total%) ...',
-	updateNotification: '%name% %new_ver% dostupný (používate %curr_ver%) - %url%'
+	updateNotification: '%name% %new_ver% dostupný (používate %curr_ver%) - %url%',
+
+	txtCacheText: 'Na servery bola nájdená aktualizácia, prosím znova načítajte stránku!',
+	txtCacheButton: 'Znovu načítať'
 }
 
 localization['tr_TR']=	/* thanks Selcuk Pultar */
@@ -369,7 +434,86 @@ localization['tr_TR']=	/* thanks Selcuk Pultar */
 	errHttp501: 'henüz uygulamaya geçirilmemiştir',
 
 	loadingResources: 'Kaynaklar yükleniyor (%total% taneden %act%) ...',
-	updateNotification: '%name% %new_ver% hazır (sizde %curr_ver% var) - %url%'
+	updateNotification: '%name% %new_ver% hazır (sizde %curr_ver% var) - %url%',
+
+	txtCacheText: 'Sunucuda bir güncelleme mevcut, lütfen sayfayı yeniden yükleyin!',
+	txtCacheButton: 'Yeniden yükle'
+}
+
+localization['ru_RU']=	/* thanks Александр Симонов */
+{
+	_name_: 'Русский',
+	_default_datepicker_format_: 'dd.mm.yy',
+	_default_AMPM_format_: false,
+
+	altLogo: 'Лого',
+	altLogout: 'Выход',
+	buttonLogin: 'Вход',
+	pholderUsername: 'Имя',
+	pholderPassword: 'Пароль',
+	txtResources: 'Ресурсы',
+	txtSearch: 'Поиск',
+	txtNote: 'Примечание',
+
+	buttonEdit: 'Изменить',
+	buttonSave: 'Сохранить',
+	buttonDelete: 'Удалить',
+
+	unsupportedBrowser: 'Ваш браузер не поддерживается!',
+
+	errUnableSync: 'Ошибка: \'невозможно синхронизировать ресурс\': попробуйте позже!',
+	errHttpCommon: 'код ошибки %%',
+	errHttp401: 'не авторизован',
+	errHttp403: 'запрещен',
+	errHttp405: 'метод не разрешен',
+	errHttp408: 'таймаут запроса',
+	errHttp412: 'кто-то другой уже произвел изменения на сервере',
+	errHttp500: 'внутренняя ошибка сервера',
+	errHttp501: 'не реализовано',
+
+	loadingResources: 'Загрузка ресурсов (%act% из %total%)...',
+	updateNotification: '%name% версии %new_ver% доступен (сейчас у вас версия %curr_ver%) - %url%',
+
+	txtCacheText: 'На сервере доступно обновление. Перезагрузите страницу!',
+	txtCacheButton: 'Перезагрузить'
+}
+
+localization['uk_UA']=	/* Serge Yakimchuck <yakim@yakim.org.ua> */
+{
+	_name_: 'Українська',
+	_default_datepicker_format_: 'dd-mm-yy',
+	_default_AMPM_format_: true,
+
+	altLogo: 'Лого',
+	altLogout: 'Вийти',
+	buttonLogin: 'Увійти',
+	pholderUsername: 'Користувач',
+	pholderPassword: 'Пароль',
+	txtResources: 'Ресурси',
+	txtSearch: 'Пошук',
+	txtNote: 'Примітки',
+
+	buttonEdit: 'Правити',
+	buttonSave: 'Зберегти',
+	buttonDelete: 'Видалити',
+
+	unsupportedBrowser: 'Увага: Ваш браузер не підтримується!',
+
+	errUnableSync: 'Помилка: \'неможливо синхронізувати ресурс\': спробуйте пізніше!',
+	errHttpCommon: 'код помилки %%',
+	errHttp401: 'не авторизовано',
+	errHttp403: 'заборонено',
+	errHttp405: 'метод не дозволений',
+	errHttp408: 'перевищено час запиту',
+	errHttp412: 'хтось ще якраз це змінює на сервері',
+	errHttp500: 'внутрішня помилка сервера',
+	errHttp501: 'не реалізовано',
+
+	loadingResources: 'завантаження ресурсів (%act% з %total%) ...',
+	updateNotification: '%name% %new_ver% доступна (у вас %curr_ver%) - %url%',
+
+	txtCacheText: 'на сервері доступне оновлення, перезавантажте, будь ласка, сторінку!',
+	txtCacheButton: 'Перезавантаження'
 }
 
 var localizationCalDAV=new Object();
@@ -377,11 +521,11 @@ var localizationCalDAV=new Object();
 localizationCalDAV['cs_CZ']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd.M.yyyy',
+	_default_time_format_list_: 'dd.MM.yyyy',
 
 	txtCalendar: 'Kalendář',
 	txtCalendars: 'Kalendáře',
@@ -409,7 +553,7 @@ localizationCalDAV['cs_CZ']=
 	customTimezone: 'Vlastní (Lokální čas)',
 	loadPrevMonth: 'Načíst předchádzející měsíc',
 	loadNextMonth: 'Načíst následující měsíc',
-	repeatBoxHead: 'Možnosti opakovací události',
+	repeatBoxButton: 'Možnosti opakování',
 	repeatBoxContent: 'je opakovací událost.',
 	repeatBoxQuestion: 'Se kterými událostmi chcete pracovat?',
 	allEvsButton: 'Všechny události',
@@ -472,6 +616,8 @@ localizationCalDAV['cs_CZ']=
 	pholderCompletedOnDate: 'Den',
 	pholderCompletedOnTime: 'Čas',
 
+	txtStatusFiltersHeaderTODO: 'Filtry',
+	txtStatusFiltersFooterTODO: '* dokončeno %date% a později',
 	txtStatusNeedsActionTODO: 'Potřebuje akci',
 	txtStatusCompletedTODO: 'Dokončena',
 	txtStatusInProcessTODO: 'Řešená',
@@ -630,11 +776,11 @@ localizationCalDAV['cs_CZ']=
 localizationCalDAV['da_DK']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd-M-yyyy',
+	_default_time_format_list_: 'dd-MM-yyyy',
 
 	txtCalendar: 'Kalender',
 	txtCalendars: 'Kalendere',
@@ -662,7 +808,7 @@ localizationCalDAV['da_DK']=
 	customTimezone: 'Brugerdefineret (Lokal tid)',
 	loadPrevMonth: 'Hent forrige måned',
 	loadNextMonth: 'Hent næste måned',
-	repeatBoxHead: 'Indstillinger for gentaget begivenhed',
+	repeatBoxButton: 'Gentagelsesindstillinger',
 	repeatBoxContent: 'er en gentaget begivenhed.',
 	repeatBoxQuestion: 'Hvilke forekomster vil du åbne?',
 	allEvsButton: 'Alle forekomster',
@@ -725,6 +871,8 @@ localizationCalDAV['da_DK']=
 	pholderCompletedOnDate: 'Dato',
 	pholderCompletedOnTime: 'Time',
 
+	txtStatusFiltersHeaderTODO: 'Filtre',
+	txtStatusFiltersFooterTODO: '* afsluttet %date% eller senere',
 	txtStatusNeedsActionTODO: 'Kræver opfølgning',
 	txtStatusCompletedTODO: 'Fuldført',
 	txtStatusInProcessTODO: 'Under udførelse',
@@ -883,11 +1031,11 @@ localizationCalDAV['da_DK']=
 localizationCalDAV['de_DE']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd.M.yyyy',
+	_default_time_format_list_: 'dd.MM.yyyy',
 
 	txtCalendar: 'Kalender',
 	txtCalendars: 'Kalender',
@@ -915,7 +1063,7 @@ localizationCalDAV['de_DE']=
 	customTimezone: 'Unbekannt (lokale Zeit)',
 	loadPrevMonth: 'Zeige vorherigen Monat',
 	loadNextMonth: 'Zeige nächsten Monat',
-	repeatBoxHead: 'Serienterminoptionen',
+	repeatBoxButton: 'Wiederholen',
 	repeatBoxContent: 'ist ein Serientermin.',
 	repeatBoxQuestion: 'Welche Termine sollen bearbeitet werden?',
 	allEvsButton: 'Alle Termine',
@@ -978,6 +1126,8 @@ localizationCalDAV['de_DE']=
 	pholderCompletedOnDate: 'Datum',
 	pholderCompletedOnTime: 'Zeit',
 
+	txtStatusFiltersHeaderTODO: 'Filter',
+	txtStatusFiltersFooterTODO: '* am oder nach dem %date% fertiggestellt.',
 	txtStatusNeedsActionTODO: 'offen', /* Lightning translates it to 'Benötigt Eingriff' */
 	txtStatusCompletedTODO: 'erledigt',
 	txtStatusInProcessTODO: 'in Bearbeitung',
@@ -1136,11 +1286,11 @@ localizationCalDAV['de_DE']=
 localizationCalDAV['en_US']=
 {
 	_default_title_format_month_: 'yyyy MMM',
-	_default_title_format_week_: 'yyyy MMM d{ \'&#8212;\'[ yyyy][ MMM] d}',
+	_default_title_format_week_: 'yyyy MMM d{ \'–\'[ yyyy][ MMM] d}',
 	_default_title_format_day_: 'yyyy MMM d, ddd',
 	_default_title_format_table_: 'yyyy MMM, ddd',
 	_default_column_format_agenda_: 'ddd, MMM d',
-	_default_time_format_list_: 'yyyy-M-d',
+	_default_time_format_list_: 'yyyy-MM-dd',
 
 	txtCalendar: 'Calendar',
 	txtCalendars: 'Calendars',
@@ -1168,7 +1318,7 @@ localizationCalDAV['en_US']=
 	customTimezone: 'Custom (Local Time)',
 	loadPrevMonth: 'Load previous month',
 	loadNextMonth: 'Load next month',
-	repeatBoxHead: 'Repeating event options',
+	repeatBoxButton: 'Recurrence options',
 	repeatBoxContent: 'is a repeating event.',
 	repeatBoxQuestion: 'Which events would you like to work with?',
 	allEvsButton: 'All events',
@@ -1231,6 +1381,8 @@ localizationCalDAV['en_US']=
 	pholderCompletedOnDate: 'Date',
 	pholderCompletedOnTime: 'Time',
 
+	txtStatusFiltersHeaderTODO: 'Filters',
+	txtStatusFiltersFooterTODO: '* completed at or after %date%',
 	txtStatusNeedsActionTODO: 'Needs action',
 	txtStatusCompletedTODO: 'Completed',
 	txtStatusInProcessTODO: 'In progress',
@@ -1386,14 +1538,269 @@ localizationCalDAV['en_US']=
 	CalDAVerrTodoHttp410: 'Todo is no longer available at the server'
 }
 
+localizationCalDAV['es_ES']=
+{
+	_default_title_format_month_: 'MMM yyyy',
+	_default_title_format_week_: 'd MMM yyyy{ \'&#8212;\'d [ MMM] [ yyyy]}',
+	_default_title_format_day_: 'ddd, d \'de\' MMM \'de\' yyyy',
+	_default_title_format_table_: 'ddd, MMM \'de\' yyyy',
+	_default_column_format_agenda_: 'ddd, d \'de\' MMM',
+	_default_time_format_list_: 'dd-MM-yyyy',
+
+	txtCalendar: 'Calendario',
+	txtCalendars: 'Calendarios',
+	txtTodo: 'Tarea',
+	txtTodoLists: 'Lista de tareas',
+	txtSubscribed: 'Suscripciones',
+	fullCalendarMonth: 'mes',
+	fullCalendarMultiWeek: 'msemana',
+	fullCalendarAgendaWeek: 'semana',
+	fullCalendarAgendaDay: 'día',
+	fullCalendarTable: 'tabla',
+	fullCalendarTodayButton: 'hoy',
+	fullCalendarAllDay: 'todo el día',
+	CalDAVsearch: 'Buscar',
+	resourceEnable: 'Habilitar todos los calendarios para este recurso',
+	resourceDisable: 'Deshabilitar todos los calendarios para este recurso',
+	allEnable: 'Habilitar todos los calendarios',
+	allDisable: 'Deshabilitar todos los calendarios',
+	timezone: 'Zona horaria',
+	txtTimezonePicker: 'Z. horaria:',
+	loadingRList: 'Cargando lista de recursos ...',
+	renderingE: 'Generando calendarios ...',
+	timezoneChange: 'Aplicando cambios de zona horaria ...',
+	localTime: 'Tiempo local',
+	customTimezone: 'Personalizado (Tiempo local)',
+	loadPrevMonth: 'Cargar mes anterior',
+	loadNextMonth: 'Cargar mes siguiente',
+	repeatBoxHead: 'Opciones de evento repetitivo',
+	repeatBoxContent: 'es un evento repetitivo.',
+	repeatBoxQuestion: '¿Con cuáles eventos quieres trabajar?',
+	allEvsButton: 'Todos los eventos',
+	allFutureButton: 'Este y los eventos siguientes',
+	eventOnlyButton: 'Solo este evento',
+	repeatBoxContentTODO: 'es una tarea repetitiva.',
+	repeatBoxQuestionTODO: '¿Con qué tareas quieres trabajar?',
+	allEvsButtonTODO: 'Todas las tareas',
+	allFutureButtonTODO: 'Esta y las futuras tareas',
+	eventOnlyButtonTODO: 'Solo esta tarea',
+	txtStatus: 'Estado',
+	eventAvailability : 'Disponible',
+	eventAvailabilityBusy : 'Ocupado',
+	eventAvailabilityFree : 'Libre',
+	eventType: 'Privacidad',
+	eventTypePublic: 'Público',
+	eventTypePrivate: 'Privado',
+	eventTypeConfidential: 'Confidencial',
+	txtPriority: 'Prioridad',
+	txtPriorityNone: 'Ninguna',
+	txtPriorityLow: 'Baja',
+	txtPriorityMedium: 'Media',
+	txtPriorityHigh: 'Alta',
+	eventURL : 'URL',
+	repeatInterval: 'cada',
+	repeatDays: 'días',
+	repeatWeeks: 'semanas',
+	repeatMonths: 'meses',
+	repeatYears: 'años',
+	repeatChangeTxt: 'ha sido cambiado en el servidor!',
+	repeatChangeTxtClose: 'Cierra el formulario y vuelve a abrir el evento',
+	repeatTodoChangeTxtClose: 'Cierra el formulario y vuelve a abrir la tarea',
+	calendarLoader: 'Recargando ...',
+	resizeLoader: 'Redimensionando ...',
+
+	monthNames: ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+	'Julio','Agosto','Septiembre','Octubre','Noviembre','Deciembre'],
+	monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun',
+	'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+	dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+	dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sáb'],
+	dayNamesMin: ['D','L','M','X','J','V','S'],
+
+	// TODOS
+	pholderNameTODO: 'Nombre',
+	pholderNewTODO: 'Nueva tarea',
+	txtTypeTODO: 'Tipo',
+	txtTypeTODONone: 'Simple',
+	txtTypeTODOStart: 'Con hora de inicio',
+	txtTypeTODODue: 'Con hora de fin',
+	txtTypeTODOBoth: 'Con hora de inicio y fin',
+	txtDateFromTODO: 'Desde',
+	txtDateToTODO: 'Hasta',
+	txtCompletedOn: 'Completado en',
+
+	pholderDateFromTODO: 'Fecha desde',
+	pholderTimeFromTODO: 'Hora desde',
+	pholderDateToTODO: 'Fecha hasta',
+	pholderTimeToTODO: 'Hora hasta',
+	pholderCompletedOnDate: 'Fecha',
+	pholderCompletedOnTime: 'Hora',
+
+	txtStatusFiltersHeaderTODO: 'Filtros',
+	txtStatusFiltersFooterTODO: '* completado en o después de %date%',
+	txtStatusNeedsActionTODO: 'Necesita atención',
+	txtStatusCompletedTODO: 'Completado',
+	txtStatusInProcessTODO: 'En progreso',
+	txtStatusCancelledTODO: 'Cancelado',
+	txtPercentCompletedTODO: 'Completado',
+
+	txtCalendarTODO: 'Calendario',
+	txtSelectCalendarTODO: 'Selecciona un calendario',
+	txtAlertTODO: 'Alerta',
+	txtAlertNoneTODO: 'Ninguno',
+	txtAlertMessageTODO: 'Mensaje',
+	txtAlertOnDateTODO: 'En la fecha',
+	txtAlertWeeksBeforeTODO: 'Semanas antes',
+	txtAlertDaysBeforeTODO: 'Días antes',
+	txtAlertHoursBeforeTODO: 'Horas antes',
+	txtAlertMinutesBeforeTODO: 'Minutos antes',
+	txtAlertSecondsBeforeTODO: 'Segundos antes',
+	txtAlertWeeksAfterTODO: 'Semanas después',
+	txtAlertDaysAfterTODO: 'Días después',
+	txtAlertHoursAfterTODO: 'Horas después',
+	txtAlertMinutesAfterTODO: 'Minutos después',
+	txtAlertSecondsAfterTODO: 'Segundos después',
+
+	pholderAfterBeforeValTODO: 'Valor',
+	pholderAlarmDateTODO: 'Fecha de alarma',
+	pholderAlarmTimeTODO: 'Hora de alarma',
+
+	pholderNoteTODO: 'Nota',
+	txtNoteTODO: 'Nota',
+
+	todoPrevNav: 'Mostrar instancia previa',
+	todoNextNav: 'Mostrar siguiente instancia',
+	todoUncompletedPrevNav: 'Mostrar instancia previa incompleta',
+	todoUncompletedNextNav: 'Mostrar siguiente instancia incompleta',
+
+	buttonSaveTODO: 'Guardar',
+	buttonEditTODO: 'Editar',
+	buttonResetTODO: 'Revertir',
+	buttonCloseTODO: 'Cerrar',
+	buttonDeleteTODO: 'Borrar',
+
+	// EVENTS
+	pholderName: 'Nombre',
+	pholderNewEvent: 'Nuevo evento',
+	txtLocation: 'Lugar',
+	pholderLocation: 'Lugar',
+
+	txtAllDay: 'Todo el día',
+	from: 'Desde',
+	to: 'Hasta',
+
+	pholderDateFrom: 'Fecha desde',
+	pholderTimeFrom: 'Hora desde',
+	pholderDateTo: 'Fecha hasta',
+	pholderTimeTo: 'Hora hasta',
+
+	txtStatusNone: 'No especificado',
+	txtStatusTentative: 'Tentativo',
+	txtStatusConfirmed: 'Confirmado',
+	txtStatusCancelled: 'Cancelado',
+
+	txtRepeat: 'Repetir',
+	txtNoRepeat: 'No repetir',
+	txtRepeatDay: 'Diariamente',
+	txtRepeatWeek: 'Semanalmente',
+	txtRepeatWeekend: 'Cada fin de semana',
+	txtRepeatMonth: 'Mensualmente',
+	txtRepeatTwoWeek: 'Bi-semanalmente',
+	txtRepeatYear: 'Anualmente',
+	txtRepeatCustomWeek: 'Semanalmente personalizado',
+	txtRepeatCustomMonth: 'Mensualmente personalizado',
+	txtRepeatCustomYear: 'Anualmente personalizado',
+	txtRepeatWork: 'En días de semana',
+	txtRepeatOnDate: 'En la fecha',
+	txtRepeatAfter: 'Ocurrencias',
+	txtRepeatNever: 'Nunca',
+	pholderUntilDate: 'Fecha hasta',
+	pholderRepeatCount: 'Repetir la cuenta',
+	txtRepeatCustomWeekLabel: 'en',
+	txtRepeatCustomMonthLabel: 'en los días',
+	txtRepeatCustomMonthEvery: 'Cada',
+	txtRepeatCustomMonthFirst: 'Primer',
+	txtRepeatCustomMonthSecond: 'Segundo',
+	txtRepeatCustomMonthThird: 'Tercer',
+	txtRepeatCustomMonthFourth: 'Cuarto',
+	txtRepeatCustomMonthFifth: 'Quinto',
+	txtRepeatCustomMonthLast: 'Último',
+	txtRepeatCustomMonthCustom: 'Personalizado',
+	txtRepeatCustomMonthMonth: 'Día del mes',
+	txtRepeatCustomYearLabel1: 'cada',
+	txtRepeatCustomYearLabel2: 'de',
+
+	txtRepeatEnd: 'fin',
+	txtEventCalendar: 'Calendario',
+	txtSelectCalendar: 'Selecciona un calendario',
+	txtAlert: 'Alerta',
+	txtAlertNone: 'Ninguno',
+	txtAlertMessage: 'Mensaje',
+	txtAlertOnDate: 'En la fecha',
+	txtAlertWeeksBefore: 'Semanas antes',
+	txtAlertDaysBefore: 'Días antes',
+	txtAlertHoursBefore: 'Horas antes',
+	txtAlertMinutesBefore: 'Minutos antes',
+	txtAlertSecondsBefore: 'Segundos antes',
+	txtAlertWeeksAfter: 'Semanas después',
+	txtAlertDaysAfter: 'Días después',
+	txtAlertHoursAfter: 'Horas después',
+	txtAlertMinutesAfter: 'Minutos después',
+	txtAlertSecondsAfter: 'Segundos después',
+
+	pholderAfterBeforeVal: 'Valor',
+	pholderAlarmDate: 'Fecha de alarm',
+	pholderAlarmTime: 'Hora de alarma',
+
+	pholderNote: 'Nota',
+
+	eventPrevNav: 'Mostrar instancia previa',
+	eventNextNav: 'Mostrar siguiente instancia',
+
+	buttonReset: 'Revertir',
+	buttonClose: 'Cerrar',
+
+	txtAllSavedTodo: 'Éxito: Tarea guardada!',
+	txtAllSaved: 'Éxito: Evento guardado!',
+
+	txtAllDeletedTodo: 'Éxito: Tarea borrada!',
+	txtAllDeleted: 'Éxito: Evento borrado!',
+
+	txtNotChooseTodo: 'Error: Tienes que elegir un calendario!',
+	txtNotChoose: 'Error: Tienes que elegir un calendario!',
+
+	txtErrorDates: 'Error: La fecha de comienzo debe ser anterior a la de fin!',
+	txtErrorDatesTodo: 'Error: La fecha de comienzo debe ser anterior a la de fin!',
+
+	txtErorInputTodo: 'Imposible guardar: corrige los valores inválidos!',
+	txtDateTimeErrorTodo: 'Debes elegir una fecha y hora!',
+
+	txtErorInput: 'Error: \'imposible guardar\': corrige los valores marcados!',
+
+	txtAlertsH: 'Alertas',
+	buttonAlert: 'Limpiar alertas',
+
+	altAddEvent: 'Agregar evento',
+	altAddTodo: 'Agregar tarea',
+
+	loadingCalendars: 'Cargando calendarios (%act% de %total%) ...',
+
+	errUnableSaveBeginCalDAV: 'Error: \'imposible guardar el evento\': %%!',
+	errUnableDeleteBeginCalDAV: 'Error: \'imposible borrar el evento\': %%!',
+	CalDAVerrHttp410: 'El evento ya no está disponible en el servidor',
+	errUnableSaveTodoBeginCalDAV: 'Error: \'imposible guardar la tarea\': %%!',
+	errUnableDeleteTodoBeginCalDAV: 'Error: \'imposible borrar la tarea\': %%!',
+	CalDAVerrTodoHttp410: 'La tarea ya no está disponible en el servidor'
+}
+
 localizationCalDAV['fr_FR']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd-M-yyyy',
+	_default_time_format_list_: 'dd-MM-yyyy',
 
 	txtCalendar: 'Calendrier',
 	txtCalendars: 'Calendriers',
@@ -1418,10 +1825,10 @@ localizationCalDAV['fr_FR']=
 	renderingE: 'Prévisualisation des calendriers ...',
 	timezoneChange: 'Changement de fuseau horaire...',
 	localTime: 'Heure locale',
-	customTimezone: 'Custom (heure locale)',
+	customTimezone: 'Personnalisé (heure locale)',
 	loadPrevMonth: 'Charger le mois précédent',
 	loadNextMonth: 'Charger le mois suivant',
-	repeatBoxHead: 'Options d\'évènement récurrent',
+	repeatBoxButton: 'Option de récurrence',
 	repeatBoxContent: 'est un évènement récurrent.',
 	repeatBoxQuestion: 'Avec quels évènements voulez-vous travailler ?',
 	allEvsButton: 'Tous les évènements',
@@ -1484,6 +1891,8 @@ localizationCalDAV['fr_FR']=
 	pholderCompletedOnDate: 'Date',
 	pholderCompletedOnTime: 'Heure',
 
+	txtStatusFiltersHeaderTODO: 'Filtres',
+	txtStatusFiltersFooterTODO: '* Se termine à ou après le %date%',
 	txtStatusNeedsActionTODO: 'En attente d\'action',
 	txtStatusCompletedTODO: 'Terminée',
 	txtStatusInProcessTODO: 'En cours',
@@ -1618,10 +2027,10 @@ localizationCalDAV['fr_FR']=
 	txtErrorDates: 'Erreur : La date de début doit précéder la date de fin !',
 	txtErrorDatesTodo: 'Erreur : La date de début doit précéder la date de fin !',
 
-	txtErorInputTodo: 'Impossible d\'enregistrer : corriger les valeurs non valides !',
+	txtErorInputTodo: 'Impossible d\'enregistrer : corrigez les valeurs non valides !',
 	txtDateTimeErrorTodo: 'Il faut choisir une date et une heure !',
 
-	txtErorInput: 'Erreur : \'Impossible d\'enregistrer\' : corriger les valeurs surlignées !',
+	txtErorInput: 'Erreur : \'Impossible d\'enregistrer\' : corrigez les valeurs surlignées !',
 
 	txtAlertsH: 'Alertes',
 	buttonAlert: 'Vider les Alertes',
@@ -1631,275 +2040,22 @@ localizationCalDAV['fr_FR']=
 
 	loadingCalendars: 'Chargement des calendriers (%act% sur %total%) ...',
 
-	errUnableSaveBeginCalDAV: 'Erreur : \'impossible d\'enregistrer l\'évènement\' : %%!',
-	errUnableDeleteBeginCalDAV: 'Erreur : \'impossible d\'effacer l\'evènement\' : %%!',
+	errUnableSaveBeginCalDAV: 'Erreur : \'impossible d\'enregistrer l\'évènement\' : %% !',
+	errUnableDeleteBeginCalDAV: 'Erreur : \'impossible d\'effacer l\'évènement\' : %% !',
 	CalDAVerrHttp410: 'Évènement non présent sur le serveur',
-	errUnableSaveTodoBeginCalDAV: 'Erreur : \'impossible de sauvegarder la tâche\' : %%!',
-	errUnableDeleteTodoBeginCalDAV: 'Erreur : \'impossible de supprimer la tâche\' : %%!',
+	errUnableSaveTodoBeginCalDAV: 'Erreur : \'impossible de sauvegarder la tâche\' : %% !',
+	errUnableDeleteTodoBeginCalDAV: 'Erreur : \'impossible de supprimer la tâche\' : %% !',
 	CalDAVerrTodoHttp410: 'La tâche n\'est plus disponible sur le serveur'
-}
-
-localizationCalDAV['hu_HU']=
-{
-	_default_title_format_month_: 'yyyy MMM',
-	_default_title_format_week_: 'yyyy MMM d{ \'&#8212;\'[ yyyy][ MMM] d}',
-	_default_title_format_day_: 'yyyy MMM d, ddd',
-	_default_title_format_table_: 'yyyy MMM, ddd',
-	_default_column_format_agenda_: 'ddd, MMM d',
-	_default_time_format_list_: 'yyyy.M.d',
-
-	txtCalendar: 'Naptár',
-	txtCalendars: 'Naptárak',
-	txtTodo: 'Feladat',
-	txtTodoLists: 'FeladatListák',
-	txtSubscribed: 'Előfizetések',
-	fullCalendarMonth: 'hónap',
-	fullCalendarMultiWeek: 'több hét',
-	fullCalendarAgendaWeek: 'hét',
-	fullCalendarAgendaDay: 'nap',
-	fullCalendarTable: 'táblázat',
-	fullCalendarTodayButton: 'ma',
-	fullCalendarAllDay: 'eg. napi',
-	CalDAVsearch: 'Keresés',
-	resourceEnable: 'A forrás minden naptára megjelenítése',
-	resourceDisable: 'A forrás minden naptára elrejtése',
-	allEnable: 'Minden naptár megjelenítése',	
-	allDisable: 'Minden naptár elrejtése',
-	timezone: 'Időzóna',
-	txtTimezonePicker: 'Időzóna:',
-	loadingRList: 'Forrás lista betöltése ...',
-	renderingE: 'Naptárak megjelenítése ...',
-	timezoneChange: 'Időzónaváltás alkalmazása ...',
-	localTime: 'Helyi idő',
-	customTimezone: 'Egyéni (Helyi idő)',
-	loadPrevMonth: 'Előző hónap betöltése',
-	loadNextMonth: 'Következő hónap betöltése',
-	repeatBoxHead: 'Ismétlődő esemény lehetőségei',
-	repeatBoxContent: 'ismétlődő esemény.',
-	repeatBoxQuestion: 'Melyik eseménnyel szeretne dolgozni?',
-	allEvsButton: 'Minden eseménnyel',
-	allFutureButton: 'Ez és az összes jövőbeli eseménnyel',
-	eventOnlyButton: 'Csak ezzel az eseménnyel',
-	repeatBoxContentTODO: 'ismétlődő feladat.',
-	repeatBoxQuestionTODO: 'Melyik feladattal szeretne dolgozni?',
-	allEvsButtonTODO: 'Minden feladattal',
-	allFutureButtonTODO: 'Ez és az összes jövőbeli feladattal',
-	eventOnlyButtonTODO: 'Csak ezzel a feladattal',
-	txtStatus: 'Állapot',
-	eventAvailability : 'Elérhetőség',
-	eventAvailabilityBusy : 'Elfoglalt',
-	eventAvailabilityFree : 'Szabad',
-	eventType: 'Adatvédelem',
-	eventTypePublic: 'Nyilvános',
-	eventTypePrivate: 'Magán',
-	eventTypeConfidential: 'Bizalmas',
-	txtPriority: 'Prioritás',
-	txtPriorityNone: 'Semmilyen',
-	txtPriorityLow: 'Alacsony',
-	txtPriorityMedium: 'Közepes',
-	txtPriorityHigh: 'Magas',
-	eventURL : 'URL',
-	repeatInterval: 'minden',
-	repeatDays: 'nap',
-	repeatWeeks: 'hét',
-	repeatMonths: 'hónap',
-	repeatYears: 'év',
-	repeatChangeTxt: 'megváltozott a szerveren!',
-	repeatChangeTxtClose: 'Zárja be az űrlapot, és nyissa meg az eseményt újra',
-	repeatTodoChangeTxtClose: 'Zárja be az űrlapot, és nyissa meg a feladatot újra',
-	calendarLoader: 'Újratöltés ...',
-	resizeLoader: 'Átméretezés ...',
-
-	monthNames: ['Január', 'Február', 'Március', 'Április', 'Május', 'Június',
-	'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December'],
-	monthNamesShort: ['Jan', 'Feb', 'Már', 'Ápr', 'Máj', 'Jún',
-	'Júl', 'Aug', 'Szep', 'Okt', 'Nov', 'Dec'],
-	dayNames: ['Vasárnap', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat'],
-	dayNamesShort: ['Vas', 'Hét', 'Ked', 'Sze', 'Csü', 'Pén', 'Szo'],
-	dayNamesMin: ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'],
-
-	// TODOS
-	pholderNameTODO: 'Cím',
-	pholderNewTODO: 'Új feladat',
-	txtTypeTODO: 'Típus',
-	txtTypeTODONone: 'Egyszerű',
-	txtTypeTODOStart: 'Kezdet időpontal',
-	txtTypeTODODue: 'Határidő időpontal',
-	txtTypeTODOBoth: 'Kezdet és határidő időpontal',
-	txtDateFromTODO: 'Kezdet',
-	txtDateToTODO: 'Határidő',
-	txtCompletedOn: 'Befejeződött',
-
-	pholderDateFromTODO: 'Kezdet dátum',
-	pholderTimeFromTODO: 'Kezdet időpont',
-	pholderDateToTODO: 'Határidő dátum',
-	pholderTimeToTODO: 'Határidő időpont',
-	pholderCompletedOnDate: 'Dátum',
-	pholderCompletedOnTime: 'Időpont',
-
-	txtStatusNeedsActionTODO: 'Foglalkozni kell vele',
-	txtStatusCompletedTODO: 'Befejezve',
-	txtStatusInProcessTODO: 'Folyamatban',
-	txtStatusCancelledTODO: 'Megszakítva',
-	txtPercentCompletedTODO: 'Befejezve',
-
-	txtCalendarTODO: 'Naptár',
-	txtSelectCalendarTODO: 'Válassz egy naptárat',
-	txtAlertTODO: 'Emlékeztető',
-	txtAlertNoneTODO: 'Nincs',
-	txtAlertMessageTODO: 'Értesítés',
-	txtAlertOnDateTODO: 'Egyéni',
-	txtAlertWeeksBeforeTODO: 'Héttel előtte',
-	txtAlertDaysBeforeTODO: 'Nappal előtte',
-	txtAlertHoursBeforeTODO: 'Órával előtte',
-	txtAlertMinutesBeforeTODO: 'Perccel előtte',
-	txtAlertSecondsBeforeTODO: 'Másodperccel előtte',
-	txtAlertWeeksAfterTODO: 'Héttel után',
-	txtAlertDaysAfterTODO: 'Nappal után',
-	txtAlertHoursAfterTODO: 'Órával után',
-	txtAlertMinutesAfterTODO: 'Perccel után',
-	txtAlertSecondsAfterTODO: 'Másodperccel után',
-
-	pholderAfterBeforeValTODO: 'Érték',
-	pholderAlarmDateTODO: 'Emlékeztető dátum',
-	pholderAlarmTimeTODO: 'Emlékeztető időpont',
-
-	pholderNoteTODO: 'Megjegyzés',
-	txtNoteTODO: 'Megjegyzés',
-
-	todoPrevNav: 'Mutasd az előző példányt',
-	todoNextNav: 'Mutasd a következő példányt',
-	todoUncompletedPrevNav: 'Mutasd az előző befejezetlen példányt',
-	todoUncompletedNextNav: 'Mutasd a következő befejezetlen példányt',
-
-	buttonSaveTODO: 'Mentés',
-	buttonEditTODO: 'Szerkesztés',
-	buttonResetTODO: 'Visszaállítás',
-	buttonCloseTODO: 'Bezárás',
-	buttonDeleteTODO: 'Törlés',
-
-	// EVENTS
-	pholderName: 'Cím',
-	pholderNewEvent: 'Új esemény',
-	txtLocation: 'Hely',
-	pholderLocation: 'Hely',
-
-	txtAllDay: 'Egész napos',
-	from: 'Kezdet',
-	to: 'Vége',
-
-	pholderDateFrom: 'Kezdet dátum',
-	pholderTimeFrom: 'Kezdet időpont',
-	pholderDateTo: 'Határidő dátum',
-	pholderTimeTo: 'Határidő időpont',
-
-	txtStatusNone: 'Nem meghatározott',
-	txtStatusTentative: 'Feltételes',
-	txtStatusConfirmed: 'Megerősített',
-	txtStatusCancelled: 'Törölt',
-
-	txtRepeat: 'Ismétlés',
-	txtNoRepeat: 'Nem ismétlődik',
-	txtRepeatDay: 'Naponta',
-	txtRepeatWeek: 'Hetente',
-	txtRepeatWeekend: 'Minden hétköznap',
-	txtRepeatMonth: 'Havonta',
-	txtRepeatTwoWeek: 'Kéthetente',
-	txtRepeatYear: 'Évente',
-	txtRepeatCustomWeek: 'Egyéni hetente',
-	txtRepeatCustomMonth: 'Egyéni havonta',
-	txtRepeatCustomYear: 'Egyéni évente',
-	txtRepeatWork: 'Minden munkanapon',
-	txtRepeatOnDate: 'Egyéni',
-	txtRepeatAfter: 'Ismétlődés után',
-	txtRepeatNever: 'Soha',
-	pholderUntilDate: 'Dátum-ig',
-	pholderRepeatCount: 'Ismétlésszám',
-	txtRepeatCustomWeekLabel: '/',
-	txtRepeatCustomMonthLabel: '/',
-	txtRepeatCustomMonthEvery: 'Minden',
-	txtRepeatCustomMonthFirst: 'Első',
-	txtRepeatCustomMonthSecond: 'Második',
-	txtRepeatCustomMonthThird: 'Harmadik',
-	txtRepeatCustomMonthFourth: 'Negyedik',
-	txtRepeatCustomMonthFifth: 'Ötodik',
-	txtRepeatCustomMonthLast: 'Utolsó',
-	txtRepeatCustomMonthCustom: 'Egyéni',
-	txtRepeatCustomMonthMonth: 'Nap a hónapban',
-	txtRepeatCustomYearLabel1: 'minden',
-	txtRepeatCustomYearLabel2: '/',
-	txtRepeatEnd: 'vége',
-
-	txtEventCalendar: 'Naptár',
-	txtSelectCalendar: 'Válassz egy naptárat',
-	txtAlert: 'Emlékeztető',
-	txtAlertNone: 'Nincs',
-	txtAlertMessage: 'Értesítés',
-	txtAlertOnDate: 'Egyéni',
-	txtAlertWeeksBefore: 'Héttel előtte',
-	txtAlertDaysBefore: 'Nappal előtte',
-	txtAlertHoursBefore: 'Órával előtte',
-	txtAlertMinutesBefore: 'Perccel előtte',
-	txtAlertSecondsBefore: 'Másodperccel előtte',
-	txtAlertWeeksAfter: 'Héttel után',
-	txtAlertDaysAfter: 'Nappal után',
-	txtAlertHoursAfter: 'Órával után',
-	txtAlertMinutesAfter: 'Perccel után',
-	txtAlertSecondsAfter: 'Másodperccel után',
-
-	pholderAfterBeforeVal: 'Érték',
-	pholderAlarmDate: 'Emlékeztető dátum',
-	pholderAlarmTime: 'Emlékeztető időpont',
-
-	pholderNote: 'Megjegyzés',
-
-	eventPrevNav: 'Mutasd az előző példányt',
-	eventNextNav: 'Mutasd a következő befejezetlen példányt',
-
-	buttonReset: 'Visszaállítás',
-	buttonClose: 'Bezárás',
-
-	txtAllSavedTodo: 'A feladat sikeresen elmentve!',
-	txtAllSaved: 'Az esemény sikeresen elmentve!',
-
-	txtAllDeletedTodo: 'A feladat sikeresen törölve!',
-	txtAllDeleted: 'Az esemény sikeresen törölve!',
-
-	txtNotChooseTodo: 'Hiba: naptárat kell választani!',
-	txtNotChoose: 'Hiba: naptárat kell választani!',
-
-	txtErrorDates: 'Hiba: a kezdési dátumnak korábbinak kell lennie a befejezési dátumnál!',
-	txtErrorDatesTodo: 'Hiba: a kezdési dátumnak korábbinak kell lennie a befejezési dátumnál!',
-
-	txtErorInputTodo: 'Hiba: javítsa ki a kijelölt érvénytelen értékeket!',
-	txtDateTimeErrorTodo: 'Hiba: ki kell választani a dátumot és az időt!',
-
-	txtErorInput: 'Hiba: javítsa ki a kijelölt érvénytelen értékeket!',
-
-	txtAlertsH: 'Emlékeztetők',
-	buttonAlert: 'Emlékeztetők eltávolítása',
-
-	altAddEvent: 'Új esemény',
-	altAddTodo: 'Új feladat',
-
-	loadingCalendars: 'Naptárak betöltése (%act%/%total%) ...',
-
-	errUnableSaveBeginCalDAV: 'Hiba: \'nem sikerült az esemény elmentése\': %%!',
-	errUnableDeleteBeginCalDAV: 'Hiba: \'nem sikerült az esemény törlése\': %%!',
-	CalDAVerrHttp410: 'az esemény már nem elérhető a szerveren',
-	errUnableSaveTodoBeginCalDAV: 'Hiba: \'nem sikerült a feladat elmentése\': %%!',
-	errUnableDeleteTodoBeginCalDAV: 'Hiba: \'nem sikerült a feladat törlése\': %%!',
-	CalDAVerrTodoHttp410: 'a feladat már nem elérhető a szerveren'
 }
 
 localizationCalDAV['it_IT']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd/M/yyyy',
+	_default_time_format_list_: 'dd/MM/yyyy',
 
 	txtCalendar: 'Calendario',
 	txtCalendars: 'Calendari',
@@ -1927,7 +2083,7 @@ localizationCalDAV['it_IT']=
 	customTimezone: 'Personalizzato (Ora Locale)',
 	loadPrevMonth: 'Carica mese precedente',
 	loadNextMonth: 'Carica mese successivo',
-	repeatBoxHead: 'Opzioni ripetizione evento',
+	repeatBoxButton: 'Opzioni di ripetizione',
 	repeatBoxContent: 'è un evento con ripetizione.',
 	repeatBoxQuestion: 'Su quali eventi desideri lavorare?',
 	allEvsButton: 'Tutti gli eventi',
@@ -1990,6 +2146,8 @@ localizationCalDAV['it_IT']=
 	pholderCompletedOnDate: 'Data',
 	pholderCompletedOnTime: 'Ora',
 
+	txtStatusFiltersHeaderTODO: 'Filtri',
+	txtStatusFiltersFooterTODO: '* completato dal giorno %date%',
 	txtStatusNeedsActionTODO: 'Azione richiesta',
 	txtStatusCompletedTODO: 'Completato',
 	txtStatusInProcessTODO: 'In corso',
@@ -2145,14 +2303,269 @@ localizationCalDAV['it_IT']=
 	CalDAVerrTodoHttp410: 'L\'attività non risulta più disponibile sul server'
 }
 
+localizationCalDAV['hu_HU']=
+{
+	_default_title_format_month_: 'yyyy MMM',
+	_default_title_format_week_: 'yyyy MMM d{ \'–\'[ yyyy][ MMM] d}',
+	_default_title_format_day_: 'yyyy MMM d, ddd',
+	_default_title_format_table_: 'yyyy MMM, ddd',
+	_default_column_format_agenda_: 'ddd, MMM d',
+	_default_time_format_list_: 'yyyy.MM.dd',
+
+	txtCalendar: 'Naptár',
+	txtCalendars: 'Naptárak',
+	txtTodo: 'Feladat',
+	txtTodoLists: 'FeladatListák',
+	txtSubscribed: 'Előfizetések',
+	fullCalendarMonth: 'hónap',
+	fullCalendarMultiWeek: 'több hét',
+	fullCalendarAgendaWeek: 'hét',
+	fullCalendarAgendaDay: 'nap',
+	fullCalendarTable: 'táblázat',
+	fullCalendarTodayButton: 'ma',
+	fullCalendarAllDay: 'eg. napi',
+	CalDAVsearch: 'Keresés',
+	resourceEnable: 'A forrás minden naptára megjelenítése',
+	resourceDisable: 'A forrás minden naptára elrejtése',
+	allEnable: 'Minden naptár megjelenítése',	
+	allDisable: 'Minden naptár elrejtése',
+	timezone: 'Időzóna',
+	txtTimezonePicker: 'Időzóna:',
+	loadingRList: 'Forrás lista betöltése ...',
+	renderingE: 'Naptárak megjelenítése ...',
+	timezoneChange: 'Időzónaváltás alkalmazása ...',
+	localTime: 'Helyi idő',
+	customTimezone: 'Egyéni (Helyi idő)',
+	loadPrevMonth: 'Előző hónap betöltése',
+	loadNextMonth: 'Következő hónap betöltése',
+	repeatBoxButton: 'Ismétlődés lehetőségek',
+	repeatBoxContent: 'ismétlődő esemény.',
+	repeatBoxQuestion: 'Melyik eseménnyel szeretne dolgozni?',
+	allEvsButton: 'Minden eseménnyel',
+	allFutureButton: 'Ez és az összes jövőbeli eseménnyel',
+	eventOnlyButton: 'Csak ezzel az eseménnyel',
+	repeatBoxContentTODO: 'ismétlődő feladat.',
+	repeatBoxQuestionTODO: 'Melyik feladattal szeretne dolgozni?',
+	allEvsButtonTODO: 'Minden feladattal',
+	allFutureButtonTODO: 'Ez és az összes jövőbeli feladattal',
+	eventOnlyButtonTODO: 'Csak ezzel a feladattal',
+	txtStatus: 'Állapot',
+	eventAvailability : 'Elérhetőség',
+	eventAvailabilityBusy : 'Elfoglalt',
+	eventAvailabilityFree : 'Szabad',
+	eventType: 'Adatvédelem',
+	eventTypePublic: 'Nyilvános',
+	eventTypePrivate: 'Magán',
+	eventTypeConfidential: 'Bizalmas',
+	txtPriority: 'Prioritás',
+	txtPriorityNone: 'Semmilyen',
+	txtPriorityLow: 'Alacsony',
+	txtPriorityMedium: 'Közepes',
+	txtPriorityHigh: 'Magas',
+	eventURL : 'URL',
+	repeatInterval: 'minden',
+	repeatDays: 'nap',
+	repeatWeeks: 'hét',
+	repeatMonths: 'hónap',
+	repeatYears: 'év',
+	repeatChangeTxt: 'megváltozott a szerveren!',
+	repeatChangeTxtClose: 'Zárja be az űrlapot, és nyissa meg az eseményt újra',
+	repeatTodoChangeTxtClose: 'Zárja be az űrlapot, és nyissa meg a feladatot újra',
+	calendarLoader: 'Újratöltés ...',
+	resizeLoader: 'Átméretezés ...',
+
+	monthNames: ['Január', 'Február', 'Március', 'Április', 'Május', 'Június',
+	'Július', 'Augusztus', 'Szeptember', 'Október', 'November', 'December'],
+	monthNamesShort: ['Jan', 'Feb', 'Már', 'Ápr', 'Máj', 'Jún',
+	'Júl', 'Aug', 'Szep', 'Okt', 'Nov', 'Dec'],
+	dayNames: ['Vasárnap', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat'],
+	dayNamesShort: ['Vas', 'Hét', 'Ked', 'Sze', 'Csü', 'Pén', 'Szo'],
+	dayNamesMin: ['V', 'H', 'K', 'Sze', 'Cs', 'P', 'Szo'],
+
+	// TODOS
+	pholderNameTODO: 'Cím',
+	pholderNewTODO: 'Új feladat',
+	txtTypeTODO: 'Típus',
+	txtTypeTODONone: 'Egyszerű',
+	txtTypeTODOStart: 'Kezdet időpontal',
+	txtTypeTODODue: 'Határidő időpontal',
+	txtTypeTODOBoth: 'Kezdet és határidő időpontal',
+	txtDateFromTODO: 'Kezdet',
+	txtDateToTODO: 'Határidő',
+	txtCompletedOn: 'Befejeződött',
+
+	pholderDateFromTODO: 'Kezdet dátum',
+	pholderTimeFromTODO: 'Kezdet időpont',
+	pholderDateToTODO: 'Határidő dátum',
+	pholderTimeToTODO: 'Határidő időpont',
+	pholderCompletedOnDate: 'Dátum',
+	pholderCompletedOnTime: 'Időpont',
+
+	txtStatusFiltersHeaderTODO: 'Szűrők',
+	txtStatusFiltersFooterTODO: '* befejezett feladatok %date% és később',
+	txtStatusNeedsActionTODO: 'Foglalkozni kell vele',
+	txtStatusCompletedTODO: 'Befejezve',
+	txtStatusInProcessTODO: 'Folyamatban',
+	txtStatusCancelledTODO: 'Megszakítva',
+	txtPercentCompletedTODO: 'Befejezve',
+
+	txtCalendarTODO: 'Naptár',
+	txtSelectCalendarTODO: 'Válassz egy naptárat',
+	txtAlertTODO: 'Emlékeztető',
+	txtAlertNoneTODO: 'Nincs',
+	txtAlertMessageTODO: 'Értesítés',
+	txtAlertOnDateTODO: 'Egyéni',
+	txtAlertWeeksBeforeTODO: 'Héttel előtte',
+	txtAlertDaysBeforeTODO: 'Nappal előtte',
+	txtAlertHoursBeforeTODO: 'Órával előtte',
+	txtAlertMinutesBeforeTODO: 'Perccel előtte',
+	txtAlertSecondsBeforeTODO: 'Másodperccel előtte',
+	txtAlertWeeksAfterTODO: 'Héttel után',
+	txtAlertDaysAfterTODO: 'Nappal után',
+	txtAlertHoursAfterTODO: 'Órával után',
+	txtAlertMinutesAfterTODO: 'Perccel után',
+	txtAlertSecondsAfterTODO: 'Másodperccel után',
+
+	pholderAfterBeforeValTODO: 'Érték',
+	pholderAlarmDateTODO: 'Emlékeztető dátum',
+	pholderAlarmTimeTODO: 'Emlékeztető időpont',
+
+	pholderNoteTODO: 'Megjegyzés',
+	txtNoteTODO: 'Megjegyzés',
+
+	todoPrevNav: 'Mutasd az előző példányt',
+	todoNextNav: 'Mutasd a következő példányt',
+	todoUncompletedPrevNav: 'Mutasd az előző befejezetlen példányt',
+	todoUncompletedNextNav: 'Mutasd a következő befejezetlen példányt',
+
+	buttonSaveTODO: 'Mentés',
+	buttonEditTODO: 'Szerkesztés',
+	buttonResetTODO: 'Visszaállítás',
+	buttonCloseTODO: 'Bezárás',
+	buttonDeleteTODO: 'Törlés',
+
+	// EVENTS
+	pholderName: 'Cím',
+	pholderNewEvent: 'Új esemény',
+	txtLocation: 'Hely',
+	pholderLocation: 'Hely',
+
+	txtAllDay: 'Egész napos',
+	from: 'Kezdet',
+	to: 'Vége',
+
+	pholderDateFrom: 'Kezdet dátum',
+	pholderTimeFrom: 'Kezdet időpont',
+	pholderDateTo: 'Határidő dátum',
+	pholderTimeTo: 'Határidő időpont',
+
+	txtStatusNone: 'Nem meghatározott',
+	txtStatusTentative: 'Feltételes',
+	txtStatusConfirmed: 'Megerősített',
+	txtStatusCancelled: 'Törölt',
+
+	txtRepeat: 'Ismétlés',
+	txtNoRepeat: 'Nem ismétlődik',
+	txtRepeatDay: 'Naponta',
+	txtRepeatWeek: 'Hetente',
+	txtRepeatWeekend: 'Minden hétköznap',
+	txtRepeatMonth: 'Havonta',
+	txtRepeatTwoWeek: 'Kéthetente',
+	txtRepeatYear: 'Évente',
+	txtRepeatCustomWeek: 'Egyéni hetente',
+	txtRepeatCustomMonth: 'Egyéni havonta',
+	txtRepeatCustomYear: 'Egyéni évente',
+	txtRepeatWork: 'Minden munkanapon',
+	txtRepeatOnDate: 'Egyéni',
+	txtRepeatAfter: 'Ismétlődés után',
+	txtRepeatNever: 'Soha',
+	pholderUntilDate: 'Dátum-ig',
+	pholderRepeatCount: 'Ismétlésszám',
+	txtRepeatCustomWeekLabel: '/',
+	txtRepeatCustomMonthLabel: '/',
+	txtRepeatCustomMonthEvery: 'Minden',
+	txtRepeatCustomMonthFirst: 'Első',
+	txtRepeatCustomMonthSecond: 'Második',
+	txtRepeatCustomMonthThird: 'Harmadik',
+	txtRepeatCustomMonthFourth: 'Negyedik',
+	txtRepeatCustomMonthFifth: 'Ötodik',
+	txtRepeatCustomMonthLast: 'Utolsó',
+	txtRepeatCustomMonthCustom: 'Egyéni',
+	txtRepeatCustomMonthMonth: 'Nap a hónapban',
+	txtRepeatCustomYearLabel1: 'minden',
+	txtRepeatCustomYearLabel2: '/',
+	txtRepeatEnd: 'vége',
+
+	txtEventCalendar: 'Naptár',
+	txtSelectCalendar: 'Válassz egy naptárat',
+	txtAlert: 'Emlékeztető',
+	txtAlertNone: 'Nincs',
+	txtAlertMessage: 'Értesítés',
+	txtAlertOnDate: 'Egyéni',
+	txtAlertWeeksBefore: 'Héttel előtte',
+	txtAlertDaysBefore: 'Nappal előtte',
+	txtAlertHoursBefore: 'Órával előtte',
+	txtAlertMinutesBefore: 'Perccel előtte',
+	txtAlertSecondsBefore: 'Másodperccel előtte',
+	txtAlertWeeksAfter: 'Héttel után',
+	txtAlertDaysAfter: 'Nappal után',
+	txtAlertHoursAfter: 'Órával után',
+	txtAlertMinutesAfter: 'Perccel után',
+	txtAlertSecondsAfter: 'Másodperccel után',
+
+	pholderAfterBeforeVal: 'Érték',
+	pholderAlarmDate: 'Emlékeztető dátum',
+	pholderAlarmTime: 'Emlékeztető időpont',
+
+	pholderNote: 'Megjegyzés',
+
+	eventPrevNav: 'Mutasd az előző példányt',
+	eventNextNav: 'Mutasd a következő befejezetlen példányt',
+
+	buttonReset: 'Visszaállítás',
+	buttonClose: 'Bezárás',
+
+	txtAllSavedTodo: 'A feladat sikeresen elmentve!',
+	txtAllSaved: 'Az esemény sikeresen elmentve!',
+
+	txtAllDeletedTodo: 'A feladat sikeresen törölve!',
+	txtAllDeleted: 'Az esemény sikeresen törölve!',
+
+	txtNotChooseTodo: 'Hiba: naptárat kell választani!',
+	txtNotChoose: 'Hiba: naptárat kell választani!',
+
+	txtErrorDates: 'Hiba: a kezdési dátumnak korábbinak kell lennie a befejezési dátumnál!',
+	txtErrorDatesTodo: 'Hiba: a kezdési dátumnak korábbinak kell lennie a befejezési dátumnál!',
+
+	txtErorInputTodo: 'Hiba: javítsa ki a kijelölt érvénytelen értékeket!',
+	txtDateTimeErrorTodo: 'Hiba: ki kell választani a dátumot és az időt!',
+
+	txtErorInput: 'Hiba: javítsa ki a kijelölt érvénytelen értékeket!',
+
+	txtAlertsH: 'Emlékeztetők',
+	buttonAlert: 'Emlékeztetők eltávolítása',
+
+	altAddEvent: 'Új esemény',
+	altAddTodo: 'Új feladat',
+
+	loadingCalendars: 'Naptárak betöltése (%act%/%total%) ...',
+
+	errUnableSaveBeginCalDAV: 'Hiba: \'nem sikerült az esemény elmentése\': %%!',
+	errUnableDeleteBeginCalDAV: 'Hiba: \'nem sikerült az esemény törlése\': %%!',
+	CalDAVerrHttp410: 'az esemény már nem elérhető a szerveren',
+	errUnableSaveTodoBeginCalDAV: 'Hiba: \'nem sikerült a feladat elmentése\': %%!',
+	errUnableDeleteTodoBeginCalDAV: 'Hiba: \'nem sikerült a feladat törlése\': %%!',
+	CalDAVerrTodoHttp410: 'a feladat már nem elérhető a szerveren'
+}
+
 localizationCalDAV['nl_NL']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd-M-yyyy',
+	_default_time_format_list_: 'dd-MM-yyyy',
 
 	txtCalendar: 'Agenda',
 	txtCalendars: 'Agenda’s',
@@ -2180,7 +2593,7 @@ localizationCalDAV['nl_NL']=
 	customTimezone: 'Speciaal (Plaatselijke tijd)',
 	loadPrevMonth: 'Vorige maand',
 	loadNextMonth: 'Volgende maand',
-	repeatBoxHead: 'Herhaalinstellingen',
+	repeatBoxButton: 'Herhalingsinstellingen',
 	repeatBoxContent: 'is een herhalende afspraak.',
 	repeatBoxQuestion: 'Welke afspraken wilt u bewerken?',
 	allEvsButton: 'Alle afspraken',
@@ -2218,7 +2631,7 @@ localizationCalDAV['nl_NL']=
 
 	monthNames: ['Januari','Februari','Maart','April','Mei','Juni',
 	'Juli','Augustus','September','Oktober','November','December'],
-	monthNamesShort: ['Jan', 'Feb', 'Maa', 'Apr', 'Mei', 'Jun',
+	monthNamesShort: ['Jan', 'Feb', 'Mrt', 'Apr', 'Mei', 'Jun',
 	'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dec'],
 	dayNames: ['Zondag', 'Maandag', 'Dinsdag', 'Woensdag', 'Donderdag', 'Vrijdag', 'Zaterdag'],
 	dayNamesShort: ['Zon', 'Maa', 'Din', 'Woe', 'Don', 'Vrij', 'Zat'],
@@ -2243,6 +2656,8 @@ localizationCalDAV['nl_NL']=
 	pholderCompletedOnDate: 'Datum',
 	pholderCompletedOnTime: 'Tijd',
 
+	txtStatusFiltersHeaderTODO: 'Filters',
+	txtStatusFiltersFooterTODO: '* afgehandeld op of na %date%',
 	txtStatusNeedsActionTODO: 'Aktie nodig',
 	txtStatusCompletedTODO: 'Afgewerkt',
 	txtStatusInProcessTODO: 'In behandeling',
@@ -2268,7 +2683,7 @@ localizationCalDAV['nl_NL']=
 
 	pholderAfterBeforeValTODO: 'Waarde',
 	pholderAlarmDateTODO: 'Alarmdatum',
-	pholderAlarmTimeTODO: 'Alarmtijn',
+	pholderAlarmTimeTODO: 'Alarmtijd',
 
 	pholderNoteTODO: 'Boodschap',
 	txtNoteTODO: 'Boodschap',
@@ -2401,11 +2816,11 @@ localizationCalDAV['nl_NL']=
 localizationCalDAV['sk_SK']=
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\' d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\' d MMM yyyy}',
 	_default_title_format_day_: 'ddd, d MMM yyyy',
 	_default_title_format_table_: 'ddd, MMM yyyy',
 	_default_column_format_agenda_: 'ddd, d MMM',
-	_default_time_format_list_: 'd.M.yyyy',
+	_default_time_format_list_: 'dd.MM.yyyy',
 
 	txtCalendar: 'Kalendár',
 	txtCalendars: 'Kalendáre',
@@ -2433,7 +2848,7 @@ localizationCalDAV['sk_SK']=
 	customTimezone: 'Custom (Local Time)',
 	loadPrevMonth: 'Načítať predchádzajúci mesiac',
 	loadNextMonth: 'Načítať nasledujúci mesiac',
-	repeatBoxHead: 'Možnosti opakovacej udalosti',
+	repeatBoxButton: 'Možnosti opakovania',
 	repeatBoxContent: 'je opakovacia udalosť.',
 	repeatBoxQuestion: 'S ktorými udalosťami chcete pracovať?',
 	allEvsButton: 'Všetky udalosti',
@@ -2496,6 +2911,8 @@ localizationCalDAV['sk_SK']=
 	pholderCompletedOnDate: 'Deň',
 	pholderCompletedOnTime: 'Čas',
 
+	txtStatusFiltersHeaderTODO: 'Filtre',
+	txtStatusFiltersFooterTODO: '* dokončené %date% a neskôr',
 	txtStatusNeedsActionTODO: 'Potrebuje akciu',
 	txtStatusCompletedTODO: 'Dokončená',
 	txtStatusInProcessTODO: 'Riešená',
@@ -2654,11 +3071,11 @@ localizationCalDAV['sk_SK']=
 localizationCalDAV['tr_TR']=	/* thanks Selcuk Pultar */
 {
 	_default_title_format_month_: 'MMM yyyy',
-	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'&#8212;\'d MMM yyyy}',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\'d MMM yyyy}',
 	_default_title_format_day_: 'd MMM yyyy, ddd',
 	_default_title_format_table_: 'MMM yyyy, ddd',
 	_default_column_format_agenda_: 'd MMM, ddd',
-	_default_time_format_list_: 'd-M-yyyy',
+	_default_time_format_list_: 'dd-MM-yyyy',
 
 	txtCalendar: 'Takvimler',
 	txtCalendars: 'Takvimler',
@@ -2686,7 +3103,7 @@ localizationCalDAV['tr_TR']=	/* thanks Selcuk Pultar */
 	customTimezone: 'Özel (Yerel Saat)',
 	loadPrevMonth: 'Önceki ayı yükle',
 	loadNextMonth: 'Sonraki ayı yükle',
-	repeatBoxHead: 'Tekrar eden etkinlik seçenekleri',
+	repeatBoxButton: 'Tekrarlama seçenekleri',
 	repeatBoxContent: 'tekrar eden bir etkinlik.',
 	repeatBoxQuestion: 'Hangi etkinlikler üzerinde çalışmak istersiniz?',
 	allEvsButton: 'Tüm etkinlikler',
@@ -2749,6 +3166,8 @@ localizationCalDAV['tr_TR']=	/* thanks Selcuk Pultar */
 	pholderCompletedOnDate: 'Tarih',
 	pholderCompletedOnTime: 'Saat',
 
+	txtStatusFiltersHeaderTODO: 'Filtreler',
+	txtStatusFiltersFooterTODO: '* %date% tarihinde veya daha sonrasında tamamlanmış',
 	txtStatusNeedsActionTODO: 'Eylem gerektiriyor',
 	txtStatusCompletedTODO: 'Tamamlandı',
 	txtStatusInProcessTODO: 'İlerlemekte',
@@ -2902,6 +3321,516 @@ localizationCalDAV['tr_TR']=	/* thanks Selcuk Pultar */
 	errUnableSaveTodoBeginCalDAV: 'Hata: \'yapılacak kaydedilemedi\': %%!',
 	errUnableDeleteTodoBeginCalDAV: 'Hata: \'yapılacak silinemedi\': %%!',
 	CalDAVerrTodoHttp410: 'Yapılacak artık sunucuda mevcut değil'
+}
+
+localizationCalDAV['ru_RU']=
+{
+	_default_title_format_month_: 'MMMM yyyy',
+	_default_title_format_week_: 'd MMM yyyy{ \'–\' d MMM yyyy}',
+	_default_title_format_day_: 'd MMM yyyy, dddd',
+	_default_title_format_table_: 'MMM yyyy, ddd',
+	_default_column_format_agenda_: 'd MMM, ddd',
+	_default_time_format_list_: 'dd.MM.yyyy',
+
+	txtCalendar: 'Календарь',
+	txtCalendars: 'Календари',
+	txtTodo: 'Задачи',
+	txtTodoLists: 'Списки задач',
+	txtSubscribed: 'Подписки',
+	fullCalendarMonth: 'Шесть недель',
+	fullCalendarMultiWeek: 'Три недели',
+	fullCalendarAgendaWeek: 'Неделя',
+	fullCalendarAgendaDay: 'День',
+	fullCalendarTable: 'Таблица',
+	fullCalendarTodayButton: 'Сегодня',
+	fullCalendarAllDay: 'Весь день',
+	CalDAVsearch: 'Поиск',
+	resourceEnable: 'Отобразить все календари в этом ресурсе',
+	resourceDisable: 'Скрыть все календари в этом ресурсе',
+	allEnable: 'Отобразить все календари',
+	allDisable: 'Скрыть все календари',
+	timezone: 'Врем. зона',
+	txtTimezonePicker: 'Вр. зона:',
+	loadingRList: 'Загрузка списка ресурсов...',
+	renderingE: 'Отображение календарей...',
+	timezoneChange: 'Применение временной зоны ...',
+	localTime: 'Местное время',
+	customTimezone: 'Заказная (местное время)',
+	loadPrevMonth: 'Загрузить предыдущий месяц',
+	loadNextMonth: 'Загрузить следующий месяц',
+	repeatBoxButton: 'Настройки повторения',
+	repeatBoxContent: '- повторяющееся событие.',
+	repeatBoxQuestion: 'С какими экземплярами события вы хотите работать?',
+	allEvsButton: 'Со всеми',
+	allFutureButton: 'С этим и со всеми будущими',
+	eventOnlyButton: 'Только с этим',
+	repeatBoxContentTODO: '- повторяющаяся задача.',
+	repeatBoxQuestionTODO: 'С какими экземплярами задачи вы хотите работать?',
+	allEvsButtonTODO: 'Со всеми',
+	allFutureButtonTODO: 'С этим и со всеми будущими',
+	eventOnlyButtonTODO: 'Только с этим',
+	txtStatus: 'Состояние',
+	eventAvailability : 'Доступность',
+	eventAvailabilityBusy : 'Занят',
+	eventAvailabilityFree : 'Свободен',
+	eventType: 'Приватность',
+	eventTypePublic: 'Публичное',
+	eventTypePrivate: 'Приватное',
+	eventTypeConfidential: 'Конфиденциальное',
+	txtPriority: 'Приоритет',
+	txtPriorityNone: 'Нет',
+	txtPriorityLow: 'Низкий',
+	txtPriorityMedium: 'Средний',
+	txtPriorityHigh: 'Высокий',
+	eventURL : 'URL',
+	repeatInterval: 'каждый(ую)',
+	repeatDays: 'день',
+	repeatWeeks: 'неделю',
+	repeatMonths: 'месяц',
+	repeatYears: 'год',
+	repeatChangeTxt: 'было изменено на сервере!',
+	repeatChangeTxtClose: 'Закройте и откройте событие заново',
+	repeatTodoChangeTxtClose: 'Закройте и откройте задачу заново',
+	calendarLoader: 'Перезагрузка...',
+	resizeLoader: 'Изменение размера...',
+
+	monthNames: ['Январь','Февраль','Март','Апрель','Май','Июнь',
+	'Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+	monthNamesShort: ['янв', 'фев', 'мар', 'апр', 'мая', 'июн',
+	'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'],
+	dayNames: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
+	dayNamesShort: ['Вск', 'Пон', 'Втр', 'Срд', 'Чтв', 'Птн', 'Суб'],
+	dayNamesMin: ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'],
+
+	// TODOS
+	pholderNameTODO: 'Название',
+	pholderNewTODO: 'новая задача',
+	txtTypeTODO: 'Тип',
+	txtTypeTODONone: 'Простая',
+	txtTypeTODOStart: 'С датой/временем начала',
+	txtTypeTODODue: 'С датой/временем окончания',
+	txtTypeTODOBoth: 'С датой/временем начала и окончания',
+	txtDateFromTODO: 'Начало',
+	txtDateToTODO: 'Окончание',
+	txtCompletedOn: 'Выполнена',
+
+	pholderDateFromTODO: 'Дата начала',
+	pholderTimeFromTODO: 'Время начала',
+	pholderDateToTODO: 'Дата окончания',
+	pholderTimeToTODO: 'Время окончания',
+	pholderCompletedOnDate: 'Дата выполнения',
+	pholderCompletedOnTime: 'Время выполнения',
+
+	txtStatusFiltersHeaderTODO: 'Отбор по состоянию',
+	txtStatusFiltersFooterTODO: '* выполненных %date% или позже',
+	txtStatusNeedsActionTODO: 'Новая',
+	txtStatusCompletedTODO: 'Выполнена',
+	txtStatusInProcessTODO: 'В процессе',
+	txtStatusCancelledTODO: 'Отменена',
+	txtPercentCompletedTODO: 'Выполнено на',
+
+	txtCalendarTODO: 'Календарь',
+	txtSelectCalendarTODO: 'Выберите календарь',
+	txtAlertTODO: 'Уведомление',
+	txtAlertNoneTODO: 'Нет',
+	txtAlertMessageTODO: 'Сообщение',
+	txtAlertOnDateTODO: 'По дате',
+	txtAlertWeeksBeforeTODO: 'За N недель до',
+	txtAlertDaysBeforeTODO: 'За N дней до',
+	txtAlertHoursBeforeTODO: 'За N часов до',
+	txtAlertMinutesBeforeTODO: 'За N минут до',
+	txtAlertSecondsBeforeTODO: 'За N секунд до',
+	txtAlertWeeksAfterTODO: 'Через N недель после',
+	txtAlertDaysAfterTODO: 'Через N дней после',
+	txtAlertHoursAfterTODO: 'Через N часов после',
+	txtAlertMinutesAfterTODO: 'Через N минут после',
+	txtAlertSecondsAfterTODO: 'Через N секунд после',
+
+	pholderAfterBeforeValTODO: 'Значение',
+	pholderAlarmDateTODO: 'Дата уведомления',
+	pholderAlarmTimeTODO: 'Время уведомления',
+
+	pholderNoteTODO: 'Примечание',
+	txtNoteTODO: 'Примечание',
+
+	todoPrevNav: 'Показать предыдущий экземпляр',
+	todoNextNav: 'Показать следующий экземпляр',
+	todoUncompletedPrevNav: 'Показать предыдущий невыполненный экземпляр',
+	todoUncompletedNextNav: 'Показать следующий невыполненный экземпляр',
+
+	buttonSaveTODO: 'Сохранить',
+	buttonEditTODO: 'Изменить',
+	buttonResetTODO: 'Отменить',
+	buttonCloseTODO: 'Закрыть',
+	buttonDeleteTODO: 'Удалить',
+
+	// EVENTS
+	pholderName: 'Название',
+	pholderNewEvent: 'Новое событие',
+	txtLocation: 'Место',
+	pholderLocation: 'Местоположение',
+
+	txtAllDay: 'Весь день',
+	from: 'Начало',
+	to: 'Конец',
+
+	pholderDateFrom: 'Дата начала',
+	pholderTimeFrom: 'Время начала',
+	pholderDateTo: 'Дата окончания',
+	pholderTimeTo: 'Время окончания',
+
+	txtStatusNone: 'Не указано',
+	txtStatusTentative: 'Неизвестно',
+	txtStatusConfirmed: 'Подтверждено',
+	txtStatusCancelled: 'Отменено',
+
+	txtRepeat: 'Повторять',
+	txtNoRepeat: 'Не повторять',
+	txtRepeatDay: 'Каждый божий день',
+	txtRepeatWeek: 'Каждую неделю',
+	txtRepeatWeekend: 'Каждый выходной',
+	txtRepeatMonth: 'Раз в месяц',
+	txtRepeatTwoWeek: 'Раз в две недели',
+	txtRepeatYear: 'Раз в год',
+	txtRepeatCustomWeek: 'Раз в неделю (настр.)',
+	txtRepeatCustomMonth: 'Раз в месяц (настр.)',
+	txtRepeatCustomYear: 'Раз в год (настр.)',
+	txtRepeatWork: 'Каждый рабочий день',
+	txtRepeatOnDate: 'По дате',
+	txtRepeatAfter: 'Через N повторений',
+	txtRepeatNever: 'Никогда',
+	pholderUntilDate: 'Повторять до',
+	pholderRepeatCount: 'Повторять раз',
+	txtRepeatCustomWeekLabel: 'в',
+	txtRepeatCustomMonthLabel: 'по дням',
+	txtRepeatCustomMonthEvery: 'Каждый(ую/ое)',
+	txtRepeatCustomMonthFirst: 'Первый(ую/ое)',
+	txtRepeatCustomMonthSecond: 'Второй(ую/ое)',
+	txtRepeatCustomMonthThird: 'Третий(ью/ье)',
+	txtRepeatCustomMonthFourth: 'Четвертый(ую/ое)',
+	txtRepeatCustomMonthFifth: 'Пятый(ую/ое)',
+	txtRepeatCustomMonthLast: 'Крайний(юю/ее)',
+	txtRepeatCustomMonthCustom: 'Указать дни (настр.)',
+	txtRepeatCustomMonthMonth: 'День месяца',
+	txtRepeatCustomYearLabel1: 'по дням',
+	txtRepeatCustomYearLabel2: 'по месяцам',
+
+	txtRepeatEnd: 'и закончить',
+	txtEventCalendar: 'Календарь',
+	txtSelectCalendar: 'Выберите календарь',
+	txtAlert: 'Уведомление',
+	txtAlertNone: 'Нет',
+	txtAlertMessage: 'Сообщение',
+	txtAlertOnDate: 'По дате',
+	txtAlertWeeksBefore: 'За N недель до',
+	txtAlertDaysBefore: 'За N дней до',
+	txtAlertHoursBefore: 'За N часов до',
+	txtAlertMinutesBefore: 'За N минут до',
+	txtAlertSecondsBefore: 'За N секунд до',
+	txtAlertWeeksAfter: 'Через N недель после',
+	txtAlertDaysAfter: 'Через N дней после',
+	txtAlertHoursAfter: 'Через N часов после',
+	txtAlertMinutesAfter: 'Через N мирнут после',
+	txtAlertSecondsAfter: 'Через N секунд после',
+
+	pholderAfterBeforeVal: 'Значение',
+	pholderAlarmDate: 'Дата уведомления',
+	pholderAlarmTime: 'Время уведомления',
+
+	pholderNote: 'Примечание',
+
+	eventPrevNav: 'Показать предыдущий экземпляр',
+	eventNextNav: 'Показать следующий экземпляр',
+
+	buttonReset: 'Отменить',
+	buttonClose: 'Закрыть',
+
+	txtAllSavedTodo: 'Задача успешно сохранена!',
+	txtAllSaved: 'Событие успешно сохранено!',
+
+	txtAllDeletedTodo: 'Задача успешно удалена!',
+	txtAllDeleted: 'Событие успешно удалено!',
+
+	txtNotChooseTodo: 'Ошибка: необходимо выбрать календарь!',
+	txtNotChoose: 'Ошибка: необходимо выбрать календарь!',
+
+	txtErrorDates: 'Ошибка: дата начала не может быть позже даты окончания!',
+	txtErrorDatesTodo: 'Ошибка: дата начала не может быть позже даты окончания!',
+
+	txtErorInputTodo: 'Исправьте неверные значения!',
+	txtDateTimeErrorTodo: 'Укажите дату и время!',
+
+	txtErorInput: 'Ошибка: исправьте подсвеченные неверные значения!',
+
+	txtAlertsH: 'Уведомления',
+	buttonAlert: 'Очистить уведомления',
+
+	altAddEvent: 'Добавить событие',
+	altAddTodo: 'Добавить задачу',
+
+	loadingCalendars: 'Загрузка календарей (%act% из %total%) ...',
+
+	errUnableSaveBeginCalDAV: 'Ошибка: \'не могу сохранить событие\': %%!',
+	errUnableDeleteBeginCalDAV: 'Ошибка: \'не могу удалить событие\': %%!',
+	CalDAVerrHttp410: 'Событие более не существует на сервере',
+	errUnableSaveTodoBeginCalDAV: 'Ошибка: \'не могу сохранить задачу\': %%!',
+	errUnableDeleteTodoBeginCalDAV: 'Ошибка: \'не могу удалить задачу\': %%!',
+	CalDAVerrTodoHttp410: 'Задача более не существует на сервере'
+}
+
+localizationCalDAV['uk_UA']=
+{
+	_default_title_format_month_: 'MMM yyyy',
+	_default_title_format_week_: 'd[ MMM][ yyyy]{ \'–\'d MMM yyyy}',
+	_default_title_format_day_: 'd MMM yyyy, ddd',
+	_default_title_format_table_: 'MMM yyyy, ddd',
+	_default_column_format_agenda_: 'd MMM, ddd',
+	_default_time_format_list_: 'dd-MM-yyyy',
+
+	txtCalendar: 'Календар',
+	txtCalendars: 'Календарі',
+	txtTodo: 'Завдання',
+	txtTodoLists: 'Список завдань',
+	txtSubscribed: 'Підписка',
+	fullCalendarMonth: 'місяць',
+	fullCalendarMultiWeek: 'тижні',
+	fullCalendarAgendaWeek: 'тиждень',
+	fullCalendarAgendaDay: 'день',
+	fullCalendarTable: 'таблиця',
+	fullCalendarTodayButton: 'сьогодні',
+	fullCalendarAllDay: 'всі дні',
+	CalDAVsearch: 'Пошук',
+	resourceEnable: 'Включити всі календарі на цьому ресурсі',
+	resourceDisable: 'Вимкнути всі календарі на цьому ресурсі',
+	allEnable: 'Включити всі календарі',
+	allDisable: 'Вимкнути всі календарі',
+	timezone: 'Часова зона',
+	txtTimezonePicker: 'Часова зона:',
+	loadingRList: 'Завантаження списку ресурсів ...',
+	renderingE: 'Надання календарів ...',
+	timezoneChange: 'Прийняття змін часової зони ...',
+	localTime: 'Локальний час',
+	customTimezone: 'Налаштований (локальний час)',
+	loadPrevMonth: 'Завантаження попереднього місяця',
+	loadNextMonth: 'Завантаження наступного місяця',
+	repeatBoxButton: 'Опції повторення',
+	repeatBoxContent: 'ця подія повторюється.',
+	repeatBoxQuestion: 'З якою подією ви бажаєте працювати?',
+	allEvsButton: 'Всі події',
+	allFutureButton: 'Ця, та всі наступні події',
+	eventOnlyButton: 'Лише ця подія',
+	repeatBoxContentTODO: 'Завдання що повторюється.',
+	repeatBoxQuestionTODO: 'З яким завданням ви бажаєте працювати?',
+	allEvsButtonTODO: 'Всі завдання',
+	allFutureButtonTODO: 'Це, та всі наступні завдання',
+	eventOnlyButtonTODO: 'Лише це завдання',
+	txtStatus: 'Статус',
+	eventAvailability : 'Доступність',
+	eventAvailabilityBusy : 'Зайнятий',
+	eventAvailabilityFree : 'Вільний',
+	eventType: 'Приватність',
+	eventTypePublic: 'Загальнодоступне',
+	eventTypePrivate: 'Приватне',
+	eventTypeConfidential: 'Конфіденційне',
+	txtPriority: 'Приорітет',
+	txtPriorityNone: 'Немає',
+	txtPriorityLow: 'Низький',
+	txtPriorityMedium: 'Середній',
+	txtPriorityHigh: 'Високий',
+	eventURL : 'URL',
+	repeatInterval: 'кожен',
+	repeatDays: 'день',
+	repeatWeeks: 'тиждень',
+	repeatMonths: 'місяць',
+	repeatYears: 'рік',
+	repeatChangeTxt: 'було змінено на сервері!',
+	repeatChangeTxtClose: 'Закрийте форму та відкрийте подію знову',
+	repeatTodoChangeTxtClose: 'Закрийте форму та відкрийте завдання знову',
+	calendarLoader: 'перезавантаження ...',
+	resizeLoader: 'зміна розміру ...',
+
+	monthNames: ['Січень','Лютий','Березень','Квітень','Травень','Червень',
+	'Липень','Серпень','Вересень','Жовтень','Листопад','Грудень'],
+	monthNamesShort: ['Січ', 'Лют', 'Бер', 'Кві', 'Тра', 'Чер',
+	'Лип', 'Сер', 'Вер', 'Жов', 'Лис', 'Гру'],
+	dayNames: ['Неділя', 'Понеділок', 'Вівторок', 'Середа', 'Четвер', 'П\'ятниця', 'Субота'],
+	dayNamesShort: ['Нед', 'Пон', 'Вівт', 'Сер', 'Чет', 'П\'ят', 'Суб'],
+	dayNamesMin: ['Нд','Пн','Вт','Ср','Чт','Пт','Сб'],
+
+	// TODOS
+	pholderNameTODO: 'Назва',
+	pholderNewTODO: 'Нове  завдання',
+	txtTypeTODO: 'Тип',
+	txtTypeTODONone: 'Просте',
+	txtTypeTODOStart: 'Час початку',
+	txtTypeTODODue: 'Тривалість',
+	txtTypeTODOBoth: 'З часом початку та тривалістю',
+	txtDateFromTODO: 'З',
+	txtDateToTODO: 'До',
+	txtCompletedOn: 'Завершено в',
+
+	pholderDateFromTODO: 'Початкова дата',
+	pholderTimeFromTODO: 'Початковий час',
+	pholderDateToTODO: 'Кінцева дата',
+	pholderTimeToTODO: 'Кінцевий час',
+	pholderCompletedOnDate: 'Дата',
+	pholderCompletedOnTime: 'Час',
+
+	txtStatusFiltersHeaderTODO: 'Фільтри',
+	txtStatusFiltersFooterTODO: '* завершення після чи в  %date%',
+	txtStatusNeedsActionTODO: 'Потребує дії',
+	txtStatusCompletedTODO: 'Завершено',
+	txtStatusInProcessTODO: 'В процесі',
+	txtStatusCancelledTODO: 'Скасовано',
+	txtPercentCompletedTODO: 'Завершено',
+
+	txtCalendarTODO: 'Календар',
+	txtSelectCalendarTODO: 'Оберіть календар',
+	txtAlertTODO: 'Попередження',
+	txtAlertNoneTODO: 'Нічого',
+	txtAlertMessageTODO: 'Повідомлення',
+	txtAlertOnDateTODO: 'За дати',
+	txtAlertWeeksBeforeTODO: 'За тижнів',
+	txtAlertDaysBeforeTODO: 'За днів',
+	txtAlertHoursBeforeTODO: 'За годин',
+	txtAlertMinutesBeforeTODO: 'За хвилин',
+	txtAlertSecondsBeforeTODO: 'За секунд',
+	txtAlertWeeksAfterTODO: 'Через тижнів',
+	txtAlertDaysAfterTODO: 'Через днів',
+	txtAlertHoursAfterTODO: 'Через годин',
+	txtAlertMinutesAfterTODO: 'Через хвилин',
+	txtAlertSecondsAfterTODO: 'Через секунд',
+
+	pholderAfterBeforeValTODO: 'Значення',
+	pholderAlarmDateTODO: 'Дата попередження',
+	pholderAlarmTimeTODO: 'Час попередження',
+
+	pholderNoteTODO: 'Примітка',
+	txtNoteTODO: 'Примітка',
+
+	todoPrevNav: 'Показати попередній елемент',
+	todoNextNav: 'Показати наступний елемент',
+	todoUncompletedPrevNav: 'Показати попередній незавершений елемент',
+	todoUncompletedNextNav: 'Показати наступний незавершений елемент',
+
+	buttonSaveTODO: 'Зберегти',
+	buttonEditTODO: 'Редагувати',
+	buttonResetTODO: 'Скасувати',
+	buttonCloseTODO: 'Закрити',
+	buttonDeleteTODO: 'Видалити',
+
+	// EVENTS
+	pholderName: 'Назва',
+	pholderNewEvent: 'Нова подія',
+	txtLocation: 'Місцерозташування',
+	pholderLocation: 'Місцерозташування',
+
+	txtAllDay: 'Весь день',
+	from: 'З',
+	to: 'До',
+
+	pholderDateFrom: 'З дати',
+	pholderTimeFrom: 'З часу',
+	pholderDateTo: 'До дати',
+	pholderTimeTo: 'До часу',
+
+	txtStatusNone: 'Не визначено',
+	txtStatusTentative: 'Не певно',
+	txtStatusConfirmed: 'Підтверджено',
+	txtStatusCancelled: 'Скасовано',
+
+	txtRepeat: 'Повторити',
+	txtNoRepeat: 'Не повторювати',
+	txtRepeatDay: 'Щоденно',
+	txtRepeatWeek: 'Щотижня',
+	txtRepeatWeekend: 'Кожні вихідні',
+	txtRepeatMonth: 'Щомісяця',
+	txtRepeatTwoWeek: 'кожних два тижні',
+	txtRepeatYear: 'Щорічно',
+	txtRepeatCustomWeek: 'Тижнева періодичність',
+	txtRepeatCustomMonth: 'Місячна періодичність',
+	txtRepeatCustomYear: 'Річна періодичність',
+	txtRepeatWork: 'Кожен робочий день',
+	txtRepeatOnDate: 'За дати',
+	txtRepeatAfter: 'Повторів',
+	txtRepeatNever: 'Ніколи',
+	pholderUntilDate: 'До дати',
+	pholderRepeatCount: 'Кількість повторень',
+	txtRepeatCustomWeekLabel: 'в',
+	txtRepeatCustomMonthLabel: 'в дні',
+	txtRepeatCustomMonthEvery: 'кожен',
+	txtRepeatCustomMonthFirst: 'Перший',
+	txtRepeatCustomMonthSecond: 'Другий',
+	txtRepeatCustomMonthThird: 'Третій',
+	txtRepeatCustomMonthFourth: 'Четвертий',
+	txtRepeatCustomMonthFifth: 'П\'ятий',
+	txtRepeatCustomMonthLast: 'Останній',
+	txtRepeatCustomMonthCustom: 'Обрати',
+	txtRepeatCustomMonthMonth: 'День місяця',
+	txtRepeatCustomYearLabel1: 'кожен',
+	txtRepeatCustomYearLabel2: 'з',
+
+	txtRepeatEnd: 'Кінець',
+	txtEventCalendar: 'Календар',
+	txtSelectCalendar: 'Оберіть календар',
+	txtAlert: 'Попередження',
+	txtAlertNone: 'Немає',
+	txtAlertMessage: 'Повідомлення',
+	txtAlertOnDate: 'За дати',
+	txtAlertWeeksBefore: 'За тижнів',
+	txtAlertDaysBefore: 'За днів',
+	txtAlertHoursBefore: 'За годин',
+	txtAlertMinutesBefore: 'За хвилин',
+	txtAlertSecondsBefore: 'За секунд',
+	txtAlertWeeksAfter: 'Через тижнів',
+	txtAlertDaysAfter: 'Через днів',
+	txtAlertHoursAfter: 'Через днів',
+	txtAlertMinutesAfter: 'Через хвилин',
+	txtAlertSecondsAfter: 'Через секунд',
+
+	pholderAfterBeforeVal: 'Значення',
+	pholderAlarmDate: 'Дата попередження',
+	pholderAlarmTime: 'Час попередження',
+
+	pholderNote: 'Примітка',
+
+	eventPrevNav: 'Показати попередній елемент',
+	eventNextNav: 'Показати наступний елемент',
+
+	buttonReset: 'Скасувати',
+	buttonClose: 'Закрити',
+
+	txtAllSavedTodo: 'Успіх: Завдання збережено!',
+	txtAllSaved: 'Успіх: Подію збережено',
+
+	txtAllDeletedTodo: 'Успіх: Завдання видалено!',
+	txtAllDeleted: 'Успіх: Подію видалено!',
+
+	txtNotChooseTodo: 'Помилка: Треба обрати календар!',
+	txtNotChoose: 'Помилка: Треба обрати календар!',
+
+	txtErrorDates: 'Помилка: Дата початки має передувати даті закінчення!',
+	txtErrorDatesTodo: 'Помилка: Дата початки має передувати даті закінчення!',
+
+	txtErorInputTodo: 'Неможливо зберегти: виправіть помилкові значення!',
+	txtDateTimeErrorTodo: 'Треба обрати дату та час!',
+
+	txtErorInput: 'Помилка: \'неможливо зберегти\': виправіть підсвічені помилкові значення!',
+
+	txtAlertsH: 'Попередження',
+	buttonAlert: 'Очистити попередження',
+
+	altAddEvent: 'Додати подію',
+	altAddTodo: 'Додати завдання',
+
+	loadingCalendars: 'Завантаження календарів (%act% з %total%) ...',
+
+	errUnableSaveBeginCalDAV: 'Помилка: \'неможливо зберегти подію\': %%!',
+	errUnableDeleteBeginCalDAV: 'Помилка: \'неможливо видалити подію\': %%!',
+	CalDAVerrHttp410: 'Подія більше недоступна на сервері',
+	errUnableSaveTodoBeginCalDAV: 'Помилка: \'неможливо видалити завдання\': %%!',
+	errUnableDeleteTodoBeginCalDAV: 'Помилка: \'неможливо зберегти завдання\': %%!',
+	CalDAVerrTodoHttp410: 'Завдання більше недоступне на сервері'
 }
 
 $.extend(true, localization, localizationCalDAV);

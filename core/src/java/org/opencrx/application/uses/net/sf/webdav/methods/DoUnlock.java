@@ -84,14 +84,11 @@ public class DoUnlock extends WebDavMethod {
     private static Logger LOG = Logger.getLogger(DoUnlock.class.getPackage().getName());
 
     private final WebDavStore _store;
-    private final boolean _readOnly;
 
     public DoUnlock(
-    	WebDavStore store,
-        boolean readOnly
+    	WebDavStore store
     ) {
         _store = store;
-        _readOnly = readOnly;
     }
 
     @Override
@@ -100,25 +97,20 @@ public class DoUnlock extends WebDavMethod {
     ) throws IOException, LockFailedException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	    	
         LOG.finest("-- " + this.getClass().getName());
-        if (_readOnly) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        } else {
-            String path = getRelativePath(requestContext);
-            try {
-                String lockId = getLockIdFromLockTokenHeader(requestContext);
-                if(lockId != null) {
-                    if (_store.unlock(requestContext, lockId)) {
-                        resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-                    } else {
-                        LOG.finest("DoUnlock failure at " + path);
-                        resp.sendError(WebdavStatus.SC_METHOD_FAILURE);
-                    }
+        String path = getRelativePath(requestContext);
+        try {
+            String lockId = getLockIdFromLockTokenHeader(requestContext);
+            if(lockId != null) {
+                if (_store.unlock(requestContext, lockId)) {
+                    resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+                } else {
+                    LOG.finest("DoUnlock failure at " + path);
+                    resp.sendError(WebdavStatus.SC_METHOD_FAILURE);
                 }
-            } catch (LockFailedException e) {
-                e.printStackTrace();
-            } finally {
             }
+        } catch (LockFailedException e) {
+            e.printStackTrace();
+        } finally {
         }
     }
 

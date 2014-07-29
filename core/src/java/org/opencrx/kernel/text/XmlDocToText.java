@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: WordToText
+ * Description: XmlDocToText
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,7 +52,6 @@
  */
 package org.opencrx.kernel.text;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
@@ -68,7 +67,6 @@ import org.openmdx.base.exception.ServiceException;
  */
 public class XmlDocToText {
 
-    //-----------------------------------------------------------------------    
     /**
      * Gets the text from an XML document.
      * 
@@ -76,7 +74,7 @@ public class XmlDocToText {
      */
     public Reader parse(
         InputStream in
-    ) throws ServiceException, IOException {
+    ) throws ServiceException {
         StringBuilder text = new StringBuilder();    	
     	try {
 	    	POIXMLTextExtractor extractor = ExtractorFactory.createExtractor(
@@ -84,7 +82,7 @@ public class XmlDocToText {
 	    	);
     		text.append(extractor.getText());
     	} catch(Exception e) {
-    		new ServiceException(e).log();
+    		throw new ServiceException(e);
     	}
         return new StringReader(text.toString());
     }

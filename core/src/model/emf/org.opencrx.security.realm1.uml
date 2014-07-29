@@ -39,7 +39,7 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_3TY_0MNoEeCwM9ZbEbYdjg"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_3TY_0cNoEeCwM9ZbEbYdjg" value="1"/>
               <qualifier xmi:id="_JDoHQMNpEeCwM9ZbEbYdjg" name="index">
-                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
               </qualifier>
             </ownedAttribute>
           </packagedElement>

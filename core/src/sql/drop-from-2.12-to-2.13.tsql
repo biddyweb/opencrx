@@ -1,0 +1,10 @@
+#include "sql-definitions.tsql"
+
+ALTER TABLE OOCKE1_RESOURCE DROP_COLUMN_BEGIN overtime_rate DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_RESOURCE DROP_COLUMN_BEGIN standard_rate DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"
+
+ALTER TABLE OOCKE1_RESOURCE DROP_COLUMN_BEGIN rate_currency DROP_COLUMN_END COMMAND_TERMINATOR 
+#include "sql-command-separator.tsql"

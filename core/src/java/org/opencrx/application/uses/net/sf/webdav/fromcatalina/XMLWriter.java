@@ -1,6 +1,6 @@
 /*
  * ====================================================================
- * Project:     openCRX/core, http://www.opencrx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: XMLWriter
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -70,7 +70,7 @@
 package org.opencrx.application.uses.net.sf.webdav.fromcatalina;
 
 import java.io.IOException;
-import java.io.Writer;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -80,8 +80,6 @@ import java.util.Map;
  * @author <a href="mailto:remm@apache.org">Remy Maucherat</a>
  */
 public class XMLWriter {
-
-    // -------------------------------------------------------------- Constants
 
     /**
      * Opening tag.
@@ -98,17 +96,10 @@ public class XMLWriter {
      */
     public static final int NO_CONTENT = 2;
 
-    // ----------------------------------------------------- Instance Variables
-
-    /**
-     * Buffer.
-     */
-    protected StringBuffer _buffer = new StringBuffer();
-
     /**
      * Writer.
      */
-    protected Writer _writer = null;
+    protected PrintWriter _writer = null;
 
     /**
      * Namespaces to be declared in the root element
@@ -120,33 +111,15 @@ public class XMLWriter {
      */
     protected boolean _isRootElement = true;
 
-    // ----------------------------------------------------------- Constructors
-
     /**
      * Constructor.
      */
-    public XMLWriter(Map<String, String> namespaces) {
-        _namespaces = namespaces;
-    }
-
-    /**
-     * Constructor.
-     */
-    public XMLWriter(Writer writer, Map<String, String> namespaces) {
-        _writer = writer;
-        _namespaces = namespaces;
-    }
-
-    // --------------------------------------------------------- Public Methods
-
-    /**
-     * Retrieve generated XML.
-     * 
-     * @return String containing the generated XML
-     */
-    @Override
-    public String toString() {
-        return _buffer.toString();
+    public XMLWriter(
+    	PrintWriter writer, 
+    	Map<String, String> namespaces
+    ) {
+        this._writer = writer;
+        this._namespaces = namespaces;
     }
 
     /**
@@ -157,10 +130,13 @@ public class XMLWriter {
      * @param value
      *      Property value
      */
-    public void writeProperty(String name, String value) {
-        writeElement(name, OPENING);
-        _buffer.append(value);
-        writeElement(name, CLOSING);
+    public void writeProperty(
+    	String name, 
+    	String value
+    ) {
+        this.writeElement(name, OPENING);
+        this._writer.write(value);
+        this.writeElement(name, CLOSING);
     }
 
     /**
@@ -169,8 +145,10 @@ public class XMLWriter {
      * @param name
      *      Property name
      */
-    public void writeProperty(String name) {
-        writeElement(name, NO_CONTENT);
+    public void writeProperty(
+    	String name
+    ) {
+        this.writeElement(name, NO_CONTENT);
     }
 
     /**
@@ -213,22 +191,22 @@ public class XMLWriter {
         }
         switch (type) {
 	        case OPENING:
-	            _buffer.append("<");
-	            _buffer.append(name);
-	            _buffer.append( nsdecl);
-	            _buffer.append( ">");
+	            this._writer.write("<");
+	            this._writer.write(name);
+	            this._writer.write(nsdecl.toString());
+	            this._writer.write(">");
 	            break;
 	        case CLOSING:
-	            _buffer.append("</");
-	            _buffer.append( name);
-	            _buffer.append( ">\n");
+	        	this._writer.write("</");
+	        	this._writer.write(name);
+	        	this._writer.write(">\n");
 	            break;
 	        case NO_CONTENT:
 	        default:
-	            _buffer.append("<");
-	            _buffer.append( name);
-	            _buffer.append( nsdecl);
-	            _buffer.append( "/>");
+	        	this._writer.write("<");
+	        	this._writer.write(name);
+	        	this._writer.write(nsdecl.toString());
+	        	this._writer.write("/>");
 	            break;
         }
     }
@@ -239,8 +217,10 @@ public class XMLWriter {
      * @param text
      *      Text to append
      */
-    public void writeText(String text) {
-        _buffer.append(text);
+    public void writeText(
+    	String text
+    ) {
+    	this._writer.write(text);
     }
 
     /**
@@ -249,28 +229,28 @@ public class XMLWriter {
      * @param data
      *      Data to append
      */
-    public void writeData(String data) {
-        _buffer.append("<![CDATA[");
-        _buffer.append( data);
-        _buffer.append( "]]>");
+    public void writeData(
+    	String data
+    ) {
+    	this._writer.write("<![CDATA[");
+    	this._writer.write( data);
+    	this._writer.write( "]]>");
     }
 
     /**
      * Write XML Header.
      */
-    public void writeXMLHeader() {
-        _buffer.append("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n");
+    public void writeXMLHeader(
+    ) {
+    	this._writer.write("<?xml version=\"1.0\" encoding=\"utf-8\" ?>\n");
     }
 
     /**
      * Send data and reinitializes buffer.
      */
-    public void sendData() throws IOException {
-        if (_writer != null) {
-            _writer.write(_buffer.toString());
-            _writer.flush();
-            _buffer = new StringBuffer();
-        }
+    public void sendData(
+    ) throws IOException {
+    	this._writer.flush();
     }
 
 }

@@ -2,24 +2,23 @@
 <java version="1.3.1_11" class="java.beans.XMLDecoder">
 	<object class="org.openmdx.portal.servlet.Filters">
 		<void property="forReference">
-			<array class="java.lang.String" length="4">	
-				<void index="0">			
+			<array class="java.lang.String" length="4">
+				<void index="0">
 					<string>org:opencrx:kernel:account1:Contact:accountMembership</string>
 				</void>
-				<void index="1">			
+				<void index="1">
 					<string>org:opencrx:kernel:account1:LegalEntity:accountMembership</string>
 				</void>
-				<void index="2">			
+				<void index="2">
 					<string>org:opencrx:kernel:account1:UnspecifiedAccount:accountMembership</string>
 				</void>
-				<void index="3">			
+				<void index="3">
 					<string>org:opencrx:kernel:account1:Group:accountMembership</string>
 				</void>
 			</array>
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="4">
-
 				<!-- relationships, i.e. 1 hop member or membership -->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -81,7 +80,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- memberships -->
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -140,7 +138,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- deep relationships -->
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -179,7 +176,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- memberships (disabled) -->
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -238,7 +234,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

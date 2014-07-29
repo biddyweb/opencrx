@@ -193,14 +193,14 @@ public class Audit_1 extends Indexed_1 {
         	} else if(v1 instanceof Long || v2 instanceof Long) {
         		return ((Number)v1).longValue() == ((Number)v2).longValue();        		
         	} else {
-                return ((Comparable)v1).compareTo(v2) == 0;        		
+                return ((Comparable<Object>)v1).compareTo(v2) == 0;        		
         	}
         } else if(
             (v1 instanceof Comparable) && 
             (v2 instanceof Comparable) &&
             (v1.getClass().equals(v2.getClass()))
         ) {
-            return ((Comparable)v1).compareTo(v2) == 0;
+            return ((Comparable<Object>)v1).compareTo(v2) == 0;
         } else {
         	return v1.equals(v2);
         }
@@ -537,7 +537,7 @@ public class Audit_1 extends Indexed_1 {
 		            (request.path().size() > 5) ||
 		            ((request.path().size() == 5) && principalName.startsWith(SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR)) 
 		        ) {
-		        	boolean isTouchOnly = false;
+		        	boolean propagatePut = true;
 		            if(this.isAuditSegment(header, request.path())) {    
 		                // Create audit entry
 		            	DataproviderRequest getRequest = new DataproviderRequest(
@@ -586,14 +586,16 @@ public class Audit_1 extends Indexed_1 {
 		                        beforeImage,
 		                        request.object()
 		                    );
-		                    // --> trivial update
+		                    // No modified features. Do not create audit entry and do not
+		                    // propagate PUT. E.g. isQuery=true operations do not touch
+		                    // an object.
 		                    if(modifiedFeatures.isEmpty()) {
-			                    // Do not create audit entry if modifiedAt is only modified attribute	                    	
-		                    	isTouchOnly = true;
+		                    	propagatePut = false;
 		                    } else if(
 		                        ((modifiedFeatures.size() > 1) ||
 		                        !modifiedFeatures.contains(SystemAttributes.MODIFIED_AT))
 		                    ) {
+			                    // Non-trivial update. Create audit entry	                    	
 		                        Object_2Facade.getValue(beforeImage).keySet().retainAll(
 		                            modifiedFeatures
 		                        );
@@ -623,12 +625,13 @@ public class Audit_1 extends Indexed_1 {
 		                            e.log();
 		                        }
 		                    } else {
-		                    	isTouchOnly = true;
+		                    	// Trivial update. Do not generate an audit entry but propagate
+		                    	// the PUT. This way the object's modifiedAt reflects a touch. 
 		                    }
 		                }
 		            }
 		            // In case of touch only updates do not propagate PUT
-		            if(!isTouchOnly) {
+		            if(propagatePut) {
 			            super.put(		            	
 			                ispec,
 			                input,
@@ -843,9 +846,8 @@ public class Audit_1 extends Indexed_1 {
 		                Object_2Facade.newInstance(reply).attributeValuesAsList("visitStatus").add(
 		                    new Short((short)2)
 		                );                
-		            }
-		            // Not yet visited by visitorId
-		            else if((pos = auditEntryFacade.attributeValuesAsList("visitedBy").indexOf(visitorId + ":" + NOT_VISITED_SUFFIX)) >= 0) {
+		            } else if((pos = auditEntryFacade.attributeValuesAsList("visitedBy").indexOf(visitorId + ":" + NOT_VISITED_SUFFIX)) >= 0) {
+			            // Not yet visited by visitorId
 		            	auditEntryFacade.attributeValuesAsList("visitedBy").set(
 		                    pos,
 		                    visitorId + ":" + DateTimeFormat.BASIC_UTC_FORMAT.format(new Date())
@@ -871,9 +873,8 @@ public class Audit_1 extends Indexed_1 {
 		                );                
 		            }
 		            return reply;
-		        }
-		        // Delegate
-		        else {
+		        } else {
+			        // Delegate
 		            return super.otherOperation(
 		                header,
 		                request,

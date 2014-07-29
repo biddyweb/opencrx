@@ -6,6 +6,9 @@
 			<field name="wfProcessInstance" visibility="cci">
 				<join table="OOCKE1_JOIN_WFPROCHASPROCINST"/>
 			</field>
+			<field name="executeScript" visibility="cci">
+				<column name="EXECUTE_SCRIPT" jdbc-type="CLOB"/>
+			</field>			
 		</class>
 	</package>
 </openmdxjdo>

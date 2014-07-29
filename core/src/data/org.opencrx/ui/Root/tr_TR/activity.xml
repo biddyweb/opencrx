@@ -275,9 +275,9 @@
                       <label>
                         <_item>Durum</_item>
                       </label>
-                      <shortLabel>
-                        <_item>Durum</_item>
-                      </shortLabel>
+ 											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                       <toolTip>
                         <_item>Durum</_item>
                       </toolTip>

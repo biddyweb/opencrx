@@ -10,17 +10,67 @@
 						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
 							<_object></_object>
 							<_content>
+								<featureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:assignedPrincipal">
+										<_object>
+											<type>org:opencrx:security:realm1:Principal</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:emailAccount">
+										<_object>
+											<type>org:opencrx:kernel:home1:EMailAccount</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:lastLoginAt">
+										<_object>
+											<type>org:w3c:dateTime</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:isDisabled">
+										<_object>
+											<type>org:w3c:boolean</type>
+											<multiplicity>0..1</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:assignedPrincipalGroup">
+										<_object>
+											<type>org:opencrx:security:realm1:PrincipalGroup</type>
+											<multiplicity>list</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+									<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:assignedRole">
+										<_object>
+											<type>org:openmdx:security:realm1:Role</type>
+											<multiplicity>list</multiplicity>
+											<changeable>false</changeable>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.StructuralFeatureDefinition>
+								</featureDefinition>
 								<elementDefinition>
-									<!--Segment Definition-->
+									<!--Segment Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment">
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>all user homes</_item>
+												<_item>Users</_item>
 											</toolTip>
 											<label>
-												<_item>User Homepages</_item>
+												<_item>Users</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -29,27 +79,64 @@
 											</order>
 											<iconKey>org:opencrx:kernel:home1:UserHome</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Tab Definitions Pane1-->
+									<!--Tab Definitions Pane1 -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:userHome">
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
 											<toolTip>
-												<_item>User Homes</_item>
+												<_item>All Users</_item>
 											</toolTip>
 											<label>
-												<_item>User Homes</_item>
+												<_item>All Users</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>10</_item>
 											</order>
-											<maxMember>5</maxMember>
+											<maxMember>7</maxMember>
 										</_object>
-										<_content/>
+										<_content>
+											<additionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9998" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Users (enabled)</_item>
+														</toolTip>
+														<label>
+															<_item>Users (enabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>20</_item>
+														</order>
+														<maxMember>7</maxMember>
+													</_object>
+													<_content />
+												</org.openmdx.ui1.AdditionalElementDefinition>
+												<org.openmdx.ui1.AdditionalElementDefinition id="9999" _operation="create">
+													<_object>
+														<toolTip>
+															<_item>Users (disabled)</_item>
+														</toolTip>
+														<label>
+															<_item>Users (disabled)</_item>
+														</label>
+														<order>
+															<_item>0</_item>
+															<_item>0</_item>
+															<_item>30</_item>
+														</order>
+														<maxMember>7</maxMember>
+													</_object>
+													<_content />
+												</org.openmdx.ui1.AdditionalElementDefinition>
+											</additionalElementDefinition>
+										</_content>
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:alert">
 										<_object>
@@ -69,7 +156,7 @@
 											<showMaxMember>5</showMaxMember>
 											<maxMember>6</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:timer">
 										<_object>
@@ -88,7 +175,7 @@
 											<showMaxMember>7</showMaxMember>
 											<maxMember>11</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:accessHistory">
 										<_object>
@@ -106,7 +193,7 @@
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:quickAccess">
 										<_object>
@@ -124,7 +211,7 @@
 											</order>
 											<maxMember>3</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:chart">
 										<_object>
@@ -142,7 +229,7 @@
 											</order>
 											<maxMember>2</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:objectFinder">
 										<_object>
@@ -160,7 +247,7 @@
 											</order>
 											<maxMember>5</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:exportProfile">
 										<_object>
@@ -178,9 +265,9 @@
 											</order>
 											<maxMember>5</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome">
 										<_object>
 											<active>true</active>
@@ -192,16 +279,16 @@
 											</label>
 											<iconKey>UserHome</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- disable Delete Operation -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:delete">
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Tab Definition-->
+									<!--Tab Definition -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30">
 										<_object>
 											<active>true</active>
@@ -212,9 +299,57 @@
 												<_item>Options</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:40">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Security</_item>
+											</toolTip>
+											<label>
+												<_item>Security</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:40:Group:10">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+											<label>
+												<_item>&amp;nbsp;</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:40:Group:20">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+											<label>
+												<_item>&amp;nbsp;</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:40:Group:30">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>&amp;nbsp;</_item>
+											</toolTip>
+											<label>
+												<_item>&amp;nbsp;</_item>
+											</label>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:0:Group:10">
 										<_object>
 											<active>true</active>
@@ -225,10 +360,10 @@
 												<_item>Calendar</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in Details Tab-->
-									<!--FieldGroups in Options Tab-->
+									<!--FieldGroups in Details Tab -->
+									<!--FieldGroups in Options Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:0">
 										<_object>
 											<active>true</active>
@@ -239,7 +374,7 @@
 												<_item>E-mail Options</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Attr:Tab:30:Group:10">
 										<_object>
@@ -251,100 +386,159 @@
 												<_item>User Settings</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Element Definitions-->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:contact">
 										<_object>
 											<active>true</active>
-											<filterable>true</filterable>
-											<sortable>true</sortable>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
 											<toolTip>
 												<_item>Contact</_item>
 											</toolTip>
 											<label>
 												<_item>Contact</_item>
 											</label>
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>10</_item>
-											</order>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeekName">
-										<_object>
-											<active>false</active>
-											<toolTip>
-												<_item>Name</_item>
-											</toolTip>
-											<label>
-												<_item>Name</_item>
-											</label>
-											<!--
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>10</_item>
-											</order>
-											-->
 											<orderFieldGroup>
 												<_item>0</_item>
+												<_item>0</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>1</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:assignedPrincipal">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.UserHomeHasAssignedPrincipalDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
+											<toolTip>
+												<_item>Principal</_item>
+											</toolTip>
+											<label>
+												<_item>Principal</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>40</_item>
 												<_item>10</_item>
 												<_item>10</_item>
 											</orderFieldGroup>
 											<orderObjectContainer>
-												<_item>99</_item>
 												<_item>0</_item>
 												<_item>0</_item>
+												<_item>3</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeek">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:isDisabled">
 										<_object>
-											<spanRow>7</spanRow>
-											<active>false</active>
+											<dataBindingName>org.opencrx.kernel.portal.UserHomeIsDisabledDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
 											<toolTip>
-												<_item>Work week</_item>
+												<_item>Disabled</_item>
 											</toolTip>
 											<label>
-												<_item>Work week</_item>
+												<_item>Disabled</_item>
 											</label>
-											<!--
-											<order>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>20</_item>
-											</order>
-											-->
 											<orderFieldGroup>
-												<_item>0</_item>
-												<_item>10</_item>
-												<_item>20</_item>
-											</orderFieldGroup>
-											<orderObjectContainer>
-												<_item>99</_item>
-												<_item>0</_item>
-												<_item>0</_item>
-											</orderObjectContainer>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:workWeekMimeType">
-										<_object>
-											<active>false</active>
-											<label>
-												<_item></_item>
-											</label>
-											<order>
-												<_item>0</_item>
+												<_item>40</_item>
 												<_item>10</_item>
 												<_item>30</_item>
-											</order>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>6</_item>
+											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:lastLoginAt">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.UserHomeLastLoginAtDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
+											<toolTip>
+												<_item>Last login at</_item>
+											</toolTip>
+											<label>
+												<_item>Last login at</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>40</_item>
+												<_item>10</_item>
+												<_item>40</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>7</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:assignedPrincipalGroup">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.UserHomeHasAssignedPrincipalGroupDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Groups</_item>
+											</toolTip>
+											<label>
+												<_item>Groups</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>40</_item>
+												<_item>20</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>4</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:assignedRole">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.UserHomeHasAssignedRoleDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
+											<spanRow>10</spanRow>
+											<toolTip>
+												<_item>Roles</_item>
+											</toolTip>
+											<label>
+												<_item>Roles</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>40</_item>
+												<_item>30</_item>
+												<_item>10</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>5</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Options -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:sendMailSubjectPrefix">
@@ -362,7 +556,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:webAccessUrl">
 										<_object>
@@ -380,7 +574,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:primaryGroup">
 										<_object>
@@ -402,8 +596,33 @@
 												<_item>20</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:emailAccount">
+										<_object>
+											<dataBindingName>org.opencrx.kernel.portal.UserHomeHasEMailAccountDataBinding</dataBindingName>
+											<active>true</active>
+											<filterable>false</filterable>
+											<sortable>false</sortable>
+											<toolTip>
+												<_item>E-Mail</_item>
+											</toolTip>
+											<label>
+												<_item>E-Mail</_item>
+											</label>
+											<orderFieldGroup>
+												<_item>30</_item>
+												<_item>10</_item>
+												<_item>15</_item>
+											</orderFieldGroup>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>2</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>									
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:storeSettingsOnLogoff">
 										<_object>
 											<active>true</active>
@@ -419,7 +638,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:settings">
 										<_object>
@@ -438,10 +657,10 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Alert -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert">
 										<_object>
 											<active>true</active>
@@ -454,11 +673,11 @@
 											</label>
 											<iconKey>Alert</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:name">
 										<_object>
 											<active>true</active>
@@ -474,7 +693,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:alertState">
 										<_object>
@@ -491,7 +710,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:importance">
 										<_object>
@@ -508,7 +727,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:reference">
 										<_object>
@@ -530,7 +749,7 @@
 												<_item>5</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:description">
 										<_object>
@@ -543,20 +762,14 @@
 											<label>
 												<_item>Description</_item>
 											</label>
-											<!--
-											<order>
-												<_item>0</_item>
-												<_item>0</_item>
-												<_item>80</_item>
-											</order>
-											-->
+											<!-- <order> <_item>0</_item> <_item>0</_item> <_item>80</_item> </order> -->
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid enhancement -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:createdAt">
@@ -568,28 +781,22 @@
 											<label>
 												<_item>Created at</_item>
 											</label>
-<!--                                            
-                      <orderFieldGroup>
-                          <_item>0</_item>
-                          <_item>0</_item>
-                          <_item>3</_item>
-                      </orderFieldGroup>
--->
+											<!-- <orderFieldGroup> <_item>0</_item> <_item>0</_item> <_item>3</_item> </orderFieldGroup> -->
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>70</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Operations-->
+									<!--Operations -->
 									<!-- disable delete because of AirSync -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:delete">
 										<_object>
 											<active>false</active>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead">
 										<_object>
@@ -606,7 +813,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead:Group:in">
 										<_object>
@@ -623,7 +830,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsRead:Group:result">
 										<_object>
@@ -635,7 +842,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted">
 										<_object>
@@ -653,7 +860,7 @@
 											</order>
 											<iconKey>org:opencrx:kernel:OpMarkAsAccepted</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted:Group:in">
 										<_object>
@@ -670,7 +877,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Alert:Pane:Op:Tab:markAsAccepted:Group:result">
 										<_object>
@@ -682,11 +889,11 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- Timer -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer">
 										<_object>
 											<active>true</active>
@@ -699,11 +906,11 @@
 											</label>
 											<iconKey>Timer</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:name">
 										<_object>
 											<active>true</active>
@@ -719,7 +926,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:action">
 										<_object>
@@ -741,7 +948,7 @@
 												<_item>90</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerStartAt">
 										<_object>
@@ -760,7 +967,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerEndAt">
 										<_object>
@@ -783,7 +990,7 @@
 												<_item>110</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:description">
 										<_object>
@@ -801,7 +1008,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:target">
 										<_object>
@@ -823,7 +1030,7 @@
 												<_item>5</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:timerState">
 										<_object>
@@ -840,7 +1047,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:disabled">
 										<_object>
@@ -858,7 +1065,7 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grid enhancement -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:createdAt">
@@ -870,20 +1077,14 @@
 											<label>
 												<_item>Created at</_item>
 											</label>
-<!--                                            
-                      <orderFieldGroup>
-                          <_item>0</_item>
-                          <_item>0</_item>
-                          <_item>3</_item>
-                      </orderFieldGroup>
--->
+											<!-- <orderFieldGroup> <_item>0</_item> <_item>0</_item> <_item>3</_item> </orderFieldGroup> -->
 											<orderObjectContainer>
 												<_item>0</_item>
 												<_item>20</_item>
 												<_item>30</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerRepeat">
 										<_object>
@@ -901,7 +1102,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:triggerIntervalMinutes">
 										<_object>
@@ -919,7 +1120,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Timer:lastTriggerAt">
 										<_object>
@@ -938,11 +1139,11 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 
 									<!-- QuickAccess -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess">
 										<_object>
 											<active>true</active>
@@ -954,11 +1155,11 @@
 											</label>
 											<iconKey>QuickAccess</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:reference">
 										<_object>
 											<active>true</active>
@@ -974,7 +1175,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:name">
 										<_object>
@@ -991,7 +1192,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:description">
 										<_object>
@@ -1008,7 +1209,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:iconKey">
 										<_object>
@@ -1025,7 +1226,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionType">
 										<_object>
@@ -1042,7 +1243,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionName">
 										<_object>
@@ -1060,7 +1261,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:QuickAccess:actionParam">
 										<_object>
@@ -1078,10 +1279,10 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- AccessHistory -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory">
 										<_object>
 											<active>true</active>
@@ -1093,11 +1294,11 @@
 											</label>
 											<iconKey>AccessHistory</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory:reference">
 										<_object>
 											<active>true</active>
@@ -1113,7 +1314,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:AccessHistory:description">
 										<_object>
@@ -1131,10 +1332,10 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Chart -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart">
 										<_object>
 											<active>true</active>
@@ -1146,11 +1347,11 @@
 											</label>
 											<iconKey>Chart</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chartName">
 										<_object>
 											<active>true</active>
@@ -1171,7 +1372,7 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chartMimeType">
 										<_object>
@@ -1185,7 +1386,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:description">
 										<_object>
@@ -1207,7 +1408,7 @@
 												<_item>0</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Chart:chart">
 										<_object>
@@ -1225,11 +1426,10 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 									<!-- ObjectFinder -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder">
 										<_object>
 											<active>true</active>
@@ -1241,7 +1441,7 @@
 											</label>
 											<iconKey>ObjectFinder</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- Grids -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryAccount">
@@ -1260,7 +1460,7 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryActivity">
 										<_object>
@@ -1278,7 +1478,7 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryContract">
 										<_object>
@@ -1296,7 +1496,7 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryProduct">
 										<_object>
@@ -1314,7 +1514,7 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDocument">
 										<_object>
@@ -1332,7 +1532,7 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryBuilding">
 										<_object>
@@ -1350,7 +1550,7 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:indexEntryDepot">
 										<_object>
@@ -1368,11 +1568,11 @@
 											</order>
 											<maxMember>1</maxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:name">
 										<_object>
 											<active>true</active>
@@ -1388,7 +1588,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:description">
 										<_object>
@@ -1405,7 +1605,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:allWords">
 										<_object>
@@ -1422,7 +1622,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:atLeastOneOfTheWords">
 										<_object>
@@ -1439,7 +1639,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ObjectFinder:withoutWords">
 										<_object>
@@ -1456,10 +1656,10 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<!-- ExportProfile -->
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ExportProfile">
 										<_object>
 											<active>true</active>
@@ -1471,13 +1671,12 @@
 											</label>
 											<iconKey>ExportProfile</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
-									<!--FieldGroups in Details Tab-->
-									<!--Element Definitions-->
+									<!--FieldGroups in General Tab -->
+									<!--FieldGroups in Details Tab -->
+									<!--Element Definitions -->
 									<!-- customized in common.xml -->
-
 									<!-- Operations -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem">
 										<_object>
@@ -1495,7 +1694,7 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem:Group:in">
 										<_object>
@@ -1507,7 +1706,7 @@
 												<_item>Input</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:locale">
 										<_object>
@@ -1524,7 +1723,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:item">
 										<_object>
@@ -1541,7 +1740,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemMimeType">
 										<_object>
@@ -1558,7 +1757,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportParams:itemName">
 										<_object>
@@ -1575,7 +1774,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:importItem:Group:result">
 										<_object>
@@ -1587,7 +1786,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:status">
 										<_object>
@@ -1604,7 +1803,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:statusMessage">
 										<_object>
@@ -1621,7 +1820,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:ImportResult:importedObject">
 										<_object>
@@ -1638,7 +1837,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser">
 										<_object>
@@ -1656,7 +1855,7 @@
 											</order>
 											<iconKey>OpCreateUser</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser:Group:in">
 										<_object>
@@ -1673,7 +1872,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:createUser:Group:result">
 										<_object>
@@ -1685,7 +1884,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:principalName">
 										<_object>
@@ -1702,7 +1901,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:contact">
 										<_object>
@@ -1719,7 +1918,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:primaryUserGroup">
 										<_object>
@@ -1736,7 +1935,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPassword">
 										<_object>
@@ -1754,7 +1953,7 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserParams:initialPasswordVerification">
 										<_object>
@@ -1772,7 +1971,7 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:status">
 										<_object>
@@ -1789,7 +1988,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:statusMessage">
 										<_object>
@@ -1806,7 +2005,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:CreateUserResult:createdUserHome">
 										<_object>
@@ -1823,9 +2022,8 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers">
 										<_object>
 											<active>true</active>
@@ -1842,7 +2040,7 @@
 											</order>
 											<iconKey>OpCreateUser</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers:Group:in">
 										<_object>
@@ -1859,7 +2057,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Segment:Pane:Op:Tab:importUsers:Group:result">
 										<_object>
@@ -1871,7 +2069,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:item">
 										<_object>
@@ -1888,7 +2086,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:itemMimeType">
 										<_object>
@@ -1905,7 +2103,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersParams:itemName">
 										<_object>
@@ -1922,7 +2120,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ImportUsersResult:statusMessage">
 										<_object>
@@ -1939,9 +2137,8 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems">
 										<_object>
 											<active>true</active>
@@ -1958,7 +2155,7 @@
 											</order>
 											<iconKey>org:opencrx:kernel:OpRefresh</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems:Group:in">
 										<_object>
@@ -1975,7 +2172,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:refreshItems:Group:result">
 										<_object>
@@ -1987,7 +2184,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword">
 										<_object>
@@ -2005,7 +2202,7 @@
 											</order>
 											<iconKey>org:opencrx:kernel:OpChangePassword</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword:Group:in">
 										<_object>
@@ -2022,7 +2219,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:changePassword:Group:result">
 										<_object>
@@ -2034,7 +2231,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:oldPassword">
 										<_object>
@@ -2052,7 +2249,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPassword">
 										<_object>
@@ -2070,7 +2267,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordParams:newPasswordVerification">
 										<_object>
@@ -2088,7 +2285,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:ChangePasswordResult:status">
 										<_object>
@@ -2105,9 +2302,8 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:210">
 										<_object>
 											<active>true</active>
@@ -2118,7 +2314,7 @@
 												<_item>Find</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic">
 										<_object>
@@ -2135,7 +2331,7 @@
 												<_item>500</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic:Group:in">
 										<_object>
@@ -2152,7 +2348,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchBasic:Group:result">
 										<_object>
@@ -2164,7 +2360,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchBasicParams:searchExpression">
 										<_object>
@@ -2181,9 +2377,8 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced">
 										<_object>
 											<active>true</active>
@@ -2199,7 +2394,7 @@
 												<_item>510</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced:Group:in">
 										<_object>
@@ -2216,7 +2411,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:Pane:Op:Tab:searchAdvanced:Group:result">
 										<_object>
@@ -2228,7 +2423,7 @@
 												<_item>Result</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:allWords">
 										<_object>
@@ -2245,7 +2440,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:atLeastOneOfTheWords">
 										<_object>
@@ -2262,7 +2457,7 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchAdvancedParams:withoutWords">
 										<_object>
@@ -2279,7 +2474,7 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:SearchResult:objectFinder">
 										<_object>
@@ -2296,7 +2491,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 								</elementDefinition>
 							</_content>

@@ -79,7 +79,7 @@ import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.ViewPortFactory;
-import org.openmdx.portal.servlet.view.TransientObjectView;
+import org.openmdx.portal.servlet.component.TransientObjectView;
 
 import twitter4j.DirectMessage;
 import twitter4j.Twitter;

@@ -72,16 +72,18 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.WebKeys;
-import org.openmdx.portal.servlet.control.FieldGroupControl;
-import org.openmdx.portal.servlet.control.GridControl;
+import org.openmdx.portal.servlet.component.AttributePane;
+import org.openmdx.portal.servlet.component.UiAttributeTab;
+import org.openmdx.portal.servlet.component.UiFieldGroup;
+import org.openmdx.portal.servlet.component.ObjectView;
+import org.openmdx.portal.servlet.component.ReferencePane;
+import org.openmdx.portal.servlet.component.ShowObjectView;
+import org.openmdx.portal.servlet.control.UiFieldGroupControl;
+import org.openmdx.portal.servlet.control.UiGridControl;
 import org.openmdx.portal.servlet.control.OperationPaneControl;
-import org.openmdx.portal.servlet.control.OperationTabControl;
-import org.openmdx.portal.servlet.control.WizardTabControl;
-import org.openmdx.portal.servlet.view.AttributeTab;
-import org.openmdx.portal.servlet.view.FieldGroup;
-import org.openmdx.portal.servlet.view.ObjectView;
-import org.openmdx.portal.servlet.view.ReferencePane;
-import org.openmdx.portal.servlet.view.ShowObjectView;
+import org.openmdx.portal.servlet.control.UiOperationTabControl;
+import org.openmdx.portal.servlet.control.WizardControl;
+import org.openmdx.portal.servlet.control.UiWizardTabControl;
 
 /**
  * ManageGUIPermissionsWizardController
@@ -490,8 +492,8 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 				ShowObjectView showView = (ShowObjectView)view;
 				// Operations
 				WizardViewState viewState = this.wizardState.viewStates.get(WizardState.VIEW_OPERATION_PERMISSIONS);
-				for(OperationPaneControl paneControl: showView.getShowInspectorControl().getOperationPaneControl()) {
-					for(OperationTabControl tabControl: paneControl.getOperationTabControl()) {
+				for(OperationPaneControl paneControl: showView.getControl().getChildren(OperationPaneControl.class)) {
+					for(UiOperationTabControl tabControl: paneControl.getChildren(UiOperationTabControl.class)) {
 						String elementName = tabControl.getQualifiedOperationName();
 						for(String permission: getGenericPermissions(this.getObject(), elementName, true)) {
 							if(isStoredPermission(storedPermissions, permission)) {
@@ -510,7 +512,7 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 					}
 				}
 				// Wizards
-				for(WizardTabControl tabControl: showView.getShowInspectorControl().getWizardControl().getWizardTabControls()) {
+				for(UiWizardTabControl tabControl: showView.getControl().getChildren(WizardControl.class).get(0).getChildren(UiWizardTabControl.class)) {
 					for(String permission: getGenericPermissions(this.getObject(), tabControl.getQualifiedOperationName(), true)) {
 						if(isStoredPermission(storedPermissions, permission)) {
 							viewState.currentGenericPermissions.add(permission);
@@ -521,22 +523,11 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 				}
 				// Fields
 				viewState = this.wizardState.viewStates.get(WizardState.VIEW_FIELD_PERMISSIONS);
-				for(AttributeTab attributeTab: showView.getAttributePane().getAttributeTab()) {
-					// Attribute tabs only have specific permissions
-					{
-						String elementName = attributeTab.getAttributeTabControl().getId();
-						for(String permission: getSpecificPermissions(this.getObject(), elementName, false)) {
-							if(isStoredPermission(storedPermissions, permission)) {
-								viewState.currentSpecificPermissions.add(permission);
-							} else {
-								viewState.specificPermissions.add(permission);
-							}
-						}
-					}
-					for(FieldGroup fieldGroup: attributeTab.getFieldGroup()) {
-						// Field groups only have specific permissions
+				for(AttributePane attributePane: showView.getChildren(AttributePane.class)) {
+					for(UiAttributeTab attributeTab: attributePane.getChildren(UiAttributeTab.class)) {
+						// Attribute tabs only have specific permissions
 						{
-							String elementName = fieldGroup.getFieldGroupControl().getId();
+							String elementName = attributeTab.getControl().getId();
 							for(String permission: getSpecificPermissions(this.getObject(), elementName, false)) {
 								if(isStoredPermission(storedPermissions, permission)) {
 									viewState.currentSpecificPermissions.add(permission);
@@ -545,20 +536,33 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 								}
 							}
 						}
-						for(FieldGroupControl.Field field: fieldGroup.getFieldGroupControl().getFields()) {
-							String elementName = field.getField().getQualifiedFeatureName();
-							for(String permission: getGenericPermissions(this.getObject(), elementName, true)) {
-								if(isStoredPermission(storedPermissions, permission)) {
-									viewState.currentGenericPermissions.add(permission);
-								} else {
-									viewState.genericPermissions.add(permission);
+						for(UiFieldGroup fieldGroup: attributeTab.getChildren(UiFieldGroup.class)) {
+							// Field groups only have specific permissions
+							{
+								String elementName = fieldGroup.getControl().getId();
+								for(String permission: getSpecificPermissions(this.getObject(), elementName, false)) {
+									if(isStoredPermission(storedPermissions, permission)) {
+										viewState.currentSpecificPermissions.add(permission);
+									} else {
+										viewState.specificPermissions.add(permission);
+									}
 								}
 							}
-							for(String permission: getSpecificPermissions(this.getObject(), elementName, true)) {
-								if(isStoredPermission(storedPermissions, permission)) {
-									viewState.currentSpecificPermissions.add(permission);
-								} else {
-									viewState.specificPermissions.add(permission);
+							for(UiFieldGroupControl.Field field: fieldGroup.getFields()) {
+								String elementName = field.getField().getQualifiedFeatureName();
+								for(String permission: getGenericPermissions(this.getObject(), elementName, true)) {
+									if(isStoredPermission(storedPermissions, permission)) {
+										viewState.currentGenericPermissions.add(permission);
+									} else {
+										viewState.genericPermissions.add(permission);
+									}
+								}
+								for(String permission: getSpecificPermissions(this.getObject(), elementName, true)) {
+									if(isStoredPermission(storedPermissions, permission)) {
+										viewState.currentSpecificPermissions.add(permission);
+									} else {
+										viewState.specificPermissions.add(permission);
+									}
 								}
 							}
 						}
@@ -566,8 +570,8 @@ public class ManageGUIPermissionsWizardController extends AbstractWizardControll
 				}
 				// Grids
 				viewState = this.wizardState.viewStates.get(WizardState.VIEW_GRID_PERMISSIONS);
-				for(ReferencePane referencePane: showView.getReferencePane()) {
-					for(GridControl gridControl: referencePane.getReferencePaneControl().getGridControl()) {
+				for(ReferencePane referencePane: showView.getChildren(ReferencePane.class)) {
+					for(UiGridControl gridControl: referencePane.getControl().getChildren(UiGridControl.class)) {
 						String elementName = gridControl.getQualifiedReferenceTypeName();
 						for(String permission: getGenericPermissions(this.getObject(), elementName, true)) {
 							if(isStoredPermission(storedPermissions, permission)) {

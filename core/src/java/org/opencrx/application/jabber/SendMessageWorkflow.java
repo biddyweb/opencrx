@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -79,6 +79,10 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.kernel.log.SysLog;
 
+/**
+ * SendMessageWorkflow
+ *
+ */
 public class SendMessageWorkflow extends Workflows.SynchronousWorkflow {
 
 	/* (non-Javadoc)
@@ -112,17 +116,18 @@ public class SendMessageWorkflow extends Workflows.SynchronousWorkflow {
                 subject = "ERROR: " + Notifications.getInstance().getNotificationSubject(
                     pm,
                     targetObject,
+                    wfProcessInstance.refGetPath(),
                     userHome,
                     params,
                     true // useSendMailSubjectPrefix
                 );
                 text = "ERROR: direct message not sent. No default jabber account\n";                 
-            }
-            // Send message
-            else {
+            } else {
+                // Send message
                 subject = Notifications.getInstance().getNotificationSubject(
                     pm,
                     targetObject,
+                    wfProcessInstance.refGetPath(),
                     userHome,
                     params,
                     true //this.useSendMailSubjectPrefix
@@ -170,8 +175,7 @@ public class SendMessageWorkflow extends Workflows.SynchronousWorkflow {
                 subject,
                 text
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
         	SysLog.warning("Can not send message");
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
@@ -181,8 +185,7 @@ public class SendMessageWorkflow extends Workflows.SynchronousWorkflow {
                 e.getMessage()
             );
             throw e0;        	
-        }
-        finally {
+        } finally {
         	if(rootPm != null) {
         		rootPm.close();
         	}

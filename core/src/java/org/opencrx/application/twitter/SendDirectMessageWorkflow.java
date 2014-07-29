@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -78,6 +78,10 @@ import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.auth.AccessToken;
 
+/**
+ * SendDirectMessageWorkflow
+ *
+ */
 public class SendDirectMessageWorkflow extends Workflows.SynchronousWorkflow {
 
 	/* (non-Javadoc)
@@ -118,17 +122,18 @@ public class SendDirectMessageWorkflow extends Workflows.SynchronousWorkflow {
                 subject = "ERROR: " + Notifications.getInstance().getNotificationSubject(
                     pm,
                     targetObject,
+                    wfProcessInstance.refGetPath(),
                     userHome,
                     params,
                     true // useSendMailSubjectPrefix
                 );
                 text = "ERROR: direct message not sent. No default twitter account\n";                 
-            }
-            // Send direct message
-            else {
+            } else {
+                // Send direct message
                 subject = Notifications.getInstance().getNotificationSubject(
                     pm,
                     targetObject,
+                    wfProcessInstance.refGetPath(),
                     userHome,
                     params,
                     true //this.useSendMailSubjectPrefix
@@ -174,8 +179,7 @@ public class SendDirectMessageWorkflow extends Workflows.SynchronousWorkflow {
                 subject,
                 text
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
         	SysLog.warning("Can not send direct message");
             ServiceException e0 = new ServiceException(e);
             SysLog.detail(e0.getMessage(), e0.getCause());
@@ -185,8 +189,7 @@ public class SendDirectMessageWorkflow extends Workflows.SynchronousWorkflow {
                 e.getMessage()
             );
             throw e0;        	
-        }
-        finally {
+        } finally {
         	if(rootPm != null) {
         		rootPm.close();
         	}

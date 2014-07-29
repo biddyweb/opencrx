@@ -67,6 +67,7 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityMilestone;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.Resource;
+import org.opencrx.kernel.home1.cci2.SyncFeedQuery;
 import org.opencrx.kernel.home1.jmi1.ActivityFilterCalendarFeed;
 import org.opencrx.kernel.home1.jmi1.ActivityGroupCalendarFeed;
 import org.opencrx.kernel.home1.jmi1.AirSyncProfile;
@@ -87,6 +88,94 @@ import org.openmdx.base.naming.Path;
 public class AdapterConnectionHelper {
 
 	/**
+	 * ConnectionURL
+	 *
+	 */
+	public static class ConnectionURL {
+		
+		public ConnectionURL(
+			URL url,
+			RefObject_1_0 object
+		) {
+			this.url = url;
+			this.object = object;
+		}
+		
+		/**
+		 * @return the description
+		 */
+		public RefObject_1_0 getObject() {
+			return object;
+		}
+		/**
+		 * @param description the description to set
+		 */
+		public void setObject(RefObject_1_0 object) {
+			this.object = object;
+		}
+		/**
+		 * @return the url
+		 */
+		public URL getUrl() {
+			return url;
+		}
+		/**
+		 * @param url the url to set
+		 */
+		public void setUrl(URL url) {
+			this.url = url;
+		}
+
+		private RefObject_1_0 object;
+		private URL url;
+
+	}
+
+	/**
+	 * ResourcePath
+	 *
+	 */
+	public static class ResourcePath {
+		
+		public ResourcePath(
+			RefObject_1_0 object,
+			String path
+		) {
+			this.object = object;
+			this.path = path;
+		}
+		
+		/**
+		 * @return the object
+		 */
+		public RefObject_1_0 getObject() {
+			return object;
+		}
+		/**
+		 * @param object the object to set
+		 */
+		public void setObject(RefObject_1_0 object) {
+			this.object = object;
+		}
+		/**
+		 * @return the path
+		 */
+		public String getPath() {
+			return path;
+		}
+		/**
+		 * @param path the path to set
+		 */
+		public void setPath(String path) {
+			this.path = path;
+		}
+
+		private RefObject_1_0 object;
+		private String path;
+		
+	}
+	
+	/**
 	 * Map paths to URLs.
 	 * 
 	 * @param baseUrl
@@ -96,19 +185,22 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	private static List<URL> mapToURLs(
+	private static List<ConnectionURL> mapToURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
 		String servletType,
-		List<String> paths
+		List<ResourcePath> paths
 	) throws ServiceException {
 		try {
 			String providerName = obj.refGetPath().get(2);	
 			String segmentName = obj.refGetPath().get(4);			
-			List<URL> urls = new ArrayList<URL>();
-			for(String path: paths) {
+			List<ConnectionURL> urls = new ArrayList<ConnectionURL>();
+			for(ResourcePath path: paths) {
 				urls.add(
-					new URL(baseUrl.replace("-core-", "-" + servletType + "-") + providerName + "/" + segmentName + path)
+					new ConnectionURL(
+						new URL(baseUrl.replace("-core-", "-" + servletType + "-") + providerName + "/" + segmentName + path.getPath()),
+						path.getObject()
+					)
 				);
 			}
 			return urls;
@@ -116,62 +208,97 @@ public class AdapterConnectionHelper {
 			throw new ServiceException(e);
 		}
 	}
-	
+
 	/**
 	 * Get calendar paths for given object.
-	 * 
+	 *
 	 * @param obj
 	 * @param isCollectionTypeTask
 	 * @param suffix
 	 * @return
 	 * @throws ServiceException
 	 */
-	private static List<String> getCalendarPaths(
+	private static List<ResourcePath> getCalendarPaths(
 		RefObject_1_0 obj,
 		boolean isCollectionTypeTask,
 		String suffix
 	) throws ServiceException {
 		try {
 			PersistenceManager pm = JDOHelper.getPersistenceManager(obj);
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			if(obj instanceof ActivityFilterGroup) {
-				ActivityFilterGroup activityFilterGroup =
-					(ActivityFilterGroup)obj;
+				ActivityFilterGroup activityFilterGroup = (ActivityFilterGroup)obj;
 				if((activityFilterGroup.getName() != null) && !activityFilterGroup.getName().isEmpty()) {
 					ActivityGroup group = (ActivityGroup)pm.getObjectById(activityFilterGroup.refGetPath().getParent().getParent());
 					if(group instanceof ActivityTracker) {
-						paths.add("/tracker/" + group.getName() + "/filter/" + activityFilterGroup.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);
+						paths.add(
+							new ResourcePath(
+								group,
+								"/tracker/" + group.getName() + "/filter/" + activityFilterGroup.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+							)
+						);
 					} else if(group instanceof ActivityMilestone) {
-						paths.add("/milestone/" +  group.getName() + "/filter/" + activityFilterGroup.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);						
+						paths.add(
+							new ResourcePath(
+								group,
+								"/milestone/" +  group.getName() + "/filter/" + activityFilterGroup.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+							)
+						);						
 					} else if(group instanceof ActivityCategory) {
-						paths.add("/category/" +  group.getName() + "/filter/" + activityFilterGroup.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);						
+						paths.add(
+							new ResourcePath(
+								group,
+								"/category/" +  group.getName() + "/filter/" + activityFilterGroup.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+							)
+						);						
 					}
 				}
 			} else if(obj instanceof ActivityFilterGlobal) {
 				ActivityFilterGlobal activityFilterGlobal = (ActivityFilterGlobal)obj;
 				if((activityFilterGlobal.getName() != null) && !activityFilterGlobal.getName().isEmpty()) {
-					paths.add("/globalfilter/" + activityFilterGlobal.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);
+					paths.add(
+						new ResourcePath(
+							activityFilterGlobal,
+							"/globalfilter/" + activityFilterGlobal.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+						)
+					);
 				}
 			} else if(obj instanceof ActivityTracker) {
-				ActivityTracker activityTracker =
-					(ActivityTracker)obj;
+				ActivityTracker activityTracker = (ActivityTracker)obj;
 				if((activityTracker.getName() != null) && !activityTracker.getName().isEmpty()) {
-					paths.add("/tracker/" + activityTracker.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);
+					paths.add(
+						new ResourcePath(
+							activityTracker,
+							"/tracker/" + activityTracker.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+						)
+					);						
 				}
 			} else if(obj instanceof ActivityCategory) {
-				ActivityCategory activityCategory =
-					(ActivityCategory)obj;
+				ActivityCategory activityCategory = (ActivityCategory)obj;
 				if((activityCategory.getName() != null) && !activityCategory.getName().isEmpty()) {
-					paths.add("/category/" + activityCategory.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);
+					paths.add(
+						new ResourcePath(
+							activityCategory,
+							"/category/" + activityCategory.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+						)
+					);
 				}
 			} else if(obj instanceof ActivityMilestone) {
 				ActivityMilestone activityMilestone = (ActivityMilestone)obj;
 				if((activityMilestone.getName() != null) && !activityMilestone.getName().isEmpty()) {
-					paths.add("/milestone/" + activityMilestone.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);
+					paths.add(
+						new ResourcePath(
+							activityMilestone,
+							"/milestone/" + activityMilestone.getName() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+						)
+					);
 				}
 			} else if(obj instanceof CalendarProfile) {
 				CalendarProfile calendarProfile = (CalendarProfile)obj;
-				for(SyncFeed feed: calendarProfile.<SyncFeed>getFeed()) {
+				SyncFeedQuery syncFeedQuery = (SyncFeedQuery)pm.newQuery(SyncFeed.class);
+				syncFeedQuery.orderByName().ascending();
+				syncFeedQuery.forAllIsActive().isTrue();
+				for(SyncFeed feed: calendarProfile.<SyncFeed>getFeed(syncFeedQuery)) {
 					if(Boolean.TRUE.equals(feed.isActive())) {
 						if(feed instanceof ActivityFilterCalendarFeed) {
 							try {
@@ -198,10 +325,21 @@ public class AdapterConnectionHelper {
 								// In case of AUTHORIZATION_FAILUREs								
 							}
 						}
+						paths.add(
+							new ResourcePath(
+								feed,
+								"/user/" + calendarProfile.refGetPath().get(6) + "/profile/" + calendarProfile.refGetPath().get(8) + "/" + feed.refGetPath().getBase() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+							)
+						);						
 					}
 				}
 			} else if(obj instanceof UserHome) {
-				paths.add("/home/" + obj.refGetPath().getBase() + (isCollectionTypeTask ? "/VTODO" : "") + suffix);
+				paths.add(
+					new ResourcePath(
+						obj,
+						"/home/" + obj.refGetPath().getBase() + (isCollectionTypeTask ? "/VTODO" : "") + suffix
+					)
+				);
 			}
 			return paths;
 		} catch(Exception e) {
@@ -217,24 +355,33 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	private static List<String> getCardPaths(
+	private static List<ResourcePath> getCardPaths(
 		RefObject_1_0 obj,
 		String suffix
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 		    if(obj instanceof org.opencrx.kernel.account1.jmi1.AccountFilterGlobal) {
 		    	org.opencrx.kernel.account1.jmi1.AccountFilterGlobal accountFilterGlobal =
 		    		(org.opencrx.kernel.account1.jmi1.AccountFilterGlobal)obj;
 		    	if((accountFilterGlobal.getName() != null) && !accountFilterGlobal.getName().isEmpty()) {
-		    		paths.add("/filter/" + accountFilterGlobal.getName() + suffix);
+		    		paths.add(
+		    			new ResourcePath(
+		    				accountFilterGlobal,
+		    				"/filter/" + accountFilterGlobal.getName() + suffix
+		    			)
+		    		);
 		    	}
-		    }
-		    else if(obj instanceof org.opencrx.kernel.account1.jmi1.AbstractGroup) {
+		    } else if(obj instanceof org.opencrx.kernel.account1.jmi1.AbstractGroup) {
 		    	org.opencrx.kernel.account1.jmi1.AbstractGroup accountGroup =
 		    		(org.opencrx.kernel.account1.jmi1.AbstractGroup)obj;
 		    	if((accountGroup.getName() != null) && !accountGroup.getName().isEmpty()) {
-		    		paths.add("/group/" + accountGroup.getName() + suffix);
+		    		paths.add(
+		    			new ResourcePath(
+		    				accountGroup,
+		    				"/group/" + accountGroup.getName() + suffix
+		    			)
+		    		);
 		    	}
 		    } else if(obj instanceof CardProfile) {
 		    	CardProfile cardProfile = (CardProfile)obj;
@@ -269,19 +416,23 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getCalDavCollectionSetURLs(
+	public static List<ConnectionURL> getCalDavCollectionSetURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
 		try {
 			PersistenceManager pm = JDOHelper.getPersistenceManager(obj);
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			if(obj instanceof CalendarProfile) {
-				CalendarProfile calendarProfile =
-					(CalendarProfile)obj;			
+				CalendarProfile calendarProfile = (CalendarProfile)obj;			
 		        if((calendarProfile.getName() != null) && !calendarProfile.getName().isEmpty()) {
 		        	UserHome userHome = (UserHome)pm.getObjectById(new Path(obj.refMofId()).getParent().getParent());
-		        	paths.add("/user/" + userHome.refGetPath().getBase() + "/profile/" + calendarProfile.getName());      	
+		        	paths.add(
+		        		new ResourcePath(
+		        			userHome,
+		        			"/user/" + userHome.refGetPath().getBase() + "/profile/" + calendarProfile.getName()
+		        		)
+		        	);      	
 		        }
 			}
 			return mapToURLs(
@@ -303,7 +454,7 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getCalDavEventCollectionURLs(
+	public static List<ConnectionURL> getCalDavEventCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
@@ -323,7 +474,7 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getCalDavTaskCollectionURLs(
+	public static List<ConnectionURL> getCalDavTaskCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
@@ -343,19 +494,23 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getWebDavCollectionURLs(
+	public static List<ConnectionURL> getWebDavCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {		
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			PersistenceManager pm = JDOHelper.getPersistenceManager(obj);
 			if(obj instanceof DocumentProfile) {
-				DocumentProfile documentProfile =
-					(DocumentProfile)obj;			
+				DocumentProfile documentProfile = (DocumentProfile)obj;			
 		        if((documentProfile.getName() != null) && !documentProfile.getName().isEmpty()) {
 		        	UserHome userHome =  (UserHome)pm.getObjectById(obj.refGetPath().getParent().getParent());
-		        	paths.add("/user/" + userHome.refGetPath().getBase() + "/profile/" + documentProfile.getName());	        	
+		        	paths.add(
+		        		new ResourcePath(
+		        			userHome,
+		        			"/user/" + userHome.refGetPath().getBase() + "/profile/" + documentProfile.getName()
+		        		)
+		        	);	        	
 		        }			
 			}
 			return mapToURLs(
@@ -377,18 +532,23 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getCardDavCollectionSetURLs(
+	public static List<ConnectionURL> getCardDavCollectionSetURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			PersistenceManager pm = JDOHelper.getPersistenceManager(obj);			
 			if(obj instanceof CardProfile) {
 				CardProfile cardProfile = (CardProfile)obj;			
 		        if((cardProfile.getName() != null) && !cardProfile.getName().isEmpty()) {
 		        	UserHome userHome =  (UserHome)pm.getObjectById(obj.refGetPath().getParent().getParent());
-		        	paths.add("/user/" + userHome.refGetPath().getBase() + "/profile/" + cardProfile.getName());	        	
+		        	paths.add(
+		        		new ResourcePath(
+		        			userHome,
+		        			"/user/" + userHome.refGetPath().getBase() + "/profile/" + cardProfile.getName()
+		        		)
+		        	);	        	
 		        }
 			}
 			return mapToURLs(
@@ -410,12 +570,12 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getCardDavCollectionURLs(
+	public static List<ConnectionURL> getCardDavCollectionURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			PersistenceManager pm = JDOHelper.getPersistenceManager(obj);			
 			if(obj instanceof CardProfile) {
 				CardProfile cardProfile = (CardProfile)obj;
@@ -424,7 +584,12 @@ public class AdapterConnectionHelper {
 					for(SyncFeed feed: cardProfile.<SyncFeed>getFeed()) {
 						if(Boolean.TRUE.equals(feed.isActive())) {					
 							if(feed instanceof ContactsFeed) {
-								paths.add("/" + userHome.refGetPath().getBase() + "/" + cardProfile.refGetPath().getBase() + "/" + feed.refGetPath().getBase());
+								paths.add(
+									new ResourcePath(
+										feed,
+										"/" + userHome.refGetPath().getBase() + "/" + cardProfile.refGetPath().getBase() + "/" + feed.refGetPath().getBase()
+									)
+								);
 							}
 						}
 					}
@@ -451,66 +616,26 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getICalURLs(
+	public static List<ConnectionURL> getICalURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
 		String optionMax,
 		String optionIsDisabled
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			String suffix = "&type=ics&max=" + (optionMax == null ? "" : optionMax) + "&disabled=" + (optionIsDisabled == null ? "" : optionIsDisabled);
 			if(obj instanceof Resource) {
 				Resource resource = (Resource)obj;
 				if((resource.getName() != null) && !resource.getName().isEmpty()) {
-					paths.add("/resource/" + resource.getName() + suffix);      	
-			      }
+					paths.add(
+						new ResourcePath(
+							resource,
+							"/resource/" + resource.getName() + suffix
+						)
+					);						
+			    }
 			}
-		    paths.addAll(
-		    	getCalendarPaths(
-		    		obj,
-		    		false,
-		    		suffix
-		    	)
-		    );
-			return mapToURLs(
-				baseUrl.endsWith("/") ? baseUrl + "activities?id=" : baseUrl + "/activities?id=",
-				obj,
-				"ical",
-				paths
-			);
-		} catch(Exception e) {
-			throw new ServiceException(e);
-		}
-	}
-
-	/**
-	 * Get timeline URLs for given object.
-	 * 
-	 * @param baseUrl
-	 * @param obj
-	 * @param optionMax
-	 * @param optionIsDisabled
-	 * @param optionTimelineHeight
-	 * @return
-	 * @throws ServiceException
-	 */
-	public static List<URL> getTimelineURLs(
-		String baseUrl,
-		RefObject_1_0 obj,
-		String optionMax,
-		String optionIsDisabled,
-		String optionTimelineHeight
-	) throws ServiceException {
-		try {
-			List<String> paths = new ArrayList<String>();
-			String suffix = "&type=html&max=" + (optionMax == null ? "" : optionMax) + "&height=" + (optionTimelineHeight == null ? "" : optionTimelineHeight) + "&disabled=" + (optionIsDisabled == null ? "" : optionIsDisabled);
-			if(obj instanceof Resource) {
-				Resource resource = (Resource)obj;
-				if((resource.getName() != null) && !resource.getName().isEmpty()) {
-					paths.add("/resource/" + resource.getName() + suffix);      	
-			      }
-			}			
 		    paths.addAll(
 		    	getCalendarPaths(
 		    		obj,
@@ -540,7 +665,7 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getFreeBusyURLs(
+	public static List<ConnectionURL> getFreeBusyURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
 		String optionUser,
@@ -548,16 +673,26 @@ public class AdapterConnectionHelper {
 		String optionIsDisabled
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			String suffix1 = "&user=" + (optionUser == null ? "" : optionUser) + "&max=" + (optionMax == null ? "" : optionMax) + "&disabled=" + (optionIsDisabled == null ? "" : optionIsDisabled);
 			String suffix2 = "&type=ics&user=" + (optionUser == null ? "" : optionUser) + "&max=" + (optionMax == null ? "" : optionMax) + "&disabled=" + (optionIsDisabled == null ? "" : optionIsDisabled);
 			if(obj instanceof Resource) {
 				Resource resource = (Resource)obj;
 				if((resource.getName() != null) && !resource.getName().isEmpty()) {
-					paths.add("/resource/" + resource.getName() + suffix1);      	
-					paths.add("/resource/" +resource.getName() + suffix2);      	
+					paths.add(
+						new ResourcePath(
+							resource,
+							"/resource/" + resource.getName() + suffix1
+						)
+					);      	
+					paths.add(
+						new ResourcePath(
+							resource,
+							"/resource/" +resource.getName() + suffix2
+						)
+					);      	
 				}
-			}			
+			}	
 		    paths.addAll(
 		    	getCalendarPaths(
 		    		obj, 
@@ -596,7 +731,7 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getOtherCalendarURLs(
+	public static List<ConnectionURL> getOtherCalendarURLs(
 		String baseUrl,
 		RefObject_1_0 obj,
 		String optionMax,
@@ -606,7 +741,7 @@ public class AdapterConnectionHelper {
 		String optionAlarm
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			paths.addAll(
 				getCardPaths(
 					obj,
@@ -619,12 +754,13 @@ public class AdapterConnectionHelper {
 					"&type=ics&max=" + optionMax + "&icalType=VTODO&summaryPrefix=" + (optionSummaryPrefix == null ? "" : optionSummaryPrefix) + "&categories=" + (optionCategories == null ? "" : optionCategories) + "&year=" + (optionYear == null ? "" : optionYear) + "&alarm=" + (optionAlarm == null ? "" : optionAlarm)
 				)
 			);
-			List<URL> urls = new ArrayList<URL>();
+			List<ConnectionURL> urls = new ArrayList<ConnectionURL>();
 			for(CalendarType calendarType: CalendarType.values()) {
 				urls.addAll(
 					mapToURLs(
-						baseUrl.endsWith("/") ? baseUrl + calendarType.getPath().substring(1) + "?id=" : 
-							baseUrl + calendarType.getPath() + "?id=",
+						baseUrl.endsWith("/") 
+							? baseUrl + calendarType.getPath().substring(1) + "?id=" 
+							: baseUrl + calendarType.getPath() + "?id=",
 						obj,
 						"ical",
 						paths
@@ -645,12 +781,12 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getVCardURLs(
+	public static List<ConnectionURL> getVCardURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
 		try {
-			List<String> paths = getCardPaths(
+			List<ResourcePath> paths = getCardPaths(
 				obj,
 				"&type=vcf"
 			);
@@ -673,19 +809,24 @@ public class AdapterConnectionHelper {
 	 * @return
 	 * @throws ServiceException
 	 */
-	public static List<URL> getAirSyncURLs(
+	public static List<ConnectionURL> getAirSyncURLs(
 		String baseUrl,
 		RefObject_1_0 obj
 	) throws ServiceException {
 		try {
-			List<String> paths = new ArrayList<String>();
+			List<ResourcePath> paths = new ArrayList<ResourcePath>();
 			PersistenceManager pm = JDOHelper.getPersistenceManager(obj);
 			if(obj instanceof AirSyncProfile) {
 				AirSyncProfile syncProfile =
 		            (AirSyncProfile)obj;
 		        if((syncProfile.getName() != null) && !syncProfile.getName().isEmpty()) {
 		        	UserHome userHome = (UserHome)pm.getObjectById(obj.refGetPath().getParent().getParent());
-		        	paths.add("/user/" + userHome.refGetPath().getBase() + "/profile/" + syncProfile.getName());	        		        	
+		        	paths.add(
+		        		new ResourcePath(
+		        			userHome,
+		        			"/user/" + userHome.refGetPath().getBase() + "/profile/" + syncProfile.getName()
+		        		)
+		        	);	        		        	
 		        }
 			}
 			return mapToURLs(

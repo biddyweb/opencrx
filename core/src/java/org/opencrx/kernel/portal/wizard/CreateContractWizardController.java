@@ -81,7 +81,7 @@ import org.openmdx.portal.servlet.ApplicationContext;
 import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.ViewPortFactory;
-import org.openmdx.portal.servlet.view.TransientObjectView;
+import org.openmdx.portal.servlet.component.TransientObjectView;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 

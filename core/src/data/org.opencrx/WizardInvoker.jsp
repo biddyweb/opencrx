@@ -2,17 +2,14 @@
 /*
  * ====================================================================
  * Project:		openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: WizardInvoker.jsp,v 1.4 2012/01/13 15:06:14 cmu Exp $
  * Description: WizardInvoker
- * Revision:	$Revision: 1.4 $
  * Owner:		CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/01/13 15:06:14 $
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2010, CRIXP Corp., Switzerland
+ * Copyright (c) 2010-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

@@ -61,12 +61,24 @@ import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * AccountImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class AccountImpl
 	<S extends org.opencrx.kernel.account1.jmi1.Account,N extends org.opencrx.kernel.account1.cci2.Account,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * AccountImpl.
+     * 
+     * @param same
+     * @param next
+     */
     public AccountImpl(
         S same,
         N next
@@ -74,7 +86,11 @@ public class AccountImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Update Vcard.
+     * 
+     * @return
+     */
     public org.openmdx.base.jmi1.Void updateVcard(
     ) {
         try {
@@ -88,17 +104,18 @@ public class AccountImpl
         }                                                    
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		Accounts.getInstance().updateAccount(
+    		Accounts.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
@@ -107,18 +124,19 @@ public class AccountImpl
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Accounts.getInstance().removeAccount(
+    		Accounts.getInstance().preDelete(
     			this.sameObject(), 
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,
@@ -126,5 +144,5 @@ public class AccountImpl
     		);
     	}
     }
-    
+
 }

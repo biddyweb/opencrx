@@ -170,6 +170,19 @@ public class BpiActivity extends BpiObject {
 		this.processState = processState;
 	}
 	
+	/**
+	 * @return the reportingContact2
+	 */
+	public BpiContact getReportingContact2() {
+		return reportingContact2;
+	}
+	/**
+	 * @param reportingContact2 the reportingContact2 to set
+	 */
+	public void setReportingContact2(BpiContact reportingContact2) {
+		this.reportingContact2 = reportingContact2;
+	}
+
 	private String activityNumber;
 	private String name;
 	private String description;
@@ -180,7 +193,8 @@ public class BpiActivity extends BpiObject {
 	private String processState;
 	private String location;
 	private BpiContact reportingContact;
-	private BpiContact assignedTo; 
+	private BpiContact reportingContact2;
+	private BpiContact assignedTo;
 	private List<String> category;
 	private List<BpiParticipant> participant;
 	private List<BpiLocalizedField> localizedField;

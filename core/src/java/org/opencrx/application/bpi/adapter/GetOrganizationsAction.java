@@ -94,19 +94,18 @@ public class GetOrganizationsAction extends GetAccountsAction {
     ) throws IOException, ServiceException {
 		try {
 			AccountFilterGlobal accountFilter = null;
+			boolean hasErrors = false;
 			if(path.size() >= 6 && "accountFilter".equals(path.get(5))) {
 				List<AccountFilterGlobal> accountFilters = plugIn.findAccountFilters(path, pm);
 		    	if(accountFilters == null || accountFilters.isEmpty()) {
-		    		resp.setStatus(HttpServletResponse.SC_NOT_FOUND); 
+		    		resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+		    		hasErrors = true;
 		    	} else {
 		    		accountFilter = accountFilters.iterator().next();
 		    	}
 			}
 			org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, path.get(2), path.get(4));
-			if(
-				accountFilter != null || 
-				accountSegment != null
-			) {
+			if(!hasErrors) {
 		        Query_2Facade queryFacade = Facades.newQuery(
 		        	accountSegment.refGetPath().getChild("account")
 		        );

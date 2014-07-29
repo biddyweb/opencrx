@@ -1,7 +1,7 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
- * Project:     openCRX/Sample, http://www.opencrx.org/
+ * Project:     openCRX/Core, http://www.opencrx.org/
  * Description: UploadDocument
  * Owner:       CRIXP Corp., Switzerland, http://www.crixp.com
  * ====================================================================
@@ -9,7 +9,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2007-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -183,21 +183,25 @@ org.openmdx.kernel.id.*
 	}
 	javax.jdo.PersistenceManager pm = app.getNewPmData();
 	Texts_1_0 texts = app.getTexts();
+	RefObject_1_0 object = (RefObject_1_0)pm.getObjectById(new Path(objectXri));
 %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html dir="<%= texts.getDir() %>">
 <head>
-	<title><%= app.getApplicationName() + " - " + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle() + ((new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getLabel() %></title>
+	<title><%= app.getApplicationName() + " - " + (new ObjectReference(object, app)).getTitle() + ((new ObjectReference(object, app)).getTitle().length() == 0 ? "" : " - ") + (new ObjectReference(object, app)).getLabel() %></title>
 	<meta name="label" content="Upload Document">
 	<meta name="toolTip" content="Upload Document">
 	<meta name="targetType" content="_self">
 	<meta name="forClass" content="org:opencrx:kernel:document1:Segment">
 	<meta name="forClass" content="org:opencrx:kernel:document1:Document">
+	<meta name="forClass" content="org:opencrx:kernel:document1:DocumentFolder">
 	<meta name="order" content="0">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/ssf.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
+	<link rel='shortcut icon' href='../../images/favicon.ico' />	
 	<script type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<script language="javascript" type="text/javascript">
 
@@ -255,11 +259,12 @@ org.openmdx.kernel.id.*
 					boolean successfullyCreated = false;
 					boolean isNewRevision = 
 						(parameterMap.get("newRevision") != null) ||
-						((RefObject_1_0)pm.getObjectById(new Path(objectXri)) instanceof org.opencrx.kernel.document1.jmi1.Document);
+						(object instanceof org.opencrx.kernel.document1.jmi1.Document);
 
 					Path objectPath = new Path(objectXri);
 					String providerName = objectPath.get(2);
 					String segmentName = objectPath.get(4);
+					org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(objectPath, pm);
 
 					String[] names = (String[])parameterMap.get("name");
 					String name = (names == null) || (names.length == 0) ? "" : names[0];
@@ -268,7 +273,7 @@ org.openmdx.kernel.id.*
 					String[] titles = (String[])parameterMap.get("title");
 					String title = (titles == null) || (titles.length == 0) ? "" : titles[0];
 					String[] authors = (String[])parameterMap.get("author");
-					String author = (authors == null) || (authors .length == 0) ? "" : authors[0];
+					String author = (authors == null) || (authors .length == 0) ? myUserHome.refGetPath().getBase() : authors[0];
 					String[] documentNumbers = (String[])parameterMap.get("documentNumber");
 					String documentNumber = (documentNumbers == null) || (documentNumbers.length == 0) ? "" : documentNumbers[0];
 					String[] documentFolders = (String[])parameterMap.get("documentFolder");
@@ -281,7 +286,6 @@ org.openmdx.kernel.id.*
 					org.openmdx.security.realm1.jmi1.Realm realm = SecureObject.getInstance().getRealm(pm, providerName, segmentName);
 					org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
 					org.opencrx.kernel.document1.jmi1.Segment documentSegment = Documents.getInstance().getDocumentSegment(pm, providerName, segmentName);
-					org.opencrx.kernel.home1.jmi1.UserHome myUserHome = org.opencrx.kernel.backend.UserHomes.getInstance().getUserHome(objectPath, pm);
       				org.opencrx.security.realm1.jmi1.PrincipalGroup myPrincipalGroup = myUserHome.getPrimaryGroup();
       				org.opencrx.security.realm1.jmi1.PrincipalGroup admins = (org.opencrx.security.realm1.jmi1.PrincipalGroup)realm.getPrincipal(SecurityKeys.PRINCIPAL_GROUP_ADMINISTRATORS);
       				String[] owningGroup00s = (String[])parameterMap.get("owningGroup00");
@@ -291,28 +295,18 @@ org.openmdx.kernel.id.*
       				String[] owningGroup02s = (String[])parameterMap.get("owningGroup02");
       				String owningGroup02 = (owningGroup02s == null) || (owningGroup02s.length == 0) ? "" : owningGroup02s[0];
       				
-      				boolean enforceRequiredFields = false;      				
       				org.opencrx.kernel.document1.jmi1.Document document = null;
       				if(actionCancel || (objectXri == null)) {
-      					Action nextAction = (new ObjectReference((RefObject_1_0)pm.getObjectById(new Path(objectXri)), app)).getSelectObjectAction();
+      					Action nextAction = (new ObjectReference(object, app)).getSelectObjectAction();
       					response.sendRedirect(
       						request.getContextPath() + "/" + nextAction.getEncodedHRef()
       					);
-      				}
-      				else if(
-      					actionOk && 
-      					!uploadFailed && 
-      					(!enforceRequiredFields || (
-      						(title != null) && (title.length() > 0) &&
-      						(documentNumber != null) && (documentNumber.length() > 0))
-      					) 
-					) {
+      				} else if(actionOk && !uploadFailed) { 
       					try {
       						pm.currentTransaction().begin();
       						if (isNewRevision) {
-      							document = (org.opencrx.kernel.document1.jmi1.Document)pm.getObjectById(new Path(objectXri));
-      						} 
-      						else {
+      							document = (org.opencrx.kernel.document1.jmi1.Document)object;
+      						} else {
       							document = pm.newInstance(org.opencrx.kernel.document1.jmi1.Document.class);
       							document.refInitialize(false, false);
       							document.setName(name);
@@ -328,60 +322,55 @@ org.openmdx.kernel.id.*
       							);
       						}
       						// Add revision
-      						org.opencrx.kernel.document1.jmi1.MediaContent revision = pm.newInstance(org.opencrx.kernel.document1.jmi1.MediaContent.class);
-      						revision.refInitialize(false, false);
       						String resourceLocation = app.getTempFileName("uploadFile", "");
-      						// mimeType and name
       						BufferedReader r = new BufferedReader(
       							new FileReader(resourceLocation + ".INFO")
       						);
       						String contentMimeType = r.readLine();
       						String contentName = r.readLine();
-      						r.close();
-      						revision.setName(contentName);
-      						revision.setContentName(contentName);
-      						revision.setContentMimeType(contentMimeType);
-      						revision.setContent(
-								org.w3c.cci2.BinaryLargeObjects.valueOf(new File(resourceLocation))
-							);
-      						document.addRevision(
-      							Base.getInstance().getUidAsString(),
-      							revision
+      						r.close();      						
+      						Documents.getInstance().addRevision(
+      							document, 
+      							contentName, 
+      							contentMimeType, 
+      							author, 
+      							org.w3c.cci2.BinaryLargeObjects.valueOf(new File(resourceLocation))
       						);
-      						if(document.getContentType() == null) {
-      							document.setContentType(contentMimeType);
-      						}
-      						if(document.getName() == null || document.getName().isEmpty()) {
-      							document.setName(contentName);
-      						}
-      						// Set head revision
-      						document.setHeadRevision(revision);
 							pm.currentTransaction().commit();
-
-      						// Add to document folder
+      						// Add to document folder and adjust security of document
       						if(!isNewRevision) {
-      							try {
-	      							pm.currentTransaction().begin();
-	      							org.opencrx.kernel.document1.jmi1.DocumentFolder folder = null;
+      							org.opencrx.kernel.document1.jmi1.DocumentFolder folder = null;
+      							if(object instanceof org.opencrx.kernel.document1.jmi1.DocumentFolder) {
+      								folder = (org.opencrx.kernel.document1.jmi1.DocumentFolder)object;
+      							} else {
 	      							try {
 	      								folder = (org.opencrx.kernel.document1.jmi1.DocumentFolder)pm.getObjectById(new Path(documentFolder));
+	      							} catch(Exception ignore) {}
+      							}
+      							if(folder != null) {
+          							try {
+		      							pm.currentTransaction().begin();
 	      								document.getFolder().add(folder);
-	      							} catch (Exception e) {};
-	      							pm.currentTransaction().commit();
-      							} catch(Exception e) {
-      								try {
-      									pm.currentTransaction().rollback();
-      								} catch(Exception e1) {}
+		      							pm.currentTransaction().commit();
+	      							} catch(Exception e) {
+	      								try {
+	      									pm.currentTransaction().rollback();
+	      								} catch(Exception e1) {}
+	      							}
       							}
       							// Adjust security
       							List<String> owningGroupXris = new ArrayList<String>();
-      							try {
-      								List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups = document.getOwningGroup();
-      								for(org.opencrx.security.realm1.jmi1.PrincipalGroup owningGroup: owningGroups) {
+      							if(object instanceof org.opencrx.kernel.document1.jmi1.DocumentFolder) {
+      								for(org.opencrx.security.realm1.jmi1.PrincipalGroup owningGroup: ((org.opencrx.kernel.document1.jmi1.DocumentFolder)object).<org.opencrx.security.realm1.jmi1.PrincipalGroup>getOwningGroup()) {
       									owningGroupXris.add(owningGroup.refMofId());
-				          			}
-      							} catch (Exception e) {
-      								new ServiceException(e).log();
+      								}
+      							} else {
+	      							try {
+	      								List<org.opencrx.security.realm1.jmi1.PrincipalGroup> owningGroups = document.getOwningGroup();
+	      								for(org.opencrx.security.realm1.jmi1.PrincipalGroup owningGroup: owningGroups) {
+	      									owningGroupXris.add(owningGroup.refMofId());
+					          			}
+	      							} catch (Exception ignore) {}
       							}
       							try {
       								pm.currentTransaction().begin();
@@ -424,8 +413,7 @@ org.openmdx.kernel.id.*
       							}
 			    			}
 		    				successfullyCreated = true;
-      					}
-      					catch(Exception e) {
+      					} catch(Exception e) {
       						try {
       							pm.currentTransaction().rollback();
       						} catch(Exception e0) {}
@@ -443,13 +431,13 @@ org.openmdx.kernel.id.*
 						}
       				}
       				if(!successfullyCreated || uploadFailed) {
-      					boolean invalidTitle = actionOk && enforceRequiredFields && ((title == null) || (title.length() == 0));
-      					boolean invalidDocumentNumber  = actionOk && enforceRequiredFields && ((documentNumber == null) || (documentNumber.length() == 0));
+      					boolean invalidTitle = actionOk && ((title == null) || (title.length() == 0));
+      					boolean invalidDocumentNumber  = actionOk && ((documentNumber == null) || (documentNumber.length() == 0));
       					String styleModifier = isNewRevision ? 
       						"style='display:none;'"
       							: "";
       					UserDefinedView userView = new UserDefinedView(
-      						pm.getObjectById(new Path(objectXri)),
+      						object,
       						app,
       						viewsCache.getView(requestId)
       					);
@@ -461,69 +449,80 @@ org.openmdx.kernel.id.*
 <table cellspacing="8" class="tableLayout">
 	<tr>
 		<td class="cellObject">
-			<noscript>
-				<div class="panelJSWarning" style="display: block;">
-					<a href="../../helpJsCookie.html" target="_blank"><img class="popUpButton" src="../../images/help.gif" width="16" height="16" border="0" onclick="javascript:void(window.open('helpJsCookie.html', 'Help', 'fullscreen=no,toolbar=no,status=no,menubar=no,scrollbars=yes,resizable=yes,directories=no,location=no,width=400'));" alt="" /></a> <%= texts.getPageRequiresScriptText() %>
-				</div>
-			</noscript>
-			<div id="etitle" style="height:20px;">
+			<div class="OperationDialogTitle">
 				<%= isNewRevision ? userView.getFieldLabel(DOCUMENT_CLASS, "headRevision", app.getCurrentLocaleAsIndex()) : app.getLabel(DOCUMENT_CLASS) %>
 			</div>
-			<fieldset <%= styleModifier %>>
-				<div>&nbsp;</div>			
+			<br />
+			<div class="<%= CssClass.fieldGroupName %>">&nbsp;</div>			
+			<table class="fieldGroup">
+				<tr>
+					<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
+					<td>
+						<input type="file" class="valueL" size=50 name="uploadFile" tabindex="1500" " />
+					</td>
+					<td class="addon"></td>
+					<td class="<%= CssClass.fieldLabel %>"></td>
+					<td></td>
+					<td class="addon"></td>					        
+				</tr>
+			</table>
+<%
+			if(!(object instanceof org.opencrx.kernel.document1.jmi1.Document)) {
+%>				
+				<div class="<%= CssClass.fieldGroupName %>">&nbsp;</div>			
 				<table class="fieldGroup">
 					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td>
 							<input type="text" class="valueL" name="name" maxlength="50" tabindex="100" value="<%= name %>" />
 						</td>
 						<td class="addon"></td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td>
 							<input type="text" class="valueL" name="description" maxlength="50" tabindex="200" value="<%= description %>" />
 						</td>
 						<td class="addon"></td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "title", app.getCurrentLocaleAsIndex()) %><%= enforceRequiredFields ? " <font color='red'>*</font>" : "" %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "title", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td>
 							<input type="text" class="valueL" name="title" maxlength="50" tabindex="300" value="<%= title %>" />
 						</td>
 						<td class="addon"><font color="red"><%= invalidTitle ? "!" : "" %></font></td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "documentNumber", app.getCurrentLocaleAsIndex()) %><%= enforceRequiredFields ? " <font color='red'>*</font>" : "" %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "documentNumber", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td>
 							<input type="text" class="valueL" name="documentNumber" maxlength="50" tabindex="400" value="<%= documentNumber %>" />
 						</td>
 						<td class="addon"><font color="red"><%= invalidDocumentNumber ? "!" : "" %></font></td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "author", app.getCurrentLocaleAsIndex()) %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "author", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td>
 							<input type="text" class="valueL" name="author" maxlength="50" tabindex="500" value="<%= author %>" />
 						</td>
 						<td class="addon"></td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "documentType", app.getCurrentLocaleAsIndex()) %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(DOCUMENT_CLASS, "documentType", app.getCurrentLocaleAsIndex()) %>:</span></td>
 						<td >
 							<select class="valueL lightUp" name="documentType" tabindex="600">
 <%
@@ -546,24 +545,29 @@ org.openmdx.kernel.id.*
 							</select>
 						</td>
 						<td class="addon"></td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 				</table>
-			</fieldset>
-			<fieldset <%= styleModifier %>>
-				<div>&nbsp;</div>			
-				<table class="fieldGroup">							
+<%
+			}
+			if(
+				!(object instanceof org.opencrx.kernel.document1.jmi1.DocumentFolder) &&
+				!(object instanceof org.opencrx.kernel.document1.jmi1.Document)
+			) {
+%>
+				<div class="<%= CssClass.fieldGroupName %>">&nbsp;</div>			
+				<table class="fieldGroup">
 					<tr>
-						<td class="label"><span class="nw"><%= app.getLabel(DOCUMENTFOLDER_CLASS) %>:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(DOCUMENTFOLDER_CLASS) %>:</span></td>
 <%
 						String lookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
 						Action findDocumentFolderObjectAction = Action.getFindObjectAction(DOCUMENT_CLASS + ":folder", lookupId);
 %>
 						<td>
 							<div class="autocompleterMenu">
-								<ul id="nav" class="nav" onmouseover="sfinit(this);" >
+								<ul id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" onmouseover="sfinit(this);" >
 									<li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
 										<ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
 											<li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.document1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(folder)*filterByType*(org:opencrx:kernel:document1:DocumentFolder)*filterByFeature*(name)*filterOperator*(IS_LIKE)*orderByFeature*(name)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span>Document Folder / Name</a></li>
@@ -591,14 +595,12 @@ org.openmdx.kernel.id.*
 						<td class="addon">
 							<img class="popUpButton" border="0" align="bottom" alt="Click to open ObjectFinder" src="../../images/lookup.gif" onclick="OF.findObject('../../<%= findDocumentFolderObjectAction.getEncodedHRef(requestId) %>', $('documentFolder.Title'), $('documentFolder'), '<%= lookupId %>');" /></div>
 						</td>
-						<td class="label"></td>
+						<td class="<%= CssClass.fieldLabel %>"></td>
 						<td></td>
 						<td class="addon"></td>
 					</tr>
 				</table>
-			</fieldset>
-			<fieldset <%= styleModifier %>>
-				<div>&nbsp;</div>			
+				<div class="<%= CssClass.fieldGroupName %>">&nbsp;</div>			
 				<table class="fieldGroup">			
 <%
 					int ii = 0;
@@ -608,7 +610,7 @@ org.openmdx.kernel.id.*
 					for(String owningGroup: Arrays.asList(owningGroup00, owningGroup01, owningGroup02)) {
 %>				
 						<tr>
-							<td class="label"><span class="nw"><%= app.getLabel(PRINCIPAL_GROUP_CLASS) %> #<%= ii+1 %>:</span></td>						
+							<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(PRINCIPAL_GROUP_CLASS) %> #<%= ii+1 %>:</span></td>						
 							<td>
 		  	        			<select class="valueL" name="owningGroup<%= ii %>" id="owningGroup<%= ii %>" tabindex="930">
 		  	        				<option <%= owningGroup == null || owningGroup.isEmpty() ? "selected" : "" %> value="">N/A
@@ -624,7 +626,7 @@ org.openmdx.kernel.id.*
 								</select>
 							</td>
 							<td class="addon"></td>
-							<td class="label"></td>
+							<td class="<%= CssClass.fieldLabel %>"></td>
 							<td></td>
 							<td class="addon"></td>					        
 				        </tr>
@@ -633,30 +635,20 @@ org.openmdx.kernel.id.*
 					}
 %>		        
 				</table>
-			</fieldset>
-			<fieldset>
-				<div>&nbsp;</div>			
-				<table class="fieldGroup">			
-					<tr>
-						<td class="label"><span class="nw"><%= userView.getFieldLabel(MEDIA_CLASS, "content", app.getCurrentLocaleAsIndex()) %>:</span></td>
-						<td>
-							<input type="file" class="valueL" size=50 name="uploadFile" tabindex="1500" " />
-						</td>
-						<td class="addon"></td>
-						<td class="label"></td>
-						<td></td>
-						<td class="addon"></td>					        
-					</tr>
-					<tr>
-						<td colspan="3" >
-							<br>
-							<INPUT type="Submit" name="OK.Button" tabindex="2000" value="<%= app.getTexts().getSaveTitle() %>" />
-							<INPUT type="Submit" name="Cancel.Button" tabindex="2010" value="<%= app.getTexts().getCancelTitle() %>" />
-						</td>
-						<td colspan="3"></td>
-					</tr>
-				</table>
-			</fieldset>
+<%
+			}
+%>				
+			<div class="<%= CssClass.fieldGroupName %>">&nbsp;</div>			
+			<table class="fieldGroup">
+				<tr>
+					<td colspan="3" >
+						<br>
+						<input type="Submit" name="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="2000" value="<%= app.getTexts().getSaveTitle() %>" />
+						<input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="2010" value="<%= app.getTexts().getCancelTitle() %>" />
+					</td>
+					<td colspan="3"></td>
+				</tr>
+			</table>			
 		</td>
 	</tr>
 </table>

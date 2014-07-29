@@ -133,12 +133,15 @@ class ActivityResource extends CalDavResource {
     public Date getLastModified(
     ) {
 	    Date lastModifiedAt = super.getLastModified();
-	    // Because VALERTs are mixed-in, the modification date of an ICAL must be calculated. 
-	    // It is the latest modification date of the ICAL itself and of its assigned alarms.
-	    for(Timer timer: this.getObject().<Timer>getAssignedTimer()) {
-	    	if(timer.getModifiedAt().compareTo(lastModifiedAt) > 0) {
-	    		lastModifiedAt = timer.getModifiedAt();
-	    	}
+	    Activity activity = this.getObject();
+	    if(activity.getIcal().indexOf(ICalendar.X_OPENCRX_RENDER_ALARMS_TRUE) > 0) {
+		    // Because VALERTs are mixed-in, the modification date of an ICAL must be calculated. 
+		    // It is the latest modification date of the ICAL itself and of its assigned alarms.
+		    for(Timer timer: this.getObject().<Timer>getAssignedTimer()) {
+		    	if(timer.getModifiedAt().compareTo(lastModifiedAt) > 0) {
+		    		lastModifiedAt = timer.getModifiedAt();
+		    	}
+		    }
 	    }
 	    return lastModifiedAt;
     }

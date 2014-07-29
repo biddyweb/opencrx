@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -77,6 +77,7 @@ import org.opencrx.kernel.account1.jmi1.AbstractFilterAddress;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
+import org.opencrx.kernel.account1.jmi1.CheckForAutoUpdateResult;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.Member;
@@ -105,11 +106,14 @@ import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
+import org.w3c.spi2.Datatypes;
+import org.w3c.spi2.Structures;
 
 /**
  * Accounts backend class.
@@ -154,8 +158,9 @@ public class Accounts extends AbstractImpl {
         Account account
     ) throws ServiceException {
     	account.setAccountRating(account.getAccountRating());
+    	Utils.touchObject(account); // new way to touch object
     }
-    	
+
     /**
      * Init contract with given values.
      * 
@@ -490,8 +495,9 @@ public class Accounts extends AbstractImpl {
             		null
             	);
 	        	PostalAddress postalAddressOld = (PostalAddress)pmOld.getObjectById(postalAddress.refGetPath());
-	        	// Only update, if old and new are different
+	        	// Optimize: only amend assigned addresses if address was changed
 	        	if(
+    				!Utils.areEqual(postalAddressOld.getPostalAddressLine(), postalAddress.getPostalAddressLine()) ||
     				!Utils.areEqual(postalAddressOld.getPostalStreet(), postalAddress.getPostalStreet()) ||
     				!Utils.areEqual(postalAddressOld.getPostalStreetNumber(), postalAddress.getPostalStreetNumber()) ||
     				!Utils.areEqual(postalAddressOld.getPostalCode(), postalAddress.getPostalCode()) ||
@@ -523,7 +529,44 @@ public class Accounts extends AbstractImpl {
 		    		}
         		}
         	} catch(Exception ignore) {}
-    	}    	
+    	} else if(address instanceof EMailAddress) {
+    		EMailAddress emailAddress = (EMailAddress)address;
+        	try {
+        		// Get currently persistent address (old address)
+            	PersistenceManager pmOld = pm.getPersistenceManagerFactory().getPersistenceManager(
+            		SecurityKeys.ROOT_PRINCIPAL,
+            		null
+            	);
+	        	EMailAddress emailAddressOld = (EMailAddress)pmOld.getObjectById(emailAddress.refGetPath());
+	        	// Only update, if old and new are different
+	        	String emailAddressDomainOld = emailAddressOld.getEmailAddress() != null && emailAddressOld.getEmailAddress().indexOf("@") > 0
+					? emailAddressOld.getEmailAddress().substring(emailAddressOld.getEmailAddress().indexOf("@"))
+					: null;	        	
+	        	String emailAddressDomain = emailAddress.getEmailAddress() != null && emailAddress.getEmailAddress().indexOf("@") > 0
+					? emailAddress.getEmailAddress().substring(emailAddress.getEmailAddress().indexOf("@"))
+					: null;        	
+	        	if(
+	        		!Utils.areEqual(emailAddressDomainOld, emailAddressDomain)
+	        	) {
+		    		Account account = (Account)pm.getObjectById(address.refGetPath().getParent().getParent());
+		    		EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+		    		query.forAllDisabled().isFalse();
+		    		for(EMailAddress assignedAddress: account.<EMailAddress>getAssignedAddress(query)) {
+		    			// Update assigned address only if it matches the old address
+			        	String emailAddressDomainAssigned = assignedAddress.getEmailAddress() != null && assignedAddress.getEmailAddress().indexOf("@") > 0
+							? assignedAddress.getEmailAddress().substring(assignedAddress.getEmailAddress().indexOf("@"))
+							: null;	        	
+		    			if(
+		    				Utils.areEqual(emailAddressDomainOld, emailAddressDomainAssigned)
+		    			) {
+		    				assignedAddress.setEmailAddress(
+		    					assignedAddress.getEmailAddress().replace(emailAddressDomainAssigned, emailAddressDomain)
+		    				);
+		    			}
+		    		}
+        		}
+        	} catch(Exception ignore) {}
+    	}
     }
 
     /**
@@ -532,7 +575,7 @@ public class Accounts extends AbstractImpl {
      * @param account
      * @throws ServiceException
      */
-    public void updateAccount(
+    protected void updateAccount(
         Account account
     ) throws ServiceException {
         this.updateAccountFullName(account);
@@ -612,7 +655,7 @@ public class Accounts extends AbstractImpl {
      * @param address
      * @throws ServiceException
      */
-    public void updateAddress(
+    protected void updateAddress(
     	AccountAddress address
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(address);
@@ -639,7 +682,7 @@ public class Accounts extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeAddress(
+    protected void removeAddress(
     	AccountAddress address,
     	boolean preDelete
     ) throws ServiceException {
@@ -1240,7 +1283,7 @@ public class Accounts extends AbstractImpl {
      * @param member
      * @throws ServiceException
      */
-    public void updateMember(
+    protected void updateMember(
     	Member member
     ) throws ServiceException {    	
     }
@@ -1371,12 +1414,9 @@ public class Accounts extends AbstractImpl {
 	    		count++;
 	    	}
     	}
-    	// Update activity1::EMail::sender
+    	// Update e-mail sender
     	{
-	    	EMailQuery query = (EMailQuery)PersistenceHelper.newQuery(
-	    		pm.getExtent(EMail.class),
-	    		activitySegment.refGetPath().getDescendant("activity", ":*")
-	    	);
+	    	EMailQuery query = (EMailQuery)pm.newQuery(EMail.class);
 	    	query.thereExistsSender().equalTo(source);
 	    	if(updateRelationshipsSince != null) {
 	    		query.createdAt().greaterThanOrEqualTo(updateRelationshipsSince);
@@ -1392,7 +1432,6 @@ public class Accounts extends AbstractImpl {
 	    		count++;
 	    	}
     	}
-    	
     	// Update e-mail recipients
     	{
 	    	EMailRecipientQuery query = (EMailRecipientQuery)PersistenceHelper.newQuery(
@@ -1414,7 +1453,6 @@ public class Accounts extends AbstractImpl {
 	    		count++;
 	    	}
     	}
-    	
     	// Update incident parties
     	{
     		if(source instanceof EMailAddress) {
@@ -1439,7 +1477,6 @@ public class Accounts extends AbstractImpl {
 		    	}
     		}
     	}
-
     	// Update meeting parties
     	{
     		if(source instanceof EMailAddress) {
@@ -1464,7 +1501,6 @@ public class Accounts extends AbstractImpl {
 		    	}
     		}	    	
     	}
-    	
     	// Update task parties
     	{
     		if(source instanceof EMailAddress) {
@@ -1489,11 +1525,166 @@ public class Accounts extends AbstractImpl {
 		    	}
     		}
     	}
-
     	// Disable source address
     	source.setDisabled(true);
-    	
     	return count;
+    }
+
+    /**
+     * Check whether address qualifies for auto-update.
+     * 
+     * @param address
+     * @return
+     */
+    public CheckForAutoUpdateResult checkForAutoUpdate(
+    	AccountAddress address
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(address);
+    	List<AccountAddress> lCandidateAddress = new ArrayList<AccountAddress>();
+    	List<Boolean> lCandidateAddressQualifiesForAutoUpdate = new ArrayList<Boolean>();
+    	List<String> lCandidateMatchingFields = new ArrayList<String>();
+    	List<String> lCandidateNonMatchingFields = new ArrayList<String>();
+    	if(address.getAuthority() != null) {
+    		if(address instanceof PostalAddress) {
+    			PostalAddress postalAddress = (PostalAddress)address;
+    			PostalAddressQuery query = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+    			query.orderByCreatedAt().ascending();
+    			for(PostalAddress candidate: address.getAuthority().<PostalAddress>getAddress(query)) {
+    				String matchingFields = "";
+    				String nonMatchingFields = "";
+    				boolean qualifiesForAutoUpdate = true;
+    				// postalStreet
+    				boolean postalStreetMatches = Utils.areEqual(candidate.getPostalStreet(), postalAddress.getPostalStreet());
+    				if(postalStreetMatches) {
+    					matchingFields += "postalStreet"; 
+    				} else {
+    					nonMatchingFields += "postalStreet";
+    					qualifiesForAutoUpdate = false;
+    				}
+    				// postalStreetNumber
+    				boolean postalStreetNumberMatches = Utils.areEqual(candidate.getPostalStreetNumber(), postalAddress.getPostalStreetNumber());
+    				if(postalStreetNumberMatches) {
+        				matchingFields += matchingFields.isEmpty() ? "" : "<br />";
+    					matchingFields += "postalStreetNumber"; 
+    				} else {
+        				nonMatchingFields += nonMatchingFields.isEmpty() ? "" : "<br />";
+    					nonMatchingFields += "postalStreetNumber";
+    					qualifiesForAutoUpdate = false;
+    				}
+    				// postalCode
+    				boolean postalCodeMatches = Utils.areEqual(candidate.getPostalCode(), postalAddress.getPostalCode());
+    				if(postalCodeMatches) {
+        				matchingFields += matchingFields.isEmpty() ? "" : "<br />";
+    					matchingFields += "postalCode"; 
+    				} else {
+        				nonMatchingFields += nonMatchingFields.isEmpty() ? "" : "<br />";
+    					nonMatchingFields += "postalCode";
+    					qualifiesForAutoUpdate = false;
+    				}
+    				// postalCity
+    				boolean postalCityMatches = Utils.areEqual(candidate.getPostalCity(), postalAddress.getPostalCity());
+    				if(postalCityMatches) {
+        				matchingFields += matchingFields.isEmpty() ? "" : "<br />";
+    					matchingFields += "postalCity"; 
+    				} else {
+        				nonMatchingFields += nonMatchingFields.isEmpty() ? "" : "<br />";    				
+    					nonMatchingFields += "postalCity";
+    					qualifiesForAutoUpdate = false;
+    				}    				
+    				// postalState
+    				boolean postalStateMatches = Utils.areEqual(candidate.getPostalState(), postalAddress.getPostalState());
+    				if(postalStateMatches) {
+        				matchingFields += matchingFields.isEmpty() ? "" : "<br />";
+    					matchingFields += "postalState"; 
+    				} else {
+        				nonMatchingFields += nonMatchingFields.isEmpty() ? "" : "<br />";    				
+    					nonMatchingFields += "postalState";
+    					qualifiesForAutoUpdate = false;
+    				}   				
+    				// postalCountry
+    				boolean postalCountryMatches = candidate.getPostalCountry() == postalAddress.getPostalCountry();
+    				if(postalCountryMatches) {
+        				matchingFields += matchingFields.isEmpty() ? "" : "<br />";
+    					matchingFields += "postalCountry"; 
+    				} else {
+        				nonMatchingFields += nonMatchingFields.isEmpty() ? "" : "<br />";    				
+    					nonMatchingFields += "postalCountry";
+    					qualifiesForAutoUpdate = false;
+    				}
+    				if(qualifiesForAutoUpdate) {
+    					// Show matches first
+    					lCandidateAddress.add(0, candidate);
+    					lCandidateAddressQualifiesForAutoUpdate.add(0, qualifiesForAutoUpdate);
+    					lCandidateMatchingFields.add(0, matchingFields);
+    					lCandidateNonMatchingFields.add(0, nonMatchingFields);
+    				} else {
+    					lCandidateAddress.add(candidate);
+    					lCandidateAddressQualifiesForAutoUpdate.add(qualifiesForAutoUpdate);
+    					lCandidateMatchingFields.add(matchingFields);
+    					lCandidateNonMatchingFields.add(nonMatchingFields);    					
+    				}
+    			}
+    		} else if(address instanceof EMailAddress) {
+    			EMailAddress emailAddress = (EMailAddress)address;
+    			EMailAddressQuery query = (EMailAddressQuery)pm.newQuery(EMailAddress.class);
+    			query.orderByCreatedAt().ascending();
+    			for(EMailAddress candidateAddress: address.getAuthority().<EMailAddress>getAddress(query)) {
+    				String matchingFields = "";
+    				String nonMatchingFields = "";
+    				boolean qualifiesForAutoUpdate = true;
+    				// domain name
+    				String emailAddressDomain = emailAddress.getEmailAddress() != null && emailAddress.getEmailAddress().indexOf("@") > 0
+    					? emailAddress.getEmailAddress().substring(emailAddress.getEmailAddress().indexOf("@"))
+    					: null;
+    				String emailAddressDomainCandidate = candidateAddress.getEmailAddress() != null && candidateAddress.getEmailAddress().indexOf("@") > 0
+    					? candidateAddress.getEmailAddress().substring(candidateAddress.getEmailAddress().indexOf("@"))
+    					: null;
+    				boolean domainNameMatches = Utils.areEqual(emailAddressDomainCandidate, emailAddressDomain);
+    				if(domainNameMatches) {
+    					matchingFields += "emailAddressDomain"; 
+    				} else {
+    					nonMatchingFields += "emailAddressDomain";
+    					qualifiesForAutoUpdate = false;
+    				}
+    				if(qualifiesForAutoUpdate) {
+    					// Show matches first
+    					lCandidateAddress.add(0, candidateAddress);
+    					lCandidateAddressQualifiesForAutoUpdate.add(0, qualifiesForAutoUpdate);
+    					lCandidateMatchingFields.add(0, matchingFields);
+    					lCandidateNonMatchingFields.add(0, nonMatchingFields);
+    				} else {
+    					lCandidateAddress.add(candidateAddress);
+    					lCandidateAddressQualifiesForAutoUpdate.add(qualifiesForAutoUpdate);
+    					lCandidateMatchingFields.add(matchingFields);
+    					lCandidateNonMatchingFields.add(nonMatchingFields);    					
+    				}
+    			}
+     		}
+    	}
+    	int size = lCandidateAddress.size();
+    	return Structures.create(
+    		CheckForAutoUpdateResult.class,
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateAddress1, size > 0 ? lCandidateAddress.get(0) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateQualifiesForAutoUpdate1, size > 0 ? lCandidateAddressQualifiesForAutoUpdate.get(0) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateMatchingFields1, size > 0 ? lCandidateMatchingFields.get(0) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateNonMatchingFields1, size > 0 ? lCandidateNonMatchingFields.get(0) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateAddress2, size > 1 ? lCandidateAddress.get(1) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateQualifiesForAutoUpdate2, size > 1 ? lCandidateAddressQualifiesForAutoUpdate.get(1) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateMatchingFields2, size > 1 ? lCandidateMatchingFields.get(1) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateNonMatchingFields2, size > 1 ? lCandidateNonMatchingFields.get(1) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateAddress3, size > 2 ? lCandidateAddress.get(2) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateQualifiesForAutoUpdate3, size > 2 ? lCandidateAddressQualifiesForAutoUpdate.get(2) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateMatchingFields3, size > 2 ? lCandidateMatchingFields.get(2) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateNonMatchingFields3, size > 2 ? lCandidateNonMatchingFields.get(2) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateAddress4, size > 3 ? lCandidateAddress.get(3) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateQualifiesForAutoUpdate4, size > 3 ? lCandidateAddressQualifiesForAutoUpdate.get(3) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateMatchingFields4, size > 3 ? lCandidateMatchingFields.get(3) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateNonMatchingFields4, size > 3 ? lCandidateNonMatchingFields.get(3) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateAddress5, size > 4 ? lCandidateAddress.get(4) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateQualifiesForAutoUpdate5, size > 4 ? lCandidateAddressQualifiesForAutoUpdate.get(4) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateMatchingFields5, size > 4 ? lCandidateMatchingFields.get(4) : null),
+        	Datatypes.member(CheckForAutoUpdateResult.Member.candidateNonMatchingFields5, size > 4 ? lCandidateNonMatchingFields.get(4) : null)
+        );
     }
 
     /**
@@ -1503,7 +1694,7 @@ public class Accounts extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeAccount(
+    protected void removeAccount(
         Account account,
         boolean preDelete
     ) throws ServiceException {
@@ -1642,7 +1833,40 @@ public class Accounts extends AbstractImpl {
 	        null;
 	}
 
-    //-------------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+		if(object instanceof Account) {
+			this.removeAccount((Account)object, preDelete);
+		} else if(object instanceof AccountAddress) {
+			this.removeAddress((AccountAddress)object, preDelete);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		if(object instanceof Account) {
+			this.updateAccount((Account)object);
+		} else if(object instanceof AccountAddress) {
+			this.updateAddress((AccountAddress)object);
+		} else if(object instanceof Member) {
+			this.updateMember((Member)object);			
+		}
+	}
+
+	//-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
     public static final int MAIL_BUSINESS = 0;

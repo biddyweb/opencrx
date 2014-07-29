@@ -57,6 +57,7 @@ import javax.jdo.listener.DeleteCallback;
 import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Buildings;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
@@ -89,7 +90,7 @@ public class AbstractBuildingUnitImpl
     public void jdoPreStore(
     ) {
     	try {
-    		Buildings.getInstance().updateAbstractBuildingUnit(
+    		Buildings.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
@@ -109,8 +110,8 @@ public class AbstractBuildingUnitImpl
     public void jdoPreDelete(
     ) {
     	try {
-    		Buildings.getInstance().removeAbstractBuildingUnit(
-    			this.sameObject(), 
+    		Buildings.getInstance().preDelete(
+    			(CrxObject)this.sameObject(), 
     			true
     		);
     		super.jdoPreDelete();

@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
@@ -64,7 +64,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -657,7 +657,7 @@ org.openmdx.base.query.*
     <div id="left-container">
 		<div id="details" class="toggler left-item">
 		  Root: <b><%= getClickableNodeTitle(account, app, requestId) %></b><br>
-		  <input type="Submit" name="Cancel.Button" tabindex="8020" value="X" onClick="javascript:window.close();" style="float:right;margin:5px 5px 0px 0px;" /><br>
+		  <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="8020" value="X" onClick="javascript:window.close();" style="float:right;margin:5px 5px 0px 0px;" /><br>
 		  Node Limits: 25 - 5 - 5
 		</div>
 		<div class="inner" id="inner-details"></div>

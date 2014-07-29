@@ -89,7 +89,7 @@ public class AccountAssignmentContractImpl
     public void jdoPreDelete(
     ) {
     	try {
-    		Contracts.getInstance().removeAccountAssignmentContract(
+    		Contracts.getInstance().preDelete(
     			this.sameObject(), 
     			true
     		);
@@ -110,7 +110,7 @@ public class AccountAssignmentContractImpl
     public void jdoPreStore(
     ) {
     	try {
-    		Contracts.getInstance().updateAccountAssignmentContract(
+    		Contracts.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();

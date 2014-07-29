@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: AccountAddressImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -63,12 +63,24 @@ import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * AccountAddressImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class AccountAddressImpl
 	<S extends org.opencrx.kernel.account1.jmi1.AccountAddress,N extends org.opencrx.kernel.account1.cci2.AccountAddress,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public AccountAddressImpl(
         S same,
         N next
@@ -76,7 +88,12 @@ public class AccountAddressImpl
     	super(same, next);
     }
  
-    //-----------------------------------------------------------------------
+    /**
+     * Move address to account.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.account1.jmi1.MoveAddressToAccountResult moveAddressToAccount(
         org.opencrx.kernel.account1.jmi1.MoveAddressToAccountParams params
     ) {
@@ -96,7 +113,12 @@ public class AccountAddressImpl
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Move address.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.account1.jmi1.MoveAddressResult moveAddress(
         org.opencrx.kernel.account1.jmi1.MoveAddressParams params
     ) {
@@ -116,12 +138,30 @@ public class AccountAddressImpl
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Check whether address qualifies for auto-update.
+     * 
+     * @return
+     */
+    public org.opencrx.kernel.account1.jmi1.CheckForAutoUpdateResult checkForAutoUpdate(
+    ) {
+    	try {
+	    	return Accounts.getInstance().checkForAutoUpdate(
+	    		this.sameObject()
+	    	);
+    	} catch(ServiceException e) {
+    		throw new JmiServiceException(e);
+    	}
+    }
+
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
 		try {			
-			Accounts.getInstance().updateAddress(
+			Accounts.getInstance().preStore(
 				this.sameObject()
 			);
 			super.jdoPreStore();
@@ -134,18 +174,19 @@ public class AccountAddressImpl
     	}
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Accounts.getInstance().removeAddress(
+    		Accounts.getInstance().preDelete(
     			this.sameObject(), 
     			true // preDelete
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,
@@ -153,5 +194,5 @@ public class AccountAddressImpl
     		);
     	}
     }
-            	
+
 }

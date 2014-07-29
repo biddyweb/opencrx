@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -63,8 +63,19 @@ import org.codehaus.janino.Scanner;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.exception.BasicException;
 
+/**
+ * ScriptUtils
+ *
+ */
 public class ScriptUtils {
 
+	/**
+	 * Get compiled class for script.
+	 * 
+	 * @param script
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static Class<?> getClass(
 		String script
 	) throws ServiceException {
@@ -91,8 +102,7 @@ public class ScriptUtils {
 				);
 			}
 			return clazz;
-		}
-        catch(CompileException e) {
+		} catch(CompileException e) {
         	throw new ServiceException(
         		e,
         		BasicException.Code.DEFAULT_DOMAIN,
@@ -100,8 +110,7 @@ public class ScriptUtils {
         		"Script compile error",
         		new BasicException.Parameter("script", script)
         	);
-        }
-        catch(Parser.ParseException e) {
+        } catch(Parser.ParseException e) {
         	throw new ServiceException(
         		e,
         		BasicException.Code.DEFAULT_DOMAIN,
@@ -109,8 +118,7 @@ public class ScriptUtils {
         		"Script parse error",
         		new BasicException.Parameter("script", script)
         	);
-        }
-        catch(Scanner.ScanException e) {
+        } catch(Scanner.ScanException e) {
         	throw new ServiceException(
         		e,
         		BasicException.Code.DEFAULT_DOMAIN,
@@ -118,8 +126,7 @@ public class ScriptUtils {
         		"Script scan error",
         		new BasicException.Parameter("script", script)
         	);
-        }
-		catch(Exception e) {
+        } catch(Exception e) {
 			throw new ServiceException(e);
 		}
 	}
@@ -127,7 +134,8 @@ public class ScriptUtils {
 	private static final List<String> INVALID_WORDS = Arrays.asList(
 		"commit(", "commit ",
 		"begin(", "begin ",
-		"getPersistenceManagerFactory(", "getPersistenceManagerFactory ",
+		"getPersistenceManagerFactory",
+		"System.", "System ",
 		"InitialContext"
 	);
 

@@ -383,7 +383,7 @@ public class DatatypeMapper {
 		UserHome user
 	) throws ServiceException {
 		String userTz = UserHomes.getInstance().getUserTimezone(
-			UserHomes.getInstance().getSettings(user)			
+			UserHomes.getInstance().getUserSettings(user)			
 		);
 		return DateTimeFormat.getInstance(
 			"yyyyMMdd'T'HHmmss.SSS'Z'", 
@@ -1675,7 +1675,8 @@ public class DatatypeMapper {
 		UserHome userHome = (UserHome)pm.getObjectById(alert.refGetPath().getParent().getParent());
 		return Notifications.getInstance().getNotificationSubject(
 			pm, 
-			alert, 
+			alert,
+			null, // wfProcessInstanceIdentity
 			userHome, 
 			new HashMap<String,Object>(), 
 			true

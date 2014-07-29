@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
  * Project:	    openCRX/Core, http://www.opencrx.org/
@@ -63,7 +63,7 @@ org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -1357,9 +1357,10 @@ org.openmdx.kernel.log.*
 	<meta name="forClass" content="org:opencrx:kernel:activity1:EMail">
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:scheduleEvent">
 	<meta name="order" content="org:opencrx:kernel:activity1:EMail:scheduleEvent">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/ssf.css" rel="stylesheet" type="text/css" >
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<script language="javascript" type="text/javascript">
 	  var OF = null;
@@ -1552,7 +1553,7 @@ org.openmdx.kernel.log.*
 						<%= bundle.get("EMailCreatorDescription") %>
 						<table class="fieldGroup">
 							<tr>
-								<td class="label">
+								<td class="<%= CssClass.fieldLabel %>">
 									<span class="nw"><%= bundle.get("EMailCreatorLabel") %>:</span>
 								</td>
 								<td>
@@ -1656,15 +1657,15 @@ org.openmdx.kernel.log.*
 											<table style="width:100%;">
 												<tr>
 													<td>
-														<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&lt;&lt;" onclick="<%= SUBMIT_HANDLER %>" />
-														<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;" onclick="<%= SUBMIT_HANDLER %>"  />
+														<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="&lt;&lt;" onclick="<%= SUBMIT_HANDLER %>" />
+														<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="&nbsp;&nbsp;&lt;&nbsp;" onclick="<%= SUBMIT_HANDLER %>"  />
 													</td>
 													<td style="width:100%;vertical-align:middle;">
 														<span style="font-weight:bold;">&nbsp;<%= monthFormat.format(calendar.getTime()) + " " + calendarYear %>&nbsp;</span>
 													</td>
 													<td>
-														<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="<%= SUBMIT_HANDLER %>" />
-														<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&gt;&gt;" onclick="<%= SUBMIT_HANDLER %>"  />
+														<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="<%= SUBMIT_HANDLER %>" />
+														<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="&gt;&gt;" onclick="<%= SUBMIT_HANDLER %>"  />
 														<input type="hidden" name="calendar.year" tabindex="<%= tabIndex++ %>" value="<%= calendarYear %>"/>
 														<input type="hidden" name="calendar.month" tabindex="<%= tabIndex++ %>" value="<%= calendarMonth %>"/>
 													</td>
@@ -1714,7 +1715,7 @@ org.openmdx.kernel.log.*
 																}
 																else if(calendar.getTime().compareTo(yesterday) < 0) {
 %>
-																	<td style="text-align:right;"><input type="button" value="<%= dayOfMonth < 10 ? "  " : "" %><%= dayOfMonth %>&nbsp;" class="abutton disabled" disabled /></td>
+																	<td style="text-align:right;"><input type="button" value="<%= dayOfMonth < 10 ? "  " : "" %><%= dayOfMonth %>&nbsp;" class="<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %> disabled" disabled /></td>
 <%
 																}
 																else {
@@ -1726,12 +1727,12 @@ org.openmdx.kernel.log.*
 																	if(selectedDates.contains(dateAsString)) {
 																		dateIndex = selectedDates.indexOf(dateAsString);
 %>
-																		<td style="text-align:right;"><input id="DeleteDate.<%= dateIndex %>.Button" tabindex="<%= tabIndex++ %>" name="DeleteDate.<%= dateIndex %>" type="submit" class="abutton booked" value="<%= dayOfMonth < 10 ? "  " : "" %><%= dayOfMonth %>&nbsp;" onclick="<%= SUBMIT_HANDLER %>"/></td>
+																		<td style="text-align:right;"><input id="DeleteDate.<%= dateIndex %>.Button" tabindex="<%= tabIndex++ %>" name="DeleteDate.<%= dateIndex %>" type="submit" class="<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %> booked" value="<%= dayOfMonth < 10 ? "  " : "" %><%= dayOfMonth %>&nbsp;" onclick="<%= SUBMIT_HANDLER %>"/></td>
 <%
 																	}
 																	else {
 %>
-																		<td style="text-align:right;"><input id="AddDate.<%= dayOfMonth %>.Button" tabindex="<%= tabIndex++ %>" name="AddDate.<%= dayOfMonth %>" type="submit" class="abutton bookable" value="<%= dayOfMonth < 10 ? "  " : "" %><%= dayOfMonth %>&nbsp;" onclick="<%= SUBMIT_HANDLER %>"/></td>
+																		<td style="text-align:right;"><input id="AddDate.<%= dayOfMonth %>.Button" tabindex="<%= tabIndex++ %>" name="AddDate.<%= dayOfMonth %>" type="submit" class="<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %> bookable" value="<%= dayOfMonth < 10 ? "  " : "" %><%= dayOfMonth %>&nbsp;" onclick="<%= SUBMIT_HANDLER %>"/></td>
 <%
 																	}
 																}
@@ -1781,7 +1782,7 @@ org.openmdx.kernel.log.*
 													for(int i = 0; i < NUM_SLOTS; i++) {
 %>
 														<th <%= i >= NUM_SLOTS_INITIALLY_VISIBLE ? "class='hidden' " : "" %>><%= bundle.get("Slot") + "&nbsp;" + (i+1) %></th>
-														<th <%= i >= NUM_SLOTS_INITIALLY_VISIBLE ? "class='hidden' " : "" %> style="text-align:right;"><%= i+1 == NUM_SLOTS_INITIALLY_VISIBLE ? "<input id=\"Button.ExpandSlots\" name=\"ExpandSlots\" type=\"button\" tabindex=\"" + (tabIndex++) + "\" class=\"abutton\" value=\"&gt;&gt;\" onclick=\"javascript:updateCss('.hidden', 'display', '');this.style.display='none';return false;\"  />" : "" %></th>
+														<th <%= i >= NUM_SLOTS_INITIALLY_VISIBLE ? "class='hidden' " : "" %> style="text-align:right;"><%= i+1 == NUM_SLOTS_INITIALLY_VISIBLE ? "<input id=\"Button.ExpandSlots\" name=\"ExpandSlots\" type=\"button\" tabindex=\"" + (tabIndex++) + "\" class=\"" + CssClass.btn.toString() + " " + CssClass.btnDefault.toString() + "\" value=\"&gt;&gt;\" onclick=\"javascript:updateCss('.hidden', 'display', '');this.style.display='none';return false;\"  />" : "" %></th>
 <%
 													}
 %>
@@ -1796,7 +1797,7 @@ org.openmdx.kernel.log.*
 %>
 													<tr>
 														<td>
-															<input id="DeleteDate.<%= ii %>.Button" name="DeleteDate.<%= ii %>" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="&ndash;" onclick="<%= SUBMIT_HANDLER %>" />
+															<input id="DeleteDate.<%= ii %>.Button" name="DeleteDate.<%= ii %>" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="&ndash;" onclick="<%= SUBMIT_HANDLER %>" />
 														</td>
 														<td>&nbsp;&nbsp;<%= new SimpleDateFormat("EEE, MMMM d, yyyy", app.getCurrentLocale()).format(date.getTime()) %></td>
 														<input type="hidden" name="calendar.selectedDate.<%= ii %>" value="<%= dateAsString %>"/>
@@ -1828,12 +1829,12 @@ org.openmdx.kernel.log.*
 																				activityExistsQuery.forAllDisabled().isFalse();
 																				if(!eventTracker.getFilteredActivity(activityExistsQuery).isEmpty()) {
 %>
-																					<input type="submit" id="DisableTentativeEvent.<%= event %>.Button" name="DisableTentativeEvent.<%= event %>" tabindex="<%= tabIndex++ %>" <%= eventTracker == null ? "disabled" : "" %> class="abutton booked"  title="<%= bundle.get("DisableTentativeEventTitle") %>" value="&ndash;" onclick="<%= SUBMIT_HANDLER %>"/>
+																					<input type="submit" id="DisableTentativeEvent.<%= event %>.Button" name="DisableTentativeEvent.<%= event %>" tabindex="<%= tabIndex++ %>" <%= eventTracker == null ? "disabled" : "" %> class="<%= CssClass.btn.toString() + " " + CssClass.btnDefault.toString() %> booked"  title="<%= bundle.get("DisableTentativeEventTitle") %>" value="&ndash;" onclick="<%= SUBMIT_HANDLER %>"/>
 <%
 																				}
 																				else {
 %>
-																					<input type="submit" id="CreateTentativeEvent.<%= event %>.Button" name="CreateTentativeEvent.<%= event %>" tabindex="<%= tabIndex++ %>" <%= eventTracker == null || tentativeCreator == null || isEventWithoutTime(event) ? "disabled" : "class=\"abutton bookable\"" %> title="<%= bundle.get("AddTentativeEventTitle") %>" value="+" onclick="<%= SUBMIT_HANDLER %>"/>
+																					<input type="submit" id="CreateTentativeEvent.<%= event %>.Button" name="CreateTentativeEvent.<%= event %>" tabindex="<%= tabIndex++ %>" <%= eventTracker == null || tentativeCreator == null || isEventWithoutTime(event) ? "disabled" : "class=\"" + CssClass.btn.toString() + " " + CssClass.btnDefault.toString() + " bookable\"" %> title="<%= bundle.get("AddTentativeEventTitle") %>" value="+" onclick="<%= SUBMIT_HANDLER %>"/>
 <%
 																				}
 																			}
@@ -1889,9 +1890,9 @@ org.openmdx.kernel.log.*
 <%
 								}
 %>
-								<input id="RefreshCal.Button" name="RefreshCal" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("RefreshLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
-				 				<input id="ApplyCal.Button" name="ApplyCal" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("ApplyLabel") %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
-								<input id="CopyFirstRow.Button" <%= selectedDates.isEmpty() ? "style='display:none;" : "" %> name="CopyFirstRow" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("CopyFirstRowLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
+								<input id="RefreshCal.Button" name="RefreshCal" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= bundle.get("RefreshLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
+				 				<input id="ApplyCal.Button" name="ApplyCal" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= bundle.get("ApplyLabel") %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
+								<input id="CopyFirstRow.Button" <%= selectedDates.isEmpty() ? "style='display:none;" : "" %> name="CopyFirstRow" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= bundle.get("CopyFirstRowLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
 							</td>
 						</tr>
 					</table>
@@ -1903,7 +1904,7 @@ org.openmdx.kernel.log.*
 					<div>&nbsp;</div>
 					<table class="fieldGroup">
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= bundle.get("ClosedGroupPollLabel") %>:</span>
 							</td>
 							<td>
@@ -1912,7 +1913,7 @@ org.openmdx.kernel.log.*
 							<td class="gap"/>
 						</tr>
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= bundle.get("HiddenPollLabel") %>:</span>
 							</td>
 							<td>
@@ -1921,7 +1922,7 @@ org.openmdx.kernel.log.*
 							<td class="gap"/>
 						</tr>
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= bundle.get("YesNoPollLabel") %>:</span>
 							</td>
 							<td>
@@ -1930,7 +1931,7 @@ org.openmdx.kernel.log.*
 							<td class="gap"/>
 						</tr>
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= bundle.get("LimitOksPollLabel") %>:</span>
 							</td>
 							<td>
@@ -1940,7 +1941,7 @@ org.openmdx.kernel.log.*
 						</tr>
 						<a name="<%= ANCHOR_PARTICIPANTS %>"></a>
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= bundle.get("MessageToVotersLabel") %>:</span>
 							</td>
 							<td>
@@ -1990,7 +1991,7 @@ org.openmdx.kernel.log.*
 <%
 									}
 %>
-									<td><input class="abutton" type="submit" id="DeleteVoter.<%= i %>.Button" name="DeleteVoter.<%= i %>" tabindex="<%= tabIndex++ %>" title="<%= bundle.get("RemoveVoterTitle") %>" value="&ndash;" onclick="<%= SUBMIT_HANDLER %>"/></td>
+									<td><input class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" type="submit" id="DeleteVoter.<%= i %>.Button" name="DeleteVoter.<%= i %>" tabindex="<%= tabIndex++ %>" title="<%= bundle.get("RemoveVoterTitle") %>" value="&ndash;" onclick="<%= SUBMIT_HANDLER %>"/></td>
 									<td style="vertical-align:middle">
 										<a href="mailto:<%= emailAddress.getEmailAddress() + "?subject=" + subject + "&body=" + body %>" title="<%= bundle.get("EmailToVoterTitle") %>"><%= emailAddress.getEmailAddress() %></a><input type="hidden" name="voter.<%= i %>" value="<%= emailAddress.refMofId() %>"/>
 <%
@@ -2036,7 +2037,7 @@ org.openmdx.kernel.log.*
 					p.flush();
 %>
 					<input type="hidden" name="voter.count" id="voter.count" value="<%= voterCount %>" />
-					<input type="submit" class="abutton" name="AddVoter" id="AddVoter.Button" tabindex="<%= tabIndex++ %>" title="<%= bundle.get("AddSelectedVoterTitle") %>" value="+" onclick="<%= SUBMIT_HANDLER %>" />
+					<input type="submit" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" name="AddVoter" id="AddVoter.Button" tabindex="<%= tabIndex++ %>" title="<%= bundle.get("AddSelectedVoterTitle") %>" value="+" onclick="<%= SUBMIT_HANDLER %>" />
 				</fieldset>
 				<a name="<%= ANCHOR_VOTES %>"></a>
 <%
@@ -2081,7 +2082,7 @@ org.openmdx.kernel.log.*
 											String event = (String)formValues.get(slotId);
 											if(event != null && event.length() > 0) {
 %>
-												<th><input type="submit" id="CreateConfirmedEvent.<%= event %>.Button" name="CreateConfirmedEvent.<%= event %>" <%= isEditMode ? "" : "disabled" %> class="abutton" value="<%= formatEvent(event, timeFormat) %>" title="<%= bundle.get("CreateConfirmedEventTitle") %>" onclick="<%= SUBMIT_HANDLER %>"/></th>
+												<th><input type="submit" id="CreateConfirmedEvent.<%= event %>.Button" name="CreateConfirmedEvent.<%= event %>" <%= isEditMode ? "" : "disabled" %> class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= formatEvent(event, timeFormat) %>" title="<%= bundle.get("CreateConfirmedEventTitle") %>" onclick="<%= SUBMIT_HANDLER %>"/></th>
 <%
 												nSlots++;
 											}
@@ -2204,10 +2205,10 @@ org.openmdx.kernel.log.*
 %>
  				<br />
 				<a name="<%= ANCHOR_BOTTOM %>"></a>
- 				<input id="Refresh.Button" name="Refresh" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("RefreshLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
- 				<input id="Apply.Button" name="Apply" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= bundle.get("ApplyLabel") %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
- 				<input id="Save.Button" name="Save" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= texts.getSaveTitle() %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
- 				<input id="Cancel.Button" name="Cancel" type="submit" tabindex="<%= tabIndex++ %>" class="abutton" value="<%= texts.getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>"/>
+ 				<input id="Refresh.Button" name="Refresh" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= bundle.get("RefreshLabel") %>" onclick="<%= SUBMIT_HANDLER %>"/>
+ 				<input id="Apply.Button" name="Apply" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= bundle.get("ApplyLabel") %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
+ 				<input id="Save.Button" name="Save" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= texts.getSaveTitle() %>" onclick="<%= SUBMIT_HANDLER_WITH_CHECK %>"/>
+ 				<input id="Cancel.Button" name="Cancel" type="submit" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= texts.getCloseText() %>" onclick="<%= SUBMIT_HANDLER %>"/>
  				<br />
  				<br />
 			</form>

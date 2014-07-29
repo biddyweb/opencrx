@@ -1,14 +1,14 @@
 /*
  * ====================================================================
- * Project:     opencrx, http://www.opencrx.org/
- * Description: UserHomes
+ * Project:     openCRX/Core, http://www.opencrx.org/
+ * Description: Notifications
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -50,7 +50,6 @@
  * This product includes software developed by contributors to
  * openMDX (http://www.openmdx.org/)
  */
-
 package org.opencrx.kernel.backend;
 
 import java.util.Collection;
@@ -69,30 +68,40 @@ import org.opencrx.kernel.activity1.jmi1.ActivityGroup;
 import org.opencrx.kernel.activity1.jmi1.ActivityGroupAssignment;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessState;
 import org.opencrx.kernel.activity1.jmi1.ActivityProcessTransition;
+import org.opencrx.kernel.activity1.jmi1.EMail;
 import org.opencrx.kernel.activity1.jmi1.Incident;
 import org.opencrx.kernel.activity1.jmi1.Meeting;
 import org.opencrx.kernel.activity1.jmi1.MeetingParty;
 import org.opencrx.kernel.backend.Activities.PartyStatus;
+import org.opencrx.kernel.home1.jmi1.Alert;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.application.dataprovider.cci.DataproviderOperations;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.text.conversion.HtmlEncoder;
 import org.openmdx.portal.servlet.Action;
+import org.openmdx.portal.servlet.CssClass;
 import org.openmdx.portal.servlet.action.SelectObjectAction;
 
+/**
+ * Notifications
+ *
+ */
 public class Notifications extends AbstractImpl {
 
 	/**
 	 * Register Notifications with backend.
+	 * 
 	 */
 	public static void register(
 	) {
 		registerImpl(new Notifications());
 	}
-	
+
 	/**
 	 * Retrieve registered Notifications.
+	 * 
 	 * @return
 	 * @throws ServiceException
 	 */
@@ -103,14 +112,16 @@ public class Notifications extends AbstractImpl {
 
 	/**
 	 * Notifications backend.
+	 * 
 	 */
 	protected Notifications(
 	) {
 		
 	}
-	
+
 	/**
 	 * Get access URL.
+	 * 
 	 * @param targetIdentity
 	 * @param userHome
 	 * @return
@@ -121,12 +132,12 @@ public class Notifications extends AbstractImpl {
 		UserHome userHome
 	) throws ServiceException {
         String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
-        Action selectTargetAction = targetIdentity == null ?
-            null :
-            new Action(
+        Action selectTargetAction = targetIdentity == null 
+        	? null 
+        	: new Action(
                 SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
-                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXri())
+                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXRI())
                 },
                 "",
                 true
@@ -136,9 +147,10 @@ public class Notifications extends AbstractImpl {
 	        "?event=" + SelectObjectAction.EVENT_ID + 
 	        "&parameter=" + selectTargetAction.getParameter();		
 	}
-	
+
     /**
      * Get notification text.
+     * 
      * @param pm
      * @param target
      * @param wfProcessInstanceIdentity
@@ -156,55 +168,55 @@ public class Notifications extends AbstractImpl {
     ) throws ServiceException {
         String text = "#ERR";
         String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
-        Path targetIdentity = target == null ?
-            null :
-            target.refGetPath();
-        Action selectTargetAction = targetIdentity == null ?
-            null :
-            new Action(
+        Path targetIdentity = target == null 
+        	? null 
+        	: target.refGetPath();
+        Action selectTargetAction = targetIdentity == null 
+        	? null 
+        	: new Action(
                 SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
-                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXri())
+                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, targetIdentity.toXRI())
                 },
                 "",
                 true
             );
-        Path triggeredBy = params.get("triggeredBy") instanceof String ? 
-        	new Path((String)params.get("triggeredBy")) :
-        		params.get("triggeredBy") instanceof Path ?
-        			(Path)params.get("triggeredBy") :
-        				null;
-        String triggeredById = triggeredBy == null ? "N/A" : triggeredBy.getBase(); 
-        Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null ? 
-        	null : 
-        	new Action(
+        Path triggeredBy = params.get("triggeredBy") instanceof String 
+        	? new Path((String)params.get("triggeredBy")) 
+        	: params.get("triggeredBy") instanceof Path 
+        		? (Path)params.get("triggeredBy") 
+        		: null;
+        String triggeredById = triggeredBy == null ? "N/A" : triggeredBy.getLastSegment().toClassicRepresentation(); 
+        Action selectWfProcessInstanceAction = wfProcessInstanceIdentity == null 
+        	? null 
+        	: new Action(
                 SelectObjectAction.EVENT_ID, 
                 new Action.Parameter[]{
-                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, wfProcessInstanceIdentity.toXri())    
+                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, wfProcessInstanceIdentity.toXRI())    
                 },
                 "",
                 true
             );
-        Action selectTriggeredByAction =  triggeredBy == null ? 
-        	null : 
-	        	new Action(
-	                SelectObjectAction.EVENT_ID,
-	                new Action.Parameter[]{
-	                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, triggeredBy.toXri())
-	                },
-	                "",
-	                true
-	            );
+        Action selectTriggeredByAction =  triggeredBy == null 
+        	? null 
+        	: new Action(
+                SelectObjectAction.EVENT_ID,
+                new Action.Parameter[]{
+                    new Action.Parameter(Action.PARAMETER_OBJECTXRI, triggeredBy.toXRI())
+                },
+                "",
+                true
+            );
         // Alert specific text
-        if(target instanceof org.opencrx.kernel.home1.jmi1.Alert) {
-            org.opencrx.kernel.home1.jmi1.Alert alert = (org.opencrx.kernel.home1.jmi1.Alert)target;
+        if(target instanceof Alert) {
+            Alert alert = (Alert)target;
             ContextCapable referencedObj = null;
             try {
             	referencedObj = alert.getReference();
-            } catch(Exception e) {}
+            } catch(Exception ignore) {}
             if(
                 (referencedObj != null) && 
-                !(referencedObj instanceof org.opencrx.kernel.home1.jmi1.UserHome)
+                !(referencedObj instanceof UserHome)
             ) {
                 text = this.getNotificationText(
                     pm,
@@ -213,159 +225,232 @@ public class Notifications extends AbstractImpl {
                     userHome,
                     params
                );
-            }
-            else {
-                text = "Alert:\n";
+            } else {
+                text = "<!DOCTYPE html>";
+    	        text += "<html lang=\"en\">";
+    	        text += "<head>";
+    	        text += "	<meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">";
+    	        text += "	<link rel=\"stylesheet\" href=\"http://getbootstrap.com/dist/css/bootstrap.min.css\">";
+    	        text += "</head>";
+    	        text += "<body>";
+    	        text += "<div class=\"container\">";
                 if(selectTargetAction != null) {
-                    text += "=======================================================================\n";
-                    text += "\"" + this.getAccessUrl(targetIdentity, userHome) + "\"\n";
-                    text += "=======================================================================\n";
+                	text += "<div class=\"alert alert-warning\" style=\"margin-bottom:0px\">";
+                	text += "<h4><a href=\""+ this.getAccessUrl(targetIdentity, userHome) + "\">" + (alert.getName() == null ? "Alert" : alert.getName()) + "</a></h4>";
+                    text += "</div>";
+        	        text += "<pre style=\"" + PRE_STYLE + "\">";
+                } else {
+        	        text += "<pre style=\"" + PRE_STYLE + "\">";
+	                text += "Name:\n";
+	                text += (alert.getName() == null ? "---" : alert.getName()) + "\n\n";
                 }
-                text += "Name:\n";
-                text += (alert.getName() == null ? "N/A" : alert.getName()) + "\n\n";
                 text += "Description:\n";
-                text += (alert.getDescription() == null ? "N/A" : alert.getDescription()) + "\n\n"; 
-                text += "=======================================================================\n";
+                text += (alert.getDescription() == null ? "---" : alert.getDescription()) + "\n\n"; 
+                text += "</pre>";
+                text += "</div>";
+                text += "</body>";
+                text += "</html>";                
             }
-        }
-        // Activity specific text
-        else if(
+        } else if(
             (target instanceof Activity) ||
             (target instanceof ActivityFollowUp)
         ) {
-            Activity activity = target instanceof Activity ? 
-            	(Activity)target : 
-            		(Activity)pm.getObjectById(new Path(target.refMofId()).getParent().getParent());
-            Contact reportingContact = activity.getReportingContact();
-            Account reportingAccount = activity.getReportingAccount();
-            Contact assignedTo = activity.getAssignedTo();                
+            // Activity specific text
+            Activity activity = target instanceof Activity 
+            	? (Activity)target 
+            	: (Activity)pm.getObjectById(new Path(target.refMofId()).getParent().getParent());
+            Contact reportingContact = null;
+            try {
+            	reportingContact = activity.getReportingContact();
+            } catch(Exception ignore) {}
+            Account reportingAccount = null;
+            try {
+            	reportingAccount = activity.getReportingAccount();
+            } catch(Exception ignore) {}
+            Contact assignedTo = null;
+            try {
+            	assignedTo = activity.getAssignedTo();                
+            } catch(Exception ignore) {}
             ActivityProcessState activityState = activity.getProcessState();                
             ActivityProcessTransition lastTransition = activity.getLastTransition();                
-            text = "";
-            if(selectTargetAction != null) {
-                text += "=======================================================================\n";
-                text += "\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\"\n";
-                text += "=======================================================================\n";
-            }
-            text += "Reporting Contact:          " + (reportingContact == null ? "N/A" : reportingContact.getFullName()) + "\n";
-            text += "Reporting Account:          " + (reportingAccount == null ? "N/A" : reportingAccount.getFullName()) + "\n";
-            text += "Handler:                    " + (assignedTo == null ? "N/A" : assignedTo.getFullName()) + "\n";
-            text += "=======================================================================\n";
-            int ii = 0;
-            Collection<ActivityGroupAssignment> assignedGroups = activity.getAssignedGroup();
-            for(ActivityGroupAssignment assignedGroup: assignedGroups) {
-                ActivityGroup group = assignedGroup.getActivityGroup();
-                if(group != null) {
-                    if(ii == 0) {
-                        text += "Activity Group:             " + group.getName() + "\n";
-                    }
-                    else {
-                        text += "                            " + group.getName() + "\n";                        
-                    }
-                }
-            }
-            text += "Activity#:                  " + activity.getActivityNumber() + "\n";
-            if(activity instanceof Incident) {
-                Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)activity;
-                try {
-                    text += "Category:                   " + incident.getCategory() + "\n";
-                } 
-                catch(Exception e) {}
-                try {
-                    text += "Reproducibility:            " + incident.getReproducibility() + "\n";
-                } 
-                catch(Exception e) {}
-                try {
-                    text += "Severity:                   " + incident.getSeverity() + "\n";
-                } 
-                catch(Exception e) {}
-            }
-            text += "Priority:                   " + activity.getPriority() + "\n";
-            text += "Status:                     " + (activityState == null ? "N/A" : activityState.getName()) + "\n";
-            text += "Last transition:            " + (lastTransition == null ? "N/A" : lastTransition.getName()) + "\n";
-            text += "=======================================================================\n";
-            text += "Scheduled start:            " + (activity.getScheduledStart() == null ? "N/A" : activity.getScheduledStart()) + "\n";
-            text += "Scheduled end:              " + (activity.getScheduledEnd() == null ? "N/A" : activity.getScheduledEnd()) + "\n";
-            text += "Due by:                     " + (activity.getDueBy() == null ? "N/A" : activity.getDueBy()) + "\n";
-            text += "Actual start:               " + (activity.getActualStart() == null ? "N/A" : activity.getActualStart()) + "\n";
-            text += "Actual end:                 " + (activity.getActualEnd() == null ? "N/A" : activity.getActualEnd()) + "\n";
-            text += "=======================================================================\n";
-            text += "Date Submitted:             " + activity.getCreatedAt() + "\n";
-            text += "Last Modified:              " + activity.getModifiedAt() + "\n";
-            text += "=======================================================================\n";
-            // Meeting
-            if(activity instanceof Meeting) {
-            	text += "Organizer:\n";
-            	text += "*  " + activity.getAssignedTo().getFullName() + "\n";
-            	text += "Attendees:\n";
-            	Meeting meeting = (Meeting)activity;
-            	MeetingPartyQuery partyQuery = (MeetingPartyQuery)pm.newQuery(MeetingParty.class);
-            	partyQuery.orderByPartyStatus().ascending();
-            	List<MeetingParty> meetingParties = meeting.getMeetingParty(partyQuery);            	
-            	for(MeetingParty meetingParty: meetingParties) {
-            		String partyStatus =  meetingParty.getPartyStatus() == PartyStatus.ACCEPTED.getValue() ? 
-            			"+" :
-            				meetingParty.getPartyStatus() == PartyStatus.DECLINED.getValue() ?
-            					"-" : "?";            		
-            		text += partyStatus + "  " + (meetingParty.getEmailHint() == null ? meetingParty.getParty().getFullName() : meetingParty.getEmailHint()) + "\n"; 
-            	}
-                text += "=======================================================================\n";            		
-            }
-            // Summary, Description, Message Body
             String activityName = activity.getName();
-            String activityDescription = activity.getDescription();
-            String activityDetailedDescription = activity.getDetailedDescription();
-            String messageBody = activity instanceof org.opencrx.kernel.activity1.jmi1.EMail ? 
-            	((org.opencrx.kernel.activity1.jmi1.EMail)activity).getMessageBody() : 
-            	null;
-            text += "Summary:\n";
-            text += (activityName == null ? "N/A" : activityName) + "\n\n";
-            text += "Description:\n";
-            text += (activityDescription == null ? "N/A" : activityDescription) + "\n\n"; 
-            text += "Details:\n";
-            text += (activityDetailedDescription == null ? "N/A" : activityDetailedDescription) + "\n\n";
-            if(messageBody != null) {
-                text += "Message Body:\n";
-                text += messageBody + "\n\n";                     
-            }
-            text += "=======================================================================\n";
-            text += "\n";
-            // Follow Ups
-            ActivityFollowUpQuery followUpQuery = (ActivityFollowUpQuery)pm.newQuery(ActivityFollowUp.class);
-            followUpQuery.orderByCreatedAt().descending();
-            Collection<ActivityFollowUp> followUps = activity.getFollowUp(followUpQuery);
-            for(ActivityFollowUp followUp: followUps) {
-                Contact followUpAssignedTo = followUp.getAssignedTo();
-                ActivityProcessTransition followUpTransition = followUp.getTransition();                
-                text += "-----------------------------------------------------------------------\n";
-                text += "Submitted by: " + (followUpAssignedTo == null ? "N/A" : followUpAssignedTo.getFullName()) + "\n";
-                text += "Submitted at: " + followUp.getCreatedAt() + "\n";
-                text += "Transition  : " + (followUpTransition == null ? "N/A" : followUpTransition.getName()) + "\n";
-                text += "Title       : " + ((followUp == null) || (followUp.getTitle() == null) ? "N/A" : followUp.getTitle()) + "\n";
-                text += "-----------------------------------------------------------------------\n";
-                String followUpText = followUp.getText();
-                text += (followUpText == null ? "N/A" : followUpText) + "\n\n\n";
-            }
-        }
-        // Generic text
-        else {
-            text = "";
-            text = 
-                text += "=======================================================================\n";
-                text += "Event:           " + (params.get("triggeredByEventType") == null ? "N/A" : DataproviderOperations.toString(((Number)params.get("triggeredByEventType")).intValue())) + "\n";
-                text += "Trigger Id:      " + triggeredById + "\n";
-                if(selectTargetAction != null) {
-                    text += "Object Invoked:  " + ("\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\"\n");
+            text = "<!DOCTYPE html>";
+	        text += "<html lang=\"en\">";
+	        text +=     "<head>";
+	        text += "	<meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">";
+	        text += "	<link rel=\"stylesheet\" href=\"http://getbootstrap.com/dist/css/bootstrap.min.css\">";
+	        text += "</head>";
+	        text += "<body>";
+	        text += "<div class=\"container\">";
+            // Activity details
+            {
+            	text += "<div class=\"" + CssClass.alert + " " + CssClass.alertWarning + "\" style=\"margin-bottom:0px\">";
+            	text += "<h4><a href=\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\">#" + activity.getActivityNumber() + ": " + (activityName == null ? "---" : activityName) + "</a></h4>";
+                text += "</div>";
+            	text += "<pre style=\"" + PRE_STYLE + "\">";
+                text += "=========================================================\n";
+                text += "Reporting Contact:          " + (reportingContact == null ? "---" : reportingContact.getFullName()) + "\n";
+                text += "Reporting Account:          " + (reportingAccount == null ? "---" : reportingAccount.getFullName()) + "\n";
+                text += "Handler:                    " + (assignedTo == null ? "---" : assignedTo.getFullName()) + "\n";
+                text += "=========================================================\n";
+                int ii = 0;
+                Collection<ActivityGroupAssignment> assignedGroups = activity.getAssignedGroup();
+                for(ActivityGroupAssignment assignedGroup: assignedGroups) {
+                    ActivityGroup group = assignedGroup.getActivityGroup();
+                    if(group != null) {
+                        if(ii == 0) {
+                            text += "Activity Group:             " + group.getName() + "\n";
+                        } else {
+                            text += "                            " + group.getName() + "\n";                        
+                        }
+                    }
                 }
-                text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectWfProcessInstanceAction.getParameter()) + "\"\n";
-                text += "Trigger URL:     " + (selectTriggeredByAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectTriggeredByAction.getParameter()) + "\"\n";
-                text += "=======================================================================\n";
+                text += "Activity#:                  " + activity.getActivityNumber() + "\n";
+                if(activity instanceof Incident) {
+                    Incident incident = (org.opencrx.kernel.activity1.jmi1.Incident)activity;
+                    try {
+                        text += "Category:                   " + incident.getCategory() + "\n";
+                    } catch(Exception ignore) {}
+                    try {
+                        text += "Reproducibility:            " + incident.getReproducibility() + "\n";
+                    } catch(Exception e) {}
+                    try {
+                        text += "Severity:                   " + incident.getSeverity() + "\n";
+                    } catch(Exception ignore) {}
+                }
+                text += "Priority:                   " + activity.getPriority() + "\n";
+                text += "Status:                     " + (activityState == null ? "---" : activityState.getName()) + "\n";
+                text += "Last transition:            " + (lastTransition == null ? "---" : lastTransition.getName()) + "\n";
+                text += "=========================================================\n";
+                text += "Scheduled start:            " + (activity.getScheduledStart() == null ? "---" : activity.getScheduledStart()) + "\n";
+                text += "Scheduled end:              " + (activity.getScheduledEnd() == null ? "---" : activity.getScheduledEnd()) + "\n";
+                text += "Due by:                     " + (activity.getDueBy() == null ? "---" : activity.getDueBy()) + "\n";
+                text += "Actual start:               " + (activity.getActualStart() == null ? "---" : activity.getActualStart()) + "\n";
+                text += "Actual end:                 " + (activity.getActualEnd() == null ? "---" : activity.getActualEnd()) + "\n";
+                text += "=========================================================\n";
+                text += "Date Submitted:             " + activity.getCreatedAt() + "\n";
+                text += "Last Modified:              " + activity.getModifiedAt() + "\n";
+                text += "=========================================================\n";
+                // Meeting
+                if(activity instanceof Meeting) {
+                	text += "Organizer:\n";
+                	text += "*  " + activity.getAssignedTo().getFullName() + "\n";
+                	text += "Attendees:\n";
+                	Meeting meeting = (Meeting)activity;
+                	MeetingPartyQuery partyQuery = (MeetingPartyQuery)pm.newQuery(MeetingParty.class);
+                	partyQuery.orderByPartyStatus().ascending();
+                	List<MeetingParty> meetingParties = meeting.getMeetingParty(partyQuery);            	
+                	for(MeetingParty meetingParty: meetingParties) {
+                		String partyStatus =  meetingParty.getPartyStatus() == PartyStatus.ACCEPTED.getValue() 
+                			? "+" 
+                			: meetingParty.getPartyStatus() == PartyStatus.DECLINED.getValue() 
+                				? "-" 
+                				: "?";            		
+                		text += partyStatus + "  " + (meetingParty.getEmailHint() == null 
+                			? meetingParty.getParty().getFullName() 
+                			: meetingParty.getEmailHint()) + "\n"; 
+                	}
+                    text += "=========================================================\n";            		
+                }
+                // Summary, Description, Message Body
+                String activityDescription = activity.getDescription();
+                String activityDetailedDescription = activity.getDetailedDescription();
+                String messageBody = activity instanceof org.opencrx.kernel.activity1.jmi1.EMail ? 
+                	((org.opencrx.kernel.activity1.jmi1.EMail)activity).getMessageBody() : 
+                	null;
+                text += "Summary:\n";
+                text += (activityName == null ? "---" : activityName) + "\n\n";
+                text += "Description:\n";
+                text += (activityDescription == null ? "---" : activityDescription) + "\n\n"; 
+                text += "Details:\n";
+                text += (activityDetailedDescription == null ? "---" : activityDetailedDescription) + "\n\n";
+                if(messageBody != null) {
+                    text += "Message Body:\n";
+                    text += messageBody + "\n\n";                     
+                }
+                text += "</pre>";
+            }
+            // Follow-Ups
+            {
+	            // Follow Ups
+	            ActivityFollowUpQuery followUpQuery = (ActivityFollowUpQuery)pm.newQuery(ActivityFollowUp.class);
+	            followUpQuery.orderByCreatedAt().descending();
+	            Collection<ActivityFollowUp> followUps = activity.getFollowUp(followUpQuery);
+	            for(ActivityFollowUp followUp: followUps) {
+	                Contact followUpAssignedTo = null;
+	                try {
+	                	followUpAssignedTo = followUp.getAssignedTo();
+	                } catch(Exception ignore) {}
+	                ActivityProcessTransition followUpTransition = null;
+	                try {
+	                	followUpTransition = followUp.getTransition();
+	                } catch(Exception ignore) {}
+	                text += "<div class=\"" + CssClass.alert + " " + CssClass.alertInfo + "\" style=\"padding:10px;margin-bottom:0px\">";
+	                if(followUp.getTitle() != null && !followUp.getTitle().isEmpty()) {
+		                text += "<div class=\"" + CssClass.row + "\">";
+		                text += "	<div class=\"" + CssClass.colXs12 + "\"><h4>" + HtmlEncoder.encode(followUp.getTitle(), false) + "</h4></div>";
+		                text += "</div>";
+	                }
+	                text += "<div class=\"row\">";
+	                text += "	<div class=\"" + CssClass.colXs3 + " text-left\">" + (followUpTransition == null ? "---" : followUpTransition.getName()) + "</div>";
+	                text += "	<div class=\"" + CssClass.colXs4 + " text-right\">" + (followUpAssignedTo == null ? "---" : followUpAssignedTo.getFullName()) + "</div>";
+	                text += "	<div class=\"" + CssClass.colXs5 + " text-right\">" + followUp.getCreatedAt() + "</div>";
+	                text += "</div>";
+	                text += "</div>";
+	                String followUpText = followUp.getText();
+	                if(
+	                	followUpText != null &&
+	                	!HtmlEncoder.containsWiki(followUpText) &&
+	                	HtmlEncoder.containsHtml(followUpText)
+	                ) {
+	                	text += "<div class=\"" + CssClass.panel + " panel-default\">";
+	                	text += "<div class=\"panel-body\">";
+	                	text += followUpText;
+	                	text += "</div>";
+	                	text += "</div>";
+	                } else {
+                		text += "<pre style=\"" + PRE_STYLE + "\">";
+                		text += followUpText == null || followUpText.isEmpty() 
+                			? "---" 
+                			: HtmlEncoder.encode(followUpText, false);
+                		text += "</pre>";
+                	}
+	            }
+            }
+            text += "</div>";
+            text += "</body>";
+            text += "</html>";
+        } else {
+            // Generic text
+            text = "<!DOCTYPE html>";
+	        text += "<html lang=\"en\">";
+	        text +=     "<head>";
+	        text += "	<meta content=\"width=device-width, initial-scale=1\" name=\"viewport\">";
+	        text += "	<link rel=\"stylesheet\" href=\"http://getbootstrap.com/dist/css/bootstrap.min.css\">";
+	        text += "</head>";
+	        text += "<body>";
+	        text += "<div class=\"container\">";
+	        text += "<pre style=\"" + PRE_STYLE + "\">";
+            text += "=========================================================\n";
+            text += "Event:           " + (params.get("triggeredByEventType") == null ? "N/A" : DataproviderOperations.toString(((Number)params.get("triggeredByEventType")).intValue())) + "\n";
+            text += "Trigger Id:      " + triggeredById + "\n";
+            if(selectTargetAction != null) {
+                text += "Object Invoked:  " + ("\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\"\n");
+            }
+            text += "Workflow:        " + (selectWfProcessInstanceAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectWfProcessInstanceAction.getParameter()) + "\"\n";
+            text += "Trigger URL:     " + (selectTriggeredByAction == null ? "N/A" : "\"" + webAccessUrl + "?event=" +  + SelectObjectAction.EVENT_ID + "&parameter=" + selectTriggeredByAction.getParameter()) + "\"\n";
+            text += "=========================================================\n";
+            text += "</pre>";
+            text += "</div>";
+            text += "</body>";
+            text += "</html>";
         }
         return text;
     }
-            
+
     /**
      * Get notification subject.
+     * 
      * @param pm
      * @param target
      * @param userHome
@@ -377,87 +462,84 @@ public class Notifications extends AbstractImpl {
     public String getNotificationSubject(
         PersistenceManager pm,
         ContextCapable target,
+        Path wfProcessInstanceIdentity,
         UserHome userHome,  
         Map<String,Object> params,
         boolean useSendMailSubjectPrefix
     ) throws ServiceException {
         Path userHomeIdentity = userHome.refGetPath();
+        String providerName = userHomeIdentity.getSegment(2).toClassicRepresentation();
+        String segmentName = userHomeIdentity.getSegment(4).toClassicRepresentation();
         String title = null;
-        Path triggeredBy = params.get("triggeredBy") instanceof String ? 
-        	new Path((String)params.get("triggeredBy")) :
-        		params.get("triggeredBy") instanceof Path ?
-        			(Path)params.get("triggeredBy") :
-        				null;
-        String triggeredById = triggeredBy == null ? "N/A" : triggeredBy.getBase();
-        String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null ? 
-            "[" + userHome.refGetPath().get(2) + ":" + userHome.refGetPath().get(4) + "]" : 
-            	userHome.getSendMailSubjectPrefix();
+        Path triggeredBy = params.get("triggeredBy") instanceof String 
+        	? new Path((String)params.get("triggeredBy")) 
+        	: params.get("triggeredBy") instanceof Path 
+        		? (Path)params.get("triggeredBy") 
+        		: null;
+        String triggeredById = triggeredBy == null ? "N/A" : triggeredBy.getLastSegment().toClassicRepresentation();
+        String sendMailSubjectPrefix = userHome.getSendMailSubjectPrefix() == null 
+        	? "[" + providerName + ":" + segmentName + "]" 
+        	: userHome.getSendMailSubjectPrefix();
         String webAccessUrl = UserHomes.getInstance().getWebAccessUrl(userHome);
         if(
             (target != null) && 
-            ((params.get("confidential") == null) || !((Boolean)params.get("confidential")).booleanValue())
+            !Boolean.TRUE.equals(params.get("confidential"))
         ) {
             try {
-                if(target instanceof org.opencrx.kernel.activity1.jmi1.EMail) {
-                    org.opencrx.kernel.activity1.jmi1.EMail emailActivity = 
-                        (org.opencrx.kernel.activity1.jmi1.EMail)target;
-                    title =  (useSendMailSubjectPrefix ? sendMailSubjectPrefix + ": " : "") + emailActivity.getMessageSubject();
-                }
-                else if(target instanceof org.opencrx.kernel.home1.jmi1.Alert) {
-                    org.opencrx.kernel.home1.jmi1.Alert alert = 
-                        (org.opencrx.kernel.home1.jmi1.Alert)target;
-                    if(
+                if(target instanceof EMail) {
+                    EMail emailActivity = (EMail)target;
+                    title = (useSendMailSubjectPrefix ? sendMailSubjectPrefix + ": " : "") + emailActivity.getMessageSubject();
+                } else if(target instanceof Alert) {
+                    Alert alert = (Alert)target;
+                    if(alert.getName() != null && !alert.getName().isEmpty()) {
+                    	title = (useSendMailSubjectPrefix ? sendMailSubjectPrefix + ": " : "") + alert.getName();
+                    } else if(
                         (alert.getReference() != null) &&
-                        !(alert.getReference() instanceof org.opencrx.kernel.home1.jmi1.UserHome)
+                        !(alert.getReference() instanceof UserHome)
                     ) {
                         title = this.getNotificationSubject(
                             pm, 
-                            alert.getReference(), 
+                            alert.getReference(),
+                            wfProcessInstanceIdentity,
                             userHome, 
                             params,
                             useSendMailSubjectPrefix
                         );
+                    } else {
+                        title = alert.refGetPath().toXRI();
                     }
-                    else {
-                        title = alert.getName();
-                    }
-                }
-                else {
+                } else {
                     if(title == null) {
                         try {
                             if(target.refGetValue("name") != null) {
                                 title = sendMailSubjectPrefix + ": " + target.refGetValue("name");
                             }
-                        } 
-                        catch(Exception e) {}
+                        } catch(Exception ignore) {}
                     }
                     if(title == null) {
                         try {
                             if(target.refGetValue("title") != null) {
                                 title = sendMailSubjectPrefix + ": " + target.refGetValue("title");
                             }
-                        } 
-                        catch(Exception e) {}
+                        } catch(Exception ignore) {}
                     }
                     if(title == null) {
                         try {
                             if(target.refGetValue("fullName") != null) {
                                 title = sendMailSubjectPrefix + ": " + target.refGetValue("fullName");
                             }
-                        } 
-                        catch(Exception e) {}
+                        } catch(Exception ignore) {}
                     }
                 }
-            }
-            catch(Exception e) {}
+            } catch(Exception e) {}
         }
         if(title == null) {
             title = 
                 sendMailSubjectPrefix + ": " + 
-                "from=" + userHomeIdentity.get(2) + "/" + userHomeIdentity.get(4)+ "/" + userHomeIdentity.get(6) + "; " + 
+                "from=" + providerName + "/" + segmentName + "/" + userHomeIdentity.getSegment(6).toClassicRepresentation() + "; " + 
                 "trigger=" + triggeredById + "; " +
                 "access=" + webAccessUrl;                
-        }   
+        }
         return title;
     }
 
@@ -471,6 +553,8 @@ public class Notifications extends AbstractImpl {
     public static final short CAN_NOT_RETRIEVE_REQUESTED_PRINCIPAL = 4;
     public static final short CAN_NOT_CHANGE_PASSWORD = 5;
     public static final short MISSING_OLD_PASSWORD = 6;
+
+    protected static final String PRE_STYLE = "white-space:pre-wrap; word-break:normal;";
 
 }
 

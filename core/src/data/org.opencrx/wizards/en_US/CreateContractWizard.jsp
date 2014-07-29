@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -66,7 +66,7 @@ org.openmdx.kernel.id.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -98,7 +98,7 @@ org.openmdx.base.naming.*
 	RefObject_1_0 obj = wc.getObject();
 	ViewPort viewPort = wc.getViewPort(out);
 %>
-<br />
+<div class="OperationDialogTitle"><%= app.getTexts().getNewText() %>...</div>
 <form id="<%=FORM_NAME%>" name="<%=FORM_NAME%>" accept-charset="UTF-8" method="POST" action="<%=wc.getServletPath()%>">
 	<input type="hidden" name="<%=Action.PARAMETER_REQUEST_ID%>" value="<%=wc.getRequestId()%>" />
 	<input type="hidden" name="<%=Action.PARAMETER_OBJECTXRI%>" value="<%=wc.getObjectIdentity().toXRI()%>" />
@@ -108,7 +108,7 @@ org.openmdx.base.naming.*
 	<table class="tableLayout">
 		<tr>
 			<td class="cellObject">
-				<div class="panel" id="panel<%=FORM_NAME%>" style="display: block">
+				<div class="panel" id="panel<%=FORM_NAME%>" style="display:block;overflow:visible;">
 <%
 					// Contract
 					wc.getForms().get(FORM_NAME).paint(viewPort, null, true);
@@ -156,17 +156,17 @@ org.openmdx.base.naming.*
 					viewPort.flush();
 %>
 					<input type="hidden" name="ContractPositionCount" id="ContractPositionCount" value="<%= lastContractPositionIndex + 1 %>" />
-					<input type="submit" name="AddPosition" id="AddPosition.Button" tabindex="9000" value="+" onclick="javascript:$('Command').value=this.name"/>
+					<input type="submit" name="AddPosition" id="AddPosition.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="+" onclick="javascript:$('Command').value=this.name"/>
 					<div class="fieldGroupName">&nbsp;</div>
 				</div>
 				<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
 				<div id="SubmitArea" style="float:left;display:none;">				
-					<input type="submit" name="Refresh" id="Refresh.Button" tabindex="9010" value="Refresh" onclick="javascript:$('Command').value=this.name;"/>
-					<input type="submit" name="CreateOpportunity" id="CreateOpportunity.Button" tabindex="9020" value="Create Opportunity" onclick="javascript:$('Command').value=this.name;" />
-					<input type="submit" name="CreateQuote" id="CreateQuote.Button" tabindex="9030" value="Create Quote" onclick="javascript:$('Command').value=this.name;" />
-					<input type="submit" name="CreateSalesOrder" id="CreateSalesOrder.Button" tabindex="9040" value="Create Sales Order" onclick="javascript:$('Command').value=this.name;" />
-					<input type="submit" name="CreateInvoice" id="CreateInvoice.Button" tabindex="9050" value="Create Invoice" onclick="javascript:$('Command').value=this.name;" />
-					<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="Refresh" id="Refresh.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="Refresh" onclick="javascript:$('Command').value=this.name;"/>
+					<input type="submit" name="CreateOpportunity" id="CreateOpportunity.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9020" value="Create Opportunity" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="CreateQuote" id="CreateQuote.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9030" value="Create Quote" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="CreateSalesOrder" id="CreateSalesOrder.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9040" value="Create Sales Order" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="CreateInvoice" id="CreateInvoice.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9050" value="Create Invoice" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 				</div>
 <%
 				if(wc.getCustomer() != null) {
@@ -188,8 +188,8 @@ org.openmdx.base.naming.*
 %>
 							<tr class="gridTableRowFull">
 								<td><%= new ObjectReference(address, app).getTitle() %></td>
-								<td><input type="submit" id="Button.SetShippingAddress.<%= Integer.toString(ii) %>" name="SetShippingAddress" value="Shipping" onclick="javascript:$('Command').value=this.name;$('AddressXri').value='<%= address.refMofId() %>';"/>
-								<td><input type="submit" id="Button.SetBillingAddress.<%= Integer.toString(ii) %>" name="SetBillingAddress" value="Billing" onclick="javascript:$('Command').value=this.name;$('AddressXri').value='<%= address.refMofId() %>';"/>
+								<td><input type="submit" id="Button.SetShippingAddress.<%= Integer.toString(ii) %>" name="SetShippingAddress" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="Shipping" onclick="javascript:$('Command').value=this.name;$('AddressXri').value='<%= address.refMofId() %>';"/>
+								<td><input type="submit" id="Button.SetBillingAddress.<%= Integer.toString(ii) %>" name="SetBillingAddress" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="Billing" onclick="javascript:$('Command').value=this.name;$('AddressXri').value='<%= address.refMofId() %>';"/>
 								<td class="addon"/>
 							</tr>
 <%
@@ -204,6 +204,7 @@ org.openmdx.base.naming.*
 		</tr>
 	</table>
 </form>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

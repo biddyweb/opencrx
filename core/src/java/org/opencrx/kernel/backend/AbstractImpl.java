@@ -57,6 +57,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
@@ -65,10 +66,16 @@ import org.openmdx.kernel.log.SysLog;
 
 public abstract class AbstractImpl {
 
-    //-------------------------------------------------------------------------
 	private static ConcurrentMap<String,Object> currentImpls = new ConcurrentHashMap<String,Object>();
 	private static Set<String> registeredImpls = new HashSet<String>();
 	
+	/**
+	 * Get backend impl of given type.
+	 * 
+	 * @param backendClass
+	 * @return
+	 * @throws ServiceException
+	 */
 	@SuppressWarnings("unchecked")
     protected static <B extends AbstractImpl> B getInstance(
 		Class<B> backendClass
@@ -85,7 +92,11 @@ public abstract class AbstractImpl {
 		return impl;
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Register backend impl.
+	 * 
+	 * @param impl
+	 */
 	protected static void registerImpl(
 		AbstractImpl impl
 	) {
@@ -100,8 +111,7 @@ public abstract class AbstractImpl {
 				registeredImpls.add(
 					impl.getClass().getName()
 				);
-			}
-			catch(Exception e) {
+			} catch(Exception e) {
 				ServiceException e0 = new ServiceException(
 					e,
 	                BasicException.Code.DEFAULT_DOMAIN,
@@ -111,16 +121,44 @@ public abstract class AbstractImpl {
 				);
 				e0.log();
 			}
-		}
-		else {
+		} else {
 			SysLog.detail("Impl already registered. Ignoring.", impl.getClass().getName());			
 		}
 	}
 	
-	//-------------------------------------------------------------------------
+    /**
+     * Helper to get UID.
+     * 
+     * @return
+     */
     public String getUidAsString(
     ) {
         return UUIDConversion.toUID(UUIDs.newUUID());        
+    }
+
+    /**
+     * Pre-delete callback. This method is called before can object is deleted. Override
+     * this method for custom-specific behaviour.
+     * 
+     * @param object
+     * @param preDelete
+     */
+    public void preDelete(
+        RefObject_1_0 object,
+        boolean preDelete
+    ) throws ServiceException {
+    	// 
+    }
+
+    /**
+     * Pre-store callback. This method is called before an object is made persistent. Override
+     * this method for custom-specific behaviour.
+     * 
+     * @param object
+     */
+    public void preStore(
+    	RefObject_1_0 object
+    ) throws ServiceException {    	
     }
 
 	//-------------------------------------------------------------------------

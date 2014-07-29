@@ -11,7 +11,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2012-2013 CRIXP Corp., Switzerland
+ * Copyright (c) 2012-2014 CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -65,12 +65,13 @@ java.sql.*,
 org.opencrx.kernel.portal.wizard.*,
 org.opencrx.kernel.portal.wizard.ConnectionHelperController.SelectorType,
 org.opencrx.kernel.portal.wizard.ConnectionHelperController.ResourceType,
+org.opencrx.application.utils.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.kernel.id.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -96,43 +97,49 @@ org.openmdx.kernel.log.*
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-  <title><%= app.getApplicationName() %> - Connection Helper: AirSync / Calendar / vCard / WebDAV</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta name="label" content="Connection Helper: AirSync/Calendar/vCard/WebDAV">
-  <meta name="toolTip" content="Connection Helper: AirSync/Calendar/vCard/WebDAV">
-  <meta name="targetType" content="_blank">
-  <!-- calendars based on activities -->
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCategory">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityMilestone">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGlobal">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGroup">
-  <meta name="forClass" content="org:opencrx:kernel:activity1:Resource">
-  <meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
-  <meta name="forClass" content="org:opencrx:kernel:home1:AirSyncProfile">
-  <meta name="forClass" content="org:opencrx:kernel:home1:CalendarProfile">
-  <!-- calendars based on contacts -->
-  <meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal"> <!-- bday -->
-  <!-- webdav -->
-  <meta name="forClass" content="org:opencrx:kernel:home1:DocumentProfile">
-  <!-- carddav -->
-  <meta name="forClass" content="org:opencrx:kernel:home1:CardProfile">
+	<title><%= app.getApplicationName() %> - Connection URLs for Groupware</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="label" content="Connection Helper: AirSync/Calendar/vCard/WebDAV">
+	<meta name="toolTip" content="Connection Helper: AirSync/Calendar/vCard/WebDAV">
+	<meta name="targetType" content="_blank">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityTracker">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCategory">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityMilestone">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGlobal">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGroup">
+	<meta name="forClass" content="org:opencrx:kernel:activity1:Resource">
+	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
+	<meta name="forClass" content="org:opencrx:kernel:home1:AirSyncProfile">
+	<meta name="forClass" content="org:opencrx:kernel:home1:CalendarProfile">
+	<meta name="forClass" content="org:opencrx:kernel:account1:AccountFilterGlobal">
+	<meta name="forClass" content="org:opencrx:kernel:home1:DocumentProfile">
+	<meta name="forClass" content="org:opencrx:kernel:home1:CardProfile">
+	<meta name="order" content="5998">
 
-  <meta name="order" content="5998">
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link rel='shortcut icon' href='../../images/favicon.ico' />
+	<!-- Styles -->
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 
-  <style type="text/css" media="all">
-    TABLE.fieldGroup TD {
-      vertical-align:middle;
-    }
-    .label {
-      width:190px;
-    }
-  </style>
+	<!-- Libraries -->
+    <script src="../../javascript/prototype.js"></script>
+    <script src="../../javascript/jquery/jquery.min.js"></script>
+	<script>
+	  $.noConflict();
+	</script>
+	<script src="../../javascript/bootstrap/js/bootstrap.min.js"></script>
+	<script src="../../javascript/portal-all.js"></script>	
+	<link rel='shortcut icon' href='../../images/favicon.ico' />
+
+	<style type="text/css" media="all">
+	    TABLE.fieldGroup TD {
+	      vertical-align:middle;
+	    }
+	    .label {
+	      width:190px;
+	    }
+  	</style>
 </head>
    <body onload="initPage();">
    <div id="container">
@@ -156,7 +163,7 @@ org.openmdx.kernel.log.*
        </div>
      </div>
      <div id="content-wrap">
-       <div id="content" style="padding:100px 0.5em 0px 0.5em;">
+       <div id="content">
          <form name="ConnectionHelper" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
            <input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
            <input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -179,7 +186,7 @@ org.openmdx.kernel.log.*
 <%
                     if(wc.getResourceType() == ResourceType.EVENTS_AND_TASKS) {
 %>
-                        <td class="label"><span class="nw"><%= wc.getFieldLabel(ConnectionHelperController.ABSTRACTPRICELEVEL_CLASS, "basedOn", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                        <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= wc.getFieldLabel(ConnectionHelperController.ABSTRACTPRICELEVEL_CLASS, "basedOn", app.getCurrentLocaleAsIndex()) %>:</span></td>
                         <td>
                             <select class="valueL" id="selectorType" name="selectorType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('Reload.button').click();">
                                 <option <%= wc.getSelectorType() == SelectorType.TRACKER ?          "selected" : "" %> value="<%= SelectorType.TRACKER.toString() %>"><%= app.getLabel(ConnectionHelperController.ACTIVITYTRACKER_CLASS)      %></option>
@@ -199,7 +206,7 @@ org.openmdx.kernel.log.*
                     } 
                     else if(wc.getResourceType() == ResourceType.PROFILE) {
 %>
-                        <td class="label"><span class="nw">Selector type:</span></td>
+                        <td class="<%= CssClass.fieldLabel %>"><span class="nw">Selector type:</span></td>
                         <td>
                             <select class="valueL" id="selectorType" name="selectorType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('Reload.button').click();">
                                 <option <%= wc.getSelectorType() == SelectorType.AIRSYNCPROFILE ? "selected" : "" %> value="<%= SelectorType.AIRSYNCPROFILE %>"><%= app.getLabel(ConnectionHelperController.AIRSYNCPROFILE_CLASS) %></option>
@@ -213,7 +220,7 @@ org.openmdx.kernel.log.*
                     } 
                     else if(wc.getResourceType() == ResourceType.CONTACT) {
 %>
-                        <td class="label"><span class="nw">Selector type:</span></td>
+                        <td class="<%= CssClass.fieldLabel %>"><span class="nw">Selector type:</span></td>
                         <td>
                             <select class="valueL" id="selectorType" name="selectorType" class="valueL" tabindex="<%= tabIndex + 10 %>" onchange="javascript:$('Reload.button').click();">
                                 <option <%= wc.getSelectorType().equals(SelectorType.VCARD) ? "selected" : "" %> value="<%= SelectorType.VCARD %>"><%= app.getLabel(ConnectionHelperController.ACCOUNTFILTERGLOBAL_CLASS)  %></option>
@@ -225,7 +232,7 @@ org.openmdx.kernel.log.*
 %>
                   </tr>
                   <tr>
-                    <td class="label"><span class="nw"><%= wc.getAnchorObjectLabel() %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= wc.getAnchorObjectLabel() %>:</span></td>
                     <td>
 <%
                         if (wc.getAnchorObjects().isEmpty()) {
@@ -279,16 +286,16 @@ org.openmdx.kernel.log.*
 			boolean showOptionAlarm = false;
 			boolean showOptionTimelineHeight = false;
 			
-			List<URL> urls = org.opencrx.application.utils.AdapterConnectionHelper.getCalDavCollectionSetURLs(wc.getUrlBase(), anchorObject);
+			List<AdapterConnectionHelper.ConnectionURL> urls = org.opencrx.application.utils.AdapterConnectionHelper.getCalDavCollectionSetURLs(wc.getUrlBase(), anchorObject);
 			if(!urls.isEmpty()) {
 %>
 				<br />
 				<div class="fieldGroupName">CalDAV Calendar Home (use with CalDAV clients only)</div>
 				<br />
 <%				
-	            for(URL url: urls) {
+	            for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-    	            <a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+    	            <a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
     	            <br />
 <%
         	    }
@@ -300,11 +307,11 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">CalDAV Event Collections</div>
 				<br />
 <%				
-				for(URL url: urls) {
-					String stringifiedURL = url.toString();
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
+					String stringifiedURL = connectionURL.getUrl().toString();
 					stringifiedURL = stringifiedURL.endsWith("/") ? stringifiedURL : stringifiedURL + "/";
 %>
-                	<a href="<%= stringifiedURL %>" target="_blank"><%= stringifiedURL %></a>
+                	<a href="<%= stringifiedURL %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= stringifiedURL %></a>
                 	<br />
 <%
 				}
@@ -316,11 +323,11 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">CalDAV Task Collections</div>
 				<br />
 <%				
-				for(URL url: urls) {
-					String stringifiedURL = url.toString();
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
+					String stringifiedURL = connectionURL.getUrl().toString();
 					stringifiedURL = stringifiedURL.endsWith("/") ? stringifiedURL : stringifiedURL + "/";
 %>
-                	<a href="<%= stringifiedURL %>" target="_blank"><%= stringifiedURL %></a>
+                	<a href="<%= stringifiedURL %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= stringifiedURL %></a>
                 	<br />
 <%
 				}
@@ -332,11 +339,11 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">WebDAV Collections</div>
 				<br />
 <%				
-				for(URL url: urls) {
-					String stringifiedURL = url.toString();
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
+					String stringifiedURL = connectionURL.getUrl().toString();
 					stringifiedURL = stringifiedURL.endsWith("/") ? stringifiedURL : stringifiedURL + "/";
 %>
-                	<a href="<%= stringifiedURL %>" target="_blank"><%= stringifiedURL %></a>
+                	<a href="<%= stringifiedURL %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= stringifiedURL %></a>
                 	<br />
 <%
 				}
@@ -348,9 +355,9 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">CardDAV Addressbook Home (use with CardDAV clients only)</div>
 				<br />
 <%				
-				for(URL url: urls) {
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
                 	<br />
 <%
 				}
@@ -362,11 +369,11 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">CardDAV Collections</div>
 				<br />
 <%				
-				for(URL url: urls) {
-					String stringifiedURL = url.toString();
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
+					String stringifiedURL = connectionURL.getUrl().toString();
 					stringifiedURL = stringifiedURL.endsWith("/") ? stringifiedURL : stringifiedURL + "/";
 %>
-                	<a href="<%= stringifiedURL %>" target="_blank"><%= stringifiedURL %></a>
+                	<a href="<%= stringifiedURL %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= stringifiedURL %></a>
                 	<br />
 <%
 				}
@@ -383,37 +390,14 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">ICAL Calendars</div>
 				<br />
 <%				
-				for(URL url: urls) {
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
                 	<br />
 <%
 				}
 				showOptionIsDisabled = true;
 				showOptionMax = true;
-			}
-			urls = org.opencrx.application.utils.AdapterConnectionHelper.getTimelineURLs(
-				wc.getUrlBase(), 
-				anchorObject,
-				Integer.toString(wc.getOptionMax()),
-				Boolean.toString(wc.getOptionIsDisabled()),
-				Integer.toString(wc.getOptionTimelineHeight())
-			);
-			if(!urls.isEmpty()) {
-%>
-				<br />
-				<div class="fieldGroupName">Timeline URLs</div>
-				<br />
-<%				
-				for(URL url: urls) {
-%>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
-                	<br />
-<%
-				}
-				showOptionIsDisabled = true;
-				showOptionMax = true;
-				showOptionTimelineHeight = true;
 			}
 			urls = org.opencrx.application.utils.AdapterConnectionHelper.getVCardURLs(wc.getUrlBase(), anchorObject);
 			if(!urls.isEmpty()) {
@@ -422,9 +406,9 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">VCARD Collections</div>
 				<br />
 <%				
-				for(URL url: urls) {
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
                 	<br />
 <%
 				}
@@ -436,9 +420,9 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">AirSync URLs</div>
 				<br />
 <%				
-				for(URL url: urls) {
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
                 	<br />                	
 <%
 				}
@@ -458,9 +442,9 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">Other Calendars (Birthdays, Anniversaries, Dates of Death, ...)</div>
 				<br />
 <%				
-				for(URL url: urls) {
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
                 	<br />
 <%
 				}
@@ -483,9 +467,9 @@ org.openmdx.kernel.log.*
 				<div class="fieldGroupName">FreeBusy Calendars</div>
 				<br />
 <%				
-				for(URL url: urls) {
+				for(AdapterConnectionHelper.ConnectionURL connectionURL: urls) {
 %>
-                	<a href="<%= url.toString() %>" target="_blank"><%= url.toString() %></a>
+                	<a href="<%= connectionURL.getUrl() %>" target="_blank" title="<%= app.getPortalExtension().getTitle(connectionURL.getObject(), (short)0, null, false, app) %>"><%= connectionURL.getUrl() %></a>
                 	<br />
 <%
 				}
@@ -499,10 +483,10 @@ org.openmdx.kernel.log.*
 			<br />
 			<table class="fieldGroup">
 <%
-				if(showOptionUser) {	
+				if(showOptionUser) {
 %>				
 					<tr>
-					    <td class="label"><span class="nw">User:</span></td>
+					    <td class="<%= CssClass.fieldLabel %>"><span class="nw">User:</span></td>
 					    <td><input type="text" class="valueL" name="optionUser" value="<%= wc.getOptionUser() %>" onchange="javascript:$('Reload.button').click();"></input></td>
 					    <td class="addon"></td>
 					</tr>
@@ -511,7 +495,7 @@ org.openmdx.kernel.log.*
 				if(showOptionMax) {
 %>					  
 					<tr title="maximum number of accounts - default is '500'">
-					    <td class="label"><span class="nw">Max:</span></td>
+					    <td class="<%= CssClass.fieldLabel %>"><span class="nw">Max:</span></td>
 					    <td><input type="text" class="valueL" name="optionMax" value="<%= Integer.toString(wc.getOptionMax()) %>" onchange="javascript:$('Reload.button').click();"></input></td>
 					    <td class="addon"></td>
 					</tr>
@@ -520,7 +504,7 @@ org.openmdx.kernel.log.*
 				if(showOptionIsDisabled) {
 %>					  
 					<tr title="activate filter 'disabled' to process disabled activities only">
-						<td class="label"><span class="nw">Disabled:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw">Disabled:</span></td>
 					    <td>
 							<select class="valueL" name="optionIsDisabled" onchange="javascript:$('Reload.button').click();">
 								<option <%= Boolean.TRUE.equals(wc.getOptionIsDisabled()) ? "selected" : "" %> value="true">true</option>						
@@ -534,7 +518,7 @@ org.openmdx.kernel.log.*
 				if(showOptionSummaryPrefix) {
 %>					  
 					<tr title="Summary prefix - default is ''">
-					    <td class="label"><span class="nw">Summary prefix:</span></td>
+					    <td class="<%= CssClass.fieldLabel %>"><span class="nw">Summary prefix:</span></td>
 					    <td><input type="text" class="valueL" name="optionSummaryPrefix" value="<%= wc.getOptionSummaryPrefix() %>" onchange="javascript:$('Reload.button').click();"></input></td>
 					    <td class="addon"></td>
 					</tr>
@@ -543,7 +527,7 @@ org.openmdx.kernel.log.*
 				if(showOptionCategories) {
 %>					  
 					<tr>
-					    <td class="label"><span class="nw">Categories:</span></td>
+					    <td class="<%= CssClass.fieldLabel %>"><span class="nw">Categories:</span></td>
 					    <td><input type="text" class="valueL" name="optionCategories" value="<%= wc.getOptionCategories() %>" onchange="javascript:$('Reload.button').click();"></input></td>
 					    <td class="addon"></td>
 					</tr>
@@ -552,7 +536,7 @@ org.openmdx.kernel.log.*
 				if(showOptionYear) {
 %>					  
 					<tr title="generate data for year-1, year, year+1 - default is current year">
-					    <td class="label"><span class="nw">Year:</span></td>
+					    <td class="<%= CssClass.fieldLabel %>"><span class="nw">Year:</span></td>
 					    <td><input type="text" class="valueL" name="optionYear" value="<%= Integer.toString(wc.getOptionYear()) %>" onchange="javascript:$('Reload.button').click();"></input></td>
 					    <td class="addon"></td>
 					</tr>
@@ -561,7 +545,7 @@ org.openmdx.kernel.log.*
 				if(showOptionTimelineHeight) {
 %>					  
 					<tr>
-					    <td class="label"><span class="nw">Timeline height (in pixels):</span></td>
+					    <td class="<%= CssClass.fieldLabel %>"><span class="nw">Timeline height (in pixels):</span></td>
 					    <td><input type="text" class="valueL" name="optionTimelineHeight" value="<%= Integer.toString(wc.getOptionTimelineHeight()) %>" onchange="javascript:$('Reload.button').click();"></input></td>
 					    <td class="addon"></td>
 					</tr>
@@ -570,7 +554,7 @@ org.openmdx.kernel.log.*
 				if(showOptionAlarm) {
 %>					  
 					<tr>
-						<td class="label"><span class="nw">Alarm:</span></td>
+						<td class="<%= CssClass.fieldLabel %>"><span class="nw">Alarm:</span></td>
 					    <td>
 							<select class="valueL" name="optionAlarm" onchange="javascript:$('Reload.button').click();">
 								<option <%= Boolean.TRUE.equals(wc.getOptionAlarm()) ? "selected" : "" %> value="true">true</option>						
@@ -595,8 +579,8 @@ org.openmdx.kernel.log.*
 			</div>
 			<br />
 			<div class="fieldGroupName">&nbsp;</div>
-            <input type="submit" id="Reload.button" name="Reload" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
-            <input type="submit" id="Cancel" name="Cancel" tabindex="30" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
+            <input type="submit" id="Reload.button" name="Reload" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" />
+            <input type="submit" id="Cancel" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="30" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
             <br />
          </form>
        </div> <!-- content -->

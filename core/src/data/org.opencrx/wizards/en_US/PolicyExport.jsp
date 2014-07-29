@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     opencrx, http://www.opencrx.org/
@@ -67,7 +67,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -103,9 +103,11 @@ org.apache.poi.hssf.util.*
   <meta name="forClass" content="org:openmdx:security:authorization1:Policy">
   <meta name="order" content="20">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css" />
-	<link rel='shortcut icon' href='../../images/favicon.ico' />
+  <link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+  <link rel="stylesheet" href="../../_style/colors.css">
+  <link rel="stylesheet" href="../../_style/n2default.css">
+  <link rel="stylesheet" href="../../_style/ssf.css">
+  <link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 
 <body class="ytheme-gray">

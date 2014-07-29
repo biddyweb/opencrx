@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -100,7 +100,6 @@ org.openmdx.base.naming.*
   <meta name="forClass" content="org:opencrx:kernel:product1:PostalAddress">
   <meta name="order" content="9000">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <table class="gridTableFull">
     <tr class="gridTableHeaderFull">
@@ -115,12 +114,12 @@ org.openmdx.base.naming.*
             <a href="<%= googleMapsUrl[0] %>" target="_blank"><%= googleMapsUrl[1] %></a><br />
           </td>
           <td>
-          	<input type="button" name="clip" value="Clipboard" onClick='javascript:window.prompt("Copy to clipboard: Ctrl+C, Enter", "<%= googleMapsUrl[1].replace("<br />", "\\r\\n").replace("'" , "&#39;") %>");' />
+          	<input type="button" name="clip" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="Clipboard" onClick='javascript:window.prompt("Copy to clipboard: Ctrl+C, Enter", "<%= googleMapsUrl[1].replace("<br />", "\\r\\n").replace("'" , "&#39;") %>");' />
           </td>
         </tr>
 <%
       }
 %>
 </table>
+<br />
 <t:wizardClose controller="<%= wc %>" />
-

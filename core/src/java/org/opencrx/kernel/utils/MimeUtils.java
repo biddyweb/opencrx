@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -387,6 +389,35 @@ public abstract class MimeUtils {
 		}
 		return errors.isEmpty() ? mimeMessage : null;
 	}
+
+    /**
+     * Parse mime content type.
+     * 
+     * @param contentType
+     * @return
+     */
+    public static String[] parseContentType(
+        String contentType
+    ) {
+        String[] result = new String[2];
+        contentType = contentType.replace("\t", " ");
+        contentType = contentType.replace("\r\n", "");
+        Pattern pattern = Pattern.compile("([0-9a-zA-Z/\\+\\-\\.]+)(?:;(?:[ \\r\\n\\t]*)name(?:[^\\=]*)=[\\\"]?([.[^\\\"]]*)[\\\"]?)?");
+        Matcher matcher = pattern.matcher(contentType);
+        if(matcher.find()) {
+            result[0] = matcher.group(1);
+            try {
+            	String name= matcher.group(2);
+            	result[1] = name == null ? null : MimeUtility.decodeText(name);
+            } catch(Exception e) {
+            	result[1] = matcher.group(2);            	
+            }
+        } else {
+            result[0] = contentType;
+            result[1] = null;
+        }
+        return result;
+    }
 
     //-----------------------------------------------------------------------
 	// Members

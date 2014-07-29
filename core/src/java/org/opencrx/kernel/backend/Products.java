@@ -90,12 +90,12 @@ import org.opencrx.kernel.product1.jmi1.DisabledFilterProperty;
 import org.opencrx.kernel.product1.jmi1.DiscountPriceModifier;
 import org.opencrx.kernel.product1.jmi1.GetPriceLevelResult;
 import org.opencrx.kernel.product1.jmi1.LinearPriceModifier;
+import org.opencrx.kernel.product1.jmi1.PhoneNumber;
 import org.opencrx.kernel.product1.jmi1.PriceListEntry;
 import org.opencrx.kernel.product1.jmi1.PriceModifier;
 import org.opencrx.kernel.product1.jmi1.PriceUomFilterProperty;
 import org.opencrx.kernel.product1.jmi1.PricingRule;
 import org.opencrx.kernel.product1.jmi1.Product;
-import org.opencrx.kernel.product1.jmi1.Product1Package;
 import org.opencrx.kernel.product1.jmi1.ProductBasePrice;
 import org.opencrx.kernel.product1.jmi1.ProductClassificationFilterProperty;
 import org.opencrx.kernel.product1.jmi1.ProductConfiguration;
@@ -108,9 +108,9 @@ import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
@@ -1251,9 +1251,17 @@ public class Products extends AbstractImpl {
         return numberProcessed;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Remove price levels.
+     * 
+     * @param priceLevel
+     * @param processingMode
+     * @param preDelete
+     * @return
+     * @throws ServiceException
+     */
     public int removePriceLevels(
-        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
+        AbstractPriceLevel priceLevel,
         Short processingMode,
         boolean preDelete
     ) throws ServiceException {
@@ -1269,8 +1277,7 @@ public class Products extends AbstractImpl {
                 preDelete
             );
             numberProcessed = 1;
-        }
-        else if(processingMode == PROCESSING_MODE_PROCESS_INCLUDE_DEPENDENT) {
+        } else if(processingMode == PROCESSING_MODE_PROCESS_INCLUDE_DEPENDENT) {
             List<AbstractPriceLevel> dependentPriceLevels = this.getDependentPriceLevels(
                 priceLevel, 
                 false
@@ -1294,10 +1301,19 @@ public class Products extends AbstractImpl {
         }
         return numberProcessed;
     }
-    
-    //-------------------------------------------------------------------------
+
+    /**
+     * Create initial prices for price level.
+     * 
+     * @param priceLevel
+     * @param processingMode
+     * @param uom
+     * @param includeProductsCreatedSince
+     * @return
+     * @throws ServiceException
+     */
     public int createInitialPrices(
-        org.opencrx.kernel.product1.jmi1.AbstractPriceLevel priceLevel,
+        AbstractPriceLevel priceLevel,
         Short processingMode,
         org.opencrx.kernel.uom1.jmi1.Uom uom,
         Date includeProductsCreatedSince
@@ -1360,7 +1376,6 @@ public class Products extends AbstractImpl {
                 );
                 if(processingMode == PROCESSING_MODE_PROCESS) {
                 	product.addBasePrice(
-                		false,
                 		this.getUidAsString(),
                 		basePrice
                 	);
@@ -1371,29 +1386,18 @@ public class Products extends AbstractImpl {
         return numberProcessed;
     }
     
-    //-----------------------------------------------------------------------
-    protected javax.jmi.reflect.RefPackage getJmiPackage(
-        PersistenceManager pm,
-        String authorityXri
-    ) {
-    	Authority obj = pm.getObjectById(
-            Authority.class,
-            authorityXri
-        );  
-    	return obj.refOutermostPackage().refPackage(obj.refGetPath().getBase());
-    }
-
-    //-----------------------------------------------------------------------
-    protected Product1Package getProductPackage(
-        PersistenceManager pm
-    ) {
-    	return (Product1Package)getJmiPackage(
-    		pm,
-    		Product1Package.AUTHORITY_XRI
-    	);            
-    }
-
-    //-------------------------------------------------------------------------
+    /**
+     * Get price level for given product and context.
+     * 
+     * @param pricingRule
+     * @param contract
+     * @param product
+     * @param priceUom
+     * @param quantity
+     * @param pricingDate
+     * @return
+     * @throws ServiceException
+     */
     public GetPriceLevelResult getPriceLevel(
         PricingRule pricingRule,
         AbstractContract contract,
@@ -1424,7 +1428,7 @@ public class Products extends AbstractImpl {
                 (org.opencrx.kernel.product1.jmi1.GetPriceLevelResult)m.invoke(
                     null, 
                     new Object[] {
-                        this.getProductPackage(pm).refOutermostPackage(),
+                        Utils.getProductPackage(pm).refOutermostPackage(),
                         pricingRule,
                         contract,
                         product,
@@ -1701,7 +1705,7 @@ public class Products extends AbstractImpl {
      * @param product
      * @throws ServiceException
      */
-    public void updateProduct(
+    protected void updateProduct(
         Product product
     ) throws ServiceException {
     }
@@ -1713,7 +1717,7 @@ public class Products extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeProduct(
+    protected void removeProduct(
         Product product,
         boolean preDelete
     ) throws ServiceException {
@@ -1725,11 +1729,11 @@ public class Products extends AbstractImpl {
      * @param price
      * @throws ServiceException
      */
-    public void updateProductBasePrice(
+    protected void updateProductBasePrice(
         ProductBasePrice price
     ) throws ServiceException {
     }
-    
+
     /**
      * Remove product base price callback.
      * 
@@ -1737,7 +1741,7 @@ public class Products extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeProductBasePrice(
+    protected void removeProductBasePrice(
         ProductBasePrice price,
         boolean preDelete
     ) throws ServiceException {
@@ -1749,7 +1753,7 @@ public class Products extends AbstractImpl {
      * @param relatedProduct
      * @throws ServiceException
      */
-    public void updateRelatedProduct(
+    protected void updateRelatedProduct(
     	RelatedProduct relatedProduct
     ) throws ServiceException {
     }
@@ -1761,12 +1765,53 @@ public class Products extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeRelatedProduct(
+    protected void removeRelatedProduct(
         RelatedProduct relatedProduct,
         boolean preDelete
     ) throws ServiceException {
     }
 
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+		if(object instanceof Product) {
+			this.removeProduct((Product)object, preDelete);
+		} else if(object instanceof AbstractPriceLevel) {
+			this.removePriceLevel((AbstractPriceLevel)object, preDelete);
+		} else if(object instanceof ProductBasePrice) {
+			this.removeProductBasePrice((ProductBasePrice)object, preDelete);
+		} else if(object instanceof RelatedProduct) {
+			this.removeRelatedProduct((RelatedProduct)object, preDelete);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		if(object instanceof Product) {
+			this.updateProduct((Product)object);
+		} else if(object instanceof RelatedProduct) {
+			this.updateRelatedProduct((RelatedProduct)object);
+		} else if(object instanceof ProductBasePrice) {
+			this.updateProductBasePrice((ProductBasePrice)object);
+		} else if(object instanceof PhoneNumber) {
+    		Addresses.getInstance().updatePhoneNumber(
+    			(PhoneNumber)object 
+    		);
+		}
+	}
+    
     //-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------

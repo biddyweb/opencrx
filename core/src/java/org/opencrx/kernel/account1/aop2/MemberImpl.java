@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: AccountImpl
+ * Description: MemberImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,12 +59,24 @@ import org.opencrx.kernel.backend.Accounts;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * MemberImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class MemberImpl
 	<S extends org.opencrx.kernel.account1.jmi1.Member,N extends org.opencrx.kernel.account1.cci2.Member,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public MemberImpl(
         S same,
         N next
@@ -72,17 +84,18 @@ public class MemberImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		Accounts.getInstance().updateMember(
+    		Accounts.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,

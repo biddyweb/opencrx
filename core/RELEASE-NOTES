@@ -1,12 +1,12 @@
-Release Name: openCRX/Core 2.12.0
-Release Date: 2013-11-04
+Release Name: openCRX/Core 2.13.0
+Release Date: 2014-07-23
 
 ---------------------------------------------------------------------
 Notes:
 This software is published under the BSD license
 as listed below.
 
-Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+Copyright (c) 2004-2014, CRIXP Corp., Switzerland
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -54,354 +54,302 @@ openMDX (http://www.openmdx.org/)
       * Many new features (see detailed list below)
       * Many bug fixes
 
-      For more information see below and http://www.opencrx.org/opencrx/2.12/new.htm
+      For more information see below and http://www.opencrx.org/opencrx/2.13/new.htm
 
 ==============================================================================
-Version 2.12.0                                                      2013-11-04
+Version 2.13.0                                                      2014-07-23
 ==============================================================================
 
 1.    NEW FEATURES
 
-      CR10008031
-      Web Calendar. Added CalDavZAP as web calendar. Can be launched with 
-      calendar wizard: UserHome > Wizards > Web Calendar. As any CalDAV
-      client supported by openCRX, the web calendar allows to view, add, 
-      edit and remove events.
+      CR10012252
+      Portal: User-defined ordering of grid columns. Based on an existing UI 
+      customization, the user is be able to re-order grid columns (columns defined 
+      up to maxMember). The grid menu 'View' offers the column order operators. The 
+      ordering is stored in the user settings per grid.
 
-      CR10011700
-      Unify edit and new object. The "New..." object form allows to lookup 
-      (with auto-completer) existing objects. If an object is selected, the form 
-      is pre-filled with the selected object values. After editing the form, the 
-      user can then choose either to "Create" (a new) or "Save" (the existing) object. 
-      If no existing object is selected, the user only can "Create".
+      CR10012239
+      Load tester. Add sample load tester to test-core. Simple, Selenium-based 
+      (http://docs.seleniumhq.org/) load tester which performs the following actions:
+      * Logon
+      * Get root objects 1-5
+      * Three times page next on first grid. On the accounts grid filter accounts with e-mail address '.com'. 
+        On the products grid filter products with name like 'test.
+      * Logoff
+      The load tester can be configured to launch T threads and perform R runs.
+
+      CR10012238
+      Portal: Search field definitions. Allow to customize the behaviour of search fields, 
+      e.g. show pre-defined drop down values for code fields. The method 
+      PortalExtension_1_0.getSearchFieldDef() returns a SearchFieldDef for a given 
+      search field. In defined, an auto-completer is rendered for this field. When 
+      triggered, the action FindSearchFieldValuesAction is invoked which finally calls 
+      the method SearchFieldDef.findFieldValues(). By default, code fields are handled 
+      by CodeSearchFieldDef and Account-type fields are handled by AccountSearchFieldDef.
+  
+      CR10012210
+      MailWorkflow supports sendmail. MailWorkflow supports external sendmail 
+      command in addition to JavaMail. sendmail has several advantages over
+      JavaMail in high-end environments. sendmail is used by the MailWorkflow 
+      if the system property -Dorg.opencrx.usesendmail.{provider.name} is set 
+      to true, e.g.
+
+      -Dorg.opencrx.usesendmail.CRX=true 
+
+      In this case JavaMail resources must not be configured anymore in web.xml and
+      the application.server. mail.jar must still be deployed. It is required to construct 
+      RFC822-compliant MimeMessages.
+
+      CR10012169
+      DocumentExporter: The DocumentExporter workflow allows to export document
+      folders to the file system. A document folder is subject for export if
+      a DocumentFolderShare exists for this folder. The operations DocumentFolder::createDefaultShare()
+      and DocumentFolder::removeDefaultShare() allow to add and remove shares. They
+      can also be managed manually with the standard GUI. The DocumentExporter is configured
+      as follows:
+
+      In the web.xml of opencrx-core-CRX.war add the init-param for the servlet WorkflowController:
+
+      <init-param>
+        <param-name>path[6]</param-name>
+        <param-value>/DocumentExporterServlet</param-value>
+      </init-param>
+
+      Add the servlet DocumentExporter: 
+
+      <!-- DocumentExporter -->
+      <servlet id="DocumentExporterServlet">
+        <servlet-name>DocumentExporterServlet</servlet-name>
+        <servlet-class>org.opencrx.application.document.DocumentExporterServlet</servlet-class>
+      </servlet>
+
+      <servlet-mapping>
+        <servlet-name>DocumentExporterServlet</servlet-name>
+        <url-pattern>/DocumentExporterServlet/*</url-pattern>
+      </servlet-mapping>
+
+      Activate the DocumentExporter as admin-Root with the WorkflowController wizard. The following 
+      component configuration is created by default when the DocumentExporter runs the first time:
+
+      CRX.Standard.baseDir  ./docdir
+      CRX.Standard.syncKey  0
+
+      The DocumentExporter supports the following hooks:
+      * pre-export: invoked before the export of a document share begins
+      * post-export: invoked after the export of a document share has been completed
+      * pre-export-subdir: invoked before the export of a document sub-folder
+      * post-export-subdir: invoked after the export of a document sub-folder has been completed
+
+      hooks are located in {basedir}/hooks and must be executable.
+
+      Example for pre-export:
+
+      #!/bin/sh
+      # Enable for remote repos
+      # /usr/bin/git pull
+
+      Example for post-export:
+
+      #!/bin/sh
+      /usr/bin/git add --all
+      /usr/bin/git commit -aqm "Sync @ `date`"
+      # Enable for dumb servers, e.g. Apache (WebDAV)
+      # /usr/bin/git update-server-info
+      # Enable for remote repos
+      # /usr/bin/git push
+
+      CR10012178
+      Media_1 plug-in. The Media_1 plug-in allows to store the content of objects 
+      of type org:opencrx:kernel:document1:Media on the file system. The option is activated 
+      with the system property -Dorg.opencrx.mediadir.{provider.name}={mediadir.name}. 
+      The DbSchemaWizard supports the following new functions to manage and migrate existing
+      media objects in case the option -Dorg.opencrx.mediadir is turned on:
+      * Validate Media: lists all media objects which do not have a corresponding media file
+        on the file system. These media objects are subject to migration.
+      * Migrate Media to FS: migrate media objects from database to file system, i.e. media
+        objects stored in OOCKE1_MEDIA.content are exported to the file system. The location
+        of the media file corresponds to the media object's XRI. This operation is idempotent, 
+        i.e. can be run multiple times (typically in combination with Validate Media). After
+        successful migration the column OOCKE1_MEDIA.content can be cleared with the SQL
+        statement UPDATE OOCKE1_MEDIA set content = null;
+      * Migrate Media to DB: Reads all media files on mediadir and stores the content in the
+        corresponding media object (column OOCKE1_MEDIA.content). 
+
+      CR10012183
+      Note has user-defined fields. org:opencrx:kernel:generic:Note inherits 
+      from org:opencrx:kernel:generic:UserDefined. 
+
+      CR10012050
+      LocalizedFieldDataBinding. The databinding allows display and manage 
+      LocalizedField objects attached as standard fields. The databinding selects 
+      the localized field matching the current user's locale and displays the
+      localizedValue. The LocalizedFieldDataBinding allows to localize field values
+      in an easy way. E.g. the field 'Name:' of an ActivityGroup can be localized 
+      with the following ui configuration:
+
+      <featureDefinition>
+        <org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:ActivityGroup:localizedName!name">
+          <_object>
+            <type>org:w3c:string</type>
+            <multiplicity>0..1</multiplicity>
+            <changeable>true</changeable>
+          </_object>
+          <_content/>
+        </org.openmdx.ui1.StructuralFeatureDefinition>
+      </featureDefinition>
+      ...
+      <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityGroup:localizedName!name">
+        <_object>
+          <dataBindingName>org.opencrx.kernel.portal.LocalizedFieldDataBinding[?usage=n]</dataBindingName>
+          <active>true</active>
+          <toolTip>
+            <_item>Name (localized)</_item>
+          </toolTip>
+          <label>
+            <_item>Name (localized)</_item>
+          </label>
+          <order>
+            <_item>0</_item>
+            <_item>0</_item>
+            <_item>15</_item>
+          </order>
+        </_object>
+        <_content/>
+      </org.openmdx.ui1.ElementDefinition>
+
+      CR20021077
+      DataSource Selection. Multiple JDBC datasources can now be configured. 
+      This allows a custom-specific persistence plug-in to use multiple datasources
+      according to some custom selection criteria (e.g. segment name).
+
+      E.g. in Kernel.properties
+      PERSISTENCE/datasourceName[0]=java:comp/env/jdbc_opencrx_CRX_DEFAULT
+      PERSISTENCE/datasourceName[1]=java:comp/env/jdbc_opencrx_CRX_S1
+      PERSISTENCE/datasourceName[2]=java:comp/env/jdbc_opencrx_CRX_S2
+      PERSISTENCE/datasourceName[3]=java:comp/env/jdbc_opencrx_CRX_S3
+
+      And method getDataSource() of custom-specific persistence plug-in:
+
+      @Override
+      protected DataSource getDataSource(
+        DataproviderRequest request
+      ) throws ServiceException {
+         String segmentName = request.path().get(4);
+         if("S1".equals(segmentName)) {
+             return this.dataSources.get(1);
+         } else if("S2".equals(segmentName)) {
+             return this.dataSources.get(2);
+         } else if("S3".equals(segmentName)) {
+             return this.dataSources.get(3);
+         } else {
+             return super.getDataSource(request);
+         }
+      }
       
-      CR10011691
-      Ui1: css classes for UI elements. Custom css classes for UI elements. 
-      Allow to specify different classes for field groups and object containers. 
-      Css classes are customized in UI XML files with the properties cssClassFieldGroup
-      and cssClassObjectContainer, e.g.      
-      
-		<org.openmdx.ui1.ElementDefinition name="org:openmdx:kernel:activity1:Activity:name">
-			<_object>
-				<active>true</active>
-				<toolTip>
-					<_item>Name of activity</_item>
-				</toolTip>
-				<label>
-					<_item>Name</_item>
-				</label>
-				<order>
-					<_item>0</_item>
-					<_item>0</_item>
-					<_item>10</_item>
-				</order>
-				<cssClassFieldGroup>classActivityName1</cssClassFieldGroup>
-				<cssClassObjectContainer>classActivityName2</cssClassObjectContainer>
-			</_object>
-			<_content/>
-		</org.openmdx.ui1.ElementDefinition>
+      CR10011964
+      Allow to define a workflow's execute() method as (Janino) script. This 
+      way segment-specific business-logic can be added without build / deploy.
 
-      CR10011665
-      document1: document filters. Applied the filter pattern to document1. It
-      is now possible to create DocumentFilters (Saved Searches) for documents. 
-      DocumentFilters can be used in SyncFeeds and be exported to WebDAV clients.
+      Here is an example workflow script:
 
-      CR10011280
-      Grids: show total rows. The total rows in a grid are calculated when 
-      going to a page with number > 0. Once calculated, the total rows are
-      displayed for this grid.
-      
-      CR10011664
-      document1: For a specific document list all objects which reference the document.
-      The transient DocumentReferences are calculated by the database view 
-      OOCKE1_TOBJ_DOCREFERENCE.
+      // <pre>
+      public static void execute(
+        org.opencrx.kernel.base.jmi1.WorkflowTarget wfTarget,
+        org.openmdx.base.jmi1.ContextCapable targetObject,
+        org.opencrx.kernel.home1.jmi1.WfProcessInstance wfProcessInstance
+      ) throws org.openmdx.base.exception.ServiceException {
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("PrintConsole");
+        logger.log(java.util.logging.Level.INFO, "executing workflow " + wfProcessInstance.getProcess().getName());
+        logger.log(java.util.logging.Level.INFO, "target=" + targetObject);
+        logger.log(java.util.logging.Level.INFO, "wfProcessInstance=" + wfProcessInstance);
+        java.util.Map params = org.opencrx.kernel.utils.WorkflowHelper.getWorkflowParameters(wfProcessInstance);
+        logger.log(java.util.logging.Level.INFO, "params=" + params);
+      }
+      // </pre>
 
-      CR10010108
-      Cascading code fields. Code fields are rendered as cascaded drop-downs for
-      {main category} and {sub category} in case their long texts have the format 
-      {main category}|{sub category}.
+      CR10011954
+      Auto-update of addresses. If authority is set, postal and e-mail addresses 
+      are updated automtically in case the matching authority's addresses changes. 
+      The operation checkForAutoUpdate() allows to check whether a given address 
+      qualifies for auto-update.
 
-      CR10011631
-      Grids: custom queries for object identities.
-      Grids should support custom-queries for object identities. The search form displays an 
-      additional search field in case PortalExtension.getQuery() returns a non-null query for 
-      the feature 'grid.getReferencedTypeName() + ":" + identity'.
-      
-      Example:
-      Activities are searched for the attributes name, description or detailedDescription 
-      if getQuery() returns the query-extension
-      
-      (UPPER(v.name) LIKE UPPER(" + s0 + ") OR UPPER(v.name) LIKE " + s1 + " OR UPPER(v.description) 
-      LIKE UPPER(" + s2 + ") OR UPPER(v.description) LIKE " + s3 + " OR UPPER(v.detailed_description) 
-      LIKE UPPER(" + s4 + ") OR UPPER(v.detailed_description) LIKE " + s5 + ")"
-       
-      for the feature 'org:opencrx:kernel:activity1:Activity:identity'. 
+      CR10011837
+      ActivityRelationship. ActivityRelationship combines current ActivityLinkFrom 
+      (distance=-1), ActivityLinkTo (distance=+1). Also allows to handle "deep" 
+      memberships. 
 
-      CR10011238
-      BPI adapter. More actions.
-      
-      1. Get contacts
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/contact?query=...&position=...&size=...
-         * Method: GET
-         * Sample queries: 
-             ?query=thereExistsFullName().like(".*Doe.*");orderByFullName().ascending();
-             ?query=thereExistsPostalAddress().postalCountry().equalTo(756);
-             ?query=thereExistsEMailAddress().thereExistsEmailAddress().equalTo("joe@opencrx.org");
-             ?query=thereExistsPhoneNumber().thereExistsPhoneNumberFull().like(".*44.*");
-             
-      2. Get organizations
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/organization?query=...&position=...&size=...
-         * Method: GET
-         * Sample queries: 
-             ?query=thereExistsFullName().like(".*Suisse.*");orderByFullName().ascending();
-             ?query=thereExistsPostalAddress().postalCountry().equalTo(756);       
-             ?query=thereExistsEMailAddress().thereExistsEmailAddress().equalTo("joe@opencrx.org");
-             ?query=thereExistsPhoneNumber().thereExistsPhoneNumberFull().like(".*44.*");
+      CR10011930
+      CrxObject::enableCrxObject, disableCrxObject. Add operations CrxObject::enableCrxObject
+      and disableCrxObject and remove corresponding wizard. 
 
-      3. Get address groups
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/addressGroup?query=...&position=...&size=...
-         * Method: GET
-         * Sample queries: 
-             ?query=name().equalTo("test");                     
-      
-      4. Get address group
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/addressGroup/<name>
-         * Method: GET      
-      
-      5. Get address group members
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/addressGroup/member?query=...&position=...&size=...
-         * Method: GET
-         * Sample queries: 
-             ?queryType=org:opencrx:kernel:account1:PostalAddress&query=postalCountry().equalTo(:short:756);
-             ?queryType=org:opencrx:kernel:account1:EMailAddress&query=thereExistsEmailAddress().like(".*sales.*");
-             
-      6. Get assigned activities (with optional query)
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/contact/<id>/assignedActivity?query=...&position=...&size=...
-         * Method: GET
-         * Sample queries: 
-             ?query=thereExistsAssignedGroup().thereExistsActivityGroup().name().like(".*Bugs.*");
-      
-      7. Get account filter
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/accountFilter/<id>
-         * Method: GET
-
-      8. Get filtered contacts (with optional query)
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/accountFilter/<id>/contact?query=...&position=...&size=...
-         * Method: GET
-         
-      9. Get filtered organizations (with optional query)
-         * URL: http://localhost:8080/opencrx-bpi-CRX/org.opencrx.application.bpi1/provider/CRX/segment/Standard/accountFilter/<id>/organization?query=...&position=...&size=...
-         * Method: GET
- 
-      CR10011537
-      Wizard QRencoder. Wizard operating on CrxObjects to create a QR code for 
-      a given user input string. By default a QR code is generated for the object's 
-      access URL. 
-      
-      CR10011507
-      JoiningListDataBinding. Data binding which allows to collect objects from 
-      a specified set of reference features and display in a grid. Here is an
-      example configuration:
-      
-		<?xml version="1.0" encoding="UTF-8"?>
-		<org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
-			<_object />
-			<_content>
-				<provider>
-					<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
-						<_object />
-						<_content>
-							<segment>
-								<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
-									<_object />
-									<_content>
-										<featureDefinition>
-											<org.openmdx.ui1.StructuralFeatureDefinition qualifiedName="org:opencrx:kernel:activity1:Activity:summary">
-												<_object>
-													<type>org:openmdx:base:ExtentCapable</type>
-													<multiplicity>0..n</multiplicity>
-													<changeable>false</changeable>
-													<isReference>true</isReference>
-												</_object>
-												<_content />
-											</org.openmdx.ui1.StructuralFeatureDefinition>
-										</featureDefinition>
-										<elementDefinition>
-											<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:summary">
-												<_object>
-													<active>true</active>
-													<toolTip>
-														<_item>Summary</_item>
-													</toolTip>
-													<label>
-														<_item>Summary</_item>
-													</label>
-													<order>
-														<_item>0</_item>
-														<_item>0</_item>
-														<_item>5</_item>
-													</order>
-													<maxMember>5</maxMember>
-													<showMaxMember>5</showMaxMember>
-													<dataBindingName>org.openmdx.portal.servlet.databinding.JoiningListDataBinding?features=[followUp,assignedGroup,activityLinkTo,assignedResource,workReportEntry,involvedObject];orderBy=[createdAt.ASCENDING]</dataBindingName>
-												</_object>
-												<_content />
-											</org.openmdx.ui1.ElementDefinition>
-										</elementDefinition>
-									</_content>
-								</org.openmdx.ui1.Segment>
-							</segment>
-						</_content>
-					</org.openmdx.base.Provider>
-				</provider>
-			</_content>
-		</org.openmdx.base.Authority>
-
-
-      CR10011495
-      LDAPSynchronizer. Workflow which exports contacts as LDIF.
-
-		Configuration
-		-------------
-		* For each segment create Saved Search for Accounts named "LDAPSynchronizer"
-		* The LDAPSynchronizer has the following configuration options (component
-		  configuration with name 'LDAPSynchronizer'). Option names are of the
-		  form <provider name>.<segment name>.<option name>.  
-		  * syncDir. default is ldapdir. The LDIF entries are created in the following sub dirs:
-		    * people/Add: contacts changed since syncKey in Add format
-		    * people/Modify: contacts changed since syncKey in Modify format
-		    * people/Delete: contacts disabled since syncKey in Delete format
-		    * people/Error: people error entries
-		    * groups/Add: group entries in Add format
-		    * groups/Modify: group entries in Modify format
-		    * groups/Error: group error entries
-		    For each entry a separate LDIF file is created. The file name is of the 
-		    form <syncKey>-<count>.ldif
-		  * runAs: run as user
-		  * baseDNPeople: base DN for people entries. Default is ou=people,dc=example,dc=com
-		  * baseDNGroups: base DN for group entries. Default is ou=groups,dc=example,dc=com
-
-		LDAP Server
-		-----------
-		Any LDAP server supporting the standard LDIF format can be used. E.g. on Linux use slapd. 
-		Installation notes see http://wiki.debian.org/LDAP/OpenLDAPSetup:
-		> apt-get install slapd
-		> dpkg-reconfigure -plow slapd
-		Domain name: examle.com
-		Organization: Test
-				
-		Running LDAPSynchronizer
-		------------------------
-		The LDAPSynchronizer workflow is started with the Workflow Controller wizard as admin-Root.
-		
-		The exported LDIF files can then be processed using the LDIF importer tool
-		provided by your LDAP server. E.g. ldapadd for OpenLDAP. Setup a cron job to
-		process the exported LDIF files:
-
-		Update people
-		-------------
-		In directory ldapdir/CRX/Standard/people run the following script:
-		
-		#!/bin/sh
-		export ts=$(date +"%Y%m%d%H%M")
-		mv Modify ${ts}-Modify
-		mv Add ${ts}-Add
-		mv Delete ${ts}-Delete
-		cd ${ts}-Add
-		cat *.ldif | ldapadd -c -x -D cn=admin,dc=example,dc=com -w <pwd>
-		cd ..
-		cd ${ts}-Modify
-		cat *.ldif | ldapadd -c -x -D cn=admin,dc=example,dc=com -w <pwd>
-		cd ..
-		cd ${ts}-Delete
-		cat *.ldif | ldapadd -c -x -D cn=admin,dc=example,dc=com -w <pwd>
-		cd ..
-		
-		IMPORTANT:
-		* Add operations must be done before Modify
-
-		Update groups
-		-------------
-		In directory ldapdir/CRX/Standard/groups run the following script:
-		
-		#!/bin/sh
-		export ts=$(date +"%Y%m%d%H%M")
-		mv Modify ${ts}-Modify
-		mv Add ${ts}-Add
-		cd ${ts}-Add
-		cat *.ldif | ldapadd -c -x -D cn=admin,dc=example,dc=com -w <pwd>
-		cd ..
-		cd ${ts}-Modify
-		cat *.ldif | ldapadd -c -x -D cn=admin,dc=example,dc=com -w <pwd>
-		cd ..		
-
+      CR10011897
+      Portal: Next / Prev. Next / Prev allows to iterate the content of a grid 
+      at inspector-level.
 
 2.    CHANGES
 
 2.0.  CHANGED FEATURES
-      
-      CR10011828
-      Move reference SimpleBooking::originContext to Booking::originContext.
 
-      CR10011758
-      InvolvedObject. Move class org:opencrx:kernel:activity1:InvolvedObject to 
-      org:opencrx:kernel:generic:InvolvedObject. A CrxObject can now be related to CrxObject. 
+      CR10012253
+      WorkReportEntry:activity, resource. The derived features activity, resource is calculated by 
+      the persistence layer.
 
-      CR10011752
-      Extend file format for operation org:opencrx:kernel:home1:Segment:importUsers(). The operation 
-      takes a file of the following form:
+      CR10012249
+      User management. The ManagerUsers wizard is deprecated and replaced by standard GUI
+      extensions:
+      * Add grid for 'All Users', 'Users (enabled)', 'Users (disabled)'
+      * Add columns E-Mail, Principal, Groups, Roles, Disabled, Last login at to grid :userHome.
+        These new fields allows easy navigation from a user's home to its assigned principal 
+        where roles and groups can be added and removed.
+      * Add grid action InitUserHomes to grid :userHome. This action allows to inititialize the
+        selected user homes.
+      * Searching in the grid :userHome now covers the fields principal name, contact 
+        full name and e-mail account.
+      * Add tab 'Security' to UserHome which shows principal, groups, roles.
+      * Default user settings: The method UserHomes.getDefaultUserSettings() returns the default 
+        settings for a given user. The default settings are retrieved from documents with name 
+        'UserSettings.{role.name}.properties'. The content of the document must be text/plain 
+        and be in the standard Java properties format. For security reasons it must be created / 
+        modified by the segment administrator. The assigned roles of the user are iterated in the 
+        order returned by principal.getGrantedRole() and override properties with the same key 
+        (defaultSettings.putAll(settings)). The UserSettings wizard and the InitUserHomeAction use 
+        this method in order to get an initial set of user settings.
 
-        User;principal name;contact alias name;contact full name;primary principal group;initial password[;comma separated list of memberOf principal groups[;e-mail address of user[;time zone]]]
+      CR20021828
+      Portal: Deprecate grid template and edit rows. Replace grid template and edit 
+      rows by custom grid actions.
 
-      Example:
-        User;guest;-;Guest;Users;changeme;Users,Administrators;guest@opencrx.org;Europe/Zurich
-        User;test;TEST;-;Users;changeme;Users,Administrators;Europe/Zurich
-        
-      CR10011742
-      activity1: extend ActivityGroup. The activity1 model is extended by the following
-      features:
-      * ActivityGroup::activityGroupType (standard types are defined by enum Activities.ActivityGroupType).
-      * Add AccountAssignments: related accounts can be assigned to activity groups.
-      * Add ActivityGroup relationships: relationships betweeen activity groups can be captured.
-      * Add reference to main activity: optional reference to the main activity of an activity group.
-      * Add reference to accounts target group: optional reference to an account target group (e.g. useful for campaigns).       
+      CR20021827
+      Portal: Deprecate MOBILE mode. Replace MOBILE mode by bootstrap fluid 
+      grid system.
 
-      CR10011746
-      CreateCampaign Wizard. Improve usability of CreateCampaignWizard and 
-      CreateBulkActivityWizard. The wizard now supports multi-locale campaigns.
-      It creates all required activity trackers, activity creators and account 
-      filters and links the objects properly. All campaign-related tasks such
-      as bulk creation of activities and follow-ups can now be performed on the
-      main campaign tracker. 
+      CR10008606
+      Resource:standardRate/overtimeRate. The new class ResourceRate replaces the attributes
+      Resource::standardRate and overtimeRate. This solves the issue where only 2 default 
+      rates per Resource can be managed: standardRate and overtimeRate - as the recordType is 
+      code-based it should be possible to manage default rates on a code-basis as well so 
+      that additional default rates per resource can be added if needed 
 
-      CR10011439
-      AdditionalExternalLink::name. The following attributes are added:
-      * AdditionalExternalLink::name
-      * AdditionalExternalLink::description
-      * DocumentAttachment::name
-      * Rating::name
-      
-      CR10011464
-      Migrate UML2Tools. Migrate UML2Tools to Papyrus / GraphViz:
-      * Use Eclipse / Payprus (or any other Eclipse/EMF compliant tool) for editing
-        the model (.uml files).
-      * Use GraphViz to render diagrams. openCRX does not come with Papyrus diagrams.
-        Instead, the diagrams are described as GraphViz compliant graphs and rendered
-        with the GraphViz dot utility. 
-      The new ant target "model-diagrams" generates the diagrams:
-      * Complete the manually created GraphViz templates (.dott) located in ./src/model/graphviz. 
-        The utility Model_1DiagramDrawer completes the templates (place-holders ${CLASS}, 
-        ${ASSOCIATION} and ${INSTANCE_OF}) with the current model information and 
-        generates GraphViz compliant .dot files.
-      * Run the GraphViz dot utility for each generated .dot.
-      * Run the 'album' (http://marginalhacks.com/Hacks/album/) utility to generate a web-index.
-      
-      Example:
-      ant -Dalbum.theme.name=Uptight -Dalbum.theme.path="~/pgm/album/themes" -Dalbum.theme.url="http://myweb.com/_style/album/themes" model-diagrams
+      CR10011888
+      GenericContract is not abstract. Change class org:opencrx:kernel:contract1:GenericContract 
+      to be non-abstract.
 
-      
+      CR10011878
+      CalDAV, CardDAV: improve performance. Changes made:
+      * Rendering of ALARMs is based on tag X-OPENCRX-RENDER-ALARMS. This flag is true 
+        only if an activity has assigned timers. The flag controls how ICalendar.printAlarms() 
+        queries and renders alarms.
+      * No more buffering in DAV XMLWriter and HTMLWriter
+      * Optional validation of UID / externalLink in ICalendar.printCalendar()
+
 2.1.  FIXED BUGS
-      none
+      
+      CR10012030
+      WebDAV: Support for 'Range' header field. This solves WebDAV issues with Mac OS 10.8 / 10.9.
+
+      CR10011994
+      Depots.hasBookings(). Booking query can not be executed and throws exception.
+
 
 2.2   REMOVED FEATURES
       none

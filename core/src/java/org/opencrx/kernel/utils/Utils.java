@@ -77,6 +77,7 @@ import javax.jdo.Constants;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
+import javax.jmi.reflect.RefObject;
 import javax.naming.NamingException;
 
 import org.oasisopen.jmi1.RefContainer;
@@ -97,6 +98,7 @@ import org.openmdx.application.rest.ejb.DataManager_2ProxyFactory;
 import org.openmdx.application.rest.http.SimplePort;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.spi.EntityManagerFactory_1;
+import org.openmdx.base.accessor.rest.DirtyObjects;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.mof.cci.AggregationKind;
@@ -755,23 +757,23 @@ public abstract class Utils {
         ).objGetMap("reference");
         for(ModelElement_1_0 featureDef: references.values()) {
             ModelElement_1_0 referencedEnd = model.getElement(
-                featureDef.objGetValue("referencedEnd")
+                featureDef.getReferencedEnd()
             );
             boolean referenceIsCompositeAndChangeable = 
                 model.isReferenceType(featureDef) &&
-                AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation")) &&
-                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();
+                AggregationKind.COMPOSITE.equals(referencedEnd.getAggregation()) &&
+                ((Boolean)referencedEnd.isChangeable()).booleanValue();
             boolean referenceIsSharedAndChangeable = 
                 model.isReferenceType(featureDef) &&
-                AggregationKind.SHARED.equals(referencedEnd.objGetValue("aggregation")) &&
-                ((Boolean)referencedEnd.objGetValue("isChangeable")).booleanValue();            
+                AggregationKind.SHARED.equals(referencedEnd.getAggregation()) &&
+                ((Boolean)referencedEnd.isChangeable()).booleanValue();            
             // Only navigate changeable references which are either 'composite' or 'shared'
             // Do not navigate references with aggregation 'none'.
             if(referenceIsCompositeAndChangeable || referenceIsSharedAndChangeable) {
-                String referenceName = (String)featureDef.objGetValue("name");
+                String referenceName = (String)featureDef.getName();
                 boolean matches = referenceFilter == null;
                 if(!matches) {
-                    String qualifiedReferenceName = (String)featureDef.objGetValue("qualifiedName");
+                    String qualifiedReferenceName = (String)featureDef.getQualifiedName();
                     matches =
                         referenceFilter.contains(referenceName) ||
                         referenceFilter.contains(qualifiedReferenceName);
@@ -965,6 +967,18 @@ public abstract class Utils {
     	} else {
     		return s;
     	}
+    }
+
+    /**
+     * Touch object. This way jdoPreStore() will be invoked.
+     * 
+     * @param object
+     * @throws ServiceException
+     */
+    public static void touchObject(
+        RefObject object
+    ) throws ServiceException {
+    	DirtyObjects.touch(object);
     }
 
     //-------------------------------------------------------------------------

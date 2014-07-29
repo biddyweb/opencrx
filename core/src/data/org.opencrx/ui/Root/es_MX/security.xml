@@ -1015,10 +1015,10 @@
                   <org.openmdx.ui1.ElementDefinition name="org:openmdx:security:authentication1:Password:Pane:Op:Tab:set:newPassword" _operation="create">
                     <_object>
                       <label>
-                        <_item>Password Nuevo</_item>
+                        <_item>Nueva contraseña</_item>
                       </label>
                       <toolTip>
-                        <_item>Password Nuevo</_item>
+                        <_item>Nueva contraseña</_item>
                       </toolTip>
                     </_object>
                     <_content/>

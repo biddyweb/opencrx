@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -96,20 +96,17 @@ public class IndexerServlet extends HttpServlet {
     public void init(
         ServletConfig config
     ) throws ServletException {
-
         super.init(config);        
-        // persistenceManagerFactory
         try {
             this.pmf = Utils.getPersistenceManagerFactory();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             throw new ServletException("Can not get connection to data provider", e);
         }
-
     }
 
     /**
      * Update index. Iterate all segments and invoke operation updateIndex().
+     * 
      * @param id
      * @param providerName
      * @param segmentName
@@ -124,9 +121,7 @@ public class IndexerServlet extends HttpServlet {
         HttpServletRequest req, 
         HttpServletResponse res        
     ) throws IOException {
-        
-        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
-
+        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName);
         try {
             PersistenceManager pm = this.pmf.getPersistenceManager(
                 SecurityKeys.ADMIN_PRINCIPAL + SecurityKeys.ID_SEPARATOR + segmentName,
@@ -154,10 +149,9 @@ public class IndexerServlet extends HttpServlet {
                     UpdateIndexResult result = indexedSegment.updateIndex();
                     if(result.getNumberOfIndexedObjects() > 0) {
                         long duration = System.currentTimeMillis() - startedAt;
-                        System.out.println(new Date().toString() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (#" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
+                        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (#" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
                     }
-                }
-                catch(Exception e) {
+                } catch(Exception e) {
                     ServiceException e0 = new ServiceException(
                         e,
                         BasicException.Code.DEFAULT_DOMAIN,
@@ -166,22 +160,21 @@ public class IndexerServlet extends HttpServlet {
                         new BasicException.Parameter("segment.xri", indexedSegment.refMofId())
                     );
                     e0.log();
-                    System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+                    System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
                 }        
             }
             try {
                 pm.close();
-            } 
-            catch(Exception e) {}
-        }
-        catch(Exception e) {
+            } catch(Exception e) {}
+        } catch(Exception e) {
             new ServiceException(e).log();
-            System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
-        }        
+            System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": exception occured " + e.getMessage() + ". Continuing");
+        }
     }
     
     /**
      * Handle servlet request.
+     * 
      * @param req
      * @param res
      * @throws ServletException
@@ -209,20 +202,17 @@ public class IndexerServlet extends HttpServlet {
 	                        req,
 	                        res
 	                    );
-	                } 
-	                catch(Exception e) {
+	                } catch(Exception e) {
 	                    new ServiceException(e).log();
-	                }
-	                finally {
+	                } finally {
 	                    runningSegments.remove(id);
 	                }
-                }
-	        	else if(
+                } else if(
 	        		!runningSegments.get(id).isAlive() || 
 	        		runningSegments.get(id).isInterrupted()
 	        	) {
 	            	Thread t = runningSegments.get(id);
-	        		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
+	        		System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": workflow " + t.getId() + " is alive=" + t.isAlive() + "; interrupted=" + t.isInterrupted() + ". Skipping execution.");
 	        	}
             }
         }

@@ -53,10 +53,12 @@
 package org.opencrx.application.carddav;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.Set;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
@@ -68,6 +70,10 @@ import org.openmdx.base.collection.MarshallingCollection;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 
+/**
+ * AccountCollectionResource
+ *
+ */
 public class AccountCollectionResource extends CardDavResource {
 	
 	/**
@@ -191,12 +197,15 @@ public class AccountCollectionResource extends CardDavResource {
      */
     @Override
 	public Collection<Resource> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(this.getObject());
         MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
         query.forAllDisabled().isFalse();                    
         query.thereExistsAccount().vcard().isNonNull();
         query.orderByCreatedAt().ascending();
+        ((Query)query).getFetchPlan().setFetchSize(FETCH_SIZE);
         return new AccountResourceCollection<Resource>(
         	this.getRequestContext(),
         	this.getObject().getAccountGroup().getMember(query),
@@ -207,5 +216,6 @@ public class AccountCollectionResource extends CardDavResource {
 	//-----------------------------------------------------------------------
     // Members
 	//-----------------------------------------------------------------------
+    private static final int FETCH_SIZE = 200;    
 	
 }

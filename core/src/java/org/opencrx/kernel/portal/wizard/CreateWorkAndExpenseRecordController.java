@@ -77,6 +77,7 @@ import org.opencrx.kernel.activity1.cci2.ActivityCategoryQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityMilestoneQuery;
 import org.opencrx.kernel.activity1.cci2.ActivityTrackerQuery;
 import org.opencrx.kernel.activity1.cci2.CalendarDayQuery;
+import org.opencrx.kernel.activity1.cci2.ResourceRateQuery;
 import org.opencrx.kernel.activity1.cci2.WeekDayQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.activity1.jmi1.ActivityAddExpenseRecordParams;
@@ -90,6 +91,7 @@ import org.opencrx.kernel.activity1.jmi1.AddWorkAndExpenseRecordResult;
 import org.opencrx.kernel.activity1.jmi1.CalendarDay;
 import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.activity1.jmi1.ResourceAssignment;
+import org.opencrx.kernel.activity1.jmi1.ResourceRate;
 import org.opencrx.kernel.activity1.jmi1.WeekDay;
 import org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord;
 import org.opencrx.kernel.backend.Activities;
@@ -1990,15 +1992,6 @@ public class CreateWorkAndExpenseRecordController extends AbstractWizardControll
 			}
 		}
 		{
-			if((this.formFields.getResourceXri() != null) && !this.formFields.getResourceXri().isEmpty() && !this.formFields.getResourceXri().equals("*") && !this.formFields.getResourceXri().equals(this.formFields.getPreviousResourceXri())) {
-				// resource changed, get default currency
-				org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(this.formFields.getResourceXri()));
-				if ((this.formFields.getResourceXri() != null) && !this.formFields.getResourceXri().isEmpty() && !this.formFields.getResourceXri().equals("*")) {
-					try {
-						this.formFields.setBillingCurrency(res.getRateCurrency());
-					} catch (Exception e) {}
-				}
-			}
 			this.resourceRate = this.formFields.getRate();
 			if (
 				this.isRecordTypeChange() ||
@@ -2008,10 +2001,19 @@ public class CreateWorkAndExpenseRecordController extends AbstractWizardControll
 				if((this.formFields.getResourceXri() != null) && !this.formFields.getResourceXri().isEmpty() && !this.formFields.getResourceXri().equals("*")) {
 					org.opencrx.kernel.activity1.jmi1.Resource res = (org.opencrx.kernel.activity1.jmi1.Resource)pm.getObjectById(new Path(this.formFields.getResourceXri()));
 					try {
-						if (this.formFields.getRecordType() == Activities.WorkRecordType.STANDARD.getValue()) {
-							this.resourceRate = res.getStandardRate() != null ? this.getQuantityFormat().format(res.getStandardRate()) : "0.000";
-						} else if (this.formFields.getRecordType() == Activities.WorkRecordType.OVERTIME.getValue()) {
-							this.resourceRate = res.getOvertimeRate() != null ? this.getQuantityFormat().format(res.getOvertimeRate()) : "0.000";
+						if(this.formFields.getRecordType() != null) {
+							ResourceRateQuery query = (ResourceRateQuery)pm.newQuery(ResourceRate.class);
+							query.rateType().equalTo(this.formFields.getRecordType());
+							List<ResourceRate> resourceRates = res.getResourceRate(query);
+							if(!resourceRates.isEmpty()) {
+								ResourceRate resourceRate = resourceRates.iterator().next();
+								this.resourceRate = resourceRate.getRate() != null 
+									? this.getQuantityFormat().format(resourceRate.getRate()) 
+									: "0.000";
+								this.formFields.setBillingCurrency(resourceRate.getRateCurrency());
+							} else {
+								this.resourceRate = "0.000";
+							}
 						}
 					} catch (Exception ignore) {}
 				}

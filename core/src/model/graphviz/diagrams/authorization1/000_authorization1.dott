@@ -1,4 +1,4 @@
-digraph "Diagram Package org:opencrx:security:authentication1" {
+digraph "Diagram Package org:opencrx:security:authorization1" {
 
 	graph[
 	  splines=ortho;
@@ -20,7 +20,7 @@ digraph "Diagram Package org:opencrx:security:authentication1" {
 	];
 	{
 	  rank=same;
-	  "org:opencrx:security:authentication1" [label="authentication1",tooltip="org:opencrx:security:authentication1",width=2,height=1,fontsize="14px"];
+	  "org:opencrx:security:authorization1" [label="authorization1",tooltip="org:opencrx:security:authorization1",width=2,height=1,fontsize="14px"];
 	}
 
 }

@@ -190,13 +190,12 @@ public class AbstractPriceLevelImpl
     public void jdoPreDelete(
     ) {
         try {
-            Products.getInstance().removePriceLevel(
+            Products.getInstance().preDelete(
             	this.sameObject(),
             	true
             );
             super.jdoPreDelete();
-        }
-        catch(ServiceException e) {
+        } catch(ServiceException e) {
             throw new JDOUserException(
             	"Unable to preDelete()",
             	e,

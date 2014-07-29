@@ -88,14 +88,11 @@ public class DoMkcol extends WebDavMethod {
     private static Logger LOG = Logger.getLogger(DoMkcol.class.getPackage().getName());
 
     private final WebDavStore _store;
-    private final boolean _readOnly;
 
     public DoMkcol(
-    	WebDavStore store,
-        boolean readOnly
+    	WebDavStore store
     ) {
         _store = store;
-        _readOnly = readOnly;
     }
 
     @Override
@@ -104,51 +101,47 @@ public class DoMkcol extends WebDavMethod {
     ) throws IOException, LockFailedException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	
         LOG.finest("-- " + this.getClass().getName());
-        if (!_readOnly) {
-            String path = getRelativePath(requestContext);
-            String parentPath = getParentPath(getCleanPath(path));
-            if (!checkLocks(requestContext, _store, parentPath)) {
-                LOG.finest("MkCol on locked resource (parentPath) not executable!" + "\n Sending SC_FORBIDDEN (403) error response!");
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                return;
-            }
-            try {
-                Resource parentRes = _store.getResourceByPath(requestContext, parentPath);
-				if (parentRes == null) {
-					// parent not exists
-					resp.sendError(HttpServletResponse.SC_CONFLICT);
-					return;
-				}
-				if(parentPath != null) {
-					if(parentRes.isCollection()) {
-	                    Resource res = _store.getResourceByPath(requestContext, path);
-	                    if(res == null) {
-	                        _store.createCollection(requestContext, path);
-	                        resp.setStatus(HttpServletResponse.SC_CREATED);
-	                    } else {
-                            String methodsAllowed = this.determineMethodsAllowed(res);
-                            resp.addHeader("Allow", methodsAllowed);
-                            resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-	                    }
-					} else {
-	                    LOG.finest("MkCol on resource is not executable" + "\n Sending SC_METHOD_NOT_ALLOWED (405) error response!");
-	                    String methodsAllowed = this.determineMethodsAllowed(parentRes);
-	                    resp.addHeader("Allow", methodsAllowed);
-	                    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);						
-					}
-				}
-				else {
-                    resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-                }
-            } catch (AccessDeniedException e) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            } catch (WebdavException e) {
-            	new ServiceException(e).log();
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } finally {
-            }
-        } else {
+        String path = getRelativePath(requestContext);
+        String parentPath = getParentPath(getCleanPath(path));
+        if (!checkLocks(requestContext, _store, parentPath)) {
+            LOG.finest("MkCol on locked resource (parentPath) not executable!" + "\n Sending SC_FORBIDDEN (403) error response!");
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            return;
+        }
+        try {
+            Resource parentRes = _store.getResourceByPath(requestContext, parentPath);
+			if (parentRes == null) {
+				// parent not exists
+				resp.sendError(HttpServletResponse.SC_CONFLICT);
+				return;
+			}
+			if(parentPath != null) {
+				if(parentRes.isCollection()) {
+                    Resource res = _store.getResourceByPath(requestContext, path);
+                    if(res == null) {
+                        _store.createCollection(requestContext, path);
+                        resp.setStatus(HttpServletResponse.SC_CREATED);
+                    } else {
+                        String methodsAllowed = this.determineMethodsAllowed(res);
+                        resp.addHeader("Allow", methodsAllowed);
+                        resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                    }
+				} else {
+                    LOG.finest("MkCol on resource is not executable" + "\n Sending SC_METHOD_NOT_ALLOWED (405) error response!");
+                    String methodsAllowed = this.determineMethodsAllowed(parentRes);
+                    resp.addHeader("Allow", methodsAllowed);
+                    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);						
+				}
+			}
+			else {
+                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+            }
+        } catch (AccessDeniedException e) {
+            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } catch (WebdavException e) {
+        	new ServiceException(e).log();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
         }
     }
 

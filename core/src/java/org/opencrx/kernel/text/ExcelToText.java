@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2007-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -74,15 +74,28 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.exception.BasicException;
 
+/**
+ * ExcelToText
+ *
+ */
 public class ExcelToText implements HSSFListener {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     */
     public ExcelToText(
     ) {
         this.text = new StringBuilder();
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Extract text from XLS.
+     * 
+     * @param document
+     * @return
+     * @throws ServiceException
+     */
     public Reader parse(
         InputStream document
     ) throws ServiceException {
@@ -98,11 +111,9 @@ public class ExcelToText implements HSSFListener {
 		            request, 
 		            workbook
 		        );
-	        }
-	        catch(Exception e) {
+	        } catch(Exception e) {
 	        	throw new ServiceException(e);
-	        }
-	        catch(NoSuchMethodError e) {
+	        } catch(NoSuchMethodError e) {
 	        	throw new ServiceException(
 	        		BasicException.toExceptionStack(e)
 	        	);
@@ -115,8 +126,7 @@ public class ExcelToText implements HSSFListener {
     		throw new ServiceException(e);
     	}
     }
-    
-    //-----------------------------------------------------------------------
+
     /**
      * This method listens for incoming records and handles them as required.
      * 

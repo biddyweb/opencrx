@@ -54,7 +54,6 @@
     <persistence-manager-factory 
     	name="DataManagerFactory"
     	class="org.openmdx.base.accessor.rest.DataManagerFactory_1"
-    	connection-factory-name="java:comp/env/jdbc_opencrx_CRX"
     >
         <property name="javax.jdo.option.Multithreaded" value="true"/>
         <property name="org.openmdx.jdo.DataManager.optimalFetchSize" value="(java.lang.Integer)64"/>

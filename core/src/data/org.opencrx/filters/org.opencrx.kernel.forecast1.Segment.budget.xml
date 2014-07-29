@@ -10,7 +10,6 @@
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="4">
-
 				<!-- not disabled -->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -49,7 +48,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- disabled -->
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -88,7 +86,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- Budget only / not disabled -->
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -144,7 +141,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- Sales Volume Budget only / not disabled -->
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -200,7 +196,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

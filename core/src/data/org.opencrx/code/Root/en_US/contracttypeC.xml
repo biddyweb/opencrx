@@ -106,6 +106,18 @@
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
 
+												<org.opencrx.kernel.code1.CodeValueEntry code="7" _operation="set">
+													<_object>
+														<shortText>
+															<_item>Generic Contract</_item>
+														</shortText>
+														<longText>
+															<_item>[7] Generic Contract</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+
 											</entry>
 										</_content>
 									</org.opencrx.kernel.code1.CodeValueContainer>

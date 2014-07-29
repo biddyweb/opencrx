@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -76,7 +76,7 @@ org.openmdx.base.naming.*
 	final String FORM_NAME = "FetchEMail";	
 	FetchEMailController wc = new FetchEMailController();
 %>
-	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' />
+	<t:wizardHandleCommand controller='<%= wc %>' defaultCommand='Refresh' assertRequestId='false' />
 <%
 	if(response.getStatus() != HttpServletResponse.SC_OK) {
 		wc.close();
@@ -95,7 +95,6 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:activity1:ActivityCreator">
 	<meta name="order" content="8000"> 
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
@@ -104,12 +103,12 @@ org.openmdx.base.naming.*
 	<input type="hidden" id="Command" name="Command" value="" />
 	<table class="fieldGroup">
 		<tr>
-			<td class="label"><span class="nw">Host</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Host</span></td>
 			<td nowrap><input type="text" class="valueL" name="host" tabindex="<%= tabIndex++ %>" value="<%= wc.getFormFields().getHost() %>" /></td>
 			<td class="addon" />
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">Protocol:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Protocol:</span></td>
 			<td nowrap>
 				<select class="valueL" name="protocol" id="protocol" tabindex="<%= tabIndex++ %>" onChange="javascript:
 					if(this.value=='imap')  {document.getElementById('port').value='143';}
@@ -127,27 +126,27 @@ org.openmdx.base.naming.*
 			<td class="addon" />
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">Port:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Port:</span></td>
 			<td nowrap><input type="text" class="valueL" name="port" id="port" tabindex="<%= tabIndex++ %>" value="<%= wc.getFormFields().getPort() %>" /></td>
 			<td class="addon" />
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">User:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">User:</span></td>
 			<td nowrap><input type="text" class="valueL" name="user" tabindex="<%= tabIndex++ %>" value="<%= wc.getFormFields().getUser() %>" /></td>
 			<td class="addon" />
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">Password:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Password:</span></td>
 			<td nowrap><input type="password" class="valueL" name="password" tabindex="<%= tabIndex++ %>" value="<%= wc.getFormFields().getPassword() %>" /></td>
 			<td class="addon" />
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">Max messages to import:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Max messages to import:</span></td>
 			<td nowrap><input type="text" class="valueL" name="messageCount" tabindex="<%= tabIndex++ %>" value="<%= wc.getFormFields().getMessageCount() %>" /></td>
 			<td class="addon" />
 		</tr>
            <tr>
-             <td class="label"><span class="nw"><%= app.getLabel(FetchEMailController.ACTIVITYCREATOR_CLASS) %>:</span></td>
+             <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(FetchEMailController.ACTIVITYCREATOR_CLASS) %>:</span></td>
              <td>
                <select class="valueL" name="activityCreatorXri" tabindex="<%= tabIndex++ %>">
                  <option value="0">Default</option>
@@ -241,6 +240,7 @@ if("OK".equals(wc.getCommand())) {
 <%
 }
 %>
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

@@ -97,7 +97,6 @@ public class DoLock extends WebDavMethod {
     private static Logger LOG = Logger.getLogger(DoLock.class.getPackage().getName());
 
     private final WebDavStore _store;
-    private final boolean _readOnly;
 
     static class LockInformation {
     	public String scope;
@@ -106,11 +105,9 @@ public class DoLock extends WebDavMethod {
     }
     
     public DoLock(
-    	WebDavStore store,
-        boolean readOnly
+    	WebDavStore store
     ) {
         _store = store;
-        _readOnly = readOnly;
     }
 
     @Override
@@ -120,38 +117,33 @@ public class DoLock extends WebDavMethod {
         LOG.finest("-- " + this.getClass().getName());
     	HttpServletRequest req = requestContext.getHttpServletRequest();
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
-        if (_readOnly) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        } else {
-            String path = getRelativePath(requestContext);
-            String parentPath = getParentPath(getCleanPath(path));
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
-            if(!checkLocks(requestContext, _store, path)) {
-                errorList.put(path, WebdavStatus.SC_LOCKED);
-                sendReport(requestContext, errorList);
-                return; // resource is locked
+        String path = getRelativePath(requestContext);
+        String parentPath = getParentPath(getCleanPath(path));
+        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        if(!checkLocks(requestContext, _store, path)) {
+            errorList.put(path, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return; // resource is locked
+        }
+        if(!checkLocks(requestContext, _store, parentPath)) {
+            errorList.put(parentPath, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return; // parent is locked
+        }
+        try {
+            if (req.getHeader("If") != null) {
+                this.doRefreshLock(requestContext);
+            } else {
+            	Resource res = _store.getResourceByPath(requestContext, path);
+                this.doLocking(requestContext, res, path);
             }
-            if(!checkLocks(requestContext, _store, parentPath)) {
-                errorList.put(parentPath, WebdavStatus.SC_LOCKED);
-                sendReport(requestContext, errorList);
-                return; // parent is locked
-            }
-            try {
-                if (req.getHeader("If") != null) {
-                    this.doRefreshLock(requestContext);
-                } else {
-                	Resource res = _store.getResourceByPath(requestContext, path);
-                    this.doLocking(requestContext, res, path);
-                }
-            } catch (LockFailedException e) {
-                resp.sendError(WebdavStatus.SC_LOCKED);
-                new ServiceException(e).log();
-            } catch (Exception e) {
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                new ServiceException(e).log();
-            } finally {
-            }
+        } catch (LockFailedException e) {
+            resp.sendError(WebdavStatus.SC_LOCKED);
+            new ServiceException(e).log();
+        } catch (Exception e) {
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            new ServiceException(e).log();
+        } finally {
         }
     }
 
@@ -159,7 +151,7 @@ public class DoLock extends WebDavMethod {
     	RequestContext requestContext, 
     	Resource res,
         String path
-    ) {
+    ) throws IOException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	    	
         try {
             this.executeLock(requestContext, res, path);
@@ -201,7 +193,7 @@ public class DoLock extends WebDavMethod {
     	RequestContext requestContext,
         Resource res,
         String _path
-    ) throws LockFailedException {
+    ) throws IOException, LockFailedException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	    	
         // Getting LockInformation from request
     	LockInformation lockInfo = getLockInformation(requestContext);
@@ -463,7 +455,7 @@ public class DoLock extends WebDavMethod {
     private void sendLockFailError(
     	RequestContext requestContext,
         String path
-    ) {
+    ) throws IOException {
         Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
         errorList.put(path, WebdavStatus.SC_LOCKED);
         sendReport(requestContext, errorList);

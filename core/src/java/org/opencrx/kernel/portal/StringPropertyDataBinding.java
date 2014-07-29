@@ -60,10 +60,15 @@ import org.opencrx.kernel.base.jmi1.Property;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.openmdx.portal.servlet.ApplicationContext;
 
+/**
+ * StringPropertyDataBinding
+ *
+ */
 public class StringPropertyDataBinding extends AbstractPropertyDataBinding {
 
     /**
      * Constructor.
+     * 
      */
     public StringPropertyDataBinding(
     ) {
@@ -72,6 +77,7 @@ public class StringPropertyDataBinding extends AbstractPropertyDataBinding {
     
     /**
      * Constructor.
+     * 
      * @param type
      */
     public StringPropertyDataBinding(

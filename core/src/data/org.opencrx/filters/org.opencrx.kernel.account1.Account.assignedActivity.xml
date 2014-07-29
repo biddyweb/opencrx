@@ -19,7 +19,6 @@
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="3">
-
 				<!-- show only activities that are not disabled -->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -58,7 +57,6 @@
 						</void>
 					</object>
 				</void>
-
 				<!-- open activities, assigned to account -->
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -68,55 +66,28 @@
 						<void property="iconKey">
 							<string>ActivityCreator.gif</string>
 						</void>
-						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="2">
+						<void property="extension">
+							<array class="org.openmdx.base.query.Extension" length="1">
 								<void index="0">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
+									<object class="org.openmdx.base.persistence.spi.QueryExtension">
+										<void property="clause">
+											<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
+												SELECT OOCKE1_ACTIVITY.object_id FROM OOCKE1_ACTIVITY, OOCKE1_JOIN_ACCTHASASSACT
+												where (OOCKE1_JOIN_ACCTHASASSACT.assigned_activity=OOCKE1_ACTIVITY.object_id)
+												and (OOCKE1_JOIN_ACCTHASASSACT.account = vj.account)
+												and ((OOCKE1_ACTIVITY.disabled is null) OR (OOCKE1_ACTIVITY.disabled = ?b0))
+												and (OOCKE1_ACTIVITY.percent_complete&lt;100)
+												and (OOCKE1_ACTIVITY.assigned_to = OOCKE1_JOIN_ACCTHASASSACT.account)
+												)))
+											</string>
 										</void>
-										<void property="feature">
-											<string>context:ActOpenAssigned:object_class</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
+										<void property="booleanParam">
+											<array class="java.lang.Boolean" length="1">
 												<void index="0">
-													<string>org:openmdx:compatibility:datastore1:QueryFilter</string>
+													<boolean>false</boolean>
 												</void>
 											</array>
-										</void>
-									</object>
-								</void>
-								<void index="1">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
-										</void>
-										<void property="feature">
-											<string>context:ActOpenAssigned:clause</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
-												<void index="0">
-													<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
-SELECT OOCKE1_ACTIVITY.object_id FROM OOCKE1_ACTIVITY, OOCKE1_JOIN_ACCTHASASSACT
-where (OOCKE1_JOIN_ACCTHASASSACT.assigned_activity=OOCKE1_ACTIVITY.object_id)
-and (OOCKE1_JOIN_ACCTHASASSACT.account = vj.account)
-and ((OOCKE1_ACTIVITY.disabled is null) OR (OOCKE1_ACTIVITY.disabled = false))
-and (OOCKE1_ACTIVITY.percent_complete&lt;100)
-and (OOCKE1_ACTIVITY.assigned_to = OOCKE1_JOIN_ACCTHASASSACT.account)
-)))</string>
-												</void>
-											</array>
-										</void>
+										</void>										
 									</object>
 								</void>
 							</array>
@@ -126,7 +97,6 @@ and (OOCKE1_ACTIVITY.assigned_to = OOCKE1_JOIN_ACCTHASASSACT.account)
 						</void>
 					</object>
 				</void>
-
 				<!-- open activities, reported by account -->
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
@@ -136,55 +106,28 @@ and (OOCKE1_ACTIVITY.assigned_to = OOCKE1_JOIN_ACCTHASASSACT.account)
 						<void property="iconKey">
 							<string>ActivityProcess.gif</string>
 						</void>
-						<void property="condition">
-							<array class="org.openmdx.base.query.Condition" length="2">
+						<void property="extension">
+							<array class="org.openmdx.base.query.Extension" length="1">
 								<void index="0">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
+									<object class="org.openmdx.base.persistence.spi.QueryExtension">
+										<void property="clause">
+											<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
+												SELECT OOCKE1_ACTIVITY.object_id FROM OOCKE1_ACTIVITY, OOCKE1_JOIN_ACCTHASASSACT
+												where (OOCKE1_JOIN_ACCTHASASSACT.assigned_activity=OOCKE1_ACTIVITY.object_id)
+												and (OOCKE1_JOIN_ACCTHASASSACT.account = vj.account)
+												and ((OOCKE1_ACTIVITY.disabled is null) OR (OOCKE1_ACTIVITY.disabled = ?b0))
+												and (OOCKE1_ACTIVITY.percent_complete&lt;100)
+												and (OOCKE1_ACTIVITY.rep_contact = OOCKE1_JOIN_ACCTHASASSACT.account)
+												)))
+											</string>
 										</void>
-										<void property="feature">
-											<string>context:ActOpenReported:object_class</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
+										<void property="booleanParam">
+											<array class="java.lang.Boolean" length="1">
 												<void index="0">
-													<string>org:openmdx:compatibility:datastore1:QueryFilter</string>
+													<boolean>false</boolean>
 												</void>
 											</array>
-										</void>
-									</object>
-								</void>
-								<void index="1">
-									<object class="org.openmdx.base.query.PiggyBackCondition">
-										<void property="quantor">
-											<short>1</short>
-											<!-- for all -->
-										</void>
-										<void property="feature">
-											<string>context:ActOpenReported:clause</string>
-										</void>
-										<void property="fulfil">
-											<boolean>true</boolean>
-										</void>
-										<void property="value">
-											<array class="java.lang.String" length="1">
-												<void index="0">
-													<string>EXISTS (SELECT 0 FROM OOCKE1_ACTIVITY act WHERE (act.object_id = v.object_id) and (act.object_id IN (
-SELECT OOCKE1_ACTIVITY.object_id FROM OOCKE1_ACTIVITY, OOCKE1_JOIN_ACCTHASASSACT
-where (OOCKE1_JOIN_ACCTHASASSACT.assigned_activity=OOCKE1_ACTIVITY.object_id)
-and (OOCKE1_JOIN_ACCTHASASSACT.account = vj.account)
-and ((OOCKE1_ACTIVITY.disabled is null) OR (OOCKE1_ACTIVITY.disabled = false))
-and (OOCKE1_ACTIVITY.percent_complete&lt;100)
-and (OOCKE1_ACTIVITY.rep_contact = OOCKE1_JOIN_ACCTHASASSACT.account)
-)))</string>
-												</void>
-											</array>
-										</void>
+										</void>										
 									</object>
 								</void>
 							</array>
@@ -194,7 +137,6 @@ and (OOCKE1_ACTIVITY.rep_contact = OOCKE1_JOIN_ACCTHASASSACT.account)
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,20 +52,42 @@
  */
 package org.opencrx.kernel.base.aop2;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.opencrx.kernel.backend.Workflows;
+import org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams;
+import org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult;
+import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
+import org.openmdx.base.jmi1.ContextCapable;
+import org.openmdx.base.naming.Path;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * WorkflowTargetImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class WorkflowTargetImpl
-	<S extends org.opencrx.kernel.base.jmi1.WorkflowTarget,N extends org.opencrx.kernel.base.cci2.WorkflowTarget,C extends Void>
+	<S extends WorkflowTarget,N extends org.opencrx.kernel.base.cci2.WorkflowTarget,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public WorkflowTargetImpl(
         S same,
         N next
@@ -73,28 +95,105 @@ public class WorkflowTargetImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
-    public org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult executeWorkflow(
-        org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams params
+    /**
+     * Implementation of executeWorkflow operation.
+     * 
+     * @param params
+     * @return
+     */
+    public ExecuteWorkflowResult executeWorkflow(
+        ExecuteWorkflowParams params
     ) {
         try {
+        	// booleanParams
+        	Map<String,Boolean> booleanParams = new HashMap<String,Boolean>();
+        	for(int i = 0; i < params.getBooleanParamName().size(); i++) {
+        		if(params.getBooleanParamName().get(i) != null) {
+	        		booleanParams.put(
+	        			params.getBooleanParamName().get(i), 
+	        			params.getBooleanParamValue().get(i)
+	        		);
+        		}
+        	}
+        	// stringParams
+        	Map<String,String> stringParams = new HashMap<String,String>();
+        	for(int i = 0; i < params.getStringParamName().size(); i++) {
+        		if(params.getStringParamName().get(i) != null) {
+	        		stringParams.put(
+	        			params.getStringParamName().get(i), 
+	        			params.getStringParamValue().get(i)
+	        		);
+        		}
+        	}
+        	if(params.getTriggeredByEventId() != null) {
+        		stringParams.put(Workflows.PARAM_NAME_TRIGGERED_BY_EVENT_ID, params.getTriggeredByEventId());
+        	}
+        	// integerParams
+        	Map<String,Integer> integerParams = new HashMap<String,Integer>();
+        	for(int i = 0; i < params.getIntegerParamName().size(); i++) {
+        		if(params.getIntegerParamName().get(i) != null) {
+	        		integerParams.put(
+	        			params.getIntegerParamName().get(i), 
+	        			params.getIntegerParamValue().get(i)
+	        		);
+        		}
+        	}
+        	if(params.getTriggeredByEventType() != null) {
+        		integerParams.put(Workflows.PARAM_NAME_TRIGGERED_BY_EVENT_TYPE, params.getTriggeredByEventType());
+        	}
+        	// decimalParams
+        	Map<String,BigDecimal> decimalParams = new HashMap<String,BigDecimal>();
+        	for(int i = 0; i < params.getDecimalParamName().size(); i++) {
+        		if(params.getDecimalParamName().get(i) != null) {
+	        		decimalParams.put(
+	        			params.getDecimalParamName().get(i), 
+	        			params.getDecimalParamValue().get(i)
+	        		);
+        		}
+        	}
+        	// dateTimeParams
+        	Map<String,Date> dateTimeParams = new HashMap<String,Date>();
+        	for(int i = 0; i < params.getDateTimeParamName().size(); i++) {
+        		if(params.getDateTimeParamName().get(i) != null) {
+	        		dateTimeParams.put(
+	        			params.getDateTimeParamName().get(i), 
+	        			params.getDateTimeParamValue().get(i)
+	        		);
+        		}
+        	}
+        	// uriParams
+        	Map<String,Path> uriParams = new HashMap<String,Path>();
+        	for(int i = 0; i < params.getUriParamName().size(); i++) {
+        		if(params.getUriParamName().get(i) != null) {
+	        		uriParams.put(
+	        			params.getUriParamName().get(i), 
+	        			((ContextCapable)params.getUriParamValue().get(i)).refGetPath()
+	        		);
+        		}
+        	}
+        	if(params.getTriggeredBy() != null) {
+        		uriParams.put(Workflows.PARAM_NAME_TRIGGERED_BY, params.getTriggeredBy().refGetPath());
+        	}
             WfProcessInstance wfInstance = Workflows.getInstance().executeWorkflow(
             	params.getName(),
             	this.sameObject(),
                 (WfProcess)params.getWorkflow(),
                 params.getTargetObject(),
-                params.getTriggeredBy(),
-                params.getTriggeredByEventId(),
-                params.getTriggeredByEventType(),
-                params.getParentProcessInstance()                 
+                booleanParams,
+                stringParams,
+                integerParams,
+                decimalParams,
+                dateTimeParams,
+                uriParams,
+                params.getParentProcessInstance()
             );
             return Structures.create(
-            	org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult.class, 
-            	Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowResult.Member.workflowInstance, wfInstance)
+            	ExecuteWorkflowResult.class, 
+            	Datatypes.member(ExecuteWorkflowResult.Member.workflowInstance, wfInstance)
             );
         } catch(ServiceException e) {
             throw new JmiServiceException(e);
         }
     }
-        
+
 }

@@ -58,9 +58,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.jdo.PersistenceManager;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
+import org.opencrx.kernel.utils.DbSchemaUtils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.ObjectReference;
@@ -120,23 +122,18 @@ public class DbSchemaWizardController extends AbstractWizardController {
 	}
 
 	/**
-	 * Validate and fix database schema.
+	 * Get database connection.
 	 * 
 	 * @param connectionUrl
 	 * @param userName
 	 * @param password
-	 * @param fix
-	 * @throws ServiceException
-	 * @throws SQLException
+	 * @return
 	 */
-	protected void validateSchema(
+	protected Connection getConnection(
 		String connectionUrl,
 		String userName,
-		String password,
-		boolean fix
-	) throws ServiceException, SQLException {
-		// Get connection to running db
-		System.out.print(new java.util.Date() + ": DbSchemaWizard  Getting connection " + connectionUrl.toString() + " ... ");
+		String password
+	) {
 		Connection connT = null;
 		try {
 			if(connectionUrl != null && connectionUrl.startsWith("java:")) {
@@ -155,6 +152,28 @@ public class DbSchemaWizardController extends AbstractWizardController {
 		} catch(Exception e) {
 			this.report.add("ERROR: unable to get connection to database (message=" + e.getMessage() + ")");
 		}
+		return connT;
+	}
+	
+	/**
+	 * Validate and fix database schema.
+	 * 
+	 * @param connectionUrl
+	 * @param userName
+	 * @param password
+	 * @param fix
+	 * @throws ServiceException
+	 * @throws SQLException
+	 */
+	protected void validateSchema(
+		String connectionUrl,
+		String userName,
+		String password,
+		boolean fix
+	) throws ServiceException, SQLException {
+		// Get connection to running db
+		System.out.print(new java.util.Date() + ": DbSchemaWizard  Getting connection " + connectionUrl.toString() + " ... ");
+		Connection connT = this.getConnection(connectionUrl, userName, password);
 		if(connT != null) {
 			System.out.println("done");
 			// Validate
@@ -263,6 +282,81 @@ public class DbSchemaWizardController extends AbstractWizardController {
 			this.formFields.getPassword(), 
 			true // fix
 		);
+	}
+
+	/**
+	 * Migrate media to FS action.
+	 * 
+	 * @param formFields
+	 */
+	public void doMigrateMediaToFS(
+		@RequestParameter(type = "Bean") FormFields formFields		
+	) {
+		this.doRefresh(formFields);		
+		PersistenceManager pm = this.getPm();
+		String providerName = this.getProviderName();
+		Connection connT = this.getConnection(
+			formFields.getConnectionUrl(), 
+			formFields.getUserName(), 
+			formFields.getPassword()
+		);
+		if(connT != null) {
+			try  {
+	 			this.report.addAll(
+					DbSchemaUtils.migrateMediaToFS(providerName, pm, connT, false)
+				);
+			} catch(Exception e) {
+				new ServiceException(e).log();
+				this.report.add("ERROR: message is " + e.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Migrate media to DB action.
+	 * 
+	 * @param formFields
+	 */
+	public void doMigrateMediaToDB(
+		@RequestParameter(type = "Bean") FormFields formFields		
+	) {
+		this.doRefresh(formFields);		
+		PersistenceManager pm = this.getPm();
+		String providerName = this.getProviderName();
+		try {
+			this.report.addAll(
+				DbSchemaUtils.migrateMediaToDB(providerName, pm)
+			);
+		} catch(Exception e) {
+			new ServiceException(e).log();
+			this.report.add("ERROR: message is " + e.getMessage());
+		}
+	}
+
+	/**
+	 * Validate media action.
+	 * 
+	 * @param formFields
+	 */
+	public void doValidateMedia(
+		@RequestParameter(type = "Bean") FormFields formFields		
+	) {
+		this.doRefresh(formFields);		
+		PersistenceManager pm = this.getPm();
+		String providerName = this.getProviderName();
+		Connection connT = this.getConnection(
+			formFields.getConnectionUrl(), 
+			formFields.getUserName(), 
+			formFields.getPassword()
+		);		
+		try {
+			this.report.addAll(
+				DbSchemaUtils.migrateMediaToFS(providerName, pm, connT, true)
+			);
+		} catch(Exception e) {
+			new ServiceException(e).log();
+			this.report.add("ERROR: message is " + e.getMessage());
+		}
 	}
 
 	/**

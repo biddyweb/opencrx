@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -54,9 +54,12 @@ package org.opencrx.kernel.backend;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -64,13 +67,17 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.application.mail.exporter.ExportMailWorkflow;
 import org.opencrx.application.mail.exporter.SendMailNotificationWorkflow;
 import org.opencrx.application.mail.exporter.SendMailWorkflow;
+import org.opencrx.kernel.base.jmi1.BooleanProperty;
+import org.opencrx.kernel.base.jmi1.DecimalProperty;
 import org.opencrx.kernel.base.jmi1.IntegerProperty;
+import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.base.jmi1.UriProperty;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
 import org.opencrx.kernel.generic.OpenCrxException;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfActionLogEntry;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow;
 import org.opencrx.kernel.workflow.BulkCreateActivityWorkflow;
 import org.opencrx.kernel.workflow.PrintConsole;
@@ -125,19 +132,16 @@ public class Workflows extends AbstractImpl {
 	/**
 	 * Abstract class for synchronous workflows. Synchronous workflows are
 	 * by definition atomic, i.e. the may be run in parallel with other workflows.
+	 * 
 	 */
 	public static abstract class SynchronousWorkflow {
 	    
 	    /**
-	     * Executes the workflow for the specified target object. The list of processed 
-	     * (modified, created, removed) objects must be updated if the objects are subject 
-	     * to topics, subscriptions and workflows. 
+	     * Executes the workflow for the specified target object. 
 	     * 
-	     * @param userHome the user's home for which the workflow is executed.
-	     * @param targetObject workflow target object.
-	     * @param triggeredBy object which triggered workflow.
-	     * @param wfProcessInstance workflow process instance.
-	     * @param pm persistence manager
+	     * @param wfTarget
+	     * @param targetObject
+	     * @param wfProcessInstance
 	     * @throws ServiceException
 	     */
 	    public abstract void execute(
@@ -157,13 +161,14 @@ public class Workflows extends AbstractImpl {
 	    /**
 	     * Execute the workflow specified by wfProcessInstance. wfProcessInstance may be
 	     * modified by execute.
+	     * 
+	     * @param wfProcessInstance
 	     * @throws ServiceException
 	     */
 	    public abstract void execute(
 	        WfProcessInstance wfProcessInstance
 	    ) throws ServiceException;
 
-	    
 	    /**
 	     * Return true if workflow is atomic. Atomic workflows may run in parallel other
 	     * (atomic, non-atomic) workflows, i.e. their execution does not have side-effects 
@@ -231,27 +236,9 @@ public class Workflows extends AbstractImpl {
         TopicQuery topicQuery = (TopicQuery)pm.newQuery(Topic.class);
         topicQuery.name().equalTo(name);
         List<Topic> topics = segment.getTopic(topicQuery);
-        return topics.isEmpty() ? 
-        	null : 
-        		topics.iterator().next();
-    }
-
-    /**
-     * Find process.
-     * 
-     * @param name
-     * @param segment
-     * @param pm
-     * @return
-     * 
-     * @deprecated
-     */
-    public WfProcess findWfProcess(
-        String name,
-        org.opencrx.kernel.workflow1.jmi1.Segment segment,
-        javax.jdo.PersistenceManager pm
-    ) {
-    	return this.findWfProcess(name, segment);
+        return topics.isEmpty() 
+        	? null 
+        	: topics.iterator().next();
     }
 
     /**
@@ -270,9 +257,9 @@ public class Workflows extends AbstractImpl {
         WfProcessQuery wfProcessQuery = (WfProcessQuery)pm.newQuery(WfProcess.class);
         wfProcessQuery.name().equalTo(name);
         List<WfProcess> wfProcesses = segment.getWfProcess(wfProcessQuery);
-        return wfProcesses.isEmpty() ? 
-        	null :
-        		wfProcesses.iterator().next();
+        return wfProcesses.isEmpty() 
+        	? null 
+        	: wfProcesses.iterator().next();
     }
 
     /**
@@ -298,8 +285,7 @@ public class Workflows extends AbstractImpl {
         Topic topic = null;
         try {
             topic = workflowSegment.getTopic(id);
-        } 
-        catch(Exception e) {}
+        } catch(Exception e) {}
         // Do not touch existing topics
         if(topic == null) {
             pm.currentTransaction().begin();
@@ -345,8 +331,7 @@ public class Workflows extends AbstractImpl {
         WfProcess wfProcess = null;
         try {
             wfProcess = (WfProcess)workflowSegment.getWfProcess(id);
-        }
-        catch(Exception e) {}
+        } catch(Exception e) {}
         if(wfProcess == null) {
             // Add process
             pm.currentTransaction().begin();
@@ -657,26 +642,31 @@ public class Workflows extends AbstractImpl {
      * Execute the workflow. Create a workflow instance. If the
      * workflow is synchronous execute it immediately. Asynchronous
      * workflows are executed by the workflow handler.
-     * 
+     *
      * @param name
      * @param wfTarget
      * @param wfProcess
      * @param targetObject
-     * @param triggeredBy
-     * @param triggeredByEventId
-     * @param triggeredByEventType
+     * @param stringParams
+     * @param integerParams
+     * @param decimalParams
+     * @param booleanParams
+     * @param uriParams
      * @param parentProcessInstance
      * @return
      * @throws ServiceException
      */
     public WfProcessInstance executeWorkflow(
     	String name,
-        WorkflowTarget wfTarget,
+    	WorkflowTarget wfTarget,
         WfProcess wfProcess,
         ContextCapable targetObject,
-        ContextCapable triggeredBy,
-        String triggeredByEventId,
-        Integer triggeredByEventType,
+        Map<String,Boolean> booleanParams,
+        Map<String,String> stringParams,
+        Map<String,Integer> integerParams,
+        Map<String,BigDecimal> decimalParams,
+        Map<String,Date> dateTimeParams,
+        Map<String,Path> uriParams,
         WfProcessInstance parentProcessInstance
     ) throws ServiceException {
         if(wfProcess == null) {
@@ -687,16 +677,14 @@ public class Workflows extends AbstractImpl {
             );                                                                
         }
     	PersistenceManager pm = JDOHelper.getPersistenceManager(wfTarget);        
-        boolean isSynchronous = wfProcess.isSynchronous() == null ?
-        	false :
-        		wfProcess.isSynchronous().booleanValue();
+        boolean isSynchronous = Boolean.TRUE.equals(wfProcess.isSynchronous());
         // Target
         if(targetObject == null) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.WORKFLOW_MISSING_TARGET,
                 "Missing target object"
-            );                                                                
+            );
         }
         Path targetObjectIdentity = targetObject.refGetPath();
         // Create workflow instance
@@ -704,11 +692,11 @@ public class Workflows extends AbstractImpl {
             wfTarget.refGetPath().getDescendant(
                 new String[]{
                     "wfProcessInstance", 
-                    triggeredByEventId == null ? 
-                    	this.getUidAsString() : 
-                    	triggeredByEventId
+                    stringParams == null || stringParams.get(PARAM_NAME_TRIGGERED_BY_EVENT_ID) == null 
+                    	? this.getUidAsString() 
+                    	: stringParams.get(PARAM_NAME_TRIGGERED_BY_EVENT_ID)
                 }
-            );            
+            );
         WfProcessInstance processInstance = null;
         // Try to execute workflow in context of existing workflow instance
         try {
@@ -729,50 +717,143 @@ public class Workflows extends AbstractImpl {
 	            );
             }
         }
-        // Add parameters of executeWorkflow() operation to property set of WfProcessInstance
-        if(triggeredBy != null) {
-            UriProperty property = pm.newInstance(UriProperty.class);
-            property.setName("triggeredBy");
-            property.setUriValue(triggeredBy.refGetPath().toXRI());
-            processInstance.addProperty(
-            	this.getUidAsString(),
-            	property
-            );
+        // Add string parameters
+        if(stringParams != null) {
+	        for(Map.Entry<String,String> stringParam: stringParams.entrySet()) {
+	            StringProperty property = pm.newInstance(StringProperty.class);
+	            property.setName(stringParam.getKey());
+	            property.setStringValue(stringParam.getValue());
+	            processInstance.addProperty(
+	            	this.getUidAsString(),
+	            	property
+	            );
+	        }
         }
-        if(triggeredByEventType != null) {
-            IntegerProperty property = pm.newInstance(IntegerProperty.class);
-            property.setName("triggeredByEventType");
-            property.setIntegerValue(triggeredByEventType.intValue());
-            processInstance.addProperty(
-            	this.getUidAsString(),
-            	property
-            );
+        // Add integer parameters
+        if(integerParams != null) {
+	        for(Map.Entry<String,Integer> integerParam: integerParams.entrySet()) {
+	            IntegerProperty property = pm.newInstance(IntegerProperty.class);
+	            property.setName(integerParam.getKey());
+	            property.setIntegerValue(integerParam.getValue());
+	            processInstance.addProperty(
+	            	this.getUidAsString(),
+	            	property
+	            );	        	
+	        }
+        }
+        // Add decimal parameters
+        if(decimalParams != null) {
+	        for(Map.Entry<String,BigDecimal> decimalParam: decimalParams.entrySet()) {
+	            DecimalProperty property = pm.newInstance(DecimalProperty.class);
+	            property.setName(decimalParam.getKey());
+	            property.setDecimalValue(decimalParam.getValue());
+	            processInstance.addProperty(
+	            	this.getUidAsString(),
+	            	property
+	            );
+	        }
+        }
+        // Add uri parameters
+        if(uriParams != null) {
+	        for(Map.Entry<String,Path> uriParam: uriParams.entrySet()) {
+	            UriProperty property = pm.newInstance(UriProperty.class);
+	            property.setName(uriParam.getKey());
+	            property.setUriValue(uriParam.getValue().toXRI());
+	            processInstance.addProperty(
+	            	this.getUidAsString(),
+	            	property
+	            );
+	        }
+        }
+        // Add boolean parameters
+        if(booleanParams != null) {
+	        for(Map.Entry<String,Boolean> booleanParam: booleanParams.entrySet()) {
+	            BooleanProperty property = pm.newInstance(BooleanProperty.class);
+	            property.setName(booleanParam.getKey());
+	            property.setBooleanValue(booleanParam.getValue());
+	            processInstance.addProperty(
+	            	this.getUidAsString(),
+	            	property
+	            );	        	
+	        }
         }
         // Execute workflow if synchronous  
         if(isSynchronous) {
-            SynchronousWorkflow workflow = null;            
-            Class<?> workflowClass = null;
-            try {
-                workflowClass = Classes.getApplicationClass(
-                    wfProcess.getName()
-                );
-            }
-            catch(ClassNotFoundException e) {
-                new ServiceException(e).log();
-                throw new ServiceException(
-                    OpenCrxException.DOMAIN,
-                    OpenCrxException.WORKFLOW_NO_IMPLEMENTATION,
-                    "implementation not found",
-                    new BasicException.Parameter("param0", wfProcess.getName()),
-                    new BasicException.Parameter("param1", e.getMessage())
-                );                                                                                        
-            }
-            // Look up constructor
-            Constructor<?> workflowConstructor = null;
-            try {
-                workflowConstructor = workflowClass.getConstructor(new Class[]{});
-            }
-            catch(NoSuchMethodException e) {
+        	SynchronousWorkflow workflow = null;
+        	Class<?> workflowClass = null;
+        	if(wfProcess.getExecuteScript() == null || wfProcess.getExecuteScript().isEmpty()) {
+        		// Take class name of workflow class from WfProcess::name
+	            try {
+	                workflowClass = Classes.getApplicationClass(wfProcess.getName());
+	            	Constructor<?> workflowConstructor = workflowClass.getConstructor(new Class[]{});
+	                workflow = (SynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
+	            } catch(NoSuchMethodException e) {
+	                new ServiceException(e).log();
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.WORKFLOW_MISSING_CONSTRUCTOR,
+	                    "missing constructor",
+	                    new BasicException.Parameter("param0", wfProcess.getName()),
+	                    new BasicException.Parameter("param1", e.getMessage())
+	                );                                                                                        
+	            } catch(ClassNotFoundException e) {
+	                new ServiceException(e).log();
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.WORKFLOW_NO_IMPLEMENTATION,
+	                    "implementation not found",
+	                    new BasicException.Parameter("param0", wfProcess.getName()),
+	                    new BasicException.Parameter("param1", e.getMessage())
+	                );                                                                                        
+	            } catch(InstantiationException e) {
+	                new ServiceException(e).log();
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.WORKFLOW_CAN_NOT_INSTANTIATE,
+	                    "can not instantiate",
+	                    new BasicException.Parameter("param0", wfProcess.getName()),
+	                    new BasicException.Parameter("param1", e.getMessage())
+	                );                                                                                        
+	            } catch(IllegalAccessException e) {
+	                new ServiceException(e).log();
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.WORKFLOW_ILLEGAL_ACCESS,
+	                    "illegal access",
+	                    new BasicException.Parameter("param0", wfProcess.getName()),
+	                    new BasicException.Parameter("param1", e.getMessage())
+	                );                                                                            
+	            } catch(IllegalArgumentException e) {
+	                new ServiceException(e).log();
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.WORKFLOW_ILLEGAL_ARGUMENT,
+	                    "illegal argument",
+	                    new BasicException.Parameter("param0", wfProcess.getName()),
+	                    new BasicException.Parameter("param1", e.getMessage())
+	                );                                                                                        
+	            } catch(InvocationTargetException e) {
+	                throw new ServiceException(
+	                    OpenCrxException.DOMAIN,
+	                    OpenCrxException.WORKFLOW_CAN_NOT_INVOKE,
+	                    "can not invoke",
+	                    new BasicException.Parameter("param0", wfProcess.getName()),
+	                    new BasicException.Parameter("param1", e.getTargetException().getMessage())
+	                );                                                                                        
+	            }
+        	} else {
+        		// Compile workflow script on-the-fly
+       			workflowClass = ScriptUtils.getClass(wfProcess.getExecuteScript());
+        	}
+        	Method executeMethod = null;
+        	try {
+	            executeMethod = workflowClass.getMethod(
+	            	"execute", 
+	            	WorkflowTarget.class,
+	            	ContextCapable.class,
+	            	WfProcessInstance.class
+	            );        		
+        	} catch(NoSuchMethodException e) {
                 new ServiceException(e).log();
                 throw new ServiceException(
                     OpenCrxException.DOMAIN,
@@ -782,48 +863,10 @@ public class Workflows extends AbstractImpl {
                     new BasicException.Parameter("param1", e.getMessage())
                 );                                                                                        
             }
-            // Instantiate workflow
-            try {
-                workflow = (SynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
-            } catch(InstantiationException e) {
-                new ServiceException(e).log();
-                throw new ServiceException(
-                    OpenCrxException.DOMAIN,
-                    OpenCrxException.WORKFLOW_CAN_NOT_INSTANTIATE,
-                    "can not instantiate",
-                    new BasicException.Parameter("param0", wfProcess.getName()),
-                    new BasicException.Parameter("param1", e.getMessage())
-                );                                                                                        
-            } catch(IllegalAccessException e) {
-                new ServiceException(e).log();
-                throw new ServiceException(
-                    OpenCrxException.DOMAIN,
-                    OpenCrxException.WORKFLOW_ILLEGAL_ACCESS,
-                    "illegal access",
-                    new BasicException.Parameter("param0", wfProcess.getName()),
-                    new BasicException.Parameter("param1", e.getMessage())
-                );                                                                            
-            } catch(IllegalArgumentException e) {
-                new ServiceException(e).log();
-                throw new ServiceException(
-                    OpenCrxException.DOMAIN,
-                    OpenCrxException.WORKFLOW_ILLEGAL_ARGUMENT,
-                    "illegal argument",
-                    new BasicException.Parameter("param0", wfProcess.getName()),
-                    new BasicException.Parameter("param1", e.getMessage())
-                );                                                                                        
-            } catch(InvocationTargetException e) {
-                throw new ServiceException(
-                    OpenCrxException.DOMAIN,
-                    OpenCrxException.WORKFLOW_CAN_NOT_INVOKE,
-                    "can not invoke",
-                    new BasicException.Parameter("param0", wfProcess.getName()),
-                    new BasicException.Parameter("param1", e.getTargetException().getMessage())
-                );                                                                                        
-            }
             // Execute workflow
             try {
-                workflow.execute(
+	            executeMethod.invoke(
+            		workflow,
                     wfTarget,
                     targetObject,
                     processInstance
@@ -869,12 +912,11 @@ public class Workflows extends AbstractImpl {
                 WfActionLogEntry logEntry = pm.newInstance(WfActionLogEntry.class);
                 logEntry.setName(e0.getMessage());
                 logEntry.setCorrelation(
-                	targetObject instanceof BasicObject ?
-                		(BasicObject)targetObject :
-                		null
+                	targetObject instanceof BasicObject 
+                		? (BasicObject)targetObject 
+                		: null
                 );
                 processInstance.addActionLog(
-                	false,
                 	this.getUidAsString(),
                 	logEntry
                 );
@@ -916,6 +958,10 @@ public class Workflows extends AbstractImpl {
     public static final short STATUS_OK = 0;
     public static final short STATUS_FAILED = 1;
 
+    public static final String PARAM_NAME_TRIGGERED_BY_EVENT_ID = "triggeredByEventId";
+    public static final String PARAM_NAME_TRIGGERED_BY = "triggeredBy";
+    public static final String PARAM_NAME_TRIGGERED_BY_EVENT_TYPE = "triggeredByEventType";
+    
     public static final String WORKFLOW_EXPORT_MAIL = "ExportMail";
     public static final String WORKFLOW_SEND_MAIL = "SendMail";
     public static final String WORKFLOW_SEND_MAIL_NOTIFICATION = "SendMailNotification";

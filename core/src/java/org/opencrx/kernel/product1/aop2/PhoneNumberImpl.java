@@ -55,7 +55,7 @@ package org.opencrx.kernel.product1.aop2;
 import javax.jdo.JDOUserException;
 import javax.jdo.listener.StoreCallback;
 
-import org.opencrx.kernel.backend.Addresses;
+import org.opencrx.kernel.backend.Products;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
@@ -91,8 +91,8 @@ public class PhoneNumberImpl
     public void jdoPreStore(
     ) {
     	try {
-    		Addresses.getInstance().updatePhoneNumber(
-    			this.sameObject() 
+    		Products.getInstance().preStore(
+    			this.sameObject()
     		);
     		super.jdoPreStore();
     	} catch(ServiceException e) {

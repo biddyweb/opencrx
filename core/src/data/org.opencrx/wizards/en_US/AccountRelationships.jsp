@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openmdx, http://www.openmdx.org/
@@ -69,7 +69,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -239,22 +239,22 @@ org.openmdx.base.naming.*
         <fieldset>
   	      <table class="fieldGroup">
   	        <tr>
-            	<td class="label"><span class="nw">&nbsp;</span></td>
+            	<td class="<%= CssClass.fieldLabel %>"><span class="nw">&nbsp;</span></td>
   	          <td></td>
   	          <td class="addon"></td>
-            	<td class="label"><span class="nw">&nbsp;</span></td>
+            	<td class="<%= CssClass.fieldLabel %>"><span class="nw">&nbsp;</span></td>
   	          <td></td>
   	          <td class="addon"></td>
   	        </tr>
 
   	        <tr>
-            	<td class="label"><span class="nw"><%= app.getLabel(ACCOUNT_CLASS) %> #1:</span></td>
+            	<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(ACCOUNT_CLASS) %> #1:</span></td>
   	          <td colspan=4><b><%= accountSource == null ? "???" : (new ObjectReference(accountSource, app)).getTitle() %></b></td>
   	          <td class="addon"></td>
   	        </tr>
 
    	        <tr>
-            	<td class="label"><span class="nw"><%= app.getLabel(ACCOUNT_CLASS) %> #2: <font color="red">*</font></span></td>
+            	<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(ACCOUNT_CLASS) %> #2: <font color="red">*</font></span></td>
 <%
               String lookupId = org.opencrx.kernel.backend.Contracts.getInstance().getUidAsString();
               Action findAccountTargetObjectAction = Action.getFindObjectAction(accountTargetFinder, lookupId);
@@ -262,7 +262,7 @@ org.openmdx.base.naming.*
 %>
   	          <td colspan=4>
                 <div class="autocompleterMenu">
-                  <ul id="nav" class="nav" onmouseover="sfinit(this);" >
+                  <ul id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" onmouseover="sfinit(this);" >
                     <li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
                       <ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
                         <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Account)*filterByFeature*(fullName)*filterOperator*(IS_LIKE)*orderByFeature*(fullName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(ACCOUNT_CLASS, "fullName", app.getCurrentLocaleAsIndex()) %></a></li>
@@ -299,7 +299,7 @@ org.openmdx.base.naming.*
             </tr>
 
   	        <tr>
-            	<td class="label"><span class="nw">Max. <%= userView.getFieldLabel(ACCOUNT_MEMBERSHIP_CLASS, "distance", app.getCurrentLocaleAsIndex()) %></span></td>
+            	<td class="<%= CssClass.fieldLabel %>"><span class="nw">Max. <%= userView.getFieldLabel(ACCOUNT_MEMBERSHIP_CLASS, "distance", app.getCurrentLocaleAsIndex()) %></span></td>
   	          <td>
                 <select class="valueL" name="maxHopsPara" tabindex="110">
 <%
@@ -313,7 +313,7 @@ org.openmdx.base.naming.*
   	          </td>
   	          <td class="addon"></td>
 
-            	<td class="label"><span class="nw">Min. <%= userView.getFieldLabel(ACCOUNT_MEMBERSHIP_CLASS, "quality", app.getCurrentLocaleAsIndex()) %></span></td>
+            	<td class="<%= CssClass.fieldLabel %>"><span class="nw">Min. <%= userView.getFieldLabel(ACCOUNT_MEMBERSHIP_CLASS, "quality", app.getCurrentLocaleAsIndex()) %></span></td>
   	          <td>
                 <select class="valueL" name="minQualityPara" tabindex="120">
 <%
@@ -345,8 +345,8 @@ org.openmdx.base.naming.*
   <table class="fieldGroup">
     <tr id="submitButtons" style="font-weight:bold;">
       <td>
-        <INPUT type="Submit" name="OK.Button" id="OK.Button" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onmouseup="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';" />
-        <INPUT type="Submit" name="Cancel.Button" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onmouseup="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';" />
+        <input type="Submit" name="OK.Button" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onmouseup="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';" />
+        <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onmouseup="javascript:$('waitMsg').style.display='block';$('submitButtons').style.visibility='hidden';" />
       </td>
     </tr>
     <tr id="waitMsg" style="display:none;">

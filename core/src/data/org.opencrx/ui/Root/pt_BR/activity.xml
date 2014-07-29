@@ -286,9 +286,9 @@
                       <label>
                         <_item>Estado</_item>
                       </label>
-                      <shortLabel>
-                        <_item> </_item>
-                      </shortLabel>
+ 											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                       <toolTip>
                         <_item>Estado</_item>
                       </toolTip>

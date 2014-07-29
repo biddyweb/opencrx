@@ -100,14 +100,11 @@ public class DoProppatch extends WebDavMethod {
 
     private static Logger LOG = Logger.getLogger(DoProppatch.class.getPackage().getName());
 
-    private final boolean _readOnly;
     private final WebDavStore _store;
 
     public DoProppatch(
-    	WebDavStore store,
-        boolean readOnly
+    	WebDavStore store
     ) {
-        _readOnly = readOnly;
         _store = store;
     }
 
@@ -118,30 +115,21 @@ public class DoProppatch extends WebDavMethod {
         LOG.finest("-- " + this.getClass().getName());
     	HttpServletRequest req = requestContext.getHttpServletRequest();
     	HttpServletResponse resp = requestContext.getHttpServletResponse();    	
-        if (_readOnly) {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            return;
-        }
         String path = getRelativePath(requestContext);
         String parentPath = getParentPath(getCleanPath(path));
-
         Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
-
         if (!checkLocks(requestContext, _store, parentPath)) {
             errorList.put(parentPath, WebdavStatus.SC_LOCKED);
             sendReport(requestContext, errorList);
             return; // parent is locked
         }
-
         if (!checkLocks(requestContext, _store, path)) {
             errorList.put(path, WebdavStatus.SC_LOCKED);
             sendReport(requestContext, errorList);
             return; // resource is locked
         }
-
         // TODO for now, PROPPATCH just sends a valid response, stating that
         // everything is fine, but doesn't do anything.
-
         // Retrieve the resources
         Resource so = null;
         try {
@@ -157,12 +145,9 @@ public class DoProppatch extends WebDavMethod {
             List<String> tochange = new Vector<String>();
             // contains all properties from
             // toset and toremove
-
             path = getCleanPath(getRelativePath(requestContext));
-
             Node tosetNode = null;
             Node toremoveNode = null;
-
             if (req.getContentLength() != 0) {
                 try {
                     DocumentBuilder documentBuilder = getDocumentBuilder();
@@ -193,37 +178,29 @@ public class DoProppatch extends WebDavMethod {
             resp.setStatus(WebdavStatus.SC_MULTI_STATUS);
             resp.setContentType("application/xml");
             resp.setCharacterEncoding("UTF-8");
-
             // Create multistatus object
             XMLWriter writer = new XMLWriter(resp.getWriter(), namespaces);
             writer.writeXMLHeader();
             writer.writeElement("DAV::multistatus", XMLWriter.OPENING);
-
             writer.writeElement("DAV::response", XMLWriter.OPENING);
             String status = new String("HTTP/1.1 " + HttpServletResponse.SC_OK);
-
             // Generating href element
             writer.writeElement("DAV::href", XMLWriter.OPENING);
             writer.writeText(resp.encodeURL(this.getHRef(req, req.getServletPath() + "/" + path, so.isCollection())));
             writer.writeElement("DAV::href", XMLWriter.CLOSING);
             for (Iterator<String> iter = tochange.iterator(); iter.hasNext();) {
                 String property = iter.next();
-
                 writer.writeElement("DAV::propstat", XMLWriter.OPENING);
-
                 writer.writeElement("DAV::prop", XMLWriter.OPENING);
                 writer.writeElement(property, XMLWriter.NO_CONTENT);
                 writer.writeElement("DAV::prop", XMLWriter.CLOSING);
-
                 writer.writeElement("DAV::status", XMLWriter.OPENING);
                 writer.writeText(status);
                 writer.writeElement("DAV::status", XMLWriter.CLOSING);
-
                 writer.writeElement("DAV::propstat", XMLWriter.CLOSING);
             }
             writer.writeElement("DAV::response", XMLWriter.CLOSING);
             writer.writeElement("DAV::multistatus", XMLWriter.CLOSING);
-
             writer.sendData();
         } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);

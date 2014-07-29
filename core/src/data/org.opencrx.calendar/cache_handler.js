@@ -45,31 +45,35 @@ window.addEventListener('load', function(e)
 {
 	window.applicationCache.addEventListener('cached', function(e)
 	{
-		window.location.reload();
+		if(!isUserLogged)
+			window.location.reload();
+		else
+			$('#cacheDialog').css('display','block');
 	}, false);
 
 	window.applicationCache.addEventListener('updateready', function(e)
 	{
-		if(window.applicationCache.status == window.applicationCache.UPDATEREADY)
-		{
-			//window.applicationCache.swapCache();
+		if(!isUserLogged)
 			window.location.reload();
-		}
 		else
-			$('#LoginPage .window').css('display', 'inline-block');
+			$('#cacheDialog').css('display','block');
 	}, false);
 
 	window.applicationCache.addEventListener('obsolete', function(e)
 	{
-		if(window.applicationCache.status == window.applicationCache.OBSOLETE)
+		if(!isUserLogged)
 			window.location.reload();
 		else
-			$('#LoginPage .window').css('display', 'inline-block');
+			$('#cacheDialog').css('display','block');
 	}, false);
 
 	window.applicationCache.addEventListener('noupdate', function(e)
 	{
-		$('#LoginPage .window').css('display', 'inline-block');
+		if(!isUserLogged)
+		{
+			clearInterval(globalCacheUpdateInterval);
+			globalCacheUpdateInterval=setInterval(function(){window.applicationCache.update()}, 300000);
+			//$('#LoginPage .window').css('display', 'inline-block');
+		}
 	}, false);
-
 }, false);

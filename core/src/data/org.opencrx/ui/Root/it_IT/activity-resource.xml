@@ -99,7 +99,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:rateCurrency" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:rateCurrency" _operation="create">
                     <_object>
                       <label>
                         <_item>Divisa</_item>
@@ -128,28 +128,6 @@
                       </label>
                       <toolTip>
                         <_item>Calendario</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:standardRate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tariffa Ordinaria</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tariffa Ordinaria</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:overtimeRate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Tariffa Straordinario</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Tariffa Straordinario</_item>
                       </toolTip>
                     </_object>
                     <_content/>

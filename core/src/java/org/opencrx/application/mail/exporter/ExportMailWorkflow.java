@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -72,10 +72,15 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 
-public class ExportMailWorkflow 
-    extends MailWorkflow {
+/**
+ * ExportMailWorkflow
+ *
+ */
+public class ExportMailWorkflow extends MailWorkflow {
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.opencrx.application.mail.exporter.MailWorkflow#setContent(javax.mail.Message, javax.mail.Session, javax.jdo.PersistenceManager, org.openmdx.base.naming.Path, org.openmdx.base.naming.Path, org.opencrx.kernel.home1.jmi1.UserHome, java.util.Map)
+     */
     @Override
     protected String setContent(
         Message message,
@@ -91,8 +96,7 @@ public class ExportMailWorkflow
             ContextCapable target = null;
             try {
                 target = (ContextCapable)pm.getObjectById(targetIdentity);
-            } 
-            catch(Exception e) {}
+            } catch(Exception e) {}
             text = Notifications.getInstance().getNotificationText(
                 pm,
                 target,
@@ -100,6 +104,8 @@ public class ExportMailWorkflow
                 userHome,
                 params
             );
+            String providerName = wfProcessInstanceIdentity.get(2);
+            String segmentName = wfProcessInstanceIdentity.get(4);
             message.setText(text);
             // message text
             Multipart multipart = new MimeMultipart();
@@ -118,8 +124,8 @@ public class ExportMailWorkflow
                 // nested message
                 MimeMessage nestedMessage = new MimeMessage(session);
                 nestedMessage.setHeader(
-                    "X-Mailer", 
-                    "openCRX SendMail"
+                	"X-Mailer", 
+                	"//OPENCRX//V2//" + providerName + "/" + segmentName
                 );
                 // nested message subject
                 nestedMessage.setSubject(
@@ -152,7 +158,9 @@ public class ExportMailWorkflow
         return text;
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.mail.exporter.MailWorkflow#useSendMailSubjectPrefix()
+	 */
 	@Override
     boolean useSendMailSubjectPrefix(
     ) {
@@ -164,5 +172,3 @@ public class ExportMailWorkflow
     //-----------------------------------------------------------------------
     
 }
-
-//--- End of File -----------------------------------------------------------

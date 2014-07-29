@@ -332,22 +332,6 @@
 										<_content />
 									</org.openmdx.ui1.OperationDefinition>
 
-									<!-- Wizard EnableCrxObject.jsp -->
-									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:enable">
-										<_object>
-											<isQuery>true</isQuery>
-										</_object>
-										<_content />
-									</org.openmdx.ui1.OperationDefinition>
-
-									<!-- Wizard DisableCrxObject.jsp -->
-									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:generic:CrxObject:disable">
-										<_object>
-											<isQuery>true</isQuery>
-										</_object>
-										<_content />
-									</org.openmdx.ui1.OperationDefinition>
-
 									<!-- Security -->
 									<!-- Wizard ChangePasswordManaged.jsp -->
 									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:home1:UserHome:changePasswordManaged">
@@ -1262,44 +1246,6 @@
 												<_item>200</_item>
 												<_item>0</_item>
 												<_item>1000</_item>
-											</order>
-										</_object>
-										<_content />
-									</org.openmdx.ui1.ElementDefinition>
-
-									<!-- Wizard EnableCrxObject.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enable">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Enable</_item>
-											</toolTip>
-											<label>
-												<_item>Enable</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>145</_item>
-											</order>
-										</_object>
-										<_content />
-									</org.openmdx.ui1.ElementDefinition>
-
-									<!-- Wizard DisableCrxObject.jsp -->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disable">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Disable</_item>
-											</toolTip>
-											<label>
-												<_item>Disable</_item>
-											</label>
-											<order>
-												<_item>200</_item>
-												<_item>0</_item>
-												<_item>148</_item>
 											</order>
 										</_object>
 										<_content />

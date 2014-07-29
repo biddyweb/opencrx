@@ -1,4 +1,4 @@
-﻿<%@page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %>
+<%@page contentType= "text/html;charset=utf-8" language="java" pageEncoding= "UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -95,7 +95,6 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:account1:UnspecifiedAccount">
 	<meta name="order" content="9101">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
@@ -103,20 +102,20 @@ org.openmdx.base.naming.*
 	<input type="hidden" id="Command" name="Command" value="" />  
 	<table class="fieldGroup">
 		<tr>
-			<td class="label"><span class="nw">&nbsp;</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">&nbsp;</span></td>
 			<td></td>
 			<td class="addon"></td>
-			<td class="label"><span class="nw">&nbsp;</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">&nbsp;</span></td>
 			<td></td>
 			<td class="addon"></td>
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">Source <%= app.getLabel(MergeMembersController.ACCOUNT_CLASS) %>:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Source <%= app.getLabel(MergeMembersController.ACCOUNT_CLASS) %>:</span></td>
 			<td colspan=4><%= (new ObjectReference(wc.getObject(), app)).getTitle() %></td>
 			<td class="addon"></td>
 		</tr>
 		<tr>
-			<td class="label"><span class="nw">Target <%= app.getLabel(MergeMembersController.ACCOUNT_CLASS) %>:</span></td>
+			<td class="<%= CssClass.fieldLabel %>"><span class="nw">Target <%= app.getLabel(MergeMembersController.ACCOUNT_CLASS) %>:</span></td>
 <%
 			String lookupId = Base.getInstance().getUidAsString();
 			Action findAccountTargetObjectAction = Action.getFindObjectAction(MergeMembersController.ACCOUNT_REFERENCE, lookupId);
@@ -124,7 +123,7 @@ org.openmdx.base.naming.*
 %>
 			<td colspan=4>
 				<div class="autocompleterMenu">
-					<ul id="nav" class="nav" onmouseover="sfinit(this);" >
+					<ul id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" onmouseover="sfinit(this);" >
 					  <li><a href="#"><img border="0" alt="" src="./images/autocomplete_select.png" /></a>
 					    <ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
 					      <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['./ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= wc.getProviderName() %>/segment/<%= wc.getSegmentName() %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Account)*filterByFeature*(fullName)*filterOperator*(IS_LIKE)*orderByFeature*(fullName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= wc.getFieldLabel(MergeMembersController.ACCOUNT_CLASS, "fullName", app.getCurrentLocaleAsIndex()) %></a></li>
@@ -160,12 +159,12 @@ org.openmdx.base.naming.*
 			</td>
 		</tr>
 		<tr>
-		   <td class="label">Add disabled members:</td>
+		   <td class="<%= CssClass.fieldLabel %>">Add disabled members:</td>
 		  <td colspan=4><input type="checkbox" name="includeDisabledMembers" tabindex="500" value="true" <%= Boolean.TRUE.equals(wc.getFormFields().getIncludeDisabledMembers()) ? "checked" : "" %> /></td>
 		  <td class="addon"></td>
 		</tr>
 		<tr>
-		   <td class="label">Add disabled accounts:</td>
+		   <td class="<%= CssClass.fieldLabel %>">Add disabled accounts:</td>
 		  <td colspan=4><input type="checkbox" name="includeDisabledAccounts" tabindex="500" value="true" <%= Boolean.TRUE.equals(wc.getFormFields().getIncludeDisabledAccounts()) ? "checked" : "" %> /></td>
 		  <td class="addon"></td>
 		</tr>
@@ -173,8 +172,8 @@ org.openmdx.base.naming.*
 	<br>
 	<div id="WaitIndicator" style="float:left;width:50px;height:24px;" class="wait">&nbsp;</div>
 	<div id="SubmitArea" style="float:left;display:none;">				
-		<input type="submit" name="OK" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
-		<input type="submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+		<input type="submit" name="OK" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+		<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
 	</div>
 	<br />
 <%

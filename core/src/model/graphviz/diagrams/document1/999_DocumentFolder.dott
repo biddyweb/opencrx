@@ -21,17 +21,18 @@ digraph "Diagram DocumentFolder [Package org:opencrx:kernel:document1]" {
 	{
 	  rank=same;
 	  LAYER0[style=invis];
-	  ${CLASS[name=org:opencrx:kernel:document1:Segment,compartments=false,width=10]};
+	  ${CLASS[name=org:opencrx:kernel:document1:Segment,compartments=false,width=8]};
 	}
 	{
 	  rank=same;
 	  LAYER1[style=invis];
-	  ${CLASS[name=org:opencrx:kernel:document1:DocumentFolder,compartments=true,width=8]};
+	  ${CLASS[name=org:opencrx:kernel:document1:DocumentFolder,compartments=true,width=10]};
 	}
 	{
 	  rank=same;
 	  LAYER2[style=invis];
 	  ${CLASS[name=org:opencrx:kernel:document1:DocumentFolderEntry,compartments=true,width=10]};
+	  ${CLASS[name=org:opencrx:kernel:document1:DocumentFolderShare,compartments=true,width=4]};
 	}
 	{
 	  rank=same;
@@ -42,6 +43,7 @@ digraph "Diagram DocumentFolder [Package org:opencrx:kernel:document1]" {
 	  ${CLASS[name=org:opencrx:kernel:document1:DocumentBasedFolderEntry,compartments=true,width=2]};
 	  ${CLASS[name=org:opencrx:kernel:base:Auditee,compartments=false,fillcolor="#FFBD9D",width=2]};
 	  ${CLASS[name=org:opencrx:kernel:base:Indexed,compartments=false,fillcolor="#FFBD9D",width=2]};
+	  ${CLASS[name=org:opencrx:kernel:home1:UserHome,compartments=false,fillcolor="#FFBD9D",width=2]};
 	}
 	{
 	  rank=same;

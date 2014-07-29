@@ -15,6 +15,7 @@
 										<_object>
 											<name>
 												<_item>ratetype</_item>
+												<_item>org:opencrx:kernel:activity1:ResourceRate:rateType</_item>
 												<_item>org:opencrx:kernel:activity1:AbstractWorkRecord:rateType</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityAddWorkRecordByDurationParams:rateType</_item>
 												<_item>org:opencrx:kernel:activity1:ResourceAddWorkRecordByDurationParams:rateType</_item>

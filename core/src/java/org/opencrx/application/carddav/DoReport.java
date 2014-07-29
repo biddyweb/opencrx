@@ -60,6 +60,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -110,6 +111,9 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
 	        return;
 	    }
         Element rootElement = document.getDocumentElement();
+        // Filter
+        Date timeRangeStart = null;
+        Date timeRangeEnd = null;
         // href
     	Collection<Resource> resources = Collections.emptyList();
         List<Node> hrefNodes = XMLHelper.findSubElements(rootElement, "href");
@@ -133,7 +137,12 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
     	}
     	// Query
     	else if(so instanceof AccountCollectionResource) {
-    		resources = _store.getChildren(requestContext, so);
+    		resources = _store.getChildren(
+    			requestContext, 
+    			so,
+    			timeRangeStart,
+    			timeRangeEnd
+    		);
        	}
         // Properties
         Node propNode = XMLHelper.findSubElement(rootElement, "prop");

@@ -113,6 +113,7 @@ import org.opencrx.kernel.depot1.jmi1.DepotPosition;
 import org.opencrx.kernel.depot1.jmi1.DepotReport;
 import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
 import org.opencrx.kernel.document1.jmi1.Document;
+import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -247,6 +248,9 @@ public class Base extends AbstractImpl {
                     newAlert.getOwningGroup().addAll(
                         userHomeByRoot.getOwningGroup()
                     );
+                    // Only owner of alert may delete and update
+                    newAlert.setAccessLevelDelete(SecurityKeys.ACCESS_LEVEL_PRIVATE);
+                    newAlert.setAccessLevelUpdate(SecurityKeys.ACCESS_LEVEL_PRIVATE);
                     pmRoot.currentTransaction().begin();
                     userHomeByRoot.addAlert(
                     	this.getUidAsString(),
@@ -610,8 +614,7 @@ public class Base extends AbstractImpl {
     					this.getTitle(address, codeMapper, locale, asShortTitle) + 
     					this.toPlain(" / ") + 
     					this.toPlain(account.getFullName());
-    			}
-    			else {
+    			} else {
     				return address  == null ? this.toPlain("Untitled") : 
     					this.getTitle(address, codeMapper, locale, asShortTitle);                
     			}
@@ -777,7 +780,11 @@ public class Base extends AbstractImpl {
     				this.getTitle((RefObject_1_0)refObj.refGetValue("toContact"), codeMapper, locale, asShortTitle));
     		} else if(refObj instanceof org.opencrx.kernel.home1.jmi1.UserHome) {
     			org.opencrx.kernel.home1.jmi1.UserHome userHome = (org.opencrx.kernel.home1.jmi1.UserHome)refObj;
-    			return this.getTitle(userHome.getContact(), codeMapper, locale, asShortTitle);
+    			return
+    				this.getTitle(userHome.getContact(), codeMapper, locale, asShortTitle) + 
+    				this.toPlain(" (") +
+    				this.toPlain(userHome.refGetPath().getLastSegment().toClassicRepresentation()) +
+    				this.toPlain(")");
     		} else if(refObj instanceof org.opencrx.kernel.home1.jmi1.AccessHistory) {
     			return (refObj.refGetValue("reference") == null ? this.toPlain("Untitled") : 
     				this.getTitle((RefObject_1_0)refObj.refGetValue("reference"), codeMapper, locale, asShortTitle));
@@ -878,6 +885,12 @@ public class Base extends AbstractImpl {
     				this.toPlain(linkFrom.getName()) + this.toPlain(" (") + 
     				this.getTitle(linkFrom.getLinkFrom(), codeMapper, locale, asShortTitle) + 
     				this.toPlain(")");
+    		} else if(refObj instanceof DocumentFolder) {
+    			DocumentFolder folder = (DocumentFolder)refObj;
+    			return
+    				(folder.getParent() == null ? "" : this.getTitle(folder.getParent(), codeMapper, locale, asShortTitle)) +
+    				this.toPlain("/") +
+    				this.toPlain(folder.getName());
     		} else {
     			return null;
     		}
@@ -889,6 +902,8 @@ public class Base extends AbstractImpl {
 	//-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------
+	public static final String PRIVATE_SUFFIX = "~Private";
+
     public static final short IMPORT_EXPORT_OK = 0;
     public static final short IMPORT_EXPORT_FORMAT_NOT_SUPPORTED = 1;
     public static final short IMPORT_EXPORT_ITEM_NOT_VALID = 2;

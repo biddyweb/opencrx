@@ -96,16 +96,13 @@ public class DoCopy extends WebDavMethod {
 
     private final WebDavStore _store;
     private final DoDelete _doDelete;
-    private final boolean _readOnly;
 
     public DoCopy(
     	WebDavStore store,
-        DoDelete doDelete, 
-        boolean readOnly
+        DoDelete doDelete
     ) {
         _store = store;
         _doDelete = doDelete;
-        _readOnly = readOnly;
     }
 
     @Override
@@ -115,25 +112,20 @@ public class DoCopy extends WebDavMethod {
         LOG.finest("-- " + this.getClass().getName());
         HttpServletRequest req = requestContext.getHttpServletRequest();
         HttpServletResponse resp = requestContext.getHttpServletResponse();
-        if (!_readOnly) {
-            try {
-                if (!copyResource(requestContext))
-                    return;
-            } catch (AccessDeniedException e) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            } catch (ObjectAlreadyExistsException e) {
-                resp.sendError(HttpServletResponse.SC_CONFLICT, req.getRequestURI());
-            } catch (ObjectNotFoundException e) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
-            } catch (WebdavException e) {
-            	new ServiceException(e).log();
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } finally {
-            }
-        } else {
+        try {
+            if (!copyResource(requestContext))
+                return;
+        } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } catch (ObjectAlreadyExistsException e) {
+            resp.sendError(HttpServletResponse.SC_CONFLICT, req.getRequestURI());
+        } catch (ObjectNotFoundException e) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
+        } catch (WebdavException e) {
+        	new ServiceException(e).log();
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
         }
-
     }
 
     /**
@@ -315,7 +307,7 @@ public class DoCopy extends WebDavMethod {
         }
         if (infiniteDepth) {
         	Resource so = _store.getResourceByPath(requestContext, sourcePath);
-            Collection<Resource> children = _store.getChildren(requestContext, so);
+            Collection<Resource> children = _store.getChildren(requestContext, so, null, null);
             for(Resource childSo: children) {
                 try {
                     if(childSo.isCollection()) {

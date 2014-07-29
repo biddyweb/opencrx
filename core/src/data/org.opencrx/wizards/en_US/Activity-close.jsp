@@ -67,7 +67,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -107,9 +107,11 @@ org.openmdx.kernel.log.*
   <meta name="forClass" content="org:opencrx:kernel:activity1:ActivityFilterGlobal">
   <meta name="order" content="600">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+  <link rel="stylesheet" href="../../_style/colors.css">
+  <link rel="stylesheet" href="../../_style/n2default.css">
+  <link rel="stylesheet" href="../../_style/ssf.css">
   <script language="javascript" type="text/javascript" src="../../javascript/prototype.js"></script>
-  <link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-  <link href="../../_style/colors.css" rel="stylesheet" type="text/css">
   <link rel='shortcut icon' href='../../images/favicon.ico' />
 </head>
 
@@ -213,10 +215,9 @@ Close <%= activityXris.size() %> <%= activityXris.size() == 1 ? "Activity" : "Ac
 					System.out.println("closed a total of " + updateCount + " activities");
 %>
 				</pre>
-				
-			    <input type="submit" id="Reload.button" name="Reload" tabindex="9000" <%= actionOK ? "" : "style='display:none;'" %> value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
-			    <input type="submit" id="OK.button"     name="OK"     tabindex="9010" <%= actionOK ? "style='display:none;'" : "" %> value="<%= app.getTexts().getOkTitle()    %>" onclick="javascript:$('Command').value=this.name;" />
-			    <input type="submit" id="Cancel.button" name="Cancel" tabindex="9020" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
+			    <input type="submit" id="Reload.button" name="Reload" class="CssClass.btn.toString() + " " + CssClass.btnDefault.toString()" tabindex="9000" <%= actionOK ? "" : "style='display:none;'" %> value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
+			    <input type="submit" id="OK.button" name="OK" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" <%= actionOK ? "style='display:none;'" : "" %> value="<%= app.getTexts().getOkTitle()    %>" onclick="javascript:$('Command').value=this.name;" />
+			    <input type="submit" id="Cancel.button" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9020" value="<%= app.getTexts().getCancelTitle() %>"  onClick="javascript:window.close();" />
 			    <br>
           </form>
         </div> <!-- content -->

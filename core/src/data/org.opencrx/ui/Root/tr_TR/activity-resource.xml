@@ -99,7 +99,7 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:rateCurrency" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:rateCurrency" _operation="create">
                     <_object>
                       <label>
                         <_item>Para Birimi</_item>
@@ -128,28 +128,6 @@
                       </label>
                       <toolTip>
                         <_item>Takvim</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:standardRate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Standart Oran</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Standart Oran</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:overtimeRate" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Fazla Mesai Oranı</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Fazla Mesai Oranı</_item>
                       </toolTip>
                     </_object>
                     <_content/>

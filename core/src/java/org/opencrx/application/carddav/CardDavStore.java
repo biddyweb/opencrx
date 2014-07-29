@@ -59,6 +59,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -82,6 +83,7 @@ import org.opencrx.kernel.account1.jmi1.Member;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.VCard;
+import org.opencrx.kernel.backend.VCard.PutVCardResult;
 import org.opencrx.kernel.home1.cci2.CardProfileQuery;
 import org.opencrx.kernel.home1.jmi1.CardProfile;
 import org.opencrx.kernel.home1.jmi1.ContactsFeed;
@@ -177,10 +179,12 @@ public class CardDavStore implements WebDavStore {
 	@Override
 	public Collection<Resource> getChildren(
 		RequestContext requestContext, 
-		Resource res
+		Resource res,
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		if(res instanceof CardDavResource) {
-			return ((CardDavResource)res).getChildren();
+			return ((CardDavResource)res).getChildren(timeRangeStart, timeRangeEnd);
 		} else {
 			return Collections.emptyList();
 		}
@@ -312,29 +316,54 @@ public class CardDavStore implements WebDavStore {
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#removeResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
 	 */
 	@Override
-	public void removeResource(
-		RequestContext requestContext, 
+	public Status removeResource(
+		RequestContext requestContext,
+		String path,
 		Resource res
 	) {
-		if(res instanceof AccountResource) {
-			PersistenceManager pm = ((CardDavRequestContext)requestContext).getPersistenceManager();
-			Account account = ((AccountResource)res).getObject();
-			MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
-			query.thereExistsAccount().equalTo(account);
-			List<Member> members = ((AccountResource)res).getAccountCollectionResource().getObject().getAccountGroup().getMember(query);
-			pm.currentTransaction().begin();
-			for(Member member: members) {
-				member.setDisabled(true);
+		String parentPath = this.getParentPath(path); 
+		Resource parent = this.getResourceByPath(
+			requestContext, 
+			parentPath
+		);
+		if(
+			parent instanceof AccountCollectionResource && 
+			res instanceof AccountResource
+		) {
+			AccountCollectionResource accountCollection = (AccountCollectionResource)parent;
+			if(Boolean.TRUE.equals(accountCollection.getObject().isAllowAddDelete())) {
+				PersistenceManager pm = ((CardDavRequestContext)requestContext).getPersistenceManager();
+				try {
+					Account account = ((AccountResource)res).getObject();
+					MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
+					query.thereExistsAccount().equalTo(account);
+					List<Member> members = ((AccountResource)res).getAccountCollectionResource().getObject().getAccountGroup().getMember(query);
+					pm.currentTransaction().begin();
+					for(Member member: members) {
+						member.setDisabled(true);
+					}
+					pm.currentTransaction().commit();
+					return Status.OK;
+				} catch(Exception e) {
+					new ServiceException(e).log();
+					try {
+						pm.currentTransaction().rollback();
+					} catch(Exception ignore) {}
+					return Status.FORBIDDEN;
+				}
+			} else {
+				return Status.FORBIDDEN;
 			}
-			pm.currentTransaction().commit();
+		} else {
+			return Status.FORBIDDEN;
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#moveResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource, java.lang.String, java.lang.String)
 	 */
 	@Override
-    public MoveResourceStatus moveResource(
+    public Status moveResource(
     	RequestContext requestContext, 
     	Resource res, 
     	String sourcePath,
@@ -393,7 +422,7 @@ public class CardDavStore implements WebDavStore {
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#putResource(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, java.io.InputStream, java.lang.String)
 	 */
 	@Override
-    public PutResourceStatus putResource(
+    public Status putResource(
     	RequestContext requestContext, 
     	String path, 
     	InputStream content, 
@@ -404,7 +433,7 @@ public class CardDavStore implements WebDavStore {
 			requestContext, 
 			parentPath
 		);
-		if(parent instanceof AccountCollectionResource) {			
+		if(parent instanceof AccountCollectionResource) {
 	    	try {
 		    	BufferedReader reader = new BufferedReader(
 		    		new InputStreamReader(content, "UTF-8")
@@ -422,46 +451,51 @@ public class CardDavStore implements WebDavStore {
 		        		reader, 
 		        		accountSegment
 		        	);
-		        	// Create membership
-		        	if(result.getAccount() != null) {
-		        		MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
-		        		query.thereExistsAccount().equalTo(result.getAccount());
-		        		List<Member> members = group.getMember(query);
-		        		if(members.isEmpty()) {
-		        			boolean isTxLocal = !pm.currentTransaction().isActive();
-		        			if(isTxLocal) {
-		        				pm.currentTransaction().begin();
-		        			}
-		        			Member member = pm.newInstance(Member.class);
-							member.setName(result.getAccount().getFullName());
-							member.setAccount(result.getAccount());
-							member.setQuality(Accounts.MEMBER_QUALITY_NORMAL);
-							group.addMember(
-								Base.getInstance().getUidAsString(), 
-								member
-							);
-							if(isTxLocal) {
-								pm.currentTransaction().commit();
-							}
-		        		}
-	 	        	}
-		            if(result.getOldUID() != null && result.getAccount() != null) {
-		            	this.uidMapping.put(
-		            		result.getOldUID(), 
-		            		result.getAccount().refGetPath().getBase()
-		            	);
+		        	if(result.getStatus() != PutVCardResult.Status.ERROR) {
+			        	// Create membership
+			        	if(result.getAccount() != null) {
+			        		MemberQuery query = (MemberQuery)pm.newQuery(Member.class);
+			        		query.thereExistsAccount().equalTo(result.getAccount());
+			        		List<Member> members = group.getMember(query);
+			        		if(members.isEmpty()) {
+			        			boolean isTxLocal = !pm.currentTransaction().isActive();
+			        			if(isTxLocal) {
+			        				pm.currentTransaction().begin();
+			        			}
+			        			Member member = pm.newInstance(Member.class);
+								member.setName(result.getAccount().getFullName());
+								member.setAccount(result.getAccount());
+								member.setQuality(Accounts.MEMBER_QUALITY_NORMAL);
+								group.addMember(
+									Base.getInstance().getUidAsString(), 
+									member
+								);
+								if(isTxLocal) {
+									pm.currentTransaction().commit();
+								}
+			        		}
+		 	        	}
+			            if(result.getOldUID() != null && result.getAccount() != null) {
+			            	this.uidMapping.put(
+			            		result.getOldUID(), 
+			            		result.getAccount().refGetPath().getBase()
+			            	);
+			            }
+		        	}
+		            switch(result.getStatus()) {
+			            case CREATED: return Status.OK_CREATED;
+			            case UPDATED: return Status.OK;
+			            case ERROR: return Status.FORBIDDEN;
 		            }
-		        	return result.getStatus() == VCard.PutVCardResult.Status.CREATED ? 
-		        		PutResourceStatus.CREATED : 
-		        			PutResourceStatus.UPDATED;
 		    	} else {
-		    		return PutResourceStatus.FORBIDDEN;
+		    		return Status.FORBIDDEN;
 		    	}
 	    	} catch(Exception e) {
 	    		new ServiceException(e).log();
+	    		return Status.FORBIDDEN;
 	    	}
 		}
-	    return null;
+	    return Status.FORBIDDEN;
     }
 
 	/* (non-Javadoc)

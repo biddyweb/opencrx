@@ -671,10 +671,10 @@ public class Exporter extends AbstractImpl {
 			String qualifierName = null;
 			if(!objectClass.objGetList("compositeReference").isEmpty()) {
 				ModelElement_1_0 compReference = model.getElement(((Path) objectClass.objGetValue("compositeReference")).getBase());
-				ModelElement_1_0 associationEnd = model.getElement(((Path) compReference.objGetValue("referencedEnd")).getBase());
+				ModelElement_1_0 associationEnd = model.getElement(compReference.getReferencedEnd().getBase());
 				qualifierName = (String) associationEnd.objGetValue("qualifierName");
 			}
-			else if("org:openmdx:base:Authority".equals(objectClass.objGetValue("qualifiedName"))) {
+			else if("org:openmdx:base:Authority".equals(objectClass.getQualifiedName())) {
 				qualifierName = "name";
 			}
 			else {
@@ -734,18 +734,18 @@ public class Exporter extends AbstractImpl {
 				@SuppressWarnings("unchecked")
                 Map<String, ModelElement_1_0> references = model.getElement(objectType).objGetMap("reference");
 				for (ModelElement_1_0 featureDef : references.values()) {
-					ModelElement_1_0 referencedEnd = model.getElement(featureDef.objGetValue("referencedEnd"));
-					boolean referenceIsComposite = model.isReferenceType(featureDef) && AggregationKind.COMPOSITE.equals(referencedEnd.objGetValue("aggregation"));
-					boolean referenceIsShared = model.isReferenceType(featureDef) && AggregationKind.SHARED.equals(referencedEnd.objGetValue("aggregation"));
+					ModelElement_1_0 referencedEnd = model.getElement(featureDef.getReferencedEnd());
+					boolean referenceIsComposite = model.isReferenceType(featureDef) && AggregationKind.COMPOSITE.equals(referencedEnd.getAggregation());
+					boolean referenceIsShared = model.isReferenceType(featureDef) && AggregationKind.SHARED.equals(referencedEnd.getAggregation());
 					// Only navigate changeable references which are either
 					// 'composite' or 'shared'
 					// Do not navigate references with aggregation 'none'.
 					if(referenceIsComposite || referenceIsShared) {
-						String referenceName = (String) featureDef.objGetValue("name");
+						String referenceName = (String) featureDef.getName();
 						Set<String> referenceFilter = this.params.getReferenceFilter();
 						boolean matches = referenceFilter == null;
 						if(!matches) {
-							String qualifiedReferenceName = (String) featureDef.objGetValue("qualifiedName");
+							String qualifiedReferenceName = (String) featureDef.getQualifiedName();
 							for (int i = object.getLevel(); i < MAX_LEVELS; i++) {
 								matches = 
 									referenceFilter.contains(referenceName + "[" + i + "]") || 
@@ -1022,7 +1022,7 @@ public class Exporter extends AbstractImpl {
 										if(!matches) {
 											ModelElement_1_0 featureDef = attributes.get(attributeName);
 											if(featureDef != null) {
-												String qualifiedFeatureName = (String) featureDef.objGetValue("qualifiedName");
+												String qualifiedFeatureName = (String) featureDef.getQualifiedName();
 												matches = referenceFilter.contains(attributeName + "[1]") || referenceFilter.contains(qualifiedFeatureName + "[1]");
 											}
 										}
@@ -1147,7 +1147,7 @@ public class Exporter extends AbstractImpl {
 							multiplicity == Multiplicity.SPARSEARRAY ||
 							multiplicity == Multiplicity.MAP;
 						boolean needsPosition = multiplicity == Multiplicity.SPARSEARRAY;
-						String elementTag = this.toSimpleQualifiedName((String) attributeDef.objGetValue("qualifiedName"));
+						String elementTag = this.toSimpleQualifiedName((String) attributeDef.getQualifiedName());
 						List<Object> attributeValues = new ArrayList<Object>();
 						if(attributeValue instanceof Collection<?>) {
 							try {
@@ -1166,8 +1166,8 @@ public class Exporter extends AbstractImpl {
 							int valueIndex = 0;
 							for (Object value : attributeValues) {
 								String stringValue = null;
-								ModelElement_1_0 attributeType = this.model.getDereferencedType(attributeDef.objGetValue("type"));
-								String typeName = (String) attributeType.objGetValue("qualifiedName");
+								ModelElement_1_0 attributeType = this.model.getDereferencedType(attributeDef.getType());
+								String typeName = (String) attributeType.getQualifiedName();
 								if(PrimitiveTypes.DATETIME.equals(typeName)) {
 									String v = DateTimeFormat.BASIC_UTC_FORMAT.format((Date) value);
 									String t = v.substring(0, 4) + "-" + v.substring(4, 6) + "-" + v.substring(6, 11) + ":" + v.substring(11, 13) + ":" + v.substring(13, 20);

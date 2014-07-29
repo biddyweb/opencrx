@@ -90,6 +90,8 @@ abstract class WebDavResource implements Resource {
 	}
 	
 	public <T extends Resource> Collection<T> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		return Collections.emptyList();
 	}

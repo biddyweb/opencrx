@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: SegmentImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -54,11 +54,23 @@ package org.opencrx.kernel.account1.aop2;
 
 import org.openmdx.base.aop2.AbstractObject;
 
+/**
+ * SegmentImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class SegmentImpl
 	<S extends org.opencrx.kernel.account1.jmi1.Segment,N extends org.opencrx.kernel.account1.cci2.Segment,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public SegmentImpl(
         S same,
         N next

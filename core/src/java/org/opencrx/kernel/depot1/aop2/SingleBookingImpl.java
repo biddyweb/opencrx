@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: DepotImpl
+ * Description: SingleBookingImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,12 +59,24 @@ import org.opencrx.kernel.backend.Depots;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * SingleBookingImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class SingleBookingImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.SingleBooking,N extends org.opencrx.kernel.depot1.cci2.SingleBooking,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements DeleteCallback {
     
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public SingleBookingImpl(
         S same,
         N next
@@ -72,17 +84,18 @@ public class SingleBookingImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Depots.getInstance().removeSingleBooking(
+    		Depots.getInstance().preDelete(
     			this.sameObject(), 
     			true
     		);
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,

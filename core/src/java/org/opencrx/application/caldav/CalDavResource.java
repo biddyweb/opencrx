@@ -96,10 +96,12 @@ abstract class CalDavResource implements Resource {
 	}
 
 	public <T extends Resource> Collection<T> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		return Collections.emptyList();
 	}
-	
+
 	public CalDavRequestContext getRequestContext(
 	) {
 		return (CalDavRequestContext)this.requestContext;

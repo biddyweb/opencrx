@@ -1,4 +1,4 @@
-﻿<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@	page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /**
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
@@ -9,7 +9,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2011-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2011-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -63,7 +63,7 @@ org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*,
@@ -713,10 +713,11 @@ org.apache.poi.hssf.util.*
 	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
 	<meta name="order" content="4999">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/ssf.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/calendar-small.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
+	<link href="../../_style/calendar-small.css" rel="stylesheet">
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
 	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<script language="javascript" type="text/javascript" src="../../javascript/calendar/lang/calendar-<%= app.getCurrentLocaleAsString() %>.js"></script> <!-- calendar language -->
@@ -833,8 +834,8 @@ org.apache.poi.hssf.util.*
 		TD.totalR{border-top:1px solid black;border-bottom:1px solid black;padding:0px 16px 0px 0px;font-weight:bold;text-align:right;}
 		TD.smallheaderR{border-bottom:1px solid black;padding:0px 16px 0px 0px;font-weight:bold;text-align:right;}
 		TD.miniheader{font-size:7pt;}
-		TD.padded{padding:0px 15px 0px 0px;}
-		TD.padded_r{padding:0px 15px 0px 0px;text-align:right;}
+		TD.padded{padding:0px 15px 0px 0px;white-space:nowrap;}
+		TD.padded_r{padding:0px 15px 0px 0px;text-align:right;white-space:nowrap;}
 		TR.centered TD {text-align:center;}
 		TR.even TD {background-color:#EEEEFF;}
 		TR.match TD {background-color:#FFFE70;}
@@ -883,11 +884,11 @@ org.apache.poi.hssf.util.*
 			<div id="content" style="padding:0px 0.5em 0px 0.5em;">
 				<div id="aPanel">
 					<div id="inspector">
-						<div class="inspTabPanel" style="z-index: 201;">
-							<a class="<%= isWorkRecord && !isWorkRecordInPercent ? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='';										 $('reload.button').click();" href="#">Work Report</a>
-							<a class="<%= isWorkRecordInPercent									? "selected" : "" %>" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='isWorkRecordInPercent';$('reload.button').click();" href="#">Work Report in %</a>
-							<a class="<%= isWorkRecord													 ? "" : "selected" %>" onclick="$('isExpenseRecord').value='isExpenseRecord';$('isWorkRecordInPercent').value='';			$('reload.button').click();" href="#">Expense Report</a>
-						</div>
+						<ul class="nav nav-tabs nav-condensed" style="position:relative;z-index:1001;">
+							<li class="<%= isWorkRecord && !isWorkRecordInPercent ? "active" : "hidden-print" %>"><a href="#" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='';										  $('reload.button').click();" href="#">Work Report</a></li>
+							<li class="<%= isWorkRecord && isWorkRecordInPercent  ? "active" : "hidden-print" %>"><a href="#" onclick="$('isExpenseRecord').value='';$('isWorkRecordInPercent').value='isWorkRecordInPercent';$('reload.button').click();" href="#">Work Report in %</a></li>
+							<li class="<%= isWorkRecord                           ? "hidden-print" : "active" %>"><a href="#" onclick="$('isExpenseRecord').value='isExpenseRecord';$('isWorkRecordInPercent').value='';			$('reload.button').click();" href="#">Expense Report</a></li>
+						</ul>
 						<div id="inspContent" class="inspContent" style="z-index: 200;">
 							<div id="inspPanel0" class="selected" style="padding-top: 10px;">
 
@@ -912,7 +913,7 @@ org.apache.poi.hssf.util.*
 								<fieldset>
 								<table class="fieldGroup">
 									<tr>
-										<td class="label"><span class="nw"><%= app.getTexts().getSelectAllText() %></span></td>
+										<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getTexts().getSelectAllText() %></span></td>
 										<td nowrap>
 <%
 											boolean isManualEntry = "*".compareTo(selector) == 0;
@@ -969,7 +970,7 @@ org.apache.poi.hssf.util.*
 										</td>
 										<td class="addon"></td>
 
-										<td class="label"><span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>:</span></td>
+										<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "startedAt", app.getCurrentLocaleAsIndex()) %>:</span></td>
 										<td style="padding-top:2px;">
 												<input type="text" class="valueL" <%= scheduledStartDateOK ? "" : ERROR_STYLE %> name="scheduledStart" id="scheduledStart" maxlength="16" tabindex="<%= tabIndex++ %>" value="<%= scheduledStartDateOK ?	jsCalenderf.format(scheduledStartDate.getTime()) : scheduledStart %>" <%= isManualEntry ? "" : "readonly style='background-color:#F3F3F3;'" %> />
 										</td>
@@ -990,11 +991,11 @@ org.apache.poi.hssf.util.*
 									</tr>
 
 									<tr>
-										<td class="label"><span class="nw"></span></td>
+										<td class="<%= CssClass.fieldLabel %>"><span class="nw"></span></td>
 										<td nowrap></td>
 										<td class="addon"></td>
 
-										<td class="label"><span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %>:</span></td>
+										<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "endedAt", app.getCurrentLocaleAsIndex()) %>:</span></td>
 										<td style="padding-top:2px;">
 												<input type="text" class="valueL" <%= scheduledEndDateOK ? "" : ERROR_STYLE %> name="scheduledEnd" id="scheduledEnd" maxlength="16" tabindex="<%= tabIndex++ %>" value="<%= scheduledEndDateOK ?	jsCalenderf.format(scheduledEndDate.getTime()) : scheduledEnd %>" <%= isManualEntry ? "" : "readonly style='background-color:#F3F3F3;'" %> />
 										</td>
@@ -1019,7 +1020,7 @@ org.apache.poi.hssf.util.*
 								<fieldset>
 								<table class="fieldGroup">
 									<tr>
-										<td class="label"><span class="nw"><%= app.getLabel(CONTACT_CLASS) %>:</span></td>
+										<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= app.getLabel(CONTACT_CLASS) %>:</span></td>
 <%
 										String lookupId = org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString();
 										Action findContactTargetObjectAction = Action.getFindObjectAction(FEATURE_CONTACT_TARGET_FINDER, lookupId);
@@ -1027,7 +1028,7 @@ org.apache.poi.hssf.util.*
 %>
 										<td nowrap>
 											<div class="autocompleterMenu">
-												<ul id="nav" class="nav" onmouseover="sfinit(this);" >
+												<ul id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" onmouseover="sfinit(this);" >
 													<li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
 														<ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
 															<li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(fullName)*filterOperator*(IS_LIKE)*orderByFeature*(fullName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= accountName %> / <%= userView.getFieldLabel(ACCOUNT_CLASS, "fullName", app.getCurrentLocaleAsIndex()) %></a></li>
@@ -1069,7 +1070,7 @@ org.apache.poi.hssf.util.*
 									</tr>
 
 									<tr>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											<span class="nw"><%= app.getLabel(RESOURCE_CLASS) %>:</span>
 										</td>
 										<td>
@@ -1125,7 +1126,7 @@ org.apache.poi.hssf.util.*
 									</tr>
 
 									<tr>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											<span class="nw"><%= app.getLabel(ACTIVITYFILTER_CLASS) %>:</span>
 										</td>
 										<td nowrap>
@@ -1364,7 +1365,7 @@ org.apache.poi.hssf.util.*
 									if (hasProjects) {
 %>
 										<tr <%= ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0 ? "" : "style='display:none;'" %>>
-											<td class="label">
+											<td class="<%= CssClass.fieldLabel %>">
 												<span class="nw"><%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex()) %> - <%= userView.getFieldLabel(ACTIVITYTRACKER_CLASS, "userString1", app.getCurrentLocaleAsIndex()) %>:</span>
 											</td>
 											<td nowrap>
@@ -1489,7 +1490,7 @@ org.apache.poi.hssf.util.*
 									}
 %>
 									<tr>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											<div style="float:right;">
 													<img class="timeButtonL" border="0" title=">" alt="" src="../../images/filter_down_star.gif" onclick="javascript:$('activitySortOrder').value = '<%= (activitySortOrder + 1) % MAX_ACTIVITY_SORT_ORDER %>';$('reload.button').click();" />
 											</div>
@@ -1553,7 +1554,7 @@ org.apache.poi.hssf.util.*
 									</tr>
 									<!-- isBillable -->
 									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
 										<td>
@@ -1563,7 +1564,7 @@ org.apache.poi.hssf.util.*
 									</tr>
 									<!--	isReimbursable -->
 									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											<span class="nw"><%= userView.getFieldLabel(WORKANDEXPENSERECORD_CLASS, "isReimbursable", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
 										<td>
@@ -1573,7 +1574,7 @@ org.apache.poi.hssf.util.*
 									</tr>
 									<!--	priority -->
 									<tr <%= isWorkRecordInPercent ? "style='display:none;'" : "" %>>
-										<td class="label">
+										<td class="<%= CssClass.fieldLabel %>">
 											<span class="nw"><%= userView.getFieldLabel(ACTIVITY_CLASS, "priority", app.getCurrentLocaleAsIndex()) %>:</span>
 										</td>
 										<td>

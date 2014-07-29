@@ -277,7 +277,7 @@ public class DoPropfind extends WebDavMethod {
         );
         if (currentDepth > 0) {
         	Resource parent = _store.getResourceByPath(requestContext, path);
-            Collection<Resource> children = _store.getChildren(requestContext, parent);
+            Collection<Resource> children = _store.getChildren(requestContext, parent, null, null);
             if(!path.endsWith("/")) {
             	path += "/";
             }

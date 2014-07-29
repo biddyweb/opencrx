@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2013
+Copyright (C) 2011-2014
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -43,7 +43,7 @@ function EventList()
 	{
 		//we count with uniqueness of generated hash string
 		var newUID=null;
-		newUID=generateUID();	
+		newUID=generateUID();
 		return newUID;
 	}
 
@@ -104,7 +104,7 @@ function EventList()
 					return 0;
 				}
 			}
-		
+
 		if(isEvent)
 		{
 			// find the index where to insert the new event
@@ -117,12 +117,12 @@ function EventList()
 				checkEventLoader(globalResourceCalDAVList.counterList[inputCollection.uid+' '+inputCollection.listType], true);
 				return false;
 			}
-			
+
 			globalEventList.events[rid][inputEvent.uid]=inputEvent;
 		}
 		else
-			globalEventList.todos[rid][inputEvent.uid]=inputEvent
-			
+			globalEventList.todos[rid][inputEvent.uid]=inputEvent;
+
 		if(makeActive!=null)
 		{
 			globalEventList.loadEventByUID(makeActive, isEvent,isFromServer);
@@ -130,81 +130,48 @@ function EventList()
 		}
 
 		var inputUID=inputEvent.uid;
-		var busy=false;
 		rid=inputUID.substring(0, inputUID.lastIndexOf('/')+1);
 
 		setTimeout(function()
 		{
-			if(!busy)
+			if(!isEvent)
 			{
-				busy=true;
-				
-				if(!isEvent)
-				{
-					if(vcalendarTodoData(inputCollection, inputEvent, true) == false)
-						console.log("Error: '"+inputEvent.uid+"': cannot parse vTodo");
-				}
-				else
-				{
-					if(vcalendarToData(inputCollection, inputEvent, true) == false)
-						console.log("Error: '"+inputEvent.uid+"': cannot parse vEvent");
-				}
-				
-				if(isEvent)
-				{
-					if(inputEvent.counter==undefined)
-					{
-						if(globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
-						{
-							$('#calendar').fullCalendar('refetchEvents');
-							if(globalSettings.displayhiddenevents)
-							{
-								for(var k=1;k<globalResourceCalDAVList.collections.length;k++)
-								{
-									if(globalResourceCalDAVList.collections[k].uid!=undefined)
-									{
-										var pos=globalVisibleCalDAVCollections.indexOf(globalResourceCalDAVList.collections[k].uid);
-										if(pos==-1)
-											$("#SystemCalDAV .event_item[data-res-id='"+globalResourceCalDAVList.collections[k].uid+"']").addClass('checkCalDAV_hide');
-									}
-								}
-							}
-						}
-						else
-							$('#calendar').fullCalendar('removeEvents', 'fooUID');
-					}
-				}
-				else
-				{
-					if(inputEvent.counter==undefined)
-					{
-						if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
-						{
-							$('#todoList').fullCalendar('refetchEvents');
-							if(globalSettings.displayhiddenevents)
-							{
-								for(var k=1;k<globalResourceCalDAVList.TodoCollections.length;k++)
-								{
-									if(globalResourceCalDAVList.TodoCollections[k].uid!=undefined)
-									{
-										var pos=globalVisibleCalDAVTODOCollections.indexOf(globalResourceCalDAVList.TodoCollections[k].uid);
-										if(pos==-1)
-											$("#SystemCalDAVTODO .event_item[data-res-id='"+globalResourceCalDAVList.TodoCollections[k].uid+"']").addClass('checkCalDAV_hide');
-									}
-								}
-							}
-						}
-						else
-							$('#todoList').fullCalendar('removeEvents', 'fooUID');
-					}
-				}
-				globalCalDAVQs.cache();
-				globalCalDAVTODOQs.cache();
-				checkEventLoader(globalResourceCalDAVList.counterList[inputCollection.uid+' '+inputCollection.listType], true);
-				if(forceCall && !isEvent)
-					$('#todoList').fullCalendar('selectEvent',$('[data-id="'+inputEvent.uid+'"]'));
-				busy=false;
+				if(vcalendarTodoData(inputCollection, inputEvent, true) == false)
+					console.log("Error: '"+inputEvent.uid+"': cannot parse vTodo");
 			}
+			else
+			{
+				if(vcalendarToData(inputCollection, inputEvent, true) == false)
+					console.log("Error: '"+inputEvent.uid+"': cannot parse vEvent");
+			}
+
+			if(isEvent)
+			{
+				if(inputEvent.counter==undefined)
+				{
+					if(globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
+						refetchCalendarEvents();
+					else
+					{
+						var beforeScroll = $('#main').width()-$('#calendar').width();
+						$('#calendar').fullCalendar('removeEvents', 'fooUID');
+						var afterScroll = $('#main').width()-$('#calendar').width();
+						rerenderCalendar(beforeScroll!=afterScroll);
+					}
+				}
+			}
+			else
+			{
+				if(inputEvent.counter==undefined)
+				{
+					if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
+						refetchTodoEvents();
+				}
+			}
+			if(inputEvent.counter!=undefined)
+				checkEventLoader(globalResourceCalDAVList.counterList[inputCollection.uid+' '+inputCollection.listType], true);
+			if(forceCall && !isEvent)
+				$('#todoList').fullCalendar('selectEvent',$('[data-id="'+inputEvent.uid+'"]'));
 		}, 100);
 	}
 
@@ -232,11 +199,28 @@ function EventList()
 
 	this.removeOldEvents=function(inputUidBase, inputTimestamp, isEvent)
 	{
-		for(var i=0; i<globalResourceCalDAVList.collections.length;i++)
-			if(globalResourceCalDAVList.collections[i].uid!=undefined)
-				for(event in globalEventList.events[globalResourceCalDAVList.collections[i].uid])
-					if(event.timestamp!=undefined && event.uid.indexOf(inputUidBase)==0 && event.timestamp<inputTimestamp)
-						globalEventList.removeOldEvent(event.uid, true, isEvent);
+		if(isEvent)
+		{
+			for(var i=0; i<globalResourceCalDAVList.collections.length;i++)
+				if(globalResourceCalDAVList.collections[i].uid!=undefined)
+					for(var key in globalEventList.events[globalResourceCalDAVList.collections[i].uid])
+					{
+						var event = globalEventList.events[globalResourceCalDAVList.collections[i].uid][key];
+						if(event.timestamp!=undefined && event.uid.indexOf(inputUidBase)==0 && event.timestamp<inputTimestamp)
+							globalEventList.removeOldEvent(event.uid, true, isEvent);
+					}
+		}
+		else
+		{
+			for(var i=0; i<globalResourceCalDAVList.TodoCollections.length;i++)
+				if(globalResourceCalDAVList.TodoCollections[i].uid!=undefined)
+					for(var key in globalEventList.todos[globalResourceCalDAVList.TodoCollections[i].uid])
+					{
+						var event = globalEventList.todos[globalResourceCalDAVList.TodoCollections[i].uid][key];
+						if(event.timestamp!=undefined && event.uid.indexOf(inputUidBase)==0 && event.timestamp<inputTimestamp)
+							globalEventList.removeOldEvent(event.uid, true, isEvent);
+					}
+		}
 	}
 
 	this.removeOldEvent=function(inputUid, fromInterface, isEvent)
@@ -247,7 +231,7 @@ function EventList()
 		if(globalEventList.events[rid]!=undefined && globalEventList.events[rid][inputUid]!=undefined)
 		{
 			uidRemoved=inputUid;
-			delete globalEventList.events[inputUid];
+			delete globalEventList.events[rid][inputUid];
 			isEvent=true;
 		}
 		else if(globalEventList.todos[rid]!=undefined && globalEventList.todos[rid][inputUid]!=undefined)
@@ -263,30 +247,17 @@ function EventList()
 			{
 				deleteEventFromArray(uidRemoved);
 				if(isEvent)
-				{
-					$('#calendar').fullCalendar('refetchEvents');
-					globalCalDAVQs.cache();
-					if(globalSettings.displayhiddenevents)
-						for(var k=1;k<globalResourceCalDAVList.collections.length;k++)
-							if(globalResourceCalDAVList.collections[k].uid!=undefined)
-							{
-								var pos=globalVisibleCalDAVCollections.indexOf(globalResourceCalDAVList.collections[k].uid);
-								if(pos==-1)
-									$("#SystemCalDAV .event_item[data-res-id='"+globalResourceCalDAVList.collections[k].uid+"']").addClass('checkCalDAV_hide');
-							}
-				}
+					refetchCalendarEvents();
 				else
 				{
 					var prevIndex = $('.fc-view-todo .fc-list-day').find('.fc-event:visible').index($('[data-repeat-hash="'+globalCalTodo.repeatHash+'"]'));
-					$('#todoList').fullCalendar('refetchEvents');
-					
+					refetchTodoEvents();
 					if(prevIndex!=-1 && $('.fc-view-todo .fc-list-day').find('.fc-event:visible').length > 0 && prevIndex>($('.fc-view-todo .fc-list-day').find('.fc-event:visible').length-1))
 						$('#todoList').fullCalendar('selectEvent',$($('.fc-view-todo .fc-list-day').find('.fc-event:visible').get($('.fc-view-todo .fc-list-day').find('.fc-event:visible').length-1)));
 					else if(prevIndex!=-1 && $('.fc-view-todo .fc-list-day').find('.fc-event:visible').length > 0 && prevIndex<=($('.fc-view-todo .fc-list-day').find('.fc-event:visible').length-1))
 						$('#todoList').fullCalendar('selectEvent',$($('.fc-view-todo .fc-list-day').find('.fc-event:visible').get(prevIndex)));
 					else
 						$('#CATodo').attr('style','display:none');
-					globalCalDAVTODOQs.cache();
 				}
 			}
 
@@ -302,13 +273,9 @@ function EventList()
 	this.loadEventByUID=function(inputUID, isEvent,isFromServer)
 	{
 		var rid='';
-
-		CalDAVeditor_cleanup();
 		if(inputUID.charAt(inputUID.length-1)!='/')
 		{
 			rid=inputUID.substring(0, inputUID.lastIndexOf('/')+1);
-			checkEventLoader(globalResourceCalDAVList.counterList[rid+' '+globalResourceCalDAVList.getCollectionByUID(rid).listType], false);
-			
 			if(isEvent)
 			{
 				if(globalEventList.events[rid][inputUID].uid!=undefined)
@@ -316,26 +283,14 @@ function EventList()
 					var evs='';
 					if(!globalCalDAVInitLoad)
 						evs=findEventInArray(globalEventList.events[rid][inputUID].uid, isEvent);
-					
+
 					if(evs!='' && evs.etag!=globalEventList.events[rid][inputUID].etag)
 					{
 						vcalendarToData(globalResourceCalDAVList.getCollectionByUID(rid), globalEventList.events[rid][inputUID], false);
-						if(globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
-						{
-							$('#calendar').fullCalendar('refetchEvents');
-							
-							globalCalDAVQs.cache();
-							if(globalSettings.displayhiddenevents)
-							{
-								for(var k=1;k<globalResourceCalDAVList.collections.length;k++)
-									if(globalResourceCalDAVList.collections[k].uid!=undefined)
-									{
-										var pos=globalVisibleCalDAVCollections.indexOf(globalResourceCalDAVList.collections[k].uid);
-										if(pos==-1)
-											$("#SystemCalDAV .event_item[data-res-id='"+globalResourceCalDAVList.collections[k].uid+"']").addClass('checkCalDAV_hide');
-									}
-							}
-						}
+						if(!isFromServer && (globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents))
+							refetchCalendarEvents();
+						else if(isFromServer)
+							checkEventLoader(globalResourceCalDAVList.counterList[rid+' '+globalResourceCalDAVList.getCollectionByUID(rid).listType], true);
 					}
 				}
 			}
@@ -352,9 +307,9 @@ function EventList()
 						if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
 						{
 							$('#todoList').fullCalendar('allowSelectEvent',false);
-							$('#todoList').fullCalendar('refetchEvents');
+							refetchTodoEvents();
 							$('#todoList').fullCalendar('allowSelectEvent',true);
-							
+
 							if($('#showTODO').val()==inputUID)
 							{
 								var newTodo = findEventInArray(globalEventList.todos[rid][inputUID].uid,false);
@@ -392,22 +347,10 @@ function EventList()
 							}
 							else
 								$('#todoList').fullCalendar('selectEvent',null,true);
-							
-							globalCalDAVTODOQs.cache();
-							if(globalSettings.displayhiddenevents)
-							{
-								for(var k=1;k<globalResourceCalDAVList.TodoCollections.length;k++)
-									if(globalResourceCalDAVList.TodoCollections[k].uid!=undefined)
-									{
-										var pos=globalVisibleCalDAVTODOCollections.indexOf(globalResourceCalDAVList.TodoCollections[k].uid);
-										if(pos==-1)
-											$("#SystemCalDAVTODO .event_item[data-res-id='"+globalResourceCalDAVList.TodoCollections[k].uid+"']").addClass('checkCalDAV_hide');
-									}
-							}
 						}
 					}
 				}
-			}			
+			}
 		}
 	}
 }

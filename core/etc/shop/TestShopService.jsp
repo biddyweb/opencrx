@@ -61,8 +61,7 @@ java.net.*,
 java.text.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
-org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.attribute.*,org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.texts.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.reports.*,
@@ -354,7 +353,7 @@ org.openmdx.base.exception.*
 	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-	<ul class="nav">
+	<ul class="<%=CssClass.ssfNav %>">
 	</ul>
 	<div class="col1">
 		<!-- TestCustomers -->

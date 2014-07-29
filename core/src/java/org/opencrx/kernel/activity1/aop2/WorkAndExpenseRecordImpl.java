@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -62,12 +62,24 @@ import org.opencrx.kernel.backend.Activities;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * WorkAndExpenseRecordImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class WorkAndExpenseRecordImpl 
 	<S extends org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord,N extends org.opencrx.kernel.activity1.cci2.WorkAndExpenseRecord,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback, DeleteCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public WorkAndExpenseRecordImpl(
         S same,
         N next
@@ -75,9 +87,9 @@ public class WorkAndExpenseRecordImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
     /**
-     * Derived attribute activity
+     * Derived attribute activity.
+     * 
      */
     public org.opencrx.kernel.activity1.jmi1.Activity getActivity(
     ) {
@@ -91,9 +103,9 @@ public class WorkAndExpenseRecordImpl
     	}
     }
 
-    //-----------------------------------------------------------------------
     /**
-     * Derived attribute resource
+     * Derived attribute resource.
+     * 
      */
     public org.opencrx.kernel.activity1.jmi1.Resource getResource(
     ) {
@@ -107,17 +119,18 @@ public class WorkAndExpenseRecordImpl
     	}
     }
         
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+     */
     @Override
 	public void jdoPreStore(
 	) {
 		try {
-			Activities.getInstance().updateWorkAndExpenseRecord(
-				this.sameObject() 
+			Activities.getInstance().preStore(
+				this.sameObject()
 			);
 			super.jdoPreStore();
-		}
-		catch(ServiceException e) {
+		} catch(ServiceException e) {
 			throw new JDOUserException(
 				"preStore failed",
 				e,
@@ -126,18 +139,19 @@ public class WorkAndExpenseRecordImpl
 		}
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
 	public void jdoPreDelete(
 	) {
 		try {
-			Activities.getInstance().removeWorkRecord(
+			Activities.getInstance().preDelete(
 				this.sameObject(), 
 				true
 			);
 			super.jdoPreDelete();
-		}
-		catch(ServiceException e) {
+		} catch(ServiceException e) {
 			throw new JDOUserException(
 				"jdoPreDelete failed",
 				e,

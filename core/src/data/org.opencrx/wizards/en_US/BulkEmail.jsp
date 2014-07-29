@@ -1,4 +1,4 @@
-﻿<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
+<%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
@@ -60,7 +60,7 @@ org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.base.exception.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.action.*,
 org.openmdx.portal.servlet.wizards.*,
@@ -541,7 +541,6 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                 org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.class, 
      			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.name, "BulkEmail"),
      			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.parentProcessInstance, null),			
-     			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.startAt, null),			
      			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.targetObject, (org.openmdx.base.jmi1.BasicObject) newActivity),			
      			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.triggeredBy, null),	
      			org.w3c.spi2.Datatypes.member(org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams.Member.triggeredByEventId, null),	
@@ -602,7 +601,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
             		<legend><span><%= app.getLabel(ACTIVITYCREATOR_CLASS) %></span></legend>
                 <table class="fieldGroup">
                   <tr>
-                    <td class="label"><span class="nw"><%= userView.getFieldLabel(ACTIVITYCREATOR_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(ACTIVITYCREATOR_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
                       <select class="valueL" name="activityCreatorSelector" tabindex="10">
                         <option value="0">N/A</option>
@@ -659,14 +658,14 @@ org.openmdx.uses.org.apache.commons.fileupload.*
             		<legend><span><img border="0" src="../../images/EMail.gif" alt="E-mail" /></span></legend>
                 <table class="fieldGroup">
                   <tr>
-                    <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
                       <input type="text" id="activityName" name="activityName" class="valueL" tabindex="20" value="<%= activityName %>" />
                     </td>
                     <td class="addon" ></td>
                   </tr>
                   <tr>
-                    <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "description", app.getCurrentLocaleAsIndex()) %>:</span></td>
                     <td>
                       <input type="text" id="activityDescription" name="activityDescription" class="valueL" tabindex="30" value="<%= activityDescription %>" />
                     </td>
@@ -677,31 +676,31 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                     <td></td>
                   </tr>
                   <tr>
-                    <td class="label"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_FROM)) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_FROM)) %>:</span></td>
                     <td>
                       <div class="autocompleterMenu">
-                        <ul id="nav" class="nav" onmouseover="sfinit(this);" >
+                        <ul id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" onmouseover="sfinit(this);" >
                           <li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
                             <ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
-                              <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac10.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(address)*filterByType*(org:opencrx:kernel:account1:AccountAddress)*filterByFeature*(emailAddress)*filterOperator*(IS_LIKE)*orderByFeature*(emailAddress)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= app.getLabel(EMAILADDRESS_CLASS) %></a></li>
+                              <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac10.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=providerName%>/segment/<%=segmentName%>)*referenceName*(address)*filterByType*(org:opencrx:kernel:account1:AccountAddress)*filterByFeature*(emailAddress)*filterOperator*(IS_LIKE)*orderByFeature*(emailAddress)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=app.getLabel(EMAILADDRESS_CLASS)%></a></li>
                             </ul>
                           </li>
                         </ul>
                       </div>
                       <div class="autocompleterInput">
 <%
-                        String senderEmailLookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
+						String senderEmailLookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
                         Action findEmailAddressObjectAction = Action.getFindObjectAction("org:opencrx:kernel:account1:Segment:address", senderEmailLookupId);
 %>
-                        <input type="text" class="valueL valueAC" id="senderEmailXri.Title" name="senderEmailXri.Title" tabindex="40" <%= !senderOk ? "style='background-color:" + bgColorError + ";'" : "" %> value="<%= (senderEmail != null) && (senderEmail.getEmailAddress() != null) ? senderEmail.getEmailAddress() : "" %>" onblur="javascript:this.style.backgroundColor='';" />
+                        <input type="text" class="valueL valueAC" id="senderEmailXri.Title" name="senderEmailXri.Title" tabindex="40" <%=!senderOk ? "style='background-color:" + bgColorError + ";'" : ""%> value="<%=(senderEmail != null) && (senderEmail.getEmailAddress() != null) ? senderEmail.getEmailAddress() : ""%>" onblur="javascript:this.style.backgroundColor='';" />
                       </div>
-                      <input type="hidden" class="valueLLocked" id="senderEmailXri" name="senderEmailXri" readonly value="<%= senderEmailXri != null ? senderEmailXri : "" %>" />
+                      <input type="hidden" class="valueLLocked" id="senderEmailXri" name="senderEmailXri" readonly value="<%=senderEmailXri != null ? senderEmailXri : ""%>" />
                       <div class="autocomplete" id="senderEmailXri.Update" style="display:none;z-index:500;"></div>
                       <script type="text/javascript" language="javascript" charset="utf-8">
                         ac10 = new Ajax.Autocompleter(
                           'senderEmailXri.Title',
                           'senderEmailXri.Update',
-                          '../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.account1%2Fprovider%2F<%= providerName %>%2Fsegment%2F<%= segmentName %>%29*referenceName*%28address%29*filterByType*%28org:opencrx:kernel:account1:AccountAddress%29*filterByFeature*%28emailAddress%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28emailAddress%29*position*%280%29*size*%2820%29',
+                          '../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.account1%2Fprovider%2F<%=providerName%>%2Fsegment%2F<%=segmentName%>%29*referenceName*%28address%29*filterByType*%28org:opencrx:kernel:account1:AccountAddress%29*filterByFeature*%28emailAddress%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28emailAddress%29*position*%280%29*size*%2820%29',
                           {
                             paramName: 'filtervalues',
                             minChars: 2,
@@ -711,36 +710,36 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                       </script>
                     </td>
                     <td class="addon">
-                      <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%= findEmailAddressObjectAction.getIconKey() %>" onclick="OF.findObject('../../<%= findEmailAddressObjectAction.getEncodedHRef(requestId) %>', document.forms['bulkEmail'].elements['senderEmailXri.Title'], document.forms['bulkEmail'].elements['senderEmailXri'], '<%= senderEmailLookupId %>');" />
+                      <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%=findEmailAddressObjectAction.getIconKey()%>" onclick="OF.findObject('../../<%=findEmailAddressObjectAction.getEncodedHRef(requestId)%>', document.forms['bulkEmail'].elements['senderEmailXri.Title'], document.forms['bulkEmail'].elements['senderEmailXri'], '<%=senderEmailLookupId%>');" />
                     </td>
                   </tr>
 
                   <tr>
-                    <td class="label"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_TO)) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%=(codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_TO))%>:</span></td>
                     <td>
                       <div class="autocompleterMenu">
-                        <ul id="nav" class="nav" onmouseover="sfinit(this);" >
+                        <ul id="<%=CssClass.ssfNav%>" class="<%=CssClass.ssfNav%>" onmouseover="sfinit(this);" >
                           <li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
                             <ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
-                              <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac20.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(address)*filterByType*(org:opencrx:kernel:account1:AccountAddress)*filterByFeature*(emailAddress)*filterOperator*(IS_LIKE)*orderByFeature*(emailAddress)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= app.getLabel(EMAILADDRESS_CLASS) %></a></li>
+                              <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac20.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=providerName%>/segment/<%=segmentName%>)*referenceName*(address)*filterByType*(org:opencrx:kernel:account1:AccountAddress)*filterByFeature*(emailAddress)*filterOperator*(IS_LIKE)*orderByFeature*(emailAddress)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=app.getLabel(EMAILADDRESS_CLASS)%></a></li>
                             </ul>
                           </li>
                         </ul>
                       </div>
                       <div class="autocompleterInput">
 <%
-                        String recipientEmailLookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
+						String recipientEmailLookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
                         findEmailAddressObjectAction = Action.getFindObjectAction("org:opencrx:kernel:account1:Segment:address", recipientEmailLookupId);
 %>
-                        <input type="text" class="valueL valueAC" id="recipientEmailXri.Title" name="recipientEmailXri.Title" tabindex="50" <%= !recipientOk ? "style='background-color:" + bgColorError + ";'" : "" %> value="<%= (recipientEmail != null) && (recipientEmail.getEmailAddress() != null) ? recipientEmail.getEmailAddress() : "" %>" onblur="javascript:this.style.backgroundColor='';" />
+                        <input type="text" class="valueL valueAC" id="recipientEmailXri.Title" name="recipientEmailXri.Title" tabindex="50" <%=!recipientOk ? "style='background-color:" + bgColorError + ";'" : ""%> value="<%=(recipientEmail != null) && (recipientEmail.getEmailAddress() != null) ? recipientEmail.getEmailAddress() : ""%>" onblur="javascript:this.style.backgroundColor='';" />
                       </div>
-                      <input type="hidden" class="valueLLocked" id="recipientEmailXri" name="recipientEmailXri" readonly value="<%= recipientEmailXri != null ? recipientEmailXri : "" %>" />
+                      <input type="hidden" class="valueLLocked" id="recipientEmailXri" name="recipientEmailXri" readonly value="<%=recipientEmailXri != null ? recipientEmailXri : ""%>" />
                       <div class="autocomplete" id="recipientEmailXri.Update" style="display:none;z-index:500;"></div>
                       <script type="text/javascript" language="javascript" charset="utf-8">
                         ac20 = new Ajax.Autocompleter(
                           'recipientEmailXri.Title',
                           'recipientEmailXri.Update',
-                          '../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.account1%2Fprovider%2F<%= providerName %>%2Fsegment%2F<%= segmentName %>%29*referenceName*%28address%29*filterByType*%28org:opencrx:kernel:account1:AccountAddress%29*filterByFeature*%28emailAddress%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28emailAddress%29*position*%280%29*size*%2820%29',
+                          '../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.account1%2Fprovider%2F<%=providerName%>%2Fsegment%2F<%=segmentName%>%29*referenceName*%28address%29*filterByType*%28org:opencrx:kernel:account1:AccountAddress%29*filterByFeature*%28emailAddress%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28emailAddress%29*position*%280%29*size*%2820%29',
                           {
                             paramName: 'filtervalues',
                             minChars: 2,
@@ -750,37 +749,37 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                       </script>
                     </td>
                     <td class="addon">
-                      <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%= findEmailAddressObjectAction.getIconKey() %>" onclick="OF.findObject('../../<%= findEmailAddressObjectAction.getEncodedHRef(requestId) %>', document.forms['bulkEmail'].elements['recipientEmailXri.Title'], document.forms['bulkEmail'].elements['recipientEmailXri'], '<%= recipientEmailLookupId %>');" />
+                      <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%=findEmailAddressObjectAction.getIconKey()%>" onclick="OF.findObject('../../<%=findEmailAddressObjectAction.getEncodedHRef(requestId)%>', document.forms['bulkEmail'].elements['recipientEmailXri.Title'], document.forms['bulkEmail'].elements['recipientEmailXri'], '<%=recipientEmailLookupId%>');" />
                     </td>
                   </tr>
 
                   <tr>
-                    <td class="label"><span class="nw"><%= (codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_BCC)) %> (<%= app.getLabel(ADDRESSGROUP_CLASS) %>):</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%=(codes.getLongTextByCode(featurePartyTypeEMailRecipient, app.getCurrentLocaleAsIndex(), true).get(CODE_BCC))%> (<%=app.getLabel(ADDRESSGROUP_CLASS)%>):</span></td>
                     <td>
                       <div class="autocompleterMenu">
-                        <ul id="nav" class="nav" onmouseover="sfinit(this);" >
+                        <ul id="<%=CssClass.ssfNav%>" class="<%=CssClass.ssfNav%>" onmouseover="sfinit(this);" >
                           <li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
                             <ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
-                              <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac30.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.activity1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(addressGroup)*filterByFeature*(name)*filterOperator*(IS_LIKE)*orderByFeature*(name)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= userView.getFieldLabel(ADDRESSGROUP_CLASS, "name", app.getCurrentLocaleAsIndex()) %></a></li>
-                              <li><a href="#" onclick="javascript:navSelect(this);ac30.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.activity1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(addressGroup)*filterByFeature*(description)*filterOperator*(IS_LIKE)*orderByFeature*(description)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= userView.getFieldLabel(ADDRESSGROUP_CLASS, "description", app.getCurrentLocaleAsIndex()) %></a></li>
+                              <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac30.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.activity1/provider/<%=providerName%>/segment/<%=segmentName%>)*referenceName*(addressGroup)*filterByFeature*(name)*filterOperator*(IS_LIKE)*orderByFeature*(name)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=userView.getFieldLabel(ADDRESSGROUP_CLASS, "name", app.getCurrentLocaleAsIndex())%></a></li>
+                              <li><a href="#" onclick="javascript:navSelect(this);ac30.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.activity1/provider/<%=providerName%>/segment/<%=segmentName%>)*referenceName*(addressGroup)*filterByFeature*(description)*filterOperator*(IS_LIKE)*orderByFeature*(description)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=userView.getFieldLabel(ADDRESSGROUP_CLASS, "description", app.getCurrentLocaleAsIndex())%></a></li>
                             </ul>
                           </li>
                         </ul>
                       </div>
                       <div class="autocompleterInput">
 <%
-                        String addressGroupLookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
+						String addressGroupLookupId = org.opencrx.kernel.backend.Activities.getInstance().getUidAsString();
                         Action findAddressGroupObjectAction = Action.getFindObjectAction("org:opencrx:kernel:activity1:Segment:addressGroup", addressGroupLookupId);
 %>
-                        <input type="text" class="valueL valueAC" id="bulkRecipientGroupXri.Title" name="bulkRecipientGroupXri.Title" tabindex="60" <%= !bulkRecipientGroupOk ? "style='background-color:" + bgColorError + ";'" : "" %> value="<%= (bulkRecipientGroup != null) && (bulkRecipientGroup.getName() != null) ? bulkRecipientGroup.getName() : "" %>" onblur="javascript:this.style.backgroundColor='';" />
+                        <input type="text" class="valueL valueAC" id="bulkRecipientGroupXri.Title" name="bulkRecipientGroupXri.Title" tabindex="60" <%=!bulkRecipientGroupOk ? "style='background-color:" + bgColorError + ";'" : ""%> value="<%=(bulkRecipientGroup != null) && (bulkRecipientGroup.getName() != null) ? bulkRecipientGroup.getName() : ""%>" onblur="javascript:this.style.backgroundColor='';" />
                       </div>
-                      <input type="hidden" class="valueLLocked" id="bulkRecipientGroupXri" name="bulkRecipientGroupXri" readonly value="<%= bulkRecipientGroupXri != null ? bulkRecipientGroupXri : "" %>" />
+                      <input type="hidden" class="valueLLocked" id="bulkRecipientGroupXri" name="bulkRecipientGroupXri" readonly value="<%=bulkRecipientGroupXri != null ? bulkRecipientGroupXri : ""%>" />
                       <div class="autocomplete" id="bulkRecipientGroupXri.Update" style="display:none;z-index:500;"></div>
                       <script type="text/javascript" language="javascript" charset="utf-8">
                         ac30 = new Ajax.Autocompleter(
                           'bulkRecipientGroupXri.Title',
                           'bulkRecipientGroupXri.Update',
-                          '../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.activity1%2Fprovider%2F<%= providerName %>%2Fsegment%2F<%= segmentName %>%29*referenceName*%28addressGroup%29*filterByFeature*%28name%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28name%29*position*%280%29*size*%2820%29',
+                          '../../ObjectInspectorServlet?event=40&parameter=xri*%28xri%3A%40openmdx%3Aorg.opencrx.kernel.activity1%2Fprovider%2F<%=providerName%>%2Fsegment%2F<%=segmentName%>%29*referenceName*%28addressGroup%29*filterByFeature*%28name%29*filterOperator*%28IS_LIKE%29*orderByFeature*%28name%29*position*%280%29*size*%2820%29',
                           {
                             paramName: 'filtervalues',
                             minChars: 2,
@@ -790,20 +789,20 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                       </script>
                     </td>
                     <td class="addon">
-                      <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%= findAddressGroupObjectAction.getIconKey() %>" onclick="OF.findObject('../../<%= findAddressGroupObjectAction.getEncodedHRef(requestId) %>', document.forms['bulkEmail'].elements['bulkRecipientGroupXri.Title'], document.forms['bulkEmail'].elements['bulkRecipientGroupXri'], '<%= addressGroupLookupId %>');" />
+                      <img class="popUpButton" border="1" alt="lookup" title="" src="../../images/<%=findAddressGroupObjectAction.getIconKey()%>" onclick="OF.findObject('../../<%=findAddressGroupObjectAction.getEncodedHRef(requestId)%>', document.forms['bulkEmail'].elements['bulkRecipientGroupXri.Title'], document.forms['bulkEmail'].elements['bulkRecipientGroupXri'], '<%=addressGroupLookupId%>');" />
                     </td>
                   </tr>
                   <tr>
-                    <td class="label" title="\${#} will be replace with activity number"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "messageSubject", app.getCurrentLocaleAsIndex()) %>&nbsp;&nbsp;&mdash;&nbsp;\${#}:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>" title="\${#} will be replace with activity number"><span class="nw"><%=userView.getFieldLabel(EMAIL_CLASS, "messageSubject", app.getCurrentLocaleAsIndex())%>&nbsp;&nbsp;&mdash;&nbsp;\${#}:</span></td>
                     <td>
-                      <input type="text" id="messageSubject" name="messageSubject" class="valueL" style="font-family:courier;" tabindex="70" value="<%= messageSubject %>" />
+                      <input type="text" id="messageSubject" name="messageSubject" class="valueL" style="font-family:courier;" tabindex="70" value="<%=messageSubject%>" />
                     </td>
                     <td class="addon" ></td>
                   </tr>
                   <tr>
-                    <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "messageBody", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%=userView.getFieldLabel(EMAIL_CLASS, "messageBody", app.getCurrentLocaleAsIndex())%>:</span></td>
                     <td>
-                      <textarea id="messageBody" name="messageBody" rows="6" style="font-family:courier;" tabindex="80"><%= messageBody %></textarea>
+                      <textarea id="messageBody" name="messageBody" rows="6" style="font-family:courier;" tabindex="80"><%=messageBody%></textarea>
                     </td>
                     <td class="addon" ></td>
                   </tr>
@@ -813,10 +812,10 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                   </tr>
 
                   <tr>
-                    <td class="label"><span class="nw"><%= userView.getFieldLabel(EMAIL_CLASS, "gateway", app.getCurrentLocaleAsIndex()) %>:</span></td>
+                    <td class="<%= CssClass.fieldLabel %>"><span class="nw"><%=userView.getFieldLabel(EMAIL_CLASS, "gateway", app.getCurrentLocaleAsIndex())%>:</span></td>
                     <td>
                       <div class="autocompleterMenu">
-                        <ul id="nav" class="nav" onmouseover="sfinit(this);" >
+                        <ul id="<%=CssClass.ssfNav%>" class="<%=CssClass.ssfNav%>" onmouseover="sfinit(this);" >
                           <li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
                             <ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
                               <li class="selected"><a href="#" onclick="javascript:navSelect(this);ac10.url= getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%= providerName %>/segment/<%= segmentName %>)*referenceName*(address)*filterByType*(org:opencrx:kernel:account1:AccountAddress)*filterByFeature*(emailAddress)*filterOperator*(IS_LIKE)*orderByFeature*(emailAddress)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%= app.getLabel(EMAILADDRESS_CLASS) %></a></li>
@@ -884,7 +883,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               <table>
                 <tr style="vertical-align:top;">
                   <td>
-                    <INPUT type="Submit" name="Verify.Button" tabindex="10000" value="Verify" />
+                    <input type="Submit" name="Verify.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="10000" value="Verify" />
                   </td>
                   <td style="padding-left:5px;">
 <%
@@ -893,7 +892,7 @@ org.openmdx.uses.org.apache.commons.fileupload.*
                       <div style="background-color:#F4FD48;border:1px solid #CCCCCC;">
                         <table>
                           <tr style="background-color:#eee;">
-                            <td class="label"><b>Field</b></td>
+                            <td class="<%= CssClass.fieldLabel %>"><b>Field</b></td>
                             <td><b>Error</b></td>
                           </tr>
 <%
@@ -940,9 +939,8 @@ org.openmdx.uses.org.apache.commons.fileupload.*
               </table>
               <br>
               <input type="checkbox" name="commitAndSend.CheckBox" value="commitAndSend" tabindex="10010" <%= commitAndSend ? "checked" : "" %> /> Send and close<br><br>
-              <INPUT type="Submit" name="Ok.Button" tabindex="10020" value="<%= app.getTexts().getSaveTitle() %>" <%= sendOk ? "" : "disabled" %> />
-              <INPUT type="Submit" name="Cancel.Button" tabindex="10030" value="<%= app.getTexts().getCancelTitle() %>" /><br>
-
+              <input type="Submit" name="Ok.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="10020" value="<%= app.getTexts().getSaveTitle() %>" <%= sendOk ? "" : "disabled" %> />
+              <input type="Submit" name="Cancel.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="10030" value="<%= app.getTexts().getCancelTitle() %>" /><br>
             </form>
 <%
           }

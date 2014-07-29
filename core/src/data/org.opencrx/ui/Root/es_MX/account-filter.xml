@@ -10,7 +10,18 @@
             <org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
               <_object/>
               <_content>
-                <elementDefinition>
+                <elementDefinition>				
+				  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Segment:accountFilter" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Consultas guardadas - Cuentas</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Consultas guardadas - Cuentas</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>				
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:AbstractFilterAccount:accountFilterProperty" _operation="create">
                     <_object>
                       <label>

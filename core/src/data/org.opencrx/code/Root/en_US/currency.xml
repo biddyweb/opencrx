@@ -21,7 +21,7 @@
 												<_item>org:opencrx:kernel:activity1:WorkAndExpenseRecord:billingCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:FilteredWorkRecord:billingCurrency</_item>
 												<_item>org:opencrx:kernel:activity1:WorkReportEntry:billingCurrency</_item>
-												<_item>org:opencrx:kernel:activity1:Resource:rateCurrency</_item>
+												<_item>org:opencrx:kernel:activity1:ResourceRate:rateCurrency</_item>
 												<_item>org:opencrx:kernel:contract1:SalesContract:contractCurrency</_item>
 												<_item>org:opencrx:kernel:contract1:SalesContractCreator:contractCurrency</_item>
 												<_item>org:opencrx:kernel:contract1:CreateSalesContractParams:contractCurrency</_item>

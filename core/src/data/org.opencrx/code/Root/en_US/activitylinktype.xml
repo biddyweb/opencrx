@@ -18,6 +18,7 @@
 												<_item>org:opencrx:kernel:activity1:ActivityLinkTo:activityLinkType</_item>
 												<_item>org:opencrx:kernel:activity1:ActivityLinkFrom:activityLinkType</_item>
 												<_item>org:opencrx:kernel:activity1:LinkedActivityFollowUpAction:activityLinkType</_item>
+												<_item>org:opencrx:kernel:activity1:ActivityRelationship:activityLinkType</_item>
 											</name>
 										</_object>
 										<_content>

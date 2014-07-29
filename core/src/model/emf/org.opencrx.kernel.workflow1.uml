@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_CRKm0N8IEdmKapscEl8OLg" name="workflow1">
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_CRKm0N8IEdmKapscEl8OLg" name="workflow1">
   <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D3FEC9A0200D7PPP" name="org">
     <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D3FEC9A0200D7PP" name="opencrx">
       <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D3FEC9A0200D7P" name="kernel">
@@ -52,6 +52,14 @@
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3CC6A34B0011"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_1g0foKxaEduPsMREY15UOg"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_1g0foaxaEduPsMREY15UOg" value="1"/>
+            </ownedAttribute>
+            <ownedAttribute xmi:id="_zoLw8INaEeOv1OkWaXwTZQ" name="executeScript" visibility="public">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX 2 ~ Core (EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_z83ngINaEeOv1OkWaXwTZQ"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_z86q0INaEeOv1OkWaXwTZQ" value="1"/>
+              <defaultValue xmi:type="uml:LiteralString" xmi:id="_z89HEINaEeOv1OkWaXwTZQ">
+                <value xsi:nil="true"/>
+              </defaultValue>
             </ownedAttribute>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D42054180005E" name="Topic">
@@ -129,7 +137,7 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_Aytt4F_qEeKop88i7Ghj2g"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_AytG0F_qEeKop88i7Ghj2g" value="1"/>
               <qualifier xmi:id="_SxHUgF_nEeKop88i7Ghj2g" name="id">
-                <type xmi:type="uml:PrimitiveType" href="platform:resource/openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
+                <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               </qualifier>
             </ownedEnd>
           </packagedElement>

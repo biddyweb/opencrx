@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2008, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -52,10 +52,15 @@
  */
 package org.opencrx.application.mail.exporter;
 
+/**
+ * SendMailNotificationWorkflow
+ *
+ */
+public class SendMailNotificationWorkflow extends MailWorkflow {
 
-public class SendMailNotificationWorkflow 
-    extends MailWorkflow {
-
+	/* (non-Javadoc)
+	 * @see org.opencrx.application.mail.exporter.MailWorkflow#useSendMailSubjectPrefix()
+	 */
 	@Override
     boolean useSendMailSubjectPrefix(
     ) {

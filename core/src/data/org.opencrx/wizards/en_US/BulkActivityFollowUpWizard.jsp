@@ -68,7 +68,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -95,7 +95,6 @@ org.openmdx.base.naming.*
 	javax.jdo.PersistenceManager pm = wc.getPm();	
 	int tabIndex = 100;
 %>
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <div style="border:1px solid black;padding:10px;margin:2px;background-color:#FF9900;">
 	<strong>WARNING:</strong> Follow up will be performed on <strong><%= wc.getActivityCount() %> activities</strong> assigned to '<%= wc.getActivityGroup() != null ? wc.getActivityGroup().getName() : "--" %>'<br>
@@ -123,7 +122,7 @@ org.openmdx.base.naming.*
 				<table class="fieldGroup">
 					<tbody>
 						<tr>
-							<td class="label" title=""><span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityGroupAssignment", "activityGroup", app.getCurrentLocaleAsIndex()) %>:</span></td>
+							<td class="<%= CssClass.fieldLabel %>" title=""><span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityGroupAssignment", "activityGroup", app.getCurrentLocaleAsIndex()) %>:</span></td>
 							<td>
 								<select id="activityGroupXri" name="activityGroupXri" class="valueL" tabindex="<%= tabIndex++ %>" onchange="javascript:$('Refresh.Button').click();" >
 <%
@@ -162,7 +161,7 @@ org.openmdx.base.naming.*
 				<div class="fieldGroupName">FollowUp 1</div>
 				<table class="fieldGroup">
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "transition", app.getCurrentLocaleAsIndex()) %>:</span>
 						</td>
 						<td>
@@ -182,7 +181,7 @@ org.openmdx.base.naming.*
 						</td>														
 					</tr>
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "title", app.getCurrentLocaleAsIndex()) %>:</span>
 						</td>
 						<td>
@@ -192,7 +191,7 @@ org.openmdx.base.naming.*
 						</td>														
 					</tr>
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "text", app.getCurrentLocaleAsIndex()) %>:</span>
 						</td>
 						<td rowspan="10">
@@ -209,7 +208,7 @@ org.openmdx.base.naming.*
 				<div class="fieldGroupName">FollowUp 2 (optional)</div>
 				<table class="fieldGroup">
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "transition", app.getCurrentLocaleAsIndex()) %>:</span>
 						</td>
 						<td>
@@ -230,7 +229,7 @@ org.openmdx.base.naming.*
 						</td>														
 					</tr>
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "title", app.getCurrentLocaleAsIndex()) %>:</span>
 						</td>
 						<td>
@@ -240,7 +239,7 @@ org.openmdx.base.naming.*
 						</td>														
 					</tr>
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "text", app.getCurrentLocaleAsIndex()) %>:</span>
 						</td>
 						<td rowspan="10">
@@ -257,7 +256,7 @@ org.openmdx.base.naming.*
 				<div class="fieldGroupName">&nbsp;</div>
 				<table class="fieldGroup">
 					<tr>
-						<td class="label">
+						<td class="<%= CssClass.fieldLabel %>">
 							<span class="nw"><%= app.getLabel("org:opencrx:kernel:activity1:Resource") %>:</span>
 						</td>
 						<td>
@@ -311,7 +310,7 @@ org.openmdx.base.naming.*
 			  		<div id='timerDIV' <%= Boolean.TRUE.equals(wc.getFormFields().getUseTimer()) ? "" : "style='visibility:hidden;height:0px;'" %>>
 			  		<table class="fieldGroup">
 						<tr>
-				  			<td class="label">
+				  			<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= wc.getFieldLabel(BulkActivityFollowUpWizardController.TIMER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
 							</td>
 							<td>
@@ -320,7 +319,7 @@ org.openmdx.base.naming.*
 							<td class="addon"></td>
 						</tr>
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= wc.getFieldLabel(BulkActivityFollowUpWizardController.TIMER_CLASS, "timerStartAt", app.getCurrentLocaleAsIndex()) %>:</span>
 							</td>
 							<td style="padding-top:2px;">
@@ -349,15 +348,15 @@ org.openmdx.base.naming.*
 					<img border="0" src='./images/progress_bar.gif' alt='please wait...' />
 				</div>						
 				<div id="SubmitArea">
-					<input type="submit" name="Refresh" id="Refresh.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
-					<input type="submit" name="OK" id="OK.Button" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
-					<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="Refresh" id="Refresh.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getReloadText() %>" onclick="javascript:$('Command').value=this.name;" />
+					<input type="submit" name="OK" id="OK.Button" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('Command').value=this.name;this.name='--';$('WaitIndicator').style.display='block';$('SubmitArea').style.visibility='hidden';" />
+					<input type="submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('Command').value=this.name;" />
 				</div>
 			</td>
 		</tr>
 	</table>
 </form>
-<br>&nbsp;
+<br />
 <script type="text/javascript">
 	Event.observe('<%= FORM_NAME %>', 'submit', function(event) {
 		$('<%= FORM_NAME %>').request({

@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: ElementImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,12 +59,24 @@ import org.opencrx.kernel.backend.Models;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * ElementImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class ElementImpl
 	<S extends org.opencrx.kernel.model1.jmi1.Element,N extends org.opencrx.kernel.model1.cci2.Element,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements StoreCallback {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public ElementImpl(
         S same,
         N next
@@ -72,17 +84,18 @@ public class ElementImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
 		try {
-			Models.getInstance().updateModelElement(
+			Models.getInstance().preStore(
 				this.sameObject() 
 			);
 			super.jdoPreStore();
-		}
-		catch(ServiceException e) {
+		} catch(ServiceException e) {
 			throw new JDOUserException(
 				"jdoPreStore failed",
 				e,

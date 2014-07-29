@@ -80,6 +80,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
+import org.opencrx.application.uses.net.sf.webdav.WebDavStore.Status;
 import org.opencrx.application.uses.net.sf.webdav.WebdavStatus;
 import org.opencrx.application.uses.net.sf.webdav.exceptions.AccessDeniedException;
 import org.opencrx.application.uses.net.sf.webdav.exceptions.LockFailedException;
@@ -88,20 +89,20 @@ import org.opencrx.application.uses.net.sf.webdav.exceptions.ObjectNotFoundExcep
 import org.opencrx.application.uses.net.sf.webdav.exceptions.WebdavException;
 import org.openmdx.base.exception.ServiceException;
 
-
+/**
+ * DoDelete
+ *
+ */
 public class DoDelete extends WebDavMethod {
 
     private static Logger LOG = Logger.getLogger(DoDelete.class.getPackage().getName());
 
     private final WebDavStore _store;
-    private final boolean _readOnly;
 
     public DoDelete(
-    	WebDavStore store,
-        boolean readOnly
+    	WebDavStore store
     ) {
         _store = store;
-        _readOnly = readOnly;
     }
 
     @Override
@@ -111,38 +112,34 @@ public class DoDelete extends WebDavMethod {
         LOG.finest("-- " + this.getClass().getName());
         HttpServletRequest req = requestContext.getHttpServletRequest();
         HttpServletResponse resp = requestContext.getHttpServletResponse();
-        if (!_readOnly) {
-            String path = getRelativePath(requestContext);
-            String parentPath = getParentPath(getCleanPath(path));
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
-            if (!checkLocks(requestContext, _store, parentPath)) {
-                errorList.put(parentPath, WebdavStatus.SC_LOCKED);
+        String path = getRelativePath(requestContext);
+        String parentPath = getParentPath(getCleanPath(path));
+        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        if (!checkLocks(requestContext, _store, parentPath)) {
+            errorList.put(parentPath, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return; // parent is locked
+        }
+        if(!checkLocks(requestContext, _store, path)) {
+            errorList.put(path, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return; // resource is locked
+        }
+        try {
+            errorList = new Hashtable<String, Integer>();
+            Resource so = _store.getResourceByPath(requestContext, path);
+            this.deleteResource(requestContext, so, path, errorList);
+            if(!errorList.isEmpty()) {
                 sendReport(requestContext, errorList);
-                return; // parent is locked
             }
-            if (!checkLocks(requestContext, _store, path)) {
-                errorList.put(path, WebdavStatus.SC_LOCKED);
-                sendReport(requestContext, errorList);
-                return; // resource is locked
-            }
-            try {
-                errorList = new Hashtable<String, Integer>();
-                Resource so = _store.getResourceByPath(requestContext, path);
-                this.deleteResource(requestContext, so, path, errorList);
-                if (!errorList.isEmpty()) {
-                    sendReport(requestContext, errorList);
-                }
-            } catch (AccessDeniedException e) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            } catch (ObjectAlreadyExistsException e) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
-            } catch (WebdavException e) {
-            	new ServiceException(e).log();            	
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } finally {
-            }
-        } else {
+        } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+        } catch (ObjectAlreadyExistsException e) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
+        } catch (WebdavException e) {
+        	new ServiceException(e).log();            	
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
         }
     }
 
@@ -172,19 +169,20 @@ public class DoDelete extends WebDavMethod {
         Hashtable<String, Integer> errorList 
     ) throws IOException, WebdavException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
-        resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        if (!_readOnly) {
-        	if(so != null) {
-	            if (so.isCollection()) {
-	                deleteCollectionContent(requestContext, path, so, errorList);
-	                _store.removeResource(requestContext, so);
-	            } else {
-	                _store.removeResource(requestContext, so);
-	            }
-        	}
-        } else {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-        }
+    	if(so != null) {
+            if(so.isCollection()) {
+                deleteCollectionContent(requestContext, path, so, errorList);
+            }
+            WebDavStore.Status status = _store.removeResource(requestContext, path, so);
+            switch(status) {
+            	case OK:
+            		resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            		break;
+            	default:
+            		resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            		break;
+            }
+    	}
     }
 
     /**
@@ -212,15 +210,13 @@ public class DoDelete extends WebDavMethod {
     	Resource parent,
         Hashtable<String, Integer> errorList 
     ) throws WebdavException {
-        Collection<Resource> children = _store.getChildren(requestContext, parent);
+        Collection<Resource> children = _store.getChildren(requestContext, parent, null, null);
         for(Resource child: children) {
             try {
                 if(child.isCollection()) {
                     deleteCollectionContent(requestContext, path + "/" + child.getName(), child, errorList);
-                    _store.removeResource(requestContext, child);
-                } else {
-                    _store.removeResource(requestContext,child);
                 }
+                _store.removeResource(requestContext, path, child);
             } catch (AccessDeniedException e) {
                 errorList.put(path + "/" + child.getName(), new Integer(HttpServletResponse.SC_FORBIDDEN));
             } catch (ObjectNotFoundException e) {

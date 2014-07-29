@@ -135,11 +135,15 @@ public class DoFollowUpAction extends BpiAction {
 	    		try {
 	    			String followUpText = bpiDoFollowUpParams.getText();
 	    			// The activity's detailedDescription and assignedTo is updated in case updateActivity is true.
-	    			// The existing detailedDescription is then used as followUpText instead.
+	    			// The existing detailedDescription is then merged with the followUpText.
 	    			if(Boolean.TRUE.equals(bpiDoFollowUpParams.getUpdateActivity())) {
 	    				pm.currentTransaction().begin();
-	    				followUpText = activity.getDetailedDescription();
-	    				activity.setDetailedDescription(bpiDoFollowUpParams.getText());
+	    				activity.setDetailedDescription(
+	    					plugIn.mergeActivityDetailedDescription(
+		    					activity.getDetailedDescription(),
+		    					bpiDoFollowUpParams.getText()
+		    				)
+		    			);
 	    				activity.setAssignedTo(assignTo);
 	    				pm.currentTransaction().commit();
 	    			}

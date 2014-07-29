@@ -1241,22 +1241,15 @@ public class AccessControl_1 extends Standard_1 {
 	                }
 	            } catch(Exception e) {}
 	        }
-	        // Get cached parent
-	        Path reference = path;
-	        if(reference.size() % 2 == 1) {
-	            reference = path.getParent();
-	        }
-	        // Get parent from cache or retrieve
-	        Path parentPath = reference.getParent();
-	        Object[] entry = objectCache.get(parentPath);
-	        MappedRecord parent = null;
+	        Object[] entry = objectCache.get(path);
+	        MappedRecord object = null;
 	        if(entry == null) {
-	            parent = this.retrieveObject(parentPath, true);
-	            this.addToObjectCache(parent);
+	            object = this.retrieveObject(path, true);
+	            this.addToObjectCache(object);
 	        } else {
-	            parent = (MappedRecord)entry[0];
+	            object = (MappedRecord)entry[0];
 	        }
-	        return parent;
+	        return object;
 	    }
 	    
 	    /**
@@ -1277,8 +1270,7 @@ public class AccessControl_1 extends Standard_1 {
 	                    new Long(System.currentTimeMillis() + TTL_CACHED_OBJECTS)
 	                }
 	            );
-	        }
-	        else {
+	        } else {
 	        	SysLog.error("Missing object class. Object not added to cache", facade.getPath());
 	        }
 	    }
@@ -1312,7 +1304,7 @@ public class AccessControl_1 extends Standard_1 {
 	        if(request.path().size() >= 7) {
 		        parent = this.getCachedObject(
 	                header, 
-	                request.path()
+	                request.path().getPrefix(request.path().size() - 2)
 	            );
 		        parentFacade = Facades.asObject(parent);
 		        if(AccessControl_1.this.isSecureObject(parent)) {
@@ -1415,7 +1407,7 @@ public class AccessControl_1 extends Standard_1 {
 	        Path userIdentity = getRunAsPrincipalResult.getUserIdentity();
 	        MappedRecord parent = this.getCachedObject(
 	            header,
-	            request.path()
+	            request.path().getParent()
 	        );
 	        Object_2Facade parentFacade = Facades.asObject(parent);
 	        ModelElement_1_0 referencedType = AccessControl_1.this.getReferencedType(
@@ -1426,39 +1418,72 @@ public class AccessControl_1 extends Standard_1 {
 	        	AccessControl_1.this.isSecureObject(referencedType) && 
 	        	AccessControl_1.this.isSecureObject(parent)
 	        ) {
-	        	boolean containsSharedAssociation = AccessControl_1.this.model.containsSharedAssociation(
-	        		request.path()
-	        	);
+	        	boolean containsSharedAssociation = AccessControl_1.this.model.containsSharedAssociation(request.path());
 	        	if(containsSharedAssociation) {
-	        		Number originalSize = input.getSize();
-	        		Number originalPosition = input.getPosition();
-	        		// In case of shared association get the composite parent and 
-	        		// restrict query to the parent's security settings
-	        		input.setSize(1);
-	        		input.setPosition(0);
-			        super.find(
-			        	ispec, 
-			        	input, 
-			        	output
-			        );
-	        		if(!output.isEmpty()) {
-			        	Object_2Facade objectParentFacade = Facades.asObject(
+	        		Object_2Facade objectParentFacade = null;
+	        		Path compositeParentPath = null;
+	        		for(Map.Entry<Path,Path> e: sharedAssociationToCompositeParentPathMap.entrySet()) {
+	        			if(request.path().isLike(e.getKey())) {
+	        				compositeParentPath = e.getValue();
+	        				break;
+	        			}
+	        		}
+	        		if(compositeParentPath != null) {
+			        	objectParentFacade = Facades.asObject(
 			        		this.getCachedObject(
 			        			header, 
-			        			Object_2Facade.getPath(reply.getObject()).getParent()
+			        			compositeParentPath
 			        		)
 			        	);
-			        	// Restrict query according to security settings of composite parent
+	        		} else {
+		        		Number originalSize = input.getSize();
+		        		Number originalPosition = input.getPosition();
+		        		// In case of shared association get the composite parent and 
+		        		// restrict query to the parent's security settings
+		        		input.setSize(1);
+		        		input.setPosition(0);
+				        super.find(
+				        	ispec, 
+				        	input, 
+				        	output
+				        );
+		        		if(!output.isEmpty()) {
+		        			compositeParentPath = Object_2Facade.getPath(reply.getObject()).getParent().getParent();
+				        	objectParentFacade = Facades.asObject(
+				        		this.getCachedObject(
+				        			header, 
+				        			compositeParentPath
+				        		)
+				        	);
+			        		input.setPosition(originalPosition);
+			        		input.setSize(originalSize);
+			        		output.clear();
+			        		// Only add to cache if composite parent is segment
+				        	if(compositeParentPath.size() == 5) {
+				        		Path sharedAssociationPathPattern = request.path().getPrefix(5);
+				        		for(int i = 5; i < request.path().size(); i++) {
+				        			if(i % 2 == 0) {
+				        				sharedAssociationPathPattern = sharedAssociationPathPattern.getChild(":*");
+				        			} else {
+				        				sharedAssociationPathPattern = sharedAssociationPathPattern.getChild(request.path().get(i));
+				        			}
+				        		}
+					        	sharedAssociationToCompositeParentPathMap.put(
+					        		sharedAssociationPathPattern,
+					        		compositeParentPath
+					        	);
+				        	}
+		        		}
+		        	}
+		        	// Restrict query according to security settings of composite parent
+	        		if(objectParentFacade != null) {
 			        	realm.restrictQuery(
-			        		request, 
+			        		request,
 			        		objectParentFacade, 
 			        		principal, 
 			        		userIdentity
 			        	);
 	        		}
-	        		input.setPosition(originalPosition);
-	        		input.setSize(originalSize);
-	        		output.clear();
 	        	}
 	        	// Restrict query according to security settings of parent
 	        	realm.restrictQuery(
@@ -1526,7 +1551,7 @@ public class AccessControl_1 extends Standard_1 {
 		        if(request.path().size() >= 7) {
 			        parent = this.getCachedObject(
 		                header,
-		                request.path()
+		                request.path().getPrefix(request.path().size() - 2)
 		            );
 			        Object_2Facade parentFacade = Facades.asObject(parent);
 			        ModelElement_1_0 referencedType = this.getModel().getTypes(request.path())[2];
@@ -1778,68 +1803,78 @@ public class AccessControl_1 extends Standard_1 {
 	                    new BasicException.Parameter("param1", AccessControl_1.this.realmIdentity)
 	                );            
 	            }
-	            Path objectIdentity = request.path().getParent().getParent();
-	            Path userIdentity = AccessControl_1.this.getUser(principal);
-	            MappedRecord parent = objectIdentity.size() <= 5 ?
-	            	null:
-	        		this.getCachedObject(
+	            Path objectIdentity = request.path().getPrefix(request.path().size() - 2);
+	            if(objectIdentity.size() >= 7) {
+	            	Path userIdentity = AccessControl_1.this.getUser(principal);
+			        MappedRecord parent = this.getCachedObject(
 		                header,
-		                objectIdentity
-		            );            
-	            Object_2Facade parentFacade = parent == null ? null : Facades.asObject(parent);
-	            MappedRecord object = this.retrieveObject(objectIdentity, true);
-	            Object_2Facade objectFacade = Facades.asObject(object);
-	            MappedRecord result = AccessControl_1.this.createResult(
-	                request,
-	                "org:opencrx:kernel:base:CheckPermissionsResult"
-	            );
-	            Object_2Facade replyFacade = Facades.asObject(result);
-	            // Read permissions
-	            Set<String> grantedPermissions = new HashSet<String>();
-	            boolean hasPermission = realm.hasPermission(
-	            	request, 
-	            	objectFacade, 
-	            	parentFacade, 
-	            	principal, 
-	            	userIdentity, 
-	            	Action.READ, 
-	            	grantedPermissions,
-	            	this
-	            );
-                replyFacade.attributeValuesAsList("grantedPermissionsRead").addAll(grantedPermissions);
-	            replyFacade.attributeValuesAsList("hasReadPermission").add(hasPermission);
-	            // Delete permissions
-	            grantedPermissions = new HashSet<String>();
-	            hasPermission = realm.hasPermission(
-	            	request, 
-	            	objectFacade, 
-	            	parentFacade, 
-	            	principal, 
-	            	userIdentity, 
-	            	Action.DELETE, 
-	            	grantedPermissions,
-	            	this
-	            );
-                replyFacade.attributeValuesAsList("grantedPermissionsDelete").addAll(grantedPermissions);
-	            replyFacade.attributeValuesAsList("hasDeletePermission").add(hasPermission);
-	            // Update
-	            grantedPermissions = new HashSet<String>();
-	            hasPermission = realm.hasPermission(
-	            	request, 
-	            	objectFacade, 
-	            	parentFacade, 
-	            	principal, 
-	            	userIdentity, 
-	            	Action.UPDATE, 
-	            	grantedPermissions,
-	            	this
-	            );
-                replyFacade.attributeValuesAsList("grantedPermissionsUpdate").addAll(grantedPermissions);
-	            replyFacade.attributeValuesAsList("hasUpdatePermission").add(hasPermission);
-	            // Return result
-	            output.setPath(replyFacade.getPath());
-	            output.setBody(replyFacade.getValue());
-	            return true;
+		                request.path().getPrefix(request.path().size() - 2)
+		            );	            
+		            Object_2Facade parentFacade = Facades.asObject(parent);
+		            MappedRecord object = this.retrieveObject(objectIdentity, true);
+		            Object_2Facade objectFacade = Facades.asObject(object);
+		            MappedRecord result = AccessControl_1.this.createResult(
+		                request,
+		                "org:opencrx:kernel:base:CheckPermissionsResult"
+		            );
+		            Object_2Facade replyFacade = Facades.asObject(result);
+		            // Read permissions
+		            Set<String> grantedPermissions = new HashSet<String>();
+		            boolean hasPermission = realm.hasPermission(
+		            	request, 
+		            	objectFacade, 
+		            	parentFacade, 
+		            	principal, 
+		            	userIdentity, 
+		            	Action.READ, 
+		            	grantedPermissions,
+		            	this
+		            );
+	                replyFacade.attributeValuesAsList("grantedPermissionsRead").addAll(grantedPermissions);
+		            replyFacade.attributeValuesAsList("hasReadPermission").add(hasPermission);
+		            // Delete permissions
+		            grantedPermissions = new HashSet<String>();
+		            hasPermission = realm.hasPermission(
+		            	request, 
+		            	objectFacade, 
+		            	parentFacade, 
+		            	principal, 
+		            	userIdentity, 
+		            	Action.DELETE, 
+		            	grantedPermissions,
+		            	this
+		            );
+	                replyFacade.attributeValuesAsList("grantedPermissionsDelete").addAll(grantedPermissions);
+		            replyFacade.attributeValuesAsList("hasDeletePermission").add(hasPermission);
+		            // Update
+		            grantedPermissions = new HashSet<String>();
+		            hasPermission = realm.hasPermission(
+		            	request, 
+		            	objectFacade, 
+		            	parentFacade, 
+		            	principal, 
+		            	userIdentity, 
+		            	Action.UPDATE, 
+		            	grantedPermissions,
+		            	this
+		            );
+	                replyFacade.attributeValuesAsList("grantedPermissionsUpdate").addAll(grantedPermissions);
+		            replyFacade.attributeValuesAsList("hasUpdatePermission").add(hasPermission);
+		            // Return result
+		            output.setPath(replyFacade.getPath());
+		            output.setBody(replyFacade.getValue());
+		            return true;
+	            } else {
+	                throw new ServiceException(
+	                    BasicException.Code.DEFAULT_DOMAIN,
+	                    BasicException.Code.ASSERTION_FAILURE, 
+	                    "Can not invoke checkPermissions on this object",
+                        new BasicException.Parameter("path", request.path()),
+	                    new BasicException.Parameter("principal", principalName),
+	                    new BasicException.Parameter("param0", principalName),
+	                    new BasicException.Parameter("param1", AccessControl_1.this.realmIdentity)
+	                );	            	
+	            }
 	        }
 	        super.invoke(
 	            ispec,
@@ -1848,7 +1883,6 @@ public class AccessControl_1 extends Standard_1 {
 	        );
 	        return true;
 	    }
-	    
     }
 
     /**
@@ -2218,7 +2252,10 @@ public class AccessControl_1 extends Standard_1 {
     // Entry contains (path,[object,ttl])
     protected static final ConcurrentMap<Path,Object[]> objectCache = 
         new ConcurrentHashMap<Path,Object[]>();
-    
+
+    // Mapping of shared association paths to composite parent path
+    protected static final ConcurrentMap<Path,Path> sharedAssociationToCompositeParentPathMap =
+    	new ConcurrentHashMap<Path,Path>();
 }
 
 //--- End of File -----------------------------------------------------------

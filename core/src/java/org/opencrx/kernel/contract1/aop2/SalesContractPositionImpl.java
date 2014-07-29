@@ -55,15 +55,19 @@ package org.opencrx.kernel.contract1.aop2;
 import java.math.BigDecimal;
 
 import javax.jdo.JDOUserException;
+import javax.jdo.listener.DeleteCallback;
+import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.backend.Contracts;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
 public class SalesContractPositionImpl
 	<S extends org.opencrx.kernel.contract1.jmi1.SalesContractPosition,N extends org.opencrx.kernel.contract1.cci2.SalesContractPosition,C extends SalesContractPositionImpl.DerivedAttributes>
-	extends AbstractObject<S,N,C> {
+	extends AbstractObject<S,N,C>
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
 	public static class DerivedAttributes {
@@ -247,17 +251,18 @@ public class SalesContractPositionImpl
         }        	    	
     }
     
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {    
-    		Contracts.getInstance().updateSalesContractPosition(
+    		Contracts.getInstance().preStore(
     			this.sameObject()
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
@@ -266,19 +271,19 @@ public class SalesContractPositionImpl
     	}
     }
     
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
     public void jdoPreDelete(
     ) {
     	try {
-    		Contracts.getInstance().removeSalesContractPosition(
+    		Contracts.getInstance().preDelete(
     			this.sameObject(), 
-    			true, 
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,
@@ -286,8 +291,10 @@ public class SalesContractPositionImpl
     		);
     	}
     }
-            
-    //-----------------------------------------------------------------------
+
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#newContext()
+	 */
 	@SuppressWarnings("unchecked")
     @Override
     protected C newContext(

@@ -54,6 +54,7 @@ package org.opencrx.application.carddav;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -93,6 +94,8 @@ class CardProfileResource extends CardDavResource {
 	
 	@Override
 	public Collection<Resource> getChildren(
+		Date timeRangeStart,
+		Date timeRangeEnd
 	) {
 		SyncProfile syncProfile = this.getObject();
 		PersistenceManager pm = JDOHelper.getPersistenceManager(syncProfile);

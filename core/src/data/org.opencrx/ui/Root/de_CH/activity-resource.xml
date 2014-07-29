@@ -77,6 +77,18 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:resourceRate">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Ressourcensätze</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Ressourcensätze</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:name" _operation="create">
                     <_object>
                       <label>
@@ -95,17 +107,6 @@
                       </label>
                       <toolTip>
                         <_item>Beschreibung</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:rateCurrency" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Währung</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Währung</_item>
                       </toolTip>
                     </_object>
                     <_content/>
@@ -132,28 +133,76 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:standardRate" _operation="create">
+
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate" _operation="create">
+                    <_object>
+                      <active>true</active>
+                      <toolTip>
+                        <_item>Ressourcensatz</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Ressourcensatz</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <!--Element Definitions -->
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:name" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Name</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Name</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:description" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Beschreibung</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Beschreibung</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:rateType" _operation="create">
+                    <_object>
+                      <toolTip>
+                        <_item>Art des Ressourcensatzes</_item>
+                      </toolTip>
+                      <label>
+                        <_item>Art des Ressourcensatzes</_item>
+                      </label>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:rateCurrency" _operation="create">
                     <_object>
                       <label>
-                        <_item>Stundensatz (Standard)</_item>
+                        <_item>Währung</_item>
                       </label>
                       <toolTip>
-                        <_item>Stundensatz (Standard)</_item>
+                        <_item>Währung</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Resource:overtimeRate" _operation="create">
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ResourceRate:rate" _operation="create">
                     <_object>
-                      <label>
-                        <_item>Stundensatz (Überzeit)</_item>
-                      </label>
                       <toolTip>
-                        <_item>Stundensatz (Überzeit)</_item>
+                        <_item>Satz</_item>
                       </toolTip>
+                      <label>
+                        <_item>Satz</_item>
+                      </label>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Calendar" _operation="create">
                     <_object>
                       <label>

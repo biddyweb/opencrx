@@ -8,19 +8,27 @@
 	left: 0px;
 	width: 49px;
 	height: 100%;
-	background: #2d2d2d;
+	background: #f0f0f0;
 	color: #FFFFFF;
-	border-right: 1px solid #C0C0C0;
+	border-right: 1px solid #c0c0c0;
 	z-index: 26;
+	padding-top: 3px;
 }
 
 .integration_d img
 {
 	display: none;
-	height: 40px;
-	width: 40px;
-	padding: 10px 5px;
+	height: 36px;
+	width: 36px;
+	padding: 5px 7px;
 	cursor: pointer;
+}
+
+#intBlank
+{
+	height: 36px;
+	width: 36px;
+	padding: 5px 7px;
 }
 
 #resourceCalDAV_h, #resourceCalDAVTODO_h, .System > #ResourceCalDAVList, .System > #ResourceCalDAVTODOList, #timezoneWrapper, #timezoneWrapperTODO
@@ -58,17 +66,17 @@
 	left: 50px;
 }
 
-.System > div.company_d, .System > #SearchBoxCompany, .System > #ABListCompany, .System > #ABListOverlayCompany, .System > div.collection_d, .System > #SearchBox, .System > #ABList, .System > #ABListOverlay
+.System > div.collection_d, .System > #SearchBox, .System > #ABList, .System > #ABListOverlay
 {
 	left: 275px;
 }
 
-.System > div.contact_d, .System > #ABContactColor, .System > #ABContactOverlay
+.System > div.contact_d, .System > #ABContactColor, .System > #ABContactOverlay, .System > #ABMessage
 {
 	left: 526px;
 }
 
-.System > #ABMessage, .System > #ABContact
+.System > #ABContact
 {
 	left: 529px;
 }

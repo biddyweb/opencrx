@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /**
@@ -66,7 +66,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -145,9 +145,10 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:home1:UserHome">
 	<meta name="order" content="4998">
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<link href="../../_style/colors.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/n2default.css" rel="stylesheet" type="text/css">
-	<link href="../../_style/ssf.css" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="../../javascript/bootstrap/css/bootstrap.min.css">	
+	<link rel="stylesheet" href="../../_style/colors.css">
+	<link rel="stylesheet" href="../../_style/n2default.css">
+	<link rel="stylesheet" href="../../_style/ssf.css">
 	<link rel='shortcut icon' href='../../images/favicon.ico' />
 	<script language="javascript" type="text/javascript" src="../../javascript/portal-all.js"></script>
 	<script language="javascript" type="text/javascript">
@@ -331,12 +332,12 @@ org.openmdx.base.naming.*
 			display:none;
 		}
 		input.time {
-			width: 20px;
+			width: 30px;
 			text-align:right;
 			font-weight:bold;
 		}
 		input.percentage {
-			width: 25px;
+			width: 40px;
 			text-align:right;
 			font-weight:bold;
 		}
@@ -383,11 +384,12 @@ org.openmdx.base.naming.*
 			<div id="content" style="padding:0px 0.5em 0px 0.5em;">
 				<div id="aPanel">
 					<div id="inspector">
-						<div class="inspTabPanel" style="z-index: 201;">
-							<a class="<%= isWorkRecord && !isWorkRecordInPercent ? "selected" : "" %>" onclick="javascript:$('isWorkRecord').checked=true;$('isWorkRecordInPercent').checked=false;$('Reload.button').click();" href="#">Work Report</a>
-							<a class="<%= isWorkRecord && isWorkRecordInPercent ? "selected" : "" %>" onclick="javascript:$('isWorkRecord').checked=true;$('isWorkRecordInPercent').checked=true;$('Reload.button').click();" href="#">Work Report in %</a>
-							<a class="<%= isWorkRecord ? "" : "selected" %>" onclick="javascript:$('isWorkRecord').checked=false;$('isWorkRecordInPercent').checked=false;$('Reload.button').click();" href="#">Expense Report</a>
-						</div>
+
+						<ul class="nav nav-tabs nav-condensed" style="position:relative;z-index:1001;">
+							<li class="<%= isWorkRecord && !isWorkRecordInPercent ? "active" : "hidden-print" %>"><a href="#" onclick="javascript:$('isWorkRecord').checked=true;$('isWorkRecordInPercent').checked=false;$('Reload.button').click();" href="#">Work Report</a></li>
+							<li class="<%= isWorkRecord && isWorkRecordInPercent  ? "active" : "hidden-print" %>"><a href="#" onclick="javascript:$('isWorkRecord').checked=true;$('isWorkRecordInPercent').checked=true;$('Reload.button').click();" href="#">Work Report in %</a></li>
+							<li class="<%= isWorkRecord                           ? "hidden-print" : "active" %>"><a href="#" onclick="javascript:$('isWorkRecord').checked=false;$('isWorkRecordInPercent').checked=false;$('Reload.button').click();" href="#">Expense Report</a></li>
+						</ul>
 						<div id="inspContent" class="inspContent" style="z-index: 200;">
 							<div id="inspPanel0" class="selected" style="padding-top: 10px;">
 								<form name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= WIZARD_NAME %>">
@@ -420,15 +422,15 @@ org.openmdx.base.naming.*
 															<table style="width:100%;">
 																<tr>
 																	<td>
-																		<input id="Button.PrevYear" name="PrevYear" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&lt;&lt;" onclick="javascript:$('Command').value=this.name;" />
-																		<input id="Button.PrevMonth" name="PrevMonth" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;"	onclick="javascript:$('Command').value=this.name;" />
+																		<input id="Button.PrevYear" name="PrevYear" type="submit" style="font-size:6px;" tabindex="<%=tabIndex++%>" class="abutton" value="&lt;&lt;" onclick="javascript:$('Command').value=this.name;" />
+																		<input id="Button.PrevMonth" name="PrevMonth" type="submit" style="font-size:6px;" tabindex="<%=tabIndex++%>" class="abutton" value="&nbsp;&nbsp;&lt;&nbsp;"	onclick="javascript:$('Command').value=this.name;" />
 																	</td>
 																	<td style="width:100%;vertical-align:middle;">
 																		<span style="font-weight:bold;">&nbsp;<%=wc.getMonthFormat().format(firstDayOfMonth.getTime()) + " " + firstDayOfMonth.get(Calendar.YEAR)%>&nbsp;</span>
 																	</td>
 																	<td>
-																		<input id="Button.NextMonth" name="NextMonth" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="javascript:$('Command').value=this.name;" />
-																		<input id="Button.NextYear" name="NextYear" type="submit" tabindex="<%=tabIndex++%>" class="abutton" value="&gt;&gt;" onclick="javascript:$('Command').value=this.name;" />
+																		<input id="Button.NextMonth" name="NextMonth" type="submit" style="font-size:6px;" tabindex="<%=tabIndex++%>" class="abutton" value="&nbsp;&gt;&nbsp;&nbsp;" onclick="javascript:$('Command').value=this.name;" />
+																		<input id="Button.NextYear" name="NextYear" type="submit" style="font-size:6px;" tabindex="<%=tabIndex++%>" class="abutton" value="&gt;&gt;" onclick="javascript:$('Command').value=this.name;" />
 																	</td>
 																</tr>
 															</table>
@@ -483,7 +485,7 @@ org.openmdx.base.naming.*
 																					? "selectedweek"
 																					: "outofmonth";
 %>
-																				<td style="text-align:right;"><input id="SelectDateP.Button" tabindex="<%=tabIndex++%>" name="SelectDateP" type="submit" class="abutton <%=cssClass%>" value="&nbsp;<%=prevMonthDayOfMonth < 10 ? "&nbsp; " : ""%><%=prevMonthDayOfMonth%>&nbsp;" onclick="javascript:$('Command').value=this.name;$('dayOfMonth').value='<%=prevMonthDayOfMonth%>';" /></td>
+																				<td style="text-align:right;"><input id="SelectDateP.Button" tabindex="<%=tabIndex++%>" name="SelectDateP" type="submit" class="abutton <%=cssClass%>" style="padding:4px;" value="&nbsp;<%=prevMonthDayOfMonth < 10 ? "&nbsp; " : ""%><%=prevMonthDayOfMonth%>&nbsp;" onclick="javascript:$('Command').value=this.name;$('dayOfMonth').value='<%=prevMonthDayOfMonth%>';" /></td>
 <%
 																				calendarPrevMonth.add(GregorianCalendar.DAY_OF_MONTH, 1);
 																			}
@@ -503,7 +505,7 @@ org.openmdx.base.naming.*
 																					? "SelectDateN"
 																					: "SelectDate";
 %>
-																				<td style="text-align:right;"><input id="<%=buttonName%>.Button" tabindex="<%=tabIndex++%>" name="<%=buttonName%>" type="submit" class="abutton <%=cssClass%>" value="&nbsp;<%=dayOfMonth < 10 ? "&nbsp; " : ""%><%=dayOfMonth%>&nbsp;" onclick="javascript:$('Command').value=this.name;$('dayOfMonth').value='<%=dayOfMonth%>';" /></td>
+																				<td style="text-align:right;"><input id="<%=buttonName%>.Button" tabindex="<%=tabIndex++%>" name="<%=buttonName%>" type="submit" class="abutton <%=cssClass%>" style="padding:4px;" value="&nbsp;<%=dayOfMonth < 10 ? "&nbsp; " : ""%><%=dayOfMonth%>&nbsp;" onclick="javascript:$('Command').value=this.name;$('dayOfMonth').value='<%=dayOfMonth%>';" /></td>
 <%
 																				calendar.add(GregorianCalendar.DAY_OF_MONTH, 1);
 																			}
@@ -523,7 +525,7 @@ org.openmdx.base.naming.*
 												<fieldset>
 												<table class="fieldGroup">
 													<tr>
-														<td class="label"><span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS)%>:</span></td>
+														<td class="<%= CssClass.fieldLabel %>"><span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.CONTACT_CLASS)%>:</span></td>
 <%
 														tabIndex = 1;
 														String lookupId = org.opencrx.kernel.backend.Accounts.getInstance().getUidAsString();
@@ -532,7 +534,7 @@ org.openmdx.base.naming.*
 %>
 														<td>
 															<div class="autocompleterMenu">
-																<ul id="nav" class="nav" onmouseover="sfinit(this);" >
+																<ul id="<%=CssClass.ssfNav %>" class="<%=CssClass.ssfNav %>" onmouseover="sfinit(this);" >
 																	<li><a href="#"><img border="0" alt="" src="../../images/autocomplete_select.png" /></a>
 																		<ul onclick="this.style.left='-999em';" onmouseout="this.style.left='';">
 																			<li class="selected"><a href="#" onclick="javascript:navSelect(this);ac_addObject0.url= './'+getEncodedHRef(['../../ObjectInspectorServlet', 'event', '40', 'parameter', 'xri*(xri:@openmdx:org.opencrx.kernel.account1/provider/<%=wc.getProviderName()%>/segment/<%=wc.getSegmentName()%>)*referenceName*(account)*filterByType*(org:opencrx:kernel:account1:Contact)*filterByFeature*(fullName)*filterOperator*(IS_LIKE)*orderByFeature*(fullName)*position*(0)*size*(20)']);return false;"><span>&nbsp;&nbsp;&nbsp;</span><%=accountName%> / <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACCOUNT_CLASS, "fullName", app.getCurrentLocaleAsIndex())%></a></li>
@@ -574,7 +576,7 @@ org.openmdx.base.naming.*
 														</td>
 													</tr>
 													<tr>
-														<td class="label">
+														<td class="<%= CssClass.fieldLabel %>">
 															<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.RESOURCE_CLASS)%>:</span>
 														</td>
 														<td>
@@ -632,7 +634,7 @@ org.openmdx.base.naming.*
 														</td>
 													</tr>				
 													<tr>
-														<td class="label">
+														<td class="<%= CssClass.fieldLabel %>">
 															<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYFILTERGROUP_CLASS)%>:</span>
 														</td>
 														<td nowrap>
@@ -729,7 +731,7 @@ org.openmdx.base.naming.*
 														boolean isProject = CreateWorkAndExpenseRecordController.ACTIVITY_FILTER_PROJECT.equals(wc.getFormFields().getActivityFilter());
 %>
 														<tr <%= isProject ? "" : "style='display:none;'"%>>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS, "userBoolean0", app.getCurrentLocaleAsIndex())%> - <%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.ACTIVITYTRACKER_CLASS, "userString1", app.getCurrentLocaleAsIndex())%>:</span>
 															</td>
 															<td nowrap>
@@ -810,7 +812,7 @@ org.openmdx.base.naming.*
 														tabIndex += 10;
 %>
 														<tr <%=Boolean.TRUE.equals(wc.getFormFields().getShowActivityGroupNameFilter()) ? "" : "style='display:none;'"%>>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=app.getLabel(CreateWorkAndExpenseRecordController.ACTIVITYFILTERGLOBAL_CLASS)%>:</span>
 															</td>
 															<td>
@@ -820,7 +822,7 @@ org.openmdx.base.naming.*
 															<td class="addon"></td>
 														</tr>
 														<tr>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<div style="float:right;">
 																		<img class="timeButtonL" border="0" title=">" alt="" src="../../images/filter_down_star.gif" onclick="javascript:$('activitySortOrder').value = '<%=(wc.getFormFields().getActivitySortOrder() + 1) % MAX_ACTIVITY_SORT_ORDER%>';$('Reload.button').click();" />
 																</div>
@@ -916,7 +918,7 @@ org.openmdx.base.naming.*
 													<fieldset>
 													<table class="fieldGroup">
 														<tr>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "recordType", app.getCurrentLocaleAsIndex())%>:</span>
 															</td>
 															<td>
@@ -957,7 +959,7 @@ org.openmdx.base.naming.*
 														}
 %>
 														<tr>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "name", app.getCurrentLocaleAsIndex())%>:</span>
 															</td>
 															<td>
@@ -968,7 +970,7 @@ org.openmdx.base.naming.*
 															</td>
 														</tr>
 														<tr>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "description", app.getCurrentLocaleAsIndex())%>:</span>
 															</td>
 															<td>
@@ -977,7 +979,7 @@ org.openmdx.base.naming.*
 															<td class="addon"></td>
 														</tr>
 														<tr <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "rate", app.getCurrentLocaleAsIndex())%>:</span>
 															</td>
 															<td nowrap>
@@ -1007,7 +1009,7 @@ org.openmdx.base.naming.*
 															<td class="addon"></td>
 														</tr>
 														<tr <%=isWorkRecordInPercent ? "style='display:none;'" : ""%>>
-															<td class="label">
+															<td class="<%= CssClass.fieldLabel %>">
 																<span class="nw"><%=wc.getFieldLabel(CreateWorkAndExpenseRecordController.WORKANDEXPENSERECORD_CLASS, "isBillable", app.getCurrentLocaleAsIndex())%>:</span>
 															</td>
 															<td>
@@ -1016,7 +1018,7 @@ org.openmdx.base.naming.*
 															<td class="addon"></td>
 														</tr>
 														<tr class="time">
-															<td class="label timelabel">
+															<td class="timelabel">
 																<span class="nw"><b><%=wc.getDateFormat().format(wc.getDateAsCalendar(selectedDateStr, app).getTime())%></b>:</span>
 															</td>
 															<td class="time">
@@ -1178,7 +1180,7 @@ org.openmdx.base.naming.*
 													<fieldset <%=Boolean.TRUE.equals(wc.getShowMakePrivate()) ? "" : "style='display:none;'"%>>
 													<table class="fieldGroup">
 														<tr>
-															<td class="label" style="padding-top:5px;">
+															<td class="<%= CssClass.fieldLabel %>" style="padding-top:5px;">
 																<span class="nw"><strong><%=CreateWorkAndExpenseRecordController.PRIVATE_TOKEN%></strong>:</span>
 															</td>
 															<td>
@@ -1203,13 +1205,13 @@ org.openmdx.base.naming.*
 												}
 %>
 												<div class="buttons">
-													<input type="submit" id="EvictReload.Button" name="EvictReload" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getReloadText()%>" onclick="javascript:$('Command').value=this.name;" />
+													<input type="submit" id="EvictReload.Button" name="EvictReload" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>"  tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getReloadText()%>" onclick="javascript:$('Command').value=this.name;" />
 												</div>
 											</td>
 											<td></td>
 											<td>
-												<input type="submit" id="AddWorkRecord.button" name="AddWorkRecord" <%=noActivitiesFound || noResourcesFound ? "disabled" : ""%> tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getNewText()%>" onclick="javascript:$('Command').value=this.name;" />
-												<input type="submit" id="Cancel.button" name="Cancel" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getCloseText()%>" onclick="javascript:$('Command').value=this.name;" />
+												<input type="submit" id="AddWorkRecord.button" name="AddWorkRecord" <%=noActivitiesFound || noResourcesFound ? "disabled" : ""%> class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getNewText()%>" onclick="javascript:$('Command').value=this.name;" />
+												<input type="submit" id="Cancel.button" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="<%=tabIndex++%>" value="<%=app.getTexts().getCloseText()%>" onclick="javascript:$('Command').value=this.name;" />
 											</td>
 										</tr>
 									</table>

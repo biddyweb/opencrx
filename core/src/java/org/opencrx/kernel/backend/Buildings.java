@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,6 +55,7 @@ package org.opencrx.kernel.backend;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.building1.jmi1.AbstractBuildingUnit;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 
@@ -112,7 +113,7 @@ public class Buildings extends AbstractImpl {
      * @param buildingUnit
      * @throws ServiceException
      */
-    public void updateAbstractBuildingUnit(
+    protected void updateAbstractBuildingUnit(
     	AbstractBuildingUnit buildingUnit
     ) throws ServiceException {
     }
@@ -124,11 +125,38 @@ public class Buildings extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeAbstractBuildingUnit(
+    protected void removeAbstractBuildingUnit(
     	AbstractBuildingUnit buildingUnit,
     	boolean preDelete    	
     ) throws ServiceException {
     	
     }
-    
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+		if(object instanceof AbstractBuildingUnit) {
+			this.removeAbstractBuildingUnit((AbstractBuildingUnit)object, preDelete);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		if(object instanceof AbstractBuildingUnit) {
+			this.updateAbstractBuildingUnit((AbstractBuildingUnit)object);
+		}
+	}
+	
 }

@@ -118,6 +118,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:activityRelationship" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätenbeziehungen</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätenbeziehungen</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Activity:assignedResource" _operation="create">
                     <_object>
                       <label>
@@ -773,6 +784,94 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Aktivitätsbeziehung</_item>
+											</toolTip>
+											<label>
+												<_item>Aktivitätsbeziehung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:name" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Name</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Name</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:description" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beschreibung</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beschreibung</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:activityLinkType" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Typ</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Typ</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:activityFrom" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beziehung von</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beziehung von</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:activityTo" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Beziehung nach</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Beziehung nach</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:basedOn" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Abgeleitet von</_item>
+											</toolTip>
+											<label>
+												<_item>Abgeleitet von</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ActivityRelationship:distance" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Distanz</_item>
+											</toolTip>
+											<label>
+												<_item>Distanz</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:ProductReference" _operation="create">
                     <_object>
                       <label>

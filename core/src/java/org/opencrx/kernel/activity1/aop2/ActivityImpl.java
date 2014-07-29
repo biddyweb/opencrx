@@ -57,6 +57,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.JDOUserException;
+import javax.jdo.listener.DeleteCallback;
+import javax.jdo.listener.StoreCallback;
 
 import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityFollowUp;
@@ -75,7 +77,8 @@ import org.w3c.spi2.Structures;
 
 public class ActivityImpl
 	<S extends org.opencrx.kernel.activity1.jmi1.Activity,N extends org.opencrx.kernel.activity1.cci2.Activity,C extends ActivityImpl.DerivedAttributes>
-	extends AbstractObject<S,N,C> {
+	extends AbstractObject<S,N,C>
+	implements StoreCallback, DeleteCallback {
 
     //-----------------------------------------------------------------------
 	public static class DerivedAttributes {
@@ -367,17 +370,18 @@ public class ActivityImpl
         }
     }
 
-    //-----------------------------------------------------------------------
+	/* (non-Javadoc)
+	 * @see org.openmdx.base.aop2.AbstractObject#jdoPreStore()
+	 */
 	@Override
     public void jdoPreStore(
     ) {
     	try {
-    		Activities.getInstance().updateActivity(
+    		Activities.getInstance().preStore(
     			this.sameObject() 
     		);
     		super.jdoPreStore();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreStore failed",
     			e,
@@ -386,18 +390,19 @@ public class ActivityImpl
     	}
     }
 
-    //-----------------------------------------------------------------------
+    /* (non-Javadoc)
+     * @see org.openmdx.base.aop2.AbstractObject#jdoPreDelete()
+     */
     @Override
-    protected void jdoPreDelete(
+    public void jdoPreDelete(
     ) {
     	try {
-    		Activities.getInstance().removeActivity(
+    		Activities.getInstance().preDelete(
     			this.sameObject(), 
     			true
     		);
     		super.jdoPreDelete();
-    	}
-    	catch(ServiceException e) {
+    	} catch(ServiceException e) {
     		throw new JDOUserException(
     			"jdoPreDelete failed",
     			e,

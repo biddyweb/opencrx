@@ -73,6 +73,7 @@ import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.MimeUtils;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
@@ -113,11 +114,26 @@ public class TestUtils {
         @Test
         public void run(
         ) throws ServiceException, IOException, ParseException{
+        	this.testParseContentType();
             this.testTraverseObjectTree();
             this.testSecureObject();
             this.testNormalizeNewLines();
         }
 		
+	    /**
+	     * Test Utils.traverseObjectTree
+	     * @throws ServiceException
+	     */
+	    protected void testParseContentType(
+	    ) throws ServiceException {
+	    	String[] contentType1 = MimeUtils.parseContentType("application/octet-stream; name=CV_english_January.pdf");
+	    	assertEquals("contentType[0]", "application/octet-stream", contentType1[0]);
+	    	assertEquals("contentType[1]", "CV_english_January.pdf", contentType1[1]);
+	    	String[] contentType2 = MimeUtils.parseContentType("application/octet-stream; name=\"CV_english_January.pdf\"");
+	    	assertEquals("contentType[0]", "application/octet-stream", contentType2[0]);
+	    	assertEquals("contentType[1]", "CV_english_January.pdf", contentType2[1]);
+	    }
+	    
 	    /**
 	     * Test Utils.traverseObjectTree
 	     * @throws ServiceException

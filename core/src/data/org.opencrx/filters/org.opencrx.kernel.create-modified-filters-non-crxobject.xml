@@ -19,7 +19,6 @@
 				<void index="4">
 					<string>org:openmdx:security:realm1:Role:permission</string>
 				</void>
-
 				<void index="5">
 					<string>org:opencrx:kernel:activity1:Absence:note</string>
 				</void>
@@ -44,7 +43,6 @@
 				<void index="12">
 					<string>org:opencrx:kernel:activity1:Task:note</string>
 				</void>
-
 				<void index="13">
 					<string>org:opencrx:kernel:contract1:Lead:note</string>
 				</void>
@@ -60,7 +58,6 @@
 				<void index="17">
 					<string>org:opencrx:kernel:contract1:Invoice:note</string>
 				</void>
-
 				<void index="18">
 					<string>org:opencrx:kernel:account1:Contact:note</string>
 				</void>
@@ -73,18 +70,15 @@
 				<void index="21">
 					<string>org:opencrx:kernel:account1:UnspecifiedAccount:note</string>
 				</void>
-
 				<void index="22">
 					<string>org:opencrx:kernel:forecast1:Segment:budget</string>
 				</void>
-
 				<void index="23">
 					<string>org:opencrx:kernel:home1:Segment:userHome</string>
 				</void>
 				<void index="24">
 					<string>org:opencrx:kernel:home1:UserHome:reminder</string>
 				</void>
-
 				<void index="25">
 					<string>org:opencrx:kernel:home1:UserHome:wfProcessInstance</string>
 				</void>
@@ -100,13 +94,10 @@
 				<void index="29">
 					<string>org:opencrx:kernel:home1:UserHome:timer</string>
 				</void>
-
 			</array>
 		</void>
-
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="4">
-
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -115,6 +106,16 @@
 						<void property="iconKey">
 							<string>filter_down_star.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Created At [all / reverse chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Erstellt am [alle / umgekehrt chronologisch]</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
 								<void index="0">
@@ -134,7 +135,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -143,6 +143,16 @@
 						<void property="iconKey">
 							<string>filter_up_star.gif</string>
 						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Created At [all / chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Erstellt am [alle / chronologisch]</string>
+								</void>
+							</array>
+						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
 								<void index="0">
@@ -162,7 +172,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="2">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -170,6 +179,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_down_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Modified At [all / reverse chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Modifiziert am [alle / umgekehrt chronologisch]</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
@@ -190,7 +209,6 @@
 						</void>
 					</object>
 				</void>
-
 				<void index="3">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -198,6 +216,16 @@
 						</void>
 						<void property="iconKey">
 							<string>filter_up_time.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>° Modified At [all / chronological order]</string>
+								</void>
+								<void index="1">
+									<string>° Modifiziert am [alle / chronologisch]</string>
+								</void>
+							</array>
 						</void>
 						<void property="orderSpecifier">
 							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
@@ -218,7 +246,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

@@ -253,9 +253,9 @@
                       <label>
                         <_item>Etat</_item>
                       </label>
-                      <shortLabel>
-                        <_item>Etat</_item>
-                      </shortLabel>
+											<shortLabel>
+												<_item> </_item> <!-- note: space required for icon to be shown! -->
+											</shortLabel>
                       <toolTip>
                         <_item>Etat</_item>
                       </toolTip>

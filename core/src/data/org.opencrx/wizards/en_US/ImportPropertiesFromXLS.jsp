@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -99,7 +99,6 @@ org.openmdx.base.naming.*
   <meta name="order" content="org:opencrx:kernel:product1:Segment:importPropertiesFromXLS">
   <meta name="order" content="org:opencrx:kernel:product1:ProductConfigurationTypeSet:importPropertiesFromXLS">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <style type="text/css">
 	.err {background-color:orange;color:black;}
@@ -137,16 +136,16 @@ if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
         	<br>
 	        <table class="fieldGroup">
 				<tr id="submitFilename">
-					<td class="label"><span class="nw">File:</span></td>
+					<td class="<%= CssClass.fieldLabel %>"><span class="nw">File:</span></td>
 		            <td >
 		                <input type="file" class="valueL" size="100" name="<%= ImportPropertiesFromXlsController.UPLOAD_FILE_FIELD_NAME %>" tabindex="500" />
 		            </td>
 		            <td class="addon" >&nbsp;<br>&nbsp;</td>
 				</tr>
 				<tr id="submitButtons">
-					<td class="label" colspan="3">
-						<input type="Submit" name="OK" tabindex="1000" value="<%= wc.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
-						<input type="Submit" name="Cancel" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('UserDialog').innerHTML='';return false;" />
+					<td class="<%= CssClass.fieldLabel %>" colspan="3">
+						<input type="Submit" name="OK" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1000" value="<%= wc.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none';$('Command').value=this.name;" />
+						<input type="Submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="1010" value="<%= app.getTexts().getCancelTitle() %>" onclick="javascript:$('UserDialog').innerHTML='';return false;" />
 					</td>
 					<td></td>
 					<td class="addon" >&nbsp;<br>&nbsp;</td>

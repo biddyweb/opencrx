@@ -72,7 +72,7 @@ import org.opencrx.application.airsync.utils.DOMUtils;
 import org.opencrx.application.airsync.utils.WbXMLTransformer;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.lightweight.naming.NonManagedInitialContextFactoryBuilder;
-import org.openmdx.kernel.loading.Classes;
+import org.openmdx.kernel.loading.Resources;
 import org.w3c.dom.Document;
 
 import test.org.opencrx.generic.AbstractTest;
@@ -118,7 +118,7 @@ public class TestWBXML {
                 System.out.println("=-=-=-= " + wbxmlResource + " =-=-=-=");
         		// Transform from WBXML
         		try {
-	        		URL url = Classes.getApplicationResource(wbxmlResource);
+	        		URL url = Resources.getResource(wbxmlResource);
 	        		InputStream is = url.openStream();
         			doc = WbXMLTransformer.transformFromWBXML(is);
         		} catch(Exception e) {
@@ -150,7 +150,7 @@ public class TestWBXML {
         		// Parse XML
         		Document doc = null;
         		try {
-	        		URL url = Classes.getApplicationResource(xmlResource);
+	        		URL url = Resources.getResource(xmlResource);
 	        		InputStream is = url.openStream();
 	        		doc = DOMUtils.parse(is);
         		} catch(Exception e) {

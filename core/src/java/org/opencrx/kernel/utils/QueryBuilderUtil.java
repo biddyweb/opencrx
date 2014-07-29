@@ -735,7 +735,7 @@ public abstract class QueryBuilderUtil {
 		) throws ServiceException {
 			String columnName = getDatabasePlugIns()[0].getColumnName(
 				null, // conn 
-				(String)this.getFeature().objGetValue("name"), 
+				(String)this.getFeature().getName(), 
 				0, // index 
 				false, // indexSuffixIfZero 
 				true, // ignoreReservedWords 
@@ -754,7 +754,7 @@ public abstract class QueryBuilderUtil {
 		protected Integer getEmbeddedFeature(
 		) throws ServiceException {
 			return getDatabasePlugIns()[0].getEmbeddedFeature(
-				(String)this.getFeature().objGetValue("name")
+				(String)this.getFeature().getName()
 			);
 		}
 
@@ -771,7 +771,7 @@ public abstract class QueryBuilderUtil {
 		) throws ServiceException {
 			String columnName = getDatabasePlugIns()[0].getColumnName(
 				null, // conn 
-				(String)this.getFeature().objGetValue("name"), 
+				(String)this.getFeature().getName(), 
 				index, // index 
 				true, // indexSuffixIfZero 
 				true, // ignoreReservedWords 
@@ -794,12 +794,12 @@ public abstract class QueryBuilderUtil {
 		) throws ServiceException {
 			Model_1_0 model = reference.getModel();
 			Path referencedTypeAccessPath = model.getIdentityPattern(
-				model.getElement(reference.objGetValue("type"))
+				model.getElement(reference.getType())
 			);
 			if(referencedTypeAccessPath == null) {
 				try {
 					referencedTypeAccessPath = model.getIdentityPattern(
-						model.getElement(model.getReferenceType(accessPath).objGetValue("type"))
+						model.getElement(model.getReferenceType(accessPath).getType())
 					);
 				} catch(Exception ignore) {}
 				if(referencedTypeAccessPath == null) {
@@ -807,7 +807,7 @@ public abstract class QueryBuilderUtil {
 						? accessPath.getChild(":*")
 						: accessPath;
 				}
-				referencedTypeAccessPath = referencedTypeAccessPath.getDescendant((String)reference.objGetValue("name"));
+				referencedTypeAccessPath = referencedTypeAccessPath.getDescendant((String)reference.getName());
 			}
 			return referencedTypeAccessPath;			
 		}
@@ -1144,7 +1144,7 @@ public abstract class QueryBuilderUtil {
 				indent + "(" + 
 				(this.function == null 
 					? tableAlias + "." + columnName 
-					: this.function.replace((String)this.getFeature().objGetValue("name"), tableAlias + "." + columnName)
+					: this.function.replace((String)this.getFeature().getName(), tableAlias + "." + columnName)
 				) + 
 				" " +
 				this.conditionToSqlOperator(this.condition) + " " + this.value + 
@@ -1508,7 +1508,7 @@ public abstract class QueryBuilderUtil {
 					indent + TAB + TAB + tableAlias + "vj." + joinCriteria[2] + " = " + tableAlias + "v.object_id\n" + 
 					indent + TAB + "WHERE\n" + 
 					indent + TAB + TAB + tableAlias + "vj." + joinCriteria[1] + " = " + tableAlias + ".object_id";
-			} else if(ModelHelper.isReference(feature) && ModelHelper.isStoredAsAttribute(feature)) {
+			} else if(feature.isReference() && ModelHelper.isStoredAsAttribute(feature)) {
 				referencedTypeAccessPath = this.getReferencedTypeAccessPath(feature, accessPath);
 				referencedDbObject = this.getDbObject(referencedTypeAccessPath);
 				String columnName = this.getColumnName();				
@@ -1559,6 +1559,102 @@ public abstract class QueryBuilderUtil {
 		protected Condition condition;
 		protected Predicate predicate;
 		protected String havingClause;
+
+	}
+
+	/**
+	 * TypeReferencePredicate
+	 *
+	 */
+	public static class TypedReferencePredicate extends ReferencePredicate {
+		
+		/**
+		 * Constructor.
+		 * 
+		 */
+		public TypedReferencePredicate(
+		) {
+			super();
+		}
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param id
+		 * @param databasePlugIn
+		 */
+		public TypedReferencePredicate(
+			String id,
+			String description,
+			String qualifiedFeatureName
+		) {
+	        super(
+	        	id, 
+	        	description,
+	        	qualifiedFeatureName
+	        );
+        }
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param id
+		 * @param databasePlugIn
+		 */
+		public TypedReferencePredicate(
+			String id,
+			String description,
+			String qualifiedFeatureName,
+			String referencedTypeName,
+			Condition condition,
+			Predicate predicate
+		) {
+	        super(
+	        	id, 
+	        	description, 
+	        	qualifiedFeatureName
+	        );
+	        this.referencedTypeName = referencedTypeName;
+	        this.condition = condition;
+	        this.predicate = predicate;
+        }		
+		
+		/* (non-Javadoc)
+		 * @see org.opencrx.kernel.utils.QueryBuilderUtil.FeaturePredicate#getReferencedTypeAccessPath(org.openmdx.base.mof.cci.ModelElement_1_0, org.openmdx.base.naming.Path)
+		 */
+		@Override
+		protected Path getReferencedTypeAccessPath(
+			ModelElement_1_0 reference,
+			Path accessPath
+		) throws ServiceException {			
+			if(
+				this.referencedTypeName != null && 
+				reference.objGetValue("qualifiedFeatureName").equals(this.getQualifiedFeatureName())
+			) {
+				Model_1_0 model = reference.getModel();
+				return model.getIdentityPattern(
+					model.getElement(this.referencedTypeName)
+				);
+			} else {
+				return super.getReferencedTypeAccessPath(reference, accessPath);
+			}
+		}
+
+		/**
+		 * @return the referencedTypeName
+		 */
+		public String getReferencedTypeName() {
+			return referencedTypeName;
+		}
+
+		/**
+		 * @param referencedTypeName the referencedTypeName to set
+		 */
+		public void setReferencedTypeName(String referencedTypeName) {
+			this.referencedTypeName = referencedTypeName;
+		}
+		
+		private String referencedTypeName;
 
 	}
 
@@ -1707,7 +1803,7 @@ public abstract class QueryBuilderUtil {
 			clause += indent + TAB + "SELECT 0 FROM ";
 			// Get access path of composite parent
 			Path referencedTypeAccessPath = model.getIdentityPattern(
-				model.getElement(model.getReferenceType(accessPath).objGetValue("type"))
+				model.getElement(model.getReferenceType(accessPath).getType())
 			).getParent().getParent();
 			DbObject referencedDbObject = this.getDbObject(referencedTypeAccessPath);
 			String joinClause = 

@@ -85,13 +85,17 @@ import org.opencrx.kernel.depot1.jmi1.DepotPosition;
 import org.opencrx.kernel.depot1.jmi1.DepotReport;
 import org.opencrx.kernel.depot1.jmi1.DepotReportItemPosition;
 import org.opencrx.kernel.depot1.jmi1.DepotType;
+import org.opencrx.kernel.depot1.jmi1.PhoneNumber;
 import org.opencrx.kernel.depot1.jmi1.ProductDepotPosition;
 import org.opencrx.kernel.depot1.jmi1.SimpleBooking;
 import org.opencrx.kernel.depot1.jmi1.SingleBooking;
 import org.opencrx.kernel.generic.OpenCrxException;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.opencrx.kernel.product1.jmi1.Product;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.kernel.exception.BasicException;
 import org.w3c.format.DateTimeFormat;
@@ -764,7 +768,14 @@ public class Depots extends AbstractImpl {
         );
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Re-calculate depot reports.
+     * 
+     * @param depot
+     * @param report
+     * @param reportPreviousPeriod
+     * @throws ServiceException
+     */
     public void refreshReport(
         Depot depot,
         DepotReport report,
@@ -865,7 +876,13 @@ public class Depots extends AbstractImpl {
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Re-calculate depot reports.
+     * 
+     * @param depot
+     * @param bookingStatusThreshold
+     * @throws ServiceException
+     */
     public void assertReports(
         Depot depot,
         short bookingStatusThreshold
@@ -923,7 +940,14 @@ public class Depots extends AbstractImpl {
         }
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Cancel compound booking.
+     * 
+     * @param cb
+     * @param errors
+     * @return
+     * @throws ServiceException
+     */
     public CompoundBooking cancelCompoundBooking(
         CompoundBooking cb,
         List<String> errors
@@ -1018,7 +1042,12 @@ public class Depots extends AbstractImpl {
         return cancelCb;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Accept compound booking.
+     * 
+     * @param compoundBooking
+     * @throws ServiceException
+     */
     public void acceptCompoundBooking(
         CompoundBooking compoundBooking
     ) throws ServiceException {
@@ -1036,7 +1065,12 @@ public class Depots extends AbstractImpl {
         compoundBooking.getAcceptedBy().add(acceptedBy);
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Finalize compound booking.
+     * 
+     * @param cb
+     * @throws ServiceException
+     */
     public void finalizeCompoundBooking(
         CompoundBooking cb
     ) throws ServiceException {
@@ -1068,8 +1102,14 @@ public class Depots extends AbstractImpl {
         cb.setBookingStatus(new Short(BOOKING_STATUS_FINAL));        
     }
 
-    //-----------------------------------------------------------------------
-    public void removeCompoundBooking(
+    /**
+     * Remove compound booking.
+     * 
+     * @param compoundBooking
+     * @param preDelete
+     * @throws ServiceException
+     */
+    protected void removeCompoundBooking(
         CompoundBooking compoundBooking,
         boolean preDelete
     ) throws ServiceException {
@@ -1108,8 +1148,14 @@ public class Depots extends AbstractImpl {
         }
     }
 
-    //-----------------------------------------------------------------------
-    public void removeSimpleBooking(
+    /**
+     * Remove simple booking.
+     * 
+     * @param simpleBooking
+     * @param preDelete
+     * @throws ServiceException
+     */
+    protected void removeSimpleBooking(
         SimpleBooking simpleBooking,
         boolean preDelete
     ) throws ServiceException {
@@ -1126,8 +1172,14 @@ public class Depots extends AbstractImpl {
         }
     }
 
-    //-----------------------------------------------------------------------
-    public void removeSingleBooking(
+    /**
+     * Remove single booking.
+     * 
+     * @param singleBooking
+     * @param preDelete
+     * @throws ServiceException
+     */
+    protected void removeSingleBooking(
         SingleBooking singleBooking,
         boolean preDelete
     ) throws ServiceException {
@@ -1144,51 +1196,33 @@ public class Depots extends AbstractImpl {
         }
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Test for bookings having a depot position which is composite of
+     * the given booking target. The booking target can be a depot entity, 
+     * a depot holder, a depot or a depot position.
+     * 
+     * @param bookingTarget
+     * @return
+     * @throws ServiceException
+     */
     public boolean hasBookings(
-        Path bookingElementIdentity,
-        PersistenceManager pm
+        CrxObject bookingTarget
     ) throws ServiceException {
-        Path depotSegmentIdentity = bookingElementIdentity.getPrefix(5);
-        Path identityPattern = new Path("xri://@openmdx*org.opencrx.kernel.depot1").getDescendant( 
-            "provider", bookingElementIdentity.get(2), 
-            "segment", bookingElementIdentity.get(4),
-            "entity", bookingElementIdentity.get(6),
-            "depotHolder"
-        );
-        if(bookingElementIdentity.size() > 8) {
-            identityPattern = identityPattern.getDescendant(bookingElementIdentity.get(8), "depot");
-            if(bookingElementIdentity.size() > 10) {               
-                identityPattern = identityPattern.getDescendant(bookingElementIdentity.get(10), "position");
-                if(bookingElementIdentity.size() > 12) {
-                	identityPattern = identityPattern.getDescendant(bookingElementIdentity.get(12));
-                }
-                else {
-                    identityPattern = identityPattern.getDescendant(":*");                    
-                }
-            }
-            else {
-            	identityPattern = identityPattern.getDescendant(":*");
-            }
-        }
-        else {
-        	identityPattern = identityPattern.getDescendant(":*");
-        }
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(bookingTarget);
+    	String providerName = bookingTarget.refGetPath().get(2);
+    	String segmentName = bookingTarget.refGetPath().get(4);
+        org.opencrx.kernel.depot1.jmi1.Segment depotSegment = this.getDepotSegment(pm, providerName, segmentName);
         SingleBookingQuery bookingQuery = (SingleBookingQuery)pm.newQuery(SingleBooking.class);
-        bookingQuery.identity().like(
-        	depotSegmentIdentity.getDescendant(
-                new String[]{"booking", ":*"}
-            ).toXRI()
-        );
         bookingQuery.thereExistsPosition().elementOf(
-        	identityPattern
+        	PersistenceHelper.getCandidates(
+        		pm.getExtent(DepotPosition.class, true),
+        		bookingTarget.refMofId() + (bookingTarget.refGetPath().size() < 13 ? "/($...)" : "")
+        	)
         );
-        org.opencrx.kernel.depot1.jmi1.Segment depotSegment =
-        	(org.opencrx.kernel.depot1.jmi1.Segment)pm.getObjectById(depotSegmentIdentity);
-        List<SingleBooking> bookings = depotSegment.getExtent(bookingQuery);
+        List<SingleBooking> bookings = depotSegment.getBooking(bookingQuery);
         return !bookings.isEmpty();
     }
-    
+
     /**
      * Remove depot entity. Test for existing bookings.
      * 
@@ -1196,12 +1230,11 @@ public class Depots extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeDepotEntity(
+    protected void removeDepotEntity(
         DepotEntity depotEntity,
         boolean preDelete
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotEntity);    	
-        if(this.hasBookings(depotEntity.refGetPath(), pm)) {
+        if(this.hasBookings(depotEntity)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_ENTITY_HAS_BOOKINGS,
@@ -1220,16 +1253,15 @@ public class Depots extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeDepotHolder(
+    protected void removeDepotHolder(
         DepotHolder depotHolder,
         boolean preDelete
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotHolder);    	
-        if(this.hasBookings(depotHolder.refGetPath(), pm)) {
+        if(this.hasBookings(depotHolder)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_CONTRACT_HAS_BOOKINGS,
-                "Depot entity has bookings."
+                "Depot holder has bookings."
             );                                                                        
         }
         if(!preDelete) {
@@ -1244,16 +1276,15 @@ public class Depots extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeDepot(
+    protected void removeDepot(
         Depot depot,
         boolean preDelete
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(depot);    	
-        if(this.hasBookings(depot.refGetPath(), pm)) {
+        if(this.hasBookings(depot)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_DEPOT_HAS_BOOKINGS,
-                "Depot entity has bookings."
+                "Depot has bookings."
             );                                                                        
         }
         if(!preDelete) {
@@ -1268,17 +1299,16 @@ public class Depots extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeDepotPosition(
+    protected void removeDepotPosition(
         DepotPosition depotPosition,
         boolean preDelete
     ) throws ServiceException {
-    	PersistenceManager pm = JDOHelper.getPersistenceManager(depotPosition);    	
-        if(this.hasBookings(depotPosition.refGetPath(), pm)) {
+        if(this.hasBookings(depotPosition)) {
             throw new ServiceException(
                 OpenCrxException.DOMAIN,
                 OpenCrxException.DEPOT_POSITION_HAS_BOOKINGS,
-                "Depot entity has bookings."
-            );                                                                        
+                "Depot position has bookings."
+            );                                                       
         }
         if(!preDelete) {
         	depotPosition.refDelete();
@@ -1292,7 +1322,7 @@ public class Depots extends AbstractImpl {
      * @param preDelete
      * @throws ServiceException
      */
-    public void removeDepotGroup(
+    protected void removeDepotGroup(
         DepotGroup depotGroup,
         boolean preDelete
     ) throws ServiceException {
@@ -1498,6 +1528,47 @@ public class Depots extends AbstractImpl {
         cb.setLockModifiedAt(new Date());
     }
     
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
+	 */
+	@Override
+	public void preDelete(
+		RefObject_1_0 object, 
+		boolean preDelete
+	) throws ServiceException {
+		super.preDelete(object, preDelete);
+		if(object instanceof CompoundBooking) {
+			this.removeCompoundBooking((CompoundBooking)object, preDelete);
+		} else if(object instanceof DepotEntity) {
+			this.removeDepotEntity((DepotEntity)object, preDelete);
+		} else if(object instanceof DepotGroup) {
+			this.removeDepotGroup((DepotGroup)object, preDelete);
+		} else if(object instanceof DepotHolder) {
+			this.removeDepotHolder((DepotHolder)object, preDelete);
+		} else if(object instanceof Depot) {
+			this.removeDepot((Depot)object, preDelete);
+		} else if(object instanceof DepotPosition) {
+			this.removeDepotPosition((DepotPosition)object, preDelete);
+		} else if(object instanceof SimpleBooking) {
+			this.removeSimpleBooking((SimpleBooking)object, preDelete);
+		} else if(object instanceof SingleBooking) {
+			this.removeSingleBooking((SingleBooking)object, preDelete);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.opencrx.kernel.backend.AbstractImpl#preStore(org.opencrx.kernel.generic.jmi1.CrxObject)
+	 */
+	@Override
+	public void preStore(
+		RefObject_1_0 object
+	) throws ServiceException {
+		super.preStore(object);
+		if(object instanceof PhoneNumber) {
+			Addresses.getInstance().updatePhoneNumber((PhoneNumber)object);
+		}
+	}
+
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------

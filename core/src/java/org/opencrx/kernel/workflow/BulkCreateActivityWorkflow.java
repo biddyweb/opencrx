@@ -810,11 +810,9 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 			Object value = context.refGetValue(name);
 			if(value != null) {
 				if(codes != null && value instanceof Short && name.endsWith("Code")) {
-					@SuppressWarnings("unchecked")
-                    Map<Object,Object> longTexts = codes.getLongText(
+                    Map<Short,String> longTexts = codes.getLongTextByCode(
 						context.refClass().refMofId() + ":" + name, 
 						locale, 
-						true, // codeAsKey
 						true // includeAll
 					);
 					if(longTexts != null) {
@@ -831,11 +829,9 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 				String nameWithCodeSuffix = name + "Code";
 				Short code = (Short)context.refGetValue(nameWithCodeSuffix);
 				if(code != null) {
-					@SuppressWarnings("unchecked")
-	                Map<Object,Object> longTexts = codes.getLongText(
+	                Map<Short,String> longTexts = codes.getLongTextByCode(
 						context.refClass().refMofId() + ":" + nameWithCodeSuffix, 
 						locale, 
-						true, // codeAsKey
 						true // includeAll
 					);
 					if(longTexts != null) {

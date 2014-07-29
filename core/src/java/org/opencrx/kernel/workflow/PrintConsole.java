@@ -72,7 +72,7 @@ public class PrintConsole extends Workflows.SynchronousWorkflow {
         ContextCapable targetObject,
         WfProcessInstance wfProcessInstance
     ) throws ServiceException {
-        System.out.println("executing workflow " + this.getClass().getName());
+        System.out.println("executing workflow " + wfProcessInstance.getProcess().getName());
         System.out.println("target=" + targetObject);
         System.out.println("wfProcessInstance=" + wfProcessInstance);
         Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance);

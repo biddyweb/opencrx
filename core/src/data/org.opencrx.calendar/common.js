@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2013
+Copyright (C) 2011-2014
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -92,7 +92,19 @@ String.prototype.customCompare=function(stringB, alphabet, dir, caseSensitive)
 			stringB=stringB.toLowerCase();
 		}
 		while(stringA.charAt(pos)===stringB.charAt(pos) && pos<min){pos++;}
-		return (stringA.charAt(pos)=='' || alphabet.indexOf(stringA.charAt(pos))<alphabet.indexOf(stringB.charAt(pos))) ? -dir : dir;
+
+		if(stringA.charAt(pos)=='')
+			return -dir;
+		else
+		{
+			var index1=alphabet.indexOf(stringA.charAt(pos));
+			var index2=alphabet.indexOf(stringB.charAt(pos));
+
+			if(index1==-1 || index2==-1)
+				return stringA.localeCompare(stringB);
+			else
+				return (index1<index2 ? -dir : dir);
+		}
 	}
 }
 
@@ -138,7 +150,7 @@ Number.prototype.pad=function(size){
 }
 
 // Case insensitive search for attributes
-// Usage:	$('[id=vcard_editor]').find(':attrCaseInsensitive(data-type,"'+typeList[i]+'")')
+// Usage:	$('#selector').find(':attrCaseInsensitive(data-type,"'+typeList[i]+'")')
 jQuery.expr[':'].attrCaseInsensitive=function(elem, index, match)
 {
 	var matchParams=match[3].split(','),
@@ -151,6 +163,15 @@ jQuery.expr[':'].attrCaseInsensitive=function(elem, index, match)
 function capitalize(string)
 {
 	return string.charAt(0).toUpperCase()+string.slice(1).toLowerCase();
+}
+
+function hexToRgb(hex, transparency) {
+	var bigint=parseInt(hex.substring(1), 16);
+	var r=(bigint >> 16) & 255;
+	var g=(bigint >> 8) & 255;
+	var b=bigint & 255;
+
+	return 'rgba('+r+','+g+','+b+','+transparency+')';
 }
 
 function dataGetChecked(resourceListSelector)
@@ -232,7 +253,7 @@ function groupChBoxClick(obj, resourceListSelector, headerSelector, collectionSe
 // Escape vCalendar value - RFC2426 (Section 2.4.2)
 function vcalendarEscapeValue(inputValue)
 {
-	return (inputValue==undefined ? '' : inputValue).replace(/(,|;|\\)/g,"\\$1").replace(/\n/g,'\\n');
+	return (inputValue==undefined ? '' : inputValue).replace(vCalendar.pre['escapeRex'],"\\$1").replace(vCalendar.pre['escapeRex2'],'\\n');
 }
 
 // Unescape vCalendar value - RFC2426 (Section 2.4.2)

@@ -75,12 +75,14 @@ import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.cci2.ContactQuery;
 import org.opencrx.kernel.account1.cci2.EMailAddressQuery;
 import org.opencrx.kernel.account1.cci2.GroupQuery;
+import org.opencrx.kernel.account1.cci2.MemberQuery;
 import org.opencrx.kernel.account1.jmi1.AbstractGroup;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.Group;
+import org.opencrx.kernel.account1.jmi1.Member;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
 import org.opencrx.kernel.activity1.cci2.MeetingQuery;
 import org.opencrx.kernel.activity1.jmi1.Activity;
@@ -147,8 +149,8 @@ public class TestQuery {
 	
         @Test
         public void run(
-        ) throws ServiceException, IOException, ParseException{
-            this.testSimpleCciQueries();
+        ) throws ServiceException, IOException, ParseException {
+            this.testEmbeddedFeatures();
             this.testQueryExtensions();
             this.testNestedQueries();
             this.testExtent();
@@ -157,13 +159,23 @@ public class TestQuery {
             this.testOwner();
         }
 		
-	    protected void testSimpleCciQueries(
+	    protected void testEmbeddedFeatures(
 	    ) throws ServiceException{
 	        try {
 	        	org.opencrx.kernel.account1.jmi1.Segment accountSegment =
 	        		(org.opencrx.kernel.account1.jmi1.Segment)this.pm.getObjectById(
 		        		new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName)
 		        	);
+	        	GroupQuery groupQuery = (GroupQuery)this.pm.newQuery(Group.class);
+	        	int count = 0;
+	        	for(Group group: accountSegment.<Group>getAccount(groupQuery)) {
+	        		MemberQuery memberQuery = (MemberQuery)this.pm.newQuery(Member.class);
+	        		memberQuery.forAllMemberRole().notEqualTo((short)13);
+	        		boolean hasMembers = !group.getMember(memberQuery).isEmpty();
+	        		System.out.println("Group " + group.getName() + " has " + (hasMembers ? "" : "no ") + "members not having role 13");
+	        		count++;
+	        		if(count > 100) break;
+	        	}
 	        	System.out.println("account segment=" + accountSegment);
 	        } finally {
 	        }

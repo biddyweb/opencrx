@@ -1,4 +1,4 @@
-﻿<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
+<%@page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%
 /*
@@ -67,7 +67,7 @@ org.openmdx.base.exception.*,
 org.openmdx.base.accessor.jmi.cci.*,
 org.openmdx.portal.servlet.*,
 org.openmdx.portal.servlet.attribute.*,
-org.openmdx.portal.servlet.view.*,
+org.openmdx.portal.servlet.component.*,
 org.openmdx.portal.servlet.control.*,
 org.openmdx.portal.servlet.wizards.*,
 org.openmdx.base.naming.*
@@ -92,7 +92,6 @@ org.openmdx.base.naming.*
 	<meta name="forClass" content="org:opencrx:kernel:generic:CrxObject">
 	<meta name="order" content="org:opencrx:kernel:generic:CrxObject:setTimer">
 -->
-<br />
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form name="<%= FORM_NAME %>" id="<%= FORM_NAME %>" accept-charset="UTF-8" method="post" action="<%= wc.getServletPath() %>">
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
@@ -115,7 +114,7 @@ org.openmdx.base.naming.*
 %>
 			  		<table class="fieldGroup">
 						<tr>
-				  			<td class="label">
+				  			<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= wc.getFieldLabel(SetTimerOnCrxObjectController.TIMER_CLASS, "name", app.getCurrentLocaleAsIndex()) %>:</span>
 							</td>
 							<td>
@@ -124,7 +123,7 @@ org.openmdx.base.naming.*
 							<td class="addon"></td>
 						</tr>
 						<tr>
-							<td class="label">
+							<td class="<%= CssClass.fieldLabel %>">
 								<span class="nw"><%= wc.getFieldLabel(SetTimerOnCrxObjectController.TIMER_CLASS, "timerStartAt", app.getCurrentLocaleAsIndex()) %>:</span>
 							</td>
 							<td style="padding-top:2px;">
@@ -163,11 +162,11 @@ org.openmdx.base.naming.*
 	} 
 	else {
 %>	
-		<input type="Submit" name="OK" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
+		<input type="Submit" name="OK" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9000" value="<%= app.getTexts().getOkTitle() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />
 <%
 	}
 %>		
-		<input type="Submit" name="Cancel" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />		
+		<input type="Submit" name="Cancel" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" tabindex="9010" value="<%= app.getTexts().getCancelTitle() %>" onClick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;" />		
 	</div>
 	<br />
 </form>

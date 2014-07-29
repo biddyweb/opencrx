@@ -10,8 +10,7 @@
 		</void>
 		<void property="filter">
 			<array class="org.openmdx.portal.servlet.Filter" length="2">
-
-        <!-- not disabled buildingUnit -->
+				<!-- not disabled buildingUnit -->
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -49,8 +48,7 @@
 						</void>
 					</object>
 				</void>
-
-        <!-- disabled buildingUnit -->
+				<!-- disabled buildingUnit -->
 				<void index="1">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -88,7 +86,6 @@
 						</void>
 					</object>
 				</void>
-
 			</array>
 		</void>
 	</object>

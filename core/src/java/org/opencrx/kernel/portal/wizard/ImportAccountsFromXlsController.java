@@ -64,6 +64,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -102,6 +103,7 @@ import org.opencrx.kernel.backend.SecureObject;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.generic.cci2.LocalizedFieldQuery;
 import org.opencrx.kernel.generic.cci2.NoteQuery;
+import org.opencrx.kernel.generic.jmi1.CrxObject;
 import org.opencrx.kernel.generic.jmi1.LocalizedField;
 import org.opencrx.kernel.generic.jmi1.LocalizedFieldContainer;
 import org.opencrx.kernel.generic.jmi1.Note;
@@ -123,6 +125,7 @@ import org.openmdx.base.mof.cci.PrimitiveTypes;
 import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
@@ -779,16 +782,19 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
             if (!directMatch) {
                 // try to locate account based on fullName
                 try {
-                    AccountQuery accountFilter = (AccountQuery)pm.newQuery(Account.class);
-                    accountFilter.forAllDisabled().isFalse(); // exclude disabled accounts in search
-                    accountFilter.thereExistsFullName().like("(?i).*" + valueToMatch + ".*");
-                    Iterator<Account> accounts = accountSegment.getAccount(accountFilter).iterator();
-                    if (accounts.hasNext()) {
+                    AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
+                    accountQuery.forAllDisabled().isFalse(); // exclude disabled accounts in search
+                    accountQuery.thereExistsFullName().like("(?i).*" + valueToMatch + ".*");
+                    Iterator<Account> accounts = accountSegment.getAccount(accountQuery).iterator();
+                    if(accounts.hasNext()) {
                         targetAccount = accounts.next();
-                        if (accounts.hasNext()) {
+                        if(accounts.hasNext()) {
+                        	SysLog.warning("Non-unique target account. Ignoring", valueToMatch);
                             // match must be unique
                             targetAccount = null;
                         }
+                    } else {
+                    	SysLog.warning("Target account not found", valueToMatch);
                     }
                 } catch (Exception e) {
                     new ServiceException(e).log();
@@ -805,9 +811,12 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
                     if (accounts.hasNext()) {
                         targetAccount = accounts.next();
                         if (accounts.hasNext()) {
+                        	SysLog.warning("Non-unique target account. Ignoring", valueToMatch);                        	
                             // match must be unique
                             targetAccount = null;
                         }
+                    } else {
+                    	SysLog.warning("Target account not found", valueToMatch);                    	
                     }
                 } catch (Exception e) {
                     new ServiceException(e).log();
@@ -815,6 +824,64 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
             }
         }
         return targetAccount;
+    }
+
+    /**
+     * Set user fields for CrxObject.
+     * 
+     * @param crxObject
+     * @param userStrings
+     * @param userCodes
+     * @param userNumbers
+     */
+    protected void setUserFields(
+    	CrxObject crxObject,
+        List<String> userStrings,
+        List<Short> userCodes,
+        List<BigDecimal> userNumbers
+    ) {
+        if(userStrings != null) {
+        	if(userStrings.get(0) != null) {
+        		crxObject.setUserString0(userStrings.get(0));
+        	}
+        	if(userStrings.get(1) != null) {
+        		crxObject.setUserString1(userStrings.get(1));
+        	}
+        	if(userStrings.get(2) != null) {
+        		crxObject.setUserString2(userStrings.get(2));
+        	}
+        	if(userStrings.get(3) != null) {
+        		crxObject.setUserString2(userStrings.get(3));
+        	}
+        }
+        if(userCodes != null) {
+        	if(userCodes.get(0) != null) {
+        		crxObject.setUserCode0(userCodes.get(0));
+        	}
+        	if(userCodes.get(1) != null) {
+        		crxObject.setUserCode1(userCodes.get(1));
+        	}
+        	if(userCodes.get(2) != null) {
+        		crxObject.setUserCode2(userCodes.get(2));
+        	}
+        	if(userCodes.get(3) != null) {
+        		crxObject.setUserCode2(userCodes.get(3));
+        	}
+        }
+        if(userNumbers != null) {
+        	if(userNumbers.get(0) != null) {
+        		crxObject.setUserNumber0(userNumbers.get(0));
+        	}
+        	if(userNumbers.get(1) != null) {
+        		crxObject.setUserNumber1(userNumbers.get(1));
+        	}
+        	if(userNumbers.get(2) != null) {
+        		crxObject.setUserNumber2(userNumbers.get(2));
+        	}
+        	if(userNumbers.get(3) != null) {
+        		crxObject.setUserNumber2(userNumbers.get(3));
+        	}
+        }
     }
 
     /**
@@ -832,6 +899,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
         Account parentAccount,
         Account memberAccount,
         String keyMemberRole, /* a semicolon-separated list */
+        List<String> userStrings,
+        List<Short> userCodes,
+        List<BigDecimal> userNumbers,
         String feature,
         Codes codes,
         org.opencrx.kernel.account1.jmi1.Segment accountSegment
@@ -892,6 +962,12 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
                 member.setDisabled(new Boolean(true));
                 member.setDisabledReason("referenced Account is disabled");
             }
+            this.setUserFields(
+            	member, 
+            	userStrings, 
+            	userCodes, 
+            	userNumbers
+            );
         }
         return member;
     }
@@ -1074,11 +1150,31 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 						}
 						importReport.append("<td " + (isSearchAttribute ? "class='searchAttr' title='attribute used for matching'" : "") + "Col-" + DECIMAL_FORMAT_4.format(idxCell) + EOL_HTML + cellValue + "</td>");
 					} else {
-						importReport.append("<td class=\"err\">c" + DECIMAL_FORMAT_4.format(idxCell) + "[not a string cell]<br>" + cell.getCellFormula() + "</td>");
+						String cellType = null;
+						switch(cell.getCellType()) {
+							case Cell.CELL_TYPE_BLANK: 
+								cellType = "CELL_TYPE_BLANK";
+								break;
+							case Cell.CELL_TYPE_BOOLEAN:
+								cellType = "CELL_TYPE_BOOLEAN";
+								break;
+							case Cell.CELL_TYPE_ERROR:
+								cellType = "CELL_TYPE_ERROR";
+								break;
+							case Cell.CELL_TYPE_FORMULA:
+								cellType = "CELL_TYPE_FORMULA";
+								break;
+							case Cell.CELL_TYPE_NUMERIC:
+								cellType = "CELL_TYPE_NUMERIC";
+								break;
+							case Cell.CELL_TYPE_STRING:
+								cellType = "CELL_TYPE_STRING";
+						}
+						importReport.append("<td class=\"err\">c" + DECIMAL_FORMAT_4.format(idxCell) + " [not a string cell]<br />Type is " + cellType + "</td>");
 					}
 				} catch (Exception ec) {
 					new ServiceException(ec).log();
-					importReport.append("<td class=\"err\">c" + DECIMAL_FORMAT_4.format(idxCell) + " [UNKNOWN ERROR]<br>" + cell.getCellFormula() + "</td>");
+					importReport.append("<td class=\"err\">c" + DECIMAL_FORMAT_4.format(idxCell) + " [unknown error]<br />" + ec.getMessage() + "</td>");
 				}
 			}
 		} catch (Exception e) {
@@ -1572,6 +1668,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							company,
 							contact,
 							memberRole,
+							null, // userStrings
+							null, // userCodes
+							null, // userNumbers
 							FEATURE_MEMBERROLE,
 							codes,
 							accountSegment
@@ -2193,6 +2292,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 						assistant,
 						account,
 						memberRole,
+						null, // userStrings
+						null, // userCodes
+						null, // userNumbers
 						FEATURE_MEMBERROLE,
 						codes,
 						accountSegment
@@ -2240,6 +2342,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 						account,
 						manager,
 						memberRole,
+						null, // userStrings
+						null, // userCodes
+						null, // userNumbers
 						FEATURE_MEMBERROLE,
 						codes,
 						accountSegment
@@ -2296,6 +2401,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 			}
 		} else if(fieldName.equalsIgnoreCase(this.ATTR_MEMBEROF)) {
 			if(fieldValue != null) {
+				// Roles
 				String memberRoles = null;
 				int fieldIndexMemberRole = accountRecord.getFieldIndex(this.ATTR_MEMBERROLE, fieldIndex);
 				if (fieldIndexMemberRole >= 0) {
@@ -2305,6 +2411,36 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 						try {
 							memberRoles = ((BigDecimal)accountRecord.getFieldValue(fieldIndexMemberRole)).toString();
 						} catch (Exception ignore) {}
+					}
+				}
+				// userStrings
+				List<String> userStrings = new ArrayList<String>();
+				for(String userField: USER_STRING_FIELDS) {
+					int fieldIndexUser = accountRecord.getFieldIndex(this.ATTR_MEMBER_PREFIX + userField, fieldIndex);
+					if(fieldIndexUser >= 0) {
+						userStrings.add((String)accountRecord.getFieldValue(fieldIndexUser));
+					} else {
+						userStrings.add(null);
+					}
+				}
+				// userCodes
+				List<Short> userCodes = new ArrayList<Short>();
+				for(String userField: USER_CODE_FIELDS) {
+					int fieldIndexUser = accountRecord.getFieldIndex(this.ATTR_MEMBER_PREFIX + userField, fieldIndex);
+					if(fieldIndexUser >= 0) {
+						userCodes.add(((Number)accountRecord.getFieldValue(fieldIndexUser)).shortValue());
+					} else {
+						userCodes.add(null);
+					}
+				}
+				// userNumbers
+				List<BigDecimal> userNumbers = new ArrayList<BigDecimal>();
+				for(String userField: USER_NUMBER_FIELDS) {
+					int fieldIndexUser = accountRecord.getFieldIndex(this.ATTR_MEMBER_PREFIX + userField, fieldIndex);
+					if(fieldIndexUser >= 0) {
+						userNumbers.add((BigDecimal)accountRecord.getFieldValue(fieldIndexUser));
+					} else {
+						userNumbers.add(null);
 					}
 				}
 				String valueToMatch = null;
@@ -2318,6 +2454,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 						parentAccount,
 						account,
 						memberRoles,
+						userStrings,
+						userCodes,
+						userNumbers,
 						FEATURE_MEMBERROLE,
 						codes,
 						accountSegment
@@ -2389,21 +2528,21 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 					ModelElement_1_0 featureDef = (features == null ? null : (ModelElement_1_0)features.get(fieldName));
 					if(featureDef != null) {
 						if(
-							PrimitiveTypes.STRING.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+							PrimitiveTypes.STRING.equals(model.getElementType(featureDef).getQualifiedName()) &&
 							ModelHelper.getMultiplicity(featureDef).isSingleValued()
 						) {
 							account.refSetValue(fieldName, fieldValue.toString());
 							isOk = true;
 						}
 						if(
-							PrimitiveTypes.SHORT.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+							PrimitiveTypes.SHORT.equals(model.getElementType(featureDef).getQualifiedName()) &&
 							ModelHelper.getMultiplicity(featureDef).isSingleValued()
 						) {
 							account.refSetValue(fieldName, Short.parseShort(fieldValue.toString()));
 							isOk = true;
 						}
 						if(
-							PrimitiveTypes.SHORT.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+							PrimitiveTypes.SHORT.equals(model.getElementType(featureDef).getQualifiedName()) &&
 							ModelHelper.getMultiplicity(featureDef).isMultiValued()
 						) {
 							// optional, multi-valued Short, individual values separated by semicolon, e.g. 5;21;113;218
@@ -2423,7 +2562,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							isOk = true;
 						}
 						if(
-							PrimitiveTypes.BOOLEAN.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+							PrimitiveTypes.BOOLEAN.equals(model.getElementType(featureDef).getQualifiedName()) &&
 							ModelHelper.getMultiplicity(featureDef).isSingleValued()
 						) {
 							// optional, single-valued Boolean
@@ -2431,7 +2570,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							isOk = true;
 						}
 						if(
-							PrimitiveTypes.DECIMAL.equals(model.getElementType(featureDef).objGetValue("qualifiedName")) &&
+							PrimitiveTypes.DECIMAL.equals(model.getElementType(featureDef).getQualifiedName()) &&
 							ModelHelper.getMultiplicity(featureDef).isSingleValued()
 						) {
 							account.refSetValue(fieldName, new BigDecimal(fieldValue.toString()));
@@ -2822,6 +2961,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 												parentGroup,
 												acct,
 												null, /* no particular membership role */
+												null, // userStrings
+												null, // userCodes
+												null, // userNumbers
 												FEATURE_MEMBERROLE,
 												codes,
 												accountSegment
@@ -3319,6 +3461,7 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 	
 	private String ATTR_MEMBEROF = "MemberOf";
 	private String ATTR_MEMBERROLE = "MemberRole";
+	private String ATTR_MEMBER_PREFIX = "Member:";
 	private String ATTR_NOTETITLE = "NoteTitle";
 	private String ATTR_NOTETEXT = "NoteText";
 	private String ATTR_NOTECREATEDAT = "NoteCreatedAt";
@@ -3384,6 +3527,16 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 	private String ATTR_GROUPS = "GROUPS";
 	private String ATTR_BUSINESSTYPE = "BUSINESSTYPE";
 
+	private static List<String> USER_STRING_FIELDS = Arrays.asList(
+		"userString0", "userString1", "userString2", "userString3"
+	);
+	private static List<String> USER_CODE_FIELDS = Arrays.asList(
+		"userCode0", "userCode1", "userCode2", "userCode3"
+	);
+	private static List<String> USER_NUMBER_FIELDS = Arrays.asList(
+		"userNumber0", "userNumber1", "userNumber2", "userNumber3"
+	);
+	
 	private final boolean requiresAdminRole;
 	private boolean hasPermission;
 	private short locale;

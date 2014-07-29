@@ -93,14 +93,11 @@ public class DoMove extends WebDavMethod {
     private static Logger LOG = Logger.getLogger(DoMove.class.getPackage().getName());
 
     private final WebDavStore _store;
-    private final boolean _readOnly;
 
     public DoMove(
-    	WebDavStore store, 
-        boolean readOnly
+    	WebDavStore store 
     ) {
         _store = store;
-        _readOnly = readOnly;
     }
 
     /**
@@ -131,23 +128,19 @@ public class DoMove extends WebDavMethod {
     ) throws IOException, WebdavException {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
         resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-        if (!_readOnly) {
-            WebDavStore.MoveResourceStatus status = _store.moveResource(
-            	requestContext, 
-            	res, 
-            	sourcePath, 
-            	destinationPath
-            );
-            resp.setStatus(
-            	status == WebDavStore.MoveResourceStatus.CREATED 
-            		? HttpServletResponse.SC_CREATED
-            		: status == WebDavStore.MoveResourceStatus.FORBIDDEN
-            			? HttpServletResponse.SC_FORBIDDEN
-            			: HttpServletResponse.SC_NO_CONTENT
-            );
-        } else {
-            resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-        }
+        WebDavStore.Status status = _store.moveResource(
+        	requestContext, 
+        	res, 
+        	sourcePath, 
+        	destinationPath
+        );
+        resp.setStatus(
+        	status == WebDavStore.Status.OK_CREATED 
+        		? HttpServletResponse.SC_CREATED
+        		: status == WebDavStore.Status.FORBIDDEN
+        			? HttpServletResponse.SC_FORBIDDEN
+        			: HttpServletResponse.SC_NO_CONTENT
+        );
     }
 
     @Override
@@ -156,51 +149,46 @@ public class DoMove extends WebDavMethod {
     ) throws IOException, LockFailedException {
     	HttpServletRequest req = requestContext.getHttpServletRequest();
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
-        if (!_readOnly) {
-            LOG.finest("-- " + this.getClass().getName());
-            String sourcePath = this.getRelativePath(requestContext);
-            Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
-            if (!checkLocks(requestContext, _store, sourcePath)) {
-                errorList.put(sourcePath, WebdavStatus.SC_LOCKED);
+        LOG.finest("-- " + this.getClass().getName());
+        String sourcePath = this.getRelativePath(requestContext);
+        Hashtable<String, Integer> errorList = new Hashtable<String, Integer>();
+        if (!checkLocks(requestContext, _store, sourcePath)) {
+            errorList.put(sourcePath, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return;
+        }
+        String destinationPath = req.getHeader("Destination");            
+        if (destinationPath == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            return;
+        }
+        destinationPath = this.getRelativePath(requestContext, URLDecoder.decode(destinationPath, "UTF-8"));
+        if (!checkLocks(requestContext, _store, destinationPath)) {
+            errorList.put(destinationPath, WebdavStatus.SC_LOCKED);
+            sendReport(requestContext, errorList);
+            return;
+        }
+        try {
+        	errorList = new Hashtable<String, Integer>();
+            Resource sourceSo = _store.getResourceByPath(requestContext, sourcePath);
+            this.moveResource(
+            	requestContext, 
+            	sourceSo, 
+            	sourcePath, 
+            	destinationPath, 
+            	errorList
+            );
+            if(!errorList.isEmpty()) {
                 sendReport(requestContext, errorList);
-                return;
             }
-            String destinationPath = req.getHeader("Destination");            
-            if (destinationPath == null) {
-                resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
-                return;
-            }
-            destinationPath = this.getRelativePath(requestContext, URLDecoder.decode(destinationPath, "UTF-8"));
-            if (!checkLocks(requestContext, _store, destinationPath)) {
-                errorList.put(destinationPath, WebdavStatus.SC_LOCKED);
-                sendReport(requestContext, errorList);
-                return;
-            }
-            try {
-            	errorList = new Hashtable<String, Integer>();
-                Resource sourceSo = _store.getResourceByPath(requestContext, sourcePath);
-                this.moveResource(
-                	requestContext, 
-                	sourceSo, 
-                	sourcePath, 
-                	destinationPath, 
-                	errorList
-                );
-                if(!errorList.isEmpty()) {
-                    sendReport(requestContext, errorList);
-                }
-            } catch (AccessDeniedException e) {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-            } catch (ObjectAlreadyExistsException e) {
-                resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
-            } catch (WebdavException e) {
-            	new ServiceException(e).log();            	
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            } finally {
-            }
-        } else {
+        } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);
-
+        } catch (ObjectAlreadyExistsException e) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
+        } catch (WebdavException e) {
+        	new ServiceException(e).log();            	
+            resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
         }
     }
 
