@@ -148,10 +148,12 @@ import org.opencrx.kernel.home1.jmi1.SyncFeed;
 import org.opencrx.kernel.home1.jmi1.SyncProfile;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.persistence.cci.UserObjects;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.loading.Factory;
 import org.openmdx.kernel.log.SysLog;
@@ -214,8 +216,12 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					@Override
                     public Date instantiate(
                     ) {
-						return new Date(Long.valueOf(requestContext.getSyncKey()));
-                    }					
+						// Reduce precision of syncKey to 1/100s
+						// This solves rounding problems at persistence-level such as
+						// http://blogs.msdn.com/b/cdnsoldevs/archive/2011/06/22/why-you-should-never-use-datetime-again.aspx
+						long syncKeyMillis = Long.valueOf(requestContext.getSyncKey());
+						return new Date((syncKeyMillis / 10L) * 10L);
+                    }
 				}
 			);
 			return pm;
@@ -603,8 +609,8 @@ public class OpenCrxSyncBackend implements SyncBackend {
 						if(folderAddDelete instanceof AbstractGroup) {
 							pm.currentTransaction().begin();
 							AbstractGroup group = (AbstractGroup)folderAddDelete;
-							String providerName = group.refGetPath().get(2);
-							String segmentName = group.refGetPath().get(4);
+							String providerName = group.refGetPath().getSegment(2).toClassicRepresentation();
+							String segmentName = group.refGetPath().getSegment(4).toClassicRepresentation();
 							org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
 							ContactT contactT = (ContactT)data;
 							Account account = this.datatypeMapper.newAccount(pm, contactT);
@@ -741,11 +747,6 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				}
 			}
 			if(object != null) {
-				// In order to prevent concurrent modification exceptions
-				// refresh object before amending it
-				try {
-					pm.refresh(object);
-				} catch(Exception ignore) {}
 				pm.currentTransaction().begin();
 				this.datatypeMapper.toObject(
 					data,
@@ -1031,9 +1032,9 @@ public class OpenCrxSyncBackend implements SyncBackend {
 					query.orderByModifiedAt().ascending();						
 				}
 				// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP					
-				org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+				QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
 				queryExtension.setClause(
-					org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)" 						
+					Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)" 						
 				);					
 				List<AccountMembership> memberships = group.getAccountMembership(query);
 				int n = 0;
@@ -1242,9 +1243,9 @@ public class OpenCrxSyncBackend implements SyncBackend {
 				query.modifiedAt().lessThanOrEqualTo(to);
 				query.orderByModifiedAt().ascending();
 				// For distance +/-1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP					
-				org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+				QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
 				queryExtension.setClause(
-					org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)" 						
+					Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)" 						
 				);					
 				List<AccountMembership> memberships = group.getAccountMembership(query);
 				for(AccountMembership membership: memberships) {

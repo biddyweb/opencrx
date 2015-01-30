@@ -249,7 +249,7 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
      * @param pm
      * @param targetIdentity
      * @param eMailAccount
-     * @param defaultReplyEMailAddress
+     * @param defaultFromAddress
      * @return
      * @throws ServiceException
      */
@@ -258,32 +258,30 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
         PersistenceManager pm,
         Path targetIdentity,
         EMailAccount eMailAccount,
-        String defaultReplyEMailAddress
+        String defaultFromAddress
     ) throws ServiceException {
         Address[] recipients = null;
         try {
-            // from
+            // FROM
             message.setFrom(
                 new InternetAddress(
                     eMailAccount.getReplyEMailAddress() == null 
-                    	? defaultReplyEMailAddress == null 
-                    		? "noreply@localhost" 
-                    		: defaultReplyEMailAddress 
+                    	? defaultFromAddress == null 
+                    		? "noreply@localhost"
+                    		: defaultFromAddress 
                     	: eMailAccount.getReplyEMailAddress()
                 )
             );
-            // recipients
-            recipients = InternetAddress.parse(
-                eMailAccount.getName() == null 
-                	? defaultReplyEMailAddress == null 
-                		? "noreply@localhost" 
-                		: defaultReplyEMailAddress 
-                	: eMailAccount.getName()
-            );
-            message.setRecipients(
-                Message.RecipientType.TO,
-                recipients
-            );
+            // TO
+            if(eMailAccount.getName() != null && ! eMailAccount.getName().isEmpty()) {
+	            recipients = InternetAddress.parse(eMailAccount.getName());
+	            message.setRecipients(
+	                Message.RecipientType.TO,
+	                recipients
+	            );
+            } else {
+            	recipients = new Address[]{};
+            }
         } catch(AddressException e) {
             throw new ServiceException(e);
         } catch(MessagingException e) {
@@ -347,11 +345,15 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
 	 * @return
 	 */
 	protected String doSendmail(
-		Message message
+		Message message,
+		String envelopeSenderAddress
 	) {
 		String err = "";
 		try {
-			Process p = Runtime.getRuntime().exec("sendmail -t", null);
+			// sendmail
+			//   -f Sets the envelope sender address.
+			//   -t Read message for recipients and ignore the command-line arguments.
+			Process p = Runtime.getRuntime().exec("sendmail " + (envelopeSenderAddress == null ? "" : "-f " + envelopeSenderAddress + " ") + "-t", null);
 			// Send message via sendmail
 			{
 				OutputStream os = p.getOutputStream();
@@ -521,8 +523,8 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
         ContextCapable target = null;
         try {
             Path wfProcessInstanceIdentity = new Path(wfProcessInstance.refMofId());
-            String providerName = wfProcessInstanceIdentity.get(2);
-            String segmentName = wfProcessInstanceIdentity.get(4);
+            String providerName = wfProcessInstanceIdentity.getSegment(2).toClassicRepresentation();
+            String segmentName = wfProcessInstanceIdentity.getSegment(4).toClassicRepresentation();
             Map<String,Object> params = WorkflowHelper.getWorkflowParameters(wfProcessInstance); 
             UserHome userHome = (UserHome)pm.getObjectById(wfProcessInstance.refGetPath().getParent().getParent());            
             // Target object
@@ -530,7 +532,7 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
             try {
                 target = (ContextCapable)pm.getObjectById(targetIdentity);
             } catch(Exception e) {}            
-            // Find default email account
+            // Find user's default email account
             EMailAccountQuery emailAccountQuery = (EMailAccountQuery)pm.newQuery(EMailAccount.class);
             emailAccountQuery.thereExistsIsDefault().isTrue();
             emailAccountQuery.thereExistsIsActive().isTrue();
@@ -548,8 +550,12 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
             	);
             } else {
                 // Send mail
-            	String usesendmailProperty = System.getProperty("org.opencrx.usesendmail." + providerName);
-            	if(usesendmailProperty != null && Boolean.valueOf(usesendmailProperty)) {            			
+            	boolean useSendmail = System.getProperty("org.opencrx.usesendmail." + providerName + "." + segmentName) == null
+            		? System.getProperty("org.opencrx.usesendmail." + providerName) == null
+            			? false
+            			: Boolean.valueOf(System.getProperty("org.opencrx.usesendmail." + providerName))
+            		: Boolean.valueOf(System.getProperty("org.opencrx.usesendmail." + providerName + "." + segmentName));
+            	if(useSendmail) {            			
             		// no-op
             	} else {
             		// Use JavaMail service
@@ -579,7 +585,7 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
 	                }
             	}
             	{
-                    Message message = new MimeMessage(
+                    MimeMessage message = new MimeMessage(
                     	mailTransport == null 
                     		? null 
                     		: mailTransport.getSession()
@@ -589,14 +595,19 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
                     	"X-Mailer", 
                     	"//OPENCRX//V2//" + providerName + "/" + segmentName
                     );
+                    String envelopeSenderAddress = mailTransport == null
+                    	? System.getProperty("org.opencrx.sendmail.from." + providerName + "." + segmentName) == null
+                    		? System.getProperty("org.opencrx.sendmail.from." + providerName) == null
+                    			? null
+                    			: System.getProperty("org.opencrx.sendmail.from." + providerName)
+                    		: System.getProperty("org.opencrx.sendmail.from." + providerName + "." + segmentName)
+                    	: mailTransport.getSession().getProperty("mail.from");
                     recipients = this.setRecipients(
                         message,
                         pm,
                         targetIdentity,
                         eMailAccountUser,
-                        mailTransport == null 
-                        	? null 
-                        	: mailTransport.getSession().getProperty("mail.from")
+                        envelopeSenderAddress
                     );
                     if(recipients.length > 0) {
                         // subject
@@ -609,8 +620,9 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
                                 userHome,
                                 params,
                                 this.useSendMailSubjectPrefix()
-                            )
-                        );  
+                            ),
+                            "UTF-8"
+                        );
                         // content
                         String text = this.setContent(
                             message,
@@ -626,10 +638,10 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
                         message.saveChanges();
                         if(mailTransport == null) {
                         	 SysLog.detail("Send message using sendmail");
-                        	 String err = this.doSendmail(message);
+                        	 String err = this.doSendmail(message, envelopeSenderAddress);
                         	 if(!err.isEmpty()) {
                         		 throw new SendFailedException(err);
-                        	 }                        	 
+                        	 }
                         } else {
 	                        SysLog.detail("Send message using JavaMail");
 	                        mailTransport.getTransport().sendMessage(
@@ -744,5 +756,3 @@ public abstract class MailWorkflow extends Workflows.AsynchronousWorkflow {
     private static final String OPTION_MAIL_SERVICE_NAME = "mailServiceName";
     private final static Map<String,ObjectPool> MAIL_TRANSPORT_POOL = new ConcurrentHashMap<String,ObjectPool>();
 }
-
-//--- End of File -----------------------------------------------------------

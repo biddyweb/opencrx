@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_7iDqgN8HEdmKapscEl8OLg" name="home1">
+<uml:Model xmi:version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:uml="http://www.eclipse.org/uml2/4.0.0/UML" xmi:id="_7iDqgN8HEdmKapscEl8OLg" name="home1">
   <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D40E97D350217PPP" name="org">
     <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D40E97D350217PP" name="opencrx">
       <packagedElement xmi:type="uml:Package" xmi:id="_3C7B8A60016D40E97D350217P" name="kernel">
@@ -206,6 +206,11 @@
             <ownedOperation xmi:id="_eGoXwIFeEdywlJ9dlV3tmA" name="searchAdvanced">
               <ownedParameter xmi:id="_Hec_EIFgEdywlJ9dlV3tmA" name="ReturnResultParameter1" type="_ZFF7EIFfEdywlJ9dlV3tmA" direction="return"/>
               <ownedParameter xmi:id="_DlAoUIFgEdywlJ9dlV3tmA" name="in" type="_ovnIoIFeEdywlJ9dlV3tmA"/>
+            </ownedOperation>
+            <ownedOperation xmi:id="_SlaUMKCqEeS0KZ55CfFqjw" name="requestPasswordReset">
+              <ownedParameter xmi:id="_nmfhUKCqEeS0KZ55CfFqjw" direction="return">
+                <type xmi:type="uml:Class" href="../openMDX 2 ~ Core (EMF)/org.openmdx.base.uml#_3C7B8A60016D3E40433402E1"/>
+              </ownedParameter>
             </ownedOperation>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D40E980ED034C" name="Alert">
@@ -549,6 +554,10 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_IMq9wN7NEdmKapscEl8OLg"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_IMq9wd7NEdmKapscEl8OLg" value="1"/>
             </ownedAttribute>
+            <ownedOperation xmi:id="_YtbTkKe2EeSdI7r-dio61w" name="matches" isQuery="true">
+              <ownedParameter xmi:id="_rRWhwKe2EeSdI7r-dio61w" name="in" type="_bcMm8Ke2EeSdI7r-dio61w"/>
+              <ownedParameter xmi:id="_1TUV8Ke2EeSdI7r-dio61w" name="" type="_fyUSoKe2EeSdI7r-dio61w" direction="return"/>
+            </ownedOperation>
           </packagedElement>
           <packagedElement xmi:type="uml:Class" xmi:id="_3C7B8A60016D4205623A0173" name="EMailAccount">
             <generalization xmi:id="_QGo1oMyVEd-42pJgiwQJZQ" general="_bQiXsMyUEd-42pJgiwQJZQ"/>
@@ -1273,6 +1282,32 @@
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hd9XsQqyEeOYIfWfYW1Vbg"/>
               <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hd9XsgqyEeOYIfWfYW1Vbg" value="*"/>
             </ownedEnd>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_bcMm8Ke2EeSdI7r-dio61w" name="SubscriptionMatchesParams">
+            <eAnnotations xmi:id="_blxkQKe3EeSdI7r-dio61w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_dffe8Ke3EeSdI7r-dio61w" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_3w82AKe2EeSdI7r-dio61w" name="message" visibility="public">
+              <type xmi:type="uml:Class" href="../openMDX 2 ~ Core (EMF)/org.openmdx.base.uml#_3C7B8A60016D403F48350281"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_4AwMkKe2EeSdI7r-dio61w"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_4A0eAKe2EeSdI7r-dio61w" value="1"/>
+              <defaultValue xmi:type="uml:LiteralString" xmi:id="_4A1FEKe2EeSdI7r-dio61w">
+                <value xsi:nil="true"/>
+              </defaultValue>
+            </ownedAttribute>
+          </packagedElement>
+          <packagedElement xmi:type="uml:Class" xmi:id="_fyUSoKe2EeSdI7r-dio61w" name="SubscriptionMatchesResult">
+            <eAnnotations xmi:id="_gczkoKe3EeSdI7r-dio61w" source="http://www.eclipse.org/uml2/2.0.0/UML">
+              <details xmi:id="_hqI6cKe3EeSdI7r-dio61w" key="struct"/>
+            </eAnnotations>
+            <ownedAttribute xmi:id="_JItMAKe3EeSdI7r-dio61w" name="matches" visibility="public">
+              <type xmi:type="uml:PrimitiveType" href="../openMDX 2 ~ Core (EMF)/org.w3c.uml#_3C7B8A60016D3C8B63180083"/>
+              <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_JeAtoKe3EeSdI7r-dio61w"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_JeEYAKe3EeSdI7r-dio61w" value="1"/>
+              <defaultValue xmi:type="uml:LiteralString" xmi:id="_JeFmIKe3EeSdI7r-dio61w">
+                <value xsi:nil="true"/>
+              </defaultValue>
+            </ownedAttribute>
           </packagedElement>
         </packagedElement>
       </packagedElement>

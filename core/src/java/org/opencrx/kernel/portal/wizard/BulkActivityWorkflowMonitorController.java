@@ -64,11 +64,12 @@ import org.opencrx.kernel.activity1.jmi1.ActivityCreator;
 import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.ObjectReference;
 
@@ -183,7 +184,7 @@ public class BulkActivityWorkflowMonitorController extends AbstractWizardControl
 		org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery query = (org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.WfProcessInstance.class);
 		query.startedOn().isNonNull();
 		query.forAllFailed().isTrue();
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+		QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);		
@@ -202,7 +203,7 @@ public class BulkActivityWorkflowMonitorController extends AbstractWizardControl
     	PersistenceManager pm = this.getPm();
 		org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery query = (org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.WfProcessInstance.class);
 		query.startedOn().isNull();
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+		QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);		
@@ -222,7 +223,7 @@ public class BulkActivityWorkflowMonitorController extends AbstractWizardControl
 		org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery query = (org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery)pm.newQuery(org.opencrx.kernel.home1.jmi1.WfProcessInstance.class);
 		query.startedOn().isNonNull();
 		query.forAllFailed().isFalse();
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+		QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);		

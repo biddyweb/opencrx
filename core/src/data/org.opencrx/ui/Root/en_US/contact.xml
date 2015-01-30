@@ -1038,6 +1038,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:annualIncomeAmount">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Person's annual Income</_item>
 											</toolTip>

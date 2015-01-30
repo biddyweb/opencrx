@@ -99,9 +99,9 @@ public class DoUnlock extends WebDavMethod {
         LOG.finest("-- " + this.getClass().getName());
         String path = getRelativePath(requestContext);
         try {
-            String lockId = getLockIdFromLockTokenHeader(requestContext);
+            String lockId = this.getLockIdFromLockTokenHeader(requestContext);
             if(lockId != null) {
-                if (_store.unlock(requestContext, lockId)) {
+                if (_store.unlock(requestContext, path, lockId)) {
                     resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
                 } else {
                     LOG.finest("DoUnlock failure at " + path);

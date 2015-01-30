@@ -447,7 +447,7 @@ public class DatatypeMapper {
 			vcard.append("EMAIL;INTERNET:" + parseEmailAddress(contactT.getEmail2Address()) + "\n");			
 		}
 		if(contactT.getBusinessFaxNumber() != null) {
-			vcard.append("TEL;FAX:" + contactT.getBusinessFaxNumber() + "\n");
+			vcard.append("TEL;WORK;FAX:" + contactT.getBusinessFaxNumber() + "\n");
 		}
 		if(contactT.getHomeFaxNumber() != null) {
 			vcard.append("TEL;HOME;FAX:" + contactT.getHomeFaxNumber() + "\n");			
@@ -476,6 +476,10 @@ public class DatatypeMapper {
 			vcard.append("ADR;HOME;ENCODING=QUOTED-PRINTABLE:" + adrHome + "\n");			
 		}
 		vcard.append("END:VCARD");
+		this.updateContact(
+			account,
+			vcard.toString()
+		);
 		if(account instanceof Contact) {
 			Contact contact = (Contact)account;
 			if(contactT.getPicture() != null && contactT.getPicture().length() > 0) {
@@ -530,12 +534,8 @@ public class DatatypeMapper {
                 	body;        	
 			account.setDescription(body);
 		}
-		updateContact(
-			account,
-			vcard.toString()
-		);
 	}
-	
+
 	public void toNote(
 		NoteT noteT,
 		Document document,

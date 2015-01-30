@@ -107,15 +107,16 @@ import org.opencrx.kernel.product1.jmi1.RelatedProduct;
 import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -498,7 +499,7 @@ public class Products extends AbstractImpl {
                 // Query filter
                 if(filterProperty instanceof ProductQueryFilterProperty) {
                 	ProductQueryFilterProperty p = (ProductQueryFilterProperty)filterProperty;
-                	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(query);
+                	QueryExtensionRecord queryFilter = PersistenceHelper.newQueryExtension(query);
                 	queryFilter.setClause(
                 		(forCounting ? Database_1_Attributes.HINT_COUNT : "") + p.getClause()
                 	);
@@ -512,7 +513,10 @@ public class Products extends AbstractImpl {
                     	p.getDecimalParam()
                     );
                     queryFilter.setBooleanParam(
-                    	p.getBooleanParam().isEmpty() ? Boolean.FALSE : p.getBooleanParam().iterator().next()
+                    	new Boolean[]{p.getBooleanParam().isEmpty()
+                        	? Boolean.FALSE : 
+                            p.getBooleanParam().iterator().next()
+                    	}
                     );
                     queryFilter.getDateParam().addAll(
                     	p.getDateParam()
@@ -728,7 +732,7 @@ public class Products extends AbstractImpl {
             }
         }
         if(!hasQueryFilterClause && forCounting) {
-        	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(query);
+        	QueryExtensionRecord queryFilter = PersistenceHelper.newQueryExtension(query);
         	queryFilter.setClause(
         		Database_1_Attributes.HINT_COUNT + "(1=1)"
         	);
@@ -1528,7 +1532,7 @@ public class Products extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(productFilter);
     	ProductQuery query = (ProductQuery)pm.newQuery(Product.class);
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);    	

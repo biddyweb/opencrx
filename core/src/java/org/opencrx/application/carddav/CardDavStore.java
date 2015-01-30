@@ -194,14 +194,23 @@ public class CardDavStore implements WebDavStore {
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
 	 */
 	@Override
-	public BinaryLargeObject getResourceContent(
+	public ResourceContent getResourceContent(
 		RequestContext requestContext, 
 		Resource res
 	) {
 		if(res instanceof CardDavResource) {
 			return ((CardDavResource)res).getContent();
 		} else {
-			return BinaryLargeObjects.valueOf(new byte[]{});
+			return new WebDavStore.ResourceContent(){
+				@Override
+				public BinaryLargeObject getContent() {
+					return BinaryLargeObjects.valueOf(new byte[]{});
+				}
+				@Override
+				public Long getLength() {
+					return 0L;
+				}
+			};
 		}
 	}
 
@@ -478,7 +487,7 @@ public class CardDavStore implements WebDavStore {
 			            if(result.getOldUID() != null && result.getAccount() != null) {
 			            	this.uidMapping.put(
 			            		result.getOldUID(), 
-			            		result.getAccount().refGetPath().getBase()
+			            		result.getAccount().refGetPath().getLastSegment().toClassicRepresentation()
 			            	);
 			            }
 		        	}
@@ -515,7 +524,8 @@ public class CardDavStore implements WebDavStore {
 	@Override
     public Lock lock(
     	RequestContext requestContext, 
-    	String path, 
+    	String path,
+    	String id,
     	String owner, 
     	String scope, 
     	String type, 
@@ -526,22 +536,12 @@ public class CardDavStore implements WebDavStore {
     }
 
 	/* (non-Javadoc)
-	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#setLockTimeout(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, int)
-	 */
-	@Override
-    public void setLockTimeout(
-    	RequestContext requestContext, 
-    	String id, 
-    	int timeout
-    ) {	    
-    }
-
-	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#unlock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
 	 */
 	@Override
     public boolean unlock(
-    	RequestContext requestContext, 
+    	RequestContext requestContext,
+    	String path,
     	String id
     ) {
 	    return false;

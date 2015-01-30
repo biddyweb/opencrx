@@ -59,7 +59,7 @@ import java.util.List;
 import org.opencrx.kernel.admin1.jmi1.Admin1Package;
 import org.opencrx.kernel.backend.Admin;
 import org.opencrx.kernel.generic.SecurityKeys;
-import org.opencrx.kernel.layer.persistence.Media_1;
+import org.opencrx.kernel.layer.persistence.Media_2;
 import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
@@ -170,9 +170,9 @@ public class SegmentImpl
     	File mediaFile = null;
     	try {
     		Path mediaIdentity = new Path(in.getMediaXri());
-    		File mediadir = Media_1.getMediaDir(mediaIdentity);
+    		File mediadir = Media_2.getMediaDir(mediaIdentity);
     		if(mediadir != null) {
-    			mediaFile = new File(Media_1.toContentDir(mediadir, mediaIdentity), mediaIdentity.getBase());
+    			mediaFile = new File(Media_2.toContentDir(mediadir, mediaIdentity), mediaIdentity.getLastSegment().toClassicRepresentation());
     		}
     	} catch(Exception ignore) {}
     	return Structures.create(

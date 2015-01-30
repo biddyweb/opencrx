@@ -67,9 +67,13 @@ import javax.jdo.PersistenceManager;
 import org.opencrx.application.mail.exporter.ExportMailWorkflow;
 import org.opencrx.application.mail.exporter.SendMailNotificationWorkflow;
 import org.opencrx.application.mail.exporter.SendMailWorkflow;
+import org.opencrx.kernel.base.jmi1.AuditEntry;
 import org.opencrx.kernel.base.jmi1.BooleanProperty;
 import org.opencrx.kernel.base.jmi1.DecimalProperty;
 import org.opencrx.kernel.base.jmi1.IntegerProperty;
+import org.opencrx.kernel.base.jmi1.ObjectCreationAuditEntry;
+import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
+import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.StringProperty;
 import org.opencrx.kernel.base.jmi1.UriProperty;
 import org.opencrx.kernel.base.jmi1.WorkflowTarget;
@@ -183,6 +187,24 @@ public class Workflows extends AbstractImpl {
 	    }
 	    
 	}
+
+    /**
+     * Get event type for given object.
+     * 
+     * @param object
+     * @return
+     */
+    public static Workflows.EventType getEventType(
+        ContextCapable object
+    ) {
+    	return object instanceof ObjectRemovalAuditEntry 
+    		? Workflows.EventType.OBJECT_REMOVAL 
+    		: object instanceof ObjectCreationAuditEntry 
+    	  		? Workflows.EventType.OBJECT_CREATION 
+    	  		: object instanceof ObjectModificationAuditEntry 
+    	  			? Workflows.EventType.OBJECT_REPLACEMENT 
+    	  			: Workflows.EventType.NONE;
+    }
 
     /**
      * Get workflow segment.

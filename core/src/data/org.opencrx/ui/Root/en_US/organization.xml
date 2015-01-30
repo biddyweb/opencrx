@@ -683,6 +683,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreditLimit:creditLimitAmount">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Limit amount</_item>
 											</toolTip>
@@ -700,6 +702,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:CreditLimit:currentCreditUsageAmount">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Current usage</_item>
 											</toolTip>
@@ -735,6 +739,8 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Expected Usage #1</_item>
 											</toolTip>
@@ -755,6 +761,8 @@
 											<toolTip>
 												<_item>Expected Usage #2</_item>
 											</toolTip>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<label>
 												<_item>Expected Usage #2</_item>
 											</label>
@@ -772,6 +780,8 @@
 											<toolTip>
 												<_item>Expected Usage #3</_item>
 											</toolTip>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<label>
 												<_item>Expected Usage #3</_item>
 											</label>

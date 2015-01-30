@@ -124,14 +124,15 @@ public class IMAPSession extends AbstractSession {
             if(c == '\n') {
                 break;
             }
-            if(c == -1) {
+            if(c <= 0 || c > 255) {
                 return null;
-            }
-            line.append(c);
-            if(line.length() > MAX_LINE_LENGTH) {            	
-            	SysLog.info("Error: line too long. Details:", Arrays.asList(this.username, line.length(), line));
-            	// Handle silently. Do not throw exception here.
-            	break;
+            } else {
+	            line.append(c);
+	            if(line.length() > MAX_LINE_LENGTH) {            	
+	            	SysLog.info("Error: line too long. Details:", Arrays.asList(this.username, line.length(), line.substring(0, 80) + "..."));
+	            	// Handle silently. Do not throw exception here.
+	            	break;
+	            }
             }
         }
         return line.toString();

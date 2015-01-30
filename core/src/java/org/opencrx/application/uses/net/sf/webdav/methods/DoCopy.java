@@ -261,7 +261,7 @@ public class DoCopy extends WebDavMethod {
 	                _store.getResourceContent(
 	                	requestContext,
 	                    sourceSo
-	                ).getContent(), 
+	                ).getContent().getContent(),
 	                _store.getMimeType(sourceSo) 
 	            );
 	        }  
@@ -324,7 +324,7 @@ public class DoCopy extends WebDavMethod {
                             _store.getResourceContent(
                             	requestContext, 
                             	childSo
-                            ).getContent(), 
+                            ).getContent().getContent(), 
                             _store.getMimeType(childSo) 
                         );
                     }

@@ -172,7 +172,13 @@ public interface WebDavStore {
      * @throws WebdavException
      *      if something goes wrong on the store level
      */
-    BinaryLargeObject getResourceContent(
+    
+    public interface ResourceContent {
+    	BinaryLargeObject getContent();
+    	Long getLength();
+    }
+
+    ResourceContent getResourceContent(
     	RequestContext requestContext, 
     	Resource res
     );
@@ -305,6 +311,7 @@ public interface WebDavStore {
     Lock lock(
     	RequestContext requestContext, 
     	String path, 
+    	String token,
     	String owner,
         String scope, 
         String type, 
@@ -321,21 +328,9 @@ public interface WebDavStore {
      *      id to the resource to unlock
      */
     boolean unlock(
-    	RequestContext requestContext, 
+    	RequestContext requestContext,
+    	String path,
     	String id 
-    );
-
-    /**
-     * Set timeout for specified lock.
-     * 
-     * @param requestContext
-     * @param id
-     * @param timeout
-     */
-    public void setLockTimeout(
-    	RequestContext requestContext, 
-    	String id,
-    	int timeout
     );
 
     /**

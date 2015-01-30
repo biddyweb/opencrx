@@ -58,6 +58,7 @@ import java.util.Date;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
+import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.openmdx.base.jmi1.BasicObject;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
@@ -104,19 +105,28 @@ abstract class CardDavResource implements Resource {
 	@Override
     public String getName(
     ) {
-		return this.object.refGetPath().getBase();
+		return this.object.refGetPath().getLastSegment().toClassicRepresentation();
     }
 
 	public String getMimeType(
 	) {
 		return "application/xml";
 	}
-	
-	public BinaryLargeObject getContent(
+
+	public WebDavStore.ResourceContent getContent(
 	) {
-		return BinaryLargeObjects.valueOf(new byte[]{});
+		return new WebDavStore.ResourceContent(){
+			@Override
+			public BinaryLargeObject getContent() {
+				return BinaryLargeObjects.valueOf(new byte[]{});
+			}
+			@Override
+			public Long getLength() {
+				return 0L;
+			}
+		};
 	}
-	
+
 	private final RequestContext requestContext;
 	private final BasicObject object;
 }

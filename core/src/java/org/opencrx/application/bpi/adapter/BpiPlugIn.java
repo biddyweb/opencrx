@@ -85,6 +85,7 @@ import org.opencrx.application.bpi.datatype.BpiWebAddress;
 import org.opencrx.kernel.account1.cci2.AccountFilterGlobalQuery;
 import org.opencrx.kernel.account1.cci2.ContactQuery;
 import org.opencrx.kernel.account1.cci2.LegalEntityQuery;
+import org.opencrx.kernel.account1.cci2.MemberQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.AccountAddress;
 import org.opencrx.kernel.account1.jmi1.AccountFilterGlobal;
@@ -1225,6 +1226,22 @@ public class BpiPlugIn {
     	accountFilterQuery.orderByCreatedAt().ascending();
     	accountFilterQuery.forAllDisabled().isFalse();
     	return accountSegment.getAccountFilter(accountFilterQuery);    	
+    }
+
+    /**
+     * Find account members for given account.
+     * 
+     * @param account
+     * @return
+     */
+    public List<Member> findAccountMembers(
+    	Account account
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
+		MemberQuery memberQuery = (MemberQuery)pm.newQuery(Member.class);
+		memberQuery.forAllDisabled().isFalse();
+		memberQuery.thereExistsAccount().forAllDisabled().isFalse();
+		return account.getMember(memberQuery);
     }
 
     /**

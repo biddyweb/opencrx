@@ -105,12 +105,13 @@ import org.opencrx.kernel.generic.jmi1.LocalizedFieldContainer;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.WorkflowHelper;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.persistence.cci.UserObjects;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Codes;
 import org.w3c.cci2.BinaryLargeObjects;
@@ -682,7 +683,7 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		if(selector instanceof AccountFilterGlobal) {
 			AccountQuery accountQuery = (AccountQuery)pm.newQuery(Account.class);
 			accountQuery.forAllDisabled().isFalse();
-	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(accountQuery);
+			QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(accountQuery);
 	    	queryExtension.setClause(
 	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
 	    	);
@@ -691,7 +692,7 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		} else if(selector instanceof Group) {
 			MemberQuery memberQuery = (MemberQuery)pm.newQuery(Member.class);
 			memberQuery.forAllDisabled().isFalse();
-	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(memberQuery);
+			QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(memberQuery);
 	    	queryExtension.setClause(
 	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
 	    	);
@@ -700,7 +701,7 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		} else if(selector instanceof AddressFilterGlobal) {
 			AccountAddressQuery accountAddressQuery = (AccountAddressQuery)pm.newQuery(AccountAddress.class);
 			accountAddressQuery.forAllDisabled().isFalse();
-	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(accountAddressQuery);
+			QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(accountAddressQuery);
 	    	queryExtension.setClause(
 	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
 	    	);
@@ -709,7 +710,7 @@ public class BulkCreateActivityWorkflow extends Workflows.AsynchronousWorkflow {
 		} else if(selector instanceof AddressGroup) {
 			AddressGroupMemberQuery addressGroupMemberQuery = (AddressGroupMemberQuery)pm.newQuery(AddressGroupMember.class);
 			addressGroupMemberQuery.forAllDisabled().isFalse();
-	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(addressGroupMemberQuery);
+			QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(addressGroupMemberQuery);
 	    	queryExtension.setClause(
 	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
 	    	);

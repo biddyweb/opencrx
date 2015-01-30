@@ -55,6 +55,7 @@ package org.opencrx.kernel.backend;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -62,10 +63,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -75,6 +78,7 @@ import java.util.TreeSet;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
+import javax.jmi.reflect.RefObject;
 
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
@@ -87,6 +91,10 @@ import org.opencrx.kernel.activity1.jmi1.Resource;
 import org.opencrx.kernel.aop2.Configuration;
 import org.opencrx.kernel.backend.Admin.PrincipalType;
 import org.opencrx.kernel.backend.ICalendar.ICalClass;
+import org.opencrx.kernel.base.jmi1.AuditEntry;
+import org.opencrx.kernel.base.jmi1.ObjectCreationAuditEntry;
+import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
+import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.SetOwningUserParams;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
@@ -104,6 +112,7 @@ import org.opencrx.kernel.home1.jmi1.ObjectFinder;
 import org.opencrx.kernel.home1.jmi1.Subscription;
 import org.opencrx.kernel.home1.jmi1.Timer;
 import org.opencrx.kernel.home1.jmi1.UserHome;
+import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow1.jmi1.Topic;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
@@ -117,6 +126,7 @@ import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.UserSettings;
 import org.openmdx.portal.servlet.WebKeys;
+import org.openmdx.security.authentication1.jmi1.PasswordChangeParams;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
@@ -268,7 +278,90 @@ public class UserHomes extends AbstractImpl {
             }
         }
     }
-       
+    
+    /**
+     * Get template for the request password reset notification alert. The template
+     * should contain the place-holders {RESET_CONFIRM_URL} and {RESET_CANCEL_URL}.
+     * Override this method if custom and/or locale specific templates are required.
+     * 
+     * @param userHome
+     * @return
+     * @throws ServiceException
+     */
+    protected String getRequestPasswordResetNotificationTemplate(
+    	UserHome userHome
+    ) throws ServiceException {
+    	String providerName = userHome.refGetPath().getSegment(2).toClassicRepresentation();
+    	String segmentName = userHome.refGetPath().getSegment(4).toClassicRepresentation();
+    	return
+    		"Did you request a password reset for your openCRX account (" + providerName + "/" + segmentName + ")?\n" +
+    		"\n" +
+    		"If you requested this password reset, go here:\n" +
+    		"<a href=\"{RESET_CONFIRM_URL}\">{RESET_CONFIRM_URL}</a>\n" +
+    		"\n" +
+    		"If you didn't make this request, use this link to cancel it:\n" +
+    		"<a href=\"{RESET_CANCEL_URL}\">{RESET_CANCEL_URL}</a>\n" +
+    		"\n" +
+    		"Thanks,\n" +
+    		"The " + providerName + "/" + segmentName + " administrator";
+    }
+
+    /**
+     * Request password reset.
+     * 
+     * @param userHome
+     * @throws ServiceException
+     */
+    public void requestPasswordReset(
+        UserHome userHome
+    ) throws ServiceException {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(userHome);
+    	String providerName = userHome.refGetPath().getSegment(2).toClassicRepresentation();
+    	String segmentName = userHome.refGetPath().getSegment(4).toClassicRepresentation();	
+        String principalName = userHome.refGetPath().getLastSegment().toClassicRepresentation();
+        org.opencrx.security.realm1.jmi1.Principal loginPrincipal = (org.opencrx.security.realm1.jmi1.Principal)SecureObject.getInstance().findPrincipal(
+        	principalName,
+    		SecureObject.getInstance().getLoginRealmIdentity(
+        		userHome.refGetPath().getSegment(2).toClassicRepresentation()
+        	),
+        	pm
+        );
+        String webAccessUrl = userHome.getWebAccessUrl();
+        if(webAccessUrl != null) {
+        	String resetToken = Utils.getRandomBase62(40);
+	        // Send alert
+	        {
+	        	String name = providerName + "/" + segmentName + " Password Reset";
+	        	String resetConfirmUrl = webAccessUrl + (webAccessUrl.endsWith("/") ? "" : "/") + "PasswordResetConfirm.jsp?t=" + resetToken + "&p=" + providerName + "&s=" + segmentName + "&id=" + principalName;
+	        	String resetCancelUrl = webAccessUrl + (webAccessUrl.endsWith("/") ? "" : "/") + "PasswordResetCancel.jsp?t=" + resetToken + "&p=" + providerName + "&s=" + segmentName + "&id=" + principalName;
+	        	String description = this.getRequestPasswordResetNotificationTemplate(userHome);
+	        	description = description.replace("{RESET_CONFIRM_URL}", resetConfirmUrl);
+	        	description = description.replace("{RESET_CANCEL_URL}", resetCancelUrl);
+		        Base.getInstance().sendAlert(
+		        	userHome, 
+		        	principalName,
+		        	name, 
+		        	description, 
+		        	(short)2,
+		        	0, 
+		        	null
+		        );
+		        SysLog.warning("Password reset request", Arrays.asList(resetConfirmUrl, resetCancelUrl));
+	        }
+	        // Reset password to "{RESET}resetToken". This way:
+	        // 1) a base64 hash is stored of the token (and not the token itself)
+	        // 2) The account is locked because a login is impossible (a base64 encoded password hash never generates the prefix {RESET}
+	        // 3) changePassword() accepts the token with the {RESET} prefix as old password       
+	        {
+	        	this.changePassword(
+	        		(org.openmdx.security.authentication1.jmi1.Password)loginPrincipal.getCredential(),
+	        		null, // no old password verification 
+	        		RESET_PASSWORD_PREFIX + resetToken
+	        	);
+	        }
+        }
+    }
+
     /**
      * Get user home.
      * 
@@ -283,7 +376,7 @@ public class UserHomes extends AbstractImpl {
     ) throws ServiceException {
     	return this.getUserHome(from, pm, false);
     }
-    
+
     /**
      * Get user home.
      * 
@@ -294,26 +387,26 @@ public class UserHomes extends AbstractImpl {
      * @throws ServiceException
      */
     public UserHome getUserHome(
-      Path from,
-      PersistenceManager pm,
-      boolean useRunAsPrincipal
+    	Path from,
+    	PersistenceManager pm,
+    	boolean useRunAsPrincipal
     ) throws ServiceException {
     	List<String> principalChain = UserObjects.getPrincipalChain(pm);
     	return (UserHome)pm.getObjectById(
     		new Path(new String[]{
-              "org:opencrx:kernel:home1",
-              "provider",
-              from.get(2),
-              "segment",
-              from.get(4),
-              "userHome",
-              useRunAsPrincipal && principalChain.size() > 1 ? 
-            	  principalChain.get(1) : 
-            		  principalChain.get(0)
-            })
+    			"org:opencrx:kernel:home1",
+    			"provider",
+    			from.getSegment(2).toClassicRepresentation(),
+    			"segment",
+    			from.getSegment(4).toClassicRepresentation(),
+    			"userHome",
+    			useRunAsPrincipal && principalChain.size() > 1 
+    				? principalChain.get(1) 
+    				: principalChain.get(0)
+    		})
     	);
     }
-    
+
     /**
      * Get user home.
      * 
@@ -380,14 +473,14 @@ public class UserHomes extends AbstractImpl {
 	        MessageDigest md = MessageDigest.getInstance(algorithm);
 	        md.update(password.getBytes("UTF-8"));
 	        return md.digest();
-        }
-	    catch(NoSuchAlgorithmException e) {
-	    }
-	    catch(UnsupportedEncodingException e) {
+        } catch(NoSuchAlgorithmException e) {
+	    	// ignore
+	    } catch(UnsupportedEncodingException e) {
+	    	// ignore
 	    }
         return null;
     }
-    
+
     /**
      * Create a password credential for given subject.
      *  
@@ -400,7 +493,7 @@ public class UserHomes extends AbstractImpl {
         List<String> errors
     ) {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(subject);
-        String providerName = subject.refGetPath().get(2);        
+        String providerName = subject.refGetPath().getSegment(2).toClassicRepresentation();        
         org.openmdx.security.authentication1.jmi1.Segment authenticationSegment =
         	(org.openmdx.security.authentication1.jmi1.Segment)pm.getObjectById(
         		new Path("xri://@openmdx*org.openmdx.security.authentication1").getDescendant("provider", providerName, "segment", "Root")
@@ -437,8 +530,7 @@ public class UserHomes extends AbstractImpl {
     	org.openmdx.security.authentication1.jmi1.Password passwordCredentialByRoot =  null;
     	if(JDOHelper.isNew(passwordCredential)) {
     	    passwordCredentialByRoot = passwordCredential;
-    	}
-    	else {
+    	} else {
         	pmRoot = pm.getPersistenceManagerFactory().getPersistenceManager(SecurityKeys.ROOT_PRINCIPAL, null);
         	passwordCredentialByRoot = 
         		(org.openmdx.security.authentication1.jmi1.Password)pmRoot.getObjectById(
@@ -447,15 +539,58 @@ public class UserHomes extends AbstractImpl {
     	}
     	try {
     		Configuration config = (Configuration)pm.getUserObject(Configuration.class.getSimpleName());
+    		// old password
+    		byte[] oldPasswordDigest = null;
+    		if(oldPassword == null) {
+    			oldPasswordDigest = null;
+    		} else if(oldPassword.startsWith(RESET_PASSWORD_PREFIX)) {
+    			// do not digest {RESET} prefix
+    			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    			bytes.write(RESET_PASSWORD_PREFIX.getBytes("UTF-8"));
+    			bytes.write(
+    				this.getPasswordDigest(
+	    				oldPassword.substring(RESET_PASSWORD_PREFIX.length()), 
+	    				config.getPasswordEncodingAlgorithm()
+	    			)
+    			);
+    			bytes.close();
+    			oldPasswordDigest = bytes.toByteArray();    			
+    		} else {
+    			oldPasswordDigest = this.getPasswordDigest(
+    				oldPassword, 
+    				config.getPasswordEncodingAlgorithm()
+    			);
+    		}
+    		// new password
+    		byte[] newPasswordDigest = null;
+    		if(password.startsWith(RESET_PASSWORD_PREFIX)) {
+    			// do not digest {RESET} prefix
+    			ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+    			bytes.write(RESET_PASSWORD_PREFIX.getBytes("UTF-8"));
+    			bytes.write(
+    				this.getPasswordDigest(
+	    				password.substring(RESET_PASSWORD_PREFIX.length()), 
+	    				config.getPasswordEncodingAlgorithm()
+	    			)
+    			);
+    			bytes.close();
+    			newPasswordDigest = bytes.toByteArray();
+    		} else {
+    			newPasswordDigest = this.getPasswordDigest(
+    				password, 
+    				config.getPasswordEncodingAlgorithm()
+    			);
+    		}
     		if(pmRoot != null) {
     			pmRoot.currentTransaction().begin();
     		}
-	    	passwordCredentialByRoot.change(
-	    		((org.openmdx.security.authentication1.jmi1.Authentication1Package)passwordCredentialByRoot.refImmediatePackage()).createPasswordChangeParams(
-		    		oldPassword == null ? null : this.getPasswordDigest(oldPassword, config.getPasswordEncodingAlgorithm()),
-		    		password == null ? null : this.getPasswordDigest(password, config.getPasswordEncodingAlgorithm())
-		    	)
-	    	);
+    		// change password
+			PasswordChangeParams changePasswordParams = Structures.create(
+				PasswordChangeParams.class, 
+				Datatypes.member(PasswordChangeParams.Member.oldPassword, oldPasswordDigest),
+				Datatypes.member(PasswordChangeParams.Member.password, newPasswordDigest)	
+			);
+	    	passwordCredentialByRoot.change(changePasswordParams);
 	    	if(pmRoot != null) {
 	    		pmRoot.currentTransaction().commit();
 	    	}
@@ -463,15 +598,14 @@ public class UserHomes extends AbstractImpl {
         	ServiceException e0 = new ServiceException(e);
         	if(e0.getCause(OpenCrxException.DOMAIN).getExceptionCode() == BasicException.Code.ASSERTION_FAILURE) {
         		return OLD_PASSWORD_VERIFICATION_MISMATCH;
-        	}
-        	else {
+        	} else {
 	        	SysLog.warning(e.getMessage(), e.getCause());
 	            return CAN_NOT_CHANGE_PASSWORD;
         	}
         }
         return CHANGE_PASSWORD_OK;
     }
-   
+
     /**
      * Default implementation does not enforce a password policy.
      * 
@@ -535,15 +669,15 @@ public class UserHomes extends AbstractImpl {
             return MISSING_OLD_PASSWORD;
         }        
         // qualifier of user home is the principal name
-        String principalName = userHome.refGetPath().getBase();        
+        String principalName = userHome.refGetPath().getLastSegment().toClassicRepresentation();
         // get principal
         org.opencrx.security.realm1.jmi1.Principal principal = null;
         try {
             principal = (org.opencrx.security.realm1.jmi1.Principal)SecureObject.getInstance().findPrincipal(
             	principalName,
         		SecureObject.getInstance().getLoginRealmIdentity(
-            		userHome.refGetPath().get(2)
-            	),	            	
+            		userHome.refGetPath().getSegment(2).toClassicRepresentation()
+            	),
             	pm
             );
         } catch(Exception e) {
@@ -1988,6 +2122,257 @@ public class UserHomes extends AbstractImpl {
         }
     }
 
+    /**
+     * Extract value for given feature from message.
+     * 
+     * @param message
+     * @param feature
+     * @return
+     */
+    protected Object getMessageValue(
+    	Object message,
+    	String feature
+    ) {
+    	Object value = null;
+        if(message instanceof RefObject) {
+            try {
+                value = ((RefObject)message).refGetValue(feature);
+            } catch(Exception e) {
+            	SysLog.warning("Can not get filter value", e.getMessage());
+            }
+        } else {
+            String messageAsString = message.toString();
+            String indexedFilterName = feature + ":\n0: ";
+            int pos = -1;
+            if((pos = messageAsString.indexOf(indexedFilterName)) >= 0) {
+                int start = pos + indexedFilterName.length();
+                int end = messageAsString.indexOf(
+                    "\n", 
+                    start
+                );
+                if(end > start) {
+                    value = messageAsString.substring(start, end);
+                }
+            }                
+        }
+        if(value instanceof Collection) {
+        	Collection<?> values = (Collection<?>)value;
+        	value = values.isEmpty() ? null : value;
+        }
+        return value;
+    }
+
+    /**
+     * Test whether subscription accepts given event type.
+     * 
+     * @param subscription
+     * @param eventType
+     * @return
+     */
+    protected boolean subscriptionEventTypeMatches(
+        Subscription subscription,
+        ContextCapable message
+    ) {
+        if(subscription.getEventType().isEmpty()) {
+        	return true;
+        }
+        Workflows.EventType eventType = Workflows.getEventType(message);
+        for(Short e: subscription.getEventType()) {
+        	if(e.shortValue() == eventType.getValue()) {
+        		return true;
+        	}
+        }
+        return false;
+    }
+
+    /**
+     * Test if message matches the given subscription filter.
+     * 
+     * @param filterName
+     * @param filterValue
+     * @param message
+     * @return
+     */
+    protected boolean subscriptionFilterMatches(
+    	Subscription subscription,
+    	Object message,
+        String filterName,
+        Set<String> filterValues
+    ) {
+    	PersistenceManager pm = JDOHelper.getPersistenceManager(subscription);
+		if(message instanceof AuditEntry) {
+	    	PersistenceManager pmUser = null;
+			try {
+	    		AuditEntry auditEntry = (AuditEntry)message;
+		        if(auditEntry.getAuditee() != null) {
+		            // Retrieve auditee in the security context of the home's principal. 
+		            // This validates availability and read-permissions.
+		            Path userHomeIdentity = subscription.refGetPath().getParent().getParent();
+		            String principalName = userHomeIdentity.getLastSegment().toClassicRepresentation();
+		            pmUser = pm.getPersistenceManagerFactory().getPersistenceManager(
+		                principalName,
+		                null
+		            );
+		            Object auditee = null;
+		            if(auditEntry instanceof ObjectModificationAuditEntry) {
+		                try {
+		                    auditee = pmUser.getObjectById(
+		                        new Path(auditEntry.getAuditee())
+		                    );
+		                } catch(Exception e) {
+		                	SysLog.detail(e.getMessage(), e.getCause());
+		                }
+		            } else if(auditEntry instanceof ObjectRemovalAuditEntry) {
+		                auditee = ((ObjectRemovalAuditEntry)auditEntry).getBeforeImage();
+		            } else if(auditEntry instanceof ObjectCreationAuditEntry) {
+		                try {
+		                    auditee = pmUser.getObjectById(
+		                        new Path(auditEntry.getAuditee())
+		                    );
+		                } catch(Exception e) {
+		                	SysLog.detail(e.getMessage(), e.getCause());
+		                }
+		            }
+		            if(auditee != null) {
+				        return this.subscriptionFilterMatches(
+				        	subscription, 
+				        	auditee, 
+				        	filterName, 
+				        	filterValues
+				        );
+		            } else {
+		            	return false;
+		            }
+		        } else {
+		        	return false;
+		        }
+			} finally {
+				if(pmUser != null) {
+					try {
+						pmUser.close();
+					} catch(Exception ignore) {}
+				}
+			}
+		} else {
+	        Object value = this.getMessageValue(
+	        	message, 
+	        	filterName
+	        );
+	        boolean matches = false;
+	        for(String filterValue: filterValues) {
+		        boolean negate = false;
+		        if(filterValue != null && filterValue.startsWith("!")) {
+		        	filterValue = filterValue.substring(1);
+		        	negate = true;
+		        }
+		        try {
+	            	boolean isEqual = Utils.areEqual(
+	            		value instanceof RefObject ? ((RefObject)value).refMofId() : value.toString(), 
+	            		filterValue
+	            	);
+	            	matches |= negate ? !isEqual : isEqual;
+		        } catch(Exception e) {
+		        	SysLog.detail(e.getMessage(), e.getCause());
+		        	SysLog.warning("Can not get filter value", Arrays.asList(filterName, e.getMessage()));            	
+		        }
+	        }
+	        return matches;
+		}
+    }
+
+    /**
+     * Return true if the topic XRI pattern matches the message XRI.
+     * 
+     * @param subscription
+     * @param message
+     * @return
+     */
+    public boolean subscriptionTopicMatches(
+    	Subscription subscription,
+        ContextCapable message
+    ) {
+        String topicPatternXri = subscription.getTopic().getTopicPathPattern();
+        String providerName = subscription.refGetPath().getSegment(2).toClassicRepresentation();
+        String segmentName = subscription.refGetPath().getSegment(4).toClassicRepresentation();
+        if(topicPatternXri != null) {
+            Path topicPattern = new Path(topicPatternXri);
+            Path objectPath = message instanceof AuditEntry 
+            	? new Path(((AuditEntry)message).getAuditee())
+            	: message instanceof RefObject_1_0 
+            		? ((RefObject_1_0)message).refGetPath()
+            		: null;
+			// If message is a composite of UserHome it must be
+			// composite of the home of the subscribing user --> a user can
+			// not subscribe to objects which are 'owned' by another user.
+            Path userHomeIdentity = subscription.refGetPath().getParent().getParent();
+            if(
+                (objectPath.size() >= PATH_PATTERN_USER_HOME.size()) &&
+                objectPath.getPrefix(PATH_PATTERN_USER_HOME.size()).isLike(PATH_PATTERN_USER_HOME)
+            ) {
+                if(!objectPath.startsWith(userHomeIdentity)) {
+                    return false;
+                }
+            }
+            if(topicPattern.size() < 7) {
+                return false;
+            } else {
+                return 
+                	objectPath != null &&
+                    objectPath.isLike(topicPattern) &&
+                    providerName.equals(objectPath.getSegment(2).toClassicRepresentation()) &&
+                    segmentName.equals(objectPath.getSegment(4).toClassicRepresentation());
+            }
+        } else {
+            return false;
+        }
+    }
+    
+    /**
+     * Return true if subscription matches message.
+     * 
+     * @param subscription
+     * @param message
+     * @return
+     * @throws ServiceException
+     */
+    public boolean subscriptionMatches(
+    	Subscription subscription,
+    	ContextCapable message
+    ) throws ServiceException {
+    	if(!this.subscriptionTopicMatches(subscription, message)) {
+    		return false;
+    	}
+        if(!this.subscriptionEventTypeMatches(subscription, message)) {
+            return false;
+        }
+        if((subscription.getFilterName0() != null) && (subscription.getFilterName0().length() > 0)) {
+        	if(!this.subscriptionFilterMatches(subscription, message, subscription.getFilterName0(), subscription.getFilterValue0())) {
+        		return false;
+        	}
+        }
+        if((subscription.getFilterName1() != null) && (subscription.getFilterName1().length() > 0)) {
+        	if(!this.subscriptionFilterMatches(subscription, message, subscription.getFilterName1(), subscription.getFilterValue1())) {
+        		return false;
+        	}
+        }
+        if((subscription.getFilterName2() != null) && (subscription.getFilterName2().length() > 0)) {
+        	if(!this.subscriptionFilterMatches(subscription, message, subscription.getFilterName2(), subscription.getFilterValue2())) {
+        		return false;
+        	}
+        }
+        if((subscription.getFilterName3() != null) && (subscription.getFilterName3().length() > 0)) {
+        	if(!this.subscriptionFilterMatches(subscription, message, subscription.getFilterName3(), subscription.getFilterValue3())) {
+        		return false;
+        	}
+        }
+        if((subscription.getFilterName4() != null) && (subscription.getFilterName4().length() > 0)) {
+        	if(!this.subscriptionFilterMatches(subscription, message, subscription.getFilterName4(), subscription.getFilterValue4())) {
+        		return false;
+        	}
+        }
+    	return true;
+    }
+
 	/* (non-Javadoc)
 	 * @see org.opencrx.kernel.backend.AbstractImpl#preDelete(org.opencrx.kernel.generic.jmi1.CrxObject, boolean)
 	 */
@@ -2011,7 +2396,7 @@ public class UserHomes extends AbstractImpl {
 			this.updateTimer((Timer)object);
 		}
 	}
-
+	
 	//-------------------------------------------------------------------------
     // Members
     //-------------------------------------------------------------------------    
@@ -2078,6 +2463,7 @@ public class UserHomes extends AbstractImpl {
 		
 	}
 
+    public static final String RESET_PASSWORD_PREFIX = "{RESET}";
+    private static final Path PATH_PATTERN_USER_HOME = new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", ":*", "segment", ":*", "userHome", ":*");    
+    
 }
-
-//--- End of File -----------------------------------------------------------

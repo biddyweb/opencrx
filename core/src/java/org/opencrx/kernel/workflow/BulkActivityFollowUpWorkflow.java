@@ -61,6 +61,7 @@ import java.util.Map;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
+import javax.jdo.Query;
 
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.activity1.cci2.ActivityQuery;
@@ -213,9 +214,21 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
 	    		// Get identity of activities to be updated
 	    		ActivityQuery activityQuery = (ActivityQuery)pmUser.newQuery(Activity.class);
 	    		activityQuery.thereExistsProcessState().equalTo(processState);
+	    		((Query)activityQuery).getFetchPlan().setFetchSize(FETCH_SIZE);
     			Collection<Activity> activities = activityGroup.getFilteredActivity(activityQuery);
+    			int count = 0;
     			for(Activity a: activities) {
     				activityIdentities.add(a.refGetPath());
+    				count++;
+    				if(count % 1000 == 0) {
+    	    			this.createLogEntry(
+    	    				"Report @" + new Date(),
+    	    				wfProcessInstance, 
+    	    				activityIdentities.size(), 
+    	    				countSuccess, 
+    	    				countFailed
+    	    			);    					
+    				}
     			}
     			this.createLogEntry(
     				"Report @" + new Date(),
@@ -290,6 +303,8 @@ public class BulkActivityFollowUpWorkflow extends Workflows.AsynchronousWorkflow
     //-----------------------------------------------------------------------
     // Members
     //-----------------------------------------------------------------------
+    private static final int FETCH_SIZE = 200;
+    
     public static final String OPTION_ACTIVITY = "activity";
     public static final String OPTION_TRANSITION = "transition";
     public static final String OPTION_FOLLOWUP_TITLE = "followUpTitle";

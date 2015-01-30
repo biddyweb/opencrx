@@ -939,13 +939,19 @@ public class VCard extends AbstractImpl {
     	return uid;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Write PHOTO tag for given account if account.getPicture() is set.
+     * 
+     * @param p
+     * @param account
+     * @throws ServiceException
+     */
     public void writePhotoTag(
     	PrintWriter p,
-    	Contact contact
+    	Account account
     ) throws ServiceException {
-    	if(contact.getPicture() != null) {
-    		Media picture = contact.getPicture();
+    	if(account.getPicture() != null) {
+    		Media picture = account.getPicture();
     		String mimeType = picture.getContentMimeType();
     		if(mimeType != null && mimeType.indexOf("/") > 0) {
     			try {
@@ -1085,7 +1091,17 @@ public class VCard extends AbstractImpl {
         return null;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Map VCARD to given account
+     * 
+     * @param vcardAsString
+     * @param vcard
+     * @param account
+     * @param locale
+     * @param report
+     * @return
+     * @throws ServiceException
+     */
     protected Account importItem(
     	String vcardAsString,
         Map<String,VCardField> vcard,
@@ -1098,7 +1114,7 @@ public class VCard extends AbstractImpl {
         org.opencrx.kernel.code1.jmi1.Segment codeSegment = null;
         try {
         	codeSegment = (org.opencrx.kernel.code1.jmi1.Segment)pm.getObjectById(
-        		new Path("xri://@openmdx*org.opencrx.kernel.code1").getDescendant("provider", account.refGetPath().get(2), "segment", "Root")        		
+        		new Path("xri://@openmdx*org.opencrx.kernel.code1").getDescendant("provider", account.refGetPath().getSegment(2).toClassicRepresentation(), "segment", "Root")        		
         	);
         } catch(Exception e) {}
         dateTimeFormatter.setLenient(false);
@@ -1115,8 +1131,7 @@ public class VCard extends AbstractImpl {
                     String t = tokenizer.nextToken();
                     if(";".equals(t)) {
                         ii++;
-                    }
-                    else {
+                    } else {
                         nameTokens[ii] = t;
                     }
                 }
@@ -1167,30 +1182,6 @@ public class VCard extends AbstractImpl {
             if((organization != null) && !organization.isEmpty()) {
                 contact.setOrganization(organization.split(";")[0]);
             }
-            // photo
-            String photo = VCardField.getFieldValue("PHOTO", vcard);
-            if(photo != null && !photo.isEmpty()) {
-            	org.opencrx.kernel.generic.jmi1.Media picture = null;
-            	try {
-            		picture = (org.opencrx.kernel.generic.jmi1.Media)pm.getObjectById(contact.refGetPath().getDescendant("media", "VCARD"));            			
-            	} catch(Exception e) {}
-            	if(picture == null) {
-            		picture = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
-                	contact.addMedia(
-                		"VCARD",
-                		picture
-                	);
-            	}
-            	List<String> mimeTypes = VCardField.getField("PHOTO", null, null, vcard).getParameters().get("TYPE");
-            	String mimeType = mimeTypes.isEmpty() ? "image/jpeg" : mimeTypes.get(0).toLowerCase();
-            	if(mimeType.indexOf("/") < 0) {
-            		mimeType = "image/" + mimeType;
-            	}
-            	picture.setContentMimeType(mimeType);
-            	picture.setContentName("VCARD~PHOTO");
-            	picture.setContent(BinaryLargeObjects.valueOf(Base64.decode(photo)));
-            	contact.setPicture(picture);
-            }
             // bday
             String bday = VCardField.getFieldValue("BDAY", vcard);
             if((bday != null) && !bday.isEmpty()) {
@@ -1215,8 +1206,7 @@ public class VCard extends AbstractImpl {
                 } catch(Exception e) {}
             }
             report.add("Update account");
-        }
-        else if(account instanceof AbstractGroup){
+        } else if(account instanceof AbstractGroup){
         	AbstractGroup group = (AbstractGroup)account;
             if(name != null) {
                 String[] nameTokens = new String[]{"", "", "", "", ""};
@@ -1226,26 +1216,48 @@ public class VCard extends AbstractImpl {
                     String t = tokenizer.nextToken();
                     if(";".equals(t)) {
                         ii++;
-                    }
-                    else {
+                    } else {
                         nameTokens[ii] = t;
                     }
                 }
                 // name
                 if(!nameTokens[0].isEmpty()) {
                 	group.setName(nameTokens[0]);        
-                }
-                else if(group.getName() == null) {
+                } else if(group.getName() == null) {
                     group.setName("N/A");
                 }
             }
         }
+        // photo
+        String photo = VCardField.getFieldValue("PHOTO", vcard);
+        if(photo != null && !photo.isEmpty()) {
+        	org.opencrx.kernel.generic.jmi1.Media picture = null;
+        	try {
+        		picture = (org.opencrx.kernel.generic.jmi1.Media)pm.getObjectById(account.refGetPath().getDescendant("media", "VCARD"));            			
+        	} catch(Exception e) {}
+        	if(picture == null) {
+        		picture = pm.newInstance(org.opencrx.kernel.generic.jmi1.Media.class);
+            	account.addMedia(
+            		"VCARD",
+            		picture
+            	);
+        	}
+        	List<String> mimeTypes = VCardField.getField("PHOTO", null, null, vcard).getParameters().get("TYPE");
+        	String mimeType = mimeTypes.isEmpty() ? "image/jpeg" : mimeTypes.get(0).toLowerCase();
+        	if(mimeType.indexOf("/") < 0) {
+        		mimeType = "image/" + mimeType;
+        	}
+        	picture.setContentMimeType(mimeType);
+        	picture.setContentName("VCARD~PHOTO");
+        	picture.setContent(BinaryLargeObjects.valueOf(Base64.decode(photo)));
+        	account.setPicture(picture);
+        }
         // externalLink
         boolean hasVcardUid = false;
         List<String> externalLinks = account.getExternalLink();
-        String vcardUid = vcard.get("UID") == null ? 
-        	account.refGetPath().getBase() : 
-        	VCardField.getFieldValue("UID", vcard);
+        String vcardUid = vcard.get("UID") == null 
+        	? account.refGetPath().getLastSegment().toClassicRepresentation() 
+        	: VCardField.getFieldValue("UID", vcard);
         for(int i = 0; i < externalLinks.size(); i++) {
             if(externalLinks.get(i).startsWith(VCARD_SCHEMA)) {
                 externalLinks.set(
@@ -1262,9 +1274,9 @@ public class VCard extends AbstractImpl {
             );
         }
         // note
-        String s = vcard.get("NOTE") == null ?
-        	null :
-        		VCardField.getFieldValue("NOTE", vcard);
+        String s = vcard.get("NOTE") == null 
+        	? null 
+        	: VCardField.getFieldValue("NOTE", vcard);
         if(s != null) {
         	Note note = null;
         	try {
@@ -1279,8 +1291,7 @@ public class VCard extends AbstractImpl {
                 	note
                 );
                 report.add("Create note");
-            }
-            else {
+            } else {
                 report.add("Update note");
             }
             note.setTitle("VCARD~NOTE");
@@ -1325,46 +1336,36 @@ public class VCard extends AbstractImpl {
             if(address instanceof PostalAddress) {
                 if(usage.contains(Addresses.USAGE_HOME)) {
                     adrHome = (PostalAddress)address;
-                }
-                else if(usage.contains(Addresses.USAGE_BUSINESS)) {
+                } else if(usage.contains(Addresses.USAGE_BUSINESS)) {
                     adrWork = (PostalAddress)address;
                 }          
-            }
-            else if(address instanceof EMailAddress) {
+            } else if(address instanceof EMailAddress) {
                 if(usage.contains(Addresses.USAGE_BUSINESS)) {
                     emailPrefInternet = (EMailAddress)address;
-                }
-                else if(usage.contains(Addresses.USAGE_HOME)) {
+                } else if(usage.contains(Addresses.USAGE_HOME)) {
                     emailInternet = (EMailAddress)address;
                 }
-            }
-            else if(address instanceof PhoneNumber) {
+            } else if(address instanceof PhoneNumber) {
                 if(usage.contains(Addresses.USAGE_HOME)) {
                     telHomeVoice = (PhoneNumber)address;
-                }
-                // work voice
-                else if(usage.contains(Addresses.USAGE_BUSINESS)) {
+                } else if(usage.contains(Addresses.USAGE_BUSINESS)) {
+                	// work voice
                     telWorkVoice = (PhoneNumber)address;
-                }              
-                // home fax
-                else if(usage.contains(Addresses.USAGE_HOME_FAX)) {
+                } else if(usage.contains(Addresses.USAGE_HOME_FAX)) {
+                    // home fax
                     telHomeFax = (PhoneNumber)address;
-                }
-                // work fax
-                else if(usage.contains(Addresses.USAGE_BUSINESS_FAX)) {
+                } else if(usage.contains(Addresses.USAGE_BUSINESS_FAX)) {
+                    // work fax
                     telWorkFax = (PhoneNumber)address;
-                }              
-                // cell voice
-                else if(usage.contains(Addresses.USAGE_MOBILE)) {
+                } else if(usage.contains(Addresses.USAGE_MOBILE)) {
+                    // cell voice
                     telCellVoice = (PhoneNumber)address;
                 }          
-            }
-            else if(address instanceof WebAddress) {
+            } else if(address instanceof WebAddress) {
                 if(usage.contains(Addresses.USAGE_HOME)) {
                     urlHome = (WebAddress)address;
-                }
-                // work url
-                else if(usage.contains(Addresses.USAGE_BUSINESS)) {
+                } else if(usage.contains(Addresses.USAGE_BUSINESS)) {
+                    // work url
                     urlWork = (WebAddress)address;
                 }
             }
@@ -1388,8 +1389,7 @@ public class VCard extends AbstractImpl {
                 	adrHome
                 );
                 report.add("Create postal address");
-            }
-            else {
+            } else {
             	this.updatePostalAddress(
             		adrHome, 
             		s,
@@ -1418,8 +1418,7 @@ public class VCard extends AbstractImpl {
                 	adrWork
                 );
                 report.add("Create postal address");
-            }
-            else {
+            } else {
             	this.updatePostalAddress(
             		adrWork, 
             		s, 
@@ -1443,8 +1442,7 @@ public class VCard extends AbstractImpl {
                 	telHomeVoice
                 );
                 report.add("Create phone number");
-            }
-            else {
+            } else {
             	this.updatePhoneNumber(telHomeVoice, s);
                 report.add("Update phone number");
             }
@@ -1463,8 +1461,7 @@ public class VCard extends AbstractImpl {
                 	telWorkVoice
                 );
                 report.add("Create phone number");
-            }
-            else {
+            } else {
             	this.updatePhoneNumber(telWorkVoice, s);
                 report.add("Update phone number");
             }
@@ -1483,8 +1480,7 @@ public class VCard extends AbstractImpl {
                 	telHomeFax
                 );
                 report.add("Create phone number");
-            }
-            else {
+            } else {
             	this.updatePhoneNumber(telHomeFax, s);
                 report.add("Update phone number");
             }
@@ -1503,8 +1499,7 @@ public class VCard extends AbstractImpl {
                 	telWorkFax
                 );
                 report.add("Create phone number");
-            }
-            else {
+            } else {
             	this.updatePhoneNumber(telWorkFax, s);
                 report.add("Update phone number");
             }
@@ -1523,8 +1518,7 @@ public class VCard extends AbstractImpl {
                 	telCellVoice
                 );
                 report.add("Create phone number");
-            }
-            else {
+            } else {
             	this.updatePhoneNumber(telCellVoice, s);
                 report.add("Update phone number");
             }
@@ -1543,8 +1537,7 @@ public class VCard extends AbstractImpl {
                 	urlHome
                 );
                 report.add("Create web address");
-            }
-            else {
+            } else {
             	this.updateWebAddress(urlHome, s);
                 report.add("Update web address");
             }
@@ -1563,8 +1556,7 @@ public class VCard extends AbstractImpl {
                 	urlWork
                 );
                 report.add("Create web address");
-            }
-            else {
+            } else {
             	this.updateWebAddress(urlWork, s);
                 report.add("Update web address");
             }
@@ -1586,8 +1578,7 @@ public class VCard extends AbstractImpl {
                 	emailPrefInternet
                 );
                 report.add("Create email address");
-            }
-            else {
+            } else {
             	this.updateEMailAddress(emailPrefInternet, s);
                 report.add("Update email address");
             }
@@ -1617,8 +1608,7 @@ public class VCard extends AbstractImpl {
                 	emailInternet
                 );
                 report.add("Create email address");
-            }
-            else {
+            } else {
             	this.updateEMailAddress(emailInternet, s);
                 report.add("Update email address");
             }

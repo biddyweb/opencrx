@@ -149,7 +149,7 @@ public class IndexerServlet extends HttpServlet {
                     UpdateIndexResult result = indexedSegment.updateIndex();
                     if(result.getNumberOfIndexedObjects() > 0) {
                         long duration = System.currentTimeMillis() - startedAt;
-                        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (#" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
+                        System.out.println(new Date().toString() + "  " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Indexed " + indexedSegment.refMofId() + " (" + result.getNumberOfIndexedObjects() + " objects in " + duration + " ms)");
                     }
                 } catch(Exception e) {
                     ServiceException e0 = new ServiceException(

@@ -68,6 +68,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -970,6 +971,29 @@ public abstract class Utils {
     }
 
     /**
+     * Split string.
+     * 
+	 * @param text
+	 * @param size
+	 * @return
+	 */
+	public static List<String> splitString(
+		String text, 
+		int size
+	) {
+		// Give the list the right capacity to start with. You could use an array instead if you wanted.
+		if (text == null) {
+			text = "";
+		}
+		List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
+	
+		for (int start = 0; start < text.length(); start += size) {
+			ret.add(text.substring(start, Math.min(text.length(), start + size)));
+		}
+		return ret;
+	}
+
+    /**
      * Touch object. This way jdoPreStore() will be invoked.
      * 
      * @param object
@@ -979,6 +1003,24 @@ public abstract class Utils {
         RefObject object
     ) throws ServiceException {
     	DirtyObjects.touch(object);
+    }
+
+    /**
+     * Get a base62 random string of given length.
+     * 
+     * @param length
+     * @return
+     */
+    public static String getRandomBase62(
+    	int length
+    ) {
+    	final String alphabet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    	final Random random = new Random(System.currentTimeMillis());
+    	String s = "";
+    	for(int i = 0; i < length; i++) {
+    		s += alphabet.charAt(random.nextInt(62));
+    	}
+    	return s;
     }
 
     //-------------------------------------------------------------------------

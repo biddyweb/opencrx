@@ -1560,9 +1560,19 @@ public class DatatypeMappers {
         List<String> assignedCustomers = new ArrayList<String>();
         Collection<AccountAssignmentContract> accountAssignments = customerContract.getAssignedAccount();
         for(AccountAssignmentContract accountAssignment: accountAssignments) {
-        	assignedCustomers.add(
-        		this.getAccountFieldMapper().getAccountNumber(accountAssignment.getAccount())
-        	);
+        	try {
+	        	assignedCustomers.add(
+	        		this.getAccountFieldMapper().getAccountNumber(accountAssignment.getAccount())
+	        	);
+        	} catch(Exception e) {
+        		ServiceException e0 = new ServiceException(
+        			e,
+        			BasicException.Code.DEFAULT_DOMAIN,
+        			BasicException.Code.GENERIC,
+        			"Unable to map assigned account"
+        		);
+        		e0.log();
+        	}
         }
         return Datatypes.create(
             CustomerContractT.class, 
@@ -1906,7 +1916,7 @@ public class DatatypeMappers {
                 mapProductClassifications(classifications)
             ),
             Datatypes.member(
-                ProductT.Member.bundle,
+                ProductT.Member.isMemberOfBundle,
                 productBundles
             ),
             Datatypes.member(

@@ -105,15 +105,15 @@ org.openmdx.kernel.exception.*
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
 <%
-	if(!wc.getErrorMsg().isEmpty()) {
+	if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
 %>
-		<div id="errorPane" style="padding:10px 10px 10px 10px;background-color:#FF0000;">
-			<table>
-				<tr style="vertical-align:top;">
-					<td style="padding:5px;font-weight:bold;color:#FFFFFF;"><img src='images/Alert.gif'/></td>
-					<td style="padding:5px;color:#FFFFFF;"><%= wc.getErrorMsg() %></td>
-				</tr>
-			</table>
+		<div class="alert alert-danger" role="alert">
+		  <table>
+		    <tr>
+		    	<td style="vertical-align:top;padding:10px;"><span class="glyphicon glyphicon-exclamation-sign"></span></td>
+		    	<td><%= wc.getErrorMessage() %></td>
+		    </tr>
+		  </table>
 		</div>
 <%
 	}

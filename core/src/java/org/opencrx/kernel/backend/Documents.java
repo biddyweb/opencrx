@@ -68,10 +68,11 @@ import org.opencrx.kernel.document1.jmi1.DocumentFolderShare;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.w3c.cci2.BinaryLargeObject;
 
 /**
@@ -289,7 +290,7 @@ public class Documents extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(documentFilter);
     	DocumentQuery query = (DocumentQuery)pm.newQuery(Document.class);
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);

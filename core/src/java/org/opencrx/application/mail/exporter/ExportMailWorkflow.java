@@ -129,7 +129,8 @@ public class ExportMailWorkflow extends MailWorkflow {
                 );
                 // nested message subject
                 nestedMessage.setSubject(
-                    emailActivity.getMessageSubject()
+                    emailActivity.getMessageSubject(),
+                    "UTF-8"
                 );
                 Activities.getInstance().mapMessageContent(
                     emailActivity,

@@ -85,7 +85,6 @@ import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.Resource;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.application.uses.net.sf.webdav.fromcatalina.HTMLWriter;
-import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
 /**
@@ -120,8 +119,8 @@ public class DoGet extends DoHead {
     	HttpServletResponse resp = requestContext.getHttpServletResponse();
         try {
             OutputStream out = resp.getOutputStream();
-            BinaryLargeObject resourceContent = _store.getResourceContent(requestContext, res);
-            InputStream in = resourceContent.getContent();
+            WebDavStore.ResourceContent resourceContent = _store.getResourceContent(requestContext, res);
+            InputStream in = resourceContent.getContent().getContent();
             String mimeType = _store.getMimeType(res);
             if(mimeType != null) {
 	            resp.setContentType(mimeType);
@@ -154,23 +153,24 @@ public class DoGet extends DoHead {
             		}
             		if(rangeFrom != null) {
             			// Prevent chunking!
-                        resp.setBufferSize((int)(resourceContent.getLength() - rangeFrom));
+            			Long contentLength = resourceContent.getLength();
+                        resp.setBufferSize((int)(contentLength - rangeFrom));
             			long skipped = in.skip(rangeFrom);
             			if(skipped == rangeFrom) {
 	            			long pos = rangeFrom;
-	            			long contentLength = 0;
+	            			long rangeLength = 0;
 	            			int b;
 	            			while((b = in.read()) != -1) {
             					out.write(b);
 	            				pos++;
-	            				contentLength++;
+	            				rangeLength++;
 	            				if(rangeTo != null && pos > rangeTo) {
 	            					break;
 	            				}
 	            			}
 	                        resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
-	                        resp.setHeader("Content-Range", "bytes " + rangeFrom + "-" + (pos - 1) + "/" + resourceContent.getLength());
-	                        resp.setContentLength((int)contentLength);
+	                        resp.setHeader("Content-Range", "bytes " + rangeFrom + "-" + (pos - 1) + "/" + contentLength);
+	                        resp.setContentLength((int)rangeLength);
             			} else {
                             resp.setStatus(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);            			            				
             			}
@@ -237,7 +237,8 @@ public class DoGet extends DoHead {
                     	writer.writeText("<td>Folder</td>");
                     } else {
                     	writer.writeText("<td>");
-                    	writer.writeText(Long.toString(_store.getResourceContent(requestContext, child).getLength()));
+                    	WebDavStore.ResourceContent resourceContent = _store.getResourceContent(requestContext, child);
+                    	writer.writeText(Long.toString(resourceContent.getLength()));
                     	writer.writeText(" Bytes</td>");
                     }
                     if (child.getCreationDate() != null) {

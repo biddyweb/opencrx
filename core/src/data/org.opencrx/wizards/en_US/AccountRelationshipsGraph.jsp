@@ -330,7 +330,7 @@ org.openmdx.base.query.*
 			int maxCount = maxCounts[level];
 
  			org.opencrx.kernel.account1.cci2.AccountMembershipQuery membershipQuery = (org.opencrx.kernel.account1.cci2.AccountMembershipQuery)pm.newQuery(org.opencrx.kernel.account1.jmi1.AccountMembership.class);
- 			org.openmdx.base.query.Extension queryFilter = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
+ 			org.openmdx.base.rest.cci.QueryExtensionRecord queryFilter = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
 			Collection memberships = null;
  			int count = 0;
 			// acountFrom=account [ignore mebers if account is disabled!!!]

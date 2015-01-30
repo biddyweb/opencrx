@@ -420,11 +420,11 @@ org.openmdx.base.naming.*
 			membershipQuery.forAllDisabled().isFalse();
 			membershipQuery.distance().equalTo(new Short((short)-1));
 			membershipQuery.quality().lessThanOrEqualTo(new Short((short)minQuality)); // will fail if quality IS NULL
-			org.openmdx.base.query.Extension queryFilterDM1 = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
+			org.openmdx.base.rest.cci.QueryExtensionRecord queryFilterDM1 = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
     			// HINT_DBOBJECT allows to qualify the DbObject to use.
     			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
 			queryFilterDM1.setClause(
-	            "(" + org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
+	            "(" + org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1) ) and " +
 	            "( " +
 	            "v.member IN ( " +
 	            "  select distinct(member) from oocke1_tobj_acctmembership1 m, oocke1_account a " +
@@ -467,9 +467,9 @@ org.openmdx.base.naming.*
       		memberships = currentAccount.getAccountMembership(membershipQuery);
 			// HINT_DBOBJECT allows to qualify the DbObject to use.
 			// For distance 1 memberships use ACCTMEMBERSHIP1 instead of ACCTMEMBERSHIP
-			org.openmdx.base.query.Extension queryFilterD1 = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
+			org.openmdx.base.rest.cci.QueryExtensionRecord queryFilterD1 = org.openmdx.base.persistence.cci.PersistenceHelper.newQueryExtension(membershipQuery);
 			queryFilterD1.setClause(
-				org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
+					org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes.HINT_DBOBJECT + "1 */ (1=1)"
 			);
       		for(Iterator m = memberships.iterator(); m.hasNext(); ) {
       			org.opencrx.kernel.account1.jmi1.AccountMembership membership = (org.opencrx.kernel.account1.jmi1.AccountMembership)m.next();

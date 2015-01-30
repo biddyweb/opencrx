@@ -217,7 +217,7 @@ public class DbSearchReplace {
 								PreparedStatement t = conn.prepareStatement(currentStatement = statement);
 								for(int j = 0; j < statementParameters.size(); j++) {
 									Object parameter = statementParameters.get(j);
-									db.setPreparedStatementValue(conn, t, j + 1, parameter);
+									db.getDelegate().setPreparedStatementValue(conn, t, j + 1, parameter);
 								}
 								t.executeUpdate();
 								t.close();

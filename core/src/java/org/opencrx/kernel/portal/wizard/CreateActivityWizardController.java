@@ -139,7 +139,7 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 			try {
 				if((String)formFields.get("org:opencrx:kernel:activity1:Activity:name") == null) {
 					allMandatoryFieldsSet = false;
-					this.errorMsg += createErrorMessage(
+					this.errorMessage += createErrorMessage(
 						app.getTexts().getErrorTextMandatoryField(),
 		            	new String[]{getFieldLabel(ACTIVITY_CLASS, "name", app.getCurrentLocaleAsIndex())}
 		          	) + "<br>";
@@ -149,7 +149,7 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 			try {
 				if(formFields.get("org:opencrx:kernel:activity1:Activity:lastAppliedCreator") == null) {
 				allMandatoryFieldsSet = false;
-				this.errorMsg += createErrorMessage(
+				this.errorMessage += createErrorMessage(
 					app.getTexts().getErrorTextMandatoryField(),
 	            	new String[]{getFieldLabel(ACTIVITY_CLASS, "lastAppliedCreator", app.getCurrentLocaleAsIndex())}
 	         	 ) + "<br>";
@@ -160,7 +160,7 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 				elDef = app.getUiElementDefinition("org:opencrx:kernel:activity1:Activity:reportingAccount");
 				if (elDef != null && elDef.isMandatory() != null && elDef.isMandatory().booleanValue() && reportingAccount == null) {
 					allMandatoryFieldsSet = false;
-					this.errorMsg += createErrorMessage(
+					this.errorMessage += createErrorMessage(
 						app.getTexts().getErrorTextMandatoryField(),
 		            	new String[]{getFieldLabel(ACTIVITY_CLASS, "reportingAccount", app.getCurrentLocaleAsIndex())}
 		          	) + "<br>";
@@ -295,7 +295,7 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 					while (root.getCause() != null) {  
 					    root = root.getCause();  
 					}
-					this.errorMsg = (root.toString()).replaceAll("(\\r|\\n)","<br>");
+					this.errorMessage = (root.toString()).replaceAll("(\\r|\\n)","<br>");
 				} catch (Exception e0) {}
 				try {
 					pm.currentTransaction().rollback();
@@ -420,16 +420,6 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 	}
 	
 	/**
-	 * Get error message.
-	 * 
-	 * @return
-	 */
-	public String getErrorMsg(
-	) {
-		return this.errorMsg;
-	}
-	
-	/**
 	 * Get reporting account.
 	 * 
 	 * @return
@@ -509,7 +499,6 @@ public class CreateActivityWizardController extends org.openmdx.portal.servlet.A
 	public static final String ACTIVITYGROUPASSIGNMENT_CLASS = "org:opencrx:kernel:activity1:ActivityGroupAssignment";
 	public static final String ACTIVITYTYPE_CLASS = "org:opencrx:kernel:activity1:ActivityType";
 
-	private String errorMsg = "";
 	private Map<String,Object> formFields;
 	private Account reportingAccount;
 	private Contact reportingContact;

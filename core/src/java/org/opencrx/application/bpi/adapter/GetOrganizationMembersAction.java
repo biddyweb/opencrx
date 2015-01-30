@@ -93,9 +93,9 @@ public class GetOrganizationMembersAction extends BpiAction {
 	    		resp.setCharacterEncoding("UTF-8");
 	    		resp.setContentType("application/json");
 	    		PrintWriter pw = resp.getWriter();
-	    		List<BpiAccountMember> bpiAccountMembers = new ArrayList<BpiAccountMember>();
-	    		for(Member member: organization.<Member>getMember()) {
-	    			if(member.getAccount() != null && member.getAccount() instanceof Contact) {
+	    		List<BpiAccountMember> bpiAccountMembers = new ArrayList<BpiAccountMember>();	
+	    		for(Member member: plugIn.findAccountMembers(organization)) {
+	    			if(member.getAccount() instanceof Contact) {
 	    				bpiAccountMembers.add(
 	    					plugIn.toBpiAccountMember(
 	    						member, 

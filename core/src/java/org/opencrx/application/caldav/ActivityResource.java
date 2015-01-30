@@ -60,6 +60,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
+import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.kernel.activity1.jmi1.Activity;
 import org.opencrx.kernel.backend.ICalendar;
 import org.opencrx.kernel.home1.jmi1.Timer;
@@ -159,9 +160,9 @@ class ActivityResource extends CalDavResource {
 	 * @see org.opencrx.application.caldav.CalDavResource#getContent()
 	 */
 	@Override
-    public BinaryLargeObject getContent(
+    public WebDavStore.ResourceContent getContent(
     ) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(
@@ -183,7 +184,16 @@ class ActivityResource extends CalDavResource {
 			);
 		} catch(Exception ignore) {}
 		pw.close();
-		return BinaryLargeObjects.valueOf(out.toByteArray());
+		return new WebDavStore.ResourceContent() {
+			@Override
+			public Long getLength() {
+				return Long.valueOf(out.size());
+			}
+			@Override
+			public BinaryLargeObject getContent() {
+				return  BinaryLargeObjects.valueOf(out.toByteArray());
+			}
+		};
     }
 
 	//-----------------------------------------------------------------------

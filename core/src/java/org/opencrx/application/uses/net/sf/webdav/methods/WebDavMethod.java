@@ -247,8 +247,7 @@ public abstract class WebDavMethod {
      * @return the depth from the depth header
      */
     protected int getDepth(
-    	RequestContext requestContext,
-    	Resource res
+    	RequestContext requestContext
     ) {
     	HttpServletRequest req = requestContext.getHttpServletRequest();
         int depth = 1; // default is 1
@@ -354,6 +353,12 @@ public abstract class WebDavMethod {
         return ids;
     }
 
+    /**
+     * Get lock token.
+     * 
+     * @param requestContext
+     * @return
+     */
     protected String getLockIdFromLockTokenHeader(
     	RequestContext requestContext
     ) {
@@ -495,9 +500,9 @@ public abstract class WebDavMethod {
         try {
             if (so != null) {
                 if (so.isCollection()) {
-                    return getResourceMethodsAllowed() + getFolderMethodsAllowed();
+                    return this.getDefaultMethodsAllowed() + ", " + this.getResourceMethodsAllowed() + ", " + this.getFolderMethodsAllowed();
                 } else {
-                	return getResourceMethodsAllowed();
+                	return this.getDefaultMethodsAllowed() + ", " + getResourceMethodsAllowed();
                 }
             }
         } catch (Exception e) {
@@ -511,7 +516,7 @@ public abstract class WebDavMethod {
     //-----------------------------------------------------------------------
     private static final String NULL_RESOURCE_METHODS_ALLOWED = "OPTIONS, MKCOL, PUT, PROPFIND, LOCK, UNLOCK";
     private static final String RESOURCE_METHODS_ALLOWED = "OPTIONS, GET, HEAD, POST, DELETE, TRACE, PROPPATCH, COPY, MOVE, LOCK, UNLOCK, PROPFIND";
-    private static final String FOLDER_METHODS_ALLOWED = ", PUT";
+    private static final String FOLDER_METHODS_ALLOWED = "PUT";
     private static final String DEFAULT_METHODS_ALLOWED = "OPTIONS, MKCOL, PUT";
     
 }

@@ -1,18 +1,15 @@
 <%@  page contentType="text/html;charset=UTF-8" language="java" pageEncoding="UTF-8" %><%
 /*
  * ====================================================================
- * Project:	 openCRX/Core, http://www.opencrx.org/
- * Name:		$Id: VoteForEvent.jsp,v 1.20 2012/07/13 10:08:40 wfro Exp $
+ * Project:	    openCRX/Core, http://www.opencrx.org/
  * Description: VoteForEvent
- * Revision:	$Revision: 1.20 $
- * Owner:	   CRIXP Corp., Switzerland, http://www.crixp.com
- * Date:		$Date: 2012/07/13 10:08:40 $
+ * Owner:	    CRIXP Corp., Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2011, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

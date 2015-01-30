@@ -61,8 +61,8 @@ import javax.jdo.Constants;
 
 import org.openmdx.application.configuration.Configuration;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.DbObject;
 import org.openmdx.application.spi.PropertiesConfigurationProvider;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.dbobject.DbObject;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.ModelHelper;
@@ -616,7 +616,7 @@ public abstract class QueryBuilderUtil {
 		 */
 		protected String getColumnNameParent(
 		) throws ServiceException {
-			return getDatabasePlugIns()[0].getColumnName(
+			return getDatabasePlugIns()[0].getDelegate().getColumnName(
 				null, // conn
 				"parent", 
 				0, 
@@ -733,7 +733,7 @@ public abstract class QueryBuilderUtil {
 		 */
 		protected String getColumnName(
 		) throws ServiceException {
-			String columnName = getDatabasePlugIns()[0].getColumnName(
+			String columnName = getDatabasePlugIns()[0].getDelegate().getColumnName(
 				null, // conn 
 				(String)this.getFeature().getName(), 
 				0, // index 
@@ -753,7 +753,7 @@ public abstract class QueryBuilderUtil {
 		 */
 		protected Integer getEmbeddedFeature(
 		) throws ServiceException {
-			return getDatabasePlugIns()[0].getEmbeddedFeature(
+			return getDatabasePlugIns()[0].getDelegate().getEmbeddedFeature(
 				(String)this.getFeature().getName()
 			);
 		}
@@ -769,7 +769,7 @@ public abstract class QueryBuilderUtil {
 		protected String getColumnName(
 			int index
 		) throws ServiceException {
-			String columnName = getDatabasePlugIns()[0].getColumnName(
+			String columnName = getDatabasePlugIns()[0].getDelegate().getColumnName(
 				null, // conn 
 				(String)this.getFeature().getName(), 
 				index, // index 
@@ -824,7 +824,7 @@ public abstract class QueryBuilderUtil {
 		) throws ServiceException {
 			for(Database_1 databasePlugIn: getDatabasePlugIns()) {
 				try {
-					DbObject dbObject = databasePlugIn.getDbObject(
+					DbObject dbObject = databasePlugIn.getDelegate().getDbObject(
 						null, // conn 
 						accessPath, 
 						null, // filter 

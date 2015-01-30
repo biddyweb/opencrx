@@ -26,7 +26,6 @@ digraph "Diagram Main [Package org:opencrx:kernel:generic]" {
 	{
 	  rank=same;
 	  LAYER1[style=invis];
-	  ${CLASS[name=org:opencrx:kernel:generic:Media,compartments=true,width=2]};
 	  ${CLASS[name=org:opencrx:kernel:generic:Note,compartments=true,width=5]};
 	  ${CLASS[name=org:opencrx:kernel:generic:Rating,compartments=true,width=2]};
 	  ${CLASS[name=org:opencrx:kernel:generic:AdditionalExternalLink,compartments=true,width=2]};

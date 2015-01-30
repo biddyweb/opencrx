@@ -2,6 +2,10 @@
 	path="/opencrx-rest-CRX"
 	docBase="${catalina.home}/apps/opencrx-core-CRX/opencrx-rest-CRX.war"
 >
+	<!-- SSO authentication for remote users when accessed via AJP connector.
+		 For more information see Javadoc of RemoteUserAuthenticator -->
+	<Valve className="org.openmdx.catalina.authenticator.RemoteUserAuthenticator"/>
+
 	<Realm className="org.apache.catalina.realm.CombinedRealm">
 		<Realm className="org.openmdx.catalina.realm.ExtendedDataSourceRealm" 
 			debug="0"

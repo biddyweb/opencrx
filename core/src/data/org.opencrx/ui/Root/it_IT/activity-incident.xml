@@ -132,7 +132,40 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                </elementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:IncidentParty:(party;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Telefono Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Telefono Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:IncidentParty:(party;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Cellulare</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Cellulare</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:IncidentParty:(party;address)*Business!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>E-mail Lavoro</_item>
+                      </label>
+                      <toolTip>
+                        <_item>E-mail Lavoro</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                 </elementDefinition>
               </_content>
             </org.openmdx.ui1.Segment>
           </segment>

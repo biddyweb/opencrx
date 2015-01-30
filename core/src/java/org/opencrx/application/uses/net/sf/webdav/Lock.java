@@ -90,6 +90,4 @@ public interface Lock {
 	
 	String getScope();
 	
-	public String getPath();
-	
 }

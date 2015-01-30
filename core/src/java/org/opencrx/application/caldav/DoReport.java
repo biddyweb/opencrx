@@ -205,7 +205,7 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
 		        		} else if(property.indexOf("calendar-data") > 0) {
 				        	p.print  ("        <C:calendar-data xmlns:C=\"urn:ietf:params:xml:ns:caldav\">");
 				        	p.print("<![CDATA[");
-				        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource);
+				        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource).getContent();
 				        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
 				        	BinaryLargeObjects.streamCopy(content.getContent(), 0L, bos);
 				        	bos.close();

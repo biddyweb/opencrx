@@ -52,6 +52,7 @@
  */
 package org.opencrx.kernel.portal.wizard;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +76,12 @@ import org.opencrx.kernel.activity1.jmi1.ActivityTracker;
 import org.opencrx.kernel.activity1.jmi1.ActivityType;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.Activities;
+import org.opencrx.kernel.backend.UserHomes;
+import org.opencrx.kernel.backend.Activities.ActivityClass;
 import org.opencrx.kernel.backend.Cloneable;
+import org.opencrx.kernel.document1.jmi1.Document;
+import org.opencrx.kernel.document1.jmi1.MediaContent;
+import org.opencrx.kernel.portal.StringPropertyDataBinding;
 import org.opencrx.kernel.utils.QueryBuilderUtil;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
@@ -84,6 +90,7 @@ import org.openmdx.portal.servlet.ObjectReference;
 import org.openmdx.portal.servlet.ViewPort;
 import org.openmdx.portal.servlet.ViewPortFactory;
 import org.openmdx.portal.servlet.component.TransientObjectView;
+import org.w3c.cci2.BinaryLargeObjects;
 
 /**
  * CreateCampaignWizardController
@@ -118,8 +125,8 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 		boolean initCampaignActivityCreator
 	) throws ServiceException {
 		PersistenceManager pm = JDOHelper.getPersistenceManager(activityType);
-		String providerName = activityType.refGetPath().get(2);
-		String segmentName = activityType.refGetPath().get(4);
+		String providerName = activityType.refGetPath().getSegment(2).toClassicRepresentation();
+		String segmentName = activityType.refGetPath().getSegment(4).toClassicRepresentation();
 		org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
 		org.opencrx.security.realm1.jmi1.PrincipalGroup usersPrincipalGroup =
 			(org.opencrx.security.realm1.jmi1.PrincipalGroup)org.opencrx.kernel.backend.SecureObject.getInstance().findPrincipal(
@@ -274,12 +281,15 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
     			// Clone the targetGroupAccountsSelector and add a predicate which restricts to locale
     			pm.currentTransaction().begin();
     			targetGroupAccountsSelectorByLocale = (AccountFilterGlobal)Cloneable.getInstance().cloneObject(
-    	    		source, 
-    	    		accountSegment, 
-    	    		source.refGetPath().getParent().getBase(), 
+    	    		source,
+    	    		accountSegment,
+    	    		source.refGetPath().getParent().getLastSegment().toClassicRepresentation(),
     	    		null, // objectMarshallers
     	    		null, // referenceFilterAsString
-    	    		source.getOwningUser(), 
+    	    		UserHomes.getInstance().getUserHome(
+    	    			accountSegment.refGetPath(),
+    	    			pm
+    	    		).getOwningUser(), // get owner from current user's home
     	    		source.getOwningGroup()
     	    	);
     			pm.currentTransaction().commit();
@@ -313,6 +323,98 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 			}
 		}
 		return targetGroupAccountsSelectorByLocale;
+	}
+
+	/**
+	 * Init campaign e-mail message with given document.
+	 * 
+	 * @param document
+	 * @param campaignTracker
+	 * @throws ServiceException
+	 */
+	protected void initCampaignEMailMessage(
+		Document document,
+		ActivityTracker campaignTracker
+	) throws ServiceException {
+		PersistenceManager pm = this.getPm();
+		ApplicationContext app = this.getApp();
+		if(
+			document.getContentType() != null &&
+			"text/html".equalsIgnoreCase(document.getContentType()) && 
+			document.getHeadRevision() instanceof MediaContent &&
+			campaignTracker.getActivityCreator().size() == 1
+		) {
+			ActivityCreator campaignCreator = campaignTracker.<ActivityCreator>getActivityCreator().iterator().next();
+			if(campaignCreator.getActivityType().getActivityClass() == ActivityClass.EMAIL.getValue()) {
+				MediaContent headRevision = (MediaContent)document.getHeadRevision();
+				try {
+					ByteArrayOutputStream bos = new ByteArrayOutputStream();
+					BinaryLargeObjects.streamCopy(headRevision.getContent().getContent(), 0L, bos);
+					String messageSubject = campaignTracker.getDescription() == null
+						? campaignTracker.getName()
+						: campaignTracker.getDescription();
+					String messageBody = new String(bos.toByteArray(), "UTF-8");
+					if(
+						messageBody.indexOf("<html>") < 0 && 
+						messageBody.indexOf("<head>") < 0 && 
+						messageBody.indexOf("<body>") < 0
+					) {
+						messageBody = 
+							"<!DOCTYPE html>\n" + 
+							"<html>\n" + 
+							"  <head>\n" + 
+							"    <meta content=\"text/html; charset=\"utf-8\" http-equiv=\"content-type\">\n" + 
+							"    <title>" + app.getHtmlEncoder().encode(messageSubject, false) + "</title>\n" + 
+							"  </head>\n" + 
+							"  <body>\n" +
+							messageBody +
+							"  </body>\n" +
+							"</html>";
+					}
+					pm.currentTransaction().begin();
+					StringPropertyDataBinding stringPropertyDataBinding = new StringPropertyDataBinding();
+					stringPropertyDataBinding.setValue(
+						campaignCreator,
+						":" + BulkCreateActivityWizardController.PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocales.get(0) + "!messageSubject", 
+						messageSubject
+					);
+					// Set message body. Split into pieces of 2048 chars
+					List<String> messageBodyParts = Utils.splitString(messageBody, 2048);
+					int idx = 0;
+					for(int j = 0; j < messageBodyParts.size(); j++) {
+						try {
+							stringPropertyDataBinding.setValue(
+								campaignCreator, 
+								":" + BulkCreateActivityWizardController.PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocales.get(0) + "!messageBody" + j, 
+								messageBodyParts.get(j)
+							);
+							idx++;
+						} catch (Exception e) {
+							new ServiceException(e).log();
+						}
+					}
+					// Reset unused messageBody properties
+					try {
+						while (stringPropertyDataBinding.getValue(campaignCreator, ":" + BulkCreateActivityWizardController.PROPERTY_SET_NAME_SETTINS + "." + selectedLocales.get(0) + "!messageBody" + idx) != null) {
+							org.opencrx.kernel.base.jmi1.Property property = stringPropertyDataBinding.findProperty(
+								campaignCreator, 
+								":" + BulkCreateActivityWizardController.PROPERTY_SET_NAME_SETTINS + "." + this.selectedLocales.get(0) + "!messageBody" + idx
+							);
+							property.refDelete();
+							idx++;
+						}
+					} catch (Exception e) {
+						new ServiceException(e).log();
+					}
+					pm.currentTransaction().commit();
+				} catch(Exception e) {
+					new ServiceException(e).log();
+					try {
+						pm.currentTransaction().rollback();
+					} catch(Exception ignore) {}
+				}
+			}
+		}
 	}
 
 	/**
@@ -372,6 +474,12 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
     	if(this.selectedLocales.isEmpty()) {
     		this.selectedLocales.add((short)0); // en_US
     	}
+    	if(name == null || name.isEmpty()) {
+    		this.errorMessage += "The field 'Name' is mandatory";
+    	}
+    	if(activityType == null) {
+    		this.errorMessage += "<br />The field 'Activity type' is mandatory";
+    	}
 	    if(name != null && !name.isEmpty() && activityType != null) {
 	    	Map<Short,String> localeShortTexts = this.getCodes().getShortTextByCode("locale", (short)0, true);
 	    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(
@@ -405,6 +513,12 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 			    		true // initActivityCreator
 			    	);
 			    	campaignTrackerMain = campaignTracker;
+			    	if(this.getObject() instanceof Document) {
+			    		this.initCampaignEMailMessage(
+			    			(Document)this.getObject(),
+			    			campaignTracker
+			    		);
+			    	}
 	    		} else {
 		    		AccountFilterGlobal targetGroupAccountsSelectorByLocale = this.initTargetGroupAccountsSelector(
 		    			accountSegment, 
@@ -451,6 +565,15 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 			    				activityGroupRelationship
 			    			);
 			    			pm.currentTransaction().commit();
+			    		}
+			    	}
+			    	// Copy document for first locale
+			    	if(i == 0) {
+			    		if(this.getObject() instanceof Document) {
+				    		this.initCampaignEMailMessage(
+				    			(Document)this.getObject(),
+				    			campaignTracker
+				    		);
 			    		}
 			    	}
 	    		}

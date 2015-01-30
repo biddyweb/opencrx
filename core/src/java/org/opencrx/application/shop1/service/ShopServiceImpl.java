@@ -164,6 +164,7 @@ import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
 import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -380,15 +381,15 @@ public class ShopServiceImpl
             // Match restrictToProduct
             positionQuery.thereExistsProduct().equalTo(restrictToProduct);
             // Must be part of invoice with matching customer 
-            org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(positionQuery);
+            QueryExtensionRecord queryFilter = PersistenceHelper.newQueryExtension(positionQuery);
             String clause = "EXISTS (SELECT 0 FROM OOCKE1_CONTRACT c INNER JOIN OOCKE1_ACCOUNT a ON c.customer = a.object_id WHERE v.p$$parent = c.object_id AND a.alias_name = ?s0";
             queryFilter.setStringParam(this.datatypeMappers.getAccountFieldMapper().getAccountNumber(customer));
             clause += " AND c.is_gift = ?b0";
-            queryFilter.setBooleanParam(includeVouchers);
+            queryFilter.setBooleanParam(new Boolean[]{includeVouchers});
             if(invoiceStatusThreshold != null) {
             	clause += " AND c.contract_state >= ?i0";
             }
-            queryFilter.setIntegerParam(invoiceStatusThreshold);
+            queryFilter.setIntegerParam(new Integer[]{invoiceStatusThreshold});
             clause += ")";
             queryFilter.setClause(clause);
             Collection<AbstractInvoicePosition> positions = contractSegment.getExtent(positionQuery);

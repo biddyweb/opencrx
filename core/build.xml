@@ -2,12 +2,12 @@
 <!--
  * =======================================================================
  * = Description: openCRX/Core build.xml
- * = Copyright:   (c) 2003-2014 CRIXP AG
+ * = Copyright:   (c) 2003-2015 CRIXP AG
  * =======================================================================
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,9 +56,9 @@
 	<description>Build the openCRX project Core</description>
 	<property name="project.specification.title" value="openCRX/Core"/>
 	<!-- Slash separated platform list, the last entry being the default -->
-	<property name="project.platform.list" value="jre-1.6"/>
+	<property name="project.platform.list" value="jre-1.7"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.13.0"/>
+	<property name="openmdx.version" value="2.14.0"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -206,6 +206,7 @@
 		<include name="org/opencrx/**/xmi1/**"/>
 		<include name="org/opencrx/kernel/utils/**"/>
 		<include name="org/opencrx/kernel/generic/**"/>
+		<exclude name="org/opencrx/kernel/generic/jpa3/**"/>
 		<include name="META-INF/openmdxmof.properties"/>
 	</patternset>
 	<patternset id="opencrx-extension.jar.content">
@@ -248,14 +249,12 @@
 			<replacestring from="opencrx-airsync-CRX" to="opencrx-airsync-${web.application.name}"/>
 			<replacestring from="opencrx-bpi-CRX" to="opencrx-bpi-${web.application.name}"/>
 			<replacestring from="opencrx-calendar-CRX" to="opencrx-calendar-${web.application.name}"/>
+			<replacestring from="opencrx-documents-CRX" to="opencrx-documents-${web.application.name}"/>
 			<replacestring from="org.opencrx.kernel.aop2.Configuration" to="${configuration.class.name}"/>
-			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.interception.Standard_1" to="${kernel.interception.plugin.class.name}"/>
-			<replacestring from="org.openmdx.compatibility.base.dataprovider.layer.type.Standard_1" to="${kernel.type.plugin.class.name}"/>
-			<replacestring from="org.opencrx.kernel.layer.application.OpenCrxKernel_1" to="${kernel.application.plugin.class.name}"/>
-			<replacestring from="org.opencrx.kernel.layer.model.AccessControl_1" to="${kernel.model.plugin.class.name}"/>
-			<replacestring from="org.opencrx.kernel.layer.persistence.Audit_1" to="${kernel.persistence.plugin.class.name}"/>
-			<replacestring from="org.opencrx.security.layer.application.OpenCrxSecurity_1" to="${security.application.plugin.class.name}"/>
-			<replacestring from="org.opencrx.security.layer.persistence.OpenCrxDatabase_1" to="${security.persistence.plugin.class.name}"/>
+			<replacestring from="org.opencrx.kernel.layer.application.OpenCrxKernel_2" to="${kernel.application.plugin.class.name}"/>
+			<replacestring from="org.opencrx.kernel.layer.model.AccessControl_2" to="${kernel.model.plugin.class.name}"/>
+			<replacestring from="org.opencrx.kernel.layer.persistence.Audit_2" to="${kernel.persistence.plugin.class.name}"/>
+			<replacestring from="org.opencrx.security.layer.application.OpenCrxSecurity_2" to="${security.application.plugin.class.name}"/>
 			<replacestring from="Provider qualifiedName=&quot;CRX&quot;" to="Provider qualifiedName=&quot;${provider.name}&quot;"/>
 			<replacestring from="%IMPLEMENTATION_VERSION%" to="${project.implementation.version}"/>
 			<replacestring from="imap:143" to="imap:${imap.listenPort}"/>
@@ -545,6 +544,8 @@
 			<param name="bpi.target.name" value="opencrx-bpi-${web.application.name}"/>
 			<param name="calendar.source.name" value="opencrx-calendar-CRX"/>
 			<param name="calendar.target.name" value="opencrx-calendar-${web.application.name}"/>
+			<param name="documents.source.name" value="opencrx-documents-CRX"/>
+			<param name="documents.target.name" value="opencrx-documents-${web.application.name}"/>
 		</antcall>
 	</target>
 	<!-- ******************************************************************* -->
@@ -1127,6 +1128,9 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir}.rest/META-INF" prefix="META-INF"/>
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.rest/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.rest/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/org.opencrx.rest">
+				<include name="api-ui/**/*.*"/>
+			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>	
 		<!-- opencrx-ldap-CRX.war -->
@@ -1312,15 +1316,53 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.calendar/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.calendar/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.calendar">
-				<include name="**/*.manifest"/>
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.svg"/>
-				<include name="**/*.css"/>
-				<include name="**/*.html"/>
-				<include name="**/*.txt"/>
-				<include name="fonts/*.*"/>
+				<include name="**/*.*"/>
+			</zipfileset>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>
+		<!-- opencrx-documents-CRX.war -->
+		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${documents.target.name}.war" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} Documents WAR"/>
+				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
+			</manifest>
+			<zipfileset dir="${data.home}/src/data/${data.dir}.documents/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- WEB-INF -->
+			<zipfileset dir="src/data/${data.dir.generic}.documents/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<zipfileset dir="src/ear/${app.source.name}.ear/${documents.source.name}.war/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="tomcat-6.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- META-INF -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}.documents/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.documents/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/${data.dir.generic}.documents/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/org.opencrx.documents">
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>

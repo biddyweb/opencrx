@@ -795,6 +795,8 @@
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Sales commission</_item>
 											</toolTip>
@@ -814,6 +816,8 @@
 											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<changeable>false</changeable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Total base amount</_item>
 											</toolTip>
@@ -832,6 +836,8 @@
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Total discount</_item>
 											</toolTip>
@@ -850,6 +856,8 @@
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Total (excl. tax)</_item>
 											</toolTip>
@@ -868,6 +876,8 @@
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Total tax</_item>
 											</toolTip>
@@ -886,6 +896,8 @@
 										<_object>
 											<active>true</active>
 											<changeable>false</changeable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Total (incl. tax)</_item>
 											</toolTip>

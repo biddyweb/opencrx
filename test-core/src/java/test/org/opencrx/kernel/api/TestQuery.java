@@ -106,6 +106,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ExtentCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 
 import test.org.opencrx.generic.AbstractTest;
 
@@ -193,7 +194,7 @@ public class TestQuery {
 	        		(org.opencrx.kernel.contract1.cci2.SalesOrderQuery)pm.newQuery(
 	        			org.opencrx.kernel.contract1.jmi1.SalesOrder.class
 	        		);
-	        	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(salesOrderQuery);
+	        	QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(salesOrderQuery);
             	queryExtension.setClause(
             		"EXISTS (" + 
             		"  SELECT 0 FROM " + 

@@ -323,7 +323,7 @@ public class CopyDb {
 								t.setDate(j + 1, (java.sql.Date) parameter);
 							}
 							else {
-								db.setPreparedStatementValue(connTarget, t, j + 1, parameter);
+								db.getDelegate().setPreparedStatementValue(connTarget, t, j + 1, parameter);
 							}
 						}
 						t.executeUpdate();

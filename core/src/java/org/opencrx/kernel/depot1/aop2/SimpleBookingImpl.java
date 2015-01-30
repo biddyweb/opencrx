@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: DepotImpl
+ * Description: SimpleBookingImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2009, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -56,16 +56,28 @@ import javax.jdo.JDOUserException;
 import javax.jdo.listener.DeleteCallback;
 
 import org.opencrx.kernel.backend.Depots;
-import org.opencrx.kernel.generic.jmi1.CrxObject;
+import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
 
+/**
+ * SimpleBookingImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class SimpleBookingImpl
 	<S extends org.opencrx.kernel.depot1.jmi1.SimpleBooking,N extends org.opencrx.kernel.depot1.cci2.SimpleBooking,C extends Void>
 	extends AbstractObject<S,N,C>
 	implements DeleteCallback {
     
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public SimpleBookingImpl(
         S same,
         N next
@@ -81,7 +93,7 @@ public class SimpleBookingImpl
     ) {
     	try {
     		Depots.getInstance().preDelete(
-    			(CrxObject)this.sameObject(),
+    			(RefObject_1_0)this.sameObject(),
     			true
     		);
     		super.jdoPreDelete();

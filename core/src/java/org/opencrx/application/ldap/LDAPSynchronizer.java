@@ -692,7 +692,7 @@ public class LDAPSynchronizer extends HttpServlet {
 	                	SysLog.warning(e.getMessage(), e.getCause());
 	                } finally {
 	                    runningSegments.remove(id);
-			    		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Finished.");
+			    		System.out.println(new Date() + ": " + WORKFLOW_NAME + " " + providerName + "/" + segmentName + ": Done.");
 	                }
 		    	} else if(
 		    		!runningSegments.get(id).isAlive() || 

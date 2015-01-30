@@ -223,6 +223,9 @@ public class CreateAgendaWizardController extends org.openmdx.portal.servlet.Abs
 			);		
 	    String name = (String)formFields.get("org:opencrx:kernel:activity1:ActivityGroup:name");
 	    String description = (String)formFields.get("org:opencrx:kernel:activity1:ActivityGroup:description");
+    	if(name == null || name.isEmpty()) {
+    		this.errorMessage += "The field 'Name' is mandatory";
+    	}
 	    if(name != null && !name.isEmpty()) {
 	    	ActivityTracker activityTracker = createAgenda(
 	    		activitySegment,

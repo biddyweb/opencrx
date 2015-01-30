@@ -55,6 +55,7 @@ package org.opencrx.application.caldav;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -268,9 +269,12 @@ public class CalDavStore implements WebDavStore {
         	} catch(Exception ignore) {}
         	// Find sync profile by name
         	if(syncProfile == null) {
+        		List<String> profileNames = new ArrayList<String>();
+        		profileNames.add(components[3]);
+        		profileNames.addAll(Arrays.asList(DEFAULT_PROFILE_NAMES));
         		// Try with default profile names
-        		for(String profileName: DEFAULT_PROFILE_NAMES) {        		
-		        	CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
+        		for(String profileName: profileNames) {
+        			CalendarProfileQuery calendarProfileQuery = (CalendarProfileQuery)pm.newQuery(CalendarProfile.class);
 		        	calendarProfileQuery.name().equalTo(profileName);
 		        	List<CalendarProfile> calendarProfiles = userHome.getSyncProfile(calendarProfileQuery);
 		        	if(!calendarProfiles.isEmpty()) {
@@ -299,12 +303,16 @@ public class CalDavStore implements WebDavStore {
     					type = ActivityCollectionResource.Type.VTODO;
     				}
     	    		SyncFeed syncFeed = syncProfile.getFeed(id);
-    	    		return new SyncFeedBasedActivityCollectionResource(
-    	    			requestContext, 
-    	    			syncFeed,
-    	    			type,
-    	    			runAs
-    	    		);
+    	    		if(syncFeed == null) {
+    	    			return null;
+    	    		} else {
+	    	    		return new SyncFeedBasedActivityCollectionResource(
+	    	    			requestContext, 
+	    	    			syncFeed,
+	    	    			type,
+	    	    			runAs
+	    	    		);
+    	    		}
     			} else if(components.length == 6) {
     				// Activity
     				ActivityCollectionResource parent = (ActivityCollectionResource)this.getResourceByPath(
@@ -399,14 +407,23 @@ public class CalDavStore implements WebDavStore {
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
 	 */
 	@Override
-	public BinaryLargeObject getResourceContent(
+	public ResourceContent getResourceContent(
 		RequestContext requestContext, 
 		Resource res
 	) {
 		if(res instanceof CalDavResource) {
 			return ((CalDavResource)res).getContent();
 		} else {
-			return BinaryLargeObjects.valueOf(new byte[]{});
+			return new WebDavStore.ResourceContent(){
+				@Override
+				public BinaryLargeObject getContent() {
+					return BinaryLargeObjects.valueOf(new byte[]{});
+				}
+				@Override
+				public Long getLength() {
+					return 0L;
+				}
+			};
 		}
 	}
 
@@ -481,7 +498,7 @@ public class CalDavStore implements WebDavStore {
 			Status status = this.putResource(
 				requestContext, 
 				destinationPath,
-				this.getResourceContent(requestContext, res).getContent(),
+				this.getResourceContent(requestContext, res).getContent().getContent(),
 				this.getMimeType(res)
 			);
 			if(status != Status.FORBIDDEN) {
@@ -611,7 +628,7 @@ public class CalDavStore implements WebDavStore {
 		            	if(resId != null) {
 			            	this.pathMapping.put(
 			            		path, 
-			            		path.replace(resId, result.getActivity().refGetPath().getBase())
+			            		path.replace(resId, result.getActivity().refGetPath().getLastSegment().toClassicRepresentation())
 			            	);
 		            	}
 		            }
@@ -650,6 +667,7 @@ public class CalDavStore implements WebDavStore {
     public Lock lock(
     	RequestContext requestContext, 
     	String path, 
+    	String id,
     	String owner, 
     	String scope, 
     	String type, 
@@ -660,22 +678,12 @@ public class CalDavStore implements WebDavStore {
     }
 
 	/* (non-Javadoc)
-	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#setLockTimeout(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, int)
-	 */
-	@Override
-    public void setLockTimeout(
-    	RequestContext requestContext, 
-    	String id, 
-    	int timeout
-    ) {	    
-    }
-
-	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#unlock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
 	 */
 	@Override
     public boolean unlock(
-    	RequestContext requestContext, 
+    	RequestContext requestContext,
+    	String path,
     	String id
     ) {
 	    return false;

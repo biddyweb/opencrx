@@ -470,7 +470,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
 	                        if(mappedMessage instanceof InputStream) {
 	                        	mimeMessage = new MimeMessageImpl((InputStream)mappedMessage);
 	                        	// Update message subject
-	                        	mimeMessage.setSubject(((EMail)activity).getMessageSubject());
+	                        	mimeMessage.setSubject(
+	                        		((EMail)activity).getMessageSubject(),
+	                        		"UTF-8"
+	                        	);
 	                        }
                             OutputStream out = new FileOutputStream(mimeMessageFile);
 	                        mimeMessage.setUid(uid);
@@ -524,7 +527,10 @@ public class IMAPFolderImpl extends Folder implements UIDFolder {
 		                        if(mappedMessage instanceof InputStream) {
 		                        	mimeMessage = new MimeMessageImpl((InputStream)mappedMessage);
 		                        	// Update message subject
-		                        	mimeMessage.setSubject(((EMail)activity).getMessageSubject());
+		                        	mimeMessage.setSubject(
+		                        		((EMail)activity).getMessageSubject(),
+		                        		"UTF-8"
+		                        	);
 		                        }
 	                            OutputStream out = new FileOutputStream(mimeMessageFile);
 		                        mimeMessage.setUid(uid);

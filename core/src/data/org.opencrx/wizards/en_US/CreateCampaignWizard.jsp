@@ -77,7 +77,9 @@ org.openmdx.base.naming.*
 	<meta name="UNUSEDtoolTip" content="Create Campaign">
 	<meta name="targetType" content="_inplace">
 	<meta name="forClass" content="org:opencrx:kernel:activity1:Segment">
+	<meta name="forClass" content="org:opencrx:kernel:document1:Document">
 	<meta name="order" content="org:opencrx:kernel:activity1:Segment:createCampaign">
+	<meta name="order" content="org:opencrx:kernel:document1:Document:createCampaign">
 -->
 <%
 	String FORM_NAME = "CreateCampaignForm";
@@ -96,6 +98,20 @@ org.openmdx.base.naming.*
 %>
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+<%
+	if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
+%>
+		<div class="alert alert-danger" role="alert">
+		  <table>
+		    <tr>
+		    	<td style="vertical-align:top;padding:10px;"><span class="glyphicon glyphicon-exclamation-sign"></span></td>
+		    	<td><%= wc.getErrorMessage() %></td>
+		    </tr>
+		  </table>
+		</div>
+<%
+	}
+%>
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />

@@ -174,11 +174,17 @@ public class EditDocumentRevisionWizardController extends AbstractWizardControll
 				newHeadRevision.setContentMimeType("text/plain");
 			}
 			newHeadRevision.setAuthor(app.getLoginPrincipal());
-			String text = (String)this.formFields.get("org:opencrx:kernel:base:Note:text");    		
+			String text = (String)this.formFields.get("org:opencrx:kernel:base:Note:text");
+			byte[] textAsBytes = new byte[]{};
+			if(text != null) {
+				try {
+					textAsBytes = text.getBytes("UTF-8");
+				} catch(Exception e) {
+					textAsBytes = text.getBytes();
+				}
+			}
 			newHeadRevision.setContent(
-				BinaryLargeObjects.valueOf(
-					text == null ? new byte[]{} : text.getBytes()
-				)
+				BinaryLargeObjects.valueOf(textAsBytes)
 			);
 			pm.currentTransaction().begin();
 			document.addRevision(

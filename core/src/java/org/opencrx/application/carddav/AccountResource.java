@@ -59,6 +59,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
+import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.kernel.account1.jmi1.Account;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.backend.Base;
@@ -135,9 +136,9 @@ class AccountResource extends CardDavResource {
 	 * @see org.opencrx.application.carddav.CardDavResource#getContent()
 	 */
 	@Override
-    public BinaryLargeObject getContent(
+    public WebDavStore.ResourceContent getContent(
     ) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		PrintWriter p = null;
 		try {
 			p = new PrintWriter(new OutputStreamWriter(out, "UTF-8"));
@@ -173,18 +174,28 @@ class AccountResource extends CardDavResource {
                     p.write("URL:" + url + "\n");
             	} catch(Exception e) {}
             }
-            if(vcard.indexOf("PHOTO:") < 0 && account instanceof Contact) {
+            if(vcard.indexOf("PHOTO:") < 0) {
             	try {
 	            	VCard.getInstance().writePhotoTag(
 	            		p, 
-	            		(Contact)account
+	            		account
 	            	);
             	} catch(Exception e) {} // don't care if PHOTO tag can not be written
             }
             p.write("END:VCARD\n");
         }
 		p.close();
-		return BinaryLargeObjects.valueOf(out.toByteArray());
+		return new WebDavStore.ResourceContent() {
+			@Override
+			public Long getLength() {
+				return Long.valueOf(out.size());
+			}
+			
+			@Override
+			public BinaryLargeObject getContent() {
+				return BinaryLargeObjects.valueOf(out.toByteArray());
+			}
+		};
     }
 
 	private final AccountCollectionResource parent;

@@ -54,6 +54,7 @@ package org.opencrx.application.webdav;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -73,11 +74,13 @@ import org.opencrx.application.uses.net.sf.webdav.exceptions.LockFailedException
 import org.opencrx.application.uses.net.sf.webdav.exceptions.WebdavException;
 import org.opencrx.kernel.document1.cci2.DocumentBasedFolderEntryQuery;
 import org.opencrx.kernel.document1.cci2.DocumentFolderQuery;
+import org.opencrx.kernel.document1.cci2.DocumentLockQuery;
 import org.opencrx.kernel.document1.cci2.DocumentQuery;
 import org.opencrx.kernel.document1.jmi1.Document;
 import org.opencrx.kernel.document1.jmi1.DocumentFilterGlobal;
 import org.opencrx.kernel.document1.jmi1.DocumentFolder;
 import org.opencrx.kernel.document1.jmi1.DocumentFolderEntry;
+import org.opencrx.kernel.document1.jmi1.DocumentLock;
 import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.opencrx.kernel.home1.cci2.DocumentProfileQuery;
@@ -87,10 +90,13 @@ import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.persistence.cci.UserObjects;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.id.UUIDs;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
+
+import com.google.gson.Gson;
 
 /**
  * WebDavStore
@@ -228,14 +234,24 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#getResourceContent(org.opencrx.application.uses.net.sf.webdav.RequestContext, org.opencrx.application.uses.net.sf.webdav.Resource)
 	 */
 	@Override
-	public BinaryLargeObject getResourceContent(
+	public ResourceContent getResourceContent(
 		RequestContext requestContext, 
 		Resource res
 	) {
 		if(res instanceof WebDavResource) {
 			return ((WebDavResource)res).getContent();
 		} else {
-			return BinaryLargeObjects.valueOf(new byte[]{});
+			return new ResourceContent(){
+				@Override
+				public BinaryLargeObject getContent() {
+					return BinaryLargeObjects.valueOf(new byte[]{});
+				}
+				@Override
+				public Long getLength() {
+					return 0L;
+				}
+
+			};
 		}
 	}
 
@@ -424,11 +440,11 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 				pm.currentTransaction().begin();
 				document.setName(newName);
 				document.setTitle(newName);
-				Collection<DocumentRevision> revisions = document.getRevision();
-				for(DocumentRevision revision: revisions) {
-					revision.setName(newName);
-					if(revision instanceof MediaContent) {
-						((MediaContent)revision).setContentName(newName);
+				if(document.getHeadRevision() != null) {
+					DocumentRevision headRevision = document.getHeadRevision();
+					headRevision.setName(newName);
+					if(headRevision instanceof MediaContent) {
+						((MediaContent)headRevision).setContentName(newName);
 					}
 				}
 				pm.currentTransaction().commit();
@@ -443,7 +459,7 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 		        		this.getResourceContent(
 		            		requestContext, 
 		            		sourceRes
-		            	).getContent(),
+		            	).getContent().getContent(),
 		            	// keep mimeType of destination
 		        		this.getMimeType(
 		        			destRes
@@ -635,7 +651,28 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
     	RequestContext requestContext, 
     	String path
     ) {
-		return Collections.emptyList();
+		Resource res = this.getResourceByPath(requestContext, path);
+		if(res instanceof DocumentResource) {
+			DocumentResource documentRes = (DocumentResource)res;
+			Document document = documentRes.getObject();
+			PersistenceManager pm = JDOHelper.getPersistenceManager(document); 
+			DocumentLockQuery documentLockQuery = (DocumentLockQuery)pm.newQuery(DocumentLock.class);
+			List<Lock> locks = new ArrayList<Lock>();
+			for(DocumentLock documentLock: document.getLock(documentLockQuery)) {
+				if(documentLock.getDescription() != null && !documentLock.getDescription().isEmpty()) {
+					try {
+						Gson json = new Gson();
+						LockImpl lock = (LockImpl)json.fromJson(documentLock.getDescription(), LockImpl.class);
+						if(lock.getExpiresAt() > System.currentTimeMillis()) {
+							locks.add(lock);
+						}
+					} catch(Exception ignore) {}
+				}
+			}
+			return locks;
+		} else {
+			return Collections.emptyList();
+		}
     }
 
 	/**
@@ -645,20 +682,25 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
 	private static class LockImpl implements Lock {
 
 		public LockImpl(
-	    	String path, 
+	    	String id,
 	    	String owner, 
 	    	String scope, 
 	    	String type, 
 	    	int depth, 
 	    	int timeout
 		) {
-			this.id = path + UUIDConversion.toUID(UUIDs.newUUID());
-			this.path = path;
+			if(id != null && id.indexOf("opaquelocktoken:") > 0) {
+				int start = id.indexOf("opaquelocktoken:");
+				int end = id.indexOf(">", start);
+				this.id = id.substring(start + 16, end > 0 ? end : id.length());
+			} else {
+				this.id = Utils.getUidAsString();
+			}
 			this.owner = owner;
 			this.scope = scope;
 			this.type = type;
 			this.depth = depth;
-			this.expiresAt = System.currentTimeMillis() + timeout;
+			this.expiresAt = System.currentTimeMillis() + timeout * 1000L;
 		}
 		
 		@Override
@@ -682,11 +724,6 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
         }
 
 		@Override
-        public String getPath() {
-			return this.path;
-        }
-
-		@Override
         public String getScope() {
 			return this.scope;
         }
@@ -697,7 +734,6 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
         }
 
 		private final String id;
-    	private final String path; 
     	private final String owner; 
     	private final String scope; 
     	private final String type; 
@@ -713,14 +749,53 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
     public Lock lock(
     	RequestContext requestContext, 
     	String path, 
+    	String id,
     	String owner, 
     	String scope, 
     	String type, 
     	int depth, 
     	int timeout
     ) throws LockFailedException {
+		Resource res = this.getResourceByPath(requestContext, path);
+		if(res instanceof DocumentResource) {
+			DocumentResource documentRes = (DocumentResource)res;
+			if(documentRes.getObject() instanceof Document) {
+				Document document = documentRes.getObject();
+				PersistenceManager pm = JDOHelper.getPersistenceManager(document);
+				owner = UserObjects.getPrincipalChain(pm).toString();
+				LockImpl lock = new LockImpl(id, owner, scope, type, depth, timeout);
+				try {
+					DocumentLockQuery documentLockQuery = (DocumentLockQuery)pm.newQuery(DocumentLock.class);
+					documentLockQuery.name().equalTo(lock.getID());
+					List<DocumentLock> documentLocks = document.getLock(documentLockQuery);
+					DocumentLock documentLock = null;
+					pm.currentTransaction().begin();
+					if(documentLocks.isEmpty()) {
+						documentLock = pm.newInstance(DocumentLock.class);
+						documentLock.setName(lock.getID());
+						documentLock.getLockedBy().addAll(UserObjects.getPrincipalChain(pm));
+						document.addLock(
+							Utils.getUidAsString(),
+							documentLock
+						);
+					} else {
+						documentLock = documentLocks.iterator().next();
+					}
+					Gson json = new Gson();
+					documentLock.setDescription(json.toJson(lock));
+					documentLock.setLockedAt(new Date());
+					pm.currentTransaction().commit();
+				} catch(Exception e) {
+					new ServiceException(e).log();
+					try {
+						pm.currentTransaction().rollback();
+					} catch(Exception ignore) {}
+				}
+				return lock;
+			}
+		}
 		return new LockImpl(
-			path,
+			id,
 			owner,
 			scope,
 			type, 
@@ -730,24 +805,39 @@ public class WebDavStore implements org.opencrx.application.uses.net.sf.webdav.W
     }
 
 	/* (non-Javadoc)
-	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#setLockTimeout(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String, int)
-	 */
-	@Override
-    public void setLockTimeout(
-    	RequestContext requestContext, 
-    	String id, 
-    	int timeout
-    ) {	    
-    }
-
-	/* (non-Javadoc)
 	 * @see org.opencrx.application.uses.net.sf.webdav.WebDavStore#unlock(org.opencrx.application.uses.net.sf.webdav.RequestContext, java.lang.String)
 	 */
 	@Override
     public boolean unlock(
-    	RequestContext requestContext, 
+    	RequestContext requestContext,
+    	String path,
     	String id
     ) {
+		Resource res = this.getResourceByPath(requestContext, path);
+		if(res instanceof DocumentResource) {
+			DocumentResource documentRes = (DocumentResource)res;
+			if(documentRes.getObject() instanceof Document) {
+				Document document = documentRes.getObject();
+				PersistenceManager pm = JDOHelper.getPersistenceManager(document);
+				DocumentLockQuery documentLockQuery = (DocumentLockQuery)pm.newQuery(DocumentLock.class);
+				documentLockQuery.name().equalTo(id);
+				List<DocumentLock> documentLocks = document.getLock(documentLockQuery);
+				if(!documentLocks.isEmpty()) {
+					try {
+						pm.currentTransaction().begin();
+						for(DocumentLock documentLock: documentLocks) {
+							pm.deletePersistent(documentLock);
+						}
+						pm.currentTransaction().commit();
+					} catch(Exception e) {
+						new ServiceException(e).log();
+						try {
+							pm.currentTransaction().rollback();
+						} catch(Exception ignore) {}
+					}
+				}
+			}
+		}
 	    return true;
     }
 

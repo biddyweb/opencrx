@@ -54,6 +54,7 @@ package test.org.opencrx.kernel.api;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.PersistenceManagerFactory;
@@ -65,12 +66,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 import org.opencrx.kernel.account1.cci2.ContactQuery;
+import org.opencrx.kernel.account1.cci2.PostalAddressQuery;
 import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.account1.jmi1.EMailAddress;
 import org.opencrx.kernel.account1.jmi1.Member;
+import org.opencrx.kernel.account1.jmi1.PostalAddress;
 import org.opencrx.kernel.backend.Accounts;
 import org.opencrx.kernel.backend.SecureObject;
-import org.opencrx.kernel.backend.UserHomes;
 import org.opencrx.kernel.base.jmi1.CheckPermissionsParams;
 import org.opencrx.kernel.base.jmi1.CheckPermissionsResult;
 import org.opencrx.kernel.generic.SecurityKeys;
@@ -95,7 +97,6 @@ import test.org.opencrx.generic.AbstractTest;
  */
 public class TestApi {
 
-    //-----------------------------------------------------------------------
     @BeforeClass
     public static void initialize(
     ) throws NamingException, ServiceException {
@@ -107,7 +108,10 @@ public class TestApi {
     	);        
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * TestAll
+     * 
+     */
     public static class TestAll extends AbstractTest {
     	
 		public TestAll(
@@ -118,11 +122,69 @@ public class TestApi {
         @Test
         public void run(
         ) throws ServiceException, IOException, ParseException{
+        	this.testUpdateAddressLine();
             this.testReflection();
             this.testCheckPermissions();
             this.testCreateUser();
         }
 		
+        protected void testUpdateAddressLine(
+        ) throws ServiceException {
+    		org.opencrx.kernel.account1.jmi1.Segment accountSegment = (org.opencrx.kernel.account1.jmi1.Segment)pm.getObjectById(
+    			new Path("xri://@openmdx*org.opencrx.kernel.account1").getDescendant("provider", providerName, "segment", segmentName)
+    		);
+    		ContactQuery contactQuery = (ContactQuery)pm.newQuery(Contact.class);
+    		contactQuery.thereExistsFullName().like(".*test.*");
+    		contactQuery.thereExistsAddress().modifiedAt().greaterThanOrEqualTo(new Date(0));
+    		List<Contact> contacts = accountSegment.getAccount(contactQuery);
+    		int count = 0;
+    		for(Contact contact: contacts) {
+    			PostalAddressQuery postalAddressQuery = (PostalAddressQuery)pm.newQuery(PostalAddress.class);
+    			List<PostalAddress> addresses = contact.getAddress(postalAddressQuery);
+    			if(!addresses.isEmpty()) {
+    				PostalAddress address = addresses.iterator().next();
+    				System.out.println("updating address " + address.refGetPath());
+    				{
+    					System.out.println("1.postalAddressLine=" + address.getPostalAddressLine());
+    					System.out.println("1.postalStreet=" + address.getPostalStreet());
+	    				pm.currentTransaction().begin();
+	    				address.getPostalAddressLine().clear();
+	    				address.getPostalStreet().clear();
+	    				pm.currentTransaction().commit();
+    				}
+    				{
+    					System.out.println("2.postalAddressLine=" + address.getPostalAddressLine());
+    					System.out.println("2.postalStreet=" + address.getPostalStreet());
+    					pm.currentTransaction().begin();
+    					address.getPostalStreet().add("postal street 1");
+    					pm.currentTransaction().commit();
+    				}
+    				{
+    					System.out.println("3.postalAddressLine=" + address.getPostalAddressLine());
+    					System.out.println("3.postalStreet=" + address.getPostalStreet());
+    					pm.currentTransaction().begin();
+    					address.getPostalAddressLine().add("address line 1");
+    					pm.currentTransaction().commit();
+    				}
+    				{
+    					System.out.println("4.postalAddressLine=" + address.getPostalAddressLine());
+    					System.out.println("4.postalStreet=" + address.getPostalStreet());
+    					pm.currentTransaction().begin();
+    					address.getPostalAddressLine().add("address line 2");
+    					address.getPostalStreet().add("postal street 2");
+    					pm.currentTransaction().commit();
+    				}
+    				{
+    					System.out.println("5.postalAddressLine=" + address.getPostalAddressLine());
+    					System.out.println("5.postalStreet=" + address.getPostalStreet());    					
+    				}
+    				break;
+    			}
+    			count++;
+    			if(count > 100) break;
+    		}
+        }
+        
 	    protected void testReflection(
 	    ) throws ServiceException {
 	        try {
@@ -150,7 +212,9 @@ public class TestApi {
 	    protected void testCreateUser(
 	    ) throws ServiceException {
 	    	try {
-	    		org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+	    		org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = (org.opencrx.kernel.home1.jmi1.Segment)pm.getObjectById(
+	    			new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", providerName, "segment", segmentName)
+	    		);
 	    		org.opencrx.security.realm1.jmi1.PrincipalGroup primaryGroup = 
 	    			(org.opencrx.security.realm1.jmi1.PrincipalGroup)SecureObject.getInstance().findPrincipal(
 	    				SecurityKeys.USER_GROUP_USERS, 

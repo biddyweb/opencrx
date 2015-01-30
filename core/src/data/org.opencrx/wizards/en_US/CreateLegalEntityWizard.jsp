@@ -105,6 +105,20 @@ org.openmdx.base.naming.*
 %>
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" action="<%= wc.getServletPath() %>">
+<%
+	if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
+%>
+		<div class="alert alert-danger" role="alert">
+		  <table>
+		    <tr>
+		    	<td style="vertical-align:top;padding:10px;"><span class="glyphicon glyphicon-exclamation-sign"></span></td>
+		    	<td><%= wc.getErrorMessage() %></td>
+		    </tr>
+		  </table>
+		</div>
+<%
+	}
+%>
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" id="Command" name="Command" value="" />
@@ -308,7 +322,7 @@ org.openmdx.base.naming.*
 						  );
 						String newActivityHref = newActivityAction.getEncodedHRef(wc.getRequestId());
 %>
-						<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
+						<a href="<%= newActivityHref %>" target="_blank"><button type="button" name="newActivity" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %>"><%= app.getTexts().getNewText() %> <%= wc.getFieldLabel("org:opencrx:kernel:activity1:ActivityFollowUp", "activity", app.getCurrentLocaleAsIndex()) %></button></a>
 <%
 					}
 %>
@@ -323,7 +337,7 @@ org.openmdx.base.naming.*
 				    }
 				}
 %>
-				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
+				<input type="submit" name="Cancel" tabindex="<%= tabIndex++ %>" class="<%= CssClass.btn.toString() %> <%= CssClass.btnDefault.toString() %>" value="<%= app.getTexts().getCloseText() %>" onclick="javascript:$('WaitIndicator').style.display='block';$('SubmitArea').style.display='none'; $('Command').value=this.name;"/>
 				</div>
 <%
 				if(wc.getMatchingAccounts() != null) {

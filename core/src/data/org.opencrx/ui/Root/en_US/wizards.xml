@@ -93,6 +93,12 @@
 										</_object>
 										<_content />
 									</org.openmdx.ui1.OperationDefinition>
+									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:document1:Document:createCampaign">
+										<_object>
+											<isQuery>true</isQuery>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.OperationDefinition>
 
 									<!-- Wizard CreateProjectWizard.jsp -->
 									<org.openmdx.ui1.OperationDefinition qualifiedName="org:opencrx:kernel:activity1:Segment:createProject">
@@ -658,6 +664,23 @@
 
 									<!-- Wizard CreateCampaignWizard.jsp -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createCampaign">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>New Campaign</_item>
+											</toolTip>
+											<label>
+												<_item>New Campaign</_item>
+											</label>
+											<order>
+												<_item>100</_item>
+												<_item>0</_item>
+												<_item>1030</_item>
+											</order>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:createCampaign">
 										<_object>
 											<active>true</active>
 											<toolTip>

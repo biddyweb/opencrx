@@ -167,7 +167,7 @@ public class DoPropfind extends WebDavMethod {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND, req.getRequestURI());
                 return;
             }
-            int depth = this.getDepth(requestContext, res);
+            int depth = this.getDepth(requestContext);
             List<String> properties = null;
             path = this.getCleanPath(getRelativePath(requestContext));
             int propertyFindType = FIND_ALL_PROP;
@@ -552,18 +552,18 @@ public class DoPropfind extends WebDavMethod {
         int _depth
     ) {
         writer.writeElement("DAV::lockdiscovery", XMLWriter.OPENING);
-        List<Lock> los = _store.getLocksByPath(requestContext, path);
-        for(Lock lo: los) {
+        List<Lock> locks = _store.getLocksByPath(requestContext, path);
+        for(Lock lock: locks) {
 	        // Not expired
-	        if(lo != null && (System.currentTimeMillis() < lo.getExpiresAt())) {	
+	        if(lock != null && (System.currentTimeMillis() < lock.getExpiresAt())) {	
 	            writer.writeElement("DAV::activelock", XMLWriter.OPENING);
 
 	            writer.writeElement("DAV::locktype", XMLWriter.OPENING);
-	            writer.writeProperty("DAV::" + lo.getType());
+	            writer.writeProperty("DAV::" + lock.getType());
 	            writer.writeElement("DAV::locktype", XMLWriter.CLOSING);
 	
 	            writer.writeElement("DAV::lockscope", XMLWriter.OPENING);
-	            if (Lock.SCOPE_EXCLUSIVE.equals(lo.getScope())) {
+	            if (Lock.SCOPE_EXCLUSIVE.equals(lock.getScope())) {
 	                writer.writeProperty("DAV::exclusive");
 	            } else {
 	                writer.writeProperty("DAV::shared");
@@ -580,17 +580,17 @@ public class DoPropfind extends WebDavMethod {
 	
                 writer.writeElement("DAV::owner", XMLWriter.OPENING);
                 writer.writeElement("DAV::href", XMLWriter.OPENING);
-                writer.writeText(lo.getOwner());
+                writer.writeText(lock.getOwner());
                 writer.writeElement("DAV::href", XMLWriter.CLOSING);
                 writer.writeElement("DAV::owner", XMLWriter.CLOSING);
 	
-	            int timeout = (int) ((lo.getExpiresAt() - System.currentTimeMillis()) / 1000);
+	            int timeout = (int) ((lock.getExpiresAt() - System.currentTimeMillis()) / 1000);
 	            String timeoutStr = new Integer(timeout).toString();
 	            writer.writeElement("DAV::timeout", XMLWriter.OPENING);
 	            writer.writeText("Second-" + timeoutStr);
 	            writer.writeElement("DAV::timeout", XMLWriter.CLOSING);
 	
-	            String lockToken = lo.getID();
+	            String lockToken = lock.getID();
 	
 	            writer.writeElement("DAV::locktoken", XMLWriter.OPENING);
 	            writer.writeElement("DAV::href", XMLWriter.OPENING);

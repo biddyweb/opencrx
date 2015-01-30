@@ -191,6 +191,9 @@ public class CreateBugTrackerWizardController extends org.openmdx.portal.servlet
 			);
 	    String name = (String)formFields.get("org:opencrx:kernel:activity1:ActivityGroup:name");
 	    String description = (String)formFields.get("org:opencrx:kernel:activity1:ActivityGroup:description");
+    	if(name == null || name.isEmpty()) {
+    		this.errorMessage += "The field 'Name' is mandatory";
+    	}
 	    if(name != null && !name.isEmpty()) {
 	    	ActivityTracker activityTracker = createBugTracker(
 	    		activitySegment,

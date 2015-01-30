@@ -75,6 +75,7 @@ import org.opencrx.kernel.portal.PhoneNumberDataBinding;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.portal.servlet.DataBinding;
 import org.openmdx.portal.servlet.databinding.CompositeObjectDataBinding;
 
@@ -374,7 +375,7 @@ public class CreateLegalEntityWizardController extends CreateAccountWizardContro
 	    	legalEntityQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
 	    }
 	    if(queryFilterClause != null) {
-	    	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(legalEntityQuery);
+	    	QueryExtensionRecord queryFilter = PersistenceHelper.newQueryExtension(legalEntityQuery);
 		    queryFilter.setClause(queryFilterClause);
 		    queryFilter.getStringParam().addAll(stringParams);
 	    }

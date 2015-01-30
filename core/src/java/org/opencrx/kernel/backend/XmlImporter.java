@@ -71,6 +71,7 @@ import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
+import org.openmdx.base.rest.cci.ObjectRecord;
 import org.openmdx.base.rest.spi.Object_2Facade;
 import org.xml.sax.InputSource;
 
@@ -136,7 +137,7 @@ public class XmlImporter extends AbstractImpl {
         List<String> report
     ) throws ServiceException {    	    	
     	PersistenceManager pm = JDOHelper.getPersistenceManager(targetSegment);
-        Map<Path,MappedRecord> data = new LinkedHashMap<Path,MappedRecord>();
+        Map<Path,ObjectRecord> data = new LinkedHashMap<Path,ObjectRecord>();
         String itemAsXml = null;
         try {
         	itemAsXml = new String(item, "UTF-8");

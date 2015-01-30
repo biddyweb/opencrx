@@ -68,7 +68,7 @@
 							</array>
 						</void>
 						<void property="extension">
-							<array class="org.openmdx.base.query.Extension" length="1">
+							<array class="org.openmdx.base.persistence.spi.QueryExtension" length="1">
 								<void index="0">
 									<object class="org.openmdx.base.persistence.spi.QueryExtension">
 										<void property="clause">
@@ -154,7 +154,7 @@
 							</array>
 						</void>
 						<void property="extension">
-							<array class="org.openmdx.base.query.Extension" length="1">
+							<array class="org.openmdx.base.persistence.spi.QueryExtension" length="1">
 								<void index="0">
 									<object class="org.openmdx.base.persistence.spi.QueryExtension">
 										<void property="clause">
@@ -206,7 +206,7 @@
 							</array>
 						</void>
 						<void property="extension">
-							<array class="org.openmdx.base.query.Extension" length="1">
+							<array class="org.openmdx.base.persistence.spi.QueryExtension" length="1">
 								<void index="0">
 									<object class="org.openmdx.base.persistence.spi.QueryExtension">
 										<void property="clause">

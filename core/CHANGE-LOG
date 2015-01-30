@@ -1,11 +1,90 @@
-﻿
+﻿==============================================================================
+Version 3.0.0                                                       2015-01-17
+==============================================================================
 
-                    =====================================
-                           CHANGE LOG openCRX/Core
-                    =====================================
+1.    NEW FEATURES
+
+      CR10012483
+      org:opencrx:kernel:generic:Media extends org:opencrx:kernel:generic:UserDefined.
+
+      CR20029290
+      RestServlet_2 supports JSON and Swagger:
+      * Support for application/json in addition to text/xml
+      * Swagger-compliant API at object-level with XRI-suffix :api and :api-ui
+
+      CR10012500
+      REST supports CORS. Cross-origin resource sharing (CORS) is a mechanism that 
+      allows many resources (e.g., fonts, JavaScript, etc.) on a web page to be 
+      requested from another domain outside the domain from which the resource originated. 
+      In particular, JavaScript's AJAX calls can use the XMLHttpRequest mechanism. 
+      Such "cross-domain" requests would otherwise be forbidden by web browsers, per the 
+      same-origin security policy. Default CORS config added to web.xml of REST servlet. 
+      For more information see http://tomcat.apache.org/tomcat-7.0-doc/config/filter.html#CORS_Filter.
+      
+      CR10012503
+      Parameter xri for WorkflowHandler. The xri parameter allows to execute a specific 
+      asynchronous workflow "on demand". Example:
+      http://localhost:8080/opencrx-core-CRX/WorkflowHandler/execute?provider=CRX&segment=Standard&xri=xri://...
+      The workflow is executed only if it is not already complete.
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10012547
+      Refactoring SubscriptionHandlerServlet. Move subscription.matches() operation to API and therefore
+      implementation to backend classes. This allows custom-specific implementations of 
+      UserHome.subscriptionMatches(). 
+
+      CR10011964
+      Allow to define an asynchronous workflow as (Janino) script. This way segment-specific 
+      business-logic can be added without build / deploy. Asynchronous workflows
+      must implement the following methods:
+      * public static void execute(WfProcessInstance) {}
+      * public static boolean isAtomic() {}
+
+      Below is an example script for an asynchronous workflow:
+
+      // <pre>
+      public static void execute(
+        org.opencrx.kernel.home1.jmi1.WfProcessInstance wfProcessInstance
+      ) throws org.openmdx.base.exception.ServiceException {
+        java.util.logging.Logger logger = java.util.logging.Logger.getLogger("PrintConsole");
+        logger.log(java.util.logging.Level.INFO, "executing workflow " + wfProcessInstance.getProcess().getName());
+        logger.log(java.util.logging.Level.INFO, "target=" + wfProcessInstance.getTargetObject());
+        logger.log(java.util.logging.Level.INFO, "wfProcessInstance=" + wfProcessInstance);
+        java.util.Map params = org.opencrx.kernel.utils.WorkflowHelper.getWorkflowParameters(wfProcessInstance);
+        logger.log(java.util.logging.Level.INFO, "params=" + params);
+      }
+
+      public static boolean isAtomic(
+      ) throws org.openmdx.base.exception.ServiceException {
+        return true;
+      }
+      // </pre>
+      
+      CR20025970
+      Migration from dataprovider stack version 1 to version 2:
+      * Refactoring of all layer plugins
+      * Amend jdoconfig.xml
+      * Amend dataprovider configurations Kernel.properties, Security.properties
+      * Amend build.properties
+
+2.1.  FIXED BUGS
+      
+      CR10012452
+      Wizards: exception handling. Improved error handling for in-place wizards.
+      The AbstractWizardController reports the exception to the log file and stores
+      the exception message in the field errorMessasge in case the execution of
+      a command raises an exception. The wizards display the error message instead
+      of terminating abnormally.
+
+2.2   REMOVED FEATURES
+      none
+
 
 ==============================================================================
-Version 2.13.0                                                      2014-08-01
+Version 2.13.0                                                      2014-07-23
 ==============================================================================
 
 1.    NEW FEATURES
@@ -195,10 +274,10 @@ Version 2.13.0                                                      2014-08-01
       }
       
       CR10011964
-      Allow to define a workflow's execute() method as (Janino) script. This 
+      Allow to define a synchronous workflow as (Janino) script. This 
       way segment-specific business-logic can be added without build / deploy.
 
-      Here is an example workflow script:
+      Below is an example workflow script:
 
       // <pre>
       public static void execute(

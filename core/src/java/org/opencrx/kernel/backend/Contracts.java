@@ -141,15 +141,16 @@ import org.opencrx.kernel.uom1.jmi1.Uom;
 import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
 import org.opencrx.security.realm1.jmi1.PrincipalGroup;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.cci.RefPackage_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.RuntimeServiceException;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.Authority;
 import org.openmdx.base.marshalling.Marshaller;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.base.text.conversion.UUIDConversion;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.id.UUIDs;
@@ -2526,7 +2527,7 @@ public class Contracts extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(contractFilter);
         AbstractContractQuery query = (AbstractContractQuery)pm.newQuery(AbstractContract.class);
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+        QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);    	

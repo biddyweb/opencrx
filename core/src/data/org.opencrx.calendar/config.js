@@ -60,6 +60,10 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 //var globalNetworkCheckSettings={href: 'http://davical.server.com:8080/caldav.php/', hrefLabel: null, additionalResources: [], forceReadOnly: null, showHeader: true, settingsAccount: true, timeOut: 30000, lockTimeOut: 10000, delegation: false, backgroundCalendars: [], ignoreAlarms: false}
 // Davical example (client installed into Davical subdirectory - works out of the box, no additional setup required):
 var globalNetworkCheckSettings={href: location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+location.pathname.replace('-calendar-','-caldav-')+location.search.replace('?cal=','')+'/', hrefLabel: null, crossDomain: null, additionalResources: [], forceReadOnly: null, withCredentials: false, showHeader: true, settingsAccount: true, checkContentType: true, syncInterval: 3600000, timeOut: 600000, lockTimeOut: 10000, delegation: false, ignoreAlarms: false, backgroundCalendars: []}
+function globalAccountSettingsHook(url, login)
+{
+	return url.indexOf(login)!=-1 ? url : url+login+'/';
+}
 
 // if set, the configuration is loaded from the network (using HTTP basic auth) - the returned configuration XML settings are added
 //  to globalAccountSettings ... it is possible to combine this option with the globalAccountSettings although it is not recommended

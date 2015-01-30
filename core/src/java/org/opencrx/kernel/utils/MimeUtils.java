@@ -323,7 +323,10 @@ public abstract class MimeUtils {
 			} catch(Exception ignore) {}
 			// Subject
 			{
-				mimeMessage.setSubject(msg.getSubject());
+				mimeMessage.setSubject(
+					msg.getSubject(), 
+					"UTF-8"
+				);
 			}
 			// Recipients
 			for(RecipientEntry recipient: msg.getRecipients()) {

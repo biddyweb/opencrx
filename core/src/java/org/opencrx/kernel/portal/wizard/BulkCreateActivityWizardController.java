@@ -96,15 +96,17 @@ import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
 import org.opencrx.kernel.portal.DateTimePropertyDataBinding;
 import org.opencrx.kernel.portal.IntegerPropertyDataBinding;
 import org.opencrx.kernel.portal.StringPropertyDataBinding;
+import org.opencrx.kernel.utils.Utils;
 import org.opencrx.kernel.workflow.BulkCreateActivityWorkflow;
 import org.opencrx.kernel.workflow.BulkCreateActivityWorkflow.CreationType;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
@@ -155,29 +157,6 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 			return false;
 		}
     }
-
-    /**
-     * Split string.
-     * 
-	 * @param text
-	 * @param size
-	 * @return
-	 */
-	public List<String> splitString(
-		String text, 
-		int size
-	) {
-		// Give the list the right capacity to start with. You could use an array instead if you wanted.
-		if (text == null) {
-			text = "";
-		}
-		List<String> ret = new ArrayList<String>((text.length() + size - 1) / size);
-	
-		for (int start = 0; start < text.length(); start += size) {
-			ret.add(text.substring(start, Math.min(text.length(), start + size)));
-		}
-		return ret;
-	}
 
 	/**
 	 * Update e-mail recipient.
@@ -392,7 +371,7 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 				}
 				if(messageBody != null) {
 					int idx = 0;
-					for(String messageBodyPart: this.splitString(messageBody, 2048)) {
+					for(String messageBodyPart: Utils.splitString(messageBody, 2048)) {
 						org.opencrx.kernel.base.jmi1.StringProperty stringProperty = pm.newInstance(org.opencrx.kernel.base.jmi1.StringProperty.class);
 						stringProperty.setName(BulkCreateActivityWorkflow.OPTION_EMAIL_MESSAGE_BODY + idx);
 						stringProperty.setStringValue(messageBodyPart);
@@ -778,7 +757,7 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 					formFields.get("org:opencrx:kernel:activity1:EMail:messageSubject")
 				);
 				// split messageBody into pieces of 2048 chars
-				List<String> messageBodyParts = this.splitString((String)formFields.get("org:opencrx:kernel:activity1:EMail:messageBody"), 2048);
+				List<String> messageBodyParts = Utils.splitString((String)formFields.get("org:opencrx:kernel:activity1:EMail:messageBody"), 2048);
 				int idx = 0;
 				for(int i = 0; i < messageBodyParts.size(); i++) {
 					try {
@@ -1128,7 +1107,7 @@ public class BulkCreateActivityWizardController extends AbstractWizardController
 			: null;
 		if(this.activityGroup != null) {
 	    	ActivityQuery query = (ActivityQuery)pm.newQuery(Activity.class);
-	    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+	    	QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
 	    	queryExtension.setClause(
 	    		Database_1_Attributes.HINT_COUNT + "(1=1)"
 	    	);

@@ -228,6 +228,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:Opportunity:estimatedValue">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>estimated value</_item>
 											</toolTip>

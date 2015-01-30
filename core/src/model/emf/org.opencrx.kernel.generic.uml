@@ -478,6 +478,7 @@
             <generalization xmi:id="_aJdOQHaWEduay-WajN2Vbg">
               <general xmi:type="uml:Class" href="org.opencrx.kernel.base.uml#_FrwCsHaQEduay-WajN2Vbg"/>
             </generalization>
+            <generalization xmi:id="_qAs_UIXiEeSirYJOg7FwTw" general="_7j70oGB8EeGv4JgTBvupNw"/>
           </packagedElement>
           <packagedElement xmi:type="uml:Association" xmi:id="_3C7B8A60016D3FECB4F800C8" name="CrxObjectHasAdditionalExternalLink" memberEnd="_3C7B8A60016D3FECB4F8030C _3C7B8A60016D3FECB4F8030E">
             <ownedEnd xmi:id="_3C7B8A60016D3FECB4F8030E" name="crxObject" type="_3C7B8A60016D3F3FB4530021" isUnique="false" association="_3C7B8A60016D3FECB4F800C8">
@@ -906,6 +907,7 @@
             <ownedAttribute xmi:id="_U1OSsGB9EeGv4JgTBvupNw" name="userString4" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B62E40010"/>
               <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_PC7ugGB-EeGv4JgTBvupNw"/>
+              <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_0zaXQIReEeSXvZrLIE3JQA" value="*"/>
             </ownedAttribute>
             <ownedAttribute xmi:id="_VvWYoGB9EeGv4JgTBvupNw" name="userDateTime0" aggregation="composite">
               <type xmi:type="uml:PrimitiveType" href="../openMDX%202%20~%20Core%20(EMF)/org.w3c.uml#_3C7B8A60016D3C8B630802BB"/>

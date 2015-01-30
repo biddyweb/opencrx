@@ -56,6 +56,7 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -195,7 +196,21 @@ public class UserSettingsController extends org.openmdx.portal.servlet.AbstractW
 				try {
 					pm.currentTransaction().begin();
 					Properties userSettings = UserHomes.getInstance().getDefaultUserSettings(userHome);
+					// admin settings are prefixed with a * and override the default and user settings
+					Properties adminSettings = new Properties();
+					for(Iterator<Map.Entry<Object,Object>> i = userSettings.entrySet().iterator(); i.hasNext(); ) {
+						Map.Entry<Object,Object> e = i.next();
+						String key = (String)e.getKey();
+						if(key.startsWith("*")) {
+							adminSettings.put(
+								key.substring(1), 
+								e.getValue()
+							);
+							i.remove();
+						}
+					}					
 					userSettings.putAll(this.getUserSettings());
+					userSettings.putAll(adminSettings);
 					org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
 						userHome,
 						p,

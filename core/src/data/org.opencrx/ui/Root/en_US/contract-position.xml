@@ -453,6 +453,8 @@
 										<_object>
 											<columnBreak>true</columnBreak>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>List price</_item>
 											</toolTip>
@@ -492,6 +494,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:pricePerUnit">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Price per unit</_item>
 											</toolTip>
@@ -625,6 +629,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:discount">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Discount</_item>
 											</toolTip>
@@ -715,6 +721,8 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesContractPosition:salesCommission">
 										<_object>
 											<active>true</active>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Sales commission</_item>
 											</toolTip>
@@ -738,6 +746,8 @@
 										<_object>
 											<active>true</active>
 											<sortable>false</sortable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Base amount</_item>
 											</toolTip>
@@ -761,6 +771,8 @@
 										<_object>
 											<active>true</active>
 											<sortable>false</sortable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Discount amount</_item>
 											</toolTip>
@@ -784,6 +796,8 @@
 										<_object>
 											<active>true</active>
 											<sortable>false</sortable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Tax</_item>
 											</toolTip>
@@ -807,6 +821,8 @@
 										<_object>
 											<active>true</active>
 											<sortable>false</sortable>
+											<cssClassFieldGroup>alignRight</cssClassFieldGroup>
+											<cssClassObjectContainer>alignRight</cssClassObjectContainer>
 											<toolTip>
 												<_item>Amount (incl. tax)</_item>
 											</toolTip>

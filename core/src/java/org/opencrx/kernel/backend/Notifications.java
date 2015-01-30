@@ -285,7 +285,7 @@ public class Notifications extends AbstractImpl {
             // Activity details
             {
             	text += "<div class=\"" + CssClass.alert + " " + CssClass.alertWarning + "\" style=\"margin-bottom:0px\">";
-            	text += "<h4><a href=\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\">#" + activity.getActivityNumber() + ": " + (activityName == null ? "---" : activityName) + "</a></h4>";
+            	text += "<h4><a href=\"" + webAccessUrl + "?event=" + SelectObjectAction.EVENT_ID + "&parameter=" + selectTargetAction.getParameter() + "\">#" + activity.getActivityNumber() + ": " +  HtmlEncoder.encode(activityName == null ? "---" : activityName, false) + "</a></h4>";
                 text += "</div>";
             	text += "<pre style=\"" + PRE_STYLE + "\">";
                 text += "=========================================================\n";

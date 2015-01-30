@@ -97,12 +97,12 @@
         <property name="org.openmdx.jdo.DataManager.xriPattern[18]" value="xri://@openmdx*org.openmdx.security.authentication1/($...)"/>
         <property name="org.openmdx.jdo.DataManager.restPlugIn[18]" value="org.opencrx.kernel.rest.PlugIn.Security"/>
 
-		<!--  REST plugin Kernel -->             
-        <property name="org.opencrx.kernel.rest.PlugIn.Kernel.class" value="org.openmdx.application.dataprovider.kernel.EmbeddedDataprovider_1"/>
+		<!--  Dataprovider Kernel -->             
+        <property name="org.opencrx.kernel.rest.PlugIn.Kernel.class" value="org.openmdx.base.dataprovider.kernel.Dataprovider_2"/>
         <property name="org.opencrx.kernel.rest.PlugIn.Kernel.configuration" value="xri://+resource/META-INF/Kernel.properties"/>
 
-		<!--  REST plugin Security -->             
-        <property name="org.opencrx.kernel.rest.PlugIn.Security.class" value="org.openmdx.application.dataprovider.kernel.EmbeddedDataprovider_1"/>
+		<!--  Dataprovider Security -->             
+        <property name="org.opencrx.kernel.rest.PlugIn.Security.class" value="org.openmdx.base.dataprovider.kernel.Dataprovider_2"/>
         <property name="org.opencrx.kernel.rest.PlugIn.Security.configuration" value="xri://+resource/META-INF/Security.properties"/>
 
     </persistence-manager-factory>

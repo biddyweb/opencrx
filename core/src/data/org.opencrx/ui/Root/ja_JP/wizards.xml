@@ -77,6 +77,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:document1:Document:Pane:Op:Tab:createCampaign" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>新規キャンペーン</_item>
+                      </label>
+                      <toolTip>
+                        <_item>新規キャンペーン</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:Segment:Pane:Op:Tab:createProject" _operation="create">
                     <_object>
                       <label>

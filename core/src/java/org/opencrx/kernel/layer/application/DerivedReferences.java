@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2014, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,6 +59,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.jdo.FetchGroup;
 import javax.resource.ResourceException;
 import javax.resource.cci.MappedRecord;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -69,27 +70,31 @@ import org.opencrx.kernel.backend.Addresses;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.Contracts;
 import org.opencrx.kernel.backend.Products;
-import org.openmdx.application.dataprovider.cci.AttributeSelectors;
+import org.opencrx.kernel.generic.OpenCrxException;
 import org.openmdx.application.dataprovider.cci.AttributeSpecifier;
-import org.openmdx.application.dataprovider.cci.DataproviderOperations;
-import org.openmdx.application.dataprovider.cci.DataproviderReply;
-import org.openmdx.application.dataprovider.cci.DataproviderRequest;
 import org.openmdx.application.dataprovider.cci.FilterProperty;
-import org.openmdx.application.dataprovider.cci.ServiceHeader;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
-import org.openmdx.application.dataprovider.spi.Layer_1.LayerInteraction;
 import org.openmdx.base.accessor.cci.SystemAttributes;
+import org.openmdx.base.dataprovider.cci.DataproviderRequestProcessor;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.mof.cci.Model_1_0;
+import org.openmdx.base.mof.spi.Model_1Factory;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.query.ConditionType;
 import org.openmdx.base.query.Filter;
 import org.openmdx.base.query.IsInCondition;
 import org.openmdx.base.query.Quantifier;
 import org.openmdx.base.query.SortOrder;
+import org.openmdx.base.resource.Records;
+import org.openmdx.base.resource.spi.ResourceExceptions;
+import org.openmdx.base.resource.spi.RestInteractionSpec;
+import org.openmdx.base.rest.cci.ObjectRecord;
+import org.openmdx.base.rest.cci.QueryFilterRecord;
+import org.openmdx.base.rest.cci.QueryRecord;
+import org.openmdx.base.rest.cci.ResultRecord;
 import org.openmdx.base.rest.spi.Facades;
 import org.openmdx.base.rest.spi.Object_2Facade;
-import org.openmdx.base.rest.spi.Query_2Facade;
+import org.openmdx.kernel.exception.BasicException;
 import org.w3c.format.DateTimeFormat;
 import org.w3c.spi2.Datatypes;
 
@@ -99,19 +104,98 @@ import org.w3c.spi2.Datatypes;
  */
 public class DerivedReferences {
 
-    /**
+	private final Model_1_0 model;
+	private final DataproviderRequestProcessor dataproviderRequestProcessor;
+	private final List<String> readOnlyTypes;
+	
+	/**
      * Constructor.
      * 
-     * @param backend
+     * @param context
      */
     public DerivedReferences(
-        RequestHelper backend
+    	DataproviderRequestProcessor dataproviderRequestProcessor,
+        List<String> readOnlyTypes
     ) {
-        this.requestHelper = backend;
+        this.model = Model_1Factory.getModel();
+        this.dataproviderRequestProcessor = dataproviderRequestProcessor;
+        this.readOnlyTypes = readOnlyTypes;
     }
 
     /**
-     * Remap find request to given reference and add additional filter properties and attribute specifiers.
+	 * @return the readOnlyTypes
+	 */
+	public List<String> getReadOnlyTypes() {
+		return readOnlyTypes;
+	}
+
+	/**
+	 * @return the model
+	 */
+	public Model_1_0 getModel() {
+		return model;
+	}
+
+	/**
+	 * @return the dataproviderRequestProcessor
+	 */
+	public DataproviderRequestProcessor getDataproviderRequestProcessor() {
+		return dataproviderRequestProcessor;
+	}
+
+    public ObjectRecord retrieveObject(
+    	DataproviderRequestProcessor p,
+        Path identity
+    ) throws ResourceException {
+		return p.addGetRequest(
+			identity, 
+			FetchGroup.ALL
+		);
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testObjectIsChangeable(
+        MappedRecord object
+    ) throws ServiceException {
+    	Object_2Facade facade;
+        try {
+	        facade = Object_2Facade.newInstance(object);
+        }
+        catch (ResourceException e) {
+        	throw new ServiceException(e);
+        }
+        String objectClass = facade.getObjectClass();
+        for(
+            Iterator<String> i = this.getReadOnlyTypes().iterator();
+            i.hasNext();
+        ) {           
+            String type = i.next();
+            if(this.getModel().isSubtypeOf(objectClass, type)) {
+                for(
+                    Iterator<String> j = facade.getValue().keySet().iterator();
+                    j.hasNext();
+                ) {
+                    String attributeName = j.next();
+                    if(
+                        !SystemAttributes.OBJECT_CLASS.equals(attributeName) &&
+                        !SystemAttributes.MODIFIED_AT.equals(attributeName) &&
+                        !SystemAttributes.MODIFIED_BY.equals(attributeName)                        
+                    ) {
+                        throw new ServiceException(
+                            OpenCrxException.DOMAIN,
+                            OpenCrxException.OBJECT_TYPE_IS_READONLY,
+                            "Object type is readonly. Can not modify object.",
+                            new BasicException.Parameter("param0", objectClass)
+                        );
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Remap find request to given reference and add additional filter properties 
+     * and attribute specifiers.
      * 
      * @param request
      * @param reference
@@ -120,36 +204,28 @@ public class DerivedReferences {
      * @return
      * @throws ServiceException
      */
-    protected DataproviderRequest remapFindRequest(
-        DataproviderRequest request,
+    protected QueryRecord remapQuery(
+        QueryRecord request,
         Path reference,
         FilterProperty[] additionalFilterProperties,
         AttributeSpecifier[] additionalAttributeSpecifiers
-    ) throws ServiceException {
-    	List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
-    	filterProperties.addAll(Arrays.asList(request.attributeFilter()));
-    	if(additionalFilterProperties != null) {
-    		filterProperties.addAll(Arrays.asList(additionalFilterProperties));
+    ) throws ResourceException {
+    	QueryRecord mappedQuery = request.clone();
+    	mappedQuery.setResourceIdentifier(reference);
+    	if(mappedQuery.getQueryFilter() == null) {
+    		mappedQuery.setQueryFilter(Records.getRecordFactory().createMappedRecord(QueryFilterRecord.class));
     	}
-    	List<AttributeSpecifier> attributeSpecifiers = new ArrayList<AttributeSpecifier>();
-    	attributeSpecifiers.addAll(Arrays.asList(request.attributeSpecifier()));
+    	if(additionalFilterProperties != null) {
+	    	mappedQuery.getQueryFilter().getCondition().addAll(
+	    		FilterProperty.toCondition(additionalFilterProperties)
+	    	);
+    	}
     	if(additionalAttributeSpecifiers != null) {
-    		attributeSpecifiers.addAll(Arrays.asList(additionalAttributeSpecifiers));
-    	}    	
-        try {
-	        return new DataproviderRequest(
-	            Query_2Facade.newInstance(reference).getDelegate(),
-	            request.operation(),
-	            filterProperties.toArray(new FilterProperty[filterProperties.size()]),
-	            request.position(),
-	            request.size(),
-	            request.direction(),
-	            request.attributeSelector(),
-	            attributeSpecifiers.toArray(new AttributeSpecifier[attributeSpecifiers.size()])
-	        );
-        } catch (ResourceException e) {
-        	throw new ServiceException(e);
-        }
+	    	mappedQuery.getQueryFilter().getOrderSpecifier().addAll(
+	    		AttributeSpecifier.toOrderSpecifier(additionalAttributeSpecifiers)
+	    	);
+    	}
+    	return mappedQuery;
     }
 
     /**
@@ -160,13 +236,13 @@ public class DerivedReferences {
      * @return
      * @throws ServiceException
      */
-    protected DataproviderRequest remapFindRequest(
-        DataproviderRequest request,
+    protected QueryRecord remapFindRequest(
+        QueryRecord request,
         Path reference
-    ) throws ServiceException {
-    	return this.remapFindRequest(request, reference, null, null);
+    ) throws ResourceException {
+    	return this.remapQuery(request, reference, null, null);
     }
-    
+
     /**
      * Remap find request to given reference and add additional filter properties.
      * 
@@ -176,14 +252,19 @@ public class DerivedReferences {
      * @return
      * @throws ServiceException
      */
-    protected DataproviderRequest remapFindRequest(
-        DataproviderRequest request,
+    protected QueryRecord remapQuery(
+        QueryRecord request,
         Path reference,
         FilterProperty[] additionalFilterProperties
-    ) throws ServiceException {
-    	return this.remapFindRequest(request, reference, additionalFilterProperties, null);
+    ) throws ResourceException {
+    	return this.remapQuery(
+    		request, 
+    		reference, 
+    		additionalFilterProperties, 
+    		null
+    	);
     }
-    
+
     /**
      * Get reply.
      * 
@@ -194,23 +275,25 @@ public class DerivedReferences {
      * @throws ServiceException
      */
     public boolean getReply(
-        ServiceHeader header,
-        DataproviderRequest request,
-        DataproviderReply reply
-    ) throws ServiceException {
+        RestInteractionSpec ispec,
+        QueryRecord request,
+        ResultRecord response
+    ) throws ResourceException {
+    	Path path = request.getResourceIdentifier();
+    	DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
     	try {
 	        // GlobalFilterIncludesActivity
 	        if(
-	            request.path().isLike(GLOBAL_FILTER_INCLUDES_ACTIVITY)
+	        	path.isLike(GLOBAL_FILTER_INCLUDES_ACTIVITY)
 	        ) {
-	        	MappedRecord globalFilter = this.requestHelper.retrieveObject(request.path().getPrefix(7));
+	        	MappedRecord globalFilter = this.retrieveObject(p, path.getPrefix(7));
 	        	Object_2Facade globalFilterFacade = Facades.asObject(globalFilter);	        	
-	        	Path reference = request.path().getPrefix(5).getChild("activity");
+	        	Path reference = path.getPrefix(5).getChild("activity");
 	        	if(globalFilterFacade.attributeValue("activitiesSource") != null) {
 	        		Path activitiesSourceIdentity = (Path)globalFilterFacade.attributeValue("activitiesSource");
-	        		MappedRecord activitiesSource = this.requestHelper.retrieveObject(activitiesSourceIdentity);
+	        		MappedRecord activitiesSource = this.retrieveObject(p, activitiesSourceIdentity);
 	        		Object_2Facade activitiesSourceFacade = Facades.asObject(activitiesSource);
-	        		Model_1_0 model = this.requestHelper.getModel();
+	        		Model_1_0 model = this.getModel();
 		        	if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:ActivityGroup")) {
 		        		reference = activitiesSourceIdentity.getChild("filteredActivity");		        		
 		        	} else if(model.isSubtypeOf(activitiesSourceFacade.getObjectClass(), "org:opencrx:kernel:activity1:Segment")) {
@@ -221,204 +304,174 @@ public class DerivedReferences {
 		        		reference = activitiesSourceIdentity.getChild("assignedActivity");
 		        	}
 	        	}
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                reference,
-	                this.getActivityFilterProperties(
-	                    request.path().getPrefix(request.path().size() - 1),
-	                    this.requestHelper.getDelegatingInteraction()
-	                )
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
-	            return true;
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                reference,
+		                this.getActivityFilterProperties(
+		                	path.getPrefix(path.size() - 1)
+		                )
+		            ),
+		            response
+	        	);
+	        	return true;
 	        }
 	        // GlobalFilterIncludesAccount
 	        if(
-	            request.path().isLike(GLOBAL_FILTER_INCLUDES_ACCOUNT)
+	            path.isLike(GLOBAL_FILTER_INCLUDES_ACCOUNT)
 	        ) {
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("account"),
-	                this.getAccountFilterProperties(
-	                    request.path().getPrefix(request.path().size() - 1),
-	                    this.requestHelper.getDelegatingInteraction()
-	                )
-	            );  	
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		 this.remapQuery(
+	 	                request,
+	 	                path.getPrefix(5).getChild("account"),
+	 	                this.getAccountFilterProperties(
+	 	                	path.getPrefix(path.size() - 1)
+	 	                )
+	 	            ), 
+	        		response
+	        	);
 	            return true;
 	        }
 	        // GlobalFilterIncludesAddress
-	        if(request.path().isLike(GLOBAL_FILTER_INCLUDES_ADDRESS)) {
-	        	DataproviderRequest findRequest =  this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("address"),
-	                this.getAddressFilterProperties(
-	                    request.path().getPrefix(request.path().size() - 1),
-	                    this.requestHelper.getDelegatingInteraction()
-	                )
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        if(path.isLike(GLOBAL_FILTER_INCLUDES_ADDRESS)) {
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("address"),
+		                this.getAddressFilterProperties(
+		                	path.getPrefix(path.size() - 1)
+		                )
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(ACTIVITY_FILTER_INCLUDES_ACTIVITY)) {
+	        } else if(path.isLike(ACTIVITY_FILTER_INCLUDES_ACTIVITY)) {
 		        // ActivityFilterIncludesActivity
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
 	                    this.getActivityFilterProperties(
-	                        request.path().getPrefix(request.path().size() - 1),
-	                        this.requestHelper.getDelegatingInteraction()
+	                    	path.getPrefix(path.size() - 1)
 	                    )
 	                )
 	            );
 	            // Remap to ActivityGroupContainsActivity
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(7).getChild("filteredActivity"),
-	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                path.getPrefix(7).getChild("filteredActivity"),
+		                filterProperties.toArray(new FilterProperty[filterProperties.size()])
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(CONTRACT_FILTER_INCLUDES_CONTRACT)) {
+	        } else if(path.isLike(CONTRACT_FILTER_INCLUDES_CONTRACT)) {
 		        // ContractFilterIncludesContract
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
 	                    this.getContractFilterProperties(
-	                        request.path().getPrefix(request.path().size() - 1),
-	                        this.requestHelper.getDelegatingInteraction()
+	                    	path.getPrefix(path.size() - 1)
 	                    )
 	                )
 	            );
 	            // Remap to ContractGroupContainsContract
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(7).getChild("filteredContract"),
-	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                path.getPrefix(7).getChild("filteredContract"),
+		                filterProperties.toArray(new FilterProperty[filterProperties.size()])
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(GLOBAL_FILTER_INCLUDES_CONTRACT)) {
+	        } else if(path.isLike(GLOBAL_FILTER_INCLUDES_CONTRACT)) {
 		        // GlobalFilterIncludesContract
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path(),
-	                this.getContractFilterProperties(
-	                    request.path().getPrefix(request.path().size() - 1),
-	                    this.requestHelper.getDelegatingInteraction()
-	                )
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path,
+		                this.getContractFilterProperties(
+		                	path.getPrefix(path.size() - 1)
+		                )
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(GLOBAL_FILTER_INCLUDES_PRODUCT)) {
+	        } else if(path.isLike(GLOBAL_FILTER_INCLUDES_PRODUCT)) {
 		        // GlobalFilterIncludesProduct
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("product"),
-	                this.getProductFilterProperties(
-	                    request.path().getPrefix(request.path().size() - 1),
-	                    false,
-	                    this.requestHelper.getDelegatingInteraction()
-	                )
-	            );  	
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("product"),
+		                this.getProductFilterProperties(
+		                	path.getPrefix(path.size() - 1),
+		                    false
+		                )
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(GLOBAL_FILTER_INCLUDES_DOCUMENT)) {
+	        } else if(path.isLike(GLOBAL_FILTER_INCLUDES_DOCUMENT)) {
 		        // GlobalFilterIncludesDocument
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("document"),
-	                this.getDocumentFilterProperties(
-	                    request.path().getPrefix(request.path().size() - 1),
-	                    this.requestHelper.getDelegatingInteraction()
-	                )
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("document"),
+		                this.getDocumentFilterProperties(
+		                    path.getPrefix(path.size() - 1)
+		                )
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT)) {
+	        } else if(path.isLike(PRODUCT_PRICE_LEVEL_HAS_FILTERED_ACCOUNT)) {
 		        // PriceLevelHasFilteredAccount
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
 	                    this.getAccountFilterProperties(
-	                        request.path().getPrefix(request.path().size() - 1),
-	                        this.requestHelper.getDelegatingInteraction()
+	                        path.getPrefix(path.size() - 1)
 	                    )
 	                )
 	            );
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(
-	                   new String[]{request.path().get(2), "segment", request.path().get(4), "account"}
-	                ),
-	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
-	            );            
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                new Path("xri:@openmdx:org.opencrx.kernel.account1/provider").getDescendant(
+		                   new String[]{path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation(), "account"}
+		                ),
+		                filterProperties.toArray(new FilterProperty[filterProperties.size()])
+		            ), 
+	            	response
 	            );
 	            return true;
 	        } else if(
-	            request.path().isLike(PRODUCT_PRICE_LEVEL_INCLUDES_FILTERED_PRODUCT) ||
-	            request.path().isLike(SALES_VOLUME_BUDGET_POSITION_INCLUDES_FILTERED_PRODUCT)
+	            path.isLike(PRODUCT_PRICE_LEVEL_INCLUDES_FILTERED_PRODUCT) ||
+	            path.isLike(SALES_VOLUME_BUDGET_POSITION_INCLUDES_FILTERED_PRODUCT)
 	        ) {
 		        // FilterIncludesProduct
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.addAll(
 	                Arrays.asList(
 	                    this.getProductFilterProperties(
-	                        request.path().getPrefix(request.path().size() - 1),
-	                        false,
-	                        this.requestHelper.getDelegatingInteraction()
+	                        path.getPrefix(path.size() - 1),
+	                        false
 	                    )
 	                )
 	            );
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                new Path("xri://@openmdx*org.opencrx.kernel.product1/provider").getDescendant(
-	                   new String[]{request.path().get(2), "segment", request.path().get(4), "product"}
-	                ),
-	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                new Path("xri://@openmdx*org.opencrx.kernel.product1/provider").getDescendant(
+		                   new String[]{path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation(), "product"}
+		                ),
+		                filterProperties.toArray(new FilterProperty[filterProperties.size()])
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY)) {
+	        } else if(path.isLike(PRODUCT_PRICE_LEVEL_HAS_ASSIGNED_PRICE_LIST_ENTRY)) {
 		        // PriceLevelHasAssignedPriceListEntry
 	            List<FilterProperty> filterProperties = new ArrayList<FilterProperty>();
 	            filterProperties.add(
@@ -426,109 +479,99 @@ public class DerivedReferences {
 	                    Quantifier.THERE_EXISTS.code(),
 	                    "priceLevel",
 	                    ConditionType.IS_IN.code(),
-	                    new Object[]{request.path().getPrefix(7)}	                    
+	                    new Object[]{path.getPrefix(7)}	                    
 	                )
 	            );
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                new Path("xri:@openmdx:org.opencrx.kernel.product1/provider").getDescendant(
-	                   new String[]{request.path().get(2), "segment", request.path().get(4), "priceListEntry"}
-	                ),
-	                filterProperties.toArray(new FilterProperty[filterProperties.size()])
-	            );            
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                new Path("xri:@openmdx:org.opencrx.kernel.product1/provider").getDescendant(
+		                   new String[]{path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation(), "priceListEntry"}
+		                ),
+		                filterProperties.toArray(new FilterProperty[filterProperties.size()])
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(COMPOUND_BOOKING_HAS_BOOKINGS)) {
+	        } else if(path.isLike(COMPOUND_BOOKING_HAS_BOOKINGS)) {
 		        // CompoundBookingHasBooking
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("booking"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "cb",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getPrefix(7)}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("booking"),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        "cb",
+		                        ConditionType.IS_IN.code(),
+		                        new Object[]{path.getPrefix(7)}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(DEPOT_POSITION_HAS_BOOKINGS)) {
+	        } else if(path.isLike(DEPOT_POSITION_HAS_BOOKINGS)) {
 		        // DepotPositionHasBooking
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("booking"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "position",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getPrefix(13)}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		 this.remapQuery(
+	 	                request,
+	 	                path.getPrefix(5).getChild("booking"),
+	 	                new FilterProperty[]{
+	 	                    new FilterProperty(
+	 	                        Quantifier.THERE_EXISTS.code(),
+	 	                        "position",
+	 	                        ConditionType.IS_IN.code(),
+	 	                        new Object[]{path.getPrefix(13)}
+	 	                    )                        
+	 	                }
+	 	            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(DEPOT_POSITION_HAS_SIMPLE_BOOKINGS)) {
+	        } else if(path.isLike(DEPOT_POSITION_HAS_SIMPLE_BOOKINGS)) {
 		        // DepotPositionHasSimpleBooking
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("simpleBooking"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "position",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getPrefix(13)}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("simpleBooking"),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        "position",
+		                        ConditionType.IS_IN.code(),
+		                        new Object[]{path.getPrefix(13)}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(CLASSIFIER_CLASSIFIES_TYPED_ELEMENT)) {
+	        } else if(path.isLike(CLASSIFIER_CLASSIFIES_TYPED_ELEMENT)) {
 		        // ClassifierClassifiesTypedElement
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("element"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "type",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getPrefix(7)}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("element"),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        "type",
+		                        ConditionType.IS_IN.code(),
+		                        new Object[]{path.getPrefix(7)}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(DEPOT_REPORT_ITEM_HAS_BOOKING_ITEMS)) {
+	        } else if(path.isLike(DEPOT_REPORT_ITEM_HAS_BOOKING_ITEMS)) {
 		        // DepotReportItemHasBookingItem
-	        	MappedRecord itemPosition = this.requestHelper.retrieveObject(request.path().getParent());
-	            try {
-	            	DataproviderRequest findRequest = this.remapFindRequest(
+	        	MappedRecord itemPosition = this.retrieveObject(p, path.getParent());
+            	p.addFindRequest(
+            		this.remapQuery(
 	                    request,
-	                    request.path().getPrefix(request.path().size()-3).getChild("itemBooking"),
+	                    path.getPrefix(path.size()-3).getChild("itemBooking"),
 	                    new FilterProperty[]{
 	                        new FilterProperty(
 	                            Quantifier.THERE_EXISTS.code(),
@@ -537,311 +580,269 @@ public class DerivedReferences {
 	                            new Object[]{Object_2Facade.newInstance(itemPosition).attributeValue("position")}
 	                        )                        
 	                    }
-	                );
-	                this.requestHelper.getDelegatingInteraction().find(
-	                    findRequest.getInteractionSpec(),
-	                    Query_2Facade.newInstance(findRequest.object()),
-	                    reply.getResult()
-	                );
-	                return true;
-	            } catch (ResourceException e) {
-	            	throw new ServiceException(e);
-	            }
-	        } else if(request.path().isLike(DEPOT_GROUP_CONTAINS_DEPOTS)) {
+	                ), 
+            		response
+            	);
+                return true;
+	        } else if(path.isLike(DEPOT_GROUP_CONTAINS_DEPOTS)) {
 		        // DepotContainsDepot
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("extent"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "depotGroup",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getParent()}
-	                    ),                        
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        SystemAttributes.OBJECT_IDENTITY,
-	                        ConditionType.IS_LIKE.code(),
-	                        new Object[]{request.path().getPrefix(7).getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		 this.remapQuery(
+	 	                request,
+	 	                path.getPrefix(5).getChild("extent"),
+	 	                new FilterProperty[]{
+	 	                    new FilterProperty(
+	 	                        Quantifier.THERE_EXISTS.code(),
+	 	                        "depotGroup",
+	 	                        ConditionType.IS_IN.code(),
+	 	                        new Object[]{path.getParent()}
+	 	                    ),                        
+	 	                    new FilterProperty(
+	 	                        Quantifier.THERE_EXISTS.code(),
+	 	                        SystemAttributes.OBJECT_IDENTITY,
+	 	                        ConditionType.IS_LIKE.code(),
+	 	                        new Object[]{path.getPrefix(7).getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
+	 	                    )                        
+	 	                }
+	 	            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(DEPOT_GROUP_CONTAINS_DEPOT_GROUPS)) {
+	        } else if(path.isLike(DEPOT_GROUP_CONTAINS_DEPOT_GROUPS)) {
 		        // DepotContainsDepotGroup
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(request.path().size()-2),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "parent",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getParent()}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(path.size()-2),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        "parent",
+		                        ConditionType.IS_IN.code(),
+		                        new Object[]{path.getParent()}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(DEPOT_ENTITY_CONTAINS_DEPOTS)) {
+	        } else if(path.isLike(DEPOT_ENTITY_CONTAINS_DEPOTS)) {
 		        // DepotEntityContainsDepot
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("extent"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        SystemAttributes.OBJECT_IDENTITY,
-	                        ConditionType.IS_LIKE.code(),
-	                        new Object[]{request.path().getParent().getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("extent"),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        SystemAttributes.OBJECT_IDENTITY,
+		                        ConditionType.IS_LIKE.code(),
+		                        new Object[]{path.getParent().getDescendant(new String[]{"depotHolder", ":*", "depot", ":*"})}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(FOLDER_CONTAINS_FOLDERS)) {
+	        } else if(path.isLike(FOLDER_CONTAINS_FOLDERS)) {
 		        // FolderContainsFolder
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("folder"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "parent",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getParent()}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("folder"),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        "parent",
+		                        ConditionType.IS_IN.code(),
+		                        new Object[]{path.getParent()}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACTIVITY)) {
 		        // ObjectFinderSelectsIndexEntryActivity
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:activity1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:activity1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                segmentIdentity.getChild("indexEntry"),
+		                filter,
+		                new AttributeSpecifier[]{
+		                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+		                }
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACCOUNT)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_ACCOUNT)) {
 		        // ObjectFinderSelectsIndexEntryAccount
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:account1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:account1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                segmentIdentity.getChild("indexEntry"),
+		                filter,
+		                new AttributeSpecifier[]{
+		                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+		                }
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_CONTRACT)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_CONTRACT)) {
 		        // ObjectFinderSelectsIndexEntryContract
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:contract1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:contract1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                segmentIdentity.getChild("indexEntry"),
+		                filter,
+		                new AttributeSpecifier[]{
+		                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+		                }
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_PRODUCT)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_PRODUCT)) {
 		        // ObjectFinderSelectsIndexEntryProduct
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:product1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:product1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }	                
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	 this.remapQuery(
+	 	                request,
+	 	                segmentIdentity.getChild("indexEntry"),
+	 	                filter,
+	 	                new AttributeSpecifier[]{
+	 	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+	 	                }	                
+	 	            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DOCUMENT)) {
 		        // ObjectFinderSelectsIndexEntryDocument
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:document1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:document1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }	                
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                segmentIdentity.getChild("indexEntry"),
+		                filter,
+		                new AttributeSpecifier[]{
+		                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+		                }	                
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING)) {
 		        // ObjectFinderSelectsIndexEntryBuilding
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:building1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:building1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }	                
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                segmentIdentity.getChild("indexEntry"),
+		                filter,
+		                new AttributeSpecifier[]{
+		                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+		                }	                
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT)) {
+	        } else if(path.isLike(OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT)) {
 		        // ObjectFinderSelectsIndexEntryDepot
 	            Path segmentIdentity = new Path(
-	                new String[]{"org:opencrx:kernel:depot1", "provider", request.path().get(2), "segment", request.path().get(4)}
+	                new String[]{"org:opencrx:kernel:depot1", "provider", path.getSegment(2).toClassicRepresentation(), "segment", path.getSegment(4).toClassicRepresentation()}
 	            );
-	            MappedRecord objectFinder = this.requestHelper.retrieveObject(
-	                 request.path().getParent()
-	            );
+	            ObjectRecord objectFinder = this.retrieveObject(p, path.getParent());
 	            FilterProperty[] filter = this.mapObjectFinderToFilter(objectFinder);
-	            DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                segmentIdentity.getChild("indexEntry"),
-	                filter,
-	                new AttributeSpecifier[]{
-	                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
-	                }	                
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
+	            p.addFindRequest(
+	            	this.remapQuery(
+		                request,
+		                segmentIdentity.getChild("indexEntry"),
+		                filter,
+		                new AttributeSpecifier[]{
+		                	new AttributeSpecifier(SystemAttributes.CREATED_AT, 0, SortOrder.DESCENDING.code())
+		                }	                
+		            ), 
+	            	response
 	            );
 	            return true;
-	        } else if(request.path().isLike(MODEL_NAMESPACE_CONTAINS_ELEMENTS)) {
+	        } else if(path.isLike(MODEL_NAMESPACE_CONTAINS_ELEMENTS)) {
 		        // NamespaceContainsElement
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(5).getChild("element"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "container",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getPrefix(7)}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		this.remapQuery(
+		                request,
+		                path.getPrefix(5).getChild("element"),
+		                new FilterProperty[]{
+		                    new FilterProperty(
+		                        Quantifier.THERE_EXISTS.code(),
+		                        "container",
+		                        ConditionType.IS_IN.code(),
+		                        new Object[]{path.getPrefix(7)}
+		                    )                        
+		                }
+		            ), 
+	        		response
+	        	);
 	            return true;
 	        } else if(
-	            request.path().isLike(CONTRACT_POSITION_HAS_MODIFICATION) ||
-	            request.path().isLike(REMOVED_CONTRACT_POSITION_HAS_MODIFICATION)
+	            path.isLike(CONTRACT_POSITION_HAS_MODIFICATION) ||
+	            path.isLike(REMOVED_CONTRACT_POSITION_HAS_MODIFICATION)
 	        ) {
 		        // ContractPositionHasModification
-	        	DataproviderRequest findRequest = this.remapFindRequest(
-	                request,
-	                request.path().getPrefix(7).getChild("positionModification"),
-	                new FilterProperty[]{
-	                    new FilterProperty(
-	                        Quantifier.THERE_EXISTS.code(),
-	                        "involved",
-	                        ConditionType.IS_IN.code(),
-	                        new Object[]{request.path().getPrefix(9)}
-	                    )                        
-	                }
-	            );
-	            this.requestHelper.getDelegatingInteraction().find(
-	                findRequest.getInteractionSpec(),
-	                Query_2Facade.newInstance(findRequest.object()),
-	                reply.getResult()
-	            );
+	        	p.addFindRequest(
+	        		 this.remapQuery(
+	 	                request,
+	 	                path.getPrefix(7).getChild("positionModification"),
+	 	                new FilterProperty[]{
+	 	                    new FilterProperty(
+	 	                        Quantifier.THERE_EXISTS.code(),
+	 	                        "involved",
+	 	                        ConditionType.IS_IN.code(),
+	 	                        new Object[]{path.getPrefix(9)}
+	 	                    )                        
+	 	                }
+	 	            ), 
+	        		response
+	        	);
 	            return true;
 	        } else {
 	        	return false;
 	        }
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
     	}
     }
 
@@ -854,71 +855,79 @@ public class DerivedReferences {
      */
     public FilterProperty[] mapObjectFinderToFilter(
     	MappedRecord objectFinder
-    ) throws ServiceException {
-    	Object_2Facade objectFinderFacade = Facades.asObject(objectFinder);
-        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-        String allWords = (String)objectFinderFacade.attributeValue("allWords");
-        if((allWords != null) && (allWords.length() > 0)) {
-            String words[] = allWords.split("[\\s,]");
-            for(int i = 0; i < words.length; i++) {
-                filter.add(
-                    new FilterProperty(
-                        Quantifier.THERE_EXISTS.code(),
-                        "keywords",
-                        ConditionType.IS_LIKE.code(),
-                        ".*" + words[i] + ".*"
-                    )
-                );
-            }
-        }
-        String withoutWords = (String)objectFinderFacade.attributeValue("withoutWords");
-        if((withoutWords != null) && (withoutWords.length() > 0)) {
-            String words[] = withoutWords.split("[\\s,]");
-            for(int i = 0; i < words.length; i++) {
-                filter.add(
-                    new FilterProperty(
-                        Quantifier.THERE_EXISTS.code(),
-                        "keywords",
-                        ConditionType.IS_UNLIKE.code(),
-                        ".*" + words[i] + ".*"
-                    )
-                );
-            }
-        }
-        String atLeastOneOfTheWords = (String)objectFinderFacade.attributeValue("atLeastOneOfTheWords");
-        if((atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0)) {
-            String words[] = atLeastOneOfTheWords.split("[\\s,]");
-            for(int i = 0; i < words.length; i++) {
-                words[i] = ".*" + words[i] + ".*";
-            }
-            filter.add(
-                new FilterProperty(
-                    Quantifier.THERE_EXISTS.code(),
-                    "keywords",
-                    ConditionType.IS_LIKE.code(),
-                    (Object[])words
+    ) throws ResourceException {
+    	try {
+	    	Object_2Facade objectFinderFacade = Facades.asObject(objectFinder);
+	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
+	        String allWords = (String)objectFinderFacade.attributeValue("allWords");
+	        if((allWords != null) && (allWords.length() > 0)) {
+	            String words[] = allWords.split("[\\s,]");
+	            for(int i = 0; i < words.length; i++) {
+	                filter.add(
+	                    new FilterProperty(
+	                        Quantifier.THERE_EXISTS.code(),
+	                        "keywords",
+	                        ConditionType.IS_LIKE.code(),
+	                        ".*" + words[i] + ".*"
+	                    )
+	                );
+	            }
+	        }
+	        String withoutWords = (String)objectFinderFacade.attributeValue("withoutWords");
+	        if((withoutWords != null) && (withoutWords.length() > 0)) {
+	            String words[] = withoutWords.split("[\\s,]");
+	            for(int i = 0; i < words.length; i++) {
+	                filter.add(
+	                    new FilterProperty(
+	                        Quantifier.THERE_EXISTS.code(),
+	                        "keywords",
+	                        ConditionType.IS_UNLIKE.code(),
+	                        ".*" + words[i] + ".*"
+	                    )
+	                );
+	            }
+	        }
+	        String atLeastOneOfTheWords = (String)objectFinderFacade.attributeValue("atLeastOneOfTheWords");
+	        if((atLeastOneOfTheWords != null) && (atLeastOneOfTheWords.length() > 0)) {
+	            String words[] = atLeastOneOfTheWords.split("[\\s,]");
+	            for(int i = 0; i < words.length; i++) {
+	                words[i] = ".*" + words[i] + ".*";
+	            }
+	            filter.add(
+	                new FilterProperty(
+	                    Quantifier.THERE_EXISTS.code(),
+	                    "keywords",
+	                    ConditionType.IS_LIKE.code(),
+	                    (Object[])words
+	                )
+	            );
+	        }
+	        // Return newest index entry only
+	        String queryExtensionId = SystemAttributes.CONTEXT_PREFIX + Base.getInstance().getUidAsString() + ":";
+	        filter.add(
+	            new FilterProperty(
+	                Quantifier.codeOf(null),
+	                queryExtensionId + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
+	                ConditionType.codeOf(null),
+	                "(v.created_at IN (SELECT MAX(created_at) FROM OOCKE1_INDEXENTRY e WHERE e.indexed_object = v.indexed_object))"
+	            )
+	        );
+	        filter.add(
+	            new FilterProperty(
+	                Quantifier.codeOf(null),
+	                queryExtensionId + SystemAttributes.OBJECT_CLASS,
+	                ConditionType.codeOf(null),
+	                new Object[]{Database_1_Attributes.QUERY_EXTENSION_CLASS}
+	            )
+	        );
+	        return filter.toArray(new FilterProperty[filter.size()]);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
                 )
-            );
-        }
-        // Return newest index entry only
-        String queryExtensionId = SystemAttributes.CONTEXT_PREFIX + Base.getInstance().getUidAsString() + ":";
-        filter.add(
-            new FilterProperty(
-                Quantifier.codeOf(null),
-                queryExtensionId + Database_1_Attributes.QUERY_EXTENSION_CLAUSE,
-                ConditionType.codeOf(null),
-                "(v.created_at IN (SELECT MAX(created_at) FROM OOCKE1_INDEXENTRY e WHERE e.indexed_object = v.indexed_object))"
-            )
-        );
-        filter.add(
-            new FilterProperty(
-                Quantifier.codeOf(null),
-                queryExtensionId + SystemAttributes.OBJECT_CLASS,
-                ConditionType.codeOf(null),
-                new Object[]{Database_1_Attributes.QUERY_EXTENSION_CLASS}
-            )
-        );
-        return filter.toArray(new FilterProperty[filter.size()]);
+            );    		
+    	}
     }
 
     /**
@@ -932,31 +941,18 @@ public class DerivedReferences {
      */
     public FilterProperty[] getProductFilterProperties(
         Path productFilterIdentity,
-        boolean forCounting,
-        LayerInteraction delegatingInteraction
-    ) throws ServiceException {
+        boolean forCounting
+    ) throws ResourceException {
     	try {
-	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(productFilterIdentity.getChild("productFilterProperty")).getDelegate(),
-	            DataproviderOperations.ITERATION_START,
-	            null,
-	            0, 
-	            Integer.MAX_VALUE,
-	            SortOrder.ASCENDING.code(),
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            null
-	    	);
-	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
-	    	delegatingInteraction.find(
-	    		findRequest.getInteractionSpec(), 
-	    		Query_2Facade.newInstance(findRequest.object()), 
-	    		findReply.getResult()
-	    	);
-	        MappedRecord[] filterProperties = findReply.getObjects();    	
+    		DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+    		ResultRecord filterProperties = p.addFindRequest(
+    			productFilterIdentity.getChild("productFilterProperty"),
+    			FetchGroup.ALL
+    		);  	
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
 	        boolean hasQueryFilterClause = false;        
-	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	        for(Object filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject((ObjectRecord)filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1134,8 +1130,12 @@ public class DerivedReferences {
 	            );            
 	        }        
 	        return filter.toArray(new FilterProperty[filter.size()]);
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
     	}
     }
 
@@ -1148,30 +1148,17 @@ public class DerivedReferences {
      * @throws ServiceException
      */
     public FilterProperty[] getContractFilterProperties(
-        Path contractFilterIdentity,
-        LayerInteraction delegatingInteraction
-    ) throws ServiceException {
+        Path contractFilterIdentity
+    ) throws ResourceException {
     	try {
-	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(contractFilterIdentity.getChild("filterProperty")).getDelegate(),
-	            DataproviderOperations.ITERATION_START,
-	            null,
-	            0, 
-	            Integer.MAX_VALUE,
-	            SortOrder.ASCENDING.code(),
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            null
+    		DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+	    	ResultRecord filterProperties = p.addFindRequest(
+	    		contractFilterIdentity.getChild("filterProperty"),
+	    		FetchGroup.ALL
 	    	);
-	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
-	    	delegatingInteraction.find(
-	    		findRequest.getInteractionSpec(), 
-	    		Query_2Facade.newInstance(findRequest.object()), 
-	    		findReply.getResult()
-	    	);
-	        MappedRecord[] filterProperties = findReply.getObjects();
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	        for(Object filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject((ObjectRecord)filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1187,8 +1174,7 @@ public class DerivedReferences {
 	                            resolveQueryClause(
 	                            	(String)filterPropertyFacade.attributeValue("clause"), 
 	                            	contractFilterIdentity.getParent(),
-	                            	"filterProperty",
-	                            	delegatingInteraction
+	                            	"filterProperty"
 	                            )	                            	                            
 	                        )
 	                    );
@@ -1358,8 +1344,12 @@ public class DerivedReferences {
 	            }
 	        }        
 	        return filter.toArray(new FilterProperty[filter.size()]);
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
     	}
     }
 
@@ -1372,30 +1362,17 @@ public class DerivedReferences {
      * @throws ServiceException
      */
     public FilterProperty[] getActivityFilterProperties(
-        Path activityFilterIdentity,
-        LayerInteraction delegatingInteraction
-    ) throws ServiceException {
+        Path activityFilterIdentity
+    ) throws ResourceException {
     	try {
-	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(activityFilterIdentity.getChild("filterProperty")).getDelegate(),
-	            DataproviderOperations.ITERATION_START,
-	            null,
-	            0, 
-	            Integer.MAX_VALUE,
-	            SortOrder.ASCENDING.code(),
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            null
-	    	);
-	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
-	    	delegatingInteraction.find(
-	    		findRequest.getInteractionSpec(), 
-	    		Query_2Facade.newInstance(findRequest.object()), 
-	    		findReply.getResult()
-	    	);
-	        MappedRecord[] filterProperties = findReply.getObjects();
+    		DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+    		ResultRecord filterProperties = p.addFindRequest(
+    			activityFilterIdentity.getChild("filterProperty"),
+    			FetchGroup.ALL
+    		);
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	        for(Object filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject((ObjectRecord)filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1411,8 +1388,7 @@ public class DerivedReferences {
 	                            resolveQueryClause(
 	                            	(String)filterPropertyFacade.attributeValue("clause"), 
 	                            	activityFilterIdentity.getParent(),
-	                            	"filterProperty",
-	                            	delegatingInteraction
+	                            	"filterProperty"
 	                            )	                            	                            
 	                        )
 	                    );
@@ -1644,8 +1620,12 @@ public class DerivedReferences {
 	            }
 	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
     	}
     }
 
@@ -1658,30 +1638,17 @@ public class DerivedReferences {
      * @throws ServiceException
      */
     public FilterProperty[] getDocumentFilterProperties(
-        Path documentFilterIdentity,
-        LayerInteraction delegatingInteraction
-    ) throws ServiceException {
+        Path documentFilterIdentity
+    ) throws ResourceException {
     	try {
-	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(documentFilterIdentity.getChild("filterProperty")).getDelegate(),
-	            DataproviderOperations.ITERATION_START,
-	            null,
-	            0, 
-	            Integer.MAX_VALUE,
-	            SortOrder.ASCENDING.code(),
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            null
-	    	);
-	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
-	    	delegatingInteraction.find(
-	    		findRequest.getInteractionSpec(), 
-	    		Query_2Facade.newInstance(findRequest.object()), 
-	    		findReply.getResult()
-	    	);
-	        MappedRecord[] filterProperties = findReply.getObjects();
+    		DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+    		ResultRecord filterProperties = p.addFindRequest(
+    			documentFilterIdentity.getChild("filterProperty"),
+    			FetchGroup.ALL
+    		);
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	        for(Object filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject((ObjectRecord)filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1697,8 +1664,7 @@ public class DerivedReferences {
 	                            resolveQueryClause(
 	                            	(String)filterPropertyFacade.attributeValue("clause"), 
 	                            	documentFilterIdentity.getParent(),
-	                            	"filterProperty",
-	                            	delegatingInteraction
+	                            	"filterProperty"
 	                            )	                            	                            
 	                        )
 	                    );
@@ -1850,8 +1816,12 @@ public class DerivedReferences {
 	            }
 	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
     	}
     }
 
@@ -1864,30 +1834,17 @@ public class DerivedReferences {
      * @throws ServiceException
      */
     public FilterProperty[] getAddressFilterProperties(
-        Path addressFilterIdentity,
-        LayerInteraction delegatingInteraction
-    ) throws ServiceException {    	
+        Path addressFilterIdentity
+    ) throws ResourceException {    	
     	try {
-	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(addressFilterIdentity.getChild("addressFilterProperty")).getDelegate(),
-	            DataproviderOperations.ITERATION_START,
-	            null,
-	            0, 
-	            Integer.MAX_VALUE,
-	            SortOrder.ASCENDING.code(),
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            null
-	    	);
-	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
-	    	delegatingInteraction.find(
-	    		findRequest.getInteractionSpec(), 
-	    		Query_2Facade.newInstance(findRequest.object()), 
-	    		findReply.getResult()
-	    	);
-	        MappedRecord[] filterProperties = findReply.getObjects();    	
+    		DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+    		ResultRecord filterProperties = p.addFindRequest(
+    			addressFilterIdentity.getChild("addressFilterProperty"),
+    			FetchGroup.ALL
+    		);
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	        for(Object filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject((ObjectRecord)filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -1903,8 +1860,7 @@ public class DerivedReferences {
 	                            resolveQueryClause(
 	                            	(String)filterPropertyFacade.attributeValue("clause"), 
 	                            	addressFilterIdentity.getParent(),
-	                            	"addressFilterProperty",
-	                            	delegatingInteraction
+	                            	"addressFilterProperty"
 	                            )	                            
 	                        )
 	                    );
@@ -2083,8 +2039,12 @@ public class DerivedReferences {
 	            }
 	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
     	}
     }
 
@@ -2103,114 +2063,99 @@ public class DerivedReferences {
     public String resolveQueryClause(
     	String clause,
     	Path filterReference,
-    	String propertyKind,
-        LayerInteraction delegatingInteraction    	
-    ) throws ServiceException, ResourceException {
-    	while(true) {
-    		int placeHolderStart = clause.indexOf("${");
-    		int placeHolderEnd = clause.indexOf("}", placeHolderStart);
-    		if(placeHolderEnd <= placeHolderStart) {
-    			break;
-    		}
-    		String replacement = "(null=null)";
-    		String placeHolder[] = clause.substring(placeHolderStart + 2, placeHolderEnd).split("(?<!\\\\)\\.");
-    		// Place holder is of the form ${"filter name"."filter property name"} or {filter id.filter property id}
-    		// Lookup a filter and filter property with given names or ids
-    		if(placeHolder.length == 2) {
-    			String filterName = placeHolder[0].replace("\\.", ".");
-    			Object_2Facade filter = null;
-    			if(filterName.startsWith("\"")) {
-    				filterName = filterName.substring(1);
-    				filterName = filterName.endsWith("\"") ? filterName.substring(0, filterName.length() - 1) : filterName;
-        	    	DataproviderRequest filterFindRequest = new DataproviderRequest(
-        	            Query_2Facade.newInstance(filterReference).getDelegate(),
-        	            DataproviderOperations.ITERATION_START,
-        	            new FilterProperty[]{
-        	                new FilterProperty(
-        	                    Quantifier.THERE_EXISTS.code(),
-        	                    "name",
-        	                    ConditionType.IS_IN.code(),
-        	                    new Object[]{filterName}	                    
-        	                )    	            	
-        	            },
-        	            0, 
-        	            Integer.MAX_VALUE,
-        	            SortOrder.ASCENDING.code(),
-        	            AttributeSelectors.ALL_ATTRIBUTES,
-        	            null
-        	    	);
-        	    	DataproviderReply filterFindReply = delegatingInteraction.newDataproviderReply();
-        	    	delegatingInteraction.find(
-        	    		filterFindRequest.getInteractionSpec(), 
-        	    		Query_2Facade.newInstance(filterFindRequest.object()), 
-        	    		filterFindReply.getResult()
-        	    	);
-        	    	if(filterFindReply.getObjects().length > 0) {
-        	    		filter = Facades.asObject(filterFindReply.getObject());
-        	    	}
-    			} else {
-    				try {
-    					filter = Facades.asObject(this.requestHelper.retrieveObject(filterReference.getChild(filterName)));
-    				} catch(Exception ignore) {}
-    			}
-    	    	if(filter != null) {
-        			String filterPropertyName = placeHolder[1].replace("\\.", ".");
-        			Object_2Facade filterProperty = null;
-        			if(filterPropertyName.startsWith("\"")) {
-            			filterPropertyName = filterPropertyName.substring(1);
-            			filterPropertyName = filterPropertyName.endsWith("\"") ? filterPropertyName.substring(0, filterPropertyName.length() - 1) : filterPropertyName;        			
-	    	    		// Filter found. Now find property
-	        	    	DataproviderRequest filterPropertyFindRequest = new DataproviderRequest(
-	        	            Query_2Facade.newInstance(filter.getPath().getChild(propertyKind)).getDelegate(),
-	        	            DataproviderOperations.ITERATION_START,
-	        	            new FilterProperty[]{
+    	String propertyKind
+    ) throws ResourceException {
+    	try {
+	    	DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+	    	while(true) {
+	    		int placeHolderStart = clause.indexOf("${");
+	    		int placeHolderEnd = clause.indexOf("}", placeHolderStart);
+	    		if(placeHolderEnd <= placeHolderStart) {
+	    			break;
+	    		}
+	    		String replacement = "(null=null)";
+	    		String placeHolder[] = clause.substring(placeHolderStart + 2, placeHolderEnd).split("(?<!\\\\)\\.");
+	    		// Place holder is of the form ${"filter name"."filter property name"} or {filter id.filter property id}
+	    		// Lookup a filter and filter property with given names or ids
+	    		if(placeHolder.length == 2) {
+	    			String filterName = placeHolder[0].replace("\\.", ".");
+	    			Object_2Facade filter = null;
+	    			if(filterName.startsWith("\"")) {
+	    				filterName = filterName.substring(1);
+	    				filterName = filterName.endsWith("\"") ? filterName.substring(0, filterName.length() - 1) : filterName;
+	    				@SuppressWarnings("deprecation")
+	                    ResultRecord filterFindReply = p.addFindRequest(
+	    					filterReference, 
+	    					new FilterProperty[]{
 	        	                new FilterProperty(
 	        	                    Quantifier.THERE_EXISTS.code(),
 	        	                    "name",
 	        	                    ConditionType.IS_IN.code(),
-	        	                    new Object[]{filterPropertyName}   
+	        	                    new Object[]{filterName}	                    
 	        	                )    	            	
-	        	            },
-	        	            0, 
-	        	            Integer.MAX_VALUE,
-	        	            SortOrder.ASCENDING.code(),
-	        	            AttributeSelectors.ALL_ATTRIBUTES,
-	        	            null
-	        	    	);
-	        	    	DataproviderReply filterPropertyFindReply = delegatingInteraction.newDataproviderReply();
-	        	    	delegatingInteraction.find(
-	        	    		filterPropertyFindRequest.getInteractionSpec(), 
-	        	    		Query_2Facade.newInstance(filterPropertyFindRequest.object()), 
-	        	    		filterPropertyFindReply.getResult()
-	        	    	);
-	        	    	if(filterPropertyFindReply.getObjects().length > 0) {
-	        	    		filterProperty = Facades.asObject(filterPropertyFindReply.getObject());
+	        	            }
+	    				);
+	        	    	if(!filterFindReply.isEmpty()) {
+	        	    		filter = Facades.asObject((ObjectRecord)filterFindReply.get(0));
 	        	    	}
-        			} else {
-        				try {
-            				try {
-            					filterProperty = Facades.asObject(this.requestHelper.retrieveObject(filter.getPath().getDescendant(propertyKind, filterPropertyName)));
-            				} catch(Exception ignore) {}        					
-        				} catch(Exception ignore) {}
-        			}
-    	    		if(filterProperty != null) {
-    	    			if(filterProperty.attributeValue("clause") != null) {
-    	    				replacement = resolveQueryClause(
-    	    					(String)filterProperty.attributeValue("clause"),
-    	    					filterReference,
-    	    					propertyKind, 
-    	    					delegatingInteraction
-    	    				);    	    				
-    	    			}
-    	    		}
-    	    	}
-    		}
-    		clause = 
-    			clause.substring(0, placeHolderStart) + 
-    			replacement + 
-    			clause.substring(placeHolderEnd + 1);
-    	}
-    	return clause;
+	    			} else {
+	    				try {
+	    					filter = Facades.asObject(this.retrieveObject(p, filterReference.getChild(filterName)));
+	    				} catch(Exception ignore) {}
+	    			}
+	    	    	if(filter != null) {
+	        			String filterPropertyName = placeHolder[1].replace("\\.", ".");
+	        			Object_2Facade filterProperty = null;
+	        			if(filterPropertyName.startsWith("\"")) {
+	            			filterPropertyName = filterPropertyName.substring(1);
+	            			filterPropertyName = filterPropertyName.endsWith("\"") ? filterPropertyName.substring(0, filterPropertyName.length() - 1) : filterPropertyName;        			
+		    	    		// Filter found. Now find property
+	            			@SuppressWarnings("deprecation")
+	                        ResultRecord filterPropertyFindReply = p.addFindRequest(
+	            				filter.getPath().getChild(propertyKind), 
+	            				new FilterProperty[]{
+		        	                new FilterProperty(
+		        	                    Quantifier.THERE_EXISTS.code(),
+		        	                    "name",
+		        	                    ConditionType.IS_IN.code(),
+		        	                    new Object[]{filterPropertyName}   
+		        	                )    	            	
+		        	            }
+	            			);
+		        	    	if(!filterPropertyFindReply.isEmpty()) {
+		        	    		filterProperty = Facades.asObject((ObjectRecord)filterPropertyFindReply.get(0));
+		        	    	}
+	        			} else {
+	        				try {
+	            				try {
+	            					filterProperty = Facades.asObject(this.retrieveObject(p, filter.getPath().getDescendant(propertyKind, filterPropertyName)));
+	            				} catch(Exception ignore) {}        					
+	        				} catch(Exception ignore) {}
+	        			}
+	    	    		if(filterProperty != null) {
+	    	    			if(filterProperty.attributeValue("clause") != null) {
+	    	    				replacement = resolveQueryClause(
+	    	    					(String)filterProperty.attributeValue("clause"),
+	    	    					filterReference,
+	    	    					propertyKind
+	    	    				);    	    				
+	    	    			}
+	    	    		}
+	    	    	}
+	    		}
+	    		clause = 
+	    			clause.substring(0, placeHolderStart) + 
+	    			replacement + 
+	    			clause.substring(placeHolderEnd + 1);
+	    	}
+	    	return clause;
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
+        }
     }
 
     /**
@@ -2222,30 +2167,17 @@ public class DerivedReferences {
      * @throws ServiceException
      */
     public FilterProperty[] getAccountFilterProperties(
-        Path accountFilterIdentity,
-        LayerInteraction delegatingInteraction        
-    ) throws ServiceException {
+        Path accountFilterIdentity      
+    ) throws ResourceException {
     	try {
-	    	DataproviderRequest findRequest = new DataproviderRequest(
-	            Query_2Facade.newInstance(accountFilterIdentity.getChild("accountFilterProperty")).getDelegate(),
-	            DataproviderOperations.ITERATION_START,
-	            null,
-	            0, 
-	            Integer.MAX_VALUE,
-	            SortOrder.ASCENDING.code(),
-	            AttributeSelectors.ALL_ATTRIBUTES,
-	            null
-	    	);
-	    	DataproviderReply findReply = delegatingInteraction.newDataproviderReply();
-	    	delegatingInteraction.find(
-	    		findRequest.getInteractionSpec(), 
-	    		Query_2Facade.newInstance(findRequest.object()), 
-	    		findReply.getResult()
-	    	);
-	        MappedRecord[] filterProperties = findReply.getObjects();    	
+    		DataproviderRequestProcessor p = this.getDataproviderRequestProcessor();
+    		ResultRecord filterProperties = p.addFindRequest(
+    			accountFilterIdentity.getChild("accountFilterProperty"),
+    			FetchGroup.ALL
+    		);
 	        List<FilterProperty> filter = new ArrayList<FilterProperty>();
-	        for(MappedRecord filterProperty: filterProperties) {
-	        	Object_2Facade filterPropertyFacade = Facades.asObject(filterProperty);
+	        for(Object filterProperty: filterProperties) {
+	        	Object_2Facade filterPropertyFacade = Facades.asObject((ObjectRecord)filterProperty);
 	            String filterPropertyClass = filterPropertyFacade.getObjectClass();
 	            Boolean isActive = (Boolean)filterPropertyFacade.attributeValue("isActive");            
 	            if((isActive != null) && isActive.booleanValue()) {
@@ -2261,8 +2193,7 @@ public class DerivedReferences {
 	                            resolveQueryClause(
 	                            	(String)filterPropertyFacade.attributeValue("clause"), 
 	                            	accountFilterIdentity.getParent(),
-	                            	"accountFilterProperty",
-	                            	delegatingInteraction
+	                            	"accountFilterProperty"
 	                            )
 	                        )
 	                    );
@@ -2418,9 +2349,13 @@ public class DerivedReferences {
 	            }
 	        }
 	        return filter.toArray(new FilterProperty[filter.size()]);
-    	} catch(ResourceException e) {
-    		throw new ServiceException(e);
-    	}
+    	} catch(ServiceException e) {
+            throw ResourceExceptions.initHolder(
+                new ResourceException(
+                    BasicException.newEmbeddedExceptionStack(e)
+                )
+            );
+        }
     }
 
 	//-------------------------------------------------------------------------
@@ -2457,8 +2392,6 @@ public class DerivedReferences {
     private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_BUILDING = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryBuilding");
     private static final Path OBJECT_FINDER_SELECTS_INDEX_ENTRY_DEPOT = new Path("xri://@openmdx*org.opencrx.kernel.home1/provider/:*/segment/:*/userHome/:*/objectFinder/:*/indexEntryDepot");
     private static final Path SALES_VOLUME_BUDGET_POSITION_INCLUDES_FILTERED_PRODUCT = new Path("xri://@openmdx*org.opencrx.kernel.forecast1/provider/:*/segment/:*/budget/:*/position/:*/filteredProduct");
-    
-    private final RequestHelper requestHelper;
 
 }
 

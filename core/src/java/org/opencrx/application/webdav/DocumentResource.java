@@ -56,6 +56,7 @@ import java.util.Date;
 
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.kernel.document1.jmi1.Document;
+import org.opencrx.kernel.document1.jmi1.DocumentRevision;
 import org.opencrx.kernel.document1.jmi1.MediaContent;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
@@ -92,7 +93,13 @@ class DocumentResource extends WebDavResource {
     @Override
     public String getName(
     ) {
-        return this.getObject().getName();
+    	Document document = this.getObject();
+    	DocumentRevision headRevision = document.getHeadRevision();
+    	return headRevision == null
+    		? document.getName()
+    		: headRevision instanceof MediaContent
+    			? ((MediaContent)headRevision).getContentName()
+    			: headRevision.getName();
     }
 
     public String getDisplayName(
@@ -104,9 +111,9 @@ class DocumentResource extends WebDavResource {
     public Date getLastModified(
     ) {
     	Document document = this.getObject();
-    	return document.getHeadRevision() == null ?
-    		super.getLastModified() :
-    			document.getHeadRevision().getModifiedAt();
+    	return document.getHeadRevision() == null 
+    		? super.getLastModified() 
+    		: document.getHeadRevision().getModifiedAt();
     }
 
 	public DocumentCollectionResource getDocumentCollectionResource(
@@ -115,13 +122,39 @@ class DocumentResource extends WebDavResource {
     }
     
 	@Override
-    public BinaryLargeObject getContent(
+    public WebDavStore.ResourceContent getContent(
     ) {
 		Document document = this.getObject();
 		if(document.getHeadRevision() instanceof MediaContent) {
-			return ((MediaContent)document.getHeadRevision()).getContent();
+			final MediaContent headRevision = (MediaContent)document.getHeadRevision();
+			return new WebDavStore.ResourceContent(){
+				@Override
+				public BinaryLargeObject getContent() {
+					return headRevision.getContent();
+				}
+				@Override
+				public Long getLength() {
+					try {
+						return headRevision.getContentLength() == null
+							? getContent().getLength()
+							: headRevision.getContentLength();
+					} catch(Exception ignore) {
+						return 0L;
+					}
+ 				}
+			};
+			//return ((MediaContent)document.getHeadRevision()).getContent();
 		} else {
-			return BinaryLargeObjects.valueOf(new byte[]{});
+			return new WebDavStore.ResourceContent(){
+				@Override
+				public BinaryLargeObject getContent() {
+					return BinaryLargeObjects.valueOf(new byte[]{});
+				}
+				@Override
+				public Long getLength() {
+					return 0L;
+				}
+			};
 		}
     }
 

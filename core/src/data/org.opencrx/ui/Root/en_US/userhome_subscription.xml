@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <org.openmdx.base.Authority xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="org:openmdx:ui1" xsi:noNamespaceSchemaLocation="xri://+resource/org/openmdx/ui1/xmi1/ui1.xsd">
-	<_object/>
+	<_object />
 	<_content>
 		<provider>
 			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
-				<_object/>
+				<_object />
 				<_content>
 					<segment>
 						<org.openmdx.ui1.Segment qualifiedName="Root" _operation="null">
-							<_object/>
+							<_object />
 							<_content>
 								<elementDefinition>
-									<!--Subscription-->
-									<!--Tab Definitions Pane1-->
+									<!--Subscription -->
+									<!--Tab Definitions Pane1 -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:UserHome:subscription">
 										<_object>
 											<active>true</active>
@@ -32,9 +32,9 @@
 											<maxMember>15</maxMember>
 											<showMaxMember>9</showMaxMember>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Inspector Definitions-->
+									<!--Inspector Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription">
 										<_object>
 											<active>true</active>
@@ -46,9 +46,16 @@
 											</label>
 											<iconKey>Subscription</iconKey>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--FieldGroups in General Tab-->
+									<!-- disable matches Operation -->
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:Pane:Op:Tab:matches">
+										<_object>
+											<active>false</active>
+										</_object>
+										<_content />
+									</org.openmdx.ui1.ElementDefinition>
+									<!--FieldGroups in General Tab -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:Pane:Attr:Tab:0:Group:10">
 										<_object>
 											<active>true</active>
@@ -59,9 +66,9 @@
 												<_item>Filters</_item>
 											</label>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Element Definitions-->
+									<!--Element Definitions -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:name">
 										<_object>
 											<active>true</active>
@@ -77,7 +84,7 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:description">
 										<_object>
@@ -95,11 +102,11 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:isActive">
 										<_object>
-										    <columnBreak>true</columnBreak>
+											<columnBreak>true</columnBreak>
 											<active>true</active>
 											<toolTip>
 												<_item>Active</_item>
@@ -113,11 +120,11 @@
 												<_item>80</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:eventType">
 										<_object>
-										    <active>true</active>
+											<active>true</active>
 											<toolTip>
 												<_item>Event type</_item>
 											</toolTip>
@@ -130,11 +137,11 @@
 												<_item>90</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:topic">
 										<_object>
-										    <active>true</active>
+											<active>true</active>
 											<toolTip>
 												<_item>Topic</_item>
 											</toolTip>
@@ -147,13 +154,12 @@
 												<_item>100</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName0">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #0</_item>
 											</toolTip>
@@ -166,12 +172,12 @@
 												<_item>10</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName1">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #1</_item>
 											</toolTip>
@@ -184,12 +190,12 @@
 												<_item>20</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName2">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #2</_item>
 											</toolTip>
@@ -202,12 +208,12 @@
 												<_item>30</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName3">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #3</_item>
 											</toolTip>
@@ -220,12 +226,12 @@
 												<_item>40</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterName4">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Name of filter #4</_item>
 											</toolTip>
@@ -238,13 +244,13 @@
 												<_item>50</_item>
 											</order>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue0">
 										<_object>
-									    <columnBreak>true</columnBreak>
-                       <spanRow>4</spanRow>
-									    <active>true</active>
+											<columnBreak>true</columnBreak>
+											<spanRow>4</spanRow>
+											<active>true</active>
 											<toolTip>
 												<_item>Values of filter #0</_item>
 											</toolTip>
@@ -262,12 +268,12 @@
 												<_item>15</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue1">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Values of filter #1</_item>
 											</toolTip>
@@ -285,12 +291,12 @@
 												<_item>25</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue2">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Values of filter #2</_item>
 											</toolTip>
@@ -308,12 +314,12 @@
 												<_item>35</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue3">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Values of filter #3</_item>
 											</toolTip>
@@ -331,12 +337,12 @@
 												<_item>45</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:home1:Subscription:filterValue4">
 										<_object>
-									    <active>true</active>
-                       <spanRow>4</spanRow>
+											<active>true</active>
+											<spanRow>4</spanRow>
 											<toolTip>
 												<_item>Values of filter #4</_item>
 											</toolTip>
@@ -354,7 +360,7 @@
 												<_item>55</_item>
 											</orderObjectContainer>
 										</_object>
-										<_content/>
+										<_content />
 									</org.openmdx.ui1.ElementDefinition>
 								</elementDefinition>
 							</_content>

@@ -94,6 +94,20 @@ org.openmdx.base.naming.*
 -->
 <div class="OperationDialogTitle"><%= wc.getToolTip() %></div>
 <form id="<%= FORM_NAME %>" name="<%= FORM_NAME %>" accept-charset="UTF-8" method="POST" action="<%= wc.getServletPath() %>">
+<%
+	if(wc.getErrorMessage() != null && !wc.getErrorMessage().isEmpty()) {
+%>
+		<div class="alert alert-danger" role="alert">
+		  <table>
+		    <tr>
+		    	<td style="vertical-align:top;padding:10px;"><span class="glyphicon glyphicon-exclamation-sign"></span></td>
+		    	<td><%= wc.getErrorMessage() %></td>
+		    </tr>
+		  </table>
+		</div>
+<%
+	}
+%>
 	<input type="hidden" name="<%= Action.PARAMETER_REQUEST_ID %>" value="<%= wc.getRequestId() %>" />
 	<input type="hidden" name="<%= Action.PARAMETER_OBJECTXRI %>" value="<%= wc.getObjectIdentity().toXRI() %>" />
 	<input type="hidden" name="<%= ManageChangeRequestsWizardController.PARAMETER_CURRENT_CHANGE_REQUEST_XRI %>" id="<%=ManageChangeRequestsWizardController.PARAMETER_CURRENT_CHANGE_REQUEST_XRI %>" value="<%= wc.getSelectedChangeRequest() == null ? "" : wc.getSelectedChangeRequest().refGetPath().toXRI() %>" />

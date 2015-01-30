@@ -1,14 +1,14 @@
 /*
  * ====================================================================
  * Project:     openCRX/Core, http://www.opencrx.org/
- * Description: openCRX application plugin
+ * Description: UserHomeImpl
  * Owner:       CRIXP AG, Switzerland, http://www.crixp.com
  * ====================================================================
  *
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2007, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -60,11 +60,23 @@ import org.openmdx.base.exception.ServiceException;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * UserHomeImpl
+ *
+ * @param <S>
+ * @param <N>
+ * @param <C>
+ */
 public class UserHomeImpl
 	<S extends org.opencrx.kernel.home1.jmi1.UserHome,N extends org.opencrx.kernel.home1.cci2.UserHome,C extends Void>
 	extends AbstractObject<S,N,C> {
 
-    //-----------------------------------------------------------------------
+    /**
+     * Constructor.
+     * 
+     * @param same
+     * @param next
+     */
     public UserHomeImpl(
         S same,
         N next
@@ -72,7 +84,11 @@ public class UserHomeImpl
     	super(same, next);
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Refresh items.
+     * 
+     * @return
+     */
     public org.openmdx.base.jmi1.Void refreshItems(
     ) {
         try {
@@ -86,7 +102,29 @@ public class UserHomeImpl
         }            
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Request password reset.
+     * 
+     * @return
+     */
+    public org.openmdx.base.jmi1.Void requestPasswordReset(
+    ) {
+        try {
+            UserHomes.getInstance().requestPasswordReset(
+                this.sameObject()
+            );
+            return super.newVoid();
+        } catch(ServiceException e) {
+            throw new JmiServiceException(e);
+        }    	
+    }
+    
+    /**
+     * Basic full-text search.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.home1.jmi1.SearchResult searchBasic(
         org.opencrx.kernel.home1.jmi1.SearchBasicParams params
     ) {
@@ -104,7 +142,12 @@ public class UserHomeImpl
         }              
     }
     
-    //-----------------------------------------------------------------------
+    /**
+     * Advanced full-text search.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.home1.jmi1.SearchResult searchAdvanced(
         org.opencrx.kernel.home1.jmi1.SearchAdvancedParams params
     ) {
@@ -124,7 +167,12 @@ public class UserHomeImpl
         }              
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Change password.
+     * 
+     * @param params
+     * @return
+     */
     public org.opencrx.kernel.home1.jmi1.ChangePasswordResult changePassword(
         org.opencrx.kernel.home1.jmi1.ChangePasswordParams params
     ) {

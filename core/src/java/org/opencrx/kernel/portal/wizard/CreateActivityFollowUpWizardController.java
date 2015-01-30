@@ -227,7 +227,7 @@ public class CreateActivityFollowUpWizardController extends org.openmdx.portal.s
 	    		ServiceException e0 = new ServiceException(e);
 	    		e0.log();
 	    		org.openmdx.kernel.exception.BasicException b = e0.getCause(OpenCrxException.DOMAIN);
-	    		this.errorMessage = b.getDescription();
+	    		this.errorMessage = b == null ? e0.getMessage() : b.getDescription();
 	    	}
 	    }
 	}

@@ -114,12 +114,11 @@ import org.openmdx.base.mof.cci.ModelElement_1_0;
 import org.openmdx.base.mof.cci.Model_1_0;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.spi.PersistenceManagers;
-import org.openmdx.base.persistence.spi.QueryExtension;
 import org.openmdx.base.query.Condition;
-import org.openmdx.base.query.Extension;
 import org.openmdx.base.query.IsInCondition;
 import org.openmdx.base.query.IsLikeCondition;
 import org.openmdx.base.query.Quantifier;
+import org.openmdx.base.rest.spi.QueryExtensionRecord;
 import org.openmdx.kernel.log.SysLog;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
@@ -618,7 +617,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     	ApplicationContext app
     ) {
     	org.openmdx.base.query.Filter filter = new org.openmdx.base.query.Filter();
-    	Extension queryExtension = new QueryExtension();
+    	QueryExtensionRecord queryExtension = new QueryExtensionRecord();
     	queryExtension.setClause(clause);
     	queryExtension.setStringParam(stringParams.toArray(new String[stringParams.size()]));    	
     	filter.getExtension().add(queryExtension);
@@ -687,7 +686,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 				Quantifier.THERE_EXISTS,
 				featureName,
 				true,
-				(Object[])null
+				new Object[]{}
 			)
     	);
     	Condition condition = conditionParser.parse(filterValue);

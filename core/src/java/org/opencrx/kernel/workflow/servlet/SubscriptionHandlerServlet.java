@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -59,19 +59,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jdo.PersistenceManagerFactory;
-import javax.jmi.reflect.RefObject;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -94,12 +90,10 @@ import org.opencrx.kernel.base.cci2.AuditEntryQuery;
 import org.opencrx.kernel.base.jmi1.AuditEntry;
 import org.opencrx.kernel.base.jmi1.Auditee;
 import org.opencrx.kernel.base.jmi1.ExecuteWorkflowParams;
-import org.opencrx.kernel.base.jmi1.ObjectCreationAuditEntry;
-import org.opencrx.kernel.base.jmi1.ObjectModificationAuditEntry;
-import org.opencrx.kernel.base.jmi1.ObjectRemovalAuditEntry;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByParams;
 import org.opencrx.kernel.base.jmi1.TestAndSetVisitedByResult;
 import org.opencrx.kernel.generic.SecurityKeys;
+import org.opencrx.kernel.home1.cci2.SubscriptionMatchesParams;
 import org.opencrx.kernel.home1.cci2.SubscriptionQuery;
 import org.opencrx.kernel.home1.cci2.TimerQuery;
 import org.opencrx.kernel.home1.jmi1.Subscription;
@@ -113,6 +107,7 @@ import org.openmdx.base.jmi1.BasicObject;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.base.text.conversion.Base64;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
@@ -142,226 +137,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
             throw new ServletException("can not get connection to data provider", e);
         }
     }
-
-    /**
-     * @param auditEntry
-     * @return
-     */
-    private Workflows.EventType getEventType(
-        AuditEntry auditEntry
-    ) {
-      return auditEntry instanceof ObjectRemovalAuditEntry ? 
-        	Workflows.EventType.OBJECT_REMOVAL : 
-        		auditEntry instanceof ObjectCreationAuditEntry ? 
-        			Workflows.EventType.OBJECT_CREATION : 
-        				auditEntry instanceof ObjectModificationAuditEntry ? 
-        					Workflows.EventType.OBJECT_REPLACEMENT : 
-        						Workflows.EventType.NONE;
-    }
-
-    /**
-     * Test whether subscription accepts given event type.
-     * 
-     * @param subscription
-     * @param eventType
-     * @return
-     */
-    private boolean subscriptionAcceptsEventType(
-        Subscription subscription,
-        Short eventType
-    ) {
-        if(
-            (subscription.getEventType() == null) || 
-            (subscription.getEventType().isEmpty())
-        ) {
-            return true;
-        }
-        for(
-            Iterator<Short> i = subscription.getEventType().iterator();
-            i.hasNext();
-        ) {
-            Short e = i.next();
-            if((e != null) && (eventType.compareTo(e) == 0)) {
-                return true;
-            }
-        }
-        return false;
-    }
     
-    /**
-     * Test if message matches the given filter.
-     * 
-     * @param filterName
-     * @param filterValue
-     * @param message
-     * @return
-     */
-    @SuppressWarnings("unchecked")
-    protected boolean testFilterValue(
-        String filterName,
-        String filterValue,
-        Object message
-    ) {
-        // Filter name and value must be defined
-        if((filterName != null) && (filterName.length() > 0)) { 
-            Object messageValue = null;
-            if(message instanceof RefObject) {
-                try {
-                    messageValue = ((RefObject)message).refGetValue(filterName);
-                } catch(Exception e) {
-                	SysLog.warning("Can not get filter value", e.getMessage());
-                }
-            } else {
-                String messageAsString = message.toString();
-                String indexedFilterName = filterName + ":\n0: ";
-                int pos = -1;
-                if((pos = messageAsString.indexOf(indexedFilterName)) >= 0) {
-                    int start = pos + indexedFilterName.length();
-                    int end = messageAsString.indexOf(
-                        "\n", 
-                        start
-                    );
-                    if(end > start) {
-                        messageValue = messageAsString.substring(start, end);
-                    }
-                }                
-            }
-            Collection<Object> messageValues = Collections.emptyList();
-            if(messageValue instanceof Collection) {
-                messageValues = (Collection<Object>)messageValue;
-            } else if(messageValue != null) {
-            	messageValues = Arrays.asList(messageValue);
-            }
-            boolean matches = false;
-            boolean negate = false;
-            if(filterValue != null && filterValue.startsWith("!")) {
-            	filterValue = filterValue.substring(1);
-            	negate = true;
-            }
-            try {
-	            for(Object v: messageValues) {
-	            	boolean isEqual =  filterValue == null ?
-	            		v == filterValue :
-	            		v instanceof RefObject ? 
-	            			((RefObject)v).refMofId().equals(filterValue) : 
-	            			v.toString().equals(filterValue);		            			
-	            	matches |= negate ? !isEqual : isEqual;
-	            }
-            } catch(Exception e) {
-            	SysLog.detail(e.getMessage(), e.getCause());
-            	SysLog.warning("Can not get filter value", Arrays.asList(filterName, e.getMessage()));            	
-            }
-            return matches;
-        }
-        return true;
-    }
-    
-    /**
-     * Test if subscription accepts given message.
-     * 
-     * @param subscription
-     * @param auditEntry
-     * @return
-     */
-    public boolean subscriptionAcceptsMessage(
-        Subscription subscription,
-        AuditEntry auditEntry
-    ) {
-        // Verify active flag and event type
-        Workflows.EventType eventType = this.getEventType(auditEntry); 
-        if(!this.subscriptionAcceptsEventType(subscription, eventType.getValue())) {
-            return false;
-        }
-        /**
-         * Check security. 
-         * <ul>
-         *   <li>If auditee is composite to a user's home only accept if user homes of 
-         *       the subscription and the auditee are identical.
-         *   <li>If the owner of the subscription has read-permission for auditee.
-         * </ul>
-         */
-        Object auditee = null; 
-        if(auditEntry.getAuditee() != null) {
-            Path auditeeIdentity = new Path(auditEntry.getAuditee());        
-            Path userHomeIdentity = new Path(subscription.refMofId()).getParent().getParent();
-            // Check identity of user homes
-            if(
-                (auditeeIdentity.size() >= PATH_PATTERN_USER_HOME.size()) &&
-                auditeeIdentity.getPrefix(PATH_PATTERN_USER_HOME.size()).isLike(PATH_PATTERN_USER_HOME)
-            ) {
-                if(!auditeeIdentity.startsWith(userHomeIdentity)) {
-                    return false;
-                }
-            }
-            // Retrieve auditee in the security context of the home's principal. 
-            // This validates availability and read-permissions.
-            String principalName = userHomeIdentity.getBase();
-            PersistenceManager pm = this.pmf.getPersistenceManager(
-                principalName,
-                null
-            );
-            if(auditEntry instanceof ObjectModificationAuditEntry) {
-                try {
-                    auditee = pm.getObjectById(
-                        new Path(auditEntry.getAuditee())
-                    );
-                } catch(Exception e) {
-                	SysLog.detail(e.getMessage(), e.getCause());
-                }
-            } else if(auditEntry instanceof ObjectRemovalAuditEntry) {
-                auditee = ((ObjectRemovalAuditEntry)auditEntry).getBeforeImage();
-            } else if(auditEntry instanceof ObjectCreationAuditEntry) {
-                try {
-                    auditee = pm.getObjectById(
-                        new Path(auditEntry.getAuditee())
-                    );
-                } catch(Exception e) {
-                	SysLog.detail(e.getMessage(), e.getCause());
-                }
-            }   
-        }
-        if(auditee == null) return false;
-        
-        // Prepare filter names and filter values
-        List<String> filterNames = new ArrayList<String>();
-        List<Set<String>> filterValues = new ArrayList<Set<String>>();
-        if((subscription.getFilterName0() != null) && (subscription.getFilterName0().length() > 0)) {
-            filterNames.add(subscription.getFilterName0());
-            filterValues.add(subscription.getFilterValue0());
-        }
-        if((subscription.getFilterName1() != null) && (subscription.getFilterName1().length() > 0)) {
-            filterNames.add(subscription.getFilterName1());
-            filterValues.add(subscription.getFilterValue1());
-        }
-        if((subscription.getFilterName2() != null) && (subscription.getFilterName2().length() > 0)) {
-            filterNames.add(subscription.getFilterName2());
-            filterValues.add(subscription.getFilterValue2());
-        }
-        if((subscription.getFilterName3() != null) && (subscription.getFilterName3().length() > 0)) {
-            filterNames.add(subscription.getFilterName3());
-            filterValues.add(subscription.getFilterValue3());
-        }
-        if((subscription.getFilterName4() != null) && (subscription.getFilterName4().length() > 0)) {
-            filterNames.add(subscription.getFilterName4());
-            filterValues.add(subscription.getFilterValue4());
-        }
-        // Test values
-        boolean acceptsMessage = true;
-        for(int i = 0; i < filterNames.size(); i++) {     
-            boolean acceptsValues = false;
-            for(Iterator<String> j = filterValues.get(i).iterator(); j.hasNext(); ) {
-                acceptsValues |= this.testFilterValue(
-                    filterNames.get(i),
-                    j.next(),
-                    auditee
-                );
-            }
-            acceptsMessage &= acceptsValues;
-            if(!acceptsMessage) break;
-        }
-        return acceptsMessage;
-    }
-        
     /**
      * Return true if the topic XRI pattern matches the object XRI.
      * 
@@ -371,7 +147,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
      * @param objectXri
      * @return
      */
-    public boolean topicAcceptsObject(
+    public boolean topicMatchesObjectIdentity(
         String providerName,
         String segmentName,
         Topic topic,
@@ -386,13 +162,13 @@ public class SubscriptionHandlerServlet extends HttpServlet {
             } else {
                 return 
                     objectPath.isLike(topicPattern) &&
-                    objectPath.get(2).equals(providerName) &&
-                    objectPath.get(4).equals(segmentName);
+                    providerName.equals(objectPath.getSegment(2).toClassicRepresentation()) &&
+                    segmentName.equals(objectPath.getSegment(4).toClassicRepresentation());
             }
         } else {
             return false;
         }
-    }   
+    }
 
     /**
      * Find subscriptions for the audit entry's XRI.
@@ -417,7 +193,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
         List<Topic> matchingTopics = new ArrayList<Topic>();
         Collection<Topic> topics = workflowSegment.getTopic();
         for(Topic topic: topics) {
-            if(this.topicAcceptsObject(providerName, segmentName, topic, auditEntry.getAuditee())) {
+            if(this.topicMatchesObjectIdentity(providerName, segmentName, topic, auditEntry.getAuditee())) {
                 matchingTopics.add(topic);
             }            
         }
@@ -433,7 +209,12 @@ public class SubscriptionHandlerServlet extends HttpServlet {
             query.isActive().isTrue();
             Collection<Subscription> subscriptions = userHomeSegment.getExtent(query);
             for(Subscription subscription: subscriptions) {
-                if(this.subscriptionAcceptsMessage(subscription, auditEntry)) {
+            	org.opencrx.kernel.home1.jmi1.SubscriptionMatchesParams params = Structures.create(
+            		org.opencrx.kernel.home1.jmi1.SubscriptionMatchesParams.class,
+            		Datatypes.member(SubscriptionMatchesParams.Member.message, auditEntry)
+            	);
+            	org.opencrx.kernel.home1.jmi1.SubscriptionMatchesResult result = subscription.matches(params);
+                if(Boolean.TRUE.equals(result.isMatches())) {
                     matchingSubscriptions.add(subscription);
                 }
             }
@@ -468,7 +249,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
     	PersistenceManager pmUser = null;
     	try {
 	        pmUser = pm.getPersistenceManagerFactory().getPersistenceManager(
-	        	userHome.refGetPath().getBase(), 
+	        	userHome.refGetPath().getLastSegment().toClassicRepresentation(), 
 	        	null
 	        );
             ContextCapable targetObject = null;
@@ -608,7 +389,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
                                 	userHome, 
                                 	new Path(auditEntry.getAuditee()),
                                 	subscription.refGetPath(), 
-                                	this.getEventType(auditEntry),
+                                	Workflows.getEventType(auditEntry),
                                 	actions
                                 );
                             }
@@ -754,7 +535,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
 	            );
 	            timerQuery.forAllDisabled().isFalse();
 	            timerQuery.timerState().equalTo(TimerState.OPEN.getValue());
-	            org.openmdx.base.query.Extension timerQueryExtension = PersistenceHelper.newQueryExtension(timerQuery);
+	            QueryExtensionRecord timerQueryExtension = PersistenceHelper.newQueryExtension(timerQuery);
 	            timerQueryExtension.setClause(clause);
 	            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pmAdmin, providerName, segmentName);
 	            Collection<Timer> timers = userHomeSegment.getExtent(timerQuery);
@@ -781,7 +562,7 @@ public class SubscriptionHandlerServlet extends HttpServlet {
 	            	PersistenceManager pm = null;
 	            	try {
 	            		pm = this.pmf.getPersistenceManager(
-	                        timerIdentity.get(6), // userId
+	                        timerIdentity.getSegment(6).toClassicRepresentation(), // userId
 	                        null
 	                    );
 	            		Timer timer = (Timer)pm.getObjectById(timerIdentity);
@@ -919,7 +700,6 @@ public class SubscriptionHandlerServlet extends HttpServlet {
     private static final int BATCH_SIZE = 50;
     
     private static final String WORKFLOW_NAME = "SubscriptionHandler";    
-    private static final Path PATH_PATTERN_USER_HOME = new Path("xri://@openmdx*org.opencrx.kernel.home1").getDescendant("provider", ":*", "segment", ":*", "userHome", ":*");
     private static final String COMMAND_EXECUTE = "/execute";
     private static final String VISITOR_ID = "SubscriptionHandler";
     private static final Map<String,Thread> runningSegments = new ConcurrentHashMap<String,Thread>();

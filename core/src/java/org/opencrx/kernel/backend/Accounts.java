@@ -105,11 +105,12 @@ import org.opencrx.kernel.contract1.jmi1.SalesContract;
 import org.opencrx.kernel.contract1.jmi1.SalesOrder;
 import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.utils.Utils;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.kernel.exception.BasicException;
 import org.openmdx.kernel.log.SysLog;
 import org.w3c.spi2.Datatypes;
@@ -707,7 +708,7 @@ public class Accounts extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(accountFilter);
         AccountQuery query = (AccountQuery)pm.newQuery(Account.class);
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+        QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);    	
@@ -1300,7 +1301,7 @@ public class Accounts extends AbstractImpl {
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(addressFilter);
     	AccountAddressQuery query = (AccountAddressQuery)pm.newQuery(AccountAddress.class);
-    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(query);
+    	QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(query);
     	queryExtension.setClause(
     		Database_1_Attributes.HINT_COUNT + "(1=1)"
     	);    	
@@ -1824,7 +1825,7 @@ public class Accounts extends AbstractImpl {
 	    	accountQuery.thereExistsAddress().elementOf(PersistenceHelper.asSubquery(query));
 	    }
 	    if(queryFilterClause != null) {
-	    	org.openmdx.base.query.Extension queryFilter = PersistenceHelper.newQueryExtension(accountQuery);
+	    	QueryExtensionRecord queryFilter = PersistenceHelper.newQueryExtension(accountQuery);
 		    queryFilter.setClause(queryFilterClause);
 		    queryFilter.getStringParam().addAll(stringParams);
 	    }

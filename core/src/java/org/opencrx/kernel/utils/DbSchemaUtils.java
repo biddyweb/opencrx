@@ -70,7 +70,7 @@ import java.util.TreeSet;
 import javax.jdo.PersistenceManager;
 
 import org.opencrx.kernel.document1.jmi1.Media;
-import org.opencrx.kernel.layer.persistence.Media_1;
+import org.opencrx.kernel.layer.persistence.Media_2;
 import org.opencrx.kernel.tools.FastResultSet;
 import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1;
 import org.openmdx.base.exception.ServiceException;
@@ -1241,7 +1241,7 @@ public class DbSchemaUtils {
 				int countEmptyMedia = 0;
 				while(rsT.next()) {
 					String objectId = rsT.getString(1);
-					Path mediaIdentity = databasePlugIn.getReference(
+					Path mediaIdentity = databasePlugIn.getDelegate().getReference(
 						connT, 
 						objectId
 					).getChild(
@@ -1258,8 +1258,8 @@ public class DbSchemaUtils {
 						report.add("ERROR: Unsupported media identity " + mediaIdentity.toXRI() + ". Qualifiers must not contain [:]");
 						SysLog.error("ERROR: Unsupported media identity " + mediaIdentity.toXRI() + ". Qualifiers must not contain [:]");						
 					} else {
-						File contentDir = Media_1.toContentDir(mediadir, mediaIdentity);
-						File contentFile = new File(contentDir, mediaIdentity.getBase());
+						File contentDir = Media_2.toContentDir(mediadir, mediaIdentity);
+						File contentFile = new File(contentDir, mediaIdentity.getLastSegment().toClassicRepresentation());
 						if(validateOnly) {
 							if(!existingMediaFiles.contains(contentFile)) {
 								Media media = (Media)pm.getObjectById(mediaIdentity);
@@ -1346,13 +1346,20 @@ public class DbSchemaUtils {
 	        		new ServiceException(e).log();
 	        	}
 	        	if(media == null) {
-	        		report.add("ERROR: Missing media object " + mediaIdentity.toXRI() + " for file " + mediaFile);	        		
+	        		report.add("ERROR: Missing media " + mediaIdentity.toXRI() + " for file " + mediaFile);	        		
 	        	} else {
 	        		try {
-	        			pm.currentTransaction().begin();	        			
-		        		media.setContent(BinaryLargeObjects.valueOf(mediaFile));
-		        		pm.currentTransaction().commit();
-		        		report.add("OK: Migrated " + mediaIdentity.toXRI());
+	        			if(
+	        				media.getContent() == null || 
+	        				mediaFile.lastModified() > media.getModifiedAt().getTime()
+	        			) {
+		        			pm.currentTransaction().begin();
+			        		media.setContent(BinaryLargeObjects.valueOf(mediaFile));
+			        		pm.currentTransaction().commit();
+			        		report.add("OK: Migrated " + mediaIdentity.toXRI());
+	        			} else {
+							System.out.println(new java.util.Date() + ": Media up-to-date for file " + mediaFile + ".");	        				
+	        			}
 		        		count++;
 		        		if(count % 100 == 0) {
 							System.out.println(new java.util.Date() + ": Migrated " + count + " media files to database");

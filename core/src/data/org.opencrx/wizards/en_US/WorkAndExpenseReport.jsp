@@ -1626,13 +1626,13 @@ org.apache.poi.hssf.util.*
 									i.hasNext();
 							) {
 									org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)i.next();
-									selectedActivities.put(activity.getActivityNumber() == null ? "-" : activity.getActivityNumber(), activity);
+									selectedActivities.put(activity.refMofId(), activity);
 							}
 						}
 					} else if (activityXri != null && activityXri.length() > 1 && "MAX".compareTo(activityXri) != 0) {
 						selectedActivities = new TreeMap();
 						org.opencrx.kernel.activity1.jmi1.Activity activity = (org.opencrx.kernel.activity1.jmi1.Activity)pm.getObjectById(new Path(activityXri));
-						selectedActivities.put(activity.getActivityNumber() == null ? "-" : activity.getActivityNumber(), activity);
+						selectedActivities.put(activity.refMofId(), activity);
 					}
 
 					Map selectedResources = null;
@@ -1709,6 +1709,7 @@ org.apache.poi.hssf.util.*
 						workAndExpenseRecordQuery.forAllIsReimbursable().isTrue();
 					}
 					Iterator w = null;
+					ArrayList wqueue = null;
 					if (
 						!showAllResourcesOfContact &&
 						(resourceXri != null && (resourceXri.length() > 0) && "*".compareTo(resourceXri) != 0)
@@ -1717,8 +1718,22 @@ org.apache.poi.hssf.util.*
 						w = resource.getWorkReportEntry(workAndExpenseRecordQuery).iterator();
 						hasMultipleResources = false;
 					} else {
-						w = activitySegment.getWorkReportEntry(workAndExpenseRecordQuery).iterator();
+						if (selectedActivities != null) {
+							wqueue = new ArrayList<Iterator>();
+							for(Iterator sa = selectedActivities.values().iterator(); sa.hasNext();) {
+								try {
+									org.opencrx.kernel.activity1.jmi1.Activity selectedActivity = (org.opencrx.kernel.activity1.jmi1.Activity)sa.next();
+									wqueue.add(selectedActivity.getWorkReportEntry(workAndExpenseRecordQuery).iterator());
+								} catch (Exception e) {
+									new ServiceException(e).log();
+								}
+							}
+						} else {		
+							// note that this may result in very inefficient database queries
+							w = activitySegment.getWorkReportEntry(workAndExpenseRecordQuery).iterator();
+						}
 					}
+					
 					boolean
 						isProjectReporting = hasProjects &&
 						(activityFilter != null) && (ACTIVITY_FILTER_PROJECT.compareTo(activityFilter) == 0) &&
@@ -1797,9 +1812,31 @@ org.apache.poi.hssf.util.*
 
 					Map workReportEntries = new TreeMap(); // (startedAt[YYYYMMDD]-counter[00000], WorkEndExpenseRecord)
 					int counter = 0;
+					int wqueueIdx = -1;
 
-					while (doReportCalculation && w.hasNext()) {
-						org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
+					while (doReportCalculation && ((w != null && w.hasNext()) || wqueue != null)) {
+						org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord workAndExpenseRecord = null;
+						if (w != null && w.hasNext()) {
+							workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
+						} else {
+							try {
+								wqueueIdx++;
+								if (wqueue != null && wqueue.size() > wqueueIdx && wqueue.get(wqueueIdx) != null) {
+									// get next iterator
+									w = (Iterator)wqueue.get(wqueueIdx);
+									if (w.hasNext()) {
+										workAndExpenseRecord = (org.opencrx.kernel.activity1.jmi1.WorkAndExpenseRecord)w.next();
+									} else {
+										continue;
+									}
+								} else {
+									wqueue = null;
+									continue;
+								}
+							} catch (Exception e) {
+								new ServiceException(e).log();
+							}
+						}
 						if(
 							workAndExpenseRecord.getActivity() != null &&
 							(isWorkRecordInPercent || (workAndExpenseRecord.getActivity().getPriority() >= priority))
@@ -1822,7 +1859,7 @@ org.apache.poi.hssf.util.*
 									}
 							} catch (Exception e) {}
 							if (
-								((selectedActivities == null) || (selectedActivities.containsKey(activityNumber))) &&
+								((selectedActivities == null) || (selectedActivities.containsKey(activity.refMofId()))) &&
 								((selectedResources	== null) || (selectedResources.containsKey(resourceKey)))
 							) {
 								String sortKey =

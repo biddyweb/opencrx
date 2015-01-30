@@ -104,7 +104,7 @@ abstract class WebDavResource implements Resource {
 	@Override
     public String getName(
     ) {
-		return this.object.refGetPath().getBase();
+		return this.object.refGetPath().getLastSegment().toClassicRepresentation();
     }
 
 	public String getMimeType(
@@ -112,9 +112,18 @@ abstract class WebDavResource implements Resource {
 		return "application/xml";
 	}
 	
-	public BinaryLargeObject getContent(
+	public WebDavStore.ResourceContent getContent(
 	) {
-		return BinaryLargeObjects.valueOf(new byte[]{});
+		return new WebDavStore.ResourceContent(){
+			@Override
+			public BinaryLargeObject getContent() {
+				return BinaryLargeObjects.valueOf(new byte[]{});
+			}
+			@Override
+			public Long getLength() {
+				return 0L;
+			}
+		};
 	}
 	
 	private final RequestContext requestContext;

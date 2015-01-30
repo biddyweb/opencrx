@@ -170,7 +170,7 @@ public class DoReport extends org.opencrx.application.uses.net.sf.webdav.methods
         		} else if(property.indexOf("address-data") > 0) {
 		        	p.print  ("        <C:address-data xmlns:C=\"urn:ietf:params:xml:ns:carddav\">");
 		        	p.print("<![CDATA[");
-		        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource);
+		        	BinaryLargeObject content = _store.getResourceContent(requestContext, resource).getContent();
 		        	ByteArrayOutputStream bos = new ByteArrayOutputStream();
 		        	BinaryLargeObjects.streamCopy(content.getContent(), 0L, bos);
 		        	bos.close();

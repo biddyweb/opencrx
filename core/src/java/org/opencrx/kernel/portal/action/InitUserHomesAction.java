@@ -59,6 +59,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -199,6 +200,19 @@ public class InitUserHomesAction extends BoundAction {
 									pmUser.currentTransaction().begin();
 									UserHome userHome = (UserHome)pmUser.getObjectById(userHomeIdentity);
 									Properties userSettings = UserHomes.getInstance().getDefaultUserSettings(userHome);
+									// admin settings are prefixed with a * and override the default and user settings
+									Properties adminSettings = new Properties();
+									for(Iterator<Map.Entry<Object,Object>> i = userSettings.entrySet().iterator(); i.hasNext(); ) {
+										Map.Entry<Object,Object> e = i.next();
+										String key = (String)e.getKey();
+										if(key.startsWith("*")) {
+											adminSettings.put(
+												key.substring(1), 
+												e.getValue()
+											);
+											i.remove();
+										}
+									}
 									boolean currentUserOwnsHome = app.getCurrentUserRole().equals(userPrincipalName + "@" + segmentName);
 									if(currentUserOwnsHome) {
 										userSettings.putAll(app.getSettings());
@@ -211,6 +225,7 @@ public class InitUserHomesAction extends BoundAction {
 										);
 										userSettings.putAll(settings);
 									}
+									userSettings.putAll(adminSettings);
 									String settingTimezone = userSettings.getProperty(UserSettings.TIMEZONE_NAME.getName());
 									String settingStoreSettingsOnLogoff = userHome.isStoreSettingsOnLogoff() != null && userHome.isStoreSettingsOnLogoff().booleanValue() ? "true" : "false";
 									EMailAccountQuery emailAccountQuery = (EMailAccountQuery)pmUser.newQuery(EMailAccount.class);

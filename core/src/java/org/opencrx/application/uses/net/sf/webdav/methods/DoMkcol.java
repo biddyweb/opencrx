@@ -124,17 +124,15 @@ public class DoMkcol extends WebDavMethod {
                     } else {
                         String methodsAllowed = this.determineMethodsAllowed(res);
                         resp.addHeader("Allow", methodsAllowed);
-                        resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                        resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                     }
 				} else {
-                    LOG.finest("MkCol on resource is not executable" + "\n Sending SC_METHOD_NOT_ALLOWED (405) error response!");
                     String methodsAllowed = this.determineMethodsAllowed(parentRes);
                     resp.addHeader("Allow", methodsAllowed);
-                    resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);						
+                    resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
 				}
-			}
-			else {
-                resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+			} else {
+                resp.sendError(HttpServletResponse.SC_CONFLICT);
             }
         } catch (AccessDeniedException e) {
             resp.sendError(HttpServletResponse.SC_FORBIDDEN);

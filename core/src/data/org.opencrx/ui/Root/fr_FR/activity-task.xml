@@ -88,6 +88,39 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:TaskParty:(party;address)*Business!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Téléphone professionnel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Téléphone professionnel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:TaskParty:(party;address)*Mobile!phoneNumberFull" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Téléphone mobile</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Téléphone mobile</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:activity1:TaskParty:(party;address)*Business!emailAddress" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Email professionnel</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Email professionnel</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                 </elementDefinition>
               </_content>
             </org.openmdx.ui1.Segment>

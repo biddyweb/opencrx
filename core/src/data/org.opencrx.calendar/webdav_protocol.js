@@ -143,7 +143,12 @@ function netCheckAndCreateConfiguration(configurationURL)
 
 				globalAccountSettings[globalAccountSettings.length]=$.extend({}, configurationURL);
 				globalAccountSettings[globalAccountSettings.length-1].type='network';
-				globalAccountSettings[globalAccountSettings.length-1].href=configurationURL.href+globalLoginUsername+'/';
+
+				if(typeof(globalAccountSettingsHook)=='function')	// globalAccountSettings hook (for openCRX)
+					globalAccountSettings[globalAccountSettings.length-1].href=globalAccountSettingsHook(configurationURL.href, globalLoginUsername);
+				else	// standard version
+					globalAccountSettings[globalAccountSettings.length-1].href=configurationURL.href+globalLoginUsername+'/';
+
 				globalAccountSettings[globalAccountSettings.length-1].userAuth={userName: globalLoginUsername, userPassword: globalLoginPassword};
 				count++;
 

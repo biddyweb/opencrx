@@ -81,11 +81,12 @@ import org.opencrx.kernel.base.jmi1.PropertySet;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.workflow.BulkActivityFollowUpWorkflow;
 import org.opencrx.kernel.workflow1.jmi1.WfProcess;
-import org.openmdx.application.dataprovider.layer.persistence.jdbc.Database_1_Attributes;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.dataprovider.layer.persistence.jdbc.spi.Database_1_Attributes;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.naming.Path;
 import org.openmdx.base.persistence.cci.PersistenceHelper;
+import org.openmdx.base.rest.cci.QueryExtensionRecord;
 import org.openmdx.portal.servlet.AbstractWizardController;
 import org.openmdx.portal.servlet.Action;
 import org.openmdx.portal.servlet.ApplicationContext;
@@ -567,7 +568,7 @@ public class BulkActivityFollowUpWizardController extends AbstractWizardControll
 					if(this.activity.getProcessState() != null) {
 						this.activityQuery.thereExistsProcessState().equalTo(this.activity.getProcessState());
 					}
-			    	org.openmdx.base.query.Extension queryExtension = PersistenceHelper.newQueryExtension(this.activityQuery);
+					QueryExtensionRecord queryExtension = PersistenceHelper.newQueryExtension(this.activityQuery);
 			    	queryExtension.setClause(
 			    		Database_1_Attributes.HINT_COUNT + "(1=1)"
 			    	);

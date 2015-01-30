@@ -83,7 +83,7 @@ public class SendMailWorkflow extends MailWorkflow {
         PersistenceManager pm,
         Path targetIdentity,
         EMailAccount eMailAccount,
-        String defaultReplyEMailAddress
+        String defaultFromAddress
     ) throws ServiceException {
         List<Address> recipients = new ArrayList<Address>();
         try {

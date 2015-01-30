@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2013, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -55,6 +55,7 @@ package org.opencrx.kernel.workflow.servlet;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -78,7 +79,9 @@ import org.opencrx.kernel.generic.SecurityKeys;
 import org.opencrx.kernel.home1.cci2.WfProcessInstanceQuery;
 import org.opencrx.kernel.home1.jmi1.UserHome;
 import org.opencrx.kernel.home1.jmi1.WfProcessInstance;
+import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
+import org.opencrx.kernel.workflow1.jmi1.WfProcess;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.base.jmi1.ContextCapable;
 import org.openmdx.base.naming.Path;
@@ -166,8 +169,9 @@ public class WorkflowHandlerServlet extends HttpServlet {
         	PersistenceManager pm = JDOHelper.getPersistenceManager(wfInstance);
         	SysLog.info("Execute", wfInstance.getProcess().getName());        
             try {
-                String workflowName = wfInstance.getProcess().getName();
-                Boolean isSynchronous = wfInstance.getProcess().isSynchronous();        
+            	WfProcess wfProcess = wfInstance.getProcess();
+                String workflowName = wfProcess.getName();
+                Boolean isSynchronous = wfProcess.isSynchronous();
                 // Synchronous workflow
                 if(Boolean.TRUE.equals(isSynchronous)) {
                 	// Synchronous workflows are by definition atomic
@@ -185,7 +189,7 @@ public class WorkflowHandlerServlet extends HttpServlet {
     		                ExecuteWorkflowParams params = Structures.create(
     		                	ExecuteWorkflowParams.class, 
     		                	Datatypes.member(ExecuteWorkflowParams.Member.targetObject, targetObject),
-    		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredByEventId, wfInstance.refGetPath().getBase()),
+    		                	Datatypes.member(ExecuteWorkflowParams.Member.triggeredByEventId, wfInstance.refGetPath().getLastSegment().toClassicRepresentation()),
     		                	Datatypes.member(ExecuteWorkflowParams.Member.workflow, wfInstance.getProcess())
     		                );
     		                try {
@@ -212,51 +216,76 @@ public class WorkflowHandlerServlet extends HttpServlet {
                 	} else {
                 		return ExecutionStatus.SKIPPED;
                 	}
-                }
-                // Asynchronous workflow
-                else {
-                    Workflows.AsynchronousWorkflow workflow = null;            
-                    Class<?> workflowClass = null;
-                    try {
-                        workflowClass = Classes.getApplicationClass(
-                            workflowName
-                        );
-                    } catch(ClassNotFoundException e) {
-                    	SysLog.error("Implementation for workflow " + workflowName + " not found");
-                        return ExecutionStatus.FAILED;          
-                    }
-                    // Look up constructor
-                    Constructor<?> workflowConstructor = null;
-                    try {
-                        workflowConstructor = workflowClass.getConstructor(new Class[]{});
-                    } catch(NoSuchMethodException e) {
-                    	SysLog.error("No constructor found for workflow " + workflowName);
-                    }
-                    // Instantiate workflow
-                    try {
-                        workflow = (Workflows.AsynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
-                    } catch(InstantiationException e) {
-                    	SysLog.error("Can not create workflow (can not instantiate)", workflowName);
-                        return ExecutionStatus.FAILED;
-                    } catch(IllegalAccessException e) {
-                    	SysLog.error("Can not create workflow (illegal access)", workflowName);
-                        return ExecutionStatus.FAILED;
-                    } catch(IllegalArgumentException e) {
-                    	SysLog.error("Can not create workflow (illegal argument)", workflowName);
-                        return ExecutionStatus.FAILED;
-                    } catch(InvocationTargetException e) {
-                    	SysLog.error("Can not create workflow (can not invoke target)", workflowName + "(" + e.getTargetException().getMessage() + ")");
-                        return ExecutionStatus.FAILED;         
-                    }
-                    if(isAtomic == workflow.isAtomic()) {
-    	                workflow.execute(
-    	                    wfInstance
-    	                );
-    	                SysLog.info("SUCCESS");
-    	                return ExecutionStatus.SUCCESS;
-                    } else {
-                    	return ExecutionStatus.SKIPPED;                	
-                    }
+                } else {
+                    // Asynchronous workflow
+                	if(wfProcess.getExecuteScript() == null || wfProcess.getExecuteScript().isEmpty()) {                	
+	                    Workflows.AsynchronousWorkflow workflow = null;            
+	                    Class<?> workflowClass = null;
+	                    try {
+	                        workflowClass = Classes.getApplicationClass(
+	                            workflowName
+	                        );
+	                    } catch(ClassNotFoundException e) {
+	                    	SysLog.error("Implementation for workflow " + workflowName + " not found");
+	                        return ExecutionStatus.FAILED;          
+	                    }
+	                    // Look up constructor
+	                    Constructor<?> workflowConstructor = null;
+	                    try {
+	                        workflowConstructor = workflowClass.getConstructor(new Class[]{});
+	                    } catch(NoSuchMethodException e) {
+	                    	SysLog.error("No constructor found for workflow " + workflowName);
+	                    }
+	                    // Instantiate workflow
+	                    try {
+	                        workflow = (Workflows.AsynchronousWorkflow)workflowConstructor.newInstance(new Object[]{});
+	                    } catch(InstantiationException e) {
+	                    	SysLog.error("Can not create workflow (can not instantiate)", workflowName);
+	                        return ExecutionStatus.FAILED;
+	                    } catch(IllegalAccessException e) {
+	                    	SysLog.error("Can not create workflow (illegal access)", workflowName);
+	                        return ExecutionStatus.FAILED;
+	                    } catch(IllegalArgumentException e) {
+	                    	SysLog.error("Can not create workflow (illegal argument)", workflowName);
+	                        return ExecutionStatus.FAILED;
+	                    } catch(InvocationTargetException e) {
+	                    	SysLog.error("Can not create workflow (can not invoke target)", workflowName + "(" + e.getTargetException().getMessage() + ")");
+	                        return ExecutionStatus.FAILED;         
+	                    }
+	                    if(isAtomic == workflow.isAtomic()) {
+	    	                workflow.execute(wfInstance);
+	    	                SysLog.info("SUCCESS");
+	    	                return ExecutionStatus.SUCCESS;
+	                    } else {
+	                    	return ExecutionStatus.SKIPPED;                	
+	                    }
+                	} else {
+                		Class<?> workflowClass = ScriptUtils.getClass(wfProcess.getExecuteScript());
+                		Method executeMethod = null;
+	                	try {
+	        	            executeMethod = workflowClass.getMethod(
+	        	            	"execute",
+	        	            	WfProcessInstance.class
+	        	            );
+	                	} catch(NoSuchMethodException e) {
+	                    	SysLog.error("No method 'public static void execute(WfProcessInstance) {}' defined in script for workflow " + workflowName);	                		
+	                	}
+                		Method isAtomicMethod = null;
+	                	try {
+	        	            isAtomicMethod = workflowClass.getMethod(
+	        	            	"isAtomic"
+	        	            );
+	                	} catch(NoSuchMethodException e) {
+	                    	SysLog.error("No method 'public static boolean isAtomic() {}' defined in script for workflow " + workflowName);	                		
+	                	}	        	        
+	                    if(isAtomic == (Boolean)isAtomicMethod.invoke(null)) {
+            	            executeMethod.invoke(null, wfInstance);
+	    	                SysLog.info("SUCCESS");
+	    	                return ExecutionStatus.SUCCESS;
+	                    } else {
+	                    	return ExecutionStatus.SKIPPED;                	
+	                    }
+                	}
                 }
             } catch(Exception e) {
             	SysLog.warning("FAILED", e.getMessage());
@@ -394,27 +423,41 @@ public class WorkflowHandlerServlet extends HttpServlet {
                 providerName,
                 segmentName
             );
-            // Get user homes segment
-            org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
-            WfProcessInstanceQuery query = (WfProcessInstanceQuery)PersistenceHelper.newQuery(
-            	pm.getExtent(WfProcessInstance.class),
-            	userHomeSegment.refGetPath().getDescendant("userHome", ":*", "wfProcessInstance", ":*")
-            );
-            query.startedOn().isNull();
-            query.orderByStepCounter().ascending(); // process first with lower step counter
-            query.orderByCreatedAt().ascending(); // first come - first serve
-            List<WfProcessInstance> wfInstances = userHomeSegment.getExtent(query);
+            // Get identities of workflows to be executed
             List<Path> wfProcessInstanceIdentities = new ArrayList<Path>();
-            for(WfProcessInstance wfInstance: wfInstances) {
-            	wfProcessInstanceIdentities.add(
-            		wfInstance.refGetPath()
-            	);
-            	if(wfProcessInstanceIdentities.size() > BATCH_SIZE) {
-            		break;
+            if(req.getParameter("xri") != null) {
+            	String xri = req.getParameter("xri");
+            	try {
+            		WfProcessInstance wfProcessInstance = (WfProcessInstance)pm.getObjectById(new Path(xri));
+            		if(wfProcessInstance.getStartedOn() == null) {
+                    	wfProcessInstanceIdentities.add(wfProcessInstance.refGetPath());
+            		} else {
+                        System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + id + ": Ignoring " + xri + ". Workflow already completed.");            			
+            		}
+            	} catch(Exception e) {
+                    System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + id + ": unable to retrieve workflow " + xri);            		
             	}
+            } else {
+                org.opencrx.kernel.home1.jmi1.Segment userHomeSegment = UserHomes.getInstance().getUserHomeSegment(pm, providerName, segmentName);
+                WfProcessInstanceQuery query = (WfProcessInstanceQuery)PersistenceHelper.newQuery(
+                	pm.getExtent(WfProcessInstance.class),
+                	userHomeSegment.refGetPath().getDescendant("userHome", ":*", "wfProcessInstance", ":*")
+                );
+                query.startedOn().isNull();
+                query.orderByStepCounter().ascending(); // process first with lower step counter
+                query.orderByCreatedAt().ascending(); // first come - first serve
+	            List<WfProcessInstance> wfInstances = userHomeSegment.getExtent(query);
+	            for(WfProcessInstance wfInstance: wfInstances) {
+	            	wfProcessInstanceIdentities.add(
+	            		wfInstance.refGetPath()
+	            	);
+	            	if(wfProcessInstanceIdentities.size() > BATCH_SIZE) {
+	            		break;
+	            	}
+	            }
             }
-            SysLog.info("Executing workflows");
             {
+                SysLog.info("Executing workflows");
         		List<WorkflowExecutorThread> threads = new ArrayList<WorkflowExecutorThread>();
         		// Up to MAX_THREADS for atomic processes
             	if(isAtomic) {
@@ -431,9 +474,8 @@ public class WorkflowHandlerServlet extends HttpServlet {
             			threads.add(t);
             			t.start();
             		}
-            	}
-            	// Only one thread for non-atomic processes
-            	else {
+            	} else {
+                	// Only one thread for non-atomic processes
         			WorkflowExecutorThread t = new WorkflowExecutorThread(
         				segmentName,
         				wfProcessInstanceIdentities,
@@ -456,7 +498,7 @@ public class WorkflowHandlerServlet extends HttpServlet {
             } catch(Exception e) {}
         } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
-            System.out.println("Exception occured " + e0.getMessage() + ". Continuing");
+            System.out.println(new Date() + "  " + WORKFLOW_NAME + " " + id + ": Exception occured " + e0.getMessage() + ". Continuing");
             SysLog.warning("Exception occured " + e0.getMessage() + ". Continuing");
             SysLog.detail(e0.getMessage(), e0.getCause());
         }
@@ -565,4 +607,3 @@ public class WorkflowHandlerServlet extends HttpServlet {
     private long startedAt = System.currentTimeMillis();
 }
 
-//--- End of File -----------------------------------------------------------

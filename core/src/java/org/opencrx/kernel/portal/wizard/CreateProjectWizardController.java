@@ -219,6 +219,9 @@ public class CreateProjectWizardController extends org.openmdx.portal.servlet.Ab
 		String segmentName = this.getSegmentName();
 	    String name = (String)this.formFields.get("org:opencrx:kernel:activity1:ActivityGroup:name");
 	    String description = (String)this.formFields.get("org:opencrx:kernel:activity1:ActivityGroup:description");
+    	if(name == null || name.isEmpty()) {
+    		this.errorMessage += "The field 'Name' is mandatory";
+    	}
 	    if(name != null && !name.isEmpty()) {
 	    	org.opencrx.kernel.activity1.jmi1.Segment activitySegment = Activities.getInstance().getActivitySegment(pm, providerName, segmentName);
 	    	ActivityTracker activityTracker = createProject(

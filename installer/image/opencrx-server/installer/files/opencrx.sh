@@ -14,9 +14,8 @@ if [ "$1" = "run" ] ; then
   # Start TomEE
   export JAVA_HOME=$JDKPath
   cd ..
-  rm -Rf temp
-  mkdir temp
-  rm -Rf work
+  rm -Rf temp/*
+  rm -Rf work/*
   ./bin/catalina.sh run
 
 fi
