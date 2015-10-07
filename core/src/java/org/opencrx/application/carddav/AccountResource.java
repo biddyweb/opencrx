@@ -58,12 +58,15 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.opencrx.application.uses.ezvcard.Ezvcard;
+import org.opencrx.application.uses.ezvcard.VCardVersion;
 import org.opencrx.application.uses.net.sf.webdav.RequestContext;
 import org.opencrx.application.uses.net.sf.webdav.WebDavStore;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.VCard;
+import org.opencrx.kernel.document1.jmi1.Media;
+import org.openmdx.base.exception.ServiceException;
 import org.w3c.cci2.BinaryLargeObject;
 import org.w3c.cci2.BinaryLargeObjects;
 
@@ -71,7 +74,7 @@ import org.w3c.cci2.BinaryLargeObjects;
  * CardDAV resource of type Account.
  *
  */
-class AccountResource extends CardDavResource {
+public class AccountResource extends CardDavResource {
 
 	public AccountResource(
 		RequestContext requestContext,
@@ -132,6 +135,31 @@ class AccountResource extends CardDavResource {
     	return this.parent;
     }
     
+    /**
+     * Get PHOTO property for given account if account.getPicture() is set.
+     * 
+     * @param p
+     * @param account
+     * @throws ServiceException
+     */
+    public static org.opencrx.application.uses.ezvcard.property.Photo getPhoto(
+    	Account account
+    ) {
+    	if(account.getPicture() != null) {
+    		Media picture = account.getPicture();
+    		String mimeType = picture.getContentMimeType();
+    		if(mimeType != null && mimeType.indexOf("/") > 0) {
+    			try {
+	    			return new org.opencrx.application.uses.ezvcard.property.Photo(
+	    				picture.getContent().getContent(),
+	    				org.opencrx.application.uses.ezvcard.parameter.ImageType.get(null, mimeType, null)
+	    			);
+    			} catch(Exception ignore) {}
+    		}
+    	}
+    	return null;
+    }
+
 	/* (non-Javadoc)
 	 * @see org.opencrx.application.carddav.CardDavResource#getContent()
 	 */
@@ -149,40 +177,23 @@ class AccountResource extends CardDavResource {
 		HttpServletRequest req = this.getRequestContext().getHttpServletRequest();
         String vcard = account.getVcard();
         if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
-       		vcard = vcard.replace("\nN:", "\nN;CHARSET=UTF-8:");
-       		vcard = vcard.replace("\nFN:", "\nFN;CHARSET=UTF-8:");
-       		vcard = vcard.replace("\nADR;", "\nADR;CHARSET=UTF-8;");
-       		vcard = vcard.replace("\nTITLE:", "\nTITLE;CHARSET=UTF-8:");
-       		// BDAY as date only. Most CardDAV clients are unable to handle time properly
-       		if(vcard.indexOf("BDAY:") > 0) {
-       			int pos1 = vcard.indexOf("BDAY:");
-       			int pos2 = vcard.indexOf("\n", pos1);
-       			if(pos2 > pos1) {
-       				vcard =
-       					vcard.substring(0, pos1) +
-       					"BDAY;VALUE=DATE:" + vcard.substring(pos1 + 5, pos1 + 13) +
-       					vcard.substring(pos2);
-       			}
-       		}
-            int start = vcard.indexOf("BEGIN:VCARD");
-            int end = vcard.indexOf("END:VCARD");
-            p.write(vcard.substring(start, end));
-            if(vcard.indexOf("URL:") < 0) {            	
+        	org.opencrx.application.uses.ezvcard.VCard vCard = Ezvcard.parse(vcard).first();
+        	if(vCard.getUrls().isEmpty()) {
             	String url = null;
             	try {
             		url = Base.getInstance().getAccessUrl(req, "-carddav-", account);
-                    p.write("URL:" + url + "\n");
+            		vCard.addUrl(url);
             	} catch(Exception e) {}
+        	}
+        	if(vCard.getPhotos().isEmpty()) {
+        		org.opencrx.application.uses.ezvcard.property.Photo photo = getPhoto(account);
+        		if(photo != null) {
+        			vCard.addPhoto(photo);
+        		}
             }
-            if(vcard.indexOf("PHOTO:") < 0) {
-            	try {
-	            	VCard.getInstance().writePhotoTag(
-	            		p, 
-	            		account
-	            	);
-            	} catch(Exception e) {} // don't care if PHOTO tag can not be written
-            }
-            p.write("END:VCARD\n");
+        	try {
+        		Ezvcard.write(vCard).version(VCardVersion.V3_0).go(p);
+        	} catch(Exception ignore) {}
         }
 		p.close();
 		return new WebDavStore.ResourceContent() {

@@ -8,7 +8,7 @@
  * This software is published under the BSD license
  * as listed below.
  * 
- * Copyright (c) 2004-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2004-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without 
@@ -107,27 +107,45 @@ import org.w3c.format.DateTimeFormat;
 import org.w3c.spi2.Datatypes;
 import org.w3c.spi2.Structures;
 
+/**
+ * VCard
+ *
+ */
 public class VCard extends AbstractImpl {
 
-    //-------------------------------------------------------------------------
+	/**
+	 * Register VCard backend.
+	 * 
+	 */
 	public static void register(
 	) {
 		registerImpl(new VCard());
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * Get registered VCard backend.
+	 * 
+	 * @return
+	 * @throws ServiceException
+	 */
 	public static VCard getInstance(
 	) throws ServiceException {
 		return getInstance(VCard.class);
 	}
 
-	//-------------------------------------------------------------------------
+	/**
+	 * Constructor.
+	 * 
+	 */
 	protected VCard(
 	) {
 		
 	}
 	
-    //-------------------------------------------------------------------------
+	/**
+	 * VCardField
+	 *
+	 */
 	public static class VCardField {
 		
 		public VCardField(
@@ -233,7 +251,8 @@ public class VCard extends AbstractImpl {
 	}
 
 	/**
-	 * Escape new lines
+	 * Escape new lines.
+	 * 
 	 * @param from
 	 * @return
 	 */
@@ -254,6 +273,7 @@ public class VCard extends AbstractImpl {
     
     /**
      * Get UTC formatted dateTime.
+     * 
      * @param dateTime
      * @param dateTimeFormatter
      * @return
@@ -283,6 +303,7 @@ public class VCard extends AbstractImpl {
     
     /**
      * Get UTC formatted date.
+     * 
      * @param dateTime
      * @param dateTimeFormatter
      * @return
@@ -310,7 +331,12 @@ public class VCard extends AbstractImpl {
         return date;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Encode vcard string.
+     * 
+     * @param s
+     * @return
+     */
     protected String encodeString(
         String s
     ) {
@@ -319,14 +345,27 @@ public class VCard extends AbstractImpl {
         return s;
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Map salutation code to text.
+     * 
+     * @param salutationCode
+     * @return
+     * @throws ServiceException
+     */
     private String mapToSalutationText(
         short salutationCode
     ) throws ServiceException {
     	return salutations.get(Integer.valueOf(salutationCode));
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Map salutation text to code.
+     * 
+     * @param salutation
+     * @param codeSegment
+     * @return
+     * @throws ServiceException
+     */
     private short mapToSalutationCode(
         String salutation,
         org.opencrx.kernel.code1.jmi1.Segment codeSegment        
@@ -348,9 +387,14 @@ public class VCard extends AbstractImpl {
     	return 0;
     }
     
-    //-------------------------------------------------------------------------
     /**
-     * Update sourceVcard with account values and return merged vcard. 
+     * Update sourceVcard with account values and return merged vcard.
+     * 
+     * @param account
+     * @param sourceVcard
+     * @param statusMessage
+     * @return
+     * @throws ServiceException
      */
     public String mergeVcard(
         Account account,
@@ -382,8 +426,7 @@ public class VCard extends AbstractImpl {
                 String suffix = contact.getSuffix() == null ? "" : contact.getSuffix();
                 n = lastName + ";" + firstName + ";"+ middleName + ";" + (salutation == null ? "" : salutation) + ";" + suffix;
             }
-        }
-        else if(account instanceof AbstractGroup) {
+        } else if(account instanceof AbstractGroup) {
         	AbstractGroup group = (AbstractGroup)account;
             if(group.getName() != null) {
                 String name = group.getName();
@@ -399,8 +442,7 @@ public class VCard extends AbstractImpl {
             String middleName = contact.getMiddleName() == null ? "" : contact.getMiddleName();
             String suffix = contact.getSuffix() == null ? "" : contact.getSuffix();
             fn = firstName + (middleName.length() == 0 ? "" : " " + middleName) + (lastName.length() == 0 ? "" : " " + lastName) + (suffix.length() == 0 ? "" : " " + suffix);
-        }
-        else {
+        } else {
             String fullName = account.getFullName() == null ? "" : account.getFullName();
             fn = fullName;            
         }
@@ -454,8 +496,7 @@ public class VCard extends AbstractImpl {
             addresses = Accounts.getInstance().getMainAddresses(
             	account
             );
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             ServiceException e0 = new ServiceException(e);
             if(e0.getExceptionCode() != BasicException.Code.NOT_FOUND) {
                 throw e0;
@@ -584,11 +625,11 @@ public class VCard extends AbstractImpl {
         String urlHome = addresses[Accounts.WEB_HOME] == null ? 
             "" : 
             ((WebAddress)addresses[Accounts.WEB_HOME]).getWebUrl();
-        // EMAIL;PREF;INTERNET
+        // EMAIL;TYPE=PREF,INTERNET,WORK
         String emailWork = addresses[Accounts.MAIL_BUSINESS] == null ? 
             "" : 
             ((EMailAddress)addresses[Accounts.MAIL_BUSINESS]).getEmailAddress();
-        // EMAIL;INTERNET
+        // EMAIL;TYPE=INTERNET,HOME
         String emailHome = addresses[Accounts.MAIL_HOME] == null ? 
             "" : 
             ((EMailAddress)addresses[Accounts.MAIL_HOME]).getEmailAddress();        
@@ -624,8 +665,8 @@ public class VCard extends AbstractImpl {
                 "ADR;HOME:;;\n" +
                 "URL;HOME:\n" +
                 "URL;WORK:\n" +
-                "EMAIL;PREF;INTERNET:\n" +
-                "EMAIL;INTERNET:\n" +
+                "EMAIL;TYPE=PREF,INTERNET,WORK:\n" +
+                "EMAIL;TYPE=INTERNET,HOME:\n" +
                 "NOTE:\n" +
                 "END:VCARD";
         }
@@ -645,9 +686,8 @@ public class VCard extends AbstractImpl {
                 ) {
                     targetVcard.println("BEGIN:VCARD");                    
                     isVcard = true;
-                }
-                // Dump updated event fields only for first event
-                else if(
+                } else if(
+                    // Dump updated event fields only for first event
                     line.toUpperCase().startsWith("END:VCARD")
                 ) {                    
                     // REV
@@ -720,16 +760,15 @@ public class VCard extends AbstractImpl {
                     }
                     // EMAIL;PREF;INTERNET
                     if((emailWork != null) && !emailWork.isEmpty()) {
-                        targetVcard.println("EMAIL;PREF;INTERNET:" + emailWork);
+                        targetVcard.println("EMAIL;TYPE=PREF,INTERNET,WORK:" + emailWork);
                     }
                     // EMAIL;INTERNET
                     if((emailHome != null) && !emailHome.isEmpty()) {
-                        targetVcard.println("EMAIL;INTERNET:" + emailHome);
+                        targetVcard.println("EMAIL;TYPE=INTERNET,HOME:" + emailHome);
                     }
                     targetVcard.println("END:VCARD");                                            
                     isVcard = false;
-                }
-                else if(isVcard ) {
+                } else if(isVcard ) {
                     boolean isUpdatableTag = 
                         tagStart.toUpperCase().startsWith("REV");
                     isUpdatableTag |=
@@ -759,8 +798,7 @@ public class VCard extends AbstractImpl {
                     if(!isUpdatableTag) {
                         targetVcard.println(line);
                     }
-                }
-                else {
+                } else {
                     targetVcard.println(line);                    
                 }
             }
@@ -768,17 +806,24 @@ public class VCard extends AbstractImpl {
             targetVcardBos.close();
             try {
                 return targetVcardBos.toString("UTF-8");
-            }
-            catch(Exception e) {
+            } catch(Exception e) {
                 return null;
             }
-        }
-        catch(Exception e) {
+        } catch(Exception e) {
             return null;
         }
     }
     
-    //-------------------------------------------------------------------------
+    /**
+     * Update postal address with new address value.
+     * 
+     * @param address
+     * @param newValue
+     * @param locale
+     * @param codeSegment
+     * @return
+     * @throws ServiceException
+     */
     public boolean updatePostalAddress(
         PostalAddress address,
         String newValue,
@@ -864,7 +909,14 @@ public class VCard extends AbstractImpl {
         return modified;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update phone number with new value.
+     * 
+     * @param address
+     * @param newValue
+     * @return
+     * @throws ServiceException
+     */
     public boolean updatePhoneNumber(
         PhoneNumber address,
         String newValue
@@ -898,7 +950,13 @@ public class VCard extends AbstractImpl {
         return false;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update web address with new value.
+     * 
+     * @param address
+     * @param newValue
+     * @return
+     */
     public boolean updateWebAddress(
         WebAddress address,
         String newValue
@@ -911,7 +969,13 @@ public class VCard extends AbstractImpl {
         return false;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Update e-mail address with new value.
+     * 
+     * @param address
+     * @param newValue
+     * @return
+     */
     public boolean updateEMailAddress(
         EMailAddress address,
         String newValue
@@ -924,7 +988,12 @@ public class VCard extends AbstractImpl {
         return false;
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Get UID of given vcard.
+     * 
+     * @param vcard
+     * @return
+     */
     public String getVCardUid(
     	String vcard
     ) {
@@ -940,41 +1009,13 @@ public class VCard extends AbstractImpl {
     }
 
     /**
-     * Write PHOTO tag for given account if account.getPicture() is set.
+     * Parse vcard.
      * 
-     * @param p
-     * @param account
-     * @throws ServiceException
+     * @param reader
+     * @param vcardAsString
+     * @return
+     * @throws IOException
      */
-    public void writePhotoTag(
-    	PrintWriter p,
-    	Account account
-    ) throws ServiceException {
-    	if(account.getPicture() != null) {
-    		Media picture = account.getPicture();
-    		String mimeType = picture.getContentMimeType();
-    		if(mimeType != null && mimeType.indexOf("/") > 0) {
-    			try {
-        			ByteArrayOutputStream photo = new ByteArrayOutputStream();
-    				BinaryLargeObjects.streamCopy(picture.getContent().getContent(), 0L, photo);
-        			String encodedPhoto = Base64.encode(photo.toByteArray());
-        			String prefix = "PHOTO;ENCODING=b;TYPE=" + mimeType.substring(mimeType.indexOf("/") + 1) + ":";
-        			int len = 44;
-        			int pos = 0;
-        			while(pos < encodedPhoto.length()) {
-        				p.write(prefix);
-        				p.write(encodedPhoto.substring(pos, Math.min(encodedPhoto.length(), pos + len)));
-        				p.write("\n");
-        				pos += len;
-        				len = 68;
-        				prefix = " ";
-        			}
-    			} catch(Exception e) {}
-    		}
-    	}
-    }
-
-    //-------------------------------------------------------------------------
     public Map<String,VCardField> parseVCard(
         BufferedReader reader,
         StringBuilder vcardAsString
@@ -1058,7 +1099,17 @@ public class VCard extends AbstractImpl {
         return vcard;
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * Import vcard.
+     * 
+     * @param item
+     * @param account
+     * @param locale
+     * @param errors
+     * @param report
+     * @return
+     * @throws ServiceException
+     */
     public BasicObject importItem(
         byte[] item,
         Account account,
@@ -1084,15 +1135,14 @@ public class VCard extends AbstractImpl {
                 locale,
                 report
             );
-        }
-        catch(IOException e) {
+        } catch(IOException e) {
         	SysLog.warning("can not read item", e.getMessage());
         }
         return null;
     }
 
     /**
-     * Map VCARD to given account
+     * Map vcard to given account.
      * 
      * @param vcardAsString
      * @param vcard
@@ -1138,8 +1188,7 @@ public class VCard extends AbstractImpl {
                 // lastName
                 if(!nameTokens[0].isEmpty()) {
                     contact.setLastName(nameTokens[0]);        
-                }
-                else if(contact.getLastName() == null) {
+                } else if(contact.getLastName() == null) {
                     contact.setLastName("N/A");
                 }
                 // firstName
@@ -1616,7 +1665,17 @@ public class VCard extends AbstractImpl {
         return account;
     }
         
-    //-------------------------------------------------------------------------
+    /**
+     * Update account with given vcard.
+     * 
+     * @param vcardAsString
+     * @param vcard
+     * @param accountSegment
+     * @param locale
+     * @param report
+     * @return
+     * @throws ServiceException
+     */
     public Account updateAccount(
     	String vcardAsString,
         Map<String,VCardField> vcard,
@@ -1657,7 +1716,14 @@ public class VCard extends AbstractImpl {
         );
     }
 
-    //-----------------------------------------------------------------------
+    /**
+     * Find account by vcard UID.
+     * 
+     * @param pm
+     * @param accountSegment
+     * @param uid
+     * @return
+     */
     protected Account findAccount(
         PersistenceManager pm,
         org.opencrx.kernel.account1.jmi1.Segment accountSegment,
@@ -1680,7 +1746,10 @@ public class VCard extends AbstractImpl {
         }
     }
 
-    //-------------------------------------------------------------------------
+    /**
+     * putVCard operation return status.
+     *
+     */
     public static class PutVCardResult {
     	
     	public enum Status { CREATED, UPDATED, ERROR }
@@ -1716,6 +1785,7 @@ public class VCard extends AbstractImpl {
     
     /**
      * Updates existing or creates new account according to given VCARD.
+     * 
      * @param reader
      * @param accountSegment
      * @return
@@ -1884,7 +1954,7 @@ public class VCard extends AbstractImpl {
     public static final String DATETIME_FORMAT =  "yyyyMMdd'T'HHmmss";
     public static final String MIME_TYPE = "text/x-vcard";
     public static final String FILE_EXTENSION = ".vcf";
-    public static final String PROD_ID = "//OPENCRX//V2//EN";
+    public static final String PROD_ID = "//OPENCRX//V3//EN";
     
     public static final int MIME_TYPE_CODE = 3;
     public static final short DEFAULT_LOCALE = 0;
@@ -1892,4 +1962,3 @@ public class VCard extends AbstractImpl {
 
 }
 
-//--- End of File -----------------------------------------------------------

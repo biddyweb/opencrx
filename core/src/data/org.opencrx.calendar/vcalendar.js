@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -26,15 +26,15 @@ function EventList()
 	this.todos={};
 	this.displayEventsArray={};
 	this.displayTodosArray={};
-	this.repeatable=new Array();
-	this.repeatableTodo=new Array();
+	this.repeatable={};
+	this.repeatableTodo={};
 
 	this.reset=function()
 	{
 		this.events={};
 		this.todos={};
-		this.repeatable.splice(0, this.repeatable.length);
-		this.repeatableTodo.splice(0, this.repeatableTodo.length);
+		this.repeatable={};
+		this.repeatableTodo={};
 		this.displayEventsArray={};
 		this.displayTodosArray={};
 	}
@@ -113,7 +113,7 @@ function EventList()
 				inputEvent.sortStart=res;
 			else
 			{
-				console.log("Error: '"+inputEvent.uid+"': cannot parse vEvent");
+				console.log("Error: '"+inputEvent.uid+"': unable to parse vEvent");
 				checkEventLoader(globalResourceCalDAVList.counterList[inputCollection.uid+' '+inputCollection.listType], true);
 				return false;
 			}
@@ -132,24 +132,24 @@ function EventList()
 		var inputUID=inputEvent.uid;
 		rid=inputUID.substring(0, inputUID.lastIndexOf('/')+1);
 
-		setTimeout(function()
-		{
+//		setTimeout(function()
+//		{
 			if(!isEvent)
 			{
 				if(vcalendarTodoData(inputCollection, inputEvent, true) == false)
-					console.log("Error: '"+inputEvent.uid+"': cannot parse vTodo");
+					console.log("Error: '"+inputEvent.uid+"': unable to parse vTodo");
 			}
 			else
 			{
 				if(vcalendarToData(inputCollection, inputEvent, true) == false)
-					console.log("Error: '"+inputEvent.uid+"': cannot parse vEvent");
+					console.log("Error: '"+inputEvent.uid+"': unable to parse vEvent");
 			}
 
 			if(isEvent)
 			{
 				if(inputEvent.counter==undefined)
 				{
-					if(globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
+					if(globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents.value)
 						refetchCalendarEvents();
 					else
 					{
@@ -164,7 +164,7 @@ function EventList()
 			{
 				if(inputEvent.counter==undefined)
 				{
-					if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
+					if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents.value)
 						refetchTodoEvents();
 				}
 			}
@@ -172,7 +172,7 @@ function EventList()
 				checkEventLoader(globalResourceCalDAVList.counterList[inputCollection.uid+' '+inputCollection.listType], true);
 			if(forceCall && !isEvent)
 				$('#todoList').fullCalendar('selectEvent',$('[data-id="'+inputEvent.uid+'"]'));
-		}, 100);
+//		}, 100);
 	}
 
 	this.checkAndTouchIfExists=function(calendarUID,inputUID,inputEtag,inputTimestamp)
@@ -250,7 +250,9 @@ function EventList()
 					refetchCalendarEvents();
 				else
 				{
-					var prevIndex = $('.fc-view-todo .fc-list-day').find('.fc-event:visible').index($('[data-repeat-hash="'+globalCalTodo.repeatHash+'"]'));
+					var prevIndex = '';
+					if(globalCalTodo!=null)
+						prevIndex=$('.fc-view-todo .fc-list-day').find('.fc-event:visible').index($('[data-repeat-hash="'+globalCalTodo.repeatHash+'"]'));
 					refetchTodoEvents();
 					if(prevIndex!=-1 && $('.fc-view-todo .fc-list-day').find('.fc-event:visible').length > 0 && prevIndex>($('.fc-view-todo .fc-list-day').find('.fc-event:visible').length-1))
 						$('#todoList').fullCalendar('selectEvent',$($('.fc-view-todo .fc-list-day').find('.fc-event:visible').get($('.fc-view-todo .fc-list-day').find('.fc-event:visible').length-1)));
@@ -260,13 +262,10 @@ function EventList()
 						$('#CATodo').attr('style','display:none');
 				}
 			}
-
-			for(var k=0;k<globalEventList.repeatable.length;k++)
-				if(globalEventList.repeatable[k].uid==inputUid)
-				{
-					globalEventList.repeatable.splice(k, 1);
-					break;
-				}
+			if(isEvent)
+				delete globalEventList.repeatable[inputUid];
+			else
+				delete globalEventList.repeatableTodo[inputUid];
 		}
 	}
 
@@ -287,7 +286,7 @@ function EventList()
 					if(evs!='' && evs.etag!=globalEventList.events[rid][inputUID].etag)
 					{
 						vcalendarToData(globalResourceCalDAVList.getCollectionByUID(rid), globalEventList.events[rid][inputUID], false);
-						if(!isFromServer && (globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents))
+						if(!isFromServer && (globalVisibleCalDAVCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents.value))
 							refetchCalendarEvents();
 						else if(isFromServer)
 							checkEventLoader(globalResourceCalDAVList.counterList[rid+' '+globalResourceCalDAVList.getCollectionByUID(rid).listType], true);
@@ -304,20 +303,18 @@ function EventList()
 					if(evs!='' && evs.etag!=globalEventList.todos[rid][inputUID].etag)
 					{
 						vcalendarTodoData(globalResourceCalDAVList.getCollectionByUID(rid), globalEventList.todos[rid][inputUID], false);
-						if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents)
+						if(globalVisibleCalDAVTODOCollections.indexOf(rid)!=-1 || globalSettings.displayhiddenevents.value)
 						{
 							$('#todoList').fullCalendar('allowSelectEvent',false);
 							refetchTodoEvents();
 							$('#todoList').fullCalendar('allowSelectEvent',true);
-
 							if($('#showTODO').val()==inputUID)
 							{
-								var newTodo = findEventInArray(globalEventList.todos[rid][inputUID].uid,false);
-								if(newTodo!=-'')
+								var newTodo = findEventInArray(globalEventList.todos[rid][inputUID].uid,false,globalCalTodo!=null ? globalCalTodo.repeatHash : null);
+								if(newTodo!='')
 								{
 									if(globalCalTodo!=null)
 									{
-										
 										if(isFromServer && $('#showTODO').val()==inputUID && ($('#repeatTodo').val()=="true" || $('#recurrenceIDTODO').val()!=''))
 										{
 											if(globalCalTodo.repeatHash != newTodo.repeatHash)

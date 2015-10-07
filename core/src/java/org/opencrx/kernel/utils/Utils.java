@@ -817,7 +817,7 @@ public abstract class Utils {
     }
     
     /**
-     * Return true if principal is member of given groups.
+     * Return true if principal is member of at least one of the given groups.
      * 
      * @param principal
      * @param principalGroups

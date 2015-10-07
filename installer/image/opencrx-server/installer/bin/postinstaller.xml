@@ -4,10 +4,10 @@
 >
 	<property name="install.path" value="$INSTALL_PATH" />
 	<target name="expand-native">
-		<exec command="unzip ${install.path}/installer/files/apache-tomee-webprofile-1.7.1.zip -d ${install.path}" />
+		<exec command="unzip ${install.path}/installer/files/apache-tomee-webprofile-1.7.2.zip -d ${install.path}" />
 	</target>
 	<target name="expand-ant">
-		<unzip src="${install.path}/installer/files/apache-tomee-webprofile-1.7.1.zip" dest="${install.path}" />
+		<unzip src="${install.path}/installer/files/apache-tomee-webprofile-1.7.2.zip" dest="${install.path}" />
 	</target>
 	<target name="postinstall">
 		<antcall inheritAll="true" target="${expand.target}"/>
@@ -23,7 +23,6 @@
 		<!-- Update lib -->
 		<copy file="${install.path}/installer/files/catalina-openmdx.jar" todir="${install.path}/$TOMEE_BASEDIR/lib"/>
 		<!-- Update bin -->
-		<copy file="${install.path}/installer/files/openmdx-system.jar" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
 		<copy file="${install.path}/installer/files/setenv.bat" todir="${install.path}/$TOMEE_BASEDIR/bin"/>
 		<copy file="${install.path}/installer/files/setenv.sh" tofile="${install.path}/installer/files/setenv.sh.bak"/>
 		<move file="${install.path}/installer/files/setenv.sh" todir="${install.path}/$TOMEE_BASEDIR/bin"/>

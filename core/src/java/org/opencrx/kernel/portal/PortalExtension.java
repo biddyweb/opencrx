@@ -52,7 +52,10 @@
  */
 package org.opencrx.kernel.portal;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.Serializable;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -69,6 +72,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
 import javax.jmi.reflect.RefStruct;
+import javax.servlet.ServletContext;
 
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
@@ -96,16 +100,22 @@ import org.opencrx.kernel.home1.cci2.ExportProfileQuery;
 import org.opencrx.kernel.home1.jmi1.ExportProfile;
 import org.opencrx.kernel.portal.AbstractPropertyDataBinding.PropertySetHolderType;
 import org.opencrx.kernel.portal.action.CreateSubfolderAction;
+import org.opencrx.kernel.portal.action.DisableObjectsAction;
+import org.opencrx.kernel.portal.action.EnableObjectsAction;
+import org.opencrx.kernel.portal.action.ExportAsXlsAction;
+import org.opencrx.kernel.portal.action.ExportAsXmlAction;
+import org.opencrx.kernel.portal.action.ExportIncludingCompositesAsXmlAction;
+import org.opencrx.kernel.portal.action.ExportWysiwygAllColumnsAsXlsAction;
+import org.opencrx.kernel.portal.action.ExportWysiwygAsXlsAction;
 import org.opencrx.kernel.portal.action.InitUserHomesAction;
 import org.opencrx.kernel.portal.action.MarkAlertsAsAcceptedAction;
 import org.opencrx.kernel.portal.action.MarkAlertsAsReadAction;
 import org.opencrx.kernel.portal.action.MarkPriceLevelAsFinal;
-import org.opencrx.kernel.portal.action.UiGridExportAsXlsAction;
-import org.opencrx.kernel.portal.action.UiGridExportAsXmlAction;
-import org.opencrx.kernel.portal.action.UiGridExportIncludingCompositesAsXmlAction;
-import org.opencrx.kernel.portal.action.UiGridExportWysiwygAllColumnsAsXlsAction;
-import org.opencrx.kernel.portal.action.UiGridExportWysiwygAsXlsAction;
+import org.opencrx.kernel.portal.action.MarkPriceLevelAsNonFinal;
+import org.opencrx.kernel.portal.action.PriceLevelCloneValidToAction;
+import org.opencrx.kernel.portal.action.PriceLevelResetValidToAction;
 import org.opencrx.kernel.utils.QueryBuilderUtil;
+import org.opencrx.kernel.utils.ScriptUtils;
 import org.opencrx.kernel.utils.Utils;
 import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
 import org.openmdx.base.accessor.jmi.spi.RefMetaObject_1;
@@ -138,6 +148,7 @@ import org.openmdx.portal.servlet.component.ShowObjectView;
 import org.openmdx.portal.servlet.component.UiGrid;
 import org.openmdx.portal.servlet.control.Control;
 import org.openmdx.security.realm1.jmi1.Principal;
+import org.w3c.cci2.BinaryLargeObjects;
 
 /**
  * PortalExtension
@@ -168,16 +179,16 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 	    	short event
 	    ) {
 			switch(event) {
-				case UiGridExportAsXmlAction.EVENT_ID:
-					return new UiGridExportAsXmlAction();
-				case UiGridExportAsXlsAction.EVENT_ID:
-					return new UiGridExportAsXlsAction();
-				case UiGridExportIncludingCompositesAsXmlAction.EVENT_ID:
-					return new UiGridExportIncludingCompositesAsXmlAction();
-				case UiGridExportWysiwygAsXlsAction.EVENT_ID:
-					return new UiGridExportWysiwygAsXlsAction();
-				case UiGridExportWysiwygAllColumnsAsXlsAction.EVENT_ID:
-					return new UiGridExportWysiwygAllColumnsAsXlsAction();
+				case ExportAsXmlAction.EVENT_ID:
+					return new ExportAsXmlAction();
+				case ExportAsXlsAction.EVENT_ID:
+					return new ExportAsXlsAction();
+				case ExportIncludingCompositesAsXmlAction.EVENT_ID:
+					return new ExportIncludingCompositesAsXmlAction();
+				case ExportWysiwygAsXlsAction.EVENT_ID:
+					return new ExportWysiwygAsXlsAction();
+				case ExportWysiwygAllColumnsAsXlsAction.EVENT_ID:
+					return new ExportWysiwygAllColumnsAsXlsAction();
 				case MarkAlertsAsReadAction.EVENT_ID:
 					return new MarkAlertsAsReadAction();
 				case MarkAlertsAsAcceptedAction.EVENT_ID:
@@ -188,11 +199,21 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 					return new CreateSubfolderAction();
 				case InitUserHomesAction.EVENT_ID:
 					return new InitUserHomesAction();
+				case EnableObjectsAction.EVENT_ID:
+					return new EnableObjectsAction();
+				case DisableObjectsAction.EVENT_ID:
+					return new DisableObjectsAction();
+				case MarkPriceLevelAsNonFinal.EVENT_ID:
+					return new MarkPriceLevelAsNonFinal();
+				case PriceLevelResetValidToAction.EVENT_ID:
+					return new PriceLevelResetValidToAction();
+				case PriceLevelCloneValidToAction.EVENT_ID:
+					return new PriceLevelCloneValidToAction();
 				default:
 					return super.getAction(event);
 			}
 	    }
-		
+
 	}
 
 	/**
@@ -307,6 +328,42 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 	protected ActionFactory newActionFactory(
 	) {
 		return new CrxActionFactory();
+	}
+
+	/**
+	 * Get method <code>name</code> implemented by a script located in <code>/WEB-INF/config/scripts/${name}.script</code>,
+	 * whereas the first character of the script name is uppercase. This method is a helper and 
+	 * allows scripted implementations of portal extension methods.
+	 * 
+	 * @param name
+	 * @param parameterTypes
+	 * @return
+	 * @throws ServiceException
+	 */
+	protected Method getMethod(
+		String name,
+		Class<?>[] parameterTypes
+	) throws ServiceException {
+		if(this.getServletContext() != null) {
+			ServletContext context = this.getServletContext();
+			InputStream scriptIs = context.getResourceAsStream("/WEB-INF/config/scripts/" + (name.substring(0, 1).toUpperCase() + name.substring(1)) + ".script");
+			if(scriptIs != null) {
+				try {
+	    			ByteArrayOutputStream scriptBytes = new ByteArrayOutputStream();
+	    			BinaryLargeObjects.streamCopy(scriptIs, 0L, scriptBytes);
+	    			String script = scriptBytes.toString("UTF-8");
+	    			Class<?> scriptClazz = ScriptUtils.getClass(script);
+	                Method scriptMethod = scriptClazz.getMethod(
+	                    name,
+	                    parameterTypes
+	                );
+	                return scriptMethod;
+				} catch(Exception e) {
+					throw new ServiceException(e);
+				}
+			}
+		}
+		return null;
 	}
 
 	/* (non-Javadoc)
@@ -611,7 +668,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
      * @param app
      * @return
      */
-    protected org.openmdx.base.query.Filter getQueryConditions(
+    public org.openmdx.base.query.Filter getQueryConditions(
     	String clause,
     	List<String> stringParams,
     	ApplicationContext app
@@ -1475,18 +1532,22 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
     	}
     }
     
-	/* (non-Javadoc)
-	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getGridActions(org.openmdx.portal.servlet.component.ObjectView, org.openmdx.portal.servlet.component.Grid)
-	 */
-	@Override
-    public List<Action> getGridActions(
+    /**
+     * Get alert grid actions.
+     * 
+     * @param view
+     * @param grid
+     * @param maxSize
+     * @return
+     * @throws ServiceException
+     */
+    protected List<Action> getAlertGridActions(
     	ObjectView view,
-    	Grid grid
+    	Grid grid,
+    	int maxSize
     ) throws ServiceException {
-		final int MAX_SIZE = 500;
-		ApplicationContext app = view.getApplicationContext();
-	    List<Action> actions = new ArrayList<Action>(super.getGridActions(view, grid));
-	    // Alert-specific actions
+    	ApplicationContext app = view.getApplicationContext();
+    	List<Action> actions = new ArrayList<Action>();
 	    if(grid instanceof UiGrid) {
 	    	UiGrid uiGrid = (UiGrid)grid;
 	    	if("org:opencrx:kernel:home1:Alert".equals(uiGrid.getReferencedTypeName())) {
@@ -1502,7 +1563,7 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 			            MarkAlertsAsReadAction.EVENT_ID, 
 			            new Action.Parameter[]{
 			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 			            },
 			            label, 
 			            true
@@ -1521,20 +1582,38 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 			            MarkAlertsAsAcceptedAction.EVENT_ID, 
 			            new Action.Parameter[]{
 			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 			            },
-			            label, 
+			            label,
 			            true
 			        );
 				    actions.add(markAlertsAsAcceptedAction);
 	    		}
 	    	}
 	    }
-	    // PriceLevel-specific actions
+	    return actions;
+    }
+
+    /**
+     * Get price level grid actions.
+     * 
+     * @param view
+     * @param grid
+     * @param maxSize
+     * @return
+     * @throws ServiceException
+     */
+    protected List<Action> getPriceLevelGridActions(
+    	ObjectView view,
+    	Grid grid,
+    	int maxSize
+    ) throws ServiceException {
+    	ApplicationContext app = view.getApplicationContext();
+    	List<Action> actions = new ArrayList<Action>();
 	    if(grid instanceof UiGrid) {
 	    	UiGrid uiGrid = (UiGrid)grid;
 	    	if("org:opencrx:kernel:product1:AbstractPriceLevel".equals(uiGrid.getReferencedTypeName())) {
-	    		// isFinal=true
+	    		// Set isFinal
 	    		{
 				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:product1:AbstractPriceLevel:isFinal");
 				    String label = uiElementDef == null
@@ -1546,16 +1625,91 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 			            MarkPriceLevelAsFinal.EVENT_ID,
 			            new Action.Parameter[]{
 			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 			            },
-			            label + " &#10004", 
+			            "Set &#171" + label + "&#187", 
 			            true
 			        );
 				    actions.add(markPriceLevelsAsFinalAction);
 	    		}
+	    		// Reset isFinal
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:product1:AbstractPriceLevel:isFinal");
+				    String label = uiElementDef == null
+				    	? "Is final"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: uiElementDef.getToolTip().get(0);
+				    Action markPriceLevelsAsNonFinalAction = new Action(
+			            MarkPriceLevelAsNonFinal.EVENT_ID,
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
+			            },
+			            "Reset &#171" + label + "&#187",
+			            true
+			        );
+				    actions.add(markPriceLevelsAsNonFinalAction);
+	    		}
+	    		// Reset validTo
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:product1:AbstractPriceLevel:validTo");
+				    String label = uiElementDef == null
+				    	? "Valid to"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: uiElementDef.getToolTip().get(0);
+				    Action priceLevelResetValidToAction = new Action(
+			            PriceLevelResetValidToAction.EVENT_ID,
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))
+			            },
+			            "Reset &#171" + label + "&#187",
+			            true
+			        );
+				    actions.add(priceLevelResetValidToAction);
+	    		}
+	    		// Set validTo
+	    		{
+				    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:product1:AbstractPriceLevel:validTo");
+				    String label = uiElementDef == null
+				    	? "Valid to"
+				    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+					    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+					    	: uiElementDef.getToolTip().get(0);
+				    Action priceLevelSetValidToAction = new Action(
+			            PriceLevelCloneValidToAction.EVENT_ID,
+			            new Action.Parameter[]{
+			                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                
+			                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))
+			            },
+			            "Clone &#171" + label + "&#187",
+			            true
+			        );
+				    actions.add(priceLevelSetValidToAction);
+	    		}
 	    	}
-	    }
-	    // DocumentFolder-specific actions
+	    }    	
+    	return actions;
+    }
+
+    /**
+     * Get document folder grid actions.
+     * 
+     * @param view
+     * @param grid
+     * @param maxSize
+     * @return
+     * @throws ServiceException
+     */
+    protected List<Action> getDocumentFolderGridActions(
+    	ObjectView view,
+    	Grid grid,
+    	int maxSize
+    ) throws ServiceException {
+    	ApplicationContext app = view.getApplicationContext();
+    	List<Action> actions = new ArrayList<Action>();
 	    if(grid instanceof UiGrid) {
 	    	UiGrid uiGrid = (UiGrid)grid;
 	    	if("org:opencrx:kernel:document1:DocumentFolder".equals(uiGrid.getReferencedTypeName())) {
@@ -1577,8 +1731,25 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 				    actions.add(createSubfolderAction);
 	    		}
 	    	}
-	    }
-	    // UserHome-specific actions
+	    }    	
+    	return actions;
+    }
+    
+    /**
+     * Get user home grid actions.
+     * 
+     * @param view
+     * @param grid
+     * @param maxSize
+     * @return
+     * @throws ServiceException
+     */
+    protected List<Action> getUserHomeGridActions(
+    	ObjectView view,
+    	Grid grid,
+    	int maxSize
+    ) throws ServiceException {
+    	List<Action> actions = new ArrayList<Action>();
 	    if(grid instanceof UiGrid) {
 	    	UiGrid uiGrid = (UiGrid)grid;
 	    	if("org:opencrx:kernel:home1:UserHome".equals(uiGrid.getReferencedTypeName())) {
@@ -1594,8 +1765,81 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 				    actions.add(initUserHomesAction);
 	    		}
 	    	}
-	    }
-	    // Generic grid actions
+	    }    	
+    	return actions;
+    }
+    
+    /**
+     * Get enable / disable grid actions.
+     * 
+     * @param view
+     * @param grid
+     * @param maxSize
+     * @return
+     * @throws ServiceException
+     */
+    protected List<Action> getEnableDisableGridActions(
+    	ObjectView view,
+    	Grid grid,
+    	int maxSize
+    ) throws ServiceException {
+    	ApplicationContext app = view.getApplicationContext();
+    	List<Action> actions = new ArrayList<Action>();
+    	{
+		    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:enableCrxObject");
+		    String label = uiElementDef == null
+		    	? "Enable"
+		    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+			    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+			    	: uiElementDef.getToolTip().get(0);
+		    Action enableObjectsAction = new Action(
+	            EnableObjectsAction.EVENT_ID,
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))
+	            },
+	            label, 
+	            true
+	        );
+		    actions.add(enableObjectsAction);
+    	}
+    	{
+    		org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:generic:CrxObject:Pane:Op:Tab:disableCrxObject");
+		    String label = uiElementDef == null
+		    	? "Disable"
+		    	: app.getCurrentLocaleAsIndex() < uiElementDef.getToolTip().size() 
+			    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
+			    	: uiElementDef.getToolTip().get(0);
+		    Action disableObjectsAction = new Action(
+	            DisableObjectsAction.EVENT_ID, 
+	            new Action.Parameter[]{
+	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
+	            },
+	            label,
+	            true
+	        );
+		    actions.add(disableObjectsAction);
+    	}    	
+    	return actions;
+    }
+    
+    /**
+     * Get export grid actions.
+     * 
+     * @param view
+     * @param grid
+     * @param maxSize
+     * @return
+     * @throws ServiceException
+     */
+    protected List<Action> getExportGridActions(
+    	ObjectView view,
+    	Grid grid,
+    	int maxSize
+    ) throws ServiceException {
+    	ApplicationContext app = view.getApplicationContext();
+    	List<Action> actions = new ArrayList<Action>();
 	    {
 		    org.openmdx.ui1.jmi1.ElementDefinition uiElementDef = app.getUiElementDefinition("org:opencrx:kernel:base:Exporter:Pane:Op:Tab:exportItem");
 		    String label = uiElementDef == null
@@ -1604,56 +1848,111 @@ public class PortalExtension extends DefaultPortalExtension implements Serializa
 			    	? uiElementDef.getToolTip().get(app.getCurrentLocaleAsIndex()) 
 			    	: uiElementDef.getToolTip().get(0);
 		    Action exportWysiwygAsXlsAction = new Action(
-	            UiGridExportWysiwygAsXlsAction.EVENT_ID, 
+	            ExportWysiwygAsXlsAction.EVENT_ID, 
 	            new Action.Parameter[]{
 	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 	            },
 	            label + " &#10137 XLS (wysiwyg)", 
 	            true
 	        );
 		    actions.add(exportWysiwygAsXlsAction);
 		    Action exportWysiwygAllColumnsAsXlsAction = new Action(
-	            UiGridExportWysiwygAllColumnsAsXlsAction.EVENT_ID, 
+	            ExportWysiwygAllColumnsAsXlsAction.EVENT_ID, 
 	            new Action.Parameter[]{
 	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 	            },
 	            label + " &#10137 XLS (wysiwyg+)", 
 	            true
 	        );
 		    actions.add(exportWysiwygAllColumnsAsXlsAction);
 		    Action exportAsXmlAction = new Action(
-	            UiGridExportAsXmlAction.EVENT_ID, 
+	            ExportAsXmlAction.EVENT_ID, 
 	            new Action.Parameter[]{
 	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                               
-	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 	            },
 	            label + " &#10137 XML", 
 	            true
 		    );
 		    actions.add(exportAsXmlAction);
 		    Action exportAsXlsAction = new Action(
-	            UiGridExportAsXlsAction.EVENT_ID, 
+	            ExportAsXlsAction.EVENT_ID, 
 	            new Action.Parameter[]{
 	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 	            },
 	            label + " &#10137 XLS", 
 	            true
 	        );
 		    actions.add(exportAsXlsAction);
 		    Action exportIncludingCompositesAsXmlAction = new Action(
-	            UiGridExportIncludingCompositesAsXmlAction.EVENT_ID, 
+	            ExportIncludingCompositesAsXmlAction.EVENT_ID, 
 	            new Action.Parameter[]{
 	                new Action.Parameter(Action.PARAMETER_OBJECTXRI, view.getObject().refMofId()),                                                  
-	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(MAX_SIZE))                                               
+	                new Action.Parameter(Action.PARAMETER_SIZE, Integer.toString(maxSize))                                               
 	            },
 	            label + " &#10137 XML+", 
 	            true
 	        );
 		    actions.add(exportIncludingCompositesAsXmlAction);
-	    }
+	    }    	
+    	return actions;
+    }
+    
+	/* (non-Javadoc)
+	 * @see org.openmdx.portal.servlet.DefaultPortalExtension#getGridActions(org.openmdx.portal.servlet.component.ObjectView, org.openmdx.portal.servlet.component.Grid)
+	 */
+	@Override
+    public List<Action> getGridActions(
+    	ObjectView view,
+    	Grid grid
+    ) throws ServiceException {
+		final int MAX_SIZE = 500;
+	    List<Action> actions = new ArrayList<Action>(super.getGridActions(view, grid));
+	    actions.addAll(
+	    	this.getAlertGridActions(
+	    		view,
+	    		grid,
+	    		MAX_SIZE
+	    	)
+	    );
+	    actions.addAll(
+	    	this.getPriceLevelGridActions(
+	    		view,
+	    		grid,
+	    		MAX_SIZE
+	    	)
+	    );
+	    actions.addAll(
+	    	this.getDocumentFolderGridActions(
+	    		view,
+	    		grid,
+	    		MAX_SIZE
+	    	)
+	    );
+	    actions.addAll(
+	    	this.getUserHomeGridActions(
+	    		view,
+	    		grid,
+	    		MAX_SIZE
+	    	)
+	    );
+	    actions.addAll(
+	    	this.getEnableDisableGridActions(
+	    		view,
+	    		grid,
+	    		MAX_SIZE
+	    	)
+	    );
+	    actions.addAll(
+	    	this.getExportGridActions(
+	    		view,
+	    		grid,
+	    		MAX_SIZE
+	    	)
+	    );
 	    return actions;
     }
 

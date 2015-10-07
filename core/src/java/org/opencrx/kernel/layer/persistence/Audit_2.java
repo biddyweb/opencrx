@@ -337,6 +337,34 @@ public class Audit_2 extends Indexed_2 {
 	        return isAuditSegment.booleanValue();
 	    }
 
+	    /**
+         * Return true if path should be excluded from trivial updates.
+         *
+         */  
+	    protected boolean excludeFromTouch(
+	       Path path
+	    ) {
+	        return path.isLike(ACTIVITY_CREATOR_IDENTITY_PATTERN);
+	    }
+
+    	/**
+    	 * Return true if the set of modified features is considered as object touch.
+    	 * 
+    	 * @param modifiedFeatures
+    	 * @return
+    	 */
+    	protected boolean isObjectTouch(
+    	    Set<String> modifiedFeatures
+    	) {
+    	    return
+                (modifiedFeatures.size() == 1 &&
+                modifiedFeatures.contains(SystemAttributes.MODIFIED_AT))
+                ||
+                (modifiedFeatures.size() == 2 &&
+                modifiedFeatures.contains(SystemAttributes.MODIFIED_AT) &&
+                modifiedFeatures.contains(SystemAttributes.MODIFIED_BY));
+    	}
+
 	    /* (non-Javadoc)
 	     * @see org.opencrx.kernel.layer.persistence.Indexed_1.LayerInteraction#get(org.openmdx.base.resource.spi.RestInteractionSpec, org.openmdx.base.rest.spi.Query_2Facade, javax.resource.cci.IndexedRecord)
 	     */
@@ -512,12 +540,10 @@ public class Audit_2 extends Indexed_2 {
 		                    // No modified features. Do not create audit entry and do not
 		                    // propagate PUT. E.g. isQuery=true operations do not touch
 		                    // an object.
+		                    boolean isObjectTouch = this.isObjectTouch(modifiedFeatures);
 		                    if(modifiedFeatures.isEmpty()) {
 		                    	propagatePut = false;
-		                    } else if(
-		                        ((modifiedFeatures.size() > 1) ||
-		                        !modifiedFeatures.contains(SystemAttributes.MODIFIED_AT))
-		                    ) {
+		                    } else if(!isObjectTouch) {
 			                    // Non-trivial update. Create audit entry	                    	
 		                        Object_2Facade.getValue(beforeImage).keySet().retainAll(
 		                            modifiedFeatures
@@ -545,8 +571,10 @@ public class Audit_2 extends Indexed_2 {
 		                        	this.newResult()
 		                        );
 		                    } else {
-		                    	// Trivial update. Do not generate an audit entry but propagate
-		                    	// the PUT. This way the object's modifiedAt reflects a touch. 
+                                // Test whether object is to be excluded from a touch. 
+		                        // In this case do not generate an audit entry but propagate
+                                // the PUT.	                        
+		                        propagatePut = !this.excludeFromTouch(path);
 		                    }
 		                }
 		            }
@@ -879,6 +907,7 @@ public class Audit_2 extends Indexed_2 {
     // Members
     //-----------------------------------------------------------------------
     protected static final String NOT_VISITED_SUFFIX = "-";
+    protected final Path ACTIVITY_CREATOR_IDENTITY_PATTERN = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/activityCreator/:*");    
 
     protected final Map<Path,Boolean> auditSegments = new HashMap<Path,Boolean>();
     protected SparseArray<String> visitorId = new TreeSparseArray<String>();

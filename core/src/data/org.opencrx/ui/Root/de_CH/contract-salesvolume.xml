@@ -121,14 +121,14 @@
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
 
-<!-- PriceLevelAssignment -->
+<!-- ProductFilter / PriceLevelAssignment -->
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesVolumeTarget" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Umsatzziele und Konditionen</_item>
+												<_item>Produkte / Umsatzziele und Konditionen</_item>
 											</toolTip>
 											<label>
-												<_item>Umsatzziele und Konditionen</_item>
+												<_item>Produkte / Umsatzziele und Konditionen</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -171,10 +171,10 @@
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:SalesVolumeTarget:priceLevel" _operation="create">
 										<_object>
 											<toolTip>
-												<_item>Preislevel</_item>
+												<_item>Suchliste Produkte / Preislevel</_item>
 											</toolTip>
 											<label>
-												<_item>Preislevel</_item>
+												<_item>Suchliste Produkte /Preislevel</_item>
 											</label>
 										</_object>
 										<_content/>

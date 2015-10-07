@@ -441,10 +441,10 @@ public class DatatypeMapper {
 			vcard.append("TEL;CELL;VOICE:" + contactT.getMobilePhoneNumber() + "\n");
 		}
 		if(contactT.getEmail1Address() != null) {
-			vcard.append("EMAIL;PREF;INTERNET:" + parseEmailAddress(contactT.getEmail1Address()) + "\n");		
+			vcard.append("EMAIL;TYPE=PREF,INTERNET,WORK:" + parseEmailAddress(contactT.getEmail1Address()) + "\n");		
 		}
 		if(contactT.getEmail2Address() != null) {
-			vcard.append("EMAIL;INTERNET:" + parseEmailAddress(contactT.getEmail2Address()) + "\n");			
+			vcard.append("EMAIL;TYPE=INTERNET,HOME:" + parseEmailAddress(contactT.getEmail2Address()) + "\n");			
 		}
 		if(contactT.getBusinessFaxNumber() != null) {
 			vcard.append("TEL;WORK;FAX:" + contactT.getBusinessFaxNumber() + "\n");

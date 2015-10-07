@@ -1105,23 +1105,6 @@
 										</_object>
 										<_content />
 									</org.openmdx.ui1.ElementDefinition>
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Person's government ID</_item>
-											</toolTip>
-											<label>
-												<_item>Government ID</_item>
-											</label>
-											<order>
-												<_item>10</_item>
-												<_item>0</_item>
-												<_item>130</_item>
-											</order>
-										</_object>
-										<_content />
-									</org.openmdx.ui1.ElementDefinition>
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:citizenship">
 										<_object>
 											<active>true</active>

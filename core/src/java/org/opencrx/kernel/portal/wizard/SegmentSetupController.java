@@ -324,8 +324,7 @@ public class SegmentSetupController extends AbstractWizardController {
 				);
 			}
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			new ServiceException(e).log();
 			try {
 				pm.currentTransaction().rollback();
@@ -375,8 +374,7 @@ public class SegmentSetupController extends AbstractWizardController {
 				);
 			}
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			new ServiceException(e).log();
 			try {
 				pm.currentTransaction().rollback();
@@ -426,8 +424,7 @@ public class SegmentSetupController extends AbstractWizardController {
 				);
 			}
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			new ServiceException(e).log();
 			try {
 				pm.currentTransaction().rollback();
@@ -477,8 +474,7 @@ public class SegmentSetupController extends AbstractWizardController {
 				);
 			}
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			new ServiceException(e).log();
 			try {
 				pm.currentTransaction().rollback();
@@ -569,26 +565,31 @@ public class SegmentSetupController extends AbstractWizardController {
 			exportProfileName,
 			userHome
 		);
-		if(exportProfile != null) return exportProfile;
 		try {
 			pm.currentTransaction().begin();
-			exportProfile = pm.newInstance(org.opencrx.kernel.home1.jmi1.ExportProfile.class);
-			exportProfile.setName(exportProfileName);
-			exportProfile.getForClass().addAll(
-				Arrays.asList(forClass)
-			);
-			exportProfile.setMimeType(mimeType);
-			exportProfile.setExportParams(exportParams);
-			exportProfile.setTemplate(template);
-			exportProfile.getOwningGroup().addAll(allUsers);
-			userHome.addExportProfile(
-				false,
-				Activities.getInstance().getUidAsString(),
-				exportProfile
-			);
+			if(exportProfile == null)  {
+				exportProfile = pm.newInstance(org.opencrx.kernel.home1.jmi1.ExportProfile.class);
+				exportProfile.setName(exportProfileName);
+				exportProfile.getForClass().addAll(
+					Arrays.asList(forClass)
+				);
+				exportProfile.getOwningGroup().addAll(allUsers);
+				userHome.addExportProfile(
+					Activities.getInstance().getUidAsString(),
+					exportProfile
+				);
+			}
+			if(exportProfile.getMimeType() == null || exportProfile.getMimeType().isEmpty()) {
+				exportProfile.setMimeType(mimeType);
+			}
+			if(exportProfile.getExportParams() == null || exportProfile.getExportParams().isEmpty()) {
+				exportProfile.setExportParams(exportParams);
+			}
+			if(exportProfile.getTemplate() == null) {
+				exportProfile.setTemplate(template);
+			}
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			try {
 				pm.currentTransaction().rollback();
 			} catch(Exception e0) {}
@@ -619,27 +620,34 @@ public class SegmentSetupController extends AbstractWizardController {
 		    favoriteName,
 			userHome
 		);
-		if(favorite != null) return favorite;
 		try {
 			pm.currentTransaction().begin();
-			favorite = pm.newInstance(org.opencrx.kernel.home1.jmi1.QuickAccess.class);
-			favorite.setName(favoriteName);
-			favorite.setReference(reference);
-			favorite.setDescription(favoriteName);
-			favorite.setIconKey(iconKey);
-			favorite.setActionType((short)1); // Javascript
-			favorite.setActionName(action);
-			favorite.getOwningGroup().addAll(
-				userHome.getOwningGroup()
-			);
-			userHome.addQuickAccess(
-				false,
-				Activities.getInstance().getUidAsString(),
-				favorite
-			);
+			if(favorite == null) {
+				favorite = pm.newInstance(org.opencrx.kernel.home1.jmi1.QuickAccess.class);
+				favorite.setName(favoriteName);
+				favorite.getOwningGroup().addAll(
+					userHome.getOwningGroup()
+				);
+				favorite.setActionType((short)1); // Javascript
+				userHome.addQuickAccess(
+					Activities.getInstance().getUidAsString(),
+					favorite
+				);
+			}
+			if(favorite.getReference() == null) {
+				favorite.setReference(reference);
+			}
+			if(favorite.getDescription() == null || favorite.getDescription().isEmpty()) {
+				favorite.setDescription(favoriteName);
+			}
+			if(favorite.getIconKey() == null || favorite.getIconKey().isEmpty()) {
+				favorite.setIconKey(iconKey);
+			}
+			if(favorite.getActionName() == null || favorite.getActionName().isEmpty()) {
+				favorite.setActionName(action);
+			}
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			try {
 				pm.currentTransaction().rollback();
 			} catch(Exception e0) {}
@@ -699,13 +707,11 @@ public class SegmentSetupController extends AbstractWizardController {
 				segment.getOwningGroup()
 			);
 			segment.addSalesTaxType(
-				false,
 				Contracts.getInstance().getUidAsString(),
 				salesTaxType
 			);
 			pm.currentTransaction().commit();
-		}
-		catch(Exception e) {
+		} catch(Exception e) {
 			try {
 				pm.currentTransaction().rollback();
 			} catch(Exception e0) {}

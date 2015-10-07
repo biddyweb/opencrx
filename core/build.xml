@@ -58,7 +58,7 @@
 	<!-- Slash separated platform list, the last entry being the default -->
 	<property name="project.platform.list" value="jre-1.7"/>
 	<!-- project imports -->
-	<property name="openmdx.version" value="2.14.0"/>
+	<property name="openmdx.version" value="2.14.4"/>
 	<!-- openMDX ant library -->
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-properties.xml" optional="true"/>
 	<import file="../opt/openmdx-${openmdx.version}/ant/etc/ant/build-library.xml" optional="true"/>
@@ -146,6 +146,7 @@
 		<path refid="osgi.enterprise.lib"/>
 		<path refid="osgi.extension.lib"/>
 		<pathelement location="../codehaus/${build.target.platform}/janino/lib/janino.jar"/>
+		<pathelement location="../codehaus/${build.target.platform}/janino/lib/commons-compiler.jar"/>
 		<pathelement location="../apache/${build.target.platform}/poi/lib/poi.jar"/>
 		<pathelement location="../apache/${build.target.platform}/poi/lib/poi-ooxml.jar"/>
 		<pathelement location="../apache/${build.target.platform}/poi/lib/poi-scratchpad.jar"/>
@@ -185,6 +186,7 @@
 		<include name="**/*.html"/>
 		<include name="**/*.properties"/>
 		<include name="**/*.js"/>
+		<include name="**/RequestPasswordReset.jsp"/>
 		<patternset refid="jboss-3.edition.pattern"/>
 		<patternset refid="weblogic-7.edition.pattern"/>
 		<patternset refid="websphere-5.edition.pattern"/>
@@ -250,6 +252,7 @@
 			<replacestring from="opencrx-bpi-CRX" to="opencrx-bpi-${web.application.name}"/>
 			<replacestring from="opencrx-calendar-CRX" to="opencrx-calendar-${web.application.name}"/>
 			<replacestring from="opencrx-documents-CRX" to="opencrx-documents-${web.application.name}"/>
+			<replacestring from="opencrx-contacts-CRX" to="opencrx-contacts-${web.application.name}"/>
 			<replacestring from="org.opencrx.kernel.aop2.Configuration" to="${configuration.class.name}"/>
 			<replacestring from="org.opencrx.kernel.layer.application.OpenCrxKernel_2" to="${kernel.application.plugin.class.name}"/>
 			<replacestring from="org.opencrx.kernel.layer.model.AccessControl_2" to="${kernel.model.plugin.class.name}"/>
@@ -488,6 +491,9 @@
 			<openmdx:archivefileset dir="${build.dir}/bin">
 				<patternset refid="opencrx-application.jar.content"/>
 			</openmdx:archivefileset>
+			<openmdx:archivefileset dir="src/resource">
+				<patternset refid="opencrx-application.jar.content"/>
+			</openmdx:archivefileset>
 			<openmdx:archivefileset src="${build.dir}/model/${ant.project.name}.openmdx-xmi.zip">
 				<patternset refid="opencrx-application.jar.content"/>
 			</openmdx:archivefileset>
@@ -546,6 +552,8 @@
 			<param name="calendar.target.name" value="opencrx-calendar-${web.application.name}"/>
 			<param name="documents.source.name" value="opencrx-documents-CRX"/>
 			<param name="documents.target.name" value="opencrx-documents-${web.application.name}"/>
+			<param name="contacts.source.name" value="opencrx-contacts-CRX"/>
+			<param name="contacts.target.name" value="opencrx-contacts-${web.application.name}"/>
 		</antcall>
 	</target>
 	<!-- ******************************************************************* -->
@@ -726,6 +734,10 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir}/filters" prefix="WEB-INF/config/filters"/>
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}/filters" prefix="WEB-INF/config/filters"/>
 			<zipfileset dir="src/data/${data.dir.generic}/filters" prefix="WEB-INF/config/filters"/>
+			<!-- scripts -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}/scripts" prefix="WEB-INF/config/scripts" erroronmissingdir="false"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}/scripts" prefix="WEB-INF/config/scripts" erroronmissingdir="false"/>
+			<zipfileset dir="src/data/${data.dir.generic}/scripts" prefix="WEB-INF/config/scripts" erroronmissingdir="false"/>
 			<!-- texts -->
 			<zipfileset dir="${data.home}/src/data/${data.dir}/texts" prefix="WEB-INF/config/texts"/>
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}/texts" prefix="WEB-INF/config/texts"/>
@@ -844,10 +856,7 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.caldav/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.caldav/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.caldav">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -893,10 +902,7 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.carddav/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.carddav/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.carddav">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -942,10 +948,7 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.webdav/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.webdav/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.webdav">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -1033,10 +1036,7 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.vcard/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.vcard/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.vcard">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -1081,10 +1081,7 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.spaces/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.spaces/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.spaces">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -1218,10 +1215,7 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.airsync/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.airsync/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.airsync">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -1266,11 +1260,11 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir}.bpi/META-INF" prefix="META-INF"/>
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.bpi/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.bpi/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.bpi">
+				<include name="**/*.*"/>
+			</zipfileset>
 			<zipfileset dir="src/data/org.opencrx.bpi">
-				<include name="**/*.js"/>
-				<include name="**/*.gif"/>
-				<include name="**/*.png"/>
-				<include name="**/*.css"/>
+				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>
 		</openmdx:archive>
@@ -1362,6 +1356,52 @@
 			<zipfileset dir="${data.home}/src/data/${data.dir.base}.documents/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/${data.dir.generic}.documents/META-INF" prefix="META-INF"/>
 			<zipfileset dir="src/data/org.opencrx.documents">
+				<include name="**/*.*"/>
+			</zipfileset>
+			<openmdx:archivefilterchain refid="archive.filter"/>
+		</openmdx:archive>
+		<!-- opencrx-contacts-CRX.war -->
+		<openmdx:archive format="war" destfile="${build.dir}/module/${app.target.name}/${contacts.target.name}.war" duplicate="preserve">
+			<openmdx:archivemanifest refid="project.manifest"/>
+			<manifest>
+				<attribute name="Specification-Title" value="${project.specification.title} Contacts WAR"/>
+				<attribute name="Implementation-Title" value="WAR for ${build.target.platform}"/>
+			</manifest>
+			<zipfileset dir="${data.home}/src/data/${data.dir}.contacts/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- WEB-INF -->
+			<zipfileset dir="src/data/${data.dir.generic}.contacts/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<include name="*.xml"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<zipfileset dir="src/ear/${app.source.name}.ear/${contacts.source.name}.war/WEB-INF" prefix="WEB-INF">
+				<include name="web.xml"/>
+				<patternset refid="jboss-3.edition.pattern"/>
+				<patternset refid="weblogic-7.edition.pattern"/>
+				<patternset refid="websphere-5.edition.pattern"/>
+				<patternset refid="sun-8.edition.pattern"/>
+				<patternset refid="orion-9.edition.pattern"/>
+				<patternset refid="jonas-4.edition.pattern"/>
+				<patternset refid="tomcat-6.edition.pattern"/>
+				<patternset refid="openejb-3.edition.pattern"/>
+				<exclude name="*/*"/> <!-- no subdirs -->
+			</zipfileset>
+			<!-- META-INF -->
+			<zipfileset dir="${data.home}/src/data/${data.dir}.contacts/META-INF" prefix="META-INF"/>
+			<zipfileset dir="${data.home}/src/data/${data.dir.base}.contacts/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/${data.dir.generic}.contacts/META-INF" prefix="META-INF"/>
+			<zipfileset dir="src/data/org.opencrx.contacts">
 				<include name="**/*.*"/>
 			</zipfileset>
 			<openmdx:archivefilterchain refid="archive.filter"/>

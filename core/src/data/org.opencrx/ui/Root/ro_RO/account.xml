@@ -407,6 +407,17 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Contact:governmentId" _operation="create">
+                    <_object>
+                      <label>
+                        <_item>Numărul al guvernului</_item>
+                      </label>
+                      <toolTip>
+                        <_item>Numărul de identificare al guvernului</_item>
+                      </toolTip>
+                    </_object>
+                    <_content/>
+                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:Account:accountState" _operation="create">
                     <_object>
                       <label>

@@ -9,7 +9,7 @@
  * This software is published under the BSD license
  * as listed below.
  *
- * Copyright (c) 2008-2012, CRIXP Corp., Switzerland
+ * Copyright (c) 2008-2015, CRIXP Corp., Switzerland
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -153,7 +153,7 @@ org.openmdx.base.query.*
     	Attribute validFromAttr = null;
     	Attribute validToAttr = null;
     	Attribute disabledAttr = null;
-    	Attribute nameAttr = null;
+    	Attribute reasonAttr = null;
     	Attribute descriptionAttr = null;
     	Attribute modifiedAtAttr = null;
   		Map accountAssignmentInventoryItemValues = null;
@@ -205,12 +205,14 @@ org.openmdx.base.query.*
 					"disabled",
 					accountAssignmentInventoryItemValues
 				);
-			} catch (Exception e) {}
+			} catch (Exception e) {
+				new ServiceException(e).log();
+			}
 			try {
-				nameAttr = userView.addAttribute(
-					  AccountAssignmentInventoryItem_CLASS + ":name",
+				reasonAttr = userView.addAttribute(
+					  AccountAssignmentInventoryItem_CLASS + ":disabledReason",
 					  AccountAssignmentInventoryItem_CLASS,
-					"name",
+					"disabledReason",
 					accountAssignmentInventoryItemValues
 				);
 			} catch (Exception e) {}
@@ -233,19 +235,57 @@ org.openmdx.base.query.*
 		}
 
 %>
-		  <table><tr><td>
-			<table id="resultTable" class="gridTableFull">
-			  <tr class="gridTableHeader">
-			    <td>&nbsp;<%= app.getLabel("org:opencrx:kernel:building1:InventoryItem") %></td>
-			    <td>&nbsp;<%= accountAttr     == null ? "Account"     : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":account"    ).getLabel() %></td>
-			    <td>&nbsp;<%= accountRoleAttr == null ? "Role"        : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":accountRole").getLabel() %></td>
-			    <td>&nbsp;<%= validFromAttr   == null ? "Valid from"  : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":validFrom"  ).getLabel() %></td>
-			    <td>&nbsp;<%= validToAttr     == null ? "Valid to"    : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":validTo"    ).getLabel() %></td>
-			    <td>&nbsp;<%= disabledAttr    == null ? "Disabled"    : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":disabled"   ).getLabel() %></td>
-			    <td>&nbsp;<%= nameAttr        == null ? "Name"        : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":name"       ).getLabel() %></td>
-			    <td>&nbsp;<%= descriptionAttr == null ? "Description" : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":description").getLabel() %></td>
-			    <td>&nbsp;<%= modifiedAtAttr  == null ? "Modified at" : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":modifiedAt" ).getLabel() %> <img src='../../images/arrow_down.gif' alt='' /></td>
-			  </tr>
+		<div class="table-responsive" style="margin-top:10px;">
+			<table class="table table-hover table-striped table-condensed" style="max-width:2400px;" id="G_0_0_gridTable">
+				<thead>
+					<tr>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= app.getLabel("org:opencrx:kernel:building1:InventoryItem") %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= descriptionAttr == null ? "Description" : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":description").getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= accountAttr     == null ? "Account"     : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":account"    ).getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= accountRoleAttr == null ? "Role"        : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":accountRole").getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= validFromAttr   == null ? "Valid from"  : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":validFrom"  ).getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= validToAttr     == null ? "Valid to"    : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":validTo"    ).getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= disabledAttr    == null ? "Disabled"    : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":disabled"   ).getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= reasonAttr        == null ? "Reason"    : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":disabledReason").getLabel() %></div></td></tr></tbody>
+							</table>
+						</th>
+						<th>
+							<table class="filterHeader">
+								<tbody><tr><td><div><%= modifiedAtAttr  == null ? "Modified at" : userView.getAttribute(AccountAssignmentInventoryItem_CLASS + ":modifiedAt" ).getLabel() %> <img src='../../images/arrow_down.gif' alt='' /></div></td></tr></tbody>
+							</table>
+						</th>
+					</thead>
+					<tbody>
 <%
         org.opencrx.kernel.building1.cci2.AccountAssignmentInventoryItemQuery accountAssignmentInventoryItemQuery =
         	(org.opencrx.kernel.building1.cci2.AccountAssignmentInventoryItemQuery)org.openmdx.base.persistence.cci.PersistenceHelper.newQuery(
@@ -281,7 +321,7 @@ org.openmdx.base.query.*
             } catch (Exception e) {
               //new ServiceException(e).log();
 %>
-              <tr class="gridTableRow">
+              <tr class="warning">
                 <td colspan="8">N/P</td>
               </tr>
 <%
@@ -289,26 +329,25 @@ org.openmdx.base.query.*
             }
             shown++;
 
+            String inventoryItemXri = new Path(accountAssignmentInventoryItem.refMofId()).getParent().getParent().toXri();
+            org.opencrx.kernel.building1.jmi1.InventoryItem inventoryItem =
+              (org.opencrx.kernel.building1.jmi1.InventoryItem)pm.getObjectById(new Path(inventoryItemXri));
+            String inventoryItemHref = "";
+            Action action = new Action(
+               SelectObjectAction.EVENT_ID,
+               new Action.Parameter[]{
+                   new Action.Parameter(Action.PARAMETER_OBJECTXRI, inventoryItem.refMofId())
+               },
+               "",
+               true // enabled
+            );
+            inventoryItemHref = "../../" + action.getEncodedHRef();
 %>
-            <tr class="gridTableRow">
+            <tr <%= inventoryItem.isDisabled() == null || !inventoryItem.isDisabled().booleanValue() ? "class='success'" : "" %>>
               <td>
-<%
-                String inventoryItemXri = new Path(accountAssignmentInventoryItem.refMofId()).getParent().getParent().toXri();
-                org.opencrx.kernel.building1.jmi1.InventoryItem inventoryItem =
-                  (org.opencrx.kernel.building1.jmi1.InventoryItem)pm.getObjectById(new Path(inventoryItemXri));
-                String inventoryItemHref = "";
-                Action action = new Action(
-                   SelectObjectAction.EVENT_ID,
-                   new Action.Parameter[]{
-                       new Action.Parameter(Action.PARAMETER_OBJECTXRI, inventoryItem.refMofId())
-                   },
-                   "",
-                   true // enabled
-                );
-                inventoryItemHref = "../../" + action.getEncodedHRef();
-%>
                 <a href="<%= inventoryItemHref %>" target="_blank"><%= (new ObjectReference(inventoryItem, app)).getTitle() %></a>
               </td>
+      		    <td><%= inventoryItem.getDescription() != null ? inventoryItem.getDescription() : "" %></td>
               <td>
 <%
                 org.opencrx.kernel.account1.jmi1.Account account = null;
@@ -316,11 +355,11 @@ org.openmdx.base.query.*
                   account = accountAssignmentInventoryItem.getAccount();
                 }
                 if(account != null) {
-					String accountHref = "";
-					action = new ObjectReference(
-						account,
-						app
-					).getSelectObjectAction();
+									String accountHref = "";
+									action = new ObjectReference(
+										account,
+										app
+									).getSelectObjectAction();
                   accountHref = "../../" + action.getEncodedHRef();
 %>
                   <a href="<%= accountHref %>" target="_blank"><%= (new ObjectReference(account, app)).getTitle() %></a>
@@ -331,17 +370,17 @@ org.openmdx.base.query.*
               <td><%= codes.getLongTextByCode("accountRoleInventoryItem", currentLocale, true).get(accountAssignmentInventoryItem.getAccountRole()) %></td>
       		    <td><%= accountAssignmentInventoryItem.getValidFrom() != null ? dateFormat.format(accountAssignmentInventoryItem.getValidFrom()) : "" %></td>
       		    <td><%= accountAssignmentInventoryItem.getValidTo()   != null ? dateFormat.format(accountAssignmentInventoryItem.getValidTo())   : "" %></td>
-      		    <td><img src='../../images/<%= (accountAssignmentInventoryItem.isDisabled() != null) && (accountAssignmentInventoryItem.isDisabled().booleanValue()) ? "" : "not" %>checked_r.gif' alt='' /></td>
-      		    <td><%= accountAssignmentInventoryItem.getName()        != null ? accountAssignmentInventoryItem.getName()        : "" %></td>
-      		    <td><%= accountAssignmentInventoryItem.getDescription() != null ? accountAssignmentInventoryItem.getDescription() : "" %></td>
-      		    <td><%= accountAssignmentInventoryItem.getModifiedAt()  != null ? dateFormat.format(accountAssignmentInventoryItem.getModifiedAt()) : "" %></td>
+      		    <td><img src='../../images/<%= (inventoryItem.isDisabled() != null) && (inventoryItem.isDisabled().booleanValue()) ? "" : "not" %>checked_r.gif' alt='' /></td>
+      		    <td><%= inventoryItem.getDisabledReason() != null ? inventoryItem.getDisabledReason()                : "" %></td>
+      		    <td><%= inventoryItem.getModifiedAt()     != null ? dateFormat.format(inventoryItem.getModifiedAt()) : "" %></td>
             </tr>
 <%
           } // loop over AccountAssignments
         }
 %>
-      </table>
-      </td></tr></table>
+					</tbody>
+				</table>
+			</div>
 <%
       if (accountAssignments == null) {
 %>

@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -21,90 +21,90 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-Light-webfont.eot');
-    src: url('../fonts/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Light-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Light-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Light-webfont.svg#robotolight') format('svg');
-    font-weight: 300;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-Light-webfont.eot');
+	src: url('../fonts/Roboto-Light-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-Light-webfont.woff') format('woff'),
+		url('../fonts/Roboto-Light-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-Light-webfont.svg#robotolight') format('svg');
+	font-weight: 300;
 	font-style: normal;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-Regular-webfont.eot');
-    src: url('../fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Regular-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Regular-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Regular-webfont.svg#robotoregular') format('svg');
-    font-weight: 400;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-Regular-webfont.eot');
+	src: url('../fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-Regular-webfont.woff') format('woff'),
+		url('../fonts/Roboto-Regular-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-Regular-webfont.svg#robotoregular') format('svg');
+	font-weight: 400;
 	font-style: normal;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-Medium-webfont.eot');
-    src: url('../fonts/Roboto-Medium-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Medium-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Medium-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Medium-webfont.svg#robotomedium') format('svg');
-    font-weight: 500;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-Medium-webfont.eot');
+	src: url('../fonts/Roboto-Medium-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-Medium-webfont.woff') format('woff'),
+		url('../fonts/Roboto-Medium-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-Medium-webfont.svg#robotomedium') format('svg');
+	font-weight: 500;
 	font-style: normal;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-Bold-webfont.eot');
-    src: url('../fonts/Roboto-Bold-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Bold-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Bold-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Bold-webfont.svg#robotobold') format('svg');
-    font-weight: 700;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-Bold-webfont.eot');
+	src: url('../fonts/Roboto-Bold-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-Bold-webfont.woff') format('woff'),
+		url('../fonts/Roboto-Bold-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-Bold-webfont.svg#robotobold') format('svg');
+	font-weight: 700;
 	font-style: normal;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-LightItalic-webfont.eot');
-    src: url('../fonts/Roboto-LightItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-LightItalic-webfont.woff') format('woff'),
-         url('../fonts/Roboto-LightItalic-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-LightItalic-webfont.svg#robotolight_italic') format('svg');
-    font-weight: 300;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-LightItalic-webfont.eot');
+	src: url('../fonts/Roboto-LightItalic-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-LightItalic-webfont.woff') format('woff'),
+		url('../fonts/Roboto-LightItalic-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-LightItalic-webfont.svg#robotolight_italic') format('svg');
+	font-weight: 300;
 	font-style: italic;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-Italic-webfont.eot');
-    src: url('../fonts/Roboto-Italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-Italic-webfont.woff') format('woff'),
-         url('../fonts/Roboto-Italic-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-Italic-webfont.svg#robotoitalic') format('svg');
-    font-weight: 400;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-Italic-webfont.eot');
+	src: url('../fonts/Roboto-Italic-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-Italic-webfont.woff') format('woff'),
+		url('../fonts/Roboto-Italic-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-Italic-webfont.svg#robotoitalic') format('svg');
+	font-weight: 400;
 	font-style: italic;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-MediumItalic-webfont.eot');
-    src: url('../fonts/Roboto-MediumItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-MediumItalic-webfont.woff') format('woff'),
-         url('../fonts/Roboto-MediumItalic-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-MediumItalic-webfont.svg#robotomedium_italic') format('svg');
-    font-weight: 500;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-MediumItalic-webfont.eot');
+	src: url('../fonts/Roboto-MediumItalic-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-MediumItalic-webfont.woff') format('woff'),
+		url('../fonts/Roboto-MediumItalic-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-MediumItalic-webfont.svg#robotomedium_italic') format('svg');
+	font-weight: 500;
 	font-style: italic;
 }
 @font-face
 {
-    font-family: "Roboto";
-    src: url('../fonts/Roboto-BoldItalic-webfont.eot');
-    src: url('../fonts/Roboto-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/Roboto-BoldItalic-webfont.woff') format('woff'),
-         url('../fonts/Roboto-BoldItalic-webfont.ttf') format('truetype'),
-         url('../fonts/Roboto-BoldItalic-webfont.svg#robotobold_italic') format('svg');
-    font-weight: 700;
+	font-family: "Roboto";
+	src: url('../fonts/Roboto-BoldItalic-webfont.eot');
+	src: url('../fonts/Roboto-BoldItalic-webfont.eot?#iefix') format('embedded-opentype'),
+		url('../fonts/Roboto-BoldItalic-webfont.woff') format('woff'),
+		url('../fonts/Roboto-BoldItalic-webfont.ttf') format('truetype'),
+		url('../fonts/Roboto-BoldItalic-webfont.svg#robotobold_italic') format('svg');
+	font-weight: 700;
 	font-style: italic;
 }
 
@@ -133,7 +133,7 @@ body, input, select, textarea
 	opacity: 0;
 }
 
-.System > div.update_d
+.update_d
 {
 	position: absolute;
 	display: block;
@@ -148,7 +148,7 @@ body, input, select, textarea
 	z-index: 30;
 }
 
-.System *> div.update_h
+.update_h
 {
 	width: 24px;
 	font-size: 1.1em;
@@ -160,29 +160,30 @@ body, input, select, textarea
 	-o-transform: rotate(90deg);
 }
 
-.System *> span.update_h
+.update_h
 {
 	cursor: pointer;
 }
 
-.System > div.collection_d
+.collection_d
 {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	left: 225px;
+	right: 582px;
 	border-right: 1px solid;
 	border-right-color: #c0c0c0;
-	width: 250px;
 	height: 24px;
 	background: #f0f0f0;
 	color: #404040;
+	cursor: default;
 
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
-.System *> div.collection_h
+.collection_h
 {
 	position: absolute;
 	margin-left: 24px;
@@ -191,7 +192,7 @@ body, input, select, textarea
 	font-weight: 500;
 }
 
-.System *> input.collection_a, .System *> input.company_a
+.collection_a, .company_a
 {
 	position: absolute;
 	right: 0px;
@@ -201,22 +202,23 @@ body, input, select, textarea
 	height: 16px;
 }
 
-.System > div.contact_d
+.contact_d
 {
 	position: absolute;
-	top: 0px;
-	left: 476px;
-	right: 0px;
+	top: 0;
+	right: 0;
+	width: 582px;
 	height: 24px;
 	background: #f0f0f0;
 	color: #404040;
+	cursor: default;
 
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
-.System *> div.contact_h
+.contact_h
 {
 	position: absolute;
 	padding-left: 6px;
@@ -225,25 +227,23 @@ body, input, select, textarea
 	font-weight: 400;
 }
 
-.System *> input.system_l
+.system_l
 {
 	position: absolute;
-	right: 0px;
+	right: 32px;
 	padding-top: 4px;
-	padding-right: 6px;
-	width:16px;
 	height: 16px;
 }
 
-.System > #SearchBox
+#SearchBox
 {
 	position: absolute;
 	display: block;
 	top: 24px;
 	left: 225px;
+	right: 582px;
 	border-right: 1px solid;
 	border-right-color: #c0c0c0;
-	width: 250px;
 	overflow: hidden;
 	background: #ffffff;
 	z-index: 2;	/* for floating headers */
@@ -251,100 +251,121 @@ body, input, select, textarea
 	height: 24px;
 	border-top: 1px solid #c0c0c0;
 	border-bottom: 1px solid #c0c0c0;
+	cursor: default;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
-.System > #SearchBox > .container
+#SearchBox > .container
 {
 	position: absolute;
 	top: 3px;
 	left: 31px;
-	width: 192px;
+	right: 27px;
 }
-.System > #SearchBox *> input[data-type=search]
+#SearchBox *> input[data-type=search]
 {
-	width: 192px;
+	width: 100%;
 	background-color: #ffffff;
 }
 
-.System > #ABList
+#ABList
 {
 	position: absolute;
 	display: block;
 	top: 50px;	/* search support */
 	left: 225px;
+	right: 582px;
+	bottom: 0;
 	border-right: 1px solid;
 	border-right-color: #c0c0c0;
-	bottom: 0px;
-	width: 250px;
-	overflow: auto;
-	overflow-x: hidden;
+	overflow: hidden;
 	background: #ffffff;
+	cursor: default;
 
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
-.System > #ABListOverlay
+#ABListOverlay
 {
 	position: absolute;
-	top: 0px;
+	top: 0;
 	left: 225px;
-	bottom: 0px;
-	width: 250px;
+	right: 583px;
+	bottom: 0;
 	overflow: hidden;
 	background: #ffffff;
 	display: none;
 	z-index: 10;
+	cursor: default;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
-.System *> .half
+.half
 {
 	position: relative;
 	height: 50% !important;
 }
 
-.System > #ABContact
+#ABContact
 {
-	display: block;
 	position: absolute;
 	top: 25px;
-	left: 479px;
-	right: 0px;
-	bottom: 0px;
+	right: 0;
+	bottom: 0;
+	display: block;
+	width: 579px;
 	padding-bottom: 8px;
 	overflow: auto;
 	overflow-x: hidden;
 	background: #f0f0f0;
 	border-top: 1px solid #f0f0f0;
-}
-
-.System > #ABContactColor
-{
-	background: #f0f0f0;
-	position: absolute;
-	display: block;
-	top: 25px;
-	left: 476px;
-	bottom: 1px;
-	width: 3px;
+	cursor: default;
 
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
-.System > #ABContactOverlay
+#ABContactColor
+{
+	background: #f0f0f0;
+	position: absolute;
+	display: block;
+	top: 25px;
+	bottom: 0;
+	right: 579px;
+	width: 3px;
+	cursor: default;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+#ABContactOverlay
 {
 	position: absolute;
 	top: 24px;
-	left: 476px;
-	right: 0px;
-	bottom: 0px;
+	right: 0;
+	bottom: 0;
+	width: 582px;
 	overflow: hidden;
 	background: #ffffff;
 	display: none;
 	z-index: 10;
+	cursor: default;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
 #Login img[data-type=system_logo]
@@ -485,7 +506,6 @@ select[disabled][data-type="xhalf_type"]
 
 	appearance: textfield;
 	-webkit-appearance: textfield;
-	-moz-appearance: window;
 }
 @-moz-document url-prefix() {
 	select[disabled][data-type="xhalf_type"]
@@ -505,7 +525,6 @@ select[disabled][data-type="country_type"]
 
 	appearance: textfield;
 	-webkit-appearance: textfield;
-	-moz-appearance: window;
 }
 @-moz-document url-prefix() {
 	select[disabled][data-type="country_type"]
@@ -525,7 +544,6 @@ select[disabled][data-type="im_service_type"]
 
 	appearance: textfield;
 	-webkit-appearance: textfield;
-	-moz-appearance: window;
 }
 select[disabled][data-type="im_service_type"]:-moz-last-node
 {
@@ -540,16 +558,6 @@ td[data-size="login"] > select[data-type="language"]
 	min-width: 331px !important;
 	max-width: 331px !important;
 }
-
-@-moz-document url-prefix() {
-	td[data-size="login"]	/* FF image hack to show select box as text box */
-	{
-		background: url(../images/ff_login.svg) no-repeat;
-		background-position: 0px 1px;
-	}
-}
-
-
 
 
 
@@ -575,15 +583,36 @@ input::-moz-focus-inner	/* FF buttons */
 	padding: 0.07em 0em 0em 0em !important;
 }
 
-input[data-type=system_login]
+img[data-type=system_login]
 {
-	margin-top: 3px;
+	margin-top: 10px;
+	cursor: pointer;
 }
 
 input[data-type="system_username"], input[data-type="system_password"]
 {
+	font-size: 20px !important;
+	height: 28px !important;
 	min-width: 329px !important;
 	max-width: 329px !important;
+}
+
+select[data-type="language"]
+{
+	font-size: 20px !important;
+	min-height: 28px !important;
+	max-height: 28px !important;
+	background: none;
+}
+
+td[data-size="login_logo"]
+{
+	padding-left: 60px !important;
+}
+
+td[data-size="login"], td[data-size="login_input"]
+{
+	border-bottom: 2px solid #585858;
 }
 
 input[type=button], input[type=submit], .ui-datepicker-buttonpane button
@@ -721,10 +750,10 @@ textarea[readonly]:-ms-input-placeholder
 }
 
 input[type=text]::-ms-clear {
-    display: none;
+	display: none;
 }
 input[type=password]::-ms-clear {
-    display: none;
+	display: none;
 }
 
 .iex
@@ -808,7 +837,7 @@ textarea
 @-moz-document url-prefix() {
 	textarea
 	{
-		width: 530px;
+		width: 529px;
 		padding-left: 2px !important;
 	}
 }
@@ -828,66 +857,6 @@ textarea[readonly].safari_hack
 	}
 }
 
-#EditorBox
-{
-	padding-left: 7px;
-	padding-top: 4px;
-	z-index: 1;
-}
-
-#EditorBox *> .attr_desc
-{
-	font-size: 1em;
-	height: 1.3em !important;
-	vertical-align: middle !important;
-	text-align: baseline !important;
-}
-
-#EditorBox *> .opw	/* + and - image button IE bug with input type="image" and width */
-{
-	width:14px;
-}
-
-#EditorBox *> .op	/* + and - image buttons (width is defined separately in .opw) */
-{
-	padding-top: 2px;
-}
-
-#EditorBox *> .zero_height
-{
-	height: 0px !important;
-}
-
-#EditorBox *> .photo_box
-{
-	width: 171px !important;
-	height: 160px !important;
-}
-
-#EditorBox *> .photo_div
-{
-	position: relative;
-	overflow:hidden;
-	width: 164px;
-	height: 183px;
-
-	border: 1px solid;
-	border-color: #d0d0d0;
-}
-
-#EditorBox *> .photo
-{
-	position: relative;
-}
-
-#EditorBox *> .heightfix
-{
-	height: 19px !important;
-	min-height: 19px !important;
-	max-height: 19px !important;
-	line-height: 16px !important;
-}
-
 #LoginPage
 {
 	position: absolute;
@@ -897,51 +866,47 @@ textarea[readonly].safari_hack
 	height: 100%;
 	overflow: hidden;
 	z-index: 101;
-	background: #f0f0f0;
+	background: #f8f8f8;
 	display: none;	/* by default the login window is hidden */
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
-#LoginPage > .window
+.window
 {
 	position: relative;
-	top: 25%;
-	left: 50%;
 	display: inline-block;
+	width: 503px;
+	height: 311px;
+	top: 38.2%;
+	left: 61.8%;
 
-	margin-top: -50px;
-	margin-left: -175px;
-	border: 1px solid;
-	border-color: #575757;
+	margin-top: -155px;
+	margin-left: -252px;
 
-	background: #f0f0f0;
+	background-image: url(../images/cloud.svg);
 	color: #000000;
 	text-align: center;
 }
 
-#LoginPage > .window > #Login
+#Login
 {
-	padding-top: 7px;
-	padding-left: 7px;
-	padding-right: 4px;
-	padding-bottom: 6px;
-
-	margin-left:auto;
-	margin-right:auto;
+	margin-top: 50px;
+	margin-left: 85px;
 }
 
-#LoginPage > .window > #Login *> #login_message
+#login_message
 {
-	font-size: 0.8em;
+	padding-top: 20px;
+	font-size: 16px;
+	font-weight: 500;
+	color: #9E2F36;
 }
 
-#LoginPage > .window > #Login *> #login_message > td
-{
-	padding-top: 2px;
-	height: 1em !important;
-}
-
-
-#LoginPage > .window > #LoginLoader
+#LoginLoader
 {
 	position: absolute;
 	top: 0px;
@@ -949,9 +914,18 @@ textarea[readonly].safari_hack
 	right: 0px;
 	bottom: 0px;
 	overflow: visible;
-	background: #ffffff;
+	background-image: url(../images/cloud.svg);
 	display: none;
 	z-index: 1;
+}
+
+.footer
+{
+	position: absolute;
+	left: 25px;
+	bottom: 25px;
+	font-size: 16px;
+	color: #2d2d2d;
 }
 
 #cacheDialog
@@ -967,6 +941,11 @@ textarea[readonly].safari_hack
 	opacity: 0.95;
 	text-align: center;
 	z-index: 200;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #cacheDialogText
@@ -1004,6 +983,11 @@ textarea[readonly].safari_hack
 	display: none;
 	opacity: 0.9;
 	z-index: 101;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 .loader
@@ -1011,6 +995,11 @@ textarea[readonly].safari_hack
 	width: 100%;
 	height: 100%;
 	background: url(../images/loadinfo.gif) no-repeat center center;
+}
+
+.loader_hidden .loader
+{
+	background: none;
 }
 
 .loaderInfo
@@ -1027,17 +1016,22 @@ textarea[readonly].safari_hack
 {
 	position: absolute;
 	top: 24px;
-	left: 476px;
-	right: 0px;
+	right: 0;
+	display: block;
+	width: 582px;
+	height: 0;
 	z-index: 20;
 
 	background: #ffffff;
 	border-bottom: 1px solid;
 	border-bottom-color: #c0c0c0;
 	border-top: 0px;
-	display: block;
-	height: 0px;
 	overflow: hidden;
+	cursor: default;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
 #ABInMessage
@@ -1055,6 +1049,32 @@ textarea[readonly].safari_hack
 }
 
 #ABMessageText, #ABInMessageText
+{
+	position: absolute;
+	padding: 7px;
+	text-align: center;
+	vertical-align: bottom;
+	width: 100%;
+	font-weight: 500;
+	background: #ffffff;
+	bottom: 0px;
+}
+
+#ABInMessageEditBox
+{
+	position: relative;
+	top: -1px;
+	display:none;
+
+	background: #ffffff;
+	border-bottom: 1px solid;
+	border-bottom-color: #404040;
+	border-top: 0px;
+	height: 0px;
+	overflow: hidden;
+}
+
+#ABInMessageTextEditBox
 {
 	position: absolute;
 	padding: 7px;
@@ -1103,6 +1123,11 @@ textarea[readonly].safari_hack
 	display: none !important;
 }
 
+input.non_editable
+{
+	background-color: #f5f5f5 !important;
+}
+
 /* XXX - For the next version
 #SystemCalDavZAP, #SystemCalDavTODO
 {
@@ -1116,7 +1141,7 @@ textarea[readonly].safari_hack
 	font-weight: 400;
 }
 
-.System *> div.resourcesCalDAV_h
+.resourcesCalDAV_h
 {
 	position: absolute;
 	padding-left: 8px;
@@ -1125,7 +1150,7 @@ textarea[readonly].safari_hack
 	font-weight: 500;
 }
 
-.System > div.resourcesCalDAV_d
+.resourcesCalDAV_d
 {
 	position: absolute;
 	top: 0px;
@@ -1143,24 +1168,26 @@ textarea[readonly].safari_hack
 	-moz-user-select: none;
 }
 
-.System > #ResourceCalDAVList, .System > #ResourceCalDAVTODOList
+#ResourceCalDAVList, #ResourceCalDAVTODOList
 {
 	position: absolute;
 	display: block;
-	top: 25px;
+	top: 24px;
 	bottom: 0px;
 	left: 0px;
 	width: 224px;
 	overflow: auto;
 	overflow-x: hidden;
 	background: #ffffff;
+	border-top: 1px solid #c0c0c0;
+	cursor:default;
 
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 }
 
-.System > #ResourceCalDAVListOverlay
+#ResourceCalDAVListOverlay
 {
 	position: absolute;
 	top: 24px;
@@ -1242,7 +1269,7 @@ body
 		color: rgba(64, 64, 64, 0);
 		text-shadow: 0 0 0 #404040;
 	}
- 
+
 	#timezoneWrapper select option
 	{
 		color: #404040;
@@ -1251,22 +1278,7 @@ body
 
 }
 
-@-moz-document url-prefix() {
-	#SystemCalDavZAP td[data-size="full"], #SystemCalDavTODO td[data-size="full"]	/* FF image hack to show select box as text box */
-	{
-		background: url(../images/cdz_ff_full.svg) no-repeat;
-		background-position: 0px 1px;
-	}
-}
-@-moz-document url-prefix() {
-	#SystemCalDavZAP td[data-size="half"], #SystemCalDavTODO td[data-size="half"]	/* FF image hack to show select box as text box */
-	{
-		background: url(../images/cdz_ff_half.svg) no-repeat;
-		background-position: 0px 1px;
-	}
-}
-
-#CalendarLoader, #ResizeLoader, #CalendarLoaderTODO
+#CalendarLoader, #CalendarLoaderTODO
 {
 	position: absolute;
 	top: 0px;
@@ -1278,6 +1290,11 @@ body
 	display: none;
 	opacity: 0.8;
 	z-index: 99;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #CAEvent .saveLoader
@@ -1296,8 +1313,8 @@ body
 #todoLoader .saveLoader
 {
 	position: absolute;
-	height: 100%;
 	width: 100%;
+	height: 50%;
 	background: #ffffff;
 	display: block;
 	opacity: 0.95;
@@ -1314,6 +1331,11 @@ body
 	padding: 0px;
 	font-weight: 500;
 	z-index: 102;
+}
+
+#todoLoader .saveLoaderInfo
+{
+	top: 70%;
 }
 
 h1
@@ -1346,6 +1368,11 @@ h3
 	height: 24px;
 	z-index: 25;
 	border-bottom: 1px solid #c0c0c0;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 /*
@@ -1356,12 +1383,16 @@ h3
 }
 */
 
-.headers span[data-type=resourcesCalDAV_txt], .headers span[data-type=todo_txt]
+.headers span[data-type=resourcesCalDAV_txt], .headers span[data-type=todo_txt], .headers span[data-type=resourceCalDAV_subscribe_text]
 {
 	float: left;
 	margin-top: 2px;
 	margin-left: 6px;
+	width: 190px;
 	font-size: 1.1em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 #ResourceCalDAVToggle, #ResourceCalDAVTODOToggle
@@ -1371,20 +1402,21 @@ h3
 	padding-left: 7px;
 	cursor: pointer;
 }
+
+#showUnloadedCalendars, #showUnloadedCalendarsTODO
+{
+	float:right;
+	padding-top: 4px;
+	padding-right: 6px;
+	cursor: pointer;
+}
+
 #eventFormShower, #eventFormShowerTODO
 {
 	float: right;
 	height: 16px;
 	width: 17px;
 	padding: 4px 6px;
-	cursor: pointer;
-}
-
-#logoutShower
-{
-	float: right;
-	padding-top: 4px;
-	margin-right: -10px;
 	cursor: pointer;
 }
 
@@ -1399,22 +1431,24 @@ h3
 #resourceCalDAV_h, #resourceCalDAVTODO_h
 {
 	left: 0px;
+	height: 49px;
 	width: 224px;
+	border-bottom: none;
 }
 
 #todoForm_h
 {
-	left: 644px;
-	right: 0px;
+	right: 0;
+	width: 413px;
 }
 
 #todoForm
 {
 	position: absolute;
 	top: 25px;
-	left: 647px;
-	right: 0px;
-	bottom: 0px;
+	right: 0;
+	bottom: 0;
+	width: 410px;
 	overflow: auto;
 	overflow-x: hidden;
 	background-color: #f0f0f0;
@@ -1424,10 +1458,10 @@ h3
 {
 	position: absolute;
 	display: none;
-	top: 24px;
-	left: 644px;
-	right: 0px;
-	bottom: 0px;
+	top: 25px;
+	right: 0;
+	bottom: 0;
+	width: 413px;
 	z-index: 101;
 	background-color: #fff;
 }
@@ -1442,7 +1476,7 @@ h3
 #main_h_TODO
 {
 	left: 224px;
-	width: 418px;
+	right: 413px;
 	border-left: 1px solid #c0c0c0;
 	border-right: 1px solid #c0c0c0;
 /*	border-bottom: 1px solid #FFFFFF;*/
@@ -1474,6 +1508,11 @@ h3
 	background: #f0f0f0;
 	border-top: 1px solid #c0c0c0;
 	color: #404040;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #timezoneWrapper label, #timezoneWrapperTODO label
@@ -1518,6 +1557,11 @@ h3
 	border-top-color: #c0c0c0;
 	border-bottom: 1px solid;
 	border-bottom-color: #c0c0c0;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #searchFormTODO
@@ -1525,8 +1569,8 @@ h3
 	position: absolute;
 	top: 24px;
 	left: 224px;
-	width: 418px;
-	height:100px;
+	right: 413px;
+	height: 24px;
 	background: #ffffff;
 	border-left: 1px solid;
 	border-right: 1px solid;
@@ -1534,11 +1578,15 @@ h3
 	overflow: hidden;
 
 	z-index: 25;
-	height: 24px;
 	border-top: 1px solid;
 	border-top-color: #c0c0c0;
 	border-bottom: 1px solid;
 	border-bottom-color: #c0c0c0;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 .searchContainer
@@ -1561,7 +1609,7 @@ h3
 	position: absolute;
 	top: 50px;
 	left: 224px;
-	bottom: 0px;
+	bottom: 0;
 	padding: 0px 7px;
 	background: #ffffff;
 	border-left: 1px solid;
@@ -1570,15 +1618,20 @@ h3
 	overflow-x: hidden;
 	overflow-y: auto;
 	z-index: 26;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #main
 {
-	right: 0px;
+	right: 0;
 }
 #mainTODO
 {
-	width: 404px;
+	right: 413px;
 }
 
 #calendar, #todoList
@@ -1596,6 +1649,8 @@ h3
 #todoList
 {
 	padding: 7px 0px;
+	/* Safari Scrollbar fix */
+	margin-bottom: -4px;
 }
 
 #alertBox
@@ -1608,7 +1663,13 @@ h3
 	background: white;
 	border: 1px solid #c0c0c0;
 	z-index: 102;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
+
 #repeatConfirmBox
 {
 	width: 100%;
@@ -1616,14 +1677,14 @@ h3
 	text-align: center;
 	visibility: hidden;
 	background: white;
-	border: 1px solid #585858;
+	border: 1px solid #c0c0c0;
 	z-index: 100;
 }
 
 #repeatConfirmBoxTODO
 {
 	position: absolute;
-	width: 410px;
+	width: 100%;
 	text-align: center;
 	visibility: hidden;
 	background-color: #f0f0f0;
@@ -1642,6 +1703,11 @@ h3
 	top: 0px;
 	left: 0px;
 	display: none;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #TodoDisabler
@@ -1651,11 +1717,16 @@ h3
 	opacity: 0.7;
 	filter: alpha(opacity=70);
 	z-index: 99;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
-	width: 643px;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 414px;
 	display: none;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #AlertDisabler
@@ -1670,6 +1741,11 @@ h3
 	top: 0px;
 	left: 0px;
 	display: none;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 .resourceCalDAVColor
@@ -1677,17 +1753,13 @@ h3
 	width: 12px;
 	height: 24px;
 	margin-top: 0px;
+	margin-right: 6px;
 	float: left;
 }
 
-.todoColor
+.colorPicker
 {
-	width: 13px;
-	height: 13px;
-	margin-top: 1px;
-	float: left;
-	border-radius: 2px;
-	-moz-border-radius: 2px;
+	display: none;
 }
 
 .addRemoveAll
@@ -1809,10 +1881,27 @@ h3
 	background-image: url(../images/error_w.svg) !important;
 }
 
+#ResourceCalDAVList .resourceCalDAV_header.load_mode, #ResourceCalDAVTODOList .resourceCalDAVTODO_header.load_mode,
+#ResourceCalDAVList .resourceCalDAV_item.load_mode, #ResourceCalDAVTODOList .resourceCalDAVTODO_item.load_mode,
+#ResourceCalDAVList .resourceCalDAV_item.load_mode:hover, #ResourceCalDAVTODOList .resourceCalDAVTODO_item.load_mode:hover
+{
+	padding-right: 24px !important;
+	background-image: none !important;
+}
+
+.resourceCalDAV_header.unloaded, .resourceCalDAV_item.unloaded, .resourceCalDAVTODO_header.unloaded, .resourceCalDAVTODO_item.unloaded
+{
+	color: rgba(64, 64, 64, 0.4) !important;
+}
+
+.resourceCalDAV_item.unloaded .resourceCalDAVColor, .resourceCalDAVTODO_item.unloaded .resourceCalDAVColor
+{
+	opacity: 0.4;
+}
+
 .resourceCalDAV_item input[type="checkbox"], .resourceCalDAVTODO_item input[type="checkbox"]
 {
-	margin-top: -4px;
-	margin-left: 6px;
+	margin-top: -2px;
 	margin-right: 5px;
 }
 
@@ -1821,7 +1910,7 @@ h3
 {
 	.resourceCalDAV_item input[type="checkbox"], .resourceCalDAVTODO_item input[type="checkbox"]
 	{
-		margin-top: -2px;
+		margin-top: 0px;
 	}
 }
 
@@ -1840,18 +1929,28 @@ h3
 #CATodo, #CAEvent
 {
 	position: absolute;
+	cursor:default;
+
+	user-select: none;
+	-webkit-user-select:none;
+	-moz-user-select: -moz-none;
 }
 
 #event_details_template, #todo_details_template
 {
 	width: 413px;
 	position: absolute;
-	display: none; 
+	display: none;
 	background-color: #f0f0f0;
 	overflow-x: hidden;
 	overflow-y: auto;
 	border: 1px solid #c0c0c0;
 	z-index: 100;
+}
+
+#todo_details_template
+{
+	width: 410px;
 }
 
 #todo_details_template
@@ -1881,8 +1980,8 @@ h3
 	position: absolute;
 	display: block;
 	top: 24px;
-	bottom: 0px;
-	left: 644px;
+	bottom: 0;
+	right: 410px;
 	width: 3px;
 	background-color: #f0f0f0;
 	border-top: 1px solid #f0f0f0;
@@ -2027,14 +2126,9 @@ h3
 
 @-moz-document url-prefix()
 {
-	.formNav.prev
-	{
-		left: 6px;
-	}
-
 	.formNav.prev img
 	{
-		padding-top: 13px;
+		padding-top: 12px;
 	}
 }
 
@@ -2053,13 +2147,9 @@ h3
 
 @-moz-document url-prefix()
 {
-	.formNav.next
-	{
-		right: 9px;
-	}
 	.formNav.next img
 	{
-		padding-top: 13px;
+		padding-top: 12px;
 	}
 }
 
@@ -2079,7 +2169,6 @@ h3
 {
 	.formNav.top
 	{
-		top: 6px;
 		height: 19px;
 	}
 	.formNav.top img
@@ -2104,53 +2193,12 @@ h3
 {
 	.formNav.bottom
 	{
-		top: 26px;
+		top: 20px;
 		height: 19px;
 	}
 	.formNav.bottom img
 	{
 		padding-top: 3px;
-	}
-}
-
-.formNav.prev span
-{
-	position: relative;
-	top: 12px;
-	right: 5px;
-}
-
-.formNav.next span
-{
-	position: relative;
-	top: 12px;
-	left: 5px;
-}
-
-@-moz-document url-prefix()
-{
-	.formNav.prev span, .formNav.next span
-	{
-		top: 10px;
-	}
-}
-
-.formNav.top span
-{
-	top: 2px;
-}
-
-.formNav.bottom span
-{
-	top: 2px;
-	color: red;
-}
-
-@-moz-document url-prefix()
-{
-	.formNav.top span, .formNav.bottom span
-	{
-		top: 0px;
 	}
 }
 
@@ -2189,7 +2237,7 @@ textarea.long
 {
 	textarea.long
 	{
-		width: 296px;
+		width: 295px;
 	}
 }
 
@@ -2230,24 +2278,6 @@ input.verySmall[type="text"]
 	width: 23%;
 	margin: 5px 2px 0px 0px;
 	float: left;
-}
-
-#editOptionsButton, #editOptionsButtonTODO
-{
-	width: 46% !important;
-}
-
-.infoSpan
-{
-	position: relative;
-	top: 2px;
-}
-
-@-moz-document url-prefix() {
-	.infoSpan
-	{
-		top: 1px;
-	}
 }
 
 .customTable
@@ -2608,26 +2638,78 @@ img[data-type="invalidVerySmall"]
 	z-index: 100;
 }
 
-#todoForm #CATodo, #todoForm #todo_details_template
+#CATodo, #todo_details_template
 {
 	display: block;
 	border: none;
+	width: 100%;
 	height: 100%;
-	overflow: visible;
 }
 
-#todoForm #CATodo
+#CATodo
 {
-	width: 410px;
 	display: none;
-}
-
-#todoForm #todoDetailsContainer
-{
-	padding-bottom: 8px;
 }
 
 .title_cancelled
 {
 	text-decoration: line-through;
+}
+
+#CalDavZAPPopup
+{
+	display: none;
+	position: absolute;
+	max-width: 413px;
+	border: 1px solid #c0c0c0;
+	background: #f0f0f0;
+	z-index: 30;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+}
+
+#CalDavZAPPopupColor
+{
+	float: left;
+	width: 3px;
+}
+
+#CalDavZAPPopupTable
+{
+	float: left;
+	margin: 6px 4px 6px 6px;
+	text-align: left;
+}
+
+#CalDavZAPPopupTable .header
+{
+	max-width: 398px;
+	font-size: 1.1em;
+	font-weight: 500;
+}
+
+#CalDavZAPPopupTable .label
+{
+	display: block;
+	width: 98px;
+	font-size: 0.95em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+#CalDavZAPPopupTable .value
+{
+	max-width: 298px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+#CalDavZAPPopupTable .multiline
+{
+	white-space: normal;
+	word-wrap: break-word;
 }

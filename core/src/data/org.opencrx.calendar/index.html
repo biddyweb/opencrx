@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en" manifest="cache.manifest">
 <head>
-	<title>CalDavZAP - the open source CalDAV web client</title>
+	<title>CalDavZAP</title>
 	<meta http-equiv="cache-control" content="no-cache" />
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <!--
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -26,18 +26,20 @@ GNU Affero General Public License for more details.
 You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 -->
-	<link rel="stylesheet" href="css/default.css" type="text/css" />
-	<link rel="stylesheet" href="css/default_integration.css" type="text/css" />
 	<link rel="stylesheet" href="css/jquery-ui.custom.css" type="text/css" />
+	<link rel="stylesheet" href="css/spectrum.custom.css" type="text/css" />
+	<link rel="stylesheet" href="css/default.css" type="text/css" />
 	<link rel="stylesheet" href="css/fullcalendar.css" type="text/css" />
+	<link rel="stylesheet" href="css/default_integration.css" type="text/css" />
 	<script src="cache_handler.js" type="text/javascript"></script>
-	<script src="lib/jquery-2.1.0.min.js" type="text/javascript"></script>
+	<script src="lib/jquery-2.1.4.min.js" type="text/javascript"></script>
 	<script src="lib/jquery.browser.js" type="text/javascript"></script>
 	<script src="lib/jquery.autosize.js" type="text/javascript"></script>
-	<script src="lib/jquery-ui-1.10.4.custom.js" type="text/javascript"></script>
+	<script src="lib/jquery-ui-1.11.4.custom.js" type="text/javascript"></script>
 	<script src="lib/jquery.quicksearch.js" type="text/javascript"></script>
 	<script src="lib/jquery.placeholder-1.1.9.js" type="text/javascript"></script>
 	<script src="lib/jshash-2.2_sha256.js" type="text/javascript"></script>
+	<script src="lib/spectrum.js" type="text/javascript"></script>
 	<script src="lib/fullcalendar.js" type="text/javascript"></script>
 	<script src="config.js" type="text/javascript"></script>
 	<script src="common.js" type="text/javascript"></script>
@@ -48,6 +50,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<script src="resource.js" type="text/javascript"></script>
 	<script src="vcalendar.js" type="text/javascript"></script>
 	<script src="vtodo.js" type="text/javascript"></script>
+	<script src="lib/rrule.js" type="text/javascript"></script>
 	<script src="data_process.js" type="text/javascript"></script>
 	<script src="main.js" type="text/javascript"></script>
 	<script src="forms.js" type="text/javascript"></script>
@@ -67,52 +70,107 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 	<div id="LoginPage" style="opacity: 1; display:none">
 		<div class="window">
 			<div id="Login">
-				<form onsubmit="login(); return false;">
+				<form onsubmit="return false;">
 					<table>
 						<tr>
-							<td><img data-type="system_logo" src="images/logo_cdz_01.svg" alt="Logo" /></td>
+							<td data-size="login_logo"><img data-type="system_logo" src="" alt="Logo" /></td>
 						</tr>
 						<tr>
-							<td><input data-type="system_username" type="text" class="fs" autocomplete="off" placeholder="Login" /></td>
+							<td data-size="login_input"><input data-type="system_username" type="text" class="fs" autocomplete="off" placeholder="Login" /></td>
 						</tr>
 						<tr>
-							<td><input data-type="system_password" type="password" class="fs" autocomplete="off" placeholder="Password" /></td>
+							<td data-size="login_input"><input data-type="system_password" type="password" class="fs" autocomplete="off" placeholder="Password" /></td>
 						</tr>
 						<tr>
 							<td data-size="login">
-								<select data-type="language" onchange="if($(this).val()!=''){globalInterfaceLanguage=$(this).find('option').filter(':selected').attr('data-type');if(isAvaible('CalDavZAP') && !isCalDAVLoaded)localizeCalDAV();if(isAvaible('CardDavMATE') && !isCardDAVLoaded)localizeCardDAV();if(isAvaible('Settings') && !isSettingsLoaded)localizeSettings();if(isAvaible('Projects') && !isProjectsLoaded)localizeProjects();}">
+								<select data-type="language" onchange="if($(this).val()!=''){globalInterfaceLanguage=$(this).find('option').filter(':selected').attr('data-type');resetSettings();if(isAvaible('CalDavZAP') && !isCalDAVLoaded)localizeCalDAV();if(isAvaible('CardDavMATE') && !isCardDAVLoaded)localizeCardDAV();if(isAvaible('Settings') && !isSettingsLoaded)localizeSettings();if(isAvaible('Projects') && !isProjectsLoaded)localizeProjects();}">
 									<option data-type=""> </option>
 								</select>
 							</td>
 						</tr>
 						<tr>
-							<td><input data-type="system_login" onclick="if(event.shiftKey)ignoreServerSettings=true;" type="submit" value="Login" /></td>
+							<td><img data-type="system_login" alt="login" title="login" src="images/login.svg" onclick="if(event.shiftKey)ignoreServerSettings=true;login();" /></td>
 						</tr>
-						<tr id="login_message" style="display: none;"><td></td></tr>
+						<tr style="display:none">
+							<td><input type="submit"></td>
+						</tr>
 					</table>
 				</form>
 			</div>
+			<div id="login_message" style="display: none;"></div>
 			<div id="LoginLoader">
 				<div class="loader"></div>
 			</div>
 		</div>
+		<div class="footer">This is SOFTWARE!!!</div>
 	</div>
 	<div id="AlertDisabler"></div>
 	<div id="alertBox">
-		<h1>Alerts</h1>
+		<h1 id="alertsH">Alerts</h1>
 		<div id="alertBoxContent"></div>
-		<input type="button" value="Clear Alerts" onclick="clearAlertEvents();" />
+		<input id="alertButton" type="button" value="Clear Alerts" onclick="clearAlertEvents();" />
 	</div>
 	<div class="integration_d">
-		<img id="intCaldav" src="images/banner_calendar.svg" alt="Calendar" title="Calendar" onclick="checkForApplication('CalDavZAP');" />
-		<img id="intCaldavTodo" src="images/banner_todo.svg" alt="Todo" title="Todo" onclick="checkForApplication('CalDavTODO');" />
-		<img id="intCarddav" src="images/banner_addressbook.svg" alt="Addressbook" title="Addressbook" onclick="checkForApplication('CardDavMATE');" />
-		<img id="intProjects" src="images/banner_projects.svg" alt="Projects" title="Projects" onclick="checkForApplication('Projects');" />
-		<img id="intSettings" src="images/banner_settings.svg" alt="Settings" title="Settings" onclick="checkForApplication('Settings');" />
-		<div id="intBlank"></div>
-		<img id="intLogout" src="images/banner_logout.svg" alt="Logout" title="Logout" onclick="logout();" />
+		<div id="intCaldav" title="calendar" onclick="checkForApplication('CalDavZAP');">
+			<img class="int_error" src="images/error_badge.svg" alt="error" />
+		</div>
+		<div id="intCaldavTodo" title="todo" onclick="checkForApplication('CalDavTODO');">
+			<img class="int_error" src="images/error_badge.svg" alt="error" />
+		</div>
+		<div class="intBlank"></div>
+		<div id="intRefresh" title="refresh" onclick="reloadResources();"></div>
+		<div class="intBlank"></div>
+		<div id="intLogout" title="logout" onclick="logout();"></div>
 	</div>
 	<div class="System" id="SystemCalDavZAP">
+		<div id="CalDavZAPPopup">
+			<div id="CalDavZAPPopupColor"></div>
+			<table id="CalDavZAPPopupTable">
+				<tr>
+					<td colspan="2" class="header multiline" data-type="name"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="location_txt">location</td>
+					<td class="value" data-type="location"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="from_txt">from</td>
+					<td class="value" data-type="from"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="to_txt">to</td>
+					<td class="value" data-type="to"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="status_txt">status</td>
+					<td class="value" data-type="status"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="avail_txt">availability</td>
+					<td class="value" data-type="avail"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="type_txt">privacy</td>
+					<td class="value" data-type="type"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="priority_txt">priority</td>
+					<td class="value" data-type="priority"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="calendar_txt">calendar</td>
+					<td class="value" data-type="calendar"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="url_txt">url</td>
+					<td class="value" data-type="url"></td>
+				</tr>
+				<tr>
+					<td class="label" data-type="note_txt">note</td>
+					<td class="value multiline" data-type="note"></td>
+				</tr>
+			</table>
+		</div>
 		<div id="EventDisabler"></div>
 		<div class="update_d" style="display: none;">
 			<div class="update_h"></div>
@@ -121,7 +179,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			<span class="resourceCalDAV_text" data-type="resourcesCalDAV_txt">Resources</span>
 			<img src="images/add_cal_white.svg" alt="Enable all calendars" title="Enable all calendars" data-type="addAll" class="addRemoveAll addRemoveAllCalDAV" onclick="enableAll()" />
 			<img src="images/remove_cal_white.svg" alt="Disable all calendars" title="Disable all calendars" data-type="removeAll" class="addRemoveAll addRemoveAllCalDAV" onclick="disableAll()" />
-			<img class="header_button" id="logoutShower" alt="Logout" onclick="logout();" src="images/logout.svg" style="display: none;"/>
+			<img id="showUnloadedCalendars" src="images/delegation.svg" alt="Subscribe" title="Subscribe" onclick="showUnloadedCollections('event');" />
+			<input id="loadUnloadedCalendars" type="button" value="save" onclick="loadAdditionalCollections('event');" style="margin-top:4px;margin-left:6px;" />
+			<input id="loadUnloadedCalendarsCancel" type="button" value="cancel" onclick="cancelUnloadedCollections('event');" style="margin-top:4px;margin-right:6px;float:right;" />
 		</div>
 		<div id="ResourceCalDAVList">
 			<div id="ResourceCalDAVListTemplate" style="display: none;">
@@ -138,7 +198,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<div class="headers" id="main_h">
 			<input id="ResourceCalDAVToggle" type="image" src="images/resources.svg" alt="Show/Hide Resources" />
 			<div id="main_h_placeholder"></div>
-			<img class="header_button" id="eventFormShower" src="images/new_item.svg" alt="Add event" />
+			<img id="eventFormShower" src="images/new_item.svg" alt="Add event" />
 		</div>
 		<div id="searchForm">
 			<img alt="Search Form" src="images/search.svg" style="position: inline; margin-top: 4px; margin-left: 8px; vertical-align: top;" />
@@ -148,11 +208,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			<img alt="Search Reset"  id="reserButton" onclick="$('#searchInput').val('');$('#searchInput').keyup();" src="images/reset_b.svg" style="position: absolute; margin-top: 5px; right: 9px; vertical-align: top; cursor: pointer; visibility: hidden;" />
 		</div>
 		<div id="CalendarLoader">
-			<div class="loaderInfo">Reloading ...</div>
-			<div class="loader"></div>
-		</div>
-		<div id="ResizeLoader">
-			<div class="loaderInfo">Resizing ...</div>
+			<div class="loaderInfo">Calendaring ...</div>
 			<div class="loader"></div>
 		</div>
 		<div id='main'>
@@ -564,6 +620,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 								<input id="vcalendarUID" type="hidden" value=""/>
 								<input id="saveButton" type="submit" value="Save" data-type="save" onclick="updateEventFormDimensions(true);$('#CAEvent .saveLoader').show();save();" />
 								<input id="editButton" type="button" value="Edit" data-type="edit" onclick="startEditModeEvent();" />
+								<input id="duplicateButton" type="button" value="Duplicate" data-type="duplicate" onclick="duplicateEvent('')" />
 								<input id="editOptionsButton" type="button" value="edit repeat" data-type="editOptions" />
 								<input id="resetButton" type="button" value="Reset" data-type="reset" />
 								<input id="closeButton" type="button" value="Cancel" data-type="cancel" />
@@ -580,10 +637,12 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 			<div class="update_h"></div>
 		</div>
 		<div class="headers" id="resourceCalDAVTODO_h">
-			<span class="resourceCalDAV_text" data-type="resourcesCalDAV_txt">Resources</span>
+			<span class="resourceCalDAVTODO_text" data-type="resourcesCalDAV_txt">Resources</span>
 			<img src="images/add_cal_white.svg" alt="Enable all calendars" title="Enable all calendars" data-type="addAll" class="addRemoveAll addRemoveAllCalDAVTODO" onclick="enableAllTodo()" />
 			<img src="images/remove_cal_white.svg" alt="Disable all calendars" title="Disable all calendars" data-type="removeAll" class="addRemoveAll addRemoveAllCalDAVTODO" onclick="disableAllTodo()" />
-			<img class="header_button" id="logoutShowerTODO" alt="Logout" onclick="logout();" src="images/logout.svg" style="display: none;"/>
+			<img id="showUnloadedCalendarsTODO" src="images/delegation.svg" alt="Subscribe" title="Subscribe" onclick="showUnloadedCollections('todo');" />
+			<input id="loadUnloadedCalendarsTODO" type="button" value="save" onclick="loadAdditionalCollections('todo');" style="margin-top:4px;margin-left:6px;" />
+			<input id="loadUnloadedCalendarsTODOCancel" type="button" value="cancel" onclick="cancelUnloadedCollections('todo');" style="margin-top:4px;margin-right:6px;float:right;" />
 		</div>
 		<div id="ResourceCalDAVTODOList">
 			<div id="ResourceCalDAVTODOListTemplate" style="display: none;">
@@ -600,7 +659,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		<div class="headers" id="main_h_TODO">
 			<input id="ResourceCalDAVTODOToggle" type="image" src="images/resources.svg" alt="Show/Hide Resources" />
 			<div id="mainTODO_h_placeholder"></div>
-			<img class="header_button" id="eventFormShowerTODO" src="images/new_item.svg" alt="Add event" />
+			<img id="eventFormShowerTODO" src="images/new_item.svg" alt="Add todo" />
 		</div>
 		<div id="searchFormTODO">
 			<img alt="Search Form" src="images/search.svg" style="position: inline; margin-top: 4px; margin-left: 8px; vertical-align: top;" />
@@ -611,7 +670,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 		</div>
 		<div id="TodoDisabler"></div>
 		<div id="CalendarLoaderTODO">
-			<div class="loaderInfo">Reloading ...</div>
+			<div class="loaderInfo">Calendaring ...</div>
 			<div class="loader"></div>
 		</div>
 		<div id='mainTODO'>
@@ -697,7 +756,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 									<div style="float: left; width: 203px; margin-left: 7px; margin-top: 3px; margin-bottom: 3px;'" id="percentageSlider"></div>
 									<input type="text" class="verySmall" style="margin-left: 13px; float: left;" id="percenteCompleteValue"/>
 									<div class="invalidWrapper"><img data-type="invalidVerySmall" style="display: none;" src="images/error_b.svg" alt="invalid" /></div>
-									<label class="infoSpan" style="margin-left: -14px; float: left;">%</label>
+									<label style="margin-left: -14px; float: left;">%</label>
 								</td>
 							</tr>
 							<tr>
@@ -1048,6 +1107,7 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 									<input id="etagTODO" type="hidden" value=""/>
 									<input id="saveTODO" type="submit" value="Save" onclick="$('#todoInEdit').val('false');updateTodoFormDimensions(true);$('#todoLoader').show();saveTodo();" />
 									<input id="editTODO" type="button" value="Edit" onclick="startEditModeTodo();"/>
+									<input id="duplicateTODO" type="button" value="Duplicate" data-type="duplicate" onclick="duplicateEvent('TODO')" />
 									<input id="editOptionsButtonTODO" type="button" value="edit repeat" data-type="editOptionsTODO" />
 									<input id="resetTODO" type="button" value="Reset" />
 									<input id="closeTODO" type="button" value="Cancel" />

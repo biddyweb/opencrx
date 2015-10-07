@@ -146,7 +146,7 @@ public class UserSettingsController extends org.openmdx.portal.servlet.AbstractW
 	 */
 	public void doOK(
 	) throws ServiceException {
-		this.doRefresh();
+	    this.doRefresh();
 		ApplicationContext app = this.getApp();
 		RefObject_1_0 obj = this.getObject();
 		PersistenceManager pm = this.getPm();
@@ -160,7 +160,7 @@ public class UserSettingsController extends org.openmdx.portal.servlet.AbstractW
 			String fSendmailSubjectPrefix = request.getParameter("sendmailSubjectPrefix");
 			String fWebAccessUrl = request.getParameter("webAccessUrl");
 			String fTopNavigationShowMax = request.getParameter("topNavigationShowMax");
-			String fHideWorkspaceDashboard = request.getParameter("hideWorkspaceDashboard");			
+			String fHideWorkspaceDashboard = request.getParameter("hideWorkspaceDashboard");
 			List<List<String>> perspectiveRootObjects = new ArrayList<List<String>>();
 			for(int p = 0; p < selectPerspectiveActions.length; p++) {
 				List<String> fRootObjects = new ArrayList<String>();
@@ -203,12 +203,12 @@ public class UserSettingsController extends org.openmdx.portal.servlet.AbstractW
 						String key = (String)e.getKey();
 						if(key.startsWith("*")) {
 							adminSettings.put(
-								key.substring(1), 
+								key.substring(1),
 								e.getValue()
 							);
 							i.remove();
 						}
-					}					
+					}
 					userSettings.putAll(this.getUserSettings());
 					userSettings.putAll(adminSettings);
 					org.opencrx.kernel.backend.UserHomes.getInstance().applyUserSettings(
@@ -229,9 +229,8 @@ public class UserSettingsController extends org.openmdx.portal.servlet.AbstractW
 						fSubscriptions
 					);
 					pm.currentTransaction().commit();
-					// Amend session settings with persistent settings
+					this.doRefresh(); // Refresh applied (and persistent) settings
 					if(this.currentUserOwnsHome(userHome)) {
-						this.doRefresh(); // Refresh persistent settings
 						app.getSettings().clear();
 						app.getSettings().putAll(this.getUserSettings());
 					}
@@ -241,11 +240,11 @@ public class UserSettingsController extends org.openmdx.portal.servlet.AbstractW
 						pm.currentTransaction().rollback();
 					} catch(Exception e0) {}
 				}
-			}			
+			}
 		}
 		this.setExitAction(
 			new ObjectReference(this.getObject(), this.getApp()).getSelectObjectAction()
-		);		
+		);
 	}
 
    	/**

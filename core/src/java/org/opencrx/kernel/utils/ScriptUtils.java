@@ -56,10 +56,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.janino.ClassBodyEvaluator;
-import org.codehaus.janino.CompileException;
-import org.codehaus.janino.Parser;
-import org.codehaus.janino.Scanner;
 import org.openmdx.base.exception.ServiceException;
 import org.openmdx.kernel.exception.BasicException;
 
@@ -108,22 +106,6 @@ public class ScriptUtils {
         		BasicException.Code.DEFAULT_DOMAIN,
         		BasicException.Code.PARSE_FAILURE,
         		"Script compile error",
-        		new BasicException.Parameter("script", script)
-        	);
-        } catch(Parser.ParseException e) {
-        	throw new ServiceException(
-        		e,
-        		BasicException.Code.DEFAULT_DOMAIN,
-        		BasicException.Code.PARSE_FAILURE,
-        		"Script parse error",
-        		new BasicException.Parameter("script", script)
-        	);
-        } catch(Scanner.ScanException e) {
-        	throw new ServiceException(
-        		e,
-        		BasicException.Code.DEFAULT_DOMAIN,
-        		BasicException.Code.PARSE_FAILURE,
-        		"Script scan error",
         		new BasicException.Parameter("script", script)
         	);
         } catch(Exception e) {

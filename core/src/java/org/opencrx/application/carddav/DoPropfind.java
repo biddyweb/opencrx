@@ -138,8 +138,15 @@ public class DoPropfind extends org.opencrx.application.uses.net.sf.webdav.metho
     			syncProfile.refGetPath().getParent().getParent()
     		);
     		String providerName = userHome.refGetPath().get(2);
-    		String segmentName = userHome.refGetPath().get(4);			
-			if(property.indexOf("principal-address") > 0) {
+    		String segmentName = userHome.refGetPath().get(4);
+			if(property.indexOf("current-user-principal") > 0) {
+                writer.writeElement("DAV::principal-URL", XMLWriter.OPENING);
+                writer.writeElement("DAV::href", XMLWriter.OPENING);
+                writer.writeText(this.encodeURL(resp, this.getHRef(req, "/" + providerName + "/" + segmentName + "/user/" + userHome.refGetPath().getBase() + "/profile/" + syncProfile.getName(), true)));
+                writer.writeElement("DAV::href", XMLWriter.CLOSING);
+                writer.writeElement("DAV::principal-URL", XMLWriter.CLOSING);
+                return true;
+			} else if(property.indexOf("principal-address") > 0) {
 	            writer.writeElement("urn:ietf:params:xml:ns:carddav:principal-address", XMLWriter.OPENING);
 	            writer.writeElement("DAV::href", XMLWriter.OPENING);
 	            writer.writeText(resp.encodeRedirectURL(this.getHRef(req, req.getServletPath(), true)));

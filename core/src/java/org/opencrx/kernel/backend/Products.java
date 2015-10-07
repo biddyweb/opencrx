@@ -1411,9 +1411,9 @@ public class Products extends AbstractImpl {
         Date pricingDate
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(pricingRule);
-        String script = (pricingRule.getGetPriceLevelScript() == null) || (pricingRule.getGetPriceLevelScript().length() == 0) ? 
-        	PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE : 
-        	pricingRule.getGetPriceLevelScript().intern();
+        String script = pricingRule.getGetPriceLevelScript() == null || pricingRule.getGetPriceLevelScript().isEmpty() 
+        	? PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE 
+        	: pricingRule.getGetPriceLevelScript().intern();
         try {
             Class<?> clazz = ScriptUtils.getClass(script);
             Method m = clazz.getMethod(
@@ -1443,29 +1443,35 @@ public class Products extends AbstractImpl {
                 );
             return result;
         } catch(NoSuchMethodException e) {
-        	return Structures.create(
-        		GetPriceLevelResult.class, 
-        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
-        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "getPriceLevelScript does not define a method with the following signature:\n" + PRICING_RULE_GET_PRICE_LEVEL_SCRIPT_LOWEST_PRICE)
-        	);
+            ServiceException e0 = new ServiceException(
+                OpenCrxException.DOMAIN,
+                OpenCrxException.PRODUCT_GET_PRICELEVEL_SCRIPT_ERROR,
+                "Missing method getPriceLevel",
+                new BasicException.Parameter("param0", e.getMessage())
+            );
+            e0.log();
+            throw e0;
         } catch(InvocationTargetException e) {
-        	return Structures.create(
-        		GetPriceLevelResult.class, 
-        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
-        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "Can not invoke getPriceLevel():\n" + e.getTargetException().getMessage())
-        	);
+        	ServiceException e0 = new ServiceException(
+            	BasicException.toStackedException(
+            		e.getTargetException(), 
+            		e,
+	                OpenCrxException.DOMAIN,
+	                OpenCrxException.PRODUCT_GET_PRICELEVEL_SCRIPT_ERROR,
+	                "Error invoking method getPriceLevel",
+	                new BasicException.Parameter("param0", e.getMessage())
+            	));
+            e0.log();
+            throw e0;
         } catch(IllegalAccessException e) {
-        	return Structures.create(
-        		GetPriceLevelResult.class, 
-        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
-        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "Illegal access when invoking getPriceLevel():\n" + e.getMessage())
-        	);
-        } catch(Exception e) {
-        	return Structures.create(
-        		GetPriceLevelResult.class, 
-        		Datatypes.member(GetPriceLevelResult.Member.statusCode, STATUS_CODE_ERROR),
-        		Datatypes.member(GetPriceLevelResult.Member.statusMessage, "Can not compile getPriceLevelScript:\n" + e.getMessage())
-        	);
+            ServiceException e0 = new ServiceException(
+                OpenCrxException.DOMAIN,
+                OpenCrxException.PRODUCT_GET_PRICELEVEL_SCRIPT_ERROR,
+                "Illegal access when invoking method getPriceLevel",
+                new BasicException.Parameter("param0", e.getMessage())
+            );
+            e0.log();
+            throw e0;
         }
     }
 

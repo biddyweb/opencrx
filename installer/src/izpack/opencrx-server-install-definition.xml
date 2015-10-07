@@ -26,7 +26,7 @@
 		<variable name="HSQLDB_PORT" value="9001" />
 		<variable name="TOMCAT_SERVER_PORT" value="8005" />
 		<variable name="TOMCAT_HTTP_PORT" value="8080" />
-		<variable name="TOMEE_BASEDIR" value="apache-tomee-webprofile-1.7.1" />
+		<variable name="TOMEE_BASEDIR" value="apache-tomee-webprofile-1.7.2" />
 	</dynamicvariables>
 	<resources>
 		<res id="splash" src="image/opencrx-server/installer/splash.gif" />
@@ -62,8 +62,7 @@
 			<fileset dir="image/opencrx-server" targetdir="$INSTALL_PATH" />
 			<!-- Additional files -->
 			<file src="../@{build.target.platform}/core/deployment-unit/opencrx-core-CRX.ear" targetdir="$INSTALL_PATH/installer/files"/>
-			<file src="../opt/openmdx-2.14.0/@{build.target.platform}/core/lib/openmdx-system.jar" targetdir="$INSTALL_PATH/installer/files"/>
-			<file src="../opt/openmdx-2.14.0/@{build.target.platform}/tomcat/lib/catalina-openmdx.jar" targetdir="$INSTALL_PATH/installer/files"/>
+			<file src="../opt/openmdx-2.14.4/@{build.target.platform}/tomcat/lib/catalina-openmdx.jar" targetdir="$INSTALL_PATH/installer/files"/>
 			<!-- Generic -->
 			<parsable targetfile="$INSTALL_PATH/installer/bin/postinstaller.xml" type="xml" encoding="UTF-8" />
 			<parsable targetfile="$INSTALL_PATH/data/hsqldb/sqltool.rc" encoding="UTF-8" />

@@ -54,7 +54,7 @@
 	<property environment="env"/>	
 	<property file="version.properties" />
 	<property name="build.target.platform" value="jre-1.7"/>
-	<property name="openmdx.version" value="2.14.0"/>
+	<property name="openmdx.version" value="2.14.4"/>
 	<property name="IZPACK_HOME" value="${env.IZPACK_HOME}"/>
 	<echo message="${IZPACK_HOME}" />
 	<taskdef name="izpack" classname="com.izforge.izpack.ant.IzPackTask">

@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -27,25 +27,32 @@ function checkTimezone(timezone)
 		return checkTimezone(timezones_alt[timezone]);
 	return null;
 }
-function CalDAVeditor_cleanup()
+function CalDAVeditor_cleanup(repeatHash)
 {
-	CalDAVcleanupRegexEnvironment();
-	/*************************** BAD HACKS SECTION ***************************/
-	/* IE or FF */
-	if($.browser.msie || $.browser.mozilla)
-	{
-		// ADD empty SVG to interface (we will replace it later)
-		$('<svg data-type="select_icon"></svg>').css('display', 'none').insertAfter($('#event_details_template, #todo_details_template').find('select'));
-	}
-	/*************************** END OF BAD HACKS SECTION ***************************/
+	if(typeof repeatHash!='undefined')
+		CalDAVcleanupRegexEnvironment(repeatHash);
+	else
+		CalDAVcleanupRegexEnvironment();
 
-	/*************************** BAD HACKS SECTION ***************************/
-	if($.browser.msie || $.browser.mozilla)
+	if(typeof repeatHash==='undefined' || repeatHash==='form')
 	{
-		var newSVG=$(SVG_select).attr('data-type', 'select_icon').css({'pointer-events': 'none', 'z-index': '1', 'display': 'inline', 'margin-left': '-19px', 'vertical-align': 'top', 'background-color': '#ffffff'});	// background-color = stupid IE9 bug
-		$('#event_details_template, #todo_details_template').find('svg[data-type="select_icon"]').replaceWith($('<div>').append($(newSVG).clone()).html());
+		/*************************** BAD HACKS SECTION ***************************/
+		/* IE or FF */
+		if($.browser.msie || $.browser.mozilla)
+		{
+			// ADD empty SVG to interface (we will replace it later)
+			$('<svg data-type="select_icon"></svg>').css('display', 'none').insertAfter($('#event_details_template, #todo_details_template').find('select'));
+		}
+		/*************************** END OF BAD HACKS SECTION ***************************/
+
+		/*************************** BAD HACKS SECTION ***************************/
+		if($.browser.msie || $.browser.mozilla)
+		{
+			var newSVG=$(SVG_select).attr('data-type', 'select_icon').css({'pointer-events': 'none', 'z-index': '1', 'display': 'inline', 'margin-left': '-19px', 'vertical-align': 'top', 'background-color': '#ffffff'});	// background-color = stupid IE9 bug
+			$('#event_details_template, #todo_details_template').find('svg[data-type="select_icon"]').replaceWith($('<div>').append($(newSVG).clone()).html());
+		}
+		/*************************** END OF BAD HACKS SECTION ***************************/
 	}
-	/*************************** END OF BAD HACKS SECTION ***************************/
 }
 
 function animate_messageCalendar(messageSelector, messageTextSelector, duration, operation)
@@ -124,26 +131,14 @@ function show_editor_loader_messageCalendar(inputForm, inputSetClass, inputMessa
 
 }
 
-window.onkeydown=function(event)
-{
-	if(event.which==27)
-	{
-		if(globalActiveApp=='CalDavZAP' && $('#CAEvent').is(':visible') && $('#EventDisabler').is(':hidden'))
-			$('#closeButton').click();
-		else if(globalActiveApp=='Projects' && $('#ProjectEventForm').is(':visible') && $('#ProjectsDisabler').is(':hidden'))
-			$('#cancelActivity').click();
-	}
-};
-
-function items(etag, from, end, name, isall, uid, color, rid, ev_id, note, displayValue, alertTime, alertNote, untilDate, type, interval, after, repeatStart, repeatEnd, byMonthDay, repeatCount, realRepeatCount, vcalendar, location, alertTimeOut, timeZone, realStart ,realEnd, byDay, rec_id, wkst, classType, avail, hrefUrl,compareString,priority,searchData,status)
+function items(etag, from, end, title, isall, uid, rid, ev_id, note, displayValue, alertTime, alertNote, untilDate, type, interval, after, repeatStart, repeatEnd, byMonthDay, repeatCount, realRepeatCount, vcalendar, location, alertTimeOut, timeZone, realStart ,realEnd, byDay, rec_id, wkst, classType, avail, hrefUrl,compareString,priority,status,ruleString)
 {
 	this.etag=etag;
 	this.id=uid;
 	this.start=from;
 	this.end=end;
-	this.title=name;
+	this.title=title;
 	this.allDay=isall;
-	this.color=color;
 	this.res_id=rid;
 	this.ev_id=ev_id;
 	this.note=note;
@@ -173,11 +168,12 @@ function items(etag, from, end, name, isall, uid, color, rid, ev_id, note, displ
 	this.hrefUrl=hrefUrl;
 	this.compareString=compareString;
 	this.priority=priority;
-	this.searchData=searchData;
 	this.status=status;
+	this.searchvalue=title.toLowerCase().replace(vCalendar.pre['compressNewLineRex']).multiReplace(globalSearchTransformAlphabet);
+	this.ruleString=ruleString;
 }
 
-function todoItems(from, to, untilDate, type, interval, after, wkst, repeatStart, repeatEnd, repeatCount, realRepeatCount, byDay, location, note, title, uid, vcalendar, color, etag, alertTime, alertNote, status, filterStatus,  rec_id, repeatHash,  percent, displayValue, res_id, compareString, timeZone, realStart, realEnd, alertTimeOut,classType, url, completedOn, sequence,priority,finalString,searchData)
+function todoItems(from, to, untilDate, type, interval, after, wkst, repeatStart, repeatEnd, repeatCount, realRepeatCount, byDay, location, note, title, uid, vcalendar, etag, alertTime, alertNote, status, filterStatus,  rec_id, repeatHash,  percent, displayValue, res_id, compareString, timeZone, realStart, realEnd, alertTimeOut,classType, url, completedOn, sequence,priority,renderPriority, finalString,ruleString)
 {
 	this.start=from;
 	this.end=to;
@@ -196,7 +192,6 @@ function todoItems(from, to, untilDate, type, interval, after, wkst, repeatStart
 	this.title=title;
 	this.id=uid;
 	this.vcalendar=vcalendar;
-	this.color=color;
 	this.etag=etag;
 	this.alertTime=alertTime;
 	this.alertNote=alertNote;
@@ -212,37 +207,28 @@ function todoItems(from, to, untilDate, type, interval, after, wkst, repeatStart
 	this.realEnd=realEnd;
 	this.classType=classType;
 	this.url=url;
-	this.isTODO=true;
 	this.rec_id= rec_id;
 	this.repeatHash= repeatHash;
 	this.completedOn=completedOn;
 	this.sequence=sequence;
 	this.priority=priority;
+	this.renderPriority=renderPriority;
 	this.finalString=finalString;
-	this.searchData=searchData;
-}
-
-function rgb2hex(rgb)
-{
-	rgb=rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*(\d+(?:\.\d*)?|(?:\.\d+)))?\)$/);
-	function hex(x)
-	{
-		return ("0"+parseInt(x).toString(16)).slice(-2);
-	}
-	return "#"+hex(rgb[1])+hex(rgb[2])+hex(rgb[3]);
+	this.searchvalue=title.toLowerCase().replace(vCalendar.pre['compressNewLineRex']).multiReplace(globalSearchTransformAlphabet);
+	this.ruleString=ruleString;
 }
 
 function setLoadingLimit(forceLoad, allSyncMode)
 {
 	if(forceLoad)
 	{
-		if(globalSettings.eventstartpastlimit!=null && (allSyncMode || globalLimitLoading=='past'))
+		if(globalSettings.eventstartpastlimit.value!=null && (allSyncMode || globalLimitLoading=='past'))
 		{
 			var pastDate = new Date(globalLoadedLimit.getTime());
 			pastDate.setDate(pastDate.getDate()-7);
 			globalBeginPast = new Date(pastDate.getTime());
 		}
-		if(globalSettings.eventstartfuturelimit!=null && (allSyncMode || globalLimitLoading=='future'))
+		if(globalSettings.eventstartfuturelimit.value!=null && (allSyncMode || globalLimitLoading=='future'))
 		{
 			var futureDate = new Date(globalToLoadedLimit.getTime());
 			futureDate.setDate(futureDate.getDate()+14);
@@ -251,47 +237,48 @@ function setLoadingLimit(forceLoad, allSyncMode)
 	}
 }
 
-function initSearchEngine()
-{
-	globalCalDAVQs=$('input[data-type="PH_CalDAVsearch"]').quicksearch('#SystemCalDavZAP .event_item',{
-				delay: 500,
-				hide: function(){
-					$(this).addClass('searchCalDAV_hide');
-					if(this.tagName.toLowerCase()=='tr' && $(this).is(':last-child'))
-					{
-						if($(this).siblings().addBack().not('.searchCalDAV_hide').length)
-							$(this).parent().prev().find('tr').removeClass('searchCalDAV_hide');
-						else
-							$(this).parent().prev().find('tr').addClass('searchCalDAV_hide');
-					}
-				},
-				show: function(){
-					$(this).removeClass('searchCalDAV_hide');
-					if(this.tagName.toLowerCase() == 'tr' && $(this).is(':last-child'))
-						$(this).parent().prev().find('tr').removeClass('searchCalDAV_hide');
-				},
-				prepareQuery: function(val){
-					return val.multiReplace(globalSearchTransformAlphabet).toLowerCase().split(' ');
-				}
-		});
+function initSearchEngine() {
+	globalCalDAVQs=$('input[data-type="PH_CalDAVsearch"]').quicksearch(globalEventList.displayEventsArray,{
+		delay: 500,
+		hide: function() {
+			this.hidden=true;
+			$('#SystemCalDavZAP').find('.event_item[data-id="'+this.id+'"]').each(function(){
+				$(this).addClass('searchCalDAV_hide');
+				if(this.tagName.toLowerCase()=='tr' && !$(this).siblings().addBack().not('.searchCalDAV_hide').length)
+					$(this).parent().prev().find('tr').addClass('searchCalDAV_hide');
+			});
+		},
+		show: function() {
+			this.hidden=false;
+			$('#SystemCalDavZAP').find('.event_item[data-id="'+this.id+'"]').each(function(){
+				$(this).removeClass('searchCalDAV_hide');
+				if(this.tagName.toLowerCase()=='tr')
+					$(this).parent().prev().find('tr').removeClass('searchCalDAV_hide');
+			});
+		},
+		prepareQuery: function(val) {
+			return val.multiReplace(globalSearchTransformAlphabet).toLowerCase().split(' ');
+		}
+	});
 
-		globalCalDAVTODOQs=$('input[data-type="PH_CalDAVTODOsearch"]').quicksearch('#SystemCalDavTODO .event_item',{
-				delay: 500,
-				onAfter: function () {
-					if(!$('#TodoDisabler').is(':visible'))
-						if(!$('#todoList').find('.fc-event-selected:visible').length)
-							$('#todoList').fullCalendar('selectEvent');
-				},
-				hide: function(){
-					$(this).addClass('searchCalDAV_hide');
-				},
-				show: function(){
-					$(this).removeClass('searchCalDAV_hide');
-				},
-				prepareQuery: function(val){
-					return val.multiReplace(globalSearchTransformAlphabet).toLowerCase().split(' ');
-				}
-		});
+	globalCalDAVTODOQs=$('input[data-type="PH_CalDAVTODOsearch"]').quicksearch(globalEventList.displayTodosArray,{
+		delay: 500,
+		onAfter: function () {
+			if(!$('#TodoDisabler').is(':visible'))
+				$('#todoList').fullCalendar('selectEvent');
+		},
+		hide: function() {
+			this.hidden=true;
+			$('#SystemCalDavTODO').find('.event_item[data-id="'+this.id+'"]').addClass('searchCalDAV_hide');
+		},
+		show: function() {
+			this.hidden=false;
+			$('#SystemCalDavTODO').find('.event_item[data-id="'+this.id+'"]').removeClass('searchCalDAV_hide');
+		},
+		prepareQuery: function(val) {
+			return val.multiReplace(globalSearchTransformAlphabet).toLowerCase().split(' ');
+		}
+	});
 }
 
 //SORRY FOR THAT-----------------------------------------------------------------------------------------------------
@@ -305,7 +292,7 @@ function checkEventLoader(inputCounter, needRefresh)
 		else
 			$('#ResourceCalDAVTODOList [data-id="'+inputCounter.uid+'"]').removeClass('r_operate');
 
-		if((globalLimitTodoLoading=='' && globalLimitLoading=='') || (globalSettings.eventstartpastlimit==null && globalSettings.eventstartfuturelimit==null))
+		if((globalLimitTodoLoading=='' && globalLimitLoading=='') || ((inputCounter.listType=='vtodo' && globalSettings.todopastlimit.value==null) || (inputCounter.listType=='vevent' && globalSettings.eventstartpastlimit.value==null && globalSettings.eventstartfuturelimit.value==null)))
 		{
 			if(inputCounter.listType=='vevent')
 				globalAccountSettings[inputCounter.resourceIndex].calendarNo--;
@@ -314,10 +301,13 @@ function checkEventLoader(inputCounter, needRefresh)
 
 			if(((globalAccountSettings[inputCounter.resourceIndex].calendarNo==0) && (globalAccountSettings[inputCounter.resourceIndex].todoNo==0) && globalCalDAVInitLoad) || (!globalCalDAVInitLoad))
 			{
-				updateMainLoader(needRefresh,undefined,inputCounter.uid);
+				if(!globalCalDAVInitLoad&&inputCounter.typeList.indexOf('vevent')!=-1&&inputCounter.typeList.indexOf('vtodo')!=-1)
+					updateMainLoader(needRefresh,null,inputCounter.uid);
+				else
+					updateMainLoader(needRefresh,inputCounter.listType,inputCounter.uid);
 			}
 		}
-		else if(globalOnlyCalendarNumberCount==globalOnlyCalendarNumber || globalOnlyTodoCalendarNumberCount==globalTodoCalendarNumber)
+		else if((globalOnlyCalendarNumber>0 && globalOnlyCalendarNumberCount==globalOnlyCalendarNumber) || (globalTodoCalendarNumber>0 && globalOnlyTodoCalendarNumberCount==globalTodoCalendarNumber))
 			updateMainLoader(needRefresh,inputCounter.listType,inputCounter.uid);
 	}
 }
@@ -326,6 +316,7 @@ function getResourceByCollection(calendarUID)
 {
 	var coll = globalResourceCalDAVList.getCollectionByUID(calendarUID);
 	var tmp=coll.accountUID.match(vCalendar.pre['accountUidParts']);
+	var resourceSettings=null;
 
 	var resourceCalDAV_href=tmp[1]+tmp[3]+tmp[4];
 	var resourceCalDAV_user=tmp[2];
@@ -344,23 +335,26 @@ function updateMainLoaderText(type)
 		globalCalendarNumberCount++;
 		$('#MainLoaderInner').html(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalCalendarNumberCount).replace('%total%', globalCalendarNumber));
 	}
-	else if((globalLimitTodoLoading!='' || globalLimitLoading!='') && (globalSettings.eventstartpastlimit!=null || globalSettings.eventstartfuturelimit!=null))
+	else if((globalLimitTodoLoading!='' || globalLimitLoading!='') && ((type=='vtodo' && globalSettings.todopastlimit.value!=null) || (type=='vevent' && (globalSettings.eventstartpastlimit.value!=null || globalSettings.eventstartfuturelimit.value!=null))))
 	{
 		if(type=='vevent' && (globalLimitLoading=='past' || globalLimitLoading=='future'))
 		{
 			globalOnlyCalendarNumberCount++;
-			$('#CalendarLoader .loaderInfo').html(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalOnlyCalendarNumberCount).replace('%total%', globalOnlyCalendarNumber));
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalOnlyCalendarNumberCount).replace('%total%', globalOnlyCalendarNumber));
 		}
 		else if(type=='vtodo' && (globalLimitTodoLoading=='pastTodo' || globalLimitTodoLoading=='futureTodo'))
 		{
 			globalOnlyTodoCalendarNumberCount++;
-			$('#CalendarLoaderTODO .loaderInfo').html(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalOnlyTodoCalendarNumberCount).replace('%total%', globalTodoCalendarNumber));
+			$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalOnlyTodoCalendarNumberCount).replace('%total%', globalTodoCalendarNumber));
 		}
 	}
-	else if(isAvaible('Settings') && globalSettingsSaving && globalFirstHideLoader)
+	else if(globalSettingsSaving!='' && globalFirstHideLoader)
 	{
 		globalLoadedCollectionsCount++;
-		$('#SettingsFormOverlay').find('.saveLoaderInfo').text('Loading calendars '+globalLoadedCollectionsCount+' of '+globalLoadedCollectionsNumber);
+		if(globalSettingsSaving=='event')
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalLoadedCollectionsCount).replace('%total%', globalLoadedCollectionsNumber));
+		else if(globalSettingsSaving=='todo')
+			$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].loadingCalendars.replace('%act%', globalLoadedCollectionsCount).replace('%total%', globalLoadedCollectionsNumber));
 	}
 }
 
@@ -379,7 +373,7 @@ function updateMainLoader(needRefresh,type,collUID)
 	if((type==null && $('.r_operate').length==0) || (type=='vtodo' && $('#ResourceCalDAVTODOList .r_operate').length==0) || (type=='vevent' && $('#ResourceCalDAVList .r_operate').length==0))
 	{
 		var rex = vCalendar.pre['accountUidParts'];
-		if(globalCalDAVInitLoad)
+		if(globalCalDAVInitLoad && $('.r_operate').length==0)
 		{
 			updateMainLoaderTextFinal();
 			var counter = 0;
@@ -392,7 +386,7 @@ function updateMainLoader(needRefresh,type,collUID)
 			var beforeScrollTodo = $('#mainTODO').width()-$('#todoList').width();
 			for(calendarUID in globalEventList.displayEventsArray)
 				setTimeout(function(calendarUID){
-					if(globalSettings.displayhiddenevents || globalVisibleCalDAVCollections.indexOf(calendarUID)!=-1)
+					if(globalSettings.displayhiddenevents.value || globalVisibleCalDAVCollections.indexOf(calendarUID)!=-1)
 					{
 						var bg = false;
 						var tmpUID = calendarUID.match(rex);
@@ -401,7 +395,8 @@ function updateMainLoader(needRefresh,type,collUID)
 							hrefUID = tmpUID[4];
 
 						var resource = getResourceByCollection(calendarUID);
-						if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+						var collection = globalResourceCalDAVList.getEventCollectionByUID(calendarUID);
+						if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 						{
 							var rbCalendars = '';
 							if(resource.backgroundCalendars instanceof Array)
@@ -421,16 +416,18 @@ function updateMainLoader(needRefresh,type,collUID)
 									bg = true;
 							}
 						}
-						if(globalResourceCalDAVList.getEventCollectionByUID(calendarUID).makeLoaded)
-							globalResourceCalDAVList.getEventCollectionByUID(calendarUID).fcSource = $('#calendar').fullCalendar('addEventSource', globalEventList.displayEventsArray[calendarUID], bg);
+						if(collection.makeLoaded)
+							collection.fcSource = $('#calendar').fullCalendar('addEventSource', {events:globalEventList.displayEventsArray[calendarUID],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor,textColor:checkFontColor(collection.ecolor),background:bg});
 					}
 					counter--;
 					if(counter == 0)
 					{
 						var afterScroll = $('#main').width()-$('#calendar').width();
 						rerenderCalendar(beforeScroll!=afterScroll);
+						globalCalDAVQs.cache();
 						var afterScrollTodo = $('#mainTODO').width()-$('#todoList').width();
 						rerenderTodo(beforeScrollTodo!=afterScrollTodo);
+						globalCalDAVTODOQs.cache();
 						$('#calendar').fullCalendar('findToday');
 						globalCalDAVInitLoad=false;
 						$('#todoList').fullCalendar('allowSelectEvent',true);
@@ -445,18 +442,21 @@ function updateMainLoader(needRefresh,type,collUID)
 
 			for(calendarUID in globalEventList.displayTodosArray)
 				setTimeout(function(calendarUID){
-					if(globalSettings.displayhiddenevents || globalVisibleCalDAVTODOCollections.indexOf(calendarUID)!=-1)
+					if(globalSettings.displayhiddenevents.value || globalVisibleCalDAVTODOCollections.indexOf(calendarUID)!=-1)
 					{
-						if(globalResourceCalDAVList.getTodoCollectionByUID(calendarUID).makeLoaded)
-							globalResourceCalDAVList.getTodoCollectionByUID(calendarUID).fcSource = $('#todoList').fullCalendar('addEventSource', globalEventList.displayTodosArray[calendarUID]);
+						var collection = globalResourceCalDAVList.getTodoCollectionByUID(calendarUID);
+						if(collection.makeLoaded)
+							collection.fcSource = $('#todoList').fullCalendar('addEventSource', {events:globalEventList.displayTodosArray[calendarUID],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor});
 					}
 					counter--;
 					if(counter == 0)
 					{
 						var afterScroll = $('#main').width()-$('#calendar').width();
 						rerenderCalendar(beforeScroll!=afterScroll);
+						globalCalDAVQs.cache();
 						var afterScrollTodo = $('#mainTODO').width()-$('#todoList').width();
 						rerenderTodo(beforeScrollTodo!=afterScrollTodo);
+						globalCalDAVTODOQs.cache();
 						$('#calendar').fullCalendar('findToday');
 						globalCalDAVInitLoad=false;
 						$('#todoList').fullCalendar('allowSelectEvent',true);
@@ -469,11 +469,12 @@ function updateMainLoader(needRefresh,type,collUID)
 					}
 				},10,calendarUID);
 		}
-		else
+		else if(!globalCalDAVInitLoad)
 		{
 			if(type==null || type=='vevent')
 			{
-				if((globalSettings.displayhiddenevents || globalVisibleCalDAVCollections.indexOf(collUID)!=-1) && globalLimitLoading=='' && needRefresh && typeof collUID!= 'undefined' && globalResourceCalDAVList.getEventCollectionByUID(collUID)!=null && globalResourceCalDAVList.getEventCollectionByUID(collUID).fcSource==null)
+				var collection = globalResourceCalDAVList.getEventCollectionByUID(collUID);
+				if((globalSettings.displayhiddenevents.value || globalVisibleCalDAVCollections.indexOf(collUID)!=-1) && globalLimitLoading=='' && needRefresh && typeof collUID!= 'undefined' && collection!=null && collection.fcSource==null)
 				{
 					var bg = false;
 					var tmpUID = collUID.match(rex);
@@ -482,7 +483,7 @@ function updateMainLoader(needRefresh,type,collUID)
 						hrefUID = tmpUID[4];
 
 					var resource = getResourceByCollection(collUID);
-					if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+					if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 					{
 						var rbCalendars = '';
 						if(resource.backgroundCalendars instanceof Array)
@@ -502,15 +503,14 @@ function updateMainLoader(needRefresh,type,collUID)
 								bg = true;
 						}
 					}
-					globalResourceCalDAVList.getEventCollectionByUID(collUID).fcSource = $('#calendar').fullCalendar('addEventSource', globalEventList.displayEventsArray[collUID], bg);
+					collection.fcSource = $('#calendar').fullCalendar('addEventSource', {events:globalEventList.displayEventsArray[collUID],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor,textColor:checkFontColor(collection.ecolor),background:bg});
 				}
 				if(needRefresh)
 					refetchCalendarEvents();
 				setTimeout(function(){
-					if(globalLimitLoading!='' && (globalSettings.eventstartpastlimit!=null || globalSettings.eventstartfuturelimit!=null))
+					if(globalLimitLoading!='' && (globalSettings.eventstartpastlimit.value!=null || globalSettings.eventstartfuturelimit.value!=null))
 					{
 						$('#CalendarLoader').css('display', 'none');
-						$('#CalendarLoader').find('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader);
 						globalLimitLoading = '';
 						globalOnlyCalendarNumberCount = 0;
 					}
@@ -519,17 +519,17 @@ function updateMainLoader(needRefresh,type,collUID)
 			}
 			if(type==null || type=='vtodo')
 			{
-				if((globalSettings.displayhiddenevents || globalVisibleCalDAVTODOCollections.indexOf(collUID)!=-1) && globalLimitTodoLoading=='' && needRefresh && typeof collUID!= 'undefined' && globalResourceCalDAVList.getTodoCollectionByUID(collUID)!=null && globalResourceCalDAVList.getTodoCollectionByUID(collUID).fcSource==null)
+				var collection = globalResourceCalDAVList.getTodoCollectionByUID(collUID);
+				if((globalSettings.displayhiddenevents.value || globalVisibleCalDAVTODOCollections.indexOf(collUID)!=-1) && globalLimitTodoLoading=='' && needRefresh && typeof collUID!= 'undefined' && collection!=null && collection.fcSource==null)
 				{
-					globalResourceCalDAVList.getTodoCollectionByUID(collUID).fcSource = $('#todoList').fullCalendar('addEventSource', globalEventList.displayTodosArray[collUID]);
+					collection.fcSource = $('#todoList').fullCalendar('addEventSource', {events:globalEventList.displayTodosArray[collUID],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor});
 				}
 				if(needRefresh)
 					refetchTodoEvents();
 				setTimeout(function(){
-					if(globalLimitTodoLoading!='' && (globalSettings.eventstartpastlimit!=null || globalSettings.eventstartfuturelimit!=null))
+					if(globalLimitTodoLoading!='' && globalSettings.todopastlimit.value!=null)
 					{
 						$('#CalendarLoaderTODO').css('display', 'none');
-						$('#CalendarLoaderTODO').find('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader);
 						globalLimitTodoLoading = '';
 						globalOnlyTodoCalendarNumberCount = 0;
 					}
@@ -537,15 +537,8 @@ function updateMainLoader(needRefresh,type,collUID)
 			}
 			showTimezones(globalSessionTimeZone, 'Picker');
 			showTimezones(globalSessionTimeZone, 'PickerTODO');
-			if(isAvaible('Settings') && globalSettingsSaving && globalLoadedCollectionsCount == globalLoadedCollectionsNumber)
-			{
-				globalSettingsSaving=false;
-				setTimeout(function(){
-					$('#SettingsFormOverlay').hide();
-					$('#SettingsFormOverlay').find('.saveLoaderInfo').text('');
-					$('.settingsButtons, #ResourceSettingsListOverlay').css('display','none');
-				},globalHideInfoMessageAfter);
-			}
+			if(globalSettingsSaving!='' && globalLoadedCollectionsCount == globalLoadedCollectionsNumber)
+				setTimeout(function(){hideUnloadCollectionCallback(globalSettingsSaving);},300);
 		}
 	}
 }
@@ -598,21 +591,22 @@ function checkFor(data_id)
 
 function checkForTodo(data_id)
 {
-	if(typeof vCalendar.tplM['VTcontentline_TRIGGER']!='undefined' && vCalendar.tplM['VTcontentline_TRIGGER']!='' &&
-		vCalendar.tplM['VTcontentline_TRIGGER']!=null && vCalendar.tplM['VTcontentline_TRIGGER'].length>0)
-			vCalendar.tplM['VTcontentline_TRIGGER'].splice(data_id-1, 1);
+	var rh='form';
+	if(typeof vCalendar.tplM['VTcontentline_TRIGGER'][rh]!='undefined' && vCalendar.tplM['VTcontentline_TRIGGER'][rh]!='' &&
+		vCalendar.tplM['VTcontentline_TRIGGER'][rh]!=null && vCalendar.tplM['VTcontentline_TRIGGER'][rh].length>0)
+			vCalendar.tplM['VTcontentline_TRIGGER'][rh].splice(data_id-1, 1);
 
-	if(typeof vCalendar.tplM['VTcontentline_VANOTE']!='undefined' && vCalendar.tplM['VTcontentline_VANOTE']!='' &&
-		vCalendar.tplM['VTcontentline_VANOTE']!=null && vCalendar.tplM['VTcontentline_VANOTE'].length>0)
-			vCalendar.tplM['VTcontentline_VANOTE'].splice(data_id-1, 1);
+	if(typeof vCalendar.tplM['VTcontentline_VANOTE'][rh]!='undefined' && vCalendar.tplM['VTcontentline_VANOTE'][rh]!='' &&
+		vCalendar.tplM['VTcontentline_VANOTE'][rh]!=null && vCalendar.tplM['VTcontentline_VANOTE'][rh].length>0)
+			vCalendar.tplM['VTcontentline_VANOTE'][rh].splice(data_id-1, 1);
 
-	if(typeof vCalendar.tplM['VTcontentline_ACTION']!='undefined' && vCalendar.tplM['VTcontentline_ACTION']!='' &&
-		vCalendar.tplM['VTcontentline_ACTION']!=null && vCalendar.tplM['VTcontentline_ACTION'].length>0)
-			vCalendar.tplM['VTcontentline_ACTION'].splice(data_id-1, 1);
+	if(typeof vCalendar.tplM['VTcontentline_ACTION'][rh]!='undefined' && vCalendar.tplM['VTcontentline_ACTION'][rh]!='' &&
+		vCalendar.tplM['VTcontentline_ACTION'][rh]!=null && vCalendar.tplM['VTcontentline_ACTION'][rh].length>0)
+			vCalendar.tplM['VTcontentline_ACTION'][rh].splice(data_id-1, 1);
 
-	if(typeof vCalendar.tplM['VTunprocessedVALARM']!='undefined' && vCalendar.tplM['VTunprocessedVALARM']!='' &&
-		vCalendar.tplM['VTunprocessedVALARM'] != null && vCalendar.tplM['VTunprocessedVALARM'].length>0)
-			vCalendar.tplM['VTunprocessedVALARM'].splice(data_id-1, 1);
+	if(typeof vCalendar.tplM['VTunprocessedVALARM'[rh]]!='undefined' && vCalendar.tplM['VTunprocessedVALARM'][rh]!='' &&
+		vCalendar.tplM['VTunprocessedVALARM'][rh] != null && vCalendar.tplM['VTunprocessedVALARM'][rh].length>0)
+			vCalendar.tplM['VTunprocessedVALARM'][rh].splice(data_id-1, 1);
 }
 
 function div(op1, op2)
@@ -707,7 +701,7 @@ function getValidRepeatDay(inputDate, RepeatDay)
 
 	var monthNumber=inputDate.getMonth()+2;
 	var dayOfMonth=newDate.getDate();
-	
+
 	if(monthNumber>12)
 		monthNumber=1;
 
@@ -720,880 +714,370 @@ function getValidRepeatDay(inputDate, RepeatDay)
 		return dayOfMonth;
 }
 
+function generateRepeatInstances(inputObj)
+{
+	var dayDifference=inputObj.items.end.getTime()-inputObj.items.start.getTime();
+	var alertTimeOut=new Array();
+	var lastGenDate= inputObj.repeatStart;
+	var rule=null;
+	if(typeof inputObj.rule == 'undefined')
+	{
+		var options = RRule.parseString(inputObj.items.ruleString);
+		options.dtstart = new Date(inputObj.items.start.getTime());
+		if(inputObj.untilDate!=='')
+			options.until = inputObj.untilDate;
+		rule = new RRule(options);
+	}
+	else
+		rule=inputObj.rule;
+
+	rule.between(inputObj.repeatStart, inputObj.futureRLimit, true, function(date,i){
+		var varDate=new Date(date.getTime());
+
+		var varEndDate=new Date(date.getTime()+dayDifference);
+		var checkRec=false, valOffsetFrom='', intOffset='';
+
+		inputObj.items.realRepeatCount++;
+
+		if(inputObj.recurrence_id_array.length>0)
+			checkRec=isInRecurrenceArray(varDate,inputObj.stringUID,inputObj.recurrence_id_array, inputObj.tzName);
+		if(!inputObj.items.allDay)
+		{
+			var dateStart,dateEnd;
+			if(globalSettings.timezonesupport.value && inputObj.items.timeZone in timezones)
+				valOffsetFrom=getOffsetByTZ(inputObj.items.timeZone, varDate);
+			var realStart=new Date(varDate.getTime());
+			dateStart=new Date(realStart.getTime());
+			if(valOffsetFrom)
+			{
+				intOffset=(getLocalOffset(dateStart)*-1*1000)-valOffsetFrom.getSecondsFromOffset()*1000;
+				dateStart.setTime(dateStart.getTime()+intOffset);
+			}
+			if(inputObj.exDates.length>0)
+				if(inputObj.exDates.indexOf(dateStart.toString())!=-1)
+					checkRec=true;
+
+			var realEnd=new Date(varEndDate.getTime());
+			dateEnd=new Date(realEnd.getTime());
+			if(intOffset)
+				dateEnd.setTime(dateEnd.getTime()+intOffset);
+		}
+		else
+		{
+			realStart=new Date(varDate.getTime());
+			if(inputObj.exDates.length>0)
+				if(inputObj.exDates.indexOf(realStart.toString())!=-1)
+					checkRec=true;
+			dateStart=$.fullCalendar.formatDate(realStart,"yyyy-MM-dd'T'HH:mm:ss");
+			realEnd=new Date(varEndDate.getTime());
+			dateEnd =$.fullCalendar.formatDate(realEnd,"yyyy-MM-dd'T'HH:mm:ss");
+		}
+
+		var checkDateTime = new Date(inputObj.repeatStart.getTime());
+		if(typeof dateStart=='string')
+			checkDateTime=$.fullCalendar.formatDate(inputObj.repeatStart,"yyyy-MM-dd'T'HH:mm:ss");
+		if((inputObj.items.after!=='' && inputObj.items.realRepeatCount>(parseInt(inputObj.items.after,10))) || (typeof dateStart=='object' && (checkDateTime-dateStart)==0) || (typeof dateStart=='string' && checkDateTime==dateStart))
+		{
+			checkRec=true;
+			inputObj.items.realRepeatCount--;
+		}
+
+		if(!checkRec)
+		{
+			if(!inputObj.ignoreAlarms)
+				alertTimeOut=setAlertTimeouts(false,inputObj.alertTime, dateStart, dateEnd, {allDay:inputObj.items.allDay, title:inputObj.items.title},false, inputObj.items.id);
+			inputObj.items.repeatCount++;
+			var tmpObj=$.extend({},inputObj.items,{
+				start:dateStart,
+				end:dateEnd,
+				realStart:realStart,
+				realEnd:realEnd,
+				repeatCount:inputObj.items.repeatCount,
+				realRepeatCount:inputObj.items.realRepeatCount,
+				alertTimeOut:alertTimeOut
+				});
+			globalEventList.displayEventsArray[inputObj.items.res_id].splice(globalEventList.displayEventsArray[inputObj.items.res_id].length, 0, tmpObj);
+			lastGenDate = new Date(varDate.getTime());
+		}
+		return true;
+	});
+
+
+	if(typeof globalEventList.repeatable[inputObj.items.id] == 'undefined')
+		globalEventList.repeatable[inputObj.items.id]={
+			lastGenDate:lastGenDate,
+			recurrence_id_array:inputObj.recurrence_id_array,
+			stringUID:inputObj.stringUID,
+			exDates:inputObj.exDates,
+			alertTime:inputObj.alertTime,
+			ignoreAlarms:inputObj.ignoreAlarms,
+			rule:rule,
+			items:inputObj.items
+		};
+	else
+		globalEventList.repeatable[inputObj.items.id].lastGenDate=lastGenDate;
+}
+
+function generateTodoRepeatInstances(inputObj)
+{
+	var rule=null;
+	var alertTimeOut=new Array();
+	var firstDateSaved=false;
+	if(inputObj.repeatStart)
+		var resStart=new Date($.fullCalendar.parseDate(inputObj.items.realStart).getTime());
+	else if(inputObj.repeatEnd)
+		var resStart=new Date($.fullCalendar.parseDate(inputObj.items.realEnd).getTime());
+
+	if(typeof inputObj.lastGenDate!='undefined')
+		var resStart=new Date(inputObj.lastGenDate.getTime());
+
+	var lastGenDate=new Date(resStart.getTime());
+	if(typeof inputObj.rule == 'undefined')
+	{
+		var options = RRule.parseString(inputObj.items.ruleString);
+		options.dtstart = new Date(resStart.getTime());
+		if(inputObj.untilDate!=='')
+			options.until = inputObj.untilDate;
+			rule = new RRule(options);
+	}
+	else
+		rule=inputObj.rule;
+
+	var dates = new Array();
+	dates = rule.between(resStart, new Date(inputObj.futureRLimit.getTime()), true);
+
+	if(dates.length>0 && (dates[0]-resStart)!=0 || dates.length==0)
+		dates.splice(0,0,resStart);
+
+	var futureLimitDate = new Date(inputObj.futureRLimit.getTime());
+	futureLimitDate.setHours(resStart.getHours());
+	futureLimitDate.setMinutes(resStart.getMinutes());
+	futureLimitDate.setSeconds(resStart.getSeconds());
+
+
+	var startCheck = new Date(dates[dates.length-1].getTime());
+
+
+	var iterationEnd = dates.length;
+	if(globalSettings.appleremindersmode.value || (inputObj.repeatEnd=='' && inputObj.repeatStart!=''))
+		for(var i=0; i<globalMaxNextInstanesTodoCheckingNumber;i++)
+		{
+			var endCheck = new Date(startCheck.getTime()+ 30 * 24 * 3600 * 1000 + (24*3600*1000));
+			var tmpArray = new Array();
+				tmpArray = rule.between(startCheck, endCheck , true);
+			if(tmpArray.length>0)
+			{
+				var isBreak=false;
+				for(var j=0;j<tmpArray.length;j++)
+					if(dates[dates.length-1]-tmpArray[j]!=0)
+					{
+						dates.push(tmpArray[j]);
+						iterationEnd=dates.length-1;
+						isBreak=true;
+						break;
+					}
+				if(isBreak)
+					break;
+			}
+			startCheck=new Date(endCheck.getTime());
+		}
+
+
+	var realRepeatCount=inputObj.realRepeatCount;
+	var repeatCount=inputObj.repeatCount;
+	for(var i=0;i<iterationEnd;i++)
+	{
+		var varDate='', varEndDate='', valOffsetFrom='',intOffset=0;
+		var checkCont=false, dateStart='', dateEnd='';
+
+		realRepeatCount++;
+		if(inputObj.repeatEnd!='' && inputObj.repeatStart!='')
+		{
+
+			varDate=new Date(dates[i].getTime());
+			varEndDate=new Date(varDate.getTime()+inputObj.dayDifference);
+		}
+		else if(inputObj.repeatEnd=='' && inputObj.repeatStart!='')
+		{
+			varDate=new Date(dates[i].getTime());
+			if(i<=(dates.length-2))
+			{
+				varEndDate=new Date(dates[i+1].getTime());
+				varEndDate.setMinutes(varEndDate.getMinutes()-1);
+			}
+		}
+		else if(inputObj.repeatEnd!='' && inputObj.repeatStart=='')
+		{
+			varEndDate=new Date(dates[i].getTime());
+			if(i>0)
+			{
+				varDate=new Date(dates[i-1].getTime());
+				varDate.setMinutes(varDate.getMinutes()+1);
+			}
+			else if(typeof inputObj.previousRepeatStart!='undefined'&&inputObj.previousRepeatStart!=='')
+				varDate=new Date(inputObj.previousRepeatStart);
+		}
+
+		if(varDate!=='')
+		{
+			if(globalSettings.timezonesupport.value && inputObj.items.timeZone in timezones)
+				valOffsetFrom=getOffsetByTZ(inputObj.items.timeZone, varDate);
+			var realStart=new Date(varDate.getTime());
+			dateStart=new Date(varDate.getTime());
+			if(valOffsetFrom && (typeof inputObj.previousRepeatStart=='undefined' || inputObj.previousRepeatStart==''))
+			{
+				intOffset=(getLocalOffset(dateStart)*-1*1000)-valOffsetFrom.getSecondsFromOffset()*1000;
+				dateStart.setTime(dateStart.getTime()+intOffset);
+			}
+
+		}
+
+		if(varEndDate!=='')
+		{
+
+			var realEnd=new Date(varEndDate.getTime());
+			var dateEnd=new Date(varEndDate.getTime());
+			if(intOffset)
+				dateEnd.setTime(dateEnd.getTime()+intOffset);
+		}
+
+		if(inputObj.repeatStart!='')
+		{
+			checkCont=isInRecurrenceArray(realStart,inputObj.stringUID,inputObj.recurrence_id_array, inputObj.items.timeZone);
+			if(inputObj.exDates.length>0)
+				if(inputObj.exDates.indexOf(dateStart.toString())!=-1)
+					checkCont=true;
+		}
+		else
+		{
+			checkCont=isInRecurrenceArray(realEnd,inputObj.stringUID,inputObj.recurrence_id_array, inputObj.items.timeZone);
+			if(inputObj.exDates.length>0)
+				if(inputObj.exDates.indexOf(dateEnd.toString())!=-1)
+					checkCont=true;
+		}
+
+		if(inputObj.items.after!=='' && !globalSettings.appleremindersmode.value && realRepeatCount>(parseInt(inputObj.items.after,10)))
+		{
+			checkCont=true;
+			realRepeatCount--;
+		}
+
+		if(globalSettings.appleremindersmode.value && firstDateSaved && inputObj.todoArray.length==1)
+		{
+			globalAppleSupport.nextDates[inputObj.items.id] =  new Date(dateEnd.getTime());
+			break;
+		}
+		if(!checkCont)
+		{
+			if(!inputObj.ignoreAlarms)
+				alertTimeOut=setAlertTimeouts(true, inputObj.alertTime, (inputObj.repeatStart=='' ? dateEnd : dateStart), (inputObj.repeatEnd=='' ? dateStart : dateEnd), {title:inputObj.items.title, status:inputObj.items.status},!firstDateSaved,inputObj.items.id);
+			firstDateSaved = true;
+			repeatCount++;
+			var tmpObj=$.extend({},inputObj.items,{
+			start:dateStart,
+			end:(inputObj.repeatEnd=='' && i==(dates.length-1) ? '' : dateEnd),
+			realStart:realStart,
+			realEnd:realEnd,
+			repeatCount:repeatCount,
+			realRepeatCount:realRepeatCount,
+			alertTimeOut:alertTimeOut
+			});
+
+			inputObj.preTodoArray.splice(inputObj.preTodoArray.length, 0, tmpObj);
+			if(inputObj.repeatStart!='')
+				lastGenDate = new Date(dateStart.getTime());
+			else
+				lastGenDate = new Date(dateEnd.getTime());
+		}
+	}
+
+	if(typeof globalEventList.repeatableTodo[inputObj.items.id] == 'undefined')
+		globalEventList.repeatableTodo[inputObj.items.id]={
+			todoArray:inputObj.todoArray,
+			lastGenDate:lastGenDate,
+			dayDifference:inputObj.dayDifference,
+			recurrence_id_array:inputObj.recurrence_id_array,
+			stringUID:inputObj.stringUID,
+			exDates:inputObj.exDates,
+			realRepeatCount:realRepeatCount,
+			repeatCount:repeatCount,
+			alertTime:inputObj.alertTime,
+			ignoreAlarms:inputObj.ignoreAlarms,
+			rule:rule,
+			items:inputObj.items
+		};
+	else
+	{
+		globalEventList.repeatableTodo[inputObj.items.id].lastGenDate=lastGenDate;
+		globalEventList.repeatableTodo[inputObj.items.id].realRepeatCount=realRepeatCount;
+		globalEventList.repeatableTodo[inputObj.items.id].repeatCount=repeatCount;
+	}
+}
+
 function loadRepeatEvents(inputRepeatEvent,prevLimit,toLimit)
 {
-	var frequency=inputRepeatEvent.frequency;
-	var monthPlus=0, dayPlus=0;
-	if(frequency=="DAILY\r\n" || frequency=="DAILY")
-	{
-		monthPlus=0,
-		dayPlus=1;
-	}
-	else if(frequency=="WEEKLY\r\n" || frequency=="WEEKLY")
-	{
-		monthPlus=0,
-		dayPlus=7;
-	}
-	else if(frequency=="MONTHLY\r\n" || frequency=="MONTHLY")
-	{
-		monthPlus=1,
-		dayPlus=0;
-	}
-	else if(frequency=="YEARLY\r\n" || frequency=="YEARLY")
-	{
-		monthPlus=12,
-		dayPlus=0;
-	}
-			
-	var td='', td2='';
-	var valOffsetFrom='',intOffset='';
-	if(inputRepeatEvent.realStart)
-		var varDate=new Date(inputRepeatEvent.realStart.getTime());
-	else
-		var varDate=new Date(inputRepeatEvent.start.getTime());
-	if(inputRepeatEvent.realEnd)
-		var varEndDate=new Date(inputRepeatEvent.realEnd.getTime());
-	else
-		var varEndDate=new Date(inputRepeatEvent.end.getTime());
 	var repeatFromLine=new Date(prevLimit.getFullYear(), prevLimit.getMonth(), prevLimit.getDate(), 0, 0, 0);
-	var repeatCount=inputRepeatEvent.repeatCount;
-	var realRepeatCount=inputRepeatEvent.repeatCount;
-	var byMonthDay=inputRepeatEvent.byMonthDay;
-	var realStart,realEnd;
-	if(inputRepeatEvent.realUntilDate=='')
-		untilDate=toLimit;
-	else
-		untilDate=inputRepeatEvent.realUntilDate;
-	if(inputRepeatEvent.realUntil=='')
-		if(untilDate<repeatFromLine)
-			return;
-		
-	if(byMonthDay!='' && dayPlus==0)
-		byMonthDay=varDate.getDate()+dayPlus;
-
-	var dayDifference=varEndDate.getTime()-varDate.getTime();
-	var iterator=0;
-	var ruleString=inputRepeatEvent.vcalendar.match(vCalendar.pre['contentline_RRULE2'])[0].match(vCalendar.pre['contentline_parse'])[4];
-	var dates = new Array();
-	if(ruleString.indexOf('BYMONTH=')!=-1 || ruleString.indexOf('BYMONTHDAY=')!=-1 || ruleString.indexOf('BYDAY=')!=-1)
-	{
-		if(inputRepeatEvent.rulePartsArray.length>0)
-		{
-			 
-			if(inputRepeatEvent.lastGenDate!='')
-			{
-				var lastGen = new Date(inputRepeatEvent.lastGenDate.getTime());
-				
-				var onePrevNext = new Date(prevLimit.getTime());
-				onePrevNext.setDate(0);
-				inputRepeatEvent.lastGenDate.setDate(1);
-				inputRepeatEvent.lastGenDate.setMonth(onePrevNext.getMonth()-1);
-				//inputRepeatEvent.lastGenDate.setFullYear(onePrevNext.getFullYear());
-				var objR =processRule(inputRepeatEvent.vcalendar,inputRepeatEvent.lastGenDate,inputRepeatEvent.rulePartsArray.slice(),[inputRepeatEvent.lastGenDate],frequencies.indexOf(inputRepeatEvent.frequency),toLimit,inputRepeatEvent.interval,inputRepeatEvent.uid,inputRepeatEvent.rCount,inputRepeatEvent.start,inputRepeatEvent.wkst,inputRepeatEvent.classType);
-			}
-			else 
-				var objR =processRule(inputRepeatEvent.vcalendar,inputRepeatEvent.start,inputRepeatEvent.rulePartsArray.slice(),[inputRepeatEvent.start],frequencies.indexOf(inputRepeatEvent.frequency),toLimit,inputRepeatEvent.interval,inputRepeatEvent.uid,inputRepeatEvent.rCount,inputRepeatEvent.start,inputRepeatEvent.wkst,inputRepeatEvent.classType);
-		
-			dates=objR.dates;
-			inputRepeatEvent.rCount=objR.rCount;
-		}
-		for(var idt=0;idt<dates.length;idt++)
-		{
-			varDate=new Date(dates[idt].getTime());
-			varEndDate=new Date(varDate.getTime()+dayDifference);
-			iterator++;
-			
-			if((varDate.getTime()-repeatFromLine.getTime())<0)
-				continue;
-			if((varDate.getTime()-toLimit.getTime())>=0)
-				break;
-			if(inputRepeatEvent.realUntil=='')
-				var count=untilDate-varDate;
-			else
-				var count = inputRepeatEvent.realUntil - inputRepeatEvent.realRepeatCount;
-			if(untilDate&&count<0 || inputRepeatEvent.realUntilDate==''&&count<=0)
-				break;
-			else
-			{
-					if(inputRepeatEvent.frequency=="YEARLY")
-					{									
-						if(inputRepeatEvent.lastYear!=varDate.getFullYear())
-						{
-							inputRepeatEvent.lastYear=varDate.getFullYear();
-							if(inputRepeatEvent.lastYear>0 && inputRepeatEvent.rCount%inputRepeatEvent.interval!=0)
-							{
-								inputRepeatEvent.rCount++;
-								continue;
-							}			
-							inputRepeatEvent.rCount++;
-						}
-					}
-					realRepeatCount++;
-					inputRepeatEvent.realRepeatCount=realRepeatCount;
-					if(inputRepeatEvent.rec_id_array.length>0)
-					{
-						var checkCont = false;
-						for(var ir=0;ir<inputRepeatEvent.rec_id_array.length;ir++)
-						{
-							var recString = inputRepeatEvent.rec_id_array[ir].split(';')[0];
-							if(recString.charAt(recString.length-1)=='Z')
-							{
-								if(globalSettings.timezonesupport && inputRepeatEvent.timeZone in timezones)
-								{
-									var recValOffsetFrom=getOffsetByTZ(inputRepeatEvent.timeZone, varDate);
-									var recTime = new Date(recString.parseComnpactISO8601().getTime());
-									if(recValOffsetFrom)
-									{
-										var rintOffset=recValOffsetFrom.getSecondsFromOffset()*1000;
-										recTime.setTime(recTime.getTime()+rintOffset);
-									}
-									if(recTime.toString()+inputRepeatEvent.rec_id_array[ir].split(';')[1] == varDate+inputRepeatEvent.stringUID)
-										checkCont=true;
-								}
-							}
-							else
-							{
-								if(recString.parseComnpactISO8601().toString()+inputRepeatEvent.rec_id_array[ir].split(';')[1] == varDate+inputRepeatEvent.stringUID)
-									checkCont=true;
-							}
-						}
-						if(checkCont)
-							continue;
-					}
-					if(!inputRepeatEvent.allDay)
-					{
-						var dateStart, dateEnd;
-						if(inputRepeatEvent.timeZone in timezones)
-							valOffsetFrom=getOffsetByTZ(inputRepeatEvent.timeZone, varDate);
-
-						realStart=new Date(varDate.getTime());
-						dateStart=new Date(realStart.getTime());
-						if(valOffsetFrom)
-						{
-							intOffset=(getLocalOffset(dateStart)*-1*1000)-valOffsetFrom.getSecondsFromOffset()*1000;
-							dateStart.setTime(dateStart.getTime()+intOffset);
-						}
-						if(inputRepeatEvent.exDates.length>0)
-							if(inputRepeatEvent.exDates.indexOf(dateStart.toString())!=-1)
-								continue;
-						realEnd=new Date(varEndDate.getTime());
-						dateEnd=new Date(realEnd.getTime());
-						if(intOffset)
-							dateEnd.setTime(dateEnd.getTime()+intOffset);
-					}
-					else
-					{
-						realStart=new Date(varDate.getTime());
-						if(inputRepeatEvent.exDates.length>0)
-							if(inputRepeatEvent.exDates.indexOf(realStart.toString())!=-1)
-								continue;
-						var dateStart=$.fullCalendar.formatDate(varDate,"yyyy-MM-dd'T'HH:mm:ss");
-						realEnd=new Date(varEndDate.getTime());
-						var dateEnd=$.fullCalendar.formatDate(varEndDate,"yyyy-MM-dd'T'HH:mm:ss");
-					}
-
-					if(inputRepeatEvent.alertTime.length>0)
-					{
-						var repeatAlarm='',
-						myVarDate='',
-						alertString='';
-						if(!inputRepeatEvent.collection.ignoreAlarms)
-							for(var v=0;v<inputRepeatEvent.alertTime.length;v++)
-							{
-								if((inputRepeatEvent.alertTime[v].charAt(0)=='-') || (inputRepeatEvent.alertTime[v].charAt(0)=='+'))
-								{
-									var startTime;
-									if(inputRepeatEvent.alertTime[v].charAt(0)=='-')
-									{
-										if(typeof dateStart=='string')
-											startTime = $.fullCalendar.parseDate(dateStart);
-										else
-											startTime=new Date(dateStart.getTime());
-										aTime=startTime.getTime() - parseInt(inputRepeatEvent.alertTime[v].substring(1, inputRepeatEvent.alertTime[v].length-1));
-									}
-									else if(inputRepeatEvent.alertTime[v].charAt(0)=='+')
-									{
-										if(typeof dateEnd=='string')
-											startTime = $.fullCalendar.parseDate(dateEnd);
-										else
-											startTime=new Date(dateEnd.getTime());
-										aTime=startTime.getTime() + parseInt(inputRepeatEvent.alertTime[v].substring(1, inputRepeatEvent.alertTime[v].length-1));
-									}
-									var now=new Date();
-					
-									if(aTime>now)
-									{
-										var delay=aTime-now;
-										if(maxAlarmValue<delay)
-											delay=maxAlarmValue;
-										inputRepeatEvent.alertTimeOut[inputRepeatEvent.alertTimeOut.length]=setTimeout(function(startTime){
-											showAlertEvents(inputRepeatEvent.uid, (aTime-now),{start:new Date(startTime.getTime), allDay:inputRepeatEvent.allDay, title:inputRepeatEvent.title,color:inputRepeatEvent.color});
-										}, delay,startTime);
-									}
-								}
-							}
-					}
-					repeatCount++;
-					inputRepeatEvent.repeatCount=repeatCount;
-					var tmpObj=new items(inputRepeatEvent.etag, dateStart,dateEnd, inputRepeatEvent.title, inputRepeatEvent.allDay,inputRepeatEvent.uid,inputRepeatEvent.evcolor, inputRepeatEvent.rid, inputRepeatEvent.evid, inputRepeatEvent.note, inputRepeatEvent.displayValue, inputRepeatEvent.alertTime, inputRepeatEvent.alertNote, inputRepeatEvent.realUntilDate, inputRepeatEvent.frequency, inputRepeatEvent.interval, inputRepeatEvent.realUntil, inputRepeatEvent.repeatStart, inputRepeatEvent.repeatEnd, byMonthDay, inputRepeatEvent.repeatCount, inputRepeatEvent.realRepeatCount, inputRepeatEvent.vcalendar, inputRepeatEvent.location, inputRepeatEvent.alertTimeOut,inputRepeatEvent.timeZone,realStart, realEnd, inputRepeatEvent.byDay, inputRepeatEvent.rec_id,inputRepeatEvent.wkst,inputRepeatEvent.classType,inputRepeatEvent.avail,inputRepeatEvent.hrefUrl,inputRepeatEvent.compareString,inputRepeatEvent.priority,inputRepeatEvent.title.toLowerCase().multiReplace(globalSearchTransformAlphabet),inputRepeatEvent.status);
-					globalEventList.displayEventsArray[inputRepeatEvent.rid].splice(globalEventList.displayEventsArray[inputRepeatEvent.rid].length, 0, tmpObj);
-					inputRepeatEvent.lastGenDate = new Date(varDate.getTime());
-			}
-		}
-	}
-	else
-	{
-		while(true)
-		{
-			var dayNumberStart=varDate.getDate()+dayPlus;
-			var dayNumberEnd=varEndDate.getDate()+dayPlus;
-			if(dayPlus==0)
-			{
-				dayNumberStart=getValidRepeatDay(varDate,inputRepeatEvent.start);
-				dayNumberEnd=getValidRepeatDay(varEndDate,inputRepeatEvent.end);
-			}
-
-			if(varEndDate.getDate()>=dayNumberEnd)
-			{
-				varEndDate.setDate(dayNumberEnd);
-				varEndDate.setMonth(varEndDate.getMonth()+monthPlus);
-			}
-			else
-			{
-				varEndDate.setMonth(varEndDate.getMonth()+monthPlus);
-				varEndDate.setDate(dayNumberEnd);
-			}
-
-			varDate=new Date(varEndDate.getTime()-dayDifference);
-
-			if(byMonthDay!='' && dayPlus==0)
-				if(byMonthDay!=dayNumberStart)
-					continue;
-
-			iterator++;
-
-			if((varDate.getTime()-repeatFromLine.getTime())<0)
-				continue;
-			if((varDate.getTime()-toLimit.getTime())>=0)
-				break;
-
-			var count=untilDate-varDate;
-			if(count<0)
-				break;
-			else
-			{
-				if(inputRepeatEvent.byDay.length>0)
-					if(inputRepeatEvent.byDay.indexOf(varDate.getDay().toString())==-1)
-						continue;
-				
-				if((iterator%inputRepeatEvent.interval)==0)
-				{
-					realRepeatCount++;
-					inputRepeatEvent.realRepeatCount=realRepeatCount;
-					if(inputRepeatEvent.rec_id_array.length>0)
-					{
-						var checkCont = false;
-						for(var ir=0;ir<inputRepeatEvent.rec_id_array.length;ir++)
-						{
-							var recString = inputRepeatEvent.rec_id_array[ir].split(';')[0];
-							if(recString.charAt(recString.length-1)=='Z')
-							{
-								if(globalSettings.timezonesupport && inputRepeatEvent.timeZone in timezones)
-								{
-									var recValOffsetFrom=getOffsetByTZ(inputRepeatEvent.timeZone, varDate);
-									var recTime = new Date(recString.parseComnpactISO8601().getTime());
-									if(recValOffsetFrom)
-									{
-										var rintOffset=recValOffsetFrom.getSecondsFromOffset()*1000;
-										recTime.setTime(recTime.getTime()+rintOffset);
-									}	
-									if(recTime.toString()+inputRepeatEvent.rec_id_array[ir].split(';')[1] == varDate+inputRepeatEvent.stringUID)
-										checkCont=true;
-								}
-							}
-							else
-							{
-								if(recString.parseComnpactISO8601().toString()+inputRepeatEvent.rec_id_array[ir].split(';')[1] == varDate+inputRepeatEvent.stringUID)
-									checkCont=true;
-							}
-						}
-						if(checkCont)
-							continue;
-					}
-					if(!inputRepeatEvent.allDay)
-					{
-						var dateStart, dateEnd;
-						if(inputRepeatEvent.timeZone in timezones)
-							valOffsetFrom=getOffsetByTZ(inputRepeatEvent.timeZone, varDate);
-
-						realStart=new Date(varDate.getTime());
-						dateStart=new Date(realStart.getTime());
-						if(valOffsetFrom)
-						{
-							intOffset=(getLocalOffset(dateStart)*-1*1000)-valOffsetFrom.getSecondsFromOffset()*1000;
-							dateStart.setTime(dateStart.getTime()+intOffset);
-						}
-						if(inputRepeatEvent.exDates.length>0)
-							if(inputRepeatEvent.exDates.indexOf(dateStart.toString())!=-1)
-								continue;
-						realEnd=new Date(varEndDate.getTime());
-						dateEnd=new Date(realEnd.getTime());
-						if(intOffset)
-							dateEnd.setTime(dateEnd.getTime()+intOffset);
-					}
-					else
-					{
-						realStart=new Date(varDate.getTime());
-						if(inputRepeatEvent.exDates.length>0)
-							if(inputRepeatEvent.exDates.indexOf(realStart.toString())!=-1)
-								continue;
-						var dateStart=$.fullCalendar.formatDate(varDate,"yyyy-MM-dd'T'HH:mm:ss");
-						realEnd=new Date(varEndDate.getTime());
-						var dateEnd=$.fullCalendar.formatDate(varEndDate,"yyyy-MM-dd'T'HH:mm:ss");
-					}
-
-					if(inputRepeatEvent.alertTime.length>0)
-					{
-						var repeatAlarm='',
-						myVarDate='',
-						alertString='';
-						if(!inputRepeatEvent.collection.ignoreAlarms)
-							for(var v=0;v<inputRepeatEvent.alertTime.length;v++)
-							{
-								if((inputRepeatEvent.alertTime[v].charAt(0)=='-') || (inputRepeatEvent.alertTime[v].charAt(0)=='+'))
-								{
-									var startTime;
-									if(inputRepeatEvent.alertTime[v].charAt(0)=='-')
-									{
-										if(typeof dateStart=='string')
-											startTime = $.fullCalendar.parseDate(dateStart);
-										else
-											startTime=new Date(dateStart.getTime());
-										aTime=startTime.getTime() - parseInt(inputRepeatEvent.alertTime[v].substring(1, inputRepeatEvent.alertTime[v].length-1));
-									}
-									else if(inputRepeatEvent.alertTime[v].charAt(0)=='+')
-									{
-										if(typeof dateEnd=='string')
-											startTime = $.fullCalendar.parseDate(dateEnd);
-										else
-											startTime=new Date(dateEnd.getTime());
-										aTime=startTime.getTime() + parseInt(inputRepeatEvent.alertTime[v].substring(1, inputRepeatEvent.alertTime[v].length-1));
-									}
-									var now=new Date();
-					
-									if(aTime>now)
-									{
-										var delay=aTime-now;
-										if(maxAlarmValue<delay)
-											delay=maxAlarmValue;
-										inputRepeatEvent.alertTimeOut[inputRepeatEvent.alertTimeOut.length]=setTimeout(function(startTime){
-											showAlertEvents(inputRepeatEvent.uid, (aTime-now),{start:new Date(startTime.getTime()), allDay:inputRepeatEvent.allDay, title:inputRepeatEvent.title,color:inputRepeatEvent.color});
-										}, delay,startTime);
-									}
-								}
-							}
-					}
-					repeatCount++;
-					inputRepeatEvent.repeatCount=repeatCount;
-					var tmpObj=new items(inputRepeatEvent.etag, dateStart,dateEnd, inputRepeatEvent.title, inputRepeatEvent.allDay,inputRepeatEvent.uid,inputRepeatEvent.evcolor, inputRepeatEvent.rid, inputRepeatEvent.evid, inputRepeatEvent.note, inputRepeatEvent.displayValue, inputRepeatEvent.alertTime, inputRepeatEvent.alertNote, inputRepeatEvent.realUntilDate, inputRepeatEvent.frequency, inputRepeatEvent.interval, inputRepeatEvent.realUntil, inputRepeatEvent.repeatStart, inputRepeatEvent.repeatEnd, byMonthDay, inputRepeatEvent.repeatCount, inputRepeatEvent.realRepeatCount, inputRepeatEvent.vcalendar, inputRepeatEvent.location, inputRepeatEvent.alertTimeOut,inputRepeatEvent.timeZone,realStart, realEnd, inputRepeatEvent.byDay, inputRepeatEvent.rec_id,inputRepeatEvent.wkst,inputRepeatEvent.classType,inputRepeatEvent.avail,inputRepeatEvent.hrefUrl,inputRepeatEvent.compareString,inputRepeatEvent.priority,inputRepeatEvent.title.toLowerCase().multiReplace(globalSearchTransformAlphabet),inputRepeatEvent.status);
-					globalEventList.displayEventsArray[inputRepeatEvent.rid].splice(globalEventList.displayEventsArray[inputRepeatEvent.rid].length, 0, tmpObj);
-				}
-			}
-		}
-	}
+	generateRepeatInstances({
+		untilDate:inputRepeatEvent.items.untilDate,
+		repeatStart:inputRepeatEvent.lastGenDate,
+		futureRLimit:toLimit,
+		stringUID:inputRepeatEvent.stringUID,
+		recurrence_id_array:inputRepeatEvent.recurrence_id_array,
+		exDates:inputRepeatEvent.exDates,
+		alertTime:inputRepeatEvent.alertTime,
+		ignoreAlarms:inputRepeatEvent.ignoreAlarms,
+		rule:inputRepeatEvent.rule,
+		items:inputRepeatEvent.items
+	});
 }
 
 function loadRepeatTodo(inputRepeatTodo,prevLimit)
 {
-	var frequency=inputRepeatTodo.frequency;
-	var monthPlus=0, dayPlus=0;
-	if(frequency=="DAILY\r\n" || frequency=="DAILY")
+	var preTodoArray=new Array();
+	var previousRepeatStart = '';
+	var repeatInstances = globalEventList.displayTodosArray[inputRepeatTodo.items.res_id].filter(function(elm){return elm.id==inputRepeatTodo.items.id && elm.type!=''});
+	if(repeatInstances.length>0)
 	{
-		monthPlus=0,
-		dayPlus=1;
+		var index = globalEventList.displayTodosArray[inputRepeatTodo.items.res_id].indexOf(repeatInstances[repeatInstances.length-1]);
+		previousRepeatStart = repeatInstances[repeatInstances.length-1].start;
+		globalEventList.displayTodosArray[inputRepeatTodo.items.res_id].splice(index,1);
 	}
-	else if(frequency=="WEEKLY\r\n" || frequency=="WEEKLY")
-	{
-		monthPlus=0,
-		dayPlus=7;
-	}
-	else if(frequency=="MONTHLY\r\n" || frequency=="MONTHLY")
-	{
-		monthPlus=1,
-		dayPlus=0;
-	}
-	else if(frequency=="YEARLY\r\n" || frequency=="YEARLY")
-	{
-		monthPlus=12,
-		dayPlus=0;
-	}
-			
-	var td='', td2='';
-	var valOffsetFrom='',intOffset='',realStart,realEnd;
-	var lastObjStart='';
-	for(var it=globalEventList.displayTodosArray[inputRepeatTodo.rid].length-1;it>=0;it--)
-		if(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].id==inputRepeatTodo.uid && globalEventList.displayTodosArray[inputRepeatTodo.rid][it].type!='')
-		{
-			//if(prevLimit <= inputRepeatTodo.realUntilDate  && prevLimit < globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start)
-			//{
-			//	if(inputRepeatTodo.uid=='https://xtest.ytest@nms.sk@nms.sk:8443/caldav.php/xtest.ytest%40nms.sk/nms/889be6c638a18900eb562813e1336b591e2c781df261a1034c59f5bdde6e159c.ics')
-			//	console.log(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start)
-			//	globalEventList.displayTodosArray[inputRepeatTodo.rid].splice(it, 1);
-			//}
-			//if(it>0)
-			//{
-				if(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start=='' || globalEventList.displayTodosArray[inputRepeatTodo.rid][it].end=='')
-					return false;
-				if(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start!=null)
-				{
-					if(typeof globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start=='string')
-						lastObjStart=$.fullCalendar.parseDate(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start);
-					else 
-						lastObjStart=new Date(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].start.getTime());
-				}
-				else if(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].end!=null)
-				{
-					if(typeof globalEventList.displayTodosArray[inputRepeatTodo.rid][it].end=='string')
-						lastObjStart=$.fullCalendar.parseDate(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].end);
-					else 
-						lastObjStart=new Date(globalEventList.displayTodosArray[inputRepeatTodo.rid][it].end.getTime());
-				}
-			//}
-			globalEventList.displayTodosArray[inputRepeatTodo.rid].splice(it, 1);
-			inputRepeatTodo.repeatCount--;
-			break;
-		}
-	if(lastObjStart=='')
-		return false;
-	var repeatFromLine=new Date(lastObjStart.getFullYear(), lastObjStart.getMonth(), lastObjStart.getDate(), 0, 0, 0);
-	var repeatCount=inputRepeatTodo.repeatCount;
-	var realRepeatCount=inputRepeatTodo.repeatCount;
-	var byMonthDay=inputRepeatTodo.byMonthDay;
-	if(inputRepeatTodo.realUntilDate=='')
-		untilDate=globalToLoadedLimitTodo;
-	else
-		untilDate=inputRepeatTodo.realUntilDate;
-	if(inputRepeatTodo.realUntil=='')
-		if(untilDate<repeatFromLine)
-			return;
-		
-		var ruleString=inputRepeatTodo.vcalendar.match(vCalendar.pre['contentline_RRULE2'])[0].match(vCalendar.pre['contentline_parse'])[4];
-		var isSpecialRule=false;
-		if(ruleString.indexOf('BYMONTH=')!=-1 || ruleString.indexOf('BYMONTHDAY=')!=-1 || ruleString.indexOf('BYDAY=')!=-1)
-			isSpecialRule=true;
-		var staticDate='';
-		if(inputRepeatTodo.repeatStart)
-		{
-			var staticDate=inputRepeatTodo.repeatStart;
-			var varDate=new Date($.fullCalendar.parseDate(inputRepeatTodo.repeatStart).getTime());
-		}
-		else if(inputRepeatTodo.repeatEnd)
-		{
-			var staticDate=inputRepeatTodo.repeatEnd;
-			var varDate=new Date($.fullCalendar.parseDate(inputRepeatTodo.repeatEnd).getTime());
-		}
-		if(inputRepeatTodo.repeatEnd)
-			var varEndDate=new Date($.fullCalendar.parseDate(inputRepeatTodo.repeatEnd).getTime());
-//		else
-//			var varEndDate=new Date(end.getTime());
-		
-		var lastGenDate='';
-		var repeatStart=new Date(varDate.getTime());
-//		var repeatEnd=new Date(varEndDate.getTime());
-	
-					
-		var rCount = 0, dayDifference=0;
-		if(inputRepeatTodo.repeatEnd)
-			dayDifference=varEndDate.getTime()-varDate.getTime();
-		var iterator=0;
-		var lastYear=0;
-		var dateStart,dateEnd;
-		if(isSpecialRule)
-		{
-			if(inputRepeatTodo.rulePartsArray.length>0)
-			{
-				var repeatTodoStart;
-				
-				if(inputRepeatTodo.start!='')
-				{
-					if(typeof inputRepeatTodo.start=='string')
-						repeatTodoStart=$.fullCalendar.parseDate(inputRepeatTodo.start);
-					else 
-						repeatTodoStart=new Date(inputRepeatTodo.start.getTime());
-				}
-				else if(inputRepeatTodo.end!=null)
-				{
-					if(typeof inputRepeatTodo.end=='string')
-						repeatTodoStart=$.fullCalendar.parseDate(inputRepeatTodo.end);
-					else 
-						repeatTodoStart=new Date(inputRepeatTodo.end.getTime());
-				}
-				
-				var repeatLimit = new Date(globalToLoadedLimitTodo.getTime());
-				//repeatLimit.setMonth(repeatLimit.getMonth() + 2);
-				if(inputRepeatTodo.lastGenDate!='')
-				{
-					var lastGen = new Date(inputRepeatTodo.lastGenDate.getTime());
-					
-					var onePrevNext = new Date(prevLimit.getTime());
-					onePrevNext.setDate(0);
-					inputRepeatTodo.lastGenDate.setDate(1);
-					inputRepeatTodo.lastGenDate.setMonth(onePrevNext.getMonth()-1);
-					inputRepeatTodo.lastGenDate.setFullYear(onePrevNext.getFullYear());
-					var objR =processRule(inputRepeatTodo.vcalendar,inputRepeatTodo.lastGenDate,inputRepeatTodo.rulePartsArray.slice(),[inputRepeatTodo.lastGenDate],frequencies.indexOf(inputRepeatTodo.frequency),repeatLimit,inputRepeatTodo.interval,inputRepeatTodo.id,inputRepeatTodo.rCount,repeatTodoStart,inputRepeatTodo.wkst);
-				}
-				else 
-					var objR =processRule(inputRepeatTodo.vcalendar,repeatTodoStart,inputRepeatTodo.rulePartsArray.slice(),[repeatTodoStart],frequencies.indexOf(inputRepeatTodo.frequency),repeatLimit,inputRepeatTodo.interval,inputRepeatTodo.id,inputRepeatTodo.rCount,repeatTodoStart,inputRepeatTodo.wkst);
-			
-				dates=objR.dates;
-				inputRepeatTodo.rCount=objR.rCount;
-			}
-			realRepeatCount++;
-			for(var idt=0;idt<dates.length;idt++)
-			{
-				if(inputRepeatTodo.repeatEnd!='' && inputRepeatTodo.repeatStart!='')
-				{
-					varDate=new Date(dates[idt].getTime());
-					varEndDate=new Date(varDate.getTime()+dayDifference);
-				}
-				else if(inputRepeatTodo.repeatEnd=='' && inputRepeatTodo.repeatStart!='')
-				{
-					varDate=new Date(dates[idt].getTime());
-					if(idt<(dates.length-1))
-					{
-						varEndDate=new Date(dates[idt+1].getTime());
-						varEndDate.setMinutes(varEndDate.getMinutes()-1);
-					}
-					else
-						varEndDate = null;
-				}
-				else if(inputRepeatTodo.repeatEnd!='' && inputRepeatTodo.repeatStart=='')
-				{
-					varEndDate=new Date(dates[idt].getTime());
-					if(idt>0)
-					{
-						varDate=new Date(dates[idt-1].getTime());
-						varDate.setMinutes(varDate.getMinutes()+1);
-					}
-				}
-				
-				if((varDate.getTime()-repeatFromLine.getTime())<0)
-					continue;
-				if((varDate.getTime()-globalToLoadedLimitTodo.getTime())>=0)
-					break;
-				if(inputRepeatTodo.realUntil=='')
-					var count=untilDate-varDate;
-				else
-					var count = inputRepeatTodo.realUntil - inputRepeatTodo.realRepeatCount;
-				if(count<0)
-					break;
-				else
-				{
-					iterator++;
-					if(inputRepeatTodo.frequency=="YEARLY")
-					{									
-						if(inputRepeatTodo.lastYear!=varDate.getFullYear())
-						{
-							inputRepeatTodo.lastYear=varDate.getFullYear();
-							if(inputRepeatTodo.lastYear>0 && inputRepeatTodo.rCount%inputRepeatTodo.interval!=0)
-							{
-								inputRepeatTodo.rCount++;
-								continue;
-							}			
-							inputRepeatTodo.rCount++;
-						}
-					}
-					realRepeatCount++;
-					inputRepeatTodo.realRepeatCount=realRepeatCount;
-					if(inputRepeatTodo.realUntilDate=='' && inputRepeatTodo.repeatEnd=='' && realRepeatCount > inputRepeatTodo.realUntil)
-						varEndDate=null;
-					if(inputRepeatTodo.recurrence_id_array.length>0)
-					{
-						var checkCont = false;
-						for(var ir=0;ir<inputRepeatTodo.recurrence_id_array.length;ir++)
-						{
-							var recString = inputRepeatTodo.recurrence_id_array[ir].split(';')[0];
-							if(recString.charAt(recString.length-1)=='Z')
-							{
-								if(globalSettings.timezonesupport && inputRepeatTodo.tzName in timezones)
-								{
-									var recValOffsetFrom=getOffsetByTZ(inputRepeatTodo.tzName, varDate);
-									var recTime = new Date(recString.parseComnpactISO8601().getTime());
-									if(recValOffsetFrom)
-									{
-										var rintOffset=recValOffsetFrom.getSecondsFromOffset()*1000;
-										recTime.setTime(recTime.getTime()+rintOffset);
-									}
-									if(recTime.toString()+inputRepeatTodo.recurrence_id_array[ir].split(';')[1] == varDate+inputRepeatTodo.stringUID)
-										checkCont=true;
-								}
-							}
-							else
-							{
-								if(recString.parseComnpactISO8601().toString()+inputRepeatTodo.recurrence_id_array[ir].split(';')[1] == varDate+inputRepeatTodo.stringUID)
-									checkCont=true;
-							}
-							if(checkCont)
-								continue;
-						}
-					}
-				if(globalSettings.timezonesupport && inputRepeatTodo.tzName in timezones)
-					valOffsetFrom=getOffsetByTZ(inputRepeatTodo.tzName, varDate);
-				realStart=new Date(varDate.getTime());
-				
-				dateStart=new Date(varDate.getTime());
-				if(valOffsetFrom)
-				{
-					intOffset=(getLocalOffset(dateStart)*-1*1000)-valOffsetFrom.getSecondsFromOffset()*1000;
-					dateStart.setTime(dateStart.getTime()+intOffset);
-				}
-				if(inputRepeatTodo.exDates.length>0)
-					if(inputRepeatTodo.exDates.indexOf(dateStart.toString())!=-1)
-						continue;
-				if(varEndDate!=null)
-				{
-					realEnd=new Date(varEndDate.getTime());
-					dateEnd=new Date(varEndDate.getTime());
-					if(intOffset)
-						dateEnd.setTime(dateEnd.getTime()+intOffset);
-				}
-				else
-				{
-					dateEnd=null;
-					realEnd=null;
-				}
-				
-				
-					
-					if(inputRepeatTodo.alertTime.length>0 && dateEnd!=null)
-					{
-						var repeatAlarm='',
-						myVarDate='',
-						alertString='';
-						if(!inputRepeatTodo.collection.ignoreAlarms)
-							for(var v=0;v<inputRepeatTodo.alertTime.length;v++)
-							{
-								if(inputRepeatTodo.alertTime[v].charAt(0)=='-' || inputRepeatTodo.alertTime[v].charAt(0)=='+')
-								{
-									var aTime=dateEnd;
-									aTime=aTime.getTime();
-									var dur=parseInt(inputRepeatTodo.alertTime[v].substring(1, inputRepeatTodo.alertTime[v].length-1));
-									if(inputRepeatTodo.alertTime[v].charAt(0)=='-')
-										aTime=aTime-dur;
-									else
-										aTime=aTime+dur;
+	generateTodoRepeatInstances({
+		loadRepeatTodo:true,
+		rule:inputRepeatTodo.rule,
+		realRepeatCount:--inputRepeatTodo.realRepeatCount,
+		repeatCount:--inputRepeatTodo.repeatCount,
+		dayDifference:inputRepeatTodo.dayDifference,
+		untilDate:inputRepeatTodo.items.untilDate,
+		repeatStart:inputRepeatTodo.items.repeatStart,
+		repeatEnd:inputRepeatTodo.items.repeatEnd,
+		futureRLimit:globalToLoadedLimitTodo,
+		stringUID:inputRepeatTodo.stringUID,
+		recurrence_id_array:inputRepeatTodo.recurrence_id_array,
+		exDates:inputRepeatTodo.exDates,
+		alertTime:inputRepeatTodo.alertTime,
+		ignoreAlarms:inputRepeatTodo.ignoreAlarms,
+		isChange:false,
+		lastGenDate:inputRepeatTodo.lastGenDate,
+		todoArray:inputRepeatTodo.todoArray,
+		preTodoArray:preTodoArray,
+		previousRepeatStart:previousRepeatStart,
+		items:inputRepeatTodo.items
+	});
 
-									var now=new Date();
-								}
-								else
-								{
-									aTime=$.fullCalendar.parseDate(inputRepeatTodo.alertTime[v]);
-									now=new Date();
-								}
-								if(aTime>now)
-								{
-									var delay=aTime-now;
-									if(maxAlarmValue<delay)
-										delay=maxAlarmValue;
-
-									inputRepeatTodo.alertTimeOut[inputRepeatTodo.alertTimeOut.length]=setTimeout(function(){showAlertTODO(inputRepeatTodo.uid, (aTime-now), {start:dateStart, allDay:all, title:title, color:inputRepeatTodo.evcolor, status:inputRepeatTodo.status});}, delay);
-								}
-							}
-					}
-					
-					repeatCount++;
-					inputRepeatTodo.repeatCount=repeatCount;
-					var tmpObj=new todoItems(dateStart, dateEnd, inputRepeatTodo.realUntilDate, inputRepeatTodo.frequency, inputRepeatTodo.interval, inputRepeatTodo.realUntil, inputRepeatTodo.wkst,  inputRepeatTodo.repeatStart, inputRepeatTodo.repeatEnd, inputRepeatTodo.repeatCount, inputRepeatTodo.realRepeatCount,inputRepeatTodo.byDay, inputRepeatTodo.location, inputRepeatTodo.note, inputRepeatTodo.title, inputRepeatTodo.uid, inputRepeatTodo.vcalendar, inputRepeatTodo.evcolor, inputRepeatTodo.etag, inputRepeatTodo.alertTime, inputRepeatTodo.alertNote, inputRepeatTodo.status, inputRepeatTodo.filterStatus, inputRepeatTodo.rec_id, inputRepeatTodo.repeatHash, inputRepeatTodo.percent, inputRepeatTodo.displayValue, inputRepeatTodo.rid, inputRepeatTodo.compareString, inputRepeatTodo.tzName, realStart, realEnd, inputRepeatTodo.alertTimeOut,inputRepeatTodo.classType,inputRepeatTodo.url,inputRepeatTodo.completedOn,inputRepeatTodo.sequence,inputRepeatTodo.priority,inputRepeatTodo.finalAString,inputRepeatTodo.title.toLowerCase().multiReplace(globalSearchTransformAlphabet));
-					globalEventList.displayTodosArray[inputRepeatTodo.rid].splice(globalEventList.displayTodosArray[inputRepeatTodo.rid].length, 0, tmpObj);
-					lastGenDate = new Date(dateStart.getTime());
-				}
-			}
-			/*if(inputRepeatTodo.repeatEnd=='')
-			{
-				repeatCount++;
-				inputRepeatTodo.repeatCount=repeatCount;
-				var tmpObj=new todoItems(dateStart, inputRepeatTodo.end, inputRepeatTodo.realUntilDate, inputRepeatTodo.frequency, inputRepeatTodo.interval, inputRepeatTodo.realUntil, inputRepeatTodo.wkst,  inputRepeatTodo.repeatStart, inputRepeatTodo.repeatEnd, inputRepeatTodo.repeatCount, inputRepeatTodo.realRepeatCount,inputRepeatTodo.byDay, inputRepeatTodo.location, inputRepeatTodo.note, inputRepeatTodo.title, inputRepeatTodo.uid, inputRepeatTodo.vcalendar, inputRepeatTodo.evcolor, inputRepeatTodo.etag, inputRepeatTodo.alertTime, inputRepeatTodo.alertNote, inputRepeatTodo.status, inputRepeatTodo.filterStatus, inputRepeatTodo.rec_id, inputRepeatTodo.repeatHash, inputRepeatTodo.percent, inputRepeatTodo.displayValue, inputRepeatTodo.rid, inputRepeatTodo.compareString, inputRepeatTodo.tzName, realStart, realEnd, inputRepeatTodo.alertTimeOut,inputRepeatTodo.classType,inputRepeatTodo.url,inputRepeatTodo.completedOn,inputRepeatTodo.sequence,inputRepeatTodo.priority,inputRepeatTodo.finalAString,inputRepeatTodo.title.toLowerCase().multiReplace(globalSearchTransformAlphabet));
-				globalEventList.displayTodosArray[inputRepeatTodo.rid].splice(globalEventList.displayTodosArray[inputRepeatTodo.rid].length, 0, tmpObj);
-				inputRepeatTodo.lastGenDate = new Date(varDate.getTime());
-			}*/
-		}
-		else
-		{
-			var rtDate='';
-			var prevStart=new Date(varDate.getTime());
-			var counterRepeat=0;
-			if(inputRepeatTodo.realStart!='')
-				rtDate=new Date($.fullCalendar.parseDate(inputRepeatTodo.realStart).getTime());
-			else if(inputRepeatTodo.realEnd!='')
-				rtDate=new Date($.fullCalendar.parseDate(inputRepeatTodo.realEnd).getTime());
-			while(true)
-			{
-				if(counterRepeat>0)
-				{
-				
-					iterator++;
-						
-				realRepeatCount++;
-				inputRepeatTodo.realRepeatCount=realRepeatCount;
-									
-						if(globalSettings.timezonesupport && inputRepeatTodo.tzName in timezones)
-							valOffsetFrom=getOffsetByTZ(inputRepeatTodo.tzName, varDate);
-
-						if(inputRepeatTodo.repeatEnd!='' && inputRepeatTodo.repeatStart!='')
-						{
-							dateStart=new Date(prevStart.getTime());
-							dateEnd=new Date(dateStart.getTime()+dayDifference);
-						}
-						else if(inputRepeatTodo.repeatEnd=='' && inputRepeatTodo.repeatStart!='')
-						{
-							dateStart=new Date(prevStart.getTime());
-							dateEnd=new Date(varDate.getTime());
-							dateEnd.setMinutes(dateEnd.getMinutes()-1);
-						}
-						else if(inputRepeatTodo.repeatEnd!='' && inputRepeatTodo.repeatStart=='')
-						{
-							dateEnd=new Date(varDate.getTime());
-							dateStart=new Date(prevStart.getTime());
-							dateStart.setMinutes(dateStart.getMinutes()+1);
-						}
-						realStart=new Date(dateStart.getTime());
-						if(valOffsetFrom)
-						{
-							intOffset=(getLocalOffset(dateStart)*-1*1000)-valOffsetFrom.getSecondsFromOffset()*1000;
-							dateStart.setTime(dateStart.getTime()+intOffset);
-						}
-						realEnd=new Date(dateEnd.getTime());
-						
-						var recIDfound=false;
-						if(inputRepeatTodo.recurrence_id_array.length>0)
-						{
-							for(var ir=0;ir<inputRepeatTodo.recurrence_id_array.length;ir++)
-							{
-								var recString = inputRepeatTodo.recurrence_id_array[ir].split(';')[0];
-								if(recString.charAt(recString.length-1)=='Z')
-								{
-									if(globalSettings.timezonesupport && inputRepeatTodo.tzName in timezones)
-									{
-										var recValOffsetFrom=getOffsetByTZ(inputRepeatTodo.tzName, varDate);
-										var recTime = new Date(recString.parseComnpactISO8601().getTime());
-										if(recValOffsetFrom)
-										{
-											var rintOffset=recValOffsetFrom.getSecondsFromOffset()*1000;
-											recTime.setTime(recTime.getTime()+rintOffset);
-										}
-										if(recTime.toString()+inputRepeatTodo.recurrence_id_array[ir].split(';')[1] == varDate+inputRepeatTodo.stringUID)
-											recIDfound=true;
-									}
-								}
-								else
-								{
-									if(recString.parseComnpactISO8601().toString()+inputRepeatTodo.recurrence_id_array[ir].split(';')[1] == varDate+inputRepeatTodo.stringUID)
-										recIDfound=true;
-								}
-							}
-						}
-						if(inputRepeatTodo.exDates.length>0)
-							if(inputRepeatTodo.exDates.indexOf(dateStart.toString())!=-1)
-								recIDfound=true;
-						if(intOffset)
-							dateEnd.setTime(dateEnd.getTime()+intOffset);
-					
-					if(!recIDfound && ((dateStart.getTime()-repeatFromLine.getTime())>0) && (iterator%inputRepeatTodo.interval)==0)	
-					{
-						realRepeatCount++;
-						inputRepeatTodo.realRepeatCount=realRepeatCount;
-						
-						if(inputRepeatTodo.alertTime.length>0)
-						{
-							var repeatAlarm='',
-							myVarDate='',
-							alertString='';
-							if(!inputRepeatTodo.collection.ignoreAlarms)
-								for(var v=0;v<inputRepeatTodo.alertTime.length;v++)
-								{
-									if(inputRepeatTodo.alertTime[v].charAt(0)=='-' || inputRepeatTodo.alertTime[v].charAt(0)=='+')
-									{
-										var aTime=dateEnd;
-										aTime=aTime.getTime();
-										var dur=parseInt(inputRepeatTodo.alertTime[v].substring(1, inputRepeatTodo.alertTime[v].length-1));
-										if(inputRepeatTodo.alertTime[v].charAt(0)=='-')
-											aTime=aTime-dur;
-										else
-											aTime=aTime+dur;
-
-										var now=new Date();
-									}
-									else
-									{
-										aTime=$.fullCalendar.parseDate(inputRepeatTodo.alertTime[v]);
-										now=new Date();
-									}
-									if(aTime>now)
-									{
-										var delay=aTime-now;
-										if(maxAlarmValue<delay)
-											delay=maxAlarmValue;
-
-										inputRepeatTodo.alertTimeOut[inputRepeatTodo.alertTimeOut.length]=setTimeout(function(){showAlertTODO(inputRepeatTodo.uid, (aTime-now), {start:dateStart, allDay:all, title:title, color:inputRepeatTodo.evcolor, status:inputRepeatTodo.status});}, delay);
-									}
-								}
-						}
-						if(inputRepeatTodo.realEnd=='' && (dateEnd.getTime()-globalToLoadedLimitTodo.getTime())>=0)
-							break;
-						var tmpObj=new todoItems(dateStart, dateEnd, inputRepeatTodo.realUntilDate, inputRepeatTodo.frequency, inputRepeatTodo.interval, inputRepeatTodo.realUntil, inputRepeatTodo.wkst,  inputRepeatTodo.repeatStart, inputRepeatTodo.repeatEnd, inputRepeatTodo.repeatCount, inputRepeatTodo.realRepeatCount, inputRepeatTodo.byDay, inputRepeatTodo.location, inputRepeatTodo.note, inputRepeatTodo.title, inputRepeatTodo.uid, inputRepeatTodo.vcalendar, inputRepeatTodo.evcolor, inputRepeatTodo.etag, inputRepeatTodo.alertTime, inputRepeatTodo.alertNote, inputRepeatTodo.status, inputRepeatTodo.filterStatus, inputRepeatTodo.rec_id, inputRepeatTodo.repeatHash, inputRepeatTodo.percent, inputRepeatTodo.displayValue, inputRepeatTodo.rid, inputRepeatTodo.compareString, inputRepeatTodo.tzName, realStart, realEnd, inputRepeatTodo.alertTimeOut,inputRepeatTodo.classType,inputRepeatTodo.url,inputRepeatTodo.completedOn,inputRepeatTodo.sequence,inputRepeatTodo.priority,inputRepeatTodo.finalAString,inputRepeatTodo.title.toLowerCase().multiReplace(globalSearchTransformAlphabet));
-						globalEventList.displayTodosArray[inputRepeatTodo.rid].splice(globalEventList.displayTodosArray[inputRepeatTodo.rid].length, 0, tmpObj);
-						inputRepeatTodo.lastGenDate = new Date(dateStart.getTime());
-					}
-				}
-				if((varDate.getTime()-repeatFromLine.getTime())>0)
-					counterRepeat++;
-				prevStart=new Date(varDate.getTime());
-				var dayNumberDate=rtDate.getDate()+dayPlus;
-
-				if(dayPlus==0 && monthPlus==1)
-					dayNumberDate=getValidRepeatDay(rtDate,staticDate);
-						
-				if(rtDate.getDate()>=dayNumberDate)
-				{
-					rtDate.setDate(dayNumberDate);
-					rtDate.setMonth(rtDate.getMonth()+monthPlus);
-				}
-				else
-				{
-					rtDate.setMonth(rtDate.getMonth()+monthPlus);
-					rtDate.setDate(dayNumberDate);
-				}
-				varDate=new Date(rtDate.getTime());
-				if((prevStart.getTime()-globalToLoadedLimitTodo.getTime())>=0)
-					break;
-				if(inputRepeatTodo.repeatStart!='' )
-					var count=untilDate-prevStart;
-				else
-					var count=untilDate-varDate;
-				if(count<0)
-					break;
-			}
-			if(inputRepeatTodo.realEnd=='')
-			{
-				realRepeatCount++;
-				inputRepeatTodo.realRepeatCount=realRepeatCount;
-				var tmpObj=new todoItems(dateStart, inputRepeatTodo.end, inputRepeatTodo.realUntilDate, inputRepeatTodo.frequency, inputRepeatTodo.interval, inputRepeatTodo.realUntil, inputRepeatTodo.wkst,  inputRepeatTodo.repeatStart, inputRepeatTodo.repeatEnd, inputRepeatTodo.repeatCount, inputRepeatTodo.realRepeatCount, inputRepeatTodo.byDay, inputRepeatTodo.location, inputRepeatTodo.note, inputRepeatTodo.title, inputRepeatTodo.uid, inputRepeatTodo.vcalendar, inputRepeatTodo.evcolor, inputRepeatTodo.etag, inputRepeatTodo.alertTime, inputRepeatTodo.alertNote, inputRepeatTodo.status, inputRepeatTodo.filterStatus, inputRepeatTodo.rec_id, inputRepeatTodo.repeatHash, inputRepeatTodo.percent, inputRepeatTodo.displayValue, inputRepeatTodo.rid, inputRepeatTodo.compareString, inputRepeatTodo.tzName, realStart, realEnd, inputRepeatTodo.alertTimeOut,inputRepeatTodo.classType,inputRepeatTodo.url,inputRepeatTodo.completedOn,inputRepeatTodo.sequence,inputRepeatTodo.priority,inputRepeatTodo.finalAString,inputRepeatTodo.title.toLowerCase().multiReplace(globalSearchTransformAlphabet));
-				globalEventList.displayTodosArray[inputRepeatTodo.rid].splice(globalEventList.displayTodosArray[inputRepeatTodo.rid].length, 0, tmpObj);
-				inputRepeatTodo.lastGenDate = new Date(prevStart.getTime());
-			}
-		}
+	$.merge(globalEventList.displayTodosArray[inputRepeatTodo.items.res_id],preTodoArray);
 }
-
 
 function getPrevMonths(viewStart)
 {
-	
-	if(globalLimitLoading!='future' && globalLimitLoading!='past' && globalSettings.eventstartpastlimit!=null && viewStart < globalLoadedLimit)
+
+	if(globalLimitLoading!='future' && globalLimitLoading!='past' && globalSettings.eventstartpastlimit.value!=null && viewStart < globalLoadedLimit)
 	{
-		globalLoadedLimit.setMonth(globalLoadedLimit.getMonth()-globalSettings.eventstartpastlimit-1);
+		globalLoadedLimit.setMonth(globalLoadedLimit.getMonth()-globalSettings.eventstartpastlimit.value-1);
 		globalOnlyCalendarNumberCount = 0
-		$('#CalendarLoader').css('display', 'block');
+		$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 		globalLimitLoading='past';
+		setCalendarNumber(false);
 		CalDAVnetLoadCollection(globalResourceCalDAVList.collections[0], true, false, 0, globalResourceCalDAVList.collections);
 	}
 }
@@ -1602,8 +1086,8 @@ function getNextMonths(viewEnd)
 {
 	if(globalLimitLoading!='future' && globalLimitLoading!='past' && viewEnd > globalToLoadedLimit)
 	{
-		var limitSet = (globalSettings.eventstartfuturelimit!=null);
-		var futureLimit = limitSet ? globalSettings.eventstartfuturelimit : 2;
+		var limitSet = (globalSettings.eventstartfuturelimit.value!=null);
+		var futureLimit = limitSet ? globalSettings.eventstartfuturelimit.value : 2;
 		var prevLimit = new Date(globalBeginFuture.getTime());
 		globalToLoadedLimit.setMonth(globalToLoadedLimit.getMonth()+futureLimit+1);
 		var futureDate = new Date(globalToLoadedLimit.getTime());
@@ -1612,15 +1096,18 @@ function getNextMonths(viewEnd)
 		if(limitSet)
 		{
 			globalOnlyCalendarNumberCount = 0;
-			$('#CalendarLoader').css('display', 'block');
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 			globalLimitLoading='future';
 		}
 
-		for (var i=0;i<globalEventList.repeatable.length;i++)
-			loadRepeatEvents(globalEventList.repeatable[i],prevLimit,futureDate);
+		for (var repeat in globalEventList.repeatable)
+			loadRepeatEvents(globalEventList.repeatable[repeat],prevLimit,futureDate);
 
 		if(limitSet)
+		{
+			setCalendarNumber(false);
 			CalDAVnetLoadCollection(globalResourceCalDAVList.collections[0], true, false, 0, globalResourceCalDAVList.collections);
+		}
 		else
 			globalBeginFuture = new Date(futureDate.getTime());
 
@@ -1628,30 +1115,34 @@ function getNextMonths(viewEnd)
 	}
 }
 
-function getPrevMonthsTodo()
+function getPrevMonthsTodo(fromCalendar)
 {
 	if(globalLimitTodoLoading=='futureTODO' && globalLimitTodoLoading=='pastTODO')
 		return false;
 	var actualTodoMonth = new Date($('#todoList').fullCalendar('getView').start.getTime());
 	actualTodoMonth.setDate(1);
 
-	if(globalSettings.eventstartpastlimit!=null && actualTodoMonth < globalLoadedLimitTodo)
+	if(globalSettings.todopastlimit.value!=null && actualTodoMonth < globalLoadedLimitTodo)
 	{
-		globalLoadedLimitTodo.setMonth(globalLoadedLimitTodo.getMonth()-globalSettings.eventstartpastlimit-1);
+		if(typeof fromCalendar!='undefined' && fromCalendar!=null && fromCalendar)
+			globalLoadedLimitTodo = new Date(actualTodoMonth.getTime());
+		else
+			globalLoadedLimitTodo.setMonth(globalLoadedLimitTodo.getMonth()-globalSettings.todopastlimit.value-1);
 		globalOnlyTodoCalendarNumberCount = 0;
-		$('#CalendarLoaderTODO').css('display', 'block');
+		$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 		globalLimitTodoLoading='pastTodo';
+		setCalendarNumber(false);
 		CalDAVnetLoadCollection(globalResourceCalDAVList.TodoCollections[0], true, false, 0, globalResourceCalDAVList.TodoCollections);
 	}
 }
 
-function getNextMonthsTodo()
+function getNextMonthsTodo(fromCalendar)
 {
 	if(globalLimitTodoLoading=='futureTODO' && globalLimitTodoLoading=='pastTODO')
 		return false;
-	//var limitSet = (!globalSettings.appleremindersmode && globalSettings.eventstartfuturelimit!=null)
+	//var limitSet = (!globalSettings.appleremindersmode.value && globalSettings.eventstartfuturelimit.value!=null)
 	var limitSet=false;
-	var futureLimit = limitSet ? globalSettings.eventstartfuturelimit : 2;
+	var futureLimit = limitSet ? globalSettings.eventstartfuturelimit.value : 2;
 	var actualTodoMonth = new Date($('#todoList').fullCalendar('getView').end.getTime());
 	actualTodoMonth.setMonth(actualTodoMonth.getMonth()+1);
 	actualTodoMonth.setDate(1);
@@ -1659,20 +1150,29 @@ function getNextMonthsTodo()
 	if(actualTodoMonth > globalToLoadedLimitTodo)
 	{
 		var prevLimit = new Date(globalToLoadedLimitTodo.getTime());
-		globalToLoadedLimitTodo.setMonth(globalToLoadedLimitTodo.getMonth()+futureLimit+1);
+		if(typeof fromCalendar!='undefined' && fromCalendar!=null && fromCalendar)
+		{
+			globalToLoadedLimitTodo = new Date(actualTodoMonth.getTime())
+			globalToLoadedLimitTodo.setMonth(globalToLoadedLimitTodo.getMonth()+1);
+		}
+		else
+			globalToLoadedLimitTodo.setMonth(globalToLoadedLimitTodo.getMonth()+futureLimit+1);
 
 		if(limitSet)
 		{
 			globalOnlyTodoCalendarNumberCount = 0;
-			$('#CalendarLoaderTODO').css('display', 'block');
+			$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 			globalLimitTodoLoading='futureTodo';
 		}
 
-		for (var i=0;i<globalEventList.repeatableTodo.length;i++)
-			loadRepeatTodo(globalEventList.repeatableTodo[i],prevLimit);
+		for(var repeat in globalEventList.repeatableTodo)
+			loadRepeatTodo(globalEventList.repeatableTodo[repeat],prevLimit);
 
 		if(limitSet)
+		{
+			setCalendarNumber(false);
 			CalDAVnetLoadCollection(globalResourceCalDAVList.TodoCollections[0], true, false, 0, globalResourceCalDAVList.TodoCollections);
+		}
 
 		refetchTodoEvents();
 	}
@@ -1691,7 +1191,7 @@ function showAlertEvents(inputUID, realDelay, alarmObject)
 	}
 	var rid=inputUID.substring(0, inputUID.lastIndexOf('/')+1);
 
-	if(globalSettings.showhiddenalarms)
+	if(globalSettings.showhiddenalarms.value)
 		hiddenCheck = true;
 	else
 		hiddenCheck = false;
@@ -1703,14 +1203,14 @@ function showAlertEvents(inputUID, realDelay, alarmObject)
 
 		var date=$.fullCalendar.parseDate(alarmObject.start);
 		var dateString='';
-		var formattedDate = $.datepicker.formatDate(globalSettings.datepickerformat,date);
+		var formattedDate = $.datepicker.formatDate(globalSettings.datepickerformat.value,date);
 		if(formattedDate!='')
 			dateString+=' : '+formattedDate;
 
 		var timeString='';
 		if(!alarmObject.allDay)
 		{
-			var timeS = $.fullCalendar.formatDate(date, globalSettings.ampmformat?'h:mm TT{ - h:mm TT}':'H:mm{ - H:mm}')
+			var timeS = $.fullCalendar.formatDate(date, globalSettings.ampmformat.value?'h:mm TT{ - h:mm TT}':'H:mm{ - H:mm}')
 			if(timeS!='')
 				timeString=' - '+timeS;
 		}
@@ -1721,7 +1221,7 @@ function showAlertEvents(inputUID, realDelay, alarmObject)
 
 function showAlertTODO(inputUID, realDelay, alarmObject)
 {
-	if(globalSettings.ignorecompletedorcancelledalarms && (alarmObject.status=='COMPLETED' || alarmObject.status== 'CANCELLED'))
+	if(globalSettings.ignorecompletedorcancelledalarms.value && (alarmObject.status=='COMPLETED' || alarmObject.status== 'CANCELLED'))
 		return false;
 	if(maxAlarmValue<realDelay)
 	{
@@ -1738,7 +1238,7 @@ function showAlertTODO(inputUID, realDelay, alarmObject)
 	resDate='';
 	var rid=inputUID.substring(0, inputUID.lastIndexOf('/')+1);
 
-	if(globalSettings.showhiddenalarms)
+	if(globalSettings.showhiddenalarms.value)
 		hiddenCheck = true;
 	else
 		hiddenCheck = false;
@@ -1750,12 +1250,12 @@ function showAlertTODO(inputUID, realDelay, alarmObject)
 
 		var dateString='';
 		var date=$.fullCalendar.parseDate(alarmObject.start);
-		var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat,date);
+		var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat.value,date);
 		if(formattedDate!='')
 			dateString=' : '+formattedDate;
 
 		var timeString=''
-		var timeS = $.fullCalendar.formatDate(date,globalSettings.ampmformat?'h:mm TT{ - h:mm TT}':'H:mm{ - H:mm}');
+		var timeS = $.fullCalendar.formatDate(date,globalSettings.ampmformat.value?'h:mm TT{ - h:mm TT}':'H:mm{ - H:mm}');
 		if(timeS!='')
 			timeString=' - '+timeS;
 		$('#alertBoxContent').append("<div class='alert_item'><img src='images/todoB.svg' alt='Todo'/><label>"+alarmObject.title+dateString+timeString+"</label></div>");
@@ -1789,7 +1289,7 @@ function addAndEdit(isFormHidden, deleteMode)
 	dataToVcalendar('EDIT',origUID, inputUID, $('#etag').val(), '', isFormHidden, deleteMode);
 }
 
-function interResourceEdit(delUID,isFormHidden)
+function interResourceEdit(op, delUID,isFormHidden)
 {
 	var inputUID='';
 	if($('#uid').val()!='')
@@ -1800,11 +1300,12 @@ function interResourceEdit(delUID,isFormHidden)
 	var tmp=res.href.match(vCalendar.pre['hrefRex']);
 	var origUID=tmp[1]+res.userAuth.userName+'@'+tmp[2];
 
-	$('#etag').val('');
+	if(op != 'MOVE_IN')
+		$('#etag').val('');
 	var srcUID=$('#uid').val().substring($('#uid').val().lastIndexOf('/')+1, $('#uid').val().length);
 
 	inputUID=$('#event_calendar').val()+srcUID;
-	dataToVcalendar('MOVE',origUID, inputUID, '', delUID,isFormHidden);
+	dataToVcalendar(op, origUID, inputUID, '', delUID,isFormHidden);
 }
 
 function save(isFormHidden, deleteMode)
@@ -1817,8 +1318,8 @@ function save(isFormHidden, deleteMode)
 			show_editor_loader_messageCalendar('vevent', 'message_error', localization[globalInterfaceLanguage].txtErorInput);
 			return false;
 		}
-		var a=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val());
-		var a2=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_to').val());
+		var a=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val());
+		var a2=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_to').val());
 
 		var datetime_from=$.fullCalendar.formatDate(a, 'yyyy-MM-dd');
 		var datetime_to=$.fullCalendar.formatDate(a2, 'yyyy-MM-dd');
@@ -1851,16 +1352,15 @@ function save(isFormHidden, deleteMode)
 
 		if(newUID==calUID || ($('#etag').val()=='' && $('#event_calendar').val()!='choose'))
 			addAndEdit(isFormHidden, deleteMode);
-		else if(calUID.substring(0, calUID.lastIndexOf('/'))==newUID.substring(0, newUID.lastIndexOf('/')))
+//		else if(calUID.substring(0, calUID.lastIndexOf('/'))==newUID.substring(0, newUID.lastIndexOf('/')))
+//		{
+//			var delUID=$('#uid').val();
+//			interResourceEdit('MOVE_IN',delUID, isFormHidden);
+//		}
+		else if(/*calUID.substring(0, calUID.lastIndexOf('/'))!=newUID.substring(0, newUID.lastIndexOf('/')) &&*/ $('#etag').val()!='')
 		{
-			//move();
 			var delUID=$('#uid').val();
-			interResourceEdit(delUID, isFormHidden);
-		}
-		else if(calUID.substring(0, calUID.lastIndexOf('/'))!=newUID.substring(0, newUID.lastIndexOf('/')) && $('#etag').val()!='')
-		{
-			var delUID=$('#uid').val();
-			interResourceEdit(delUID, isFormHidden);
+			interResourceEdit('MOVE_OTHER',delUID, isFormHidden);
 		}
 	}
 	else
@@ -1875,6 +1375,269 @@ function deleteEvent()
 		deleteVcalendarFromCollection(delUID,'vevent');
 }
 
+function loadAdditionalCollections(collectionType)
+{
+	if(globalSettingsSaving!='')
+		return false;
+	globalSettingsSaving=collectionType;
+	var inSettings = $.extend({},globalSettings);
+	var rex = new RegExp('^(https?://)([^@/]+(?:@[^@/]+)?)@(.*)');
+	var sel = '';
+	var key = '';
+	if(collectionType=='event')
+	{
+		key='loadedcalendarcollections';
+		inSettings.loadedcalendarcollections = {value:new Array(), locked: globalSettings[key].locked};
+		$('#ResourceCalDAVList').find('.unloadCheck').each(function(cin,cel)
+		{
+			if($(cel).prop('checked'))
+			{
+				var uidParts=$(cel).attr('data-id').match(rex);
+				inSettings.loadedcalendarcollections.value.splice(inSettings.loadedcalendarcollections.value.length , 0, uidParts[1]+uidParts[3]);
+			}
+
+		});
+	}
+	else if(collectionType=='todo')
+	{
+		sel='TODO';
+		key='loadedtodocollections';
+		inSettings.loadedtodocollections = {value : new Array(), locked: globalSettings[key].locked};
+		$('#ResourceCalDAVTODOList').find('.unloadCheck').each(function(cin,cel)
+		{
+			if($(cel).prop('checked'))
+			{
+				var uidParts=$(cel).attr('data-id').match(rex);
+				inSettings.loadedtodocollections.value.splice(inSettings.loadedtodocollections.value.length , 0, uidParts[1]+uidParts[3]);
+			}
+		});
+	}
+
+	if($(inSettings[key].value).not(globalSettings[key].value).length > 0 || $(globalSettings[key].value).not(inSettings[key].value).length > 0)
+	{
+		$('#CalendarLoader'+sel).removeClass('loader_hidden');
+		$('#ResourceCalDAV'+sel+'List').find('input[type="checkbox"]').prop('disabled',true);
+		var setC=0;
+		for(var i=0;i<globalAccountSettings.length;i++)
+			if(globalAccountSettings[i].href.indexOf(globalLoginUsername)!=-1 && globalAccountSettings[i].settingsAccount)
+			{
+				setC++;
+				netSaveSettings(globalAccountSettings[i], inSettings, false, true);
+				break;
+			}
+		if(setC==0)
+			cancelUnloadedCollections(collectionType);
+	}
+	else
+		hideUnloadedCollections(collectionType,true);
+}
+
+function showUnloadedCollections(collectionType)
+{
+	if((collectionType=='event'&&globalEventCollectionsLoading) || (collectionType=='todo'&&globalTodoCollectionsLoading))
+		return false;
+	var sel=null;
+	var locString='';
+	if(collectionType=='event')
+	{
+		globalEventCollectionsLoading=true;
+		sel='';
+		locString='txtEnabledCalendars';
+	}
+	else if(collectionType=='todo')
+	{
+		globalTodoCollectionsLoading=true;
+		sel='TODO';
+		locString='txtEnabledTodoLists';
+	}
+	if(isAvaible('CardDavMATE'))
+		$('#showUnloadedAddressbooks').css('display','none');
+	if(sel=='TODO')
+		$('#showUnloadedCalendars').css('display','none');
+	else
+		$('#showUnloadedCalendarsTODO').css('display','none');
+	$('#ResourceCalDAV'+sel+'List').find('input[type="checkbox"]').prop('disabled',true);
+	$('#CalendarLoader'+sel).children('.loaderInfo').text(localization[globalInterfaceLanguage].loadingCollectionList).parent().fadeIn(300);
+	var resList = $('#ResourceCalDAV'+sel+'List');
+	var resHeader = '.resourceCalDAV'+sel+'_header';
+	var resItem = '.resourceCalDAV'+sel+'_item';
+	$('#ResourceCalDAV'+sel+'List').find('input[type="checkbox"]').prop('disabled',false);
+	$('#CalendarLoader'+sel).children('.loaderInfo').text('').parent().addClass('loader_hidden');
+	resList.find('.resourceCalDAV_item_selected').removeClass('resourceCalDAV_item_selected');
+	resList.find('input').css('display','none');
+	// header display
+	resList.children('.resourceCalDAV'+sel+'_header').each(function(){
+		if($(this).css('display')=='none')
+			$(this).addClass('unloaded').css('display','');
+		var headerClickElm = $('<input type="checkbox" class="unloadCheckHeader" style="position:absolute;top:3px;right:0px;margin-right:6px;"/>');
+		headerClickElm.change(function(){
+			loadResourceChBoxClick(this, '#ResourceCalDAV'+sel+'List', resHeader, resItem, resItem);
+		});
+		$(this).addClass('load_mode').append(headerClickElm);
+	});
+	// caldav_item display
+	resList.find('.resourceCalDAV'+sel+'_item').each(function(){
+		if(typeof $(this).attr('data-id') != 'undefined')
+		{
+			var newInputElm = $('<input type="checkbox" class="unloadCheck" data-id="'+$(this).attr('data-id')+'" style="position:absolute;top:8px;right:0px;margin-right:6px;"/>');
+			newInputElm.change(function(){
+				loadCollectionChBoxClick(this, '#ResourceCalDAV'+sel+'List', resHeader, resItem, resItem);
+			});
+			$(this).addClass('load_mode').append(newInputElm);
+			if($(this).css('display')=='none')
+				$(this).addClass('unloaded');
+			else
+				newInputElm.prop('checked',true);
+			newInputElm.trigger('change');
+		}
+	});
+	$('#showUnloadedCalendars'+sel).css('display','none');
+	$('#resourceCalDAV'+sel+'_h').find('.resourceCalDAV'+sel+'_text').text(localization[globalInterfaceLanguage][locString]);
+	var origH = resList.find('.resourceCalDAV'+sel+'_header.unloaded').eq(0).css('height');
+	var origC = resList.find('.resourceCalDAV'+sel+'_item.unloaded').eq(0).css('height');
+	resList.find('.resourceCalDAV'+sel+'_header.unloaded').css({height:0,display:''}).animate({height:origH},300);
+	resList.find('.resourceCalDAV'+sel+'_item.unloaded').css({height:0,display:''}).animate({height:origC},300);
+	resList.animate({'top':49},300);
+}
+
+function cancelUnloadedCollections(collectionType)
+{
+	var sel=null;
+	var loadedCollections=null;
+	if(collectionType=='event')
+	{
+		sel='';
+		loadedCollections=globalSettings.loadedcalendarcollections.value;
+	}
+	else if(collectionType=='todo')
+	{
+		sel='TODO';
+		loadedCollections=globalSettings.loadedtodocollections.value;
+	}
+
+	$('#ResourceCalDAV'+sel+'List').children('.resourceCalDAV'+sel+'_item').each(function(){
+		var isLoaded=false;
+		if(typeof globalCrossServerSettingsURL!='undefined'&&globalCrossServerSettingsURL!=null&globalCrossServerSettingsURL)
+		{
+			var uidParts=$(this).attr('data-id').match(RegExp('/([^/]+/[^/]+/)$'));
+			var tmpParts = uidParts[1].match('^(.*/)([^/]+)/$');
+			var checkHref=decodeURIComponent(tmpParts[1])+tmpParts[2]+'/';
+			var found=false;
+			for(var l=0;l<loadedCollections.length;l++)
+			{
+				var tmpParts2 = loadedCollections[l].match('^(.*/)([^/]+)/([^/]+)/$');
+				var checkHref2=decodeURIComponent(tmpParts2[2])+'/'+tmpParts2[3]+'/';
+				if(checkHref==checkHref2)
+				{
+					found=true;
+					break;
+				}
+			}
+			isLoaded=found;
+		}
+		else
+		{
+			var uidParts=$(this).attr('data-id').match(RegExp('^(https?://)([^@/]+(?:@[^@/]+)?)@(.*)'));
+			var checkHref=uidParts[1]+uidParts[3];
+			isLoaded=(loadedCollections.indexOf(checkHref)!=-1);
+		}
+
+		var unloadCh=$(this).find('.unloadCheck');
+		var checked=unloadCh.prop('checked');
+
+		if((isLoaded && !checked) || (!isLoaded && checked))
+			unloadCh.prop('checked',!checked).trigger('change');
+	});
+	hideUnloadedCollections(collectionType,true);
+}
+
+function hideUnloadedCollections(collectionType, withCallback)
+{
+	var sel=null;
+	var locString='';
+	if(collectionType=='event') {
+		sel='';
+		locString='txtCalendars';
+	}
+	else if(collectionType=='todo') {
+		sel='TODO';
+		locString='txtTodoLists';
+	}
+
+	var resList=$('#ResourceCalDAV'+sel+'List');
+	resList.find(':input.unloadCheck').remove();
+	resList.find(':input.unloadCheckHeader').remove();
+	resList.find('.load_mode').removeClass('load_mode');
+	resList.find(':input').css('display','');
+
+	$('#resourceCalDAV'+sel+'_h').find('.resourceCalDAV'+sel+'_text').text(localization[globalInterfaceLanguage][locString]);
+	resList.find('.resourceCalDAV'+sel+'_header.unloaded').animate({height:0},300).promise().done(function(){
+		resList.find('.resourceCalDAV'+sel+'_header.unloaded').css({display:'none',height:''});
+	});
+	resList.find('.resourceCalDAV'+sel+'_item.unloaded').animate({height:0},300).promise().done(function(){
+		resList.find('.resourceCalDAV'+sel+'_item.unloaded').css({display:'none',height:''});
+		resList.find('.resourceCalDAV'+sel+'_header').not('.unloaded').each(function(){
+			var triggerInput=$(this).nextUntil('.resourceCalDAV'+sel+'_header').filter(':visible').first().find('input[type="checkbox"]');
+			collectionChBoxClick(triggerInput.get(0), '#ResourceCalDAV'+sel+'List', '.resourceCalDAV'+sel+'_header', '.resourceCalDAV'+sel+'_item', null, false);
+		});
+		resList.find('.unloaded').removeClass('unloaded');
+		if(collectionType=='event')
+			globalEventCollectionsLoading=false;
+		else if(collectionType=='todo')
+			globalTodoCollectionsLoading=false;
+		if(withCallback)
+			hideUnloadCollectionCallback(collectionType);
+	});
+	resList.animate({'top':24},300);
+	if(withCallback)
+		$('#CalendarLoader'+sel).fadeOut(300,function(){
+			$(this).removeClass('loader_hidden');
+		});
+	if(isAvaible('CardDavMATE'))
+		$('#showUnloadedAddressbooks').css('display','block');
+	if(sel=='TODO')
+		$('#showUnloadedCalendars').css('display','block');
+	else
+		$('#showUnloadedCalendarsTODO').css('display','block');
+}
+
+function hideUnloadCollectionCallback(collectionType)
+{
+	var sel=null;
+	if(collectionType=='event')
+		sel='';
+	else if(collectionType=='todo')
+		sel='TODO';
+
+	$('#showUnloadedCalendars'+sel).css('display','');
+	globalFirstHideLoader=true;
+	globalSettingsSaving='';
+	selectActiveCalendar();
+	if(collectionType=='event')
+	{
+
+		if($('#ResourceCalDAVList .resourceCalDAV_item:visible').not('.resourceCalDAV_item_ro').length==0)
+		{
+			$('#eventFormShower').css('display','none');
+			$('#calendar').fullCalendar('setOptions',{'selectable':false});
+		}
+		else
+		{
+			$('#eventFormShower').css('display','block');
+			$('#calendar').fullCalendar('setOptions',{'selectable':true});
+		}
+	}
+	else if(collectionType=='todo')
+	{
+		if($('#ResourceCalDAVTODOList .resourceCalDAVTODO_item:visible').not('.resourceCalDAV_item_ro').length==0)
+			$('#eventFormShowerTODO').css('display','none');
+		else
+			$('#eventFormShowerTODO').css('display','block');
+	}
+	$('#CalendarLoader'+sel).css('display','none');
+	$('#ResourceCalDAV'+sel+'List').find('input[type="checkbox"]').prop('disabled',false);
+}
+
 function disableAll()
 {
 	var counter=0;
@@ -1885,10 +1648,10 @@ function disableAll()
 	if(!counter)
 		return false;
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumber++;
-		$('#CalendarLoader').css('display','block');
+		$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 		var beforeScroll = $('#main').width()-$('#calendar').width();
 		$('#calendar').fullCalendar('removeEvents');
 		$('#calendar').fullCalendar('removeEventSources');
@@ -1908,7 +1671,7 @@ function disableAll()
 				if(pos!=-1)
 					globalVisibleCalDAVCollections.splice(pos, 1);
 				check.prop('checked', false);
-				if(globalSettings.displayhiddenevents)
+				if(globalSettings.displayhiddenevents.value)
 					hideCalendarEvents(uid);
 			}
 			collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAV_header', '.resourceCalDAV_item', null, false)
@@ -1921,11 +1684,11 @@ function disableAll()
 		}*/
 	}
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumber--;
 		if(!globalResourceRefreshNumber)
-			$('#CalendarLoader').hide();
+			$('#CalendarLoader').css('display','none');
 	}
 }
 
@@ -1939,10 +1702,10 @@ function enableAll()
 	if(!counter)
 		return false;
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumber++;
-		$('#CalendarLoader').css('display','block');
+		$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 	}
 
 	var beforeScroll = $('#main').width()-$('#calendar').width();
@@ -1960,7 +1723,7 @@ function enableAll()
 				if(pos==-1)
 				{
 					globalVisibleCalDAVCollections[globalVisibleCalDAVCollections.length]=uid;
-					if(globalSettings.displayhiddenevents)
+					if(globalSettings.displayhiddenevents.value)
 						showCalendarEvents(uid);
 					else
 					{
@@ -1970,7 +1733,7 @@ function enableAll()
 						if(tmpUID!=null)
 							hrefUID = tmpUID[4];
 						var resource = getResourceByCollection(uid);
-						if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+						if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 						{
 							var rbCalendars = '';
 							if(resource.backgroundCalendars instanceof Array)
@@ -1990,13 +1753,14 @@ function enableAll()
 									bg = true;
 							}
 						}
-						globalResourceCalDAVList.collections[j].fcSource = $('#calendar').fullCalendar('addEventSource', globalEventList.displayEventsArray[uid], bg);
+						var collection = globalResourceCalDAVList.collections[j];
+						collection.fcSource = $('#calendar').fullCalendar('addEventSource', {events:globalEventList.displayEventsArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor,textColor:checkFontColor(collection.ecolor),background:bg});
 					}
 				}
 			}
 			collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAV_header', '.resourceCalDAV_item', null, false)
 		}
-/*		else
+		/*else
 		{
 			var check=$('#ResourceCalDAVList').children().eq(globalResourceCalDAVList.collections[j].index+1).find('input');
 			if(!check.prop('checked'))
@@ -2004,161 +1768,166 @@ function enableAll()
 		}*/
 	}
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		var afterScroll = $('#main').width()-$('#calendar').width();
 		rerenderCalendar(beforeScroll!=afterScroll);
 		globalResourceRefreshNumber--;
 		if(!globalResourceRefreshNumber)
-			$('#CalendarLoader').hide();
+			$('#CalendarLoader').css('display','none');
 	}
 }
 
 function disableAllTodo()
 {
-	var counter=0;
-	$('#ResourceCalDAVTODOList').children(':visible').each(function(i, e){
-		if($(e).hasClass('resourceCalDAVTODO_item') && $(e).find('input').prop('checked'))
-			counter++;
-	});
-	if(!counter)
-		return false;
+	disableAll();
 
-	if(!globalSettings.displayhiddenevents)
-	{
-		globalResourceRefreshNumberTodo++;
-		$('#CalendarLoaderTODO').css('display','block');
-		var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
-		$('#todoList').fullCalendar( 'removeEvents');
-		$('#todoList').fullCalendar( 'removeEventSources');
-		var afterScroll = $('#mainTODO').width()-$('#todoList').width();
-		rerenderTodo(beforeScroll!=afterScroll);
-	}
+	// var counter=0;
+	// $('#ResourceCalDAVTODOList').children(':visible').each(function(i, e){
+	// 	if($(e).hasClass('resourceCalDAVTODO_item') && $(e).find('input').prop('checked'))
+	// 		counter++;
+	// });
+	// if(!counter)
+	// 	return false;
 
-	for(var j=0;j<globalResourceCalDAVList.TodoCollections.length;j++)
-	{
-		if(globalResourceCalDAVList.TodoCollections[j].href!=undefined)
-		{
-			var uid=globalResourceCalDAVList.TodoCollections[j].uid;
-			var check=$('#ResourceCalDAVTODOList').find('[name^="'+uid+'"]');
-			if(check.prop('checked'))
-			{
-				var pos=globalVisibleCalDAVTODOCollections.indexOf(uid);
-				if(pos!=-1)
-					globalVisibleCalDAVTODOCollections.splice(pos, 1);
-				check.prop('checked', false);
-				if(globalSettings.displayhiddenevents)
-					hideCalendarTodos(uid);
-			}
-			collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAVTODO_header', '.resourceCalDAVTODO_item', null, false);
-		}
-		/*else
-		{
-			var check=$('#ResourceCalDAVTODOList').children().eq(globalResourceCalDAVList.TodoCollections[j].index+1).find('input');
-			if(check.prop('checked'))
-				check.prop('checked', false);
-		}*/
-	}
+	// if(!globalSettings.displayhiddenevents.value)
+	// {
+	// 	globalResourceRefreshNumberTodo++;
+	// 	$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
+	// 	var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
+	// 	$('#todoList').fullCalendar( 'removeEvents');
+	// 	$('#todoList').fullCalendar( 'removeEventSources');
+	// 	var afterScroll = $('#mainTODO').width()-$('#todoList').width();
+	// 	rerenderTodo(beforeScroll!=afterScroll);
+	// }
 
-	if(!globalSettings.displayhiddenevents)
-	{
-		globalResourceRefreshNumberTodo--;
-		if(!globalResourceRefreshNumberTodo)
-			$('#CalendarLoaderTODO').hide();
-	}
+	// for(var j=0;j<globalResourceCalDAVList.TodoCollections.length;j++)
+	// {
+	// 	if(globalResourceCalDAVList.TodoCollections[j].href!=undefined)
+	// 	{
+	// 		var uid=globalResourceCalDAVList.TodoCollections[j].uid;
+	// 		var check=$('#ResourceCalDAVTODOList').find('[name^="'+uid+'"]');
+	// 		if(check.prop('checked'))
+	// 		{
+	// 			var pos=globalVisibleCalDAVTODOCollections.indexOf(uid);
+	// 			if(pos!=-1)
+	// 				globalVisibleCalDAVTODOCollections.splice(pos, 1);
+	// 			check.prop('checked', false);
+	// 			if(globalSettings.displayhiddenevents.value)
+	// 				hideCalendarTodos(uid);
+	// 		}
+	// 		collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAVTODO_header', '.resourceCalDAVTODO_item', null, false);
+	// 	}
+	// 	/*else
+	// 	{
+	// 		var check=$('#ResourceCalDAVTODOList').children().eq(globalResourceCalDAVList.TodoCollections[j].index+1).find('input');
+	// 		if(check.prop('checked'))
+	// 			check.prop('checked', false);
+	// 	}*/
+	// }
+
+	// if(!globalSettings.displayhiddenevents.value)
+	// {
+	// 	globalResourceRefreshNumberTodo--;
+	// 	if(!globalResourceRefreshNumberTodo)
+	// 		$('#CalendarLoaderTODO').css('display','none');
+	// }
 }
 
 function enableAllTodo()
 {
-	var counter=0;
-	$('#ResourceCalDAVTODOList').children(':visible').each(function(i, e){
-		if($(e).hasClass('resourceCalDAVTODO_item') && !$(e).find('input').prop('checked'))
-			counter++;
-	});
-	if(!counter)
-		return false;
+	enableAll();
 
-	if(!globalSettings.displayhiddenevents)
-	{
-		globalResourceRefreshNumberTodo++;
-		$('#CalendarLoaderTODO').css('display','block');
-	}
+	// var counter=0;
+	// $('#ResourceCalDAVTODOList').children(':visible').each(function(i, e){
+	// 	if($(e).hasClass('resourceCalDAVTODO_item') && !$(e).find('input').prop('checked'))
+	// 		counter++;
+	// });
+	// if(!counter)
+	// 	return false;
 
-	var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
-	var rex = vCalendar.pre['accountUidParts'];
-	for(var j=0;j<globalResourceCalDAVList.TodoCollections.length;j++)
-	{
-		if(globalResourceCalDAVList.TodoCollections[j].href!=undefined)
-		{
-			var uid=globalResourceCalDAVList.TodoCollections[j].uid;
-			var check=$('#ResourceCalDAVTODOList').find('[name^="'+uid+'"]');
-			if(!check.prop('checked'))
-			{
-				check.prop('checked', true);
-				var pos=globalVisibleCalDAVTODOCollections.indexOf(uid);
-				if(pos==-1)
-				{
-					globalVisibleCalDAVTODOCollections[globalVisibleCalDAVTODOCollections.length]=uid;
-					if(globalSettings.displayhiddenevents)
-						showCalendarTodos(uid);
-					else
-					{
-						var bg = false;
-						var tmpUID = uid.match(rex);
-						var hrefUID='';
-						if(tmpUID!=null)
-							hrefUID = tmpUID[4];
-						var resource = getResourceByCollection(uid);
-						if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
-						{
-							var rbCalendars = '';
-							if(resource.backgroundCalendars instanceof Array)
-								rbCalendars=resource.backgroundCalendars;
-							else
-								rbCalendars = [resource.backgroundCalendars];
-							for(var k=0; k<rbCalendars.length;k++)
-							{
-								if (typeof rbCalendars[k]=='string')
-								{
-									var index = hrefUID.indexOf(rbCalendars[k]);
-									if(index!=-1)
-										if(hrefUID.length == (index+rbCalendars[k].length))
-											bg=true;
-								}
-								else if (typeof rbCalendars[k]=='object' && hrefUID.match(rbCalendars[k])!=null)
-									bg = true;
-							}
-						}
-						globalResourceCalDAVList.TodoCollections[j].fcSource = $('#todoList').fullCalendar('addEventSource', globalEventList.displayTodosArray[globalResourceCalDAVList.TodoCollections[j].uid], bg);
-					}
-				}
-			}
-			collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAVTODO_header', '.resourceCalDAVTODO_item', null, false);
-		}
-/*		else
-		{
-			var check=$('#ResourceCalDAVTODOList').children().eq(globalResourceCalDAVList.TodoCollections[j].index+1).find('input');
-			if(!check.prop('checked'))
-				check.prop('checked', true);
-		}*/
-	}
+	// if(!globalSettings.displayhiddenevents.value)
+	// {
+	// 	globalResourceRefreshNumberTodo++;
+	// 	$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
+	// }
 
-	if(!globalSettings.displayhiddenevents)
-	{
-		var afterScroll = $('#mainTODO').width()-$('#todoList').width();
-		rerenderTodo(beforeScroll!=afterScroll);
-		globalResourceRefreshNumberTodo--;
-		if(!globalResourceRefreshNumberTodo)
-			$('#CalendarLoaderTODO').hide();
-	}
+	// var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
+	// var rex = vCalendar.pre['accountUidParts'];
+	// for(var j=0;j<globalResourceCalDAVList.TodoCollections.length;j++)
+	// {
+	// 	if(globalResourceCalDAVList.TodoCollections[j].href!=undefined)
+	// 	{
+	// 		var uid=globalResourceCalDAVList.TodoCollections[j].uid;
+	// 		var check=$('#ResourceCalDAVTODOList').find('[name^="'+uid+'"]');
+	// 		if(!check.prop('checked'))
+	// 		{
+	// 			check.prop('checked', true);
+	// 			var pos=globalVisibleCalDAVTODOCollections.indexOf(uid);
+	// 			if(pos==-1)
+	// 			{
+	// 				globalVisibleCalDAVTODOCollections[globalVisibleCalDAVTODOCollections.length]=uid;
+	// 				if(globalSettings.displayhiddenevents.value)
+	// 					showCalendarTodos(uid);
+	// 				else
+	// 				{
+	// 					var bg = false;
+	// 					var tmpUID = uid.match(rex);
+	// 					var hrefUID='';
+	// 					if(tmpUID!=null)
+	// 						hrefUID = tmpUID[4];
+	// 					var resource = getResourceByCollection(uid);
+	// 					if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+	// 					{
+	// 						var rbCalendars = '';
+	// 						if(resource.backgroundCalendars instanceof Array)
+	// 							rbCalendars=resource.backgroundCalendars;
+	// 						else
+	// 							rbCalendars = [resource.backgroundCalendars];
+	// 						for(var k=0; k<rbCalendars.length;k++)
+	// 						{
+	// 							if (typeof rbCalendars[k]=='string')
+	// 							{
+	// 								var index = hrefUID.indexOf(rbCalendars[k]);
+	// 								if(index!=-1)
+	// 									if(hrefUID.length == (index+rbCalendars[k].length))
+	// 										bg=true;
+	// 							}
+	// 							else if (typeof rbCalendars[k]=='object' && hrefUID.match(rbCalendars[k])!=null)
+	// 								bg = true;
+	// 						}
+	// 					}
+	// 					var collection = globalResourceCalDAVList.TodoCollections[j];
+	// 					collection.fcSource = $('#todoList').fullCalendar('addEventSource', {events:globalEventList.displayTodosArray[collection.uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor});
+	// 				}
+	// 			}
+	// 		}
+	// 		collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAVTODO_header', '.resourceCalDAVTODO_item', null, false);
+	// 	}
+	// 	/*else
+	// 	{
+	// 		var check=$('#ResourceCalDAVTODOList').children().eq(globalResourceCalDAVList.TodoCollections[j].index+1).find('input');
+	// 		if(!check.prop('checked'))
+	// 			check.prop('checked', true);
+	// 	}*/
+	// }
+
+	// if(!globalSettings.displayhiddenevents.value)
+	// {
+	// 	var afterScroll = $('#mainTODO').width()-$('#todoList').width();
+	// 	rerenderTodo(beforeScroll!=afterScroll);
+	// 	globalResourceRefreshNumberTodo--;
+	// 	if(!globalResourceRefreshNumberTodo)
+	// 		$('#CalendarLoaderTODO').css('display','none');
+	// }
 }
 
 function disableResource(header)
 {
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumber++;
-		$('#CalendarLoader').show();
+		$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 	}
 
 	var beforeScroll = $('#main').width()-$('#calendar').width();
@@ -2168,29 +1937,29 @@ function disableResource(header)
 		if(pos!=-1)
 		{
 			globalVisibleCalDAVCollections.splice(pos, 1);
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				hideCalendarEvents(uid);
 			else
 				$('#calendar').fullCalendar('removeEventSource', globalResourceCalDAVList.getCollectionByUID(uid).fcSource);
 		}
 	});
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		var afterScroll = $('#main').width()-$('#calendar').width();
 		rerenderCalendar(beforeScroll!=afterScroll);
 		globalResourceRefreshNumber--;
 		if(!globalResourceRefreshNumber)
-			$('#CalendarLoader').hide();
+			$('#CalendarLoader').css('display','none');
 	}
 }
 
 function enableResource(header)
 {
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumber++;
-		$('#CalendarLoader').show();
+		$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 	}
 
 	var beforeScroll = $('#main').width()-$('#calendar').width();
@@ -2200,7 +1969,7 @@ function enableResource(header)
 		if(pos==-1)
 		{
 			globalVisibleCalDAVCollections[globalVisibleCalDAVCollections.length]=uid;
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				showCalendarEvents(uid);
 			else
 			{
@@ -2210,7 +1979,7 @@ function enableResource(header)
 				if(tmpUID!=null)
 					hrefUID = tmpUID[4];
 				var resource = getResourceByCollection(uid);
-				if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+				if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 				{
 					var rbCalendars = '';
 					if(resource.backgroundCalendars instanceof Array)
@@ -2230,27 +1999,28 @@ function enableResource(header)
 							bg = true;
 					}
 				}
-				globalResourceCalDAVList.getCollectionByUID(uid).fcSource = $('#calendar').fullCalendar('addEventSource', globalEventList.displayEventsArray[uid], bg);
+				var collection = globalResourceCalDAVList.getCollectionByUID(uid)
+				collection.fcSource = $('#calendar').fullCalendar('addEventSource', {events:globalEventList.displayEventsArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor,textColor:checkFontColor(collection.ecolor),background:bg});
 			}
 		}
 	});
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		var afterScroll = $('#main').width()-$('#calendar').width();
 		rerenderCalendar(beforeScroll!=afterScroll);
 		globalResourceRefreshNumber--;
 		if(!globalResourceRefreshNumber)
-			$('#CalendarLoader').hide();
+			$('#CalendarLoader').css('display','none');
 	}
 }
 
 function disableResourceTodo(header)
 {
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumberTodo++;
-		$('#CalendarLoaderTODO').show();
+		$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 	}
 
 	var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
@@ -2260,29 +2030,31 @@ function disableResourceTodo(header)
 		if(pos!=-1)
 		{
 			globalVisibleCalDAVTODOCollections.splice(pos, 1);
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				hideCalendarTodos(uid);
 			else
 				$('#todoList').fullCalendar('removeEventSource', globalResourceCalDAVList.getTodoCollectionByUID(uid).fcSource);
 		}
 	});
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		var afterScroll = $('#mainTODO').width()-$('#todoList').width();
 		rerenderTodo(beforeScroll!=afterScroll);
 		globalResourceRefreshNumberTodo--;
 		if(!globalResourceRefreshNumberTodo)
-			$('#CalendarLoaderTODO').hide();
+			$('#CalendarLoaderTODO').css('display','none');
 	}
+	else
+		$('#todoList').fullCalendar('selectEvent');
 }
 
 function enableResourceTodo(header)
 {
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		globalResourceRefreshNumberTodo++;
-		$('#CalendarLoaderTODO').show();
+		$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 	}
 
 	var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
@@ -2292,7 +2064,7 @@ function enableResourceTodo(header)
 		if(pos==-1)
 		{
 			globalVisibleCalDAVTODOCollections[globalVisibleCalDAVTODOCollections.length]=uid;
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				showCalendarTodos(uid);
 			else
 			{
@@ -2302,7 +2074,7 @@ function enableResourceTodo(header)
 				if(tmpUID!=null)
 					hrefUID = tmpUID[4];
 				var resource = getResourceByCollection(uid);
-				if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+				if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 				{
 					var rbCalendars = '';
 					if(resource.backgroundCalendars instanceof Array)
@@ -2322,19 +2094,22 @@ function enableResourceTodo(header)
 							bg = true;
 					}
 				}
-				globalResourceCalDAVList.getTodoCollectionByUID(uid).fcSource = $('#todoList').fullCalendar('addEventSource', globalEventList.displayTodosArray[uid], bg);
+				var collection = globalResourceCalDAVList.getTodoCollectionByUID(uid);
+				collection.fcSource = $('#todoList').fullCalendar('addEventSource', {events:globalEventList.displayTodosArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor});
 			}
 		}
 	});
 
-	if(!globalSettings.displayhiddenevents)
+	if(!globalSettings.displayhiddenevents.value)
 	{
 		var afterScroll = $('#mainTODO').width()-$('#todoList').width();
 		rerenderTodo(beforeScroll!=afterScroll);
 		globalResourceRefreshNumberTodo--;
 		if(!globalResourceRefreshNumberTodo)
-			$('#CalendarLoaderTODO').hide();
+			$('#CalendarLoaderTODO').css('display','none');
 	}
+	else
+		$('#todoList').fullCalendar('selectEvent');
 }
 
 function disableCalendar(uid)
@@ -2343,13 +2118,13 @@ function disableCalendar(uid)
 	if(pos!=-1)
 	{
 		globalVisibleCalDAVCollections.splice(pos, 1);
-		if(globalSettings.displayhiddenevents)
+		if(globalSettings.displayhiddenevents.value)
 			hideCalendarEvents(uid);
 		else
 		{
 			var beforeScroll = $('#main').width()-$('#calendar').width();
 			globalResourceRefreshNumber++;
-			$('#CalendarLoader').show();
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 			$('#calendar').fullCalendar( 'removeEventSource', globalResourceCalDAVList.getCollectionByUID(uid).fcSource);
 			globalResourceRefreshNumber--;
 
@@ -2357,7 +2132,7 @@ function disableCalendar(uid)
 			{
 				var afterScroll = $('#main').width()-$('#calendar').width();
 				rerenderCalendar(beforeScroll!=afterScroll);
-				$('#CalendarLoader').hide();
+				$('#CalendarLoader').css('display','none');
 			}
 		}
 	}
@@ -2369,20 +2144,20 @@ function enableCalendar(uid)
 	if(pos==-1)
 	{
 		globalVisibleCalDAVCollections[globalVisibleCalDAVCollections.length]=uid;
-		if(globalSettings.displayhiddenevents)
+		if(globalSettings.displayhiddenevents.value)
 			showCalendarEvents(uid);
 		else
 		{
 			var beforeScroll = $('#main').width()-$('#calendar').width();
 			globalResourceRefreshNumber++;
-			$('#CalendarLoader').show();
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 			var bg = false;
 			var tmpUID = uid.match(vCalendar.pre['accountUidParts']);
 			var hrefUID='';
 			if(tmpUID!=null)
 				hrefUID = tmpUID[4];
 			var resource = getResourceByCollection(uid);
-			if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+			if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 			{
 				var rbCalendars = '';
 				if(resource.backgroundCalendars instanceof Array)
@@ -2402,14 +2177,15 @@ function enableCalendar(uid)
 						bg = true;
 				}
 			}
-			globalResourceCalDAVList.getCollectionByUID(uid).fcSource = $('#calendar').fullCalendar('addEventSource', globalEventList.displayEventsArray[uid], bg);
+			var collection = globalResourceCalDAVList.getCollectionByUID(uid);
+			collection.fcSource = $('#calendar').fullCalendar('addEventSource', {events:globalEventList.displayEventsArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor,textColor:checkFontColor(collection.ecolor),background:bg});
 			globalResourceRefreshNumber--;
 
 			if(!globalResourceRefreshNumber)
 			{
 				var afterScroll = $('#main').width()-$('#calendar').width();
 				rerenderCalendar(beforeScroll!=afterScroll);
-				$('#CalendarLoader').hide();
+				$('#CalendarLoader').css('display','none');
 			}
 		}
 	}
@@ -2421,13 +2197,15 @@ function disableCalendarTodo(uid)
 	if(pos!=-1)
 	{
 		globalVisibleCalDAVTODOCollections.splice(pos, 1);
-		if(globalSettings.displayhiddenevents)
+		if(globalSettings.displayhiddenevents.value) {
 			hideCalendarTodos(uid);
+			$('#todoList').fullCalendar('selectEvent');
+		}
 		else
 		{
 			var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
 			globalResourceRefreshNumberTodo++;
-			$('#CalendarLoaderTODO').show();
+			$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 			$('#todoList').fullCalendar( 'removeEventSource', globalResourceCalDAVList.getTodoCollectionByUID(uid).fcSource);
 			globalResourceRefreshNumberTodo--;
 
@@ -2435,7 +2213,7 @@ function disableCalendarTodo(uid)
 			{
 				var afterScroll = $('#mainTODO').width()-$('#todoList').width();
 				rerenderTodo(beforeScroll!=afterScroll);
-				$('#CalendarLoaderTODO').hide();
+				$('#CalendarLoaderTODO').css('display','none');
 			}
 		}
 	}
@@ -2447,20 +2225,22 @@ function enableCalendarTodo(uid)
 	if(pos==-1)
 	{
 		globalVisibleCalDAVTODOCollections[globalVisibleCalDAVTODOCollections.length]=uid;
-		if(globalSettings.displayhiddenevents)
+		if(globalSettings.displayhiddenevents.value) {
 			showCalendarTodos(uid);
+			$('#todoList').fullCalendar('selectEvent');
+		}
 		else
 		{
 			var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
 			globalResourceRefreshNumberTodo++;
-			$('#CalendarLoaderTODO').show();
+			$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
 			var bg = false;
 			var tmpUID = uid.match(vCalendar.pre['accountUidParts']);
 			var hrefUID='';
 			if(tmpUID!=null)
 				hrefUID = tmpUID[4];
 			var resource = getResourceByCollection(uid);
-			if(typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+			if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
 			{
 				var rbCalendars = '';
 				if(resource.backgroundCalendars instanceof Array)
@@ -2480,15 +2260,175 @@ function enableCalendarTodo(uid)
 						bg = true;
 				}
 			}
-			globalResourceCalDAVList.getTodoCollectionByUID(uid).fcSource = $('#todoList').fullCalendar('addEventSource', globalEventList.displayTodosArray[uid], bg);
+			var collection = globalResourceCalDAVList.getTodoCollectionByUID(uid);
+			collection.fcSource = $('#todoList').fullCalendar('addEventSource', {events:globalEventList.displayTodosArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor});
 			globalResourceRefreshNumberTodo--;
 
 			if(!globalResourceRefreshNumberTodo)
 			{
 				var afterScroll = $('#mainTODO').width()-$('#todoList').width();
 				rerenderTodo(beforeScroll!=afterScroll);
-				$('#CalendarLoaderTODO').hide();
+				$('#CalendarLoaderTODO').css('display','none');
 			}
+		}
+	}
+}
+
+function enableOne(uid)
+{
+	for(var i=0;i<globalResourceCalDAVList.collections.length;i++)
+	{
+		if(globalResourceCalDAVList.collections[i].href!=undefined)
+		{
+			var currentUid=globalResourceCalDAVList.collections[i].uid;
+			var check=$('#ResourceCalDAVList').find('[name^="'+currentUid+'"]');
+			if(currentUid===uid && !check.prop('checked'))
+			{
+				var pos=globalVisibleCalDAVCollections.indexOf(currentUid);
+				if(pos===-1)
+					globalVisibleCalDAVCollections[globalVisibleCalDAVCollections.length]=uid;
+				check.prop('checked', true);
+			}
+			else if(currentUid!==uid && check.prop('checked'))
+			{
+				var pos=globalVisibleCalDAVCollections.indexOf(currentUid);
+				if(pos!==-1)
+					globalVisibleCalDAVCollections.splice(pos, 1);
+				check.prop('checked', false);
+				if(globalSettings.displayhiddenevents.value)
+					hideCalendarEvents(currentUid);
+			}
+			collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAV_header', '.resourceCalDAV_item', null, false)
+		}
+	}
+
+	if(globalSettings.displayhiddenevents.value)
+	{
+		showCalendarEvents(uid);
+	}
+	else
+	{
+		globalResourceRefreshNumber++;
+		$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
+		var beforeScroll = $('#main').width()-$('#calendar').width();
+		$('#calendar').fullCalendar('removeEvents');
+		$('#calendar').fullCalendar('removeEventSources');
+
+		var bg = false;
+		var tmpUID = uid.match(vCalendar.pre['accountUidParts']);
+		var hrefUID='';
+		if(tmpUID!=null)
+			hrefUID = tmpUID[4];
+		var resource = getResourceByCollection(uid);
+		if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+		{
+			var rbCalendars = '';
+			if(resource.backgroundCalendars instanceof Array)
+				rbCalendars=resource.backgroundCalendars;
+			else
+				rbCalendars = [resource.backgroundCalendars];
+			for(var j=0; j<rbCalendars.length;j++)
+			{
+				if (typeof rbCalendars[j]=='string')
+				{
+					var index = hrefUID.indexOf(rbCalendars[j]);
+					if(index!=-1)
+						if(hrefUID.length == (index+rbCalendars[j].length))
+							bg=true;
+				}
+				else if (typeof rbCalendars[j]=='object' && hrefUID.match(rbCalendars[j])!=null)
+					bg = true;
+			}
+		}
+		var collection = globalResourceCalDAVList.getCollectionByUID(uid);
+		collection.fcSource = $('#calendar').fullCalendar('addEventSource', {events:globalEventList.displayEventsArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor,textColor:checkFontColor(collection.ecolor),background:bg});
+
+		globalResourceRefreshNumber--;
+		if(!globalResourceRefreshNumber)
+		{
+			var afterScroll = $('#main').width()-$('#calendar').width();
+			rerenderCalendar(beforeScroll!=afterScroll);
+			$('#CalendarLoader').css('display','none');
+		}
+	}
+}
+
+function enableOneTodo(uid)
+{
+	for(var i=0;i<globalResourceCalDAVList.TodoCollections.length;i++)
+	{
+		if(globalResourceCalDAVList.TodoCollections[i].href!=undefined)
+		{
+			var currentUid=globalResourceCalDAVList.TodoCollections[i].uid;
+			var check=$('#ResourceCalDAVTODOList').find('[name^="'+currentUid+'"]');
+			if(currentUid===uid && !check.prop('checked'))
+			{
+				var pos=globalVisibleCalDAVTODOCollections.indexOf(currentUid);
+				if(pos===-1)
+					globalVisibleCalDAVTODOCollections[globalVisibleCalDAVTODOCollections.length]=uid;
+				check.prop('checked', true);
+			}
+			else if(currentUid!==uid && check.prop('checked'))
+			{
+				var pos=globalVisibleCalDAVTODOCollections.indexOf(currentUid);
+				if(pos!==-1)
+					globalVisibleCalDAVTODOCollections.splice(pos, 1);
+				check.prop('checked', false);
+				if(globalSettings.displayhiddenevents.value)
+					hideCalendarTodos(currentUid);
+			}
+			collectionChBoxClick(check.get(0), '#'+check.parent().parent().attr('id'), '.resourceCalDAVTODO_header', '.resourceCalDAVTODO_item', null, false);
+		}
+	}
+
+	if(globalSettings.displayhiddenevents.value)
+	{
+		showCalendarTodos(uid);
+		$('#todoList').fullCalendar('selectEvent');
+	}
+	else
+	{
+		globalResourceRefreshNumberTodo++;
+		$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader).parent().css('display','block');
+		var beforeScroll = $('#mainTODO').width()-$('#todoList').width();
+		$('#todoList').fullCalendar( 'removeEvents');
+		$('#todoList').fullCalendar( 'removeEventSources');
+
+		var bg = false;
+		var tmpUID = uid.match(vCalendar.pre['accountUidParts']);
+		var hrefUID='';
+		if(tmpUID!=null)
+			hrefUID = tmpUID[4];
+		var resource = getResourceByCollection(uid);
+		if(resource!=null && typeof resource.backgroundCalendars!='undefined' && resource.backgroundCalendars!=null && resource.backgroundCalendars!='')
+		{
+			var rbCalendars = '';
+			if(resource.backgroundCalendars instanceof Array)
+				rbCalendars=resource.backgroundCalendars;
+			else
+				rbCalendars = [resource.backgroundCalendars];
+			for(var j=0; j<rbCalendars.length;j++)
+			{
+				if (typeof rbCalendars[j]=='string')
+				{
+					var index = hrefUID.indexOf(rbCalendars[j]);
+					if(index!=-1)
+						if(hrefUID.length == (index+rbCalendars[j].length))
+							bg=true;
+				}
+				else if (typeof rbCalendars[j]=='object' && hrefUID.match(rbCalendars[j])!=null)
+					bg = true;
+			}
+		}
+		var collection = globalResourceCalDAVList.getTodoCollectionByUID(uid);
+		collection.fcSource = $('#todoList').fullCalendar('addEventSource', {events:globalEventList.displayTodosArray[uid],backgroundColor:hexToRgba(collection.ecolor,0.9),borderColor:collection.ecolor});
+
+		globalResourceRefreshNumberTodo--;
+		if(!globalResourceRefreshNumberTodo)
+		{
+			var afterScroll = $('#mainTODO').width()-$('#todoList').width();
+			rerenderTodo(beforeScroll!=afterScroll);
+			$('#CalendarLoaderTODO').css('display','none');
 		}
 	}
 }
@@ -2523,47 +2463,48 @@ function setGlobalDateFunction()
 	var date=new Date();
 	var offset=date.getTimezoneOffset()*(-1)*60*1000;
 }
+
 function initFullCalendar()
 {
 	$('#calendar').fullCalendar({
 		eventMode: true,
 		contentHeight: $('#main').height() - 14, // -14px for 7px padding on top and bottom
 		windowResize: function(view){
-			if(globalCalDAVQs!=null)
-				globalCalDAVQs.cache();
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				hideEventCalendars();
 			globalCalWidth = $('#main').width();
-			$('#ResizeLoader').hide();
+			if(typeof globalCalDAVInitLoad!='undefined' && !globalCalDAVInitLoad && !globalResourceRefreshNumber)
+				$('#CalendarLoader').css('display','none');
 		},
-		bindingMode: globalSettings.openformmode,
-		startOfBusiness: globalSettings.calendarstartofbusiness,
-		endOfBusiness: globalSettings.calendarendofbusiness,
+		bindingMode: globalSettings.openformmode.value,
+		startOfBusiness: globalSettings.calendarstartofbusiness.value,
+		endOfBusiness: globalSettings.calendarendofbusiness.value,
+		multiWeekSize: globalMultiWeekSize,
 		showWeekNumbers: true,
 		showDatepicker: true,
-		//ignoreTimezone: !globalSettings.timezonesupport,
+		//ignoreTimezone: !globalSettings.timezonesupport.value,
 		titleFormat: {
-			month: globalSettings.titleformatmonth,
-			multiWeek: globalSettings.titleformatweek,
-			week: globalSettings.titleformatweek,
-			day: globalSettings.titleformatday,
-			table: globalSettings.titleformattable,
+			month: globalSettings.titleformatmonth.value,
+			multiWeek: globalSettings.titleformatweek.value,
+			week: globalSettings.titleformatweek.value,
+			day: globalSettings.titleformatday.value,
+			table: globalSettings.titleformattable.value,
 		},
 		columnFormat: {
 			month: 'ddd',
 			multiWeek: 'ddd',
-			week: globalSettings.columnformatagenda,
-			day: globalSettings.columnformatagenda,
-			table: globalSettings.columnformatagenda,
+			week: globalSettings.columnformatagenda.value,
+			day: globalSettings.columnformatagenda.value,
+			table: globalSettings.columnformatagenda.value,
 		},
 		timeFormat: {
-			agenda: globalSettings.timeformatagenda,
-			list: globalSettings.ampmformat ? 'hh:mm TT{ - hh:mm TT}' : 'HH:mm{ - HH:mm}',
-			listFull: globalSettings.ampmformat ? globalSettings.timeformatlist + ' hh:mm TT{ - ' + globalSettings.timeformatlist +' hh:mm TT}' : globalSettings.timeformatlist + ' HH:mm{ - ' + globalSettings.timeformatlist + ' HH:mm}',
-			listFullAllDay: globalSettings.timeformatlist + '{ - ' + globalSettings.timeformatlist + '}',
-			'': globalSettings.timeformatbasic
+			agenda: globalSettings.timeformatagenda.value,
+			list: globalSettings.ampmformat.value ? 'hh:mm TT{ - hh:mm TT}' : 'HH:mm{ - HH:mm}',
+			listFull: dateFormatJqToFc(globalSettings.datepickerformat.value) + (globalSettings.ampmformat.value ? ' hh:mm TT{ - ' : ' HH:mm{ - ') + dateFormatJqToFc(globalSettings.datepickerformat.value) + (globalSettings.ampmformat.value ? ' hh:mm TT}' : ' HH:mm}'),
+			listFullAllDay: dateFormatJqToFc(globalSettings.datepickerformat.value) + '{ - ' + dateFormatJqToFc(globalSettings.datepickerformat.value) + '}',
+			'': globalSettings.timeformatbasic.value
 		},
-		axisFormat: globalSettings.ampmformat ? 'h:mm TT' : 'H:mm',
+		axisFormat: globalSettings.ampmformat.value ? 'h:mm TT' : 'H:mm',
 		buttonText: {
 			month: localization[globalInterfaceLanguage].fullCalendarMonth,
 			multiWeek: localization[globalInterfaceLanguage].fullCalendarMultiWeek,
@@ -2578,9 +2519,11 @@ function initFullCalendar()
 		monthNames: localization[globalInterfaceLanguage].monthNames,
 		monthNamesShort: localization[globalInterfaceLanguage].monthNamesShort,
 		dayNames: localization[globalInterfaceLanguage].dayNames,
-		dayNamesShort: localization[globalInterfaceLanguage].dayNamesShort,		
+		dayNamesShort: localization[globalInterfaceLanguage].dayNamesShort,
 		dayEventSizeStrict: true,
 		dayClick: function(date, allDay, jsEvent, view){
+			if($('#ResourceCalDAVList .resourceCalDAV_item:visible').not('.resourceCalDAV_item_ro').length==0)
+				return false;
 			$('#show').val('');
 			$('#CAEvent').hide();
 			$('#timezonePicker').prop('disabled', true);
@@ -2607,14 +2550,12 @@ function initFullCalendar()
 			}
 
 			globalCalWidth=$('#main').width();
-			if(globalCalDAVQs!=null)
-				globalCalDAVQs.cache();
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				hideEventCalendars();
 			globalAllowFcRerender=true;
 		},
-		firstDay: globalSettings.datepickerfirstdayofweek,
-		weekendDays: globalSettings.weekenddays,
+		firstDay: globalSettings.datepickerfirstdayofweek.value,
+		weekendDays: globalSettings.weekenddays.value,
 		header: {
 			left: 'prev,next today',
 			center: 'title',
@@ -2622,17 +2563,11 @@ function initFullCalendar()
 		},
 		listSections: 'day',
 		headerContainer: $('#main_h_placeholder'),
-		defaultView: globalSettings.activeview,
+		defaultView: globalSettings.activeview.value,
 		editable: true,
 		currentTimeIndicator: true,
 		unselectAuto: false,
 		eventClick: function(calEvent, jsEvent, view){
-			globalEventDateStart=new Date(calEvent.start.getTime());
-
-			if(calEvent.end!=null)
-				globalEventDateEnd=new Date(calEvent.end.getTime());
-			else
-				globalEventDateEnd=new Date(calEvent.start.getTime());
 			globalCalEvent=calEvent;
 			globalJsEvent=jsEvent;
 			if(calEvent.type=='')
@@ -2642,11 +2577,6 @@ function initFullCalendar()
 		},
 		eventDragStart: function(calEvent, jsEvent, ui, view){
 			globalPrevDragEventAllDay=calEvent.allDay;
-			globalEventDateStart=new Date(calEvent.start.getTime());
-			if(calEvent.end!=null)
-				globalEventDateEnd=new Date(calEvent.end.getTime());
-			else
-				globalEventDateEnd=new Date(calEvent.start.getTime());
 		},
 		eventDrop: function(calEvent, dayDelta, minuteDelta, allDay, revertFunc, jsEvent, ui, view){
 			if(calEvent.rid!='')
@@ -2657,7 +2587,7 @@ function initFullCalendar()
 					revertFunc();
 					return false;
 				}
-					
+
 			}
 			if(calEvent.realStart && calEvent.realEnd)
 			{
@@ -2689,14 +2619,8 @@ function initFullCalendar()
 			save(true);
 			globalPrevDragEvent = null;
 		},
-		eventResizeStart: function(calEvent, jsEvent, ui, view){
-			globalEventDateStart=new Date(calEvent.start.getTime());
-			if(calEvent.end!=null)
-				globalEventDateEnd=new Date(calEvent.end.getTime());
-			else
-				globalEventDateEnd=new Date(calEvent.start.getTime());
-		},
 		eventResize: function(calEvent, dayDelta, minuteDelta, revertFunc, jsEvent, ui, view){
+			globalPrevDragEventAllDay=calEvent.allDay;
 			if(calEvent.rid!='')
 			{
 				var coll = globalResourceCalDAVList.getCollectionByUID(calEvent.res_id);
@@ -2705,25 +2629,18 @@ function initFullCalendar()
 					revertFunc();
 					return false;
 				}
-					
 			}
 
 			if(calEvent.realStart && calEvent.realEnd)
 			{
 				var checkDateEnd = new Date(calEvent.realEnd.getFullYear(),calEvent.realEnd.getMonth(), calEvent.realEnd.getDate()+dayDelta, calEvent.realEnd.getHours(),calEvent.realEnd.getMinutes()+minuteDelta,0);
 				if(calEvent.type!='')
-				{
 					calEvent.end=checkDateEnd;
-				}
 				else
-				{
 					calEvent.realEnd=checkDateEnd;
-				}
 			}
 			else
-			{
 				calEvent.realEnd=calEvent.end;
-			}
 			globalRevertFunction=revertFunc;
 
 			if(calEvent.type!='')
@@ -2754,25 +2671,35 @@ function initFullCalendar()
 			});
 		},
 		eventAfterRender: function(event, element, view){
-			element.attr("data-res-id",event.res_id);
-			element.attr("data-id",event.id);
-			element.attr("title",event.title.replace(vCalendar.pre['compressNewLineRex']," "));
-			element.addClass("event_item");
+			element.attr('data-res-id',event.res_id);
+			element.attr('data-id',event.id);
+			element.addClass('event_item');
+
 			if(event.status == 'CANCELLED')
 				$(element).find('.fc-event-title').css('text-decoration', 'line-through');
 
-			if(event.searchData)
-			{
-				var searchElem;
-				if(view.name=='table')
-					searchElem = $('<td>');
-				else
-					searchElem = $('<div>');
-				element.append(searchElem.attr({'data-type':'searchable_data', 'style':'display:none;'}).html(event.searchData.replace(vCalendar.pre['compressNewLineRex']," ")));
+			if(typeof event.hidden!='undefined' && event.hidden) {
+				element.addClass('searchCalDAV_hide');
+				if(view.name=='table' && !$(element).siblings().addBack().not('.searchCalDAV_hide').length)
+					$(element).parent().prev().find('tr').addClass('searchCalDAV_hide');
 			}
 
-			if(view.name!='table')
-				$(element).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color',checkFontColor(event.color));
+			element.mouseenter(function(e){
+				clearTimeout(globalEventTimeoutID);
+				globalEventTimeoutID = setTimeout(function(){
+					showEventPopup(e, event);
+				}, 500);
+			});
+			element.mousemove(function(e){
+				if($('#CalDavZAPPopup').is(':visible'))
+					moveEventPopup(e);
+			});
+			element.mouseout(function(e){
+				if(!$.contains(element.get(0),e.relatedTarget)) {
+					clearTimeout(globalEventTimeoutID);
+					hideEventPopup();
+				}
+			});
 		},
 		viewChanged: function(view) {
 			$('#CAEvent').hide();
@@ -2791,30 +2718,494 @@ function initFullCalendar()
 	});
 }
 
+function todoCheckClick(status, percent, calTodo)
+{
+	var id=calTodo.repeatHash;
+	if(typeof globalTodolistStatusArray[id]!='undefined' && typeof globalTodolistStatusArray[id].timeout!='undefined')
+		clearTimeout(globalTodolistStatusArray[id].timeout);
+	else if(typeof globalTodolistStatusArray[id]=='undefined')
+		globalTodolistStatusArray[id]={};
+
+	globalTodolistStatusArray[id].timeout = setTimeout(function(){
+		if(typeof globalTodolistStatusArray[id]!='undefined')
+		{
+			$('#todoList').fullCalendar('allowSelectEvent',false);
+			fullVcalendarToTodoData(calTodo,false);
+			if(percent=='50' && typeof globalTodolistStatusArray[id].percent!='undefined')
+				percent=globalTodolistStatusArray[id].percent;
+
+			var vCalendarText='',
+			groupCounter=0;
+			// vCalendar BEGIN (required by RFC)
+			if(vCalendar.tplM['VTbegin'][id]!=null && (process_elem=vCalendar.tplM['VTbegin'][id][0])!=undefined)
+				vCalendarText+=vCalendar.tplM['VTbegin'][id][0];
+			else
+			{
+				process_elem=vCalendar.tplC['VTbegin'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				vCalendarText+=process_elem;
+			}
+
+			// VERSION (required by RFC)
+			if(vCalendar.tplM['VTcontentline_VERSION'][id]!=null && (process_elem=vCalendar.tplM['VTcontentline_VERSION'][id][0])!=undefined)
+			{
+				// replace the object and related objects' group names (+ append the related objects after the processed)
+				parsed=('\r\n'+process_elem).match(RegExp('\r\n((?:'+vCalendar.re['group']+'\\.)?)', 'm'));
+				if(parsed[1]!='') // if group is present, replace the object and related objects' group names
+					process_elem=('\r\n'+process_elem).replace(RegExp('\r\n'+parsed[1].replace('.', '\\.'), 'mg'), '\r\nitem'+(groupCounter++)+'.').substring(2);
+			}
+			else
+			{
+				process_elem=vCalendar.tplC['VTcontentline_VERSION'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+			}
+			process_elem=process_elem.replace('##:::##version##:::##', '2.0');
+			vCalendarText+=process_elem;
+
+			// CALSCALE
+			if(vCalendar.tplM['VTcontentline_CALSCALE'][id]!=null && (process_elem=vCalendar.tplM['VTcontentline_CALSCALE'][id][0])!=undefined)
+			{
+				// replace the object and related objects' group names (+ append the related objects after the processed)
+				parsed=('\r\n'+process_elem).match(RegExp('\r\n((?:'+vCalendar.re['group']+'\\.)?)', 'm'));
+				if(parsed[1]!='') // if group is present, replace the object and related objects' group names
+					process_elem=('\r\n'+process_elem).replace(RegExp('\r\n'+parsed[1].replace('.', '\\.'), 'mg'), '\r\nitem'+(groupCounter++)+'.').substring(2);
+			}
+			else
+			{
+				process_elem=vCalendar.tplC['VTcontentline_CALSCALE'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+			}
+			process_elem=process_elem.replace('##:::##calscale##:::##', 'GREGORIAN');
+			vCalendarText+=process_elem;
+			var stringUIDcurrent=calTodo.vcalendar.match(vCalendar.pre['contentline_UID']);
+			if(stringUIDcurrent!=null)
+				stringUIDcurrent=stringUIDcurrent[0].match(vCalendar.pre['contentline_parse'])[4];
+			var rec_id='';
+			if(calTodo.type!='' && calTodo.rec_id=='' && (!globalSettings.appleremindersmode.value || typeof globalAppleSupport.nextDates[calTodo.id]!='undefined'))
+			{
+				if(calTodo.repeatStart!='' && calTodo.start)
+				{
+					if(typeof calTodo.realStart=='object')
+						rec_id=$.fullCalendar.formatDate(calTodo.realStart, "yyyyMMdd'T'HHmmss");
+					else if(typeof calTodo.realStart =='string')
+						rec_id=$.fullCalendar.formatDate($.fullCalendar.parseDate(calTodo.realStart), "yyyyMMdd'T'HHmmss");
+				}
+				else if(calTodo.repeatEnd!='' && calTodo.end)
+				{
+					if(typeof calTodo.realEnd =='object')
+						rec_id=$.fullCalendar.formatDate(calTodo.realEnd, "yyyyMMdd'T'HHmmss");
+					else if(typeof calTodo.realEnd =='string')
+						rec_id=$.fullCalendar.formatDate($.fullCalendar.parseDate(calTodo.realEnd), "yyyyMMdd'T'HHmmss");
+				}
+			}
+			else
+				rec_id=calTodo.rec_id;
+			var resultTodoObj = getRepeatTodoObject({
+				rid:calTodo.res_id,
+				uidTodo:calTodo.id,
+				vcalendarHash: hex_sha256(calTodo.vcalendar),
+				vcalendarUID: stringUIDcurrent,
+				recurrenceId: rec_id,
+				timezoneTODO: calTodo.timeZone,
+				futureStart: '',
+				deleteMode: false,
+				vCalendarText:vCalendarText
+			});
+			vCalendarText = resultTodoObj.vCalendarText;
+			var tzArray=resultTodoObj.tzArray;
+			var tzString=resultTodoObj.tzString;
+			var isTimeZone=resultTodoObj.isTimeZone;
+			var origTimezone =resultTodoObj.origTimezone;
+			var appleTodoMode=resultTodoObj.appleTodoMode;
+			var realTodo = calTodo;
+			var newFirst = resultTodoObj.newFirst;
+			var sel_option = resultTodoObj.sel_option;
+			var isUTC=false, timeZoneAttr='';
+			var origFirst=vCalendarText;
+
+			if(appleTodoMode)
+				vCalendarText='';
+
+			if(realTodo.start!=null || realTodo.end!=null)
+			{
+				if(globalSettings.timezonesupport.value)
+					sel_option=realTodo.timeZone;
+				if(sel_option=='UTC')
+				{
+					isUTC=true;
+					timeZoneAttr='';
+				}
+				else if(sel_option=='local')
+					timeZoneAttr='';
+				else if(sel_option=='custom')
+					timeZoneAttr=';'+vcalendarEscapeValue('TZID='+realTodo.timeZone);
+				else
+					timeZoneAttr=';'+vcalendarEscapeValue('TZID='+sel_option);
+
+				if(vCalendarText.lastIndexOf('\r\n')!=(vCalendarText.length-2))
+					vCalendarText+='\r\n';
+				if(globalSettings.rewritetimezonecomponent.value || !vCalendar.tplM['unprocessedVTIMEZONE'][id])
+				{
+					if(tzArray.indexOf(sel_option)==-1)
+						vCalendarText+=buildTimezoneComponent(sel_option);
+				}
+				else
+					vCalendarText+=vCalendar.tplM['VTunprocessedVTIMEZONE'][id];
+			}
+			origFirst+=vCalendarText;
+
+			var todoVc = calTodo.vcalendar;
+			if(todoVc.indexOf('\r\n')==0 && vCalendarText.lastIndexOf('\r\n')==(vCalendarText.length-2))
+				todoVc=todoVc.substring(2);
+			if(todoVc.lastIndexOf('\r\n')!=(todoVc.length-2))
+				todoVc+='\r\n';
+			var additionalVCalendar = '';
+
+			var d=new Date(), utc;
+			utc=d.getUTCFullYear()+(d.getUTCMonth()+1<10 ? '0': '')+(d.getUTCMonth()+1)+(d.getUTCDate()<10 ? '0': '')+d.getUTCDate()+'T'+(d.getUTCHours()<10 ? '0': '')+d.getUTCHours()+(d.getUTCMinutes()<10 ? '0': '')+d.getUTCMinutes()+(d.getUTCSeconds()<10 ? '0': '')+d.getUTCSeconds()+'Z';
+			if(rec_id=='')
+				var checkVal='orig';
+			else
+				var checkVal=rec_id;
+			var created='';
+			for(var vev in vCalendar.tplM['VTcontentline_CREATED'][id])
+			{
+				if(vev==checkVal)
+					created=vCalendar.tplM['VTcontentline_CREATED'][id][vev];
+			}
+			var v_element=null;
+			if(created=='')
+			{
+				process_elem=vCalendar.tplC['VTcontentline_CREATED'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+				process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(utc));
+				v_element=todoVc.match(vCalendar.pre['contentline_CREATED']);
+				if(v_element!=null)
+					todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+				else
+					additionalVCalendar+=process_elem;
+			}
+
+			process_elem=vCalendar.tplC['VTcontentline_LM'];
+			process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+			process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+			process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(utc));
+			v_element=todoVc.match(vCalendar.pre['contentline_LM']);
+			if(v_element!=null)
+				todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+			else
+				additionalVCalendar+=process_elem;
+
+			process_elem=vCalendar.tplC['VTcontentline_DTSTAMP'];
+			process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+			process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+			process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(utc));
+			v_element=todoVc.match(vCalendar.pre['contentline_DTSTAMP']);
+			if(v_element!=null)
+				todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+			else
+				additionalVCalendar+=process_elem;
+
+			// UID (required by RFC)
+			if(appleTodoMode)
+			{
+				process_elem=vCalendar.tplC['VTcontentline_UID'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+				var newUID=globalEventList.getNewUID();
+				process_elem=process_elem.replace('##:::##uid##:::##', newUID);
+				v_element=todoVc.match(vCalendar.pre['contentline_UID']);
+				if(v_element!=null)
+					todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+			}
+
+
+			process_elem=vCalendar.tplC['VTcontentline_STATUS'];
+			process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+			process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+			process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(status));
+			v_element=todoVc.match(vCalendar.pre['contentline_STATUS']);
+			if(v_element!=null)
+				todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+			else
+				additionalVCalendar+=process_elem;
+
+			process_elem=vCalendar.tplC['VTcontentline_PERCENT-COMPLETE'];
+			process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+			process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+			process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(percent));
+			v_element=todoVc.match(vCalendar.pre['contentline_PERCENT-COMPLETE']);
+			if(v_element!=null)
+				todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+			else
+				additionalVCalendar+=process_elem;
+
+			//RECURRENCE-ID
+			if(rec_id!='')
+			{
+				if(!appleTodoMode)
+				{
+					process_elem=vCalendar.tplC['VTcontentline_REC_ID'];
+					process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+					process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+					if(rec_id.indexOf('T')==-1)
+					{
+						process_elem=process_elem.replace('##:::##AllDay##:::##', ';'+vcalendarEscapeValue('VALUE=DATE'));
+						process_elem=process_elem.replace('##:::##TZID##:::##', vcalendarEscapeValue(''));
+						process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(rec_id));
+					}
+					else
+					{
+						process_elem=process_elem.replace('##:::##AllDay##:::##', vcalendarEscapeValue(''));
+						process_elem=process_elem.replace('##:::##TZID##:::##',timeZoneAttr);
+						if(isUTC && rec_id.charAt(rec_id.length-1)!='Z')
+							rec_id+='Z';
+						process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(rec_id));
+					}
+					v_element=todoVc.match(vCalendar.pre['contentline_RECURRENCE_ID']);
+					if(v_element!=null)
+						todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+					else
+						additionalVCalendar+=process_elem;
+				}
+				var vcalendar_rule_element=todoVc.match(vCalendar.pre['contentline_RRULE2']);
+				if(vcalendar_rule_element!=null)
+					todoVc=todoVc.replace(vcalendar_rule_element[0], '\r\n');
+				while(todoVc.match(vCalendar.pre['contentline_EXDATE'])!= null)
+				{
+					var vcalendar_ex_element=todoVc.match(vCalendar.pre['contentline_EXDATE']);
+					if(vcalendar_ex_element!=null)
+					{
+						todoVc=todoVc.replace(vcalendar_ex_element[0], '\r\n');
+					}
+				}
+			}
+
+			if(realTodo.realStart!='' || realTodo.realEnd!='')
+			{
+				if(realTodo.realStart!='' && !appleTodoMode)
+				{
+					process_elem=vCalendar.tplC['VTcontentline_E_DTSTART'];
+					process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+					process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+
+					if(typeof realTodo.realStart=='object')
+						var datetime_from=$.fullCalendar.formatDate(realTodo.realStart, "yyyyMMdd'T'HHmmss");
+					else if(typeof realTodo.realStart =='string')
+						var datetime_from=$.fullCalendar.formatDate($.fullCalendar.parseDate(realTodo.realStart), "yyyyMMdd'T'HHmmss");
+
+					process_elem=process_elem.replace('##:::##AllDay##:::##', vcalendarEscapeValue(''));
+					process_elem=process_elem.replace('##:::##TZID##:::##', timeZoneAttr);
+					process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(datetime_from+(isUTC ? 'Z' : '')));
+
+					if(appleTodoMode)
+					{
+						var process_elem2 = '';
+						process_elem2=vCalendar.tplC['VTcontentline_DUE'];
+						process_elem2=process_elem2.replace('##:::##group_wd##:::##', '');
+						process_elem2=process_elem2.replace('##:::##params_wsc##:::##', '');
+						process_elem2=process_elem2.replace('##:::##AllDay##:::##', vcalendarEscapeValue(''));
+						process_elem2=process_elem2.replace('##:::##TZID##:::##',timeZoneAttr);
+						process_elem2=process_elem2.replace('##:::##value##:::##', vcalendarEscapeValue(datetime_from+(isUTC ? 'Z' : '')));
+						v_element=todoVc.match(vCalendar.pre['contentline_DUE']);
+
+						if(v_element!=null)
+							todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem2);
+						else
+							additionalVCalendar+=process_elem2;
+					}
+					v_element=todoVc.match(vCalendar.pre['contentline_DTSTART']);
+					if(v_element!=null)
+						todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+					else
+						additionalVCalendar+=process_elem;
+				}
+
+				if(realTodo.realEnd!='')
+				{
+					process_elem=vCalendar.tplC['VTcontentline_DUE'];
+					process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+					process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+
+					if(typeof realTodo.realEnd=='object')
+						var datetime_to=$.fullCalendar.formatDate(realTodo.realEnd, "yyyyMMdd'T'HHmmss");
+					else if(typeof realTodo.realEnd =='string')
+						var datetime_to=$.fullCalendar.formatDate($.fullCalendar.parseDate(realTodo.realEnd), "yyyyMMdd'T'HHmmss");
+
+					process_elem=process_elem.replace('##:::##AllDay##:::##', vcalendarEscapeValue(''));
+					process_elem=process_elem.replace('##:::##TZID##:::##',timeZoneAttr);
+					process_elem=process_elem.replace('##:::##value##:::##', vcalendarEscapeValue(datetime_to+(isUTC ? 'Z' : '')));
+
+					if(globalSettings.appleremindersmode.value)
+					{
+						var process_elem2 = '';
+						process_elem2=vCalendar.tplC['VTcontentline_E_DTSTART'];
+						process_elem2=process_elem2.replace('##:::##group_wd##:::##', '');
+						process_elem2=process_elem2.replace('##:::##params_wsc##:::##', '');
+
+						process_elem2=process_elem2.replace('##:::##AllDay##:::##', vcalendarEscapeValue(''));
+						process_elem2=process_elem2.replace('##:::##TZID##:::##',timeZoneAttr);
+						process_elem2=process_elem2.replace('##:::##value##:::##', vcalendarEscapeValue(datetime_to+(isUTC ? 'Z' : '')));
+						v_element=todoVc.match(vCalendar.pre['contentline_DTSTART']);
+						if(v_element!=null)
+							todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem2);
+						else
+							additionalVCalendar+=process_elem2;
+					}
+					v_element=todoVc.match(vCalendar.pre['contentline_DUE']);
+					if(v_element!=null)
+						todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+					else
+						additionalVCalendar+=process_elem;
+				}
+			}
+
+			if(status=='COMPLETED'&&percent=='100')
+			{
+				var datetime_completed=new Date();
+
+				sel_option='local';
+				if(globalSettings.timezonesupport.value && realTodo.timeZone!='' && realTodo.timeZone!='local')
+					sel_option=realTodo.timeZone;
+
+				if(sel_option!='local')
+				{
+					var valOffsetFrom=getOffsetByTZ(sel_option, datetime_completed);
+					var intOffset = valOffsetFrom.getSecondsFromOffset()*-1;
+					datetime_completed = new Date(datetime_completed.setSeconds(intOffset));
+				}
+				var newValue=$.fullCalendar.formatDate(datetime_completed, "yyyyMMdd'T'HHmmss")+'Z';
+
+				process_elem=vCalendar.tplC['VTcontentline_COMPLETED'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+				process_elem=process_elem.replace('##:::##value##:::##', newValue);
+				v_element=todoVc.match(vCalendar.pre['contentline_COMPLETED']);
+				if(v_element!=null)
+					todoVc=todoVc.replace(v_element[0], '\r\n'+process_elem);
+				else
+					additionalVCalendar+=process_elem;
+			}
+			else
+			{
+				v_element=todoVc.match(vCalendar.pre['contentline_COMPLETED']);
+				if(v_element!=null)
+					todoVc=todoVc.replace(v_element[0], '\r\n');
+			}
+
+			if(typeof vCalendar.tplM['VTalarm_STRING'][id]!='undefined'&&vCalendar.tplM['VTalarm_STRING'][id]!='')
+				additionalVCalendar+=vCalendar.tplM['VTalarm_STRING'][id];
+			if(additionalVCalendar!='')
+			{
+				process_elem=vCalendar.tplC['VTendVTODO'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				v_element=todoVc.match(vCalendar.re['endVTODO']);
+				if(v_element!=null)
+					todoVc=todoVc.replace(v_element[0], additionalVCalendar+process_elem);
+			}
+			vCalendarText+=todoVc;
+			if(appleTodoMode)
+			{
+				if(vCalendarText.indexOf('\r\n')==0 && newFirst.lastIndexOf('\r\n')==(newFirst.length-2))
+					newFirst+=vCalendarText.substring(2,vCalendarText.length);
+				else if((vCalendarText.indexOf('\r\n')==0 && newFirst.lastIndexOf('\r\n')!=(newFirst.length-2)) || (vCalendarText.indexOf('\r\n')!=0 && newFirst.lastIndexOf('\r\n')==(newFirst.length-2)) )
+					newFirst+=vCalendarText;
+				else
+					newFirst+='\r\n'+vCalendarText;
+			}
+			if(appleTodoMode)
+				vCalendarText = '';
+			// PRODID
+			if(vCalendar.tplM['VTcontentline_PRODID'][id]!=null && (process_elem=vCalendar.tplM['VTcontentline_PRODID'][id][0])!=undefined)
+			{
+				// replace the object and related objects' group names (+ append the related objects after the processed)
+				parsed=('\r\n'+process_elem).match(RegExp('\r\n((?:'+vCalendar.re['group']+'\\.)?)', 'm'));
+				if(parsed[1]!='') // if group is present, replace the object and related objects' group names
+					process_elem=('\r\n'+process_elem).replace(RegExp('\r\n'+parsed[1].replace('.', '\\.'), 'mg'), '\r\nitem'+(groupCounter++)+'.').substring(2);
+			}
+			else
+			{
+				process_elem=vCalendar.tplC['VTcontentline_PRODID'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				process_elem=process_elem.replace('##:::##params_wsc##:::##', '');
+			}
+			process_elem=process_elem.replace('##:::##value##:::##', '-//Inf-IT//'+globalAppName+' '+globalVersion+'//EN');
+			vCalendarText+=process_elem;
+
+			if(typeof vCalendar.tplM['VTunprocessed'][id]!='undefined' && vCalendar.tplM['VTunprocessed'][id]!='' && vCalendar.tplM['VTunprocessed'][id]!=null)
+			{
+				if(!appleTodoMode)
+					vCalendarText+=vCalendar.tplM['VTunprocessed'][id].replace(RegExp('^\r\n'), '');
+				else
+					origFirst+=vCalendar.tplM['VTunprocessed'][id].replace(RegExp('^\r\n'), '');;
+			}
+
+			vCalendar.tplM['VTunprocessed'][id]=new Array();
+
+			// vCalendar END (required by RFC)
+			if(vCalendar.tplM['VTend'][id]!=null && (process_elem=vCalendar.tplM['VTend'][id][0])!=undefined)
+				vCalendarText+=vCalendar.tplM['VTend'][id][0];
+			else
+			{
+				process_elem=vCalendar.tplC['VTend'];
+				process_elem=process_elem.replace('##:::##group_wd##:::##', '');
+				vCalendarText+=process_elem;
+			}
+
+			var textArray = new Array();
+			if(appleTodoMode)
+			{
+				newFirst += vCalendarText;
+				if(origFirst.lastIndexOf('\r\n')!=(origFirst.length-2))
+					origFirst += '\r\n';
+				origFirst += vCalendarText;
+				var fixed = checkAndFixMultipleUID(newFirst,false);
+				if(fixed.length==1)
+					textArray[textArray.length]=origFirst;
+				else
+					textArray=fixed;
+				vCalendarText = newFirst;
+			}
+			var fixedArr = checkAndFixMultipleUID(vCalendarText,false);
+			fixedArr = $.merge(textArray,fixedArr);
+			var inputS = fixedArr[0];
+			fixedArr.splice(0,1);
+
+			var inputUID='';
+			var coll = globalResourceCalDAVList.getTodoCollectionByUID(calTodo.id.substring(0, calTodo.id.lastIndexOf('/')+1));
+			var res = getAccount(coll.accountUID);
+			var tmp=res.href.match(vCalendar.pre['hrefRex']);
+			var accountUID=tmp[1]+res.userAuth.userName+'@'+tmp[2];
+			CalDAVeditor_cleanup(id);
+
+			return putVcalendarToCollection(accountUID, calTodo.id, calTodo.etag, inputS, '','vtodo',true,false,fixedArr);
+		}
+	},globalTodoCheckTimeoutDelay);
+}
+
 function initTodoList()
 {
 	$('#todoList').fullCalendar({
 		eventMode: false,
-		showUnstartedEvents: globalSettings.appleremindersmode,
-		simpleFilters: globalSettings.appleremindersmode,
+		showUnstartedEvents: globalSettings.appleremindersmode.value,
+		simpleFilters: globalSettings.appleremindersmode.value,
 		contentHeight: $('#mainTODO').height() - 14, //-14px for 7px padding on top and bottom
 		windowResize: function(view){
-			if(globalCalDAVTODOQs!=null)
-				globalCalDAVTODOQs.cache();
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				hideTodoCalendars();
 		},
 		showDatepicker: true,
 		titleFormat: {
-			todo: globalSettings.titleformattable,
+			todo: globalSettings.titleformattable.value
 		},
 		columnFormat: {
-			todo: globalSettings.columnformatagenda,
+			todo: globalSettings.columnformatagenda.value
 		},
 		timeFormat: {
-			list: globalSettings.ampmformat ? globalSettings.timeformatlist + ' hh:mm TT' : globalSettings.timeformatlist + ' HH:mm',
+			list: dateFormatJqToFc(globalSettings.datepickerformat.value) + (globalSettings.ampmformat.value ? ' hh:mm TT' : ' HH:mm')
 		},
-		axisFormat: globalSettings.ampmformat ? 'h:mm TT' : 'H:mm',
+		axisFormat: globalSettings.ampmformat.value ? 'h:mm TT' : 'H:mm',
 		buttonText: {
 			today: localization[globalInterfaceLanguage].fullCalendarTodayButton,
 			filtersHeader: localization[globalInterfaceLanguage].txtStatusFiltersHeaderTODO,
@@ -2829,16 +3220,14 @@ function initTodoList()
 		monthNamesShort: localization[globalInterfaceLanguage].monthNamesShort,
 		dayNames: localization[globalInterfaceLanguage].dayNames,
 		dayNamesShort: localization[globalInterfaceLanguage].dayNamesShort,
-		defaultFilters: globalSettings.todolistfilterselected,
+		defaultFilters: globalSettings.todolistfilterselected.value,
 		viewDisplay: function(view){
-			if(globalCalDAVTODOQs!=null)
-				globalCalDAVTODOQs.cache();
-			if(globalSettings.displayhiddenevents)
+			if(globalSettings.displayhiddenevents.value)
 				hideTodoCalendars();
-			$('.fc-view-todo .fc-table-dateinfo, .fc-view-todo .fc-table-datepicker').css('opacity','1');
+			$('.fc-view-todo').removeClass('fc-view-trans');
 		},
-		firstDay: globalSettings.datepickerfirstdayofweek,
-		weekendDays: globalSettings.weekenddays,
+		firstDay: globalSettings.datepickerfirstdayofweek.value,
+		weekendDays: globalSettings.weekenddays.value,
 		header: {
 			left: 'prev,next today',
 			center: '',
@@ -2848,9 +3237,20 @@ function initTodoList()
 		headerContainer: $('#mainTODO_h_placeholder'),
 		defaultView: 'todo',
 		editable: true,
+		todoColThresholds: [
+			{'col':'priority', 'width':552},
+			{'col':'location', 'width':702}
+		],
+		todoOptionalCols: [
+			{'col':'time', 'width':142},
+			{'col':'priority', 'width':18},
+			{'col':'location', 'width':150}
+		],
 		selectEmpty: function(){
-			$('#CATodo').attr('style','display:none');
-			$('#todoColor').css('background-color','');
+			if($('#todoInEdit').val()!=='true') {
+				$('#CATodo').attr('style','display:none');
+				$('#todoColor').css('background-color','');
+			}
 		},
 		eventClick: function(calTodo, jsEvent, view){
 			if($('#todoInEdit').val()=='true')
@@ -2861,13 +3261,65 @@ function initTodoList()
 				showTodoForm(calTodo, 'show', '');
 			else
 			{
-				if(globalSettings.appleremindersmode && (calTodo.status=='COMPLETED' || calTodo.status== 'CANCELLED'))
+				if(globalSettings.appleremindersmode.value && (calTodo.status=='COMPLETED' || calTodo.status== 'CANCELLED'))
 					showTodoForm(calTodo, 'show', '');
-				else if(!globalSettings.appleremindersmode || typeof globalAppleSupport.nextDates[calTodo.id] != 'undefined')
+				else if(!globalSettings.appleremindersmode.value || typeof globalAppleSupport.nextDates[calTodo.id] != 'undefined')
 					showTodoForm(calTodo, 'show', 'editOnly');
 				else
 					showTodoForm(calTodo, 'show', '');
 			}
+		},
+		eventCheckDefault: function(event, checkbox, view) {
+			var percent = parseInt(event.percent, 10);
+			if(globalSettings.appleremindersmode.value)
+				checkbox.prop('checked', percent>99);
+			else {
+				checkbox.prop({'checked':percent>0, 'indeterminate':percent>0 && percent<100});
+				checkbox.attr('data-ind', percent>0 && percent<100 ? 'true' : 'false');
+			}
+
+			checkbox.prop('disabled', globalResourceCalDAVList.getTodoCollectionByUID(event.res_id).permissions.read_only);
+		},
+		eventCheckClicked: function(checkbox, calTodo, jsEvent, view) {
+			// [] -> [-]	--->	false, false -> true, false  -> true, true
+			// [-] -> [x]	--->	true, true   -> false, false -> true, false
+			// [x] -> [-x-] --->	true, false  -> false, false -> true, false
+			// [-x-] -> []	--->	true, false  -> false, false -> false, false
+
+			jsEvent.stopPropagation();
+
+			var eventElement = checkbox.parent().parent();
+			var checked = checkbox.prop('checked');
+			var ind = checkbox.attr('data-ind')==='true';
+			var cancelled = eventElement.hasClass('fc-event-cancelled');
+
+			if(!globalSettings.appleremindersmode.value) {
+				checkbox.prop({'checked':ind || !checked && !cancelled ? !checked : checked, 'indeterminate':checked});
+				checkbox.attr('data-ind', checked ? 'true' : 'false');
+				eventElement.toggleClass('fc-event-cancelled', !ind && !checked && !cancelled);
+			}
+
+			var percent = '';
+			var status = '';
+
+			if(!checkbox.prop('checked')) {
+				percent = '0';
+				status = 'NEEDS-ACTION';
+			}
+			else if(checkbox.prop('indeterminate')) {
+				percent = '50';
+				status = 'IN-PROCESS';
+			}
+			else if(eventElement.hasClass('fc-event-cancelled')) {
+				percent = '100';
+				status = 'CANCELLED';
+			}
+			else {
+				percent = '100';
+				status = 'COMPLETED';
+			}
+
+			todoCheckClick(status, percent, calTodo);
 		},
 		eventAfterRender: function(event, element, view){
 			element.attr("data-res-id",event.res_id);
@@ -2880,7 +3332,7 @@ function initTodoList()
 			element.addClass("event_item");
 			var title = event.title.replace(vCalendar.pre['compressNewLineRex']," ");
 			if(event.status == 'CANCELLED')
-				$(element).css('text-decoration', 'line-through');
+				$(element).addClass('fc-event-cancelled');
 			switch(event.filterStatus)
 			{
 				case 'filterAction':
@@ -2891,7 +3343,7 @@ function initTodoList()
 					break;
 				case 'filterCompleted':
 					if(event.completedOn)
-						title+=' ('+localization[globalInterfaceLanguage].txtCompletedOn+' '+$.fullCalendar.formatDate(event.completedOn, globalSettings.timeformatlist+' '+$('#todoList').fullCalendar('getOption','axisFormat'))+')';
+						title+=' ('+localization[globalInterfaceLanguage].txtCompletedOn+' '+$.fullCalendar.formatDate(event.completedOn, dateFormatJqToFc(globalSettings.datepickerformat.value)+' '+(globalSettings.ampmformat.value ? 'h:mm TT' : 'H:mm'))+')';
 					else
 						title+=' ('+localization[globalInterfaceLanguage].txtStatusCompletedTODO+')';
 					break;
@@ -2902,14 +3354,20 @@ function initTodoList()
 					break;
 			}
 			element.attr("title",title);
-			if(event.searchData)
-				element.append($('<td>').attr({'data-type':'searchable_data', 'style':'display:none;'}).html(event.searchData.replace(vCalendar.pre['compressNewLineRex']," ")));
+			if(typeof event.hidden!='undefined' && event.hidden)
+				element.addClass('searchCalDAV_hide');
 		},
 		prevClick: function() {
 			getPrevMonthsTodo();
 		},
 		nextClick: function() {
 			getNextMonthsTodo();
+		},
+		datepickerClick: function(date) {
+			if(date>globalToLoadedLimitTodo)
+				getNextMonthsTodo(true);
+			else if(date<globalLoadedLimitTodo)
+				getPrevMonthsTodo(true);
 		}
 	});
 	$('#todoList').fullCalendar('allowSelectEvent',false);
@@ -2917,7 +3375,7 @@ function initTodoList()
 
 function setFirstDayEvent(setDay)
 {
-	var firstDay=typeof setDay!='undefined'?setDay:globalSettings.datepickerfirstdayofweek;
+	var firstDay=typeof setDay!='undefined'?setDay:globalSettings.datepickerfirstdayofweek.value;
 	var eventWeekDayCells = $('#week_custom .customTable td');
 	var eventWeekDayContainer = eventWeekDayCells.parent();
 	var eventMonthDayOptions = $('#repeat_month_custom_select2 option');
@@ -2944,7 +3402,7 @@ function setFirstDayEvent(setDay)
 
 function setFirstDayTodo(setDay)
 {
-	var firstDay=typeof setDay!='undefined'?setDay:globalSettings.datepickerfirstdayofweek;
+	var firstDay=typeof setDay!='undefined'?setDay:globalSettings.datepickerfirstdayofweek.value;
 	var todoWeekDayCells = $('#week_custom_TODO .customTable td');
 	var todoWeekDayContainer = todoWeekDayCells.parent();
 	var todoMonthDayOptions = $('#repeat_month_custom_select2_TODO option');
@@ -2978,6 +3436,24 @@ function checkEventFormScrollBar()
 	var scrollWidth = ($('#event_details_template').width() - $('#eventDetailsContainer').width());
 	$('#event_details_template').width(baseWidth+scrollWidth);
 	$('#eventColor').height($('#eventDetailsContainer').height()+12);
+}
+
+function checkTodoFormScrollBar()
+{
+	var baseWidth=413;
+	var scrollWidth=$('#todo_details_template').width() - $('#todoDetailsContainer').width();
+	var previousWidth = parseInt($('#mainTODO').css('right'), 10);
+	var newWidth = baseWidth+scrollWidth;
+
+	if(previousWidth===newWidth)
+		return true;
+
+	$('#main_h_TODO, #searchFormTODO, #mainTODO').css('right', newWidth);
+	$('#TodoDisabler').css('right', newWidth+1);
+	$('#todoForm_h, #todoLoader').width(newWidth);
+	$('#todoColor').css('right', newWidth-3);
+	$('#todoForm').width(newWidth-3);
+	$(window).resize();
 }
 
 function initTimepicker(ampm)
@@ -3051,7 +3527,7 @@ function showTodoNextNav(uncompletedOnly)
 function eventPrevNavClick()
 {
 	var eventsSorted=jQuery.grep(globalEventList.displayEventsArray[globalCalEvent.res_id],function(e){if(e.id==globalCalEvent.id)return true}).sort(repeatStartCompare);
-		
+
 	if(eventsSorted.indexOf(globalCalEvent)!=-1)
 	{
 		if(eventsSorted.indexOf(globalCalEvent)>0)
@@ -3059,13 +3535,13 @@ function eventPrevNavClick()
 			globalCalEvent=eventsSorted[eventsSorted.indexOf(globalCalEvent)-1];
 			showEventForm(null, globalCalEvent.allDay, globalCalEvent, globalJsEvent, 'show', 'editOnly');
 		}
-	}	
+	}
 }
 
 function eventNextNavClick()
 {
 	var eventsSorted=jQuery.grep(globalEventList.displayEventsArray[globalCalEvent.res_id],function(e){if(e.id==globalCalEvent.id)return true}).sort(repeatStartCompare);
-		
+
 	if(eventsSorted.indexOf(globalCalEvent)!=-1)
 	{
 		if(eventsSorted.indexOf(globalCalEvent)<(eventsSorted.length-1))
@@ -3073,7 +3549,7 @@ function eventNextNavClick()
 			globalCalEvent=eventsSorted[eventsSorted.indexOf(globalCalEvent)+1];
 			showEventForm(null, globalCalEvent.allDay, globalCalEvent, globalJsEvent, 'show', 'editOnly');
 		}
-	}	
+	}
 }
 
 function todoPrevNavClick(uncompletedOnly)
@@ -3130,15 +3606,16 @@ function todoStatusChanged(status)
 		var today = new Date();
 		$('.completedOnTr').show();
 		if($('#completedOnDate').val()=='')
-			$('#completedOnDate').val($.datepicker.formatDate(globalSettings.datepickerformat, today));
+			$('#completedOnDate').val($.datepicker.formatDate(globalSettings.datepickerformat.value, today));
 		if($('#completedOnTime').val()=='')
-			$('#completedOnTime').val($.fullCalendar.formatDate(today, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('#completedOnTime').val($.fullCalendar.formatDate(today, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 		$('#completedOnDate, #completedOnTime').change();
 	}
 	else {
 		$('#completedOnDate, #completedOnTime').parent().find('img').css('display','none');
 		$('.completedOnTr').hide();
 	}
+	checkTodoFormScrollBar();
 }
 
 function initKbTodoNavigation()
@@ -3170,25 +3647,26 @@ function initKbTodoNavigation()
 			var selected_todo=null, next_todo=null;
 			if((selected_todo=$('#SystemCalDavTODO').find('.fc-event-selected').parent()).length==1)
 			{
+				var list=$('#todoList').find('.fc-list-content');
 				if(event.keyCode == 38 && (next_todo=selected_todo.prevAll('.fc-list-section').find('.fc-event').filter(':visible').last()).length || event.keyCode == 40 && (next_todo=selected_todo.nextAll('.fc-list-section').find('.fc-event').filter(':visible').first()).length)
 				{
 					switch(event.keyCode)
 					{
 						case 38:
 							event.preventDefault();
-							if($('.fc-list-content').scrollTop()>$('.fc-list-content').scrollTop()+next_todo.offset().top-$('.fc-list-content').offset().top-$('.fc-list-content').height()*globalKBNavigationPaddingRate)
-								$('.fc-list-content').scrollTop($('.fc-list-content').scrollTop()+next_todo.offset().top-$('.fc-list-content').offset().top-$('.fc-list-content').height()*globalKBNavigationPaddingRate);
-							else if($('.fc-list-content').scrollTop()<$('.fc-list-content').scrollTop()+next_todo.offset().top+next_todo.height()-$('.fc-list-content').offset().top-$('.fc-list-content').height()*(1-globalKBNavigationPaddingRate))	// todo invisible (scrollbar moved)
-								$('.fc-list-content').scrollTop($('.fc-list-content').scrollTop()+next_todo.offset().top+next_todo.height()-$('.fc-list-content').offset().top-$('.fc-list-content').height()*(1-globalKBNavigationPaddingRate));
+							if(list.scrollTop()>list.scrollTop()+next_todo.offset().top-list.offset().top-list.height()*globalKBNavigationPaddingRate)
+								list.scrollTop(list.scrollTop()+next_todo.offset().top-list.offset().top-list.height()*globalKBNavigationPaddingRate);
+							else if(list.scrollTop()<list.scrollTop()+next_todo.offset().top+next_todo.height()-list.offset().top-list.height()*(1-globalKBNavigationPaddingRate))	// todo invisible (scrollbar moved)
+								list.scrollTop(list.scrollTop()+next_todo.offset().top+next_todo.height()-list.offset().top-list.height()*(1-globalKBNavigationPaddingRate));
 							else
 								return false;
 							break;
 						case 40:
 							event.preventDefault();
-							if($('.fc-list-content').scrollTop()<$('.fc-list-content').scrollTop()+next_todo.offset().top+next_todo.height()-$('.fc-list-content').offset().top-$('.fc-list-content').height()*(1-globalKBNavigationPaddingRate))	// todo invisible (scrollbar moved)
-								$('.fc-list-content').scrollTop($('.fc-list-content').scrollTop()+next_todo.offset().top+next_todo.height()-$('.fc-list-content').offset().top-$('.fc-list-content').height()*(1-globalKBNavigationPaddingRate));
-							else if($('.fc-list-content').scrollTop()>$('.fc-list-content').scrollTop()+next_todo.offset().top-$('.fc-list-content').offset().top-$('.fc-list-content').height()*globalKBNavigationPaddingRate)
-								$('.fc-list-content').scrollTop($('.fc-list-content').scrollTop()+next_todo.offset().top-$('.fc-list-content').offset().top-$('.fc-list-content').height()*globalKBNavigationPaddingRate);
+							if(list.scrollTop()<list.scrollTop()+next_todo.offset().top+next_todo.height()-list.offset().top-list.height()*(1-globalKBNavigationPaddingRate))	// todo invisible (scrollbar moved)
+								list.scrollTop(list.scrollTop()+next_todo.offset().top+next_todo.height()-list.offset().top-list.height()*(1-globalKBNavigationPaddingRate));
+							else if(list.scrollTop()>list.scrollTop()+next_todo.offset().top-list.offset().top-list.height()*globalKBNavigationPaddingRate)
+								list.scrollTop(list.scrollTop()+next_todo.offset().top-list.offset().top-list.height()*globalKBNavigationPaddingRate);
 							else
 								return false;
 							break;
@@ -3201,10 +3679,10 @@ function initKbTodoNavigation()
 					switch(event.keyCode)
 					{
 						case 38:
-							$('.fc-list-content').scrollTop(0);
+							list.scrollTop(0);
 							break;
 						case 40:
-							$('.fc-list-content').scrollTop($('.fc-list-content').prop('scrollHeight'));
+							list.scrollTop(list.prop('scrollHeight'));
 							break;
 						default:
 							break;
@@ -3215,7 +3693,7 @@ function initKbTodoNavigation()
 	});
 }
 
-function translateAlerts()
+function translateEventAlerts()
 {
 	$('[data-type="alert"]').text(localization[globalInterfaceLanguage].txtAlert);
 	$('.alert').find('[data-type="alert_none"]').text(localization[globalInterfaceLanguage].txtAlertNone);
@@ -3234,7 +3712,10 @@ function translateAlerts()
 	$('.alert_details').find('[data-type="hours_after"]').text(localization[globalInterfaceLanguage].txtAlertHoursAfter);
 	$('.alert_details').find('[data-type="minutes_after"]').text(localization[globalInterfaceLanguage].txtAlertMinutesAfter);
 	$('.alert_details').find('[data-type="seconds_after"]').text(localization[globalInterfaceLanguage].txtAlertSecondsAfter);
+}
 
+function translateTodoAlerts()
+{
 	$('[data-type="alert_TODO"]').text(localization[globalInterfaceLanguage].txtAlertTODO);
 	$('.alertTODO').find('[data-type="alert_none_TODO"]').text(localization[globalInterfaceLanguage].txtAlertNone);
 	$('.alertTODO').find('[data-type="alert_message_TODO"]').text(localization[globalInterfaceLanguage].txtAlertMessage);
@@ -3268,13 +3749,17 @@ function translate()
 	//$('[data-type="system_logo"]').attr('alt',localization[globalInterfaceLanguage].altLogo);
 	$('[data-type="system_username"]').attr('placeholder',localization[globalInterfaceLanguage].pholderUsername);
 	$('[data-type="system_password"]').attr('placeholder',localization[globalInterfaceLanguage].pholderPassword);
-	$('[data-type="system_login"]').attr('value',localization[globalInterfaceLanguage].buttonLogin);
-	$('[data-type="resourcesCalDAV_txt"]').text(localization[globalInterfaceLanguage].txtResources);
+	$('[data-type="system_login"]').attr({'title':localization[globalInterfaceLanguage].buttonLogin,'alt':localization[globalInterfaceLanguage].buttonLogin});
+	$('.resourceCalDAV_text[data-type="resourcesCalDAV_txt"]').text(localization[globalInterfaceLanguage].txtCalendars);
 	$('[data-type="choose_calendar_TODO"]').text(localization[globalInterfaceLanguage].txtSelectCalendarTODO);
 	$('[data-type="todo_txt"]').text(localization[globalInterfaceLanguage].txtTodo);
 	$('#eventFormShower').attr('alt',localization[globalInterfaceLanguage].altAddEvent);
-	$('#logoutShower').attr('alt',localization[globalInterfaceLanguage].altLogout);
+	$('#showUnloadedCalendars').attr({title:capitalize(localization[globalInterfaceLanguage].txtEnabledCalendars),alt:capitalize(localization[globalInterfaceLanguage].txtEnabledCalendars)});
+	$('#showUnloadedCalendarsTODO').attr({title:capitalize(localization[globalInterfaceLanguage].txtEnabledTodoLists),alt:capitalize(localization[globalInterfaceLanguage].txtEnabledTodoLists)});
+	$('#loadUnloadedCalendars, #loadUnloadedCalendarsTODO').val(localization[globalInterfaceLanguage].buttonSave);
+	$('#loadUnloadedCalendarsCancel, #loadUnloadedCalendarsTODOCancel').val(localization[globalInterfaceLanguage].buttonCancel);
 // TODOS
+	$('.resourceCalDAVTODO_text[data-type="resourcesCalDAV_txt"]').text(localization[globalInterfaceLanguage].txtTodoLists);
 	$('[data-type="name_TODO"]').attr('placeholder',localization[globalInterfaceLanguage].pholderNameTODO);
 	$('[data-type="type_TODO"]').text(localization[globalInterfaceLanguage].txtTypeTODO);
 	$('[data-type="todo_type_none"]').text(localization[globalInterfaceLanguage].txtTypeTODONone);
@@ -3301,7 +3786,7 @@ function translate()
 	$('[data-type="priority_TODO_low"]').text(localization[globalInterfaceLanguage].txtPriorityLow);
 	$('[data-type="priority_TODO_medium"]').text(localization[globalInterfaceLanguage].txtPriorityMedium);
 	$('[data-type="priority_TODO_high"]').text(localization[globalInterfaceLanguage].txtPriorityHigh);
-	$('[data-type="calendar_TODO"]').text(localization[globalInterfaceLanguage].txtCalendarTODO);
+	$('[data-type="calendar_TODO"]').text(localization[globalInterfaceLanguage].txtTodoList);
 	$('[data-type="note_TODO"]').text(localization[globalInterfaceLanguage].txtNoteTODO);
 	$('[data-type="PH_note_TODO"]').attr('placeholder',localization[globalInterfaceLanguage].pholderNoteTODO);
 	$('[data-type="txt_availTODO"]').text(localization[globalInterfaceLanguage].eventAvailability);
@@ -3319,6 +3804,7 @@ function translate()
 	$('[data-type="todo_next_uncompleted_nav"]').attr('title',localization[globalInterfaceLanguage].todoUncompletedNextNav);
 	$("#saveTODO").val(localization[globalInterfaceLanguage].buttonSaveTODO);
 	$("#editTODO").val(localization[globalInterfaceLanguage].buttonEditTODO);
+	$("#duplicateTODO").val(localization[globalInterfaceLanguage].buttonDuplicate);
 	$("#resetTODO").val(localization[globalInterfaceLanguage].buttonResetTODO);
 	$("#closeTODO").val(localization[globalInterfaceLanguage].buttonCloseTODO);
 	$("#deleteTODO").val(localization[globalInterfaceLanguage].buttonDeleteTODO);
@@ -3423,6 +3909,7 @@ function translate()
 	$('[data-type="event_next_nav"]').attr('title',localization[globalInterfaceLanguage].eventNextNav);
 	$("#saveButton").val(localization[globalInterfaceLanguage].buttonSave);
 	$("#editButton").val(localization[globalInterfaceLanguage].buttonEdit);
+	$("#duplicateButton").val(localization[globalInterfaceLanguage].buttonDuplicate);
 	$("#resetButton").val(localization[globalInterfaceLanguage].buttonReset);
 	$("#closeButton").val(localization[globalInterfaceLanguage].buttonClose);
 	$("#deleteButton").val(localization[globalInterfaceLanguage].buttonDelete);
@@ -3437,9 +3924,8 @@ function translate()
 	$('[data-type="txt_timezone"]').text(localization[globalInterfaceLanguage].timezone);
 	$('[data-type="txt_timezonePicker"]').text(localization[globalInterfaceLanguage].txtTimezonePicker);
 	$('[data-type="txt_timezoneTODO"]').text(localization[globalInterfaceLanguage].timezone);
-	$('#CalendarLoader').find('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader);
-	$('#ResizeLoader').find('.loaderInfo').text(localization[globalInterfaceLanguage].resizeLoader);
-	$('#CalendarLoaderTODO').find('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader);
+	$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader);
+	$('#CalendarLoaderTODO').children('.loaderInfo').text(localization[globalInterfaceLanguage].calendarLoader);
 	$('[data-type="repeat_event"]').text(localization[globalInterfaceLanguage].repeatBoxButton);
 	$('[data-type="editOptions"]').attr('value',localization[globalInterfaceLanguage].repeatBoxButton);
 	$('[data-type="editOptionsTODO"]').attr('value',localization[globalInterfaceLanguage].repeatBoxButton);
@@ -3452,59 +3938,46 @@ function translate()
 	$('[data-type="closeRepeat"]').val(localization[globalInterfaceLanguage].buttonClose);
 	$('[data-type="repeat_type"]').text(localization[globalInterfaceLanguage].repeatInterval);
 
-	translateAlerts();
+	$('#CalDavZAPPopup').find('[data-type="location_txt"]').text(localization[globalInterfaceLanguage].txtLocation);
+	$('#CalDavZAPPopup').find('[data-type="from_txt"]').text(localization[globalInterfaceLanguage].from);
+	$('#CalDavZAPPopup').find('[data-type="to_txt"]').text(localization[globalInterfaceLanguage].to);
+	$('#CalDavZAPPopup').find('[data-type="status_txt"]').text(localization[globalInterfaceLanguage].txtStatus);
+	$('#CalDavZAPPopup').find('[data-type="avail_txt"]').text(localization[globalInterfaceLanguage].eventAvailability);
+	$('#CalDavZAPPopup').find('[data-type="type_txt"]').text(localization[globalInterfaceLanguage].eventType);
+	$('#CalDavZAPPopup').find('[data-type="priority_txt"]').text(localization[globalInterfaceLanguage].txtPriority);
+	$('#CalDavZAPPopup').find('[data-type="calendar_txt"]').text(localization[globalInterfaceLanguage].txtEventCalendar);
+	$('#CalDavZAPPopup').find('[data-type="url_txt"]').text(localization[globalInterfaceLanguage].eventURL);
+	$('#CalDavZAPPopup').find('[data-type="note_txt"]').text(localization[globalInterfaceLanguage].txtNote);
+
+	translateEventAlerts();
+	translateTodoAlerts();
 }
 
 function selectActiveCalendar()
 {
 	var todoString = "";
-	$('#ResourceCalDAVList').find('.resourceCalDAV_item_selected').removeClass('resourceCalDAV_item_selected');
-	for(var i=0; i<globalResourceCalDAVList.collections.length;i++)
-		if(globalResourceCalDAVList.collections[i].uid!=undefined)
-		{
-			var inputResource = globalResourceCalDAVList.collections[i];
-			var par=inputResource.uid.split('/');
-			// set todo calendar as selected
-			if(globalSettings.calendarselected!='')
-			{
-				if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.calendarselected)
-				{
-					if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
-						$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
-				}
-				else if(inputResource.uid==globalSettings.calendarselected)
-				{
-					if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
-						$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
-				}
-				else if (typeof globalSettings.calendarselected=='object' && inputResource.uid.match(globalSettings.calendarselected)!=null)
-				{
-					if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
-						$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
-				}
-			}
-		}
-
-	if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+	if(!globalEventCollectionsLoading && globalSettingsSaving!='event')
+	{
+		$('#ResourceCalDAVList').find('.resourceCalDAV_item_selected').removeClass('resourceCalDAV_item_selected');
 		for(var i=0; i<globalResourceCalDAVList.collections.length;i++)
 			if(globalResourceCalDAVList.collections[i].uid!=undefined)
 			{
 				var inputResource = globalResourceCalDAVList.collections[i];
 				var par=inputResource.uid.split('/');
-				if(typeof globalCalendarSelected!='undefined' && globalCalendarSelected!=null && globalCalendarSelected!='')
+				// set todo calendar as selected
+				if(globalSettings.calendarselected.value!='')
 				{
-					globalSettings.calendarselected=globalCalendarSelected;
-					if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.calendarselected)
+					if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.calendarselected.value)
 					{
 						if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
 							$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
 					}
-					else if(inputResource.uid==globalSettings.calendarselected)
+					else if(inputResource.uid==globalSettings.calendarselected.value)
 					{
 						if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
 							$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
 					}
-					else if (typeof globalSettings.calendarselected=='object' && inputResource.uid.match(globalSettings.calendarselected)!=null)
+					else if (typeof globalSettings.calendarselected.value=='object' && inputResource.uid.match(globalSettings.calendarselected.value)!=null)
 					{
 						if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
 							$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
@@ -3512,63 +3985,66 @@ function selectActiveCalendar()
 				}
 			}
 
-	if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0  && $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item[data-id]:visible').length > 0)
-	{
-		var ui_d = $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item[data-id]:visible').eq(0).attr('data-id');
-		var part_u = ui_d.split('/');
-		globalSettings.calendarselected=part_u[part_u.length-3]+'/'+part_u[part_u.length-2]+'/';
-		$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item[data-id]:visible').eq(0).addClass('resourceCalDAV_item_selected');
+		if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+			for(var i=0; i<globalResourceCalDAVList.collections.length;i++)
+				if(globalResourceCalDAVList.collections[i].uid!=undefined)
+				{
+					var inputResource = globalResourceCalDAVList.collections[i];
+					var par=inputResource.uid.split('/');
+					if(typeof globalCalendarSelected!='undefined' && globalCalendarSelected!=null && globalCalendarSelected!='')
+					{
+						globalSettings.calendarselected.value=globalCalendarSelected;
+						if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.calendarselected.value)
+						{
+							if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+								$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
+						}
+						else if(inputResource.uid==globalSettings.calendarselected.value)
+						{
+							if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+								$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
+						}
+						else if (typeof globalSettings.calendarselected.value=='object' && inputResource.uid.match(globalSettings.calendarselected.value)!=null)
+						{
+							if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+								$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
+						}
+					}
+				}
+
+		if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0  && $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item[data-id]:visible').length > 0)
+		{
+			var ui_d = $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item[data-id]:visible').eq(0).attr('data-id');
+			var part_u = ui_d.split('/');
+			globalSettings.calendarselected.value=part_u[part_u.length-3]+'/'+part_u[part_u.length-2]+'/';
+			$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item[data-id]:visible').eq(0).addClass('resourceCalDAV_item_selected');
+		}
 	}
 
 	todoString = "TODO";
-	$('#ResourceCalDAVTODOList').find('.resourceCalDAVTODO_item_selected').removeClass('resourceCalDAV_item_selected');
-	for(var i=0; i<globalResourceCalDAVList.TodoCollections.length;i++)
-		if(globalResourceCalDAVList.TodoCollections[i].uid!=undefined)
-		{
-			var inputResource = globalResourceCalDAVList.TodoCollections[i];
-			var par=inputResource.uid.split('/');
-			// set todo calendar as selected
-			if(globalSettings.todocalendarselected!='')
-			{
-
-				if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.todocalendarselected)
-				{
-					if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
-						$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
-				}
-				else if(inputResource.uid==globalSettings.todocalendarselected)
-				{
-					if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
-						$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
-				}
-				else if (typeof globalSettings.todocalendarselected=='object' && inputResource.uid.match(globalSettings.todocalendarselected)!=null)
-				{
-					if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
-						$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
-				}
-			}
-		}
-
-	if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+	if(!globalTodoCollectionsLoading && globalSettingsSaving!='todo')
+	{
+		$('#ResourceCalDAVTODOList').find('.resourceCalDAV_item_selected').removeClass('resourceCalDAV_item_selected');
 		for(var i=0; i<globalResourceCalDAVList.TodoCollections.length;i++)
 			if(globalResourceCalDAVList.TodoCollections[i].uid!=undefined)
 			{
 				var inputResource = globalResourceCalDAVList.TodoCollections[i];
 				var par=inputResource.uid.split('/');
-				if(typeof globalTodoCalendarSelected!='undefined' && globalTodoCalendarSelected!=null && globalTodoCalendarSelected!='')
+				// set todo calendar as selected
+				if(globalSettings.todocalendarselected.value!='')
 				{
-					globalSettings.todocalendarselected=globalTodoCalendarSelected;
-					if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.todocalendarselected)
+
+					if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.todocalendarselected.value)
 					{
 						if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
 							$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
 					}
-					else if(inputResource.uid==globalSettings.todocalendarselected)
+					else if(inputResource.uid==globalSettings.todocalendarselected.value)
 					{
 						if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
 							$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
 					}
-					else if (typeof globalSettings.todocalendarselected=='object' && inputResource.uid.match(globalSettings.todocalendarselected)!=null)
+					else if (typeof globalSettings.todocalendarselected.value=='object' && inputResource.uid.match(globalSettings.todocalendarselected.value)!=null)
 					{
 						if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
 							$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
@@ -3576,12 +4052,40 @@ function selectActiveCalendar()
 				}
 			}
 
-	if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0 && $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item[data-id]:visible').length > 0)
-	{
-		var ui_d = $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item[data-id]:visible').eq(0).attr('data-id');
-		var part_u = ui_d.split('/');
-		globalSettings.todocalendarselected=part_u[part_u.length-3]+'/'+part_u[part_u.length-2]+'/';
-		$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item[data-id]:visible').eq(0).addClass('resourceCalDAV_item_selected');
+		if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+			for(var i=0; i<globalResourceCalDAVList.TodoCollections.length;i++)
+				if(globalResourceCalDAVList.TodoCollections[i].uid!=undefined)
+				{
+					var inputResource = globalResourceCalDAVList.TodoCollections[i];
+					var par=inputResource.uid.split('/');
+					if(typeof globalTodoCalendarSelected!='undefined' && globalTodoCalendarSelected!=null && globalTodoCalendarSelected!='')
+					{
+						globalSettings.todocalendarselected.value=globalTodoCalendarSelected;
+						if((par[par.length-3]+'/'+par[par.length-2]+'/')==globalSettings.todocalendarselected.value)
+						{
+							if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+								$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
+						}
+						else if(inputResource.uid==globalSettings.todocalendarselected.value)
+						{
+							if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+								$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
+						}
+						else if (typeof globalSettings.todocalendarselected.value=='object' && inputResource.uid.match(globalSettings.todocalendarselected.value)!=null)
+						{
+							if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0)
+								$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item:visible[data-id^="'+inputResource.uid+'"]').addClass('resourceCalDAV_item_selected');
+						}
+					}
+				}
+
+		if($('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAV_item_selected:visible').length == 0 && $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item[data-id]:visible').length > 0)
+		{
+			var ui_d = $('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item[data-id]:visible').eq(0).attr('data-id');
+			var part_u = ui_d.split('/');
+			globalSettings.todocalendarselected.value=part_u[part_u.length-3]+'/'+part_u[part_u.length-2]+'/';
+			$('#ResourceCalDAV'+todoString+'List').find('.resourceCalDAVTODO_item[data-id]:visible').eq(0).addClass('resourceCalDAV_item_selected');
+		}
 	}
 }
 
@@ -3642,8 +4146,7 @@ function rerenderCalendar(scrollChanged)
 {
 	if(scrollChanged)
 		$('#calendar').fullCalendar('render');
-	globalCalDAVQs.cache();
-	if(globalSettings.displayhiddenevents)
+	if(globalSettings.displayhiddenevents.value)
 		hideEventCalendars();
 }
 
@@ -3651,8 +4154,7 @@ function rerenderTodo(scrollChanged)
 {
 	if(scrollChanged)
 		$('#todoList').fullCalendar('render');
-	globalCalDAVTODOQs.cache();
-	if(globalSettings.displayhiddenevents)
+	if(globalSettings.displayhiddenevents.value)
 		hideTodoCalendars();
 }
 
@@ -3662,6 +4164,7 @@ function refetchCalendarEvents()
 	$('#calendar').fullCalendar('refetchEvents');
 	var afterScroll = $('#main').width()-$('#calendar').width();
 	rerenderCalendar(beforeScroll!=afterScroll);
+	globalCalDAVQs.cache();
 }
 
 function refetchTodoEvents()
@@ -3670,6 +4173,7 @@ function refetchTodoEvents()
 	$('#todoList').fullCalendar('refetchEvents');
 	var afterScroll = $('#mainTODO').width()-$('#todoList').width();
 	rerenderTodo(beforeScroll!=afterScroll);
+	globalCalDAVTODOQs.cache();
 }
 
 function initCalDavDatepicker(element)
@@ -3684,23 +4188,23 @@ function initCalDavDatepicker(element)
 				prevText: '',
 				nextText: '',
 				monthNamesShort: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
-				dateFormat: globalSettings.datepickerformat, defaultDate: null, minDate: '-120y', maxDate: '+120y', yearRange: 'c-120:c+120', showAnim: '',
-				firstDay: globalSettings.datepickerfirstdayofweek,
-				weekendDays: globalSettings.weekenddays,
+				dateFormat: globalSettings.datepickerformat.value, defaultDate: null, minDate: '-120y', maxDate: '+120y', yearRange: 'c-120:c+120', showAnim: '',
+				firstDay: globalSettings.datepickerfirstdayofweek.value,
+				weekendDays: globalSettings.weekenddays.value,
 				beforeShow: function(input, inst)	// set the datepicker value if the date is out of range (min/max)
 				{
 					inst.dpDiv.addClass('ui-datepicker-simple');
 
 					var valid=true;
-					try {var currentDate=$.datepicker.parseDate(globalSettings.datepickerformat, $(this).val())}
+					try {var currentDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, $(this).val())}
 					catch (e){valid=false}
 					if(valid==true && currentDate!=null)
 					{
-						var minDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat).datepicker('option', 'minDate');
-						var maxDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat).datepicker('option', 'maxDate');
+						var minDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat.value).datepicker('option', 'minDate');
+						var maxDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat.value).datepicker('option', 'maxDate');
 
-						var minDate=$.datepicker.parseDate(globalSettings.datepickerformat, minDateText);
-						var maxDate=$.datepicker.parseDate(globalSettings.datepickerformat, maxDateText);
+						var minDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, minDateText);
+						var maxDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, maxDateText);
 
 						if(currentDate<minDate)
 							$(this).val(minDateText);
@@ -3717,23 +4221,23 @@ function initCalDavDatepicker(element)
 				onClose: function(dateText, inst)	// set the datepicker value if the date is out of range (min/max) and reset the value to proper format (for example 'yy-mm-dd' allows '2000-1-1' -> we need to reset the value to '2000-01-01')
 				{
 					var valid=true;
-					try {var currentDate=$.datepicker.parseDate(globalSettings.datepickerformat, dateText)}
+					try {var currentDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, dateText)}
 					catch (e){valid=false}
 
 					if(valid==true && currentDate!=null)
 					{
-						var minDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat).datepicker('option', 'minDate');
-						var maxDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat).datepicker('option', 'maxDate');
+						var minDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat.value).datepicker('option', 'minDate');
+						var maxDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat.value).datepicker('option', 'maxDate');
 
-						var minDate=$.datepicker.parseDate(globalSettings.datepickerformat, minDateText);
-						var maxDate=$.datepicker.parseDate(globalSettings.datepickerformat, maxDateText);
+						var minDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, minDateText);
+						var maxDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, maxDateText);
 
 						if(currentDate<minDate)
 							$(this).val(minDateText);
 						else if(currentDate>maxDate)
 							$(this).val(maxDateText);
 						else
-							$(this).val($.datepicker.formatDate(globalSettings.datepickerformat, currentDate));
+							$(this).val($.datepicker.formatDate(globalSettings.datepickerformat.value, currentDate));
 					}
 
 					// Timepicker hack (prevent IE to re-open the datepicker on date click+focus)
@@ -3767,25 +4271,25 @@ function initCalDavDatepicker(element)
 				// handle onblur event because datepicker can be already closed
 				// note: because onblur is called more than once we can handle it only if there is a value change!
 				var valid=true;
-				try {var currentDate=$.datepicker.parseDate(globalSettings.datepickerformat, $(this).val())}
+				try {var currentDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, $(this).val())}
 				catch (e) {valid=false}
 				if($(this).val()=='')
 					valid=false;
-				
-				if(valid==true && $(this).val()!=$.datepicker.formatDate(globalSettings.datepickerformat, currentDate))
+
+				if(valid==true && $(this).val()!=$.datepicker.formatDate(globalSettings.datepickerformat.value, currentDate))
 				{
-					var minDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat).datepicker('option', 'minDate');
-					var maxDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat).datepicker('option', 'maxDate');
-					
-					var minDate=$.datepicker.parseDate(globalSettings.datepickerformat, minDateText);
-					var maxDate=$.datepicker.parseDate(globalSettings.datepickerformat, maxDateText);
-					
+					var minDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat.value).datepicker('option', 'minDate');
+					var maxDateText=$(this).datepicker('option', 'dateFormat', globalSettings.datepickerformat.value).datepicker('option', 'maxDate');
+
+					var minDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, minDateText);
+					var maxDate=$.datepicker.parseDate(globalSettings.datepickerformat.value, maxDateText);
+
 					if(currentDate<minDate)
 						$(this).val(minDateText);
 					else if(currentDate>maxDate)
 						$(this).val(maxDateText);
 					else
-						$(this).val($.datepicker.formatDate(globalSettings.datepickerformat, currentDate));
+						$(this).val($.datepicker.formatDate(globalSettings.datepickerformat.value, currentDate));
 				}
 
 				if($(this).attr('id')=='date_from')
@@ -3794,16 +4298,16 @@ function initCalDavDatepicker(element)
 					var validD=true, prevDate = '';
 					if(globalPrevDate!='')
 						prevDate = new Date(globalPrevDate.getTime());
-					try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val())}
+					try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val())}
 					catch (e){validD=false}
 
 					if($('#date_from').val()!='' && tmptime.match(globalTimePre)!=null && validD)
 					{
-						var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val());
+						var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val());
 						var datetime_to=$.fullCalendar.formatDate(dateFrom, 'yyyy-MM-dd');
 						var aDate=new Date(Date.parse("01/02/1990, "+$('#time_from').val()));
 						var time_from=$.fullCalendar.formatDate(aDate, 'HH:mm:ss');
-						
+
 						var checkD=$.fullCalendar.parseDate(datetime_to+'T'+time_from);
 						globalPrevDate = new Date(checkD.getTime());
 					}
@@ -3816,20 +4320,20 @@ function initCalDavDatepicker(element)
 						prevDate.setSeconds(0);
 						prevDate.setMilliseconds(0);
 						var diffDate  = globalPrevDate.getTime() - prevDate.getTime();
-						
-						try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_to').val())}
+
+						try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_to').val())}
 						catch (e){validD=false}
 						if($('#date_to').val()!='' && $('#time_to').val().match(globalTimePre)!=null && validD)
 						{
-							var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_to').val());
+							var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_to').val());
 							var datetime_to=$.fullCalendar.formatDate(dateTo, 'yyyy-MM-dd');
 							var aDateT=new Date(Date.parse("01/02/1990, "+$('#time_to').val()));
 							var time_to=$.fullCalendar.formatDate(aDateT, 'HH:mm:ss');
 							var checkDT=$.fullCalendar.parseDate(datetime_to+'T'+time_to);
 							var toDate = new Date(checkDT.getTime() + diffDate);
-							var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat, toDate);
+							var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat.value, toDate);
 							$('#date_to').val(formattedDate_to);
-							$('#time_to').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+							$('#time_to').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 						}
 					}
 				}
@@ -3839,21 +4343,21 @@ function initCalDavDatepicker(element)
 					var validD=true, prevDate = '';
 					if(globalPrevDate!='')
 						prevDate = new Date(globalPrevDate.getTime());
-					try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val())}
+					try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val())}
 					catch (e){validD=false}
 					if($('#date_fromTODO').val()!='' && tmptime.match(globalTimePre)!=null && validD)
 					{
-						var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val());
+						var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val());
 						var datetime_to=$.fullCalendar.formatDate(dateFrom, 'yyyy-MM-dd');
 						var aDate=new Date(Date.parse("01/02/1990, "+$('#time_fromTODO').val()));
 						var time_from=$.fullCalendar.formatDate(aDate, 'HH:mm:ss');
-						
+
 						var checkD=$.fullCalendar.parseDate(datetime_to+'T'+time_from);
 						globalPrevDate = new Date(checkD.getTime());
 					}
 					else
 						globalPrevDate='';
-					
+
 					if($(this).attr('id')=='date_fromTODO' && prevDate!='' && globalPrevDate!='')
 					{
 						globalPrevDate.setSeconds(0);
@@ -3861,20 +4365,20 @@ function initCalDavDatepicker(element)
 						prevDate.setSeconds(0);
 						prevDate.setMilliseconds(0);
 						var diffDate  = globalPrevDate.getTime() - prevDate.getTime();
-						
-						try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_toTODO').val())}
+
+						try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_toTODO').val())}
 						catch (e){validD=false}
 						if($('#date_toTODO').val()!='' && $('#time_toTODO').val().match(globalTimePre)!=null && validD)
 						{
-							var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_toTODO').val());
+							var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_toTODO').val());
 							var datetime_to=$.fullCalendar.formatDate(dateTo, 'yyyy-MM-dd');
 							var aDateT=new Date(Date.parse("01/02/1990, "+$('#time_toTODO').val()));
 							var time_to=$.fullCalendar.formatDate(aDateT, 'HH:mm:ss');
 							var checkDT=$.fullCalendar.parseDate(datetime_to+'T'+time_to);
 							var toDate = new Date(checkDT.getTime() + diffDate);
-							var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat, toDate);
+							var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat.value, toDate);
 							$('#date_toTODO').val(formattedDate_to);
-							$('#time_toTODO').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+							$('#time_toTODO').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 						}
 					}
 				}
@@ -3884,11 +4388,11 @@ function initCalDavDatepicker(element)
 				if(!$(this).prop('readonly') && !$(this).prop('disabled'))
 				{
 					var valid=false;
-					
+
 					if($(this).val()!='')
 					{
 						valid=true;
-						try {$.datepicker.parseDate(globalSettings.datepickerformat, $(this).val())}
+						try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $(this).val())}
 						catch (e){valid=false}
 					}
 
@@ -3926,20 +4430,20 @@ function initCalDavDatepicker(element)
 					}
 					else
 						$(this).parent().find('img').css('display','inline');
-					
+
 					if($(this).attr('id')=='repeat_end_date')
 					{
 						if(valid && $('#date_from').val()!='')
 						{
 							$(this).parent().find('img').css('display','inline');
-							var today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val());
+							var today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val());
 							if(today!=null)
 							{
-								var repeatEnd = $.datepicker.parseDate(globalSettings.datepickerformat, $(this).val());
+								var repeatEnd = $.datepicker.parseDate(globalSettings.datepickerformat.value, $(this).val());
 								if(repeatEnd!=null)
 									if(repeatEnd>=today)
 										$(this).parent().find('img').css('display','none');
-								
+
 							}
 						}
 					}
@@ -3948,27 +4452,27 @@ function initCalDavDatepicker(element)
 						if($('#date_fromTODO').is(':visible') && $('#date_fromTODO').val()!='')
 						{
 							$(this).parent().find('img').css('display','inline');
-							var today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val());
+							var today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val());
 							if(today!=null)
 							{
-								var repeatEnd = $.datepicker.parseDate(globalSettings.datepickerformat, $(this).val());
+								var repeatEnd = $.datepicker.parseDate(globalSettings.datepickerformat.value, $(this).val());
 								if(repeatEnd!=null)
 									if(repeatEnd>=today)
 										$(this).parent().find('img').css('display','none');
-								
+
 							}
 						}
 						else if($('#date_toTODO').is(':visible') && $('#date_toTODO').val()!='')
 						{
 							$(this).parent().find('img').css('display','inline');
-							var today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_toTODO').val());
+							var today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_toTODO').val());
 							if(today!=null)
 							{
-								var repeatEnd = $.datepicker.parseDate(globalSettings.datepickerformat, $(this).val());
+								var repeatEnd = $.datepicker.parseDate(globalSettings.datepickerformat.value, $(this).val());
 								if(repeatEnd!=null)
 									if(repeatEnd>=today)
 										$(this).parent().find('img').css('display','none');
-								
+
 							}
 						}
 					}
@@ -4010,7 +4514,7 @@ function initCalDavTimepicker(element)
 		{
 			if(tmptime.indexOf(':')==-1)
 			{
-				if(globalSettings.ampmformat)
+				if(globalSettings.ampmformat.value)
 				{
 					if(tmptime.indexOf(' ')==-1)
 						tmptime=tmptime.substring(0,2)+':'+tmptime.substring(2,4)+' '+tmptime.substring(4,6);
@@ -4020,7 +4524,7 @@ function initCalDavTimepicker(element)
 			}
 			else
 			{
-				if(globalSettings.ampmformat)
+				if(globalSettings.ampmformat.value)
 				{
 					var partA=tmptime.split(':')[0];
 					partA=parseInt(partA,10);
@@ -4050,16 +4554,16 @@ function initCalDavTimepicker(element)
 			var validD=true, prevDate = '';
 			if(globalPrevDate!='')
 				prevDate = new Date(globalPrevDate.getTime());
-				
-			try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val())}
+
+			try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val())}
 			catch (e){validD=false}
 			if(tmptime.match(globalTimePre)!=null && validD)
 			{
-				var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val());
+				var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val());
 				var datetime_to=$.fullCalendar.formatDate(dateFrom, 'yyyy-MM-dd');
 				var aDate=new Date(Date.parse("01/02/1990, "+$('#time_from').val()));
 				var time_from=$.fullCalendar.formatDate(aDate, 'HH:mm:ss');
-				
+
 				var checkD=$.fullCalendar.parseDate(datetime_to+'T'+time_from);
 				globalPrevDate = new Date(checkD.getTime());
 			}
@@ -4072,20 +4576,20 @@ function initCalDavTimepicker(element)
 				prevDate.setSeconds(0);
 				prevDate.setMilliseconds(0);
 				var diffDate  = globalPrevDate.getTime() - prevDate.getTime();
-				
-				try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_to').val())}
+
+				try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_to').val())}
 				catch (e){validD=false}
 				if($('#date_to').val()!='' && $('#time_to').val().match(globalTimePre)!=null && validD)
 				{
-					var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_to').val());
+					var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_to').val());
 					var datetime_to=$.fullCalendar.formatDate(dateTo, 'yyyy-MM-dd');
 					var aDateT=new Date(Date.parse("01/02/1990, "+$('#time_to').val()));
 					var time_to=$.fullCalendar.formatDate(aDateT, 'HH:mm:ss');
 					var checkDT=$.fullCalendar.parseDate(datetime_to+'T'+time_to);
 					var toDate = new Date(checkDT.getTime() + diffDate);
-					var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat, toDate);
+					var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat.value, toDate);
 					$('#date_to').val(formattedDate_to);
-					$('#time_to').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+					$('#time_to').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 				}
 			}
 		}
@@ -4094,21 +4598,21 @@ function initCalDavTimepicker(element)
 			var validD=true, prevDate = '';
 			if(globalPrevDate!='')
 				prevDate = new Date(globalPrevDate.getTime());
-			try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val())}
+			try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val())}
 			catch (e){validD=false}
 			if(tmptime.match(globalTimePre)!=null && validD)
 			{
-				var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val());
+				var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val());
 				var datetime_to=$.fullCalendar.formatDate(dateFrom, 'yyyy-MM-dd');
 				var aDate=new Date(Date.parse("01/02/1990, "+$('#time_fromTODO').val()));
 				var time_from=$.fullCalendar.formatDate(aDate, 'HH:mm:ss');
-				
+
 				var checkD=$.fullCalendar.parseDate(datetime_to+'T'+time_from);
 				globalPrevDate = new Date(checkD.getTime());
 			}
 			else
 				globalPrevDate='';
-			
+
 			if($(this).attr('id')=='time_fromTODO' && prevDate!='' && globalPrevDate!='')
 			{
 				globalPrevDate.setSeconds(0);
@@ -4116,19 +4620,19 @@ function initCalDavTimepicker(element)
 				prevDate.setSeconds(0);
 				prevDate.setMilliseconds(0);
 				var diffDate  = globalPrevDate.getTime() - prevDate.getTime();
-				try {$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_toTODO').val())}
+				try {$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_toTODO').val())}
 				catch (e){validD=false}
 				if($('#date_toTODO').val()!='' && $('#time_toTODO').val().match(globalTimePre)!=null && validD)
 				{
-					var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_toTODO').val());
+					var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_toTODO').val());
 					var datetime_to=$.fullCalendar.formatDate(dateTo, 'yyyy-MM-dd');
 					var aDateT=new Date(Date.parse("01/02/1990, "+$('#time_toTODO').val()));
 					var time_to=$.fullCalendar.formatDate(aDateT, 'HH:mm:ss');
 					var checkDT=$.fullCalendar.parseDate(datetime_to+'T'+time_to);
 					var toDate = new Date(checkDT.getTime() + diffDate);
-					var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat, toDate);
+					var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat.value, toDate);
 					$('#date_toTODO').val(formattedDate_to);
-					$('#time_toTODO').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+					$('#time_toTODO').val($.fullCalendar.formatDate(toDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 				}
 			}
 		}
@@ -4144,7 +4648,6 @@ function initCalDavTimepicker(element)
 			else
 				var result_time=(parseInt(formattedTime.split(':')[0],10)+(formattedTime.substr(-2)=='pm' ? 12 : 0)).pad(2)+parseInt(formattedTime.split(':')[1],10).pad(2);
 			$(this).parent().find('img').css('display', 'none');
-			//console.log('original time from user: "'+tmptime+'", result_time [24 format]: "'+result_time+'"');
 		}
 		else $(this).parent().find('img').css('display', 'inline');*/
 		if($(this).attr('id')!='completedOnTime')
@@ -4197,20 +4700,20 @@ function initCalDavTimepicker(element)
 			if(($('#time_from'+todoString).parent().find('img').css('display')=='none') && ($('#date_from'+todoString).parent().find('img').css('display')=='none')
 				&& ($('#date_to'+todoString).parent().find('img').css('display')=='none'))
 			{
-				var inputDate=$.datepicker.parseDate(globalSettings.datepickerformat,$('#date_from'+todoString).val());
+				var inputDate=$.datepicker.parseDate(globalSettings.datepickerformat.value,$('#date_from'+todoString).val());
 				var formatString=inputDate.getFullYear()+'/'+(inputDate.getMonth()<10 ? '0' : '')+(inputDate.getMonth()+1)+'/'+(inputDate.getDate()<10 ? '0' : '')+inputDate.getDate();
 
 				var timeDate=new Date(Date.parse(formatString+", "+$('#time_from'+todoString).val()));
 				now=new Date(timeDate.getTime());
 
-				var inputDate2=$.datepicker.parseDate(globalSettings.datepickerformat,$('#date_to'+todoString).val())
+				var inputDate2=$.datepicker.parseDate(globalSettings.datepickerformat.value,$('#date_to'+todoString).val())
 				var formatString2=inputDate2.getFullYear()+'/'+(inputDate2.getMonth()<10 ? '0' : '')+(inputDate2.getMonth()+1)+'/'+(inputDate2.getDate()<10 ? '0' : '')+inputDate2.getDate();
 
 				var timeDateFrom=new Date(Date.parse(formatString2+", "+$('#time_from'+todoString).val()));
 				if(formatString==formatString2)
 				{
 					now.setHours(now.getHours()+1);
-					var newTestValue = new Date(Date.parse(formatString2+", "+$.fullCalendar.formatDate(now, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm'))));
+					var newTestValue = new Date(Date.parse(formatString2+", "+$.fullCalendar.formatDate(now, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm'))));
 					if(newTestValue < timeDateFrom)
 					{
 						newTestValue.setHours(23);
@@ -4228,7 +4731,189 @@ function initCalDavTimepicker(element)
 				globalPrevDate.setMinutes(now.getMinutes());
 			}
 		}
-		$(this).val($.fullCalendar.formatDate(now, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+		$(this).val($.fullCalendar.formatDate(now, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 		$(this).keyup();
 	});
+}
+
+function duplicateEvent(todoSel)
+{
+	if(todoSel=='TODO')
+	{
+		startEditModeTodo();
+		$('#showTODO').val('');
+		$('#uidTODO').val('');
+		$('#vcalendarHashTODO').val('');
+		$('#vcalendarUIDTODO').val('');
+		$('#etagTODO').val('');
+		$('#todoInEdit').val('true');
+		$('#deleteTODO').hide();
+		$('#resetTODO').hide();
+		$('#editTODO').hide();
+		$('#duplicateTODO').hide();
+		$('#editOptionsButtonTODO').hide();
+	}
+	else
+	{
+		startEditModeEvent();
+		$('#uid').val('');
+		$('#show').val('');
+		$('#etag').val('');
+		$('#vcalendarHash').val('');
+		$('#vcalendarUID').val('');
+		$('#editButton').hide();
+		$('#duplicateButton').hide();
+		$('#editOptionsButton').hide();
+		$('#resetButton').hide();
+		$('#deleteButton').hide();
+	}
+}
+
+function showNewEvent(todoSel)
+{
+	if($('#ResourceCalDAV'+todoSel+'List .resourceCalDAV'+todoSel+'_item:visible').not('.resourceCalDAV_item_ro').length==0)
+		return false;
+
+	$('#timezonePicker'+todoSel).prop('disabled', true);
+	if(todoSel=='TODO')
+	{
+		$('#TodoDisabler').fadeIn(globalEditorFadeAnimation);
+		showTodoForm(null, 'new');
+		$('#nameTODO').focus();
+	}
+	else
+	{
+		$('#show').val('');
+		$('#CAEvent').hide();
+
+		$('#EventDisabler').fadeIn(globalEditorFadeAnimation, function(){
+			showEventForm(new Date(), true, null, null, 'new', '');
+			$('#name').focus();
+		});
+	}
+}
+
+function showEventPopup(e, event)
+{
+	var from;
+	var to;
+	var status;
+	var avail;
+	var classType;
+	var priority;
+	var resource = globalResourceCalDAVList.getCollectionByUID(event.res_id);
+
+	if(event.allDay)
+	{
+		from = $.fullCalendar.formatDate(event.realStart, dateFormatJqToFc(globalSettings.datepickerformat.value));
+		to = $.fullCalendar.formatDate(event.realEnd, dateFormatJqToFc(globalSettings.datepickerformat.value));
+	}
+	else
+	{
+		from = $.fullCalendar.formatDate(event.realStart, dateFormatJqToFc(globalSettings.datepickerformat.value) + '\'&emsp;\'' + (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm'));
+		to = $.fullCalendar.formatDate(event.realEnd, dateFormatJqToFc(globalSettings.datepickerformat.value) + '\'&emsp;\'' + (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm'));
+	}
+
+	switch(event.status){
+		case 'NONE':
+			status = localization[globalInterfaceLanguage].txtStatusNone;
+			break;
+		case 'TENTATIVE':
+			status = localization[globalInterfaceLanguage].txtStatusTentative;
+			break;
+		case 'CONFIRMED':
+			status = localization[globalInterfaceLanguage].txtStatusConfirmed;
+			break;
+		case 'CANCELLED':
+			status = localization[globalInterfaceLanguage].txtStatusCancelled;
+			break;
+		default:
+			status = localization[globalInterfaceLanguage].txtStatusNone;
+			break;
+	}
+
+	switch(event.avail){
+		case 'OPAQUE':
+			avail = localization[globalInterfaceLanguage].eventAvailabilityBusy;
+			break;
+		case 'TRANSPARENT':
+			avail = localization[globalInterfaceLanguage].eventAvailabilityFree;
+			break;
+		default:
+			avail = localization[globalInterfaceLanguage].eventAvailabilityFree;
+			break;
+	}
+
+	switch(event.classType){
+		case 'PUBLIC':
+			classType = localization[globalInterfaceLanguage].eventTypePublic;
+			break;
+		case 'CONFIDENTIAL':
+			classType = localization[globalInterfaceLanguage].eventTypeConfidential;
+			break;
+		case 'PRIVATE':
+			classType = localization[globalInterfaceLanguage].eventTypePrivate;
+			break;
+		default:
+			classType = localization[globalInterfaceLanguage].eventTypePublic;
+			break;
+	}
+
+	var prior = parseInt(event.priority,10);
+	if(prior==5)
+		priority = localization[globalInterfaceLanguage].txtPriorityMedium;
+	else if(prior>5 && prior<10)
+		priority = localization[globalInterfaceLanguage].txtPriorityLow;
+	else if(prior<5 && prior>0)
+		priority = localization[globalInterfaceLanguage].txtPriorityHigh;
+	else
+		priority = localization[globalInterfaceLanguage].txtPriorityNone;
+
+	// prevent displaying of extremely long texts in the event preview box
+	var maxPreviewTextLength=512;
+
+	if(event.title=='')
+		$('#CalDavZAPPopup').find('[data-type="name"]').parent().css('display','none');
+	else
+		$('#CalDavZAPPopup').find('[data-type="name"]').text((event.title.length>maxPreviewTextLength ? event.title.substr(0, maxPreviewTextLength-4)+' ...' : event.title)).parent().css('display','');
+	if(event.location=='')
+		$('#CalDavZAPPopup').find('[data-type="location"]').parent().css('display','none');
+	else
+		$('#CalDavZAPPopup').find('[data-type="location"]').text(event.location).parent().css('display','');
+	if(event.hrefUrl=='')
+		$('#CalDavZAPPopup').find('[data-type="url"]').parent().css('display','none');
+	else
+		$('#CalDavZAPPopup').find('[data-type="url"]').text(event.hrefUrl).parent().css('display','');
+	if(event.note=='')
+		$('#CalDavZAPPopup').find('[data-type="note"]').parent().css('display','none');
+	else
+		$('#CalDavZAPPopup').find('[data-type="note"]').text((event.note.length>maxPreviewTextLength ? event.note.substr(0, maxPreviewTextLength-4)+' ...' : event.note)).parent().css('display','');
+
+
+
+	$('#CalDavZAPPopup').find('[data-type="from"]').html(from);
+	$('#CalDavZAPPopup').find('[data-type="to"]').html(to);
+	$('#CalDavZAPPopup').find('[data-type="status"]').text(status);
+	$('#CalDavZAPPopup').find('[data-type="avail"]').text(avail);
+	$('#CalDavZAPPopup').find('[data-type="type"]').text(classType);
+	$('#CalDavZAPPopup').find('[data-type="priority"]').text(priority);
+	$('#CalDavZAPPopup').find('[data-type="calendar"]').text(resource.displayvalue);
+
+	$('#CalDavZAPPopup').css({'opacity':0,'display':'block','top':0,'left':0});
+	$('#CalDavZAPPopupColor').css('height',0);
+	$('#CalDavZAPPopup').css('top', Math.max(e.pageY-$('#CalDavZAPPopup').outerHeight()-10, 30));
+	$('#CalDavZAPPopup').css('left', Math.max(Math.min(e.pageX, $(window).width()-$('#CalDavZAPPopup').outerWidth()-50)+20, 30));
+	$('#CalDavZAPPopupColor').css({'background-color':resource.ecolor, 'height':$('#CalDavZAPPopup').height()});
+	$('#CalDavZAPPopup').animate({'opacity':1}, 100);
+}
+
+function moveEventPopup(e)
+{
+	$('#CalDavZAPPopup').css('top', Math.max(e.pageY-$('#CalDavZAPPopup').outerHeight()-10, 30));
+	$('#CalDavZAPPopup').css('left', Math.max(Math.min(e.pageX, $(window).width()-$('#CalDavZAPPopup').outerWidth()-50)+20, 30));
+}
+
+function hideEventPopup()
+{
+	$('#CalDavZAPPopup').css('display', 'none');
 }

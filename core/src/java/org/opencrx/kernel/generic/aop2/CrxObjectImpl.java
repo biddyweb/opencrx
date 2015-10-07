@@ -52,19 +52,12 @@
  */
 package org.opencrx.kernel.generic.aop2;
 
-import javax.jdo.JDOHelper;
-import javax.jdo.PersistenceManager;
-
-import org.opencrx.kernel.generic.jmi1.CrxObject;
+import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.generic.jmi1.EnableDisableCrxObjectParams;
 import org.opencrx.kernel.generic.jmi1.EnableDisableCrxObjectResult;
-import org.opencrx.kernel.utils.Utils;
-import org.openmdx.base.accessor.jmi.cci.RefObject_1_0;
+import org.openmdx.base.accessor.jmi.cci.JmiServiceException;
 import org.openmdx.base.aop2.AbstractObject;
 import org.openmdx.base.exception.ServiceException;
-import org.openmdx.base.persistence.cci.UserObjects;
-import org.w3c.spi2.Datatypes;
-import org.w3c.spi2.Structures;
 
 /**
  * CrxObjectImpl
@@ -90,93 +83,6 @@ public class CrxObjectImpl
     	super(same, next);
     }
 
-	/**
-	 * Counter
-	 *
-	 */
-	public static class Counter {
-
-		public Counter(
-			int initialValue
-		) {
-			this.counter = initialValue;
-		}
-		
-		public void increment(
-		) {
-			this.counter++;
-		}
-		
-		public int getValue(
-		) {
-			return this.counter;
-		}
-		
-		private int counter;
-
-	}
-    
-	/**
-	 * Traverse recursively composites and disable / enable.
-	 * 
-	 * @param rootObj
-	 * @param disable
-	 * @param reason
-	 * @param counter
-	 * @return
-	 */
-	protected short traverse(
-		final CrxObject rootObj,
-		final boolean disable,
-		final String reason,
-		final Counter counter
-	) {
-		short status = 0;
-		try {
-			Utils.traverseObjectTree(
-				rootObj,
-				null, // referenceFilter
-				new Utils.TraverseObjectTreeCallback() {
-					@Override
-					public Object visit(
-						RefObject_1_0 object,
-						Object context
-					) throws ServiceException {
-						if(object instanceof CrxObject) {
-							CrxObject crxObject = (CrxObject)object;
-							if(disable) {
-								if(!Boolean.TRUE.equals(crxObject.isDisabled())) {								
-									crxObject.setDisabled(true);
-									crxObject.setDisabledReason(reason);
-									if(context instanceof Counter) {
-										((Counter)context).increment();
-									}
-								}
-							} else {
-								if(Boolean.TRUE.equals(crxObject.isDisabled())) {
-									crxObject.setDisabled(false);									
-									if(context instanceof Counter) {
-										((Counter)context).increment();
-									}
-								}
-							}
-						}
-						if(counter.getValue() % 100 == 0) {
-							PersistenceManager pm = JDOHelper.getPersistenceManager(object);
-							pm.currentTransaction().commit();
-							pm.currentTransaction().begin();
-						}
-						return context;
-					}
-				},
-				counter
-			);
-		} catch(Exception e) {
-			status = -1;
-		}
-		return status;
-	}
-
     /**
      * Disable CrxObject.
      * 
@@ -186,43 +92,15 @@ public class CrxObjectImpl
     public EnableDisableCrxObjectResult disableCrxObject(
     	EnableDisableCrxObjectParams in
     ) {
-    	// Separate pm allows batching
-		PersistenceManager pm = this.sameManager().getPersistenceManagerFactory().getPersistenceManager(
-			UserObjects.getPrincipalChain(this.sameManager()).toString(),
-			null
-		);
-		Counter counter = new Counter(0);
-		short status = 0;
-		try {
-			pm.currentTransaction().begin();
-			CrxObject rootObj = (CrxObject)pm.getObjectById(this.sameObject().refGetPath());		
-			if(in.getMode() == 0) {
-				if(!Boolean.TRUE.equals(rootObj.isDisabled())) {
-					rootObj.setDisabled(true);
-					rootObj.setDisabledReason(in.getReason());
-					counter.increment();
-				}
-			} else {
-				status = this.traverse(
-					(CrxObject)pm.getObjectById(this.sameObject().refGetPath()), 
-					true, 
-					in.getReason(),
-					counter
-				);
-			}
-			pm.currentTransaction().commit();
-		} catch(Exception e) {
-			status = -1;
-			try {
-				pm.currentTransaction().rollback();
-			} catch(Exception e0) {}
-		}
-		pm.close();
-        return Structures.create(
-        	EnableDisableCrxObjectResult.class, 
-        	Datatypes.member(EnableDisableCrxObjectResult.Member.status, status),
-        	Datatypes.member(EnableDisableCrxObjectResult.Member.count, counter.getValue())
-        );
+    	try {
+	    	return Base.getInstance().disableCrxObject(
+	    		this.sameObject(), 
+	    		in.getMode(), 
+	    		in.getReason()
+	    	);
+    	} catch(ServiceException e) {
+    		throw new JmiServiceException(e);
+    	}
     }
 
     /**
@@ -234,42 +112,15 @@ public class CrxObjectImpl
     public EnableDisableCrxObjectResult enableCrxObject(
     	EnableDisableCrxObjectParams in
     ) {
-    	// Separate pm allows batching
-		PersistenceManager pm = this.sameManager().getPersistenceManagerFactory().getPersistenceManager(
-			UserObjects.getPrincipalChain(this.sameManager()).toString(),
-			null
-		);
-		Counter counter = new Counter(0);
-		short status = 0;
-		try {
-			pm.currentTransaction().begin();
-			CrxObject object = (CrxObject)pm.getObjectById(this.sameObject().refGetPath());		
-			if(in.getMode() == 0) {
-				if(Boolean.TRUE.equals(object.isDisabled())) {
-					object.setDisabled(false);
-					counter.increment();
-				}
-			} else {
-				status = this.traverse(
-					object, 
-					false, 
-					null, 
-					counter
-				);
-			}
-			pm.currentTransaction().commit();
-		} catch(Exception e) {
-			status = -1;
-			try {
-				pm.currentTransaction().rollback();
-			} catch(Exception e0) {}
-		}	
-		pm.close();
-        return Structures.create(
-        	EnableDisableCrxObjectResult.class, 
-        	Datatypes.member(EnableDisableCrxObjectResult.Member.status, status),
-        	Datatypes.member(EnableDisableCrxObjectResult.Member.count, counter.getValue())
-        );
+    	try {
+    		return Base.getInstance().enableCrxObject(
+	    		this.sameObject(), 
+	    		in.getMode(), 
+	    		in.getReason()
+    		);
+    	} catch(ServiceException e) {
+    		throw new JmiServiceException(e);
+    	}
     }
 
 }

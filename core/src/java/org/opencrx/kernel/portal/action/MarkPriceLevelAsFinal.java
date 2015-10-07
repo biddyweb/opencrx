@@ -134,13 +134,13 @@ public class MarkPriceLevelAsFinal extends BoundAction {
 	                    try {
 	                    	maxItems = Integer.parseInt(requestParameters.get(Action.PARAMETER_SIZE)[0]);
 	                    } catch(Exception e) {}
-	                    Collection<Object> priceLevels = new ArrayList<Object>();
+	                    Collection<Object> objects = new ArrayList<Object>();
 	                    // Set alert states
 	            		if(maxItems < Integer.MAX_VALUE) {
             				// Selected objects
             				if(selectedObjectIdentities != null && !selectedObjectIdentities.isEmpty()) {
             					for(Path identity: selectedObjectIdentities) {
-            						priceLevels.add(
+            						objects.add(
             							pm.getObjectById(identity)
             						);
             					}
@@ -150,7 +150,7 @@ public class MarkPriceLevelAsFinal extends BoundAction {
             					for(UiGrid.GridRow row: rows) {
             						List<Object> cells = row.getCells();
             						if(cells != null && !cells.isEmpty()) {
-            							priceLevels.add(
+            							objects.add(
             								((ObjectReferenceValue)cells.get(0)).getObject()
             							);
             						}
@@ -159,9 +159,9 @@ public class MarkPriceLevelAsFinal extends BoundAction {
             			}
 	            		try {
 		            		pm.currentTransaction().begin();
-		                    for(Object priceLevel: priceLevels) {
-		                    	if(priceLevel instanceof AbstractPriceLevel) {		                    		
-	                    			((AbstractPriceLevel)priceLevel).setFinal(true);
+		                    for(Object object: objects) {
+		                    	if(object instanceof AbstractPriceLevel) {		                    		
+	                    			((AbstractPriceLevel)object).setFinal(true);
 		                    	}
 		                    }
             				pm.currentTransaction().commit();

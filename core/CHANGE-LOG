@@ -1,4 +1,105 @@
 ﻿==============================================================================
+Version 3.1.0                                                       2015-10-05
+==============================================================================
+
+1.    NEW FEATURES
+      
+      CR10012770
+      PortalExtension: scripting support. Support for scripted method 
+      implementations of portal extension. Example: Janino-compliant scripts
+      located in /WEB-INF/config/scripts/<name>.script can be loaded with
+      
+      getQueryMethod = this.getMethod(
+          "getQuery", 
+    	  new Class[]{
+              org.opencrx.kernel.portal.PortalExtension.class,
+              String.class, // qualifiedFeatureName
+              String.class, // filterValue
+              int.class, // queryFilterStringParamCount
+              ApplicationContext.class
+          }
+      );
+      
+      CR10012764
+      Cloud support Jelastic. No need of openmdx-system.jar allows easy 
+      deployment of openCRX on Jelastic:
+      * http://sourceforge.net/p/opencrx/wiki/Admin30.InstallOnJelastic/ 
+      * http://blog.jelastic.com/2015/09/17/deploy-and-host-your-opencrx-with-jelastic/
+      
+      CR10012742
+      CardDavMATE is an open source CardDAV web client implementation. Improved 
+      VCARD RFC compliance.
+
+      CR10012355
+      Grid action: EnableObjects / DisableObjects. Batch operation allows to
+      disable / enable multiple selected objects in a grid.
+
+      CR10012355
+      Grid actions for enabling / disabling objects.
+      
+      CR10012548
+      Grid actions for PriceLevel:
+      * MarkPriceLevelAsFinal –> setFinal(true)
+      * MarkPriceLevelAsNonFinal –> setFinal(false)
+      * PriceLevelCloneValidTo –> clone validTo from first selected price level
+      * PriceLevelResetValidTo –> setValidTo(null)
+
+      CR10012527
+      Self-service password reset. The API is extended by the operation 
+      UserHome::requestPasswordReset() which 
+      * sends (by an alert) a reset and a cancel password reset URL to the user
+      * resets the password to "{RESET}resetToken"
+      This way:
+      * a base64 hash is stored of the token (and not the token itself)
+      * The account is locked because a login is impossible (a base64 encoded 
+        password hash never generates the prefix {RESET}
+      * changePassword() accepts the token with the {RESET} prefix as old 
+        password
+      The three wizards PasswordResetCancel.jsp, PasswordResetConfirm.jsp and 
+      RequestPasswordReset.jsp implement the logic on the GUI side:
+      1) The reset password process is started by calling the wizard 
+         RequestPasswordReset.jsp. If required, a link to the wizard can addded 
+         to login-note.html. The wizard presents an input field whereas the user 
+         has to enter its fully qualified ID, e.g. guest@CRX/Standard. Custom-
+         specific help and descriptions go to request-password-reset-note.html. 
+         The wizard invokes the operation UserHome::requestPasswordReset() which 
+         sends out the reset and cancel password URLs and locks the user account.
+      2) The reset password URL points to the wizard PasswordResetConfirm.jsp 
+         which allows to reset the password.
+      3) The cancel password URL points to the wizard PasswordResetCancel.jsp 
+         which invalidates the reset token. It resets the password to a 20 char
+         random value. This way the user home stays locked until the reset 
+         password process is completed successfully.
+
+2.    CHANGES
+
+2.0.  CHANGED FEATURES
+      
+      CR10012774
+      Modeling: Account / LegalEntity. Add attributes LegalEntity::establishedAt, 
+      LegalEntity::dissolvedAt. Move attribute Contact::governmentId to 
+      Account::governmentId. 
+
+      CR10012774
+      Modeling: DeliveryInfo. Add attributes to make class usable for more
+      use-cases.
+      
+
+2.1.  FIXED BUGS
+      
+      CR10012674
+      Search in code fields broken if there are matches with disabled codes.
+      
+      CR10012569
+      UserSettingsWizard: in case the segment administrator changes the 
+      perspective settings for another only the settings for the perspective with 
+      the highest index are applied. Perpectives with lower index (e.g. Root) are 
+      ignored.
+
+2.2   REMOVED FEATURES
+      none
+
+==============================================================================
 Version 3.0.0                                                       2015-01-17
 ==============================================================================
 

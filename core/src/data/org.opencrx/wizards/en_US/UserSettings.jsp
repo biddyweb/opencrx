@@ -121,7 +121,7 @@ org.openmdx.base.naming.*
 					<tr>
 						<td style="width:300px;">
 							<label style="font-weight:normal" for="timezone_sorttz">Timezone:</label> 
-							<img border='0' alt='' title='sorted by timezone' height='16px' src='../../images/filter_down_cal.gif' />
+							<img border='0' alt='' title='sorted by timezone' height='16px' src='images/filter_down_cal.gif' />
 						</td>
 						<td>
 							<select id="timezone_sorttz" name="timezone_sorttz" class="form-control" onchange="javascript:document.getElementById('timezone').value=this.value;document.getElementById('timezone_sortAlpha').value=this.value;" >
@@ -146,7 +146,7 @@ org.openmdx.base.naming.*
 					<tr>
 						<td>
 							<label style="font-weight:normal" for="timezone_sortAlpha">Timezone:</label> 
-							<img border='0' alt='' title='sorted alphabetically' height='16px' src='../../images/filter_down_star.gif' />
+							<img border='0' alt='' title='sorted alphabetically' height='16px' src='images/filter_down_star.gif' />
 						</td>
 						<td>
 							<select id="timezone_sortAlpha" name="timezone_sortAlpha" class="form-control" onchange="javascript:document.getElementById('timezone').value=this.value;document.getElementById('timezone_sorttz').value=this.value;" >

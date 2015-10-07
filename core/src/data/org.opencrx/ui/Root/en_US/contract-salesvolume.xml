@@ -284,10 +284,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Sales Volume Target and Conditions</_item>
+												<_item>Products / Sales Volume Target and Conditions</_item>
 											</toolTip>
 											<label>
-												<_item>Sales Volume Target and Conditions</_item>
+												<_item>Products / Sales Volume Target and Conditions</_item>
 											</label>
 											<order>
 												<_item>0</_item>
@@ -356,10 +356,10 @@
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Price Level</_item>
+												<_item>Saved Search Products / Price Level</_item>
 											</toolTip>
 											<label>
-												<_item>Price Level</_item>
+												<_item>Saved Search Products / Price Level</_item>
 											</label>
 											<orderFieldGroup>
 												<_item>0</_item>

@@ -39,6 +39,14 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
+                          <_object>
+                            <longText>
+                              <_item>Dänisch [da/dan]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="102" _operation="set">
                           <_object>
                             <longText>
@@ -51,6 +59,14 @@
                           <_object>
                             <longText>
                               <_item>Englisch [en/eng]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="114" _operation="set">
+                          <_object>
+                            <longText>
+                              <_item>Estnisch [et/est]</_item>
                             </longText>
                           </_object>
                           <_content/>
@@ -95,10 +111,34 @@
                           </_object>
                           <_content/>
                         </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="190" _operation="set">
+                          <_object>
+                            <longText>
+                              <_item>Lettisch [lv/lav]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="195" _operation="set">
+                          <_object>
+                            <longText>
+                              <_item>Litauisch [lt/lit]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
                         <org.opencrx.kernel.code1.CodeValueEntry code="311" _operation="set">
                           <_object>
                             <longText>
                               <_item>Farsi/Persisch [fa/per]</_item>
+                            </longText>
+                          </_object>
+                          <_content/>
+                        </org.opencrx.kernel.code1.CodeValueEntry>
+                        <org.opencrx.kernel.code1.CodeValueEntry code="312" _operation="set">
+                          <_object>
+                            <longText>
+                              <_item>Finnisch [fi/fin]</_item>
                             </longText>
                           </_object>
                           <_content/>

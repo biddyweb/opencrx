@@ -3,35 +3,83 @@
 	position: absolute;
 	display: none;
 	overflow: hidden;
-	top: 0px;
-	bottom: 0px;
-	left: 0px;
+	top: 0;
+	bottom: 0;
+	left: 0;
 	width: 49px;
-	height: 100%;
 	background: #f0f0f0;
 	color: #FFFFFF;
 	border-right: 1px solid #c0c0c0;
 	z-index: 26;
 	padding-top: 3px;
+	cursor: default;
+
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
 }
 
-.integration_d img
+.integration_d div
 {
 	display: none;
 	height: 36px;
 	width: 36px;
-	padding: 5px 7px;
+	padding: 7px 7px;
 	cursor: pointer;
 }
 
-#intBlank
+.integration_d .intBlank
 {
-	height: 36px;
-	width: 36px;
-	padding: 5px 7px;
+	cursor: default;
 }
 
-#resourceCalDAV_h, #resourceCalDAVTODO_h, .System > #ResourceCalDAVList, .System > #ResourceCalDAVTODOList, #timezoneWrapper, #timezoneWrapperTODO
+#intCaldav
+{
+	background: url(../images/banner_calendar.svg) no-repeat center;
+}
+
+#intCaldavTodo
+{
+	background: url(../images/banner_todo.svg) no-repeat center;
+}
+
+#intCarddav
+{
+	background: url(../images/banner_addressbook.svg) no-repeat center;
+}
+
+#intProjects
+{
+	background: url(../images/banner_projects.svg) no-repeat center;
+}
+
+#intReports
+{
+	background: url(../images/banner_reports.svg) no-repeat center;
+}
+
+#intSettings
+{
+	background: url(../images/banner_settings.svg) no-repeat center;
+}
+
+#intRefresh
+{
+	background: url(../images/banner_refresh.svg) no-repeat center;
+}
+
+#intLogout
+{
+	background: url(../images/banner_logout.svg) no-repeat center;
+}
+
+.int_error
+{
+	display: none;
+	margin: 28px 0px 0px 28px;
+}
+
+#resourceCalDAV_h, #resourceCalDAVTODO_h, #ResourceCalDAVList, #ResourceCalDAVTODOList, #timezoneWrapper, #timezoneWrapperTODO
 {
 	left: 50px;
 }
@@ -46,62 +94,87 @@
 	left: 50px;
 }
 
-#CalendarLoader, #ResizeLoader, #CalendarLoaderTODO
+#CalendarLoader, #CalendarLoaderTODO
 {
 	left: 275px;
 }
 
-#todoForm_h, #todoColor, #todoLoader
-{
-	left: 694px;
-}
-
-#todoForm
-{
-	left: 697px;
-}
-
-.System > div.resourcesCardDAV_d, .System > #ResourceCardDAVList, .System > #ResourceCardDAVListOverlay
+.resourcesCardDAV_d, #ResourceCardDAVList, #ResourceCardDAVListOverlay
 {
 	left: 50px;
 }
 
-.System > div.collection_d, .System > #SearchBox, .System > #ABList, .System > #ABListOverlay
+.collection_d, #SearchBox, #ABList, #ABListOverlay, #AddressbookOverlay
 {
 	left: 275px;
 }
 
-.System > div.contact_d, .System > #ABContactColor, .System > #ABContactOverlay, .System > #ABMessage
+/*.contact_d, #ABContactColor, #ABContactOverlay, #ABMessage
 {
 	left: 526px;
 }
 
-.System > #ABContact
+#ABContact
 {
 	left: 529px;
-}
+}*/
 
-.System > div.resourcesSettings_d, .System > #ResourceSettingsList
+.filters_d, .statistics_d, #FilterList, #ProjectsData, #SystemProjectsLock, #SystemReportsLock, #ProjectListDisabler
 {
 	left: 50px;
 }
 
-.System > div.settings_d, .System > #SettingsForm, .System > #SettingsFormOverlay
-{
-	left: 275px;
-}
-
-.System > div.filters_d, .System > div.statistics_d, .System > #FilterList, .System > #ProjectsData, #SystemProjectsLock, #ProjectListDisabler
-{
-	left: 50px;
-}
-
-.System > div.projects_d, .System > #ProjectList, .System > #SearchBoxProject, #ProjectListOverlay
+.projects_d, #ProjectList, #SearchBoxProject, #ProjectListOverlay
 {
 	left: 375px;
 }
 
-.System > div.project_d, .System > #ProjectForm, #ProjectFormLoader, .System > #ProjectEvents, .System > #ProjectEventsHeader, #ActivityListDisabler, #ProjectFormMessage
+.project_d, #ProjectForm, #ProjectFormLoader, #ProjectEventsContainer, #ActivityListDisabler, #ProjectFormMessage
 {
 	left: 626px;
+}
+
+.resourcesReports_d, #ResourceReportsList
+{
+	left: 50px;
+}
+
+.resourcesSettings_d, #ResourceSettingsList
+{
+	left: 50px;
+}
+
+#ResourceReportsListOverlay
+{
+	left: 50px;
+}
+
+.report_filters_d, #ReportFilterList
+{
+	left: 275px;
+}
+
+.reports_d, #ReportsColor, #ReportsFormOverlay
+{
+	left: 600px;
+}
+
+#ReportsForm
+{
+	left: 603px;
+}
+
+#ResourceSettingsListOverlay
+{
+	left: 50px;
+}
+
+.settings_d, #SettingsColor, #SettingsFormOverlay
+{
+	left: 275px;
+}
+
+#SettingsForm
+{
+	left: 278px;
 }

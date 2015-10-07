@@ -53,7 +53,7 @@
 												<_item>0</_item>
 												<_item>0</_item>
 											</orderObjectContainer>
-											<maxMember>2</maxMember>
+											<maxMember>3</maxMember>
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
@@ -1341,35 +1341,56 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
-									<!--Tab Definition-->
-									<!--FieldGroups in General Tab-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:Pane:Attr:Tab:0:Group:0">
-										<_object>
-											<active>true</active>
-											<toolTip>
-												<_item>Delivery Information</_item>
-											</toolTip>
-											<label>
-												<_item>Delivery Information</_item>
-											</label>
-										</_object>
-										<_content/>
-									</org.openmdx.ui1.ElementDefinition>
 									<!--Element Definitions-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:name">
 										<_object>
 											<active>true</active>
-											<sortable>false</sortable>
 											<toolTip>
-												<_item>Quantity shipped</_item>
+												<_item>Name</_item>
 											</toolTip>
 											<label>
-												<_item>Quantity shipped</_item>
+												<_item>Name</_item>
 											</label>
 											<order>
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>10</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:description">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Description</_item>
+											</toolTip>
+											<label>
+												<_item>Description</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:deliveryTempCelcius">
+										<_object>
+											<active>true</active>
+											<decimalPlaces>1</decimalPlaces>
+											<hasThousandsSeparator>true</hasThousandsSeparator>
+											<toolTip>
+												<_item>Delivery temperature</_item>
+											</toolTip>
+											<label>
+												<_item>Delivery temperature</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>30</_item>
 											</order>
 										</_object>
 										<_content/>
@@ -1388,6 +1409,179 @@
 												<_item>0</_item>
 												<_item>0</_item>
 												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:actualStartAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Actual start</_item>
+											</toolTip>
+											<label>
+												<_item>Actual start</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>00</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:actualEndAt">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>Actual end</_item>
+											</toolTip>
+											<label>
+												<_item>Actual end</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>100</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>12</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped">
+										<_object>
+											<active>true</active>
+											<decimalPlaces>0</decimalPlaces>
+											<hasThousandsSeparator>true</hasThousandsSeparator>
+											<toolTip>
+												<_item>Quantity shipped</_item>
+											</toolTip>
+											<label>
+												<_item>Quantity shipped</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>10</_item>
+											</order>
+											<orderObjectContainer>
+												<_item>0</_item>
+												<_item>0</_item>
+												<_item>14</_item>
+											</orderObjectContainer>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped2">
+										<_object>
+											<active>true</active>
+											<decimalPlaces>0</decimalPlaces>
+											<hasThousandsSeparator>true</hasThousandsSeparator>
+											<toolTip>
+												<_item>Quantity (other) shipped</_item>
+											</toolTip>
+											<label>
+												<_item>Quantity (other) shipped</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>20</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityBeforeDelivery">
+										<_object>
+											<active>true</active>
+											<decimalPlaces>0</decimalPlaces>
+											<hasThousandsSeparator>true</hasThousandsSeparator>
+											<toolTip>
+												<_item>Quantity before delivery</_item>
+											</toolTip>
+											<label>
+												<_item>Quantity before delivery</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>30</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:uomQuantityShipped">
+										<_object>
+											<active>true</active>
+											<columnBreak>true</columnBreak>
+											<toolTip>
+												<_item>UOM (quantity shipped)</_item>
+											</toolTip>
+											<label>
+												<_item>UOM (quantity shipped)</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>80</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:uomQuantityShipped2">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>UOM (quantity other shipped)</_item>
+											</toolTip>
+											<label>
+												<_item>UOM (quantity other shipped)</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>90</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:uomQuantityBeforeDelivery">
+										<_object>
+											<active>true</active>
+											<toolTip>
+												<_item>UOM (quantity before delivery)</_item>
+											</toolTip>
+											<label>
+												<_item>UOM (quantity before delivery)</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>10</_item>
+												<_item>100</_item>
+											</order>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:feedback">
+										<_object>
+											<active>true</active>
+											<spanRow>4</spanRow>
+											<toolTip>
+												<_item>Feedback</_item>
+											</toolTip>
+											<label>
+												<_item>Feedback</_item>
+											</label>
+											<order>
+												<_item>0</_item>
+												<_item>20</_item>
+												<_item>10</_item>
 											</order>
 										</_object>
 										<_content/>

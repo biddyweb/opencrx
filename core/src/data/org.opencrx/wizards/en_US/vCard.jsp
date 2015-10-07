@@ -283,16 +283,16 @@ org.openmdx.kernel.log.*
 			if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
                	ByteArrayOutputStream bos = new ByteArrayOutputStream();
                	PrintWriter p = new PrintWriter(new OutputStreamWriter(bos, "UTF-8"));
-				int start = vcard.indexOf("BEGIN:VCARD");
-				int end = vcard.indexOf("END:VCARD");
-				p.write(vcard.substring(start, end));
-				if(vcard.indexOf("PHOTO:") < 0 && account instanceof org.opencrx.kernel.account1.jmi1.Contact) {
-                   	org.opencrx.kernel.backend.VCard.getInstance().writePhotoTag(
-                   		p, 
-                   		(org.opencrx.kernel.account1.jmi1.Contact)account
-                   	);
-				}
-				p.write("END:VCARD\n");
+            	org.opencrx.application.uses.ezvcard.VCard vCard = org.opencrx.application.uses.ezvcard.Ezvcard.parse(vcard).first();
+            	if(vCard.getPhotos().isEmpty()) {
+            		org.opencrx.application.uses.ezvcard.property.Photo photo = org.opencrx.application.carddav.AccountResource.getPhoto(account);
+            		if(photo != null) {
+            			vCard.addPhoto(photo);
+            		}
+                }
+            	try {
+            		org.opencrx.application.uses.ezvcard.Ezvcard.write(vCard).version(org.opencrx.application.uses.ezvcard.VCardVersion.V3_0).go(p);
+            	} catch(Exception ignore) {}
 				p.close();
 				zipos.putNextEntry(new ZipEntry(filename));
 				zipos.write(bos.toByteArray());

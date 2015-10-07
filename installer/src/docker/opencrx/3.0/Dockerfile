@@ -32,9 +32,9 @@ RUN mkdir $HOME/opt \
   && ls -al $HOME/opt/opencrx \
   && rm -rf $HOME/temp
 
-VOLUME ["/root/opt/opencrx/data", "/root/opt/opencrx/apache-tomee-webprofile-1.7.1/logs", "/root/opt/opencrx/apache-tomee-webprofile-1.7.1/temp", "/root/opt/opencrx/apache-tomee-webprofile-1.7.1/work", "/root/opt/opencrx/apache-tomee-webprofile-1.7.1/airsyncdir", "/root/opt/opencrx/apache-tomee-webprofile-1.7.1/maildir"]
+VOLUME ["/root/opt/opencrx/data", "/root/opt/opencrx/apache-tomee-webprofile-1.7.2/logs", "/root/opt/opencrx/apache-tomee-webprofile-1.7.2/temp", "/root/opt/opencrx/apache-tomee-webprofile-1.7.2/work", "/root/opt/opencrx/apache-tomee-webprofile-1.7.2/airsyncdir", "/root/opt/opencrx/apache-tomee-webprofile-1.7.2/maildir"]
 COPY ./docker-entrypoint.sh /
 RUN chmod a+x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 80 8001 8009
-CMD cd /root/opt/opencrx/apache-tomee-webprofile-1.7.1/bin;./opencrx.sh run
+CMD cd /root/opt/opencrx/apache-tomee-webprofile-1.7.2/bin;./opencrx.sh run

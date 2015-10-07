@@ -1,17 +1,23 @@
-#Fri Mar 09 11:03:14 CET 2012
 eclipse.preferences.version=1
+encoding//src/data/org.opencrx/texts/ar_SA/opencrx.texts.properties=UTF-8
+encoding//src/data/org.opencrx/texts/bg_BG/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/cs_CZ/opencrx.texts.properties=UTF-8
-encoding//src/data/org.opencrx/texts/de_CH/opencrx.texts.properties=ISO-8859-1
+encoding//src/data/org.opencrx/texts/de_CH/opencrx.texts.properties=UTF-8
+encoding//src/data/org.opencrx/texts/el_GR/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/en_US/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/es_CO/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/es_MX/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/fa_IR/opencrx.texts.properties=UTF-8
+encoding//src/data/org.opencrx/texts/fi_FI/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/fr_FR/opencrx.texts.properties=UTF-8
+encoding//src/data/org.opencrx/texts/hu_HU/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/it_IT/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/ja_JP/opencrx.texts.properties=UTF-8
+encoding//src/data/org.opencrx/texts/ko_KR/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/nl_NL/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/pl_PL/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/pt_BR/opencrx.texts.properties=UTF-8
+encoding//src/data/org.opencrx/texts/pt_PT/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/ro_RO/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/ru_RU/opencrx.texts.properties=UTF-8
 encoding//src/data/org.opencrx/texts/sk_SK/opencrx.texts.properties=UTF-8

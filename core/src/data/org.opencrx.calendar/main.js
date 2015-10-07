@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -20,18 +20,11 @@ along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 var globalEventList=new EventList();
-var globalTODOlist=new GlobalTODOlist();
 var globalAppleSupport = new AppleSupportNextDateArray();
-var isResourceNumber=false;
-var maxAlarmValue=2147000000;
-
-var countPreviousEvents=0;
-var countPreviousCalendars=0;
-var globalThreadCounter=0;
-var maximumThreadNumber=16;
-
-var isDaylight=false;
 var globalResourceCalDAVList=new ResourceCalDAVList();
+var maxAlarmValue=2147000000;
+var globalMultiWeekSize=3;
+var globalMaxNextInstanesTodoCheckingNumber=60;
 
 var globalEventIntervalID=null;
 var globalResourceRefreshNumber=0;
@@ -45,6 +38,7 @@ var globalTodoCalendarNumber=0;
 var globalOnlyCalendarNumberCount=0;
 var globalOnlyTodoCalendarNumberCount=0;
 var globalCalendarNumberCount=0;
+var globalEventTimeoutID=0;
 
 var cleanResourceCalDAVListTemplate=null;
 var cleanResourceCalDAVTODOListTemplate=null;
@@ -65,17 +59,13 @@ var prevFunctionArray=new Array();
 var prevFunctionArrayIterator=0;
 var globalWorkerArray=new Array();
 var globalIntervalArray=new Array();
-var globalResourceErrorCounter=0;
 var globalCurrentLoadingResource='';
 var timeZonesEnabled=new Array();
 var cLcouny=42;
-var timezoneKeys=new Array();
 var processedTimezones = Array();
 var timelist=new Array();
 var minelems=[0,15,30,45];
 var frequencies = ["SECONDLY", "MINUTELY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY"];
-var globalEventDateStart='';
-var globalEventDateEnd='';
 var globalToday=new Date();
 var isCalDAVLoaded=false;
 var isCalDAVAvaible=true;
@@ -92,6 +82,8 @@ var globalDefaultTodoCalendarCollectionActiveAll = false;
 var globalDefaultCalendarCollectionLoadAll = false;
 var globalDefaultTodoCalendarCollectionLoadAll = false;
 var globalTodoLoaderHide='';
+var globalEventCollectionsLoading=false;
+var globalTodoCollectionsLoading=false;
 
 var globalCalEvent=null;
 var globalCalTodo=null;
@@ -100,8 +92,162 @@ var globalRevertFunction=null;
 var globalPrevDragEventAllDay=null;
 var globalPrevDate='';
 var globalAllowFcRerender=true;
-var globalCalWidth;
+var globalCalWidth=0;
+var globalTodoCheckTimeout=null;
+var globalTodoCheckTimeoutDelay=1000;
+var globalTodolistStatusArray={};
 
+var globalSettings={
+	version: {value: (typeof globalSettingsVersion!='undefined' && globalSettingsVersion!=null) ? globalSettingsVersion : 1, locked:false},
+	resourcealphabetsorting: {value: (typeof globalResourceAlphabetSorting!='undefined' && globalResourceAlphabetSorting!=null) ? globalResourceAlphabetSorting : true, locked:false},
+	usejqueryauth: {value:  (typeof globalUseJqueryAuth!='undefined' && globalUseJqueryAuth!=null) ? globalUseJqueryAuth : false, locked:false},
+	settingstype: {value:  (typeof globalSettingsType!='undefined' && globalSettingsType!=null && globalSettingsType!='') ? globalSettingsType : 'principal-URL', locked:false},
+	defaultactiveapp: {value:  (typeof globalDefaultActiveApp!='undefined' && globalDefaultActiveApp!=null && globalDefaultActiveApp!='') ? globalDefaultActiveApp : null, locked:false},
+	islastdefaultactiveapp: {value:  false, locked:false},
+	datepickerfirstdayofweek: {value:  (typeof globalDatepickerFirstDayOfWeek!='undefined' && globalDatepickerFirstDayOfWeek!=null) ? globalDatepickerFirstDayOfWeek : 1, locked:false},
+	syncresourcesinterval: {value: (typeof globalSyncResourcesInterval!='undefined' && globalSyncResourcesInterval!=null) ? globalSyncResourcesInterval :300000, locked:false},
+	datepickerformat: {value: (typeof globalDatepickerFormat!='undefined' && globalDatepickerFormat!=null && globalDatepickerFormat!='') ? globalDatepickerFormat : localization[globalInterfaceLanguage]._default_datepicker_format_, locked:false},
+	backgroundsync: {value: (typeof globalBackgroundSync!='undefined' && globalBackgroundSync!=null) ? globalBackgroundSync : true, locked:false},
+	enablekbnavigation: {value: (typeof globalEnableKbNavigation!='undefined' && globalEnableKbNavigation!=null) ? globalEnableKbNavigation : true, locked:false},
+	rewritetimezonecomponent: {value:  (typeof globalRewriteTimezoneComponent!='undefined' && globalRewriteTimezoneComponent!=null) ? globalRewriteTimezoneComponent : true, locked:false},
+	removeunknowntimezone: {value:  (typeof globalRemoveUnknownTimezone!='undefined' && globalRemoveUnknownTimezone!=null) ? globalRemoveUnknownTimezone : false, locked:false},
+	mozillasupport: {value:  (typeof globalMozillaSupport!='undefined' && globalMozillaSupport!=null) ? globalMozillaSupport : false, locked:false},
+	appleremindersmode: {value:  (typeof globalAppleRemindersMode!='undefined' && globalAppleRemindersMode!=null) ? globalAppleRemindersMode : false, locked:false},
+	titleformatmonth: {value:  localization[globalInterfaceLanguage]._default_title_format_month_, locked:false},
+	titleformatweek: {value:  localization[globalInterfaceLanguage]._default_title_format_week_, locked:false},
+	titleformatday: {value:  localization[globalInterfaceLanguage]._default_title_format_day_, locked:false},
+	titleformattable: {value:  localization[globalInterfaceLanguage]._default_title_format_table_, locked:false},
+	columnformatagenda: {value:  localization[globalInterfaceLanguage]._default_column_format_agenda_, locked:false},
+	activecalendarcollections: {value:  (typeof globalActiveCalendarCollections!='undefined' && globalActiveCalendarCollections!=null) ? globalActiveCalendarCollections : new Array(), locked:false},
+	activetodocollections: {value:  (typeof globalActiveTodoCollections!='undefined' && globalActiveTodoCollections!=null) ? globalActiveTodoCollections : new Array(), locked:false},
+	loadedcalendarcollections: {value:  (typeof globalLoadedCalendarCollections!='undefined' && globalLoadedCalendarCollections!=null) ? globalLoadedCalendarCollections : new Array(), locked:false},
+	loadedtodocollections: {value:  (typeof globalLoadedTodoCollections!='undefined' && globalLoadedTodoCollections!=null) ? globalLoadedTodoCollections : new Array(), locked:false},
+	todolistfilterselected: {value:  (typeof globalTodoListFilterSelected!='undefined' && globalTodoListFilterSelected!=null && globalTodoListFilterSelected!='') ? globalTodoListFilterSelected : ['filterAction', 'filterProgress'], locked:false},
+	activeview: {value:  (typeof globalActiveView!='undefined' && globalActiveView!=null && globalActiveView!='') ? globalActiveView : 'multiWeek', locked:false},
+	islastactiveview: {value:  true, locked:false},
+	calendarselected: {value:  (typeof globalCalendarSelected!='undefined' && globalCalendarSelected!=null && globalCalendarSelected!='') ? globalCalendarSelected : '', locked:false},
+	todocalendarselected: {value:  (typeof globalTodoCalendarSelected!='undefined' && globalTodoCalendarSelected!=null && globalTodoCalendarSelected!='') ? globalTodoCalendarSelected : '', locked:false},
+	timezone: {value:  (typeof globalTimeZone!='undefined' && globalTimeZone!=null && globalTimeZone!='') ? globalTimeZone : 'local', locked:false},
+	islasttimezone: {value: true, locked:false},
+	openformmode: {value:  (typeof globalOpenFormMode!='undefined' && globalOpenFormMode!=null && globalOpenFormMode!='') ? globalOpenFormMode : 'double', locked:false},
+	calendarstartofbusiness: {value:  (typeof globalCalendarStartOfBusiness!='undefined' && globalCalendarStartOfBusiness!=null) ? globalCalendarStartOfBusiness : 8, locked:false},
+	calendarendofbusiness: {value:  (typeof globalCalendarEndOfBusiness!='undefined' && globalCalendarEndOfBusiness!=null) ? globalCalendarEndOfBusiness : 17, locked:false},
+	defaulteventduration: {value:  (typeof globalDefaultEventDuration!='undefined' && globalDefaultEventDuration!=null && globalDefaultEventDuration>=0) ? globalDefaultEventDuration : null, locked:false},
+	ampmformat: {value:  (typeof globalAMPMFormat!='undefined' && globalAMPMFormat!=null) ? globalAMPMFormat : localization[globalInterfaceLanguage]._default_AMPM_format_, locked:false},
+	timeformatagenda: {value:  (typeof globalTimeFormatAgenda!='undefined' && globalTimeFormatAgenda!=null && globalTimeFormatAgenda!='') ? globalTimeFormatAgenda : null, locked:false},
+	timeformatbasic: {value:  (typeof globalTimeFormatBasic!='undefined' && globalTimeFormatBasic!=null && globalTimeFormatBasic!='') ? globalTimeFormatBasic : null, locked:false},
+	displayhiddenevents: {value:  (typeof globalDisplayHiddenEvents!='undefined' && globalDisplayHiddenEvents!=null) ? globalDisplayHiddenEvents : false, locked:false},
+	timezonesupport: {value:  (typeof globalTimeZoneSupport!='undefined' && globalTimeZoneSupport!=null) ? globalTimeZoneSupport : true, locked:false},
+	timezonesenabled: {value:  (typeof globalTimeZonesEnabled!='undefined' && globalTimeZonesEnabled!=null && globalTimeZonesEnabled!='') ? globalTimeZonesEnabled : [], locked:false},
+	showhiddenalarms: {value:  (typeof globalShowHiddenAlarms!='undefined' && globalShowHiddenAlarms!=null) ? globalShowHiddenAlarms : false, locked:false},
+	ignorecompletedorcancelledalarms: {value: (typeof globalIgnoreCompletedOrCancelledAlarms!='undefined' && globalIgnoreCompletedOrCancelledAlarms!=null) ? globalIgnoreCompletedOrCancelledAlarms : true, locked:false},
+	weekenddays: {value: (typeof globalWeekendDays!='undefined' && globalWeekendDays!=null && globalWeekendDays!='') ? globalWeekendDays : [0, 6], locked:false},
+	eventstartpastlimit: {value:  (typeof globalEventStartPastLimit!='undefined' && globalEventStartPastLimit!=null) ? globalEventStartPastLimit : 3, locked:false},
+	todopastlimit: {value:  (typeof globalTodoPastLimit!='undefined' && globalTodoPastLimit!=null) ? globalTodoPastLimit : 3, locked:false},
+	eventstartfuturelimit: {value:  (typeof globalEventStartFutureLimit!='undefined' && globalEventStartFutureLimit!=null) ? globalEventStartFutureLimit : 3, locked:false},
+	compatibility: {value: (typeof globalCompatibility!='undefined' && globalCompatibility!=null && globalCompatibility!='') ? globalCompatibility : {anniversaryOutputFormat: ['apple']}, locked:false},
+	contactstorefn: {value: (typeof globalContactStoreFN!='undefined' && globalContactStoreFN!=null && globalContactStoreFN!='') ? globalContactStoreFN : ['prefix',' last',' middle',' first',' suffix'], locked:false},
+	urihandlertel: {value: (typeof globalUriHandlerTel!='undefined' && globalUriHandlerTel!=null && globalUriHandlerTel!='') ? globalUriHandlerTel : 'tel:', locked:false},
+	urihandleremail: {value: (typeof globalUriHandlerEmail!='undefined' && globalUriHandlerEmail!=null && globalUriHandlerEmail!='') ? globalUriHandlerEmail : 'mailto:', locked:false},
+	urihandlerurl: {value: (typeof globalUriHandlerUrl!='undefined' && globalUriHandlerUrl!=null && globalUriHandlerUrl!='') ? globalUriHandlerUrl : 'http://', locked:false},
+	urihandlerprofile: {value: (typeof globalUriHandlerProfile!='undefined' && globalUriHandlerProfile!=null && globalUriHandlerProfile!='') ? globalUriHandlerProfile : {'twitter': 'http://twitter.com/%u', 'facebook': 'http://www.facebook.com/%u', 'flickr': 'http://www.flickr.com/photos/%u', 'linkedin': 'http://www.linkedin.com/in/%u', 'myspace': 'http://www.myspace.com/%u', 'sinaweibo': 'http://weibo.com/n/%u'}, locked:false},
+	addresscountryequivalence: {value: (typeof globalAddressCountryEquivalence!='undefined' && globalAddressCountryEquivalence!=null && globalAddressCountryEquivalence!='') ? globalAddressCountryEquivalence : [{country: 'de', regex: '^\\W*Deutschland\\W*$'}, {country: 'sk', regex: '^\\W*Slovensko\\W*$'}], locked:false},
+	addressbookselected: {value:  (typeof globalAddressbookSelected!='undefined' && globalAddressbookSelected!=null && globalAddressbookSelected!='') ? globalAddressbookSelected : '', locked:false},
+	collectiondisplay: {value:  (typeof globalCollectionDisplay!='undefined' && globalCollectionDisplay!=null && globalCollectionDisplay!='') ? globalCollectionDisplay : (
+		(typeof globalGroupContactsByCompanies!='undefined' && globalGroupContactsByCompanies) ?
+		[{label: '{Name}', value: {company: ['{Company}', ' [{Department}]'], personal: ['{LastName}', ' {MiddleName}', ' {FirstName}']}}, {label: '{JobTitle}', value: ['{JobTitle}']}, {label: '{Email}', value: ['{Email[:0]}']}, {label: '{Phone} 1', value: ['{Phone[:0]}']}, {label: '{Phone} 2', value: ['{Phone[:1]}']}, {label: '{NoteText}', value: ['{NoteText}']}] :
+		[{label: '{Name}', value: ['{LastName}', ' {MiddleName}', ' {FirstName}']}, {label: '{Company} [{Department}]', value: ['{Company}', ' [{Department}]']}, {label: '{JobTitle}', value: ['{JobTitle}']}, {label: '{Email}', value: ['{Email[:0]}']}, {label: '{Phone} 1', value: ['{Phone[:0]}']}, {label: '{Phone} 2', value: ['{Phone[:1]}']}, {label: '{NoteText}', value: ['{NoteText}']}]
+		), locked:false},
+	collectionsort: {value:  (typeof globalCollectionSort!='undefined' && globalCollectionSort!=null && globalCollectionSort!='') ? globalCollectionSort : '', locked:false},
+	defaultaddresscountry: {value:  (typeof globalDefaultAddressCountry!='undefined' && globalDefaultAddressCountry!=null && globalDefaultAddressCountry!='') ? globalDefaultAddressCountry :'us', locked:false},
+	addresscountryfavorites: {value:  (typeof globalAddressCountryFavorites!='undefined' && globalAddressCountryFavorites!=null && globalAddressCountryFavorites!='') ? globalAddressCountryFavorites :[], locked:false},
+	activeaddressbookcollections: {value:  (typeof globalActiveAddressbookCollections!='undefined' && globalActiveAddressbookCollections!=null) ? globalActiveAddressbookCollections : new Array(), locked:false},
+	loadedaddressbookcollections: {value:  (typeof globalLoadedAddressbookCollections!='undefined' && globalLoadedAddressbookCollections!=null) ? globalLoadedAddressbookCollections : new Array(), locked:false}
+};
+
+
+function resetSettings()
+{
+	globalSettings={
+		version: {value: (typeof globalSettingsVersion!='undefined' && globalSettingsVersion!=null) ? globalSettingsVersion : 1, locked:false},
+		resourcealphabetsorting: {value: (typeof globalResourceAlphabetSorting!='undefined' && globalResourceAlphabetSorting!=null) ? globalResourceAlphabetSorting : true, locked:false},
+		usejqueryauth: {value:  (typeof globalUseJqueryAuth!='undefined' && globalUseJqueryAuth!=null) ? globalUseJqueryAuth : false, locked:false},
+		settingstype: {value:  (typeof globalSettingsType!='undefined' && globalSettingsType!=null && globalSettingsType!='') ? globalSettingsType : 'principal-URL', locked:false},
+		defaultactiveapp: {value:  (typeof globalDefaultActiveApp!='undefined' && globalDefaultActiveApp!=null && globalDefaultActiveApp!='') ? globalDefaultActiveApp : null, locked:false},
+		islastdefaultactiveapp: {value:  false, locked:false},
+		datepickerfirstdayofweek: {value:  (typeof globalDatepickerFirstDayOfWeek!='undefined' && globalDatepickerFirstDayOfWeek!=null) ? globalDatepickerFirstDayOfWeek : 1, locked:false},
+		syncresourcesinterval: {value: (typeof globalSyncResourcesInterval!='undefined' && globalSyncResourcesInterval!=null) ? globalSyncResourcesInterval :300000, locked:false},
+		datepickerformat: {value: (typeof globalDatepickerFormat!='undefined' && globalDatepickerFormat!=null && globalDatepickerFormat!='') ? globalDatepickerFormat : localization[globalInterfaceLanguage]._default_datepicker_format_, locked:false},
+		backgroundsync: {value: (typeof globalBackgroundSync!='undefined' && globalBackgroundSync!=null) ? globalBackgroundSync : true, locked:false},
+		enablekbnavigation: {value: (typeof globalEnableKbNavigation!='undefined' && globalEnableKbNavigation!=null) ? globalEnableKbNavigation : true, locked:false},
+		rewritetimezonecomponent: {value:  (typeof globalRewriteTimezoneComponent!='undefined' && globalRewriteTimezoneComponent!=null) ? globalRewriteTimezoneComponent : true, locked:false},
+		removeunknowntimezone: {value:  (typeof globalRemoveUnknownTimezone!='undefined' && globalRemoveUnknownTimezone!=null) ? globalRemoveUnknownTimezone : false, locked:false},
+		mozillasupport: {value:  (typeof globalMozillaSupport!='undefined' && globalMozillaSupport!=null) ? globalMozillaSupport : false, locked:false},
+		appleremindersmode: {value:  (typeof globalAppleRemindersMode!='undefined' && globalAppleRemindersMode!=null) ? globalAppleRemindersMode : false, locked:false},
+		titleformatmonth: {value:  localization[globalInterfaceLanguage]._default_title_format_month_, locked:false},
+		titleformatweek: {value:  localization[globalInterfaceLanguage]._default_title_format_week_, locked:false},
+		titleformatday: {value:  localization[globalInterfaceLanguage]._default_title_format_day_, locked:false},
+		titleformattable: {value:  localization[globalInterfaceLanguage]._default_title_format_table_, locked:false},
+		columnformatagenda: {value:  localization[globalInterfaceLanguage]._default_column_format_agenda_, locked:false},
+		activecalendarcollections: {value:  (typeof globalActiveCalendarCollections!='undefined' && globalActiveCalendarCollections!=null) ? globalActiveCalendarCollections : new Array(), locked:false},
+		activetodocollections: {value:  (typeof globalActiveTodoCollections!='undefined' && globalActiveTodoCollections!=null) ? globalActiveTodoCollections : new Array(), locked:false},
+		loadedcalendarcollections: {value:  (typeof globalLoadedCalendarCollections!='undefined' && globalLoadedCalendarCollections!=null) ? globalLoadedCalendarCollections : new Array(), locked:false},
+		loadedtodocollections: {value:  (typeof globalLoadedTodoCollections!='undefined' && globalLoadedTodoCollections!=null) ? globalLoadedTodoCollections : new Array(), locked:false},
+		todolistfilterselected: {value:  (typeof globalTodoListFilterSelected!='undefined' && globalTodoListFilterSelected!=null && globalTodoListFilterSelected!='') ? globalTodoListFilterSelected : ['filterAction', 'filterProgress'], locked:false},
+		activeview: {value:  (typeof globalActiveView!='undefined' && globalActiveView!=null && globalActiveView!='') ? globalActiveView : 'multiWeek', locked:false},
+		islastactiveview: {value:  true, lockedlocked:false},
+		calendarselected: {value:  (typeof globalCalendarSelected!='undefined' && globalCalendarSelected!=null && globalCalendarSelected!='') ? globalCalendarSelected : '', locked:false},
+		todocalendarselected: {value:  (typeof globalTodoCalendarSelected!='undefined' && globalTodoCalendarSelected!=null && globalTodoCalendarSelected!='') ? globalTodoCalendarSelected : '', locked:false},
+		timezone: {value:  (typeof globalTimeZone!='undefined' && globalTimeZone!=null && globalTimeZone!='') ? globalTimeZone : 'local', locked:false},
+		islasttimezone: {value: true, locked:false},
+		openformmode: {value:  (typeof globalOpenFormMode!='undefined' && globalOpenFormMode!=null && globalOpenFormMode!='') ? globalOpenFormMode : 'double', locked:false},
+		calendarstartofbusiness: {value:  (typeof globalCalendarStartOfBusiness!='undefined' && globalCalendarStartOfBusiness!=null) ? globalCalendarStartOfBusiness : 8, locked:false},
+		calendarendofbusiness: {value:  (typeof globalCalendarEndOfBusiness!='undefined' && globalCalendarEndOfBusiness!=null) ? globalCalendarEndOfBusiness : 17, locked:false},
+		defaulteventduration: {value:  (typeof globalDefaultEventDuration!='undefined' && globalDefaultEventDuration!=null && globalDefaultEventDuration>=0) ? globalDefaultEventDuration : null, locked:false},
+		ampmformat: {value:  (typeof globalAMPMFormat!='undefined' && globalAMPMFormat!=null) ? globalAMPMFormat : localization[globalInterfaceLanguage]._default_AMPM_format_, locked:false},
+		timeformatagenda: {value:  (typeof globalTimeFormatAgenda!='undefined' && globalTimeFormatAgenda!=null && globalTimeFormatAgenda!='') ? globalTimeFormatAgenda : null, locked:false},
+		timeformatbasic: {value:  (typeof globalTimeFormatBasic!='undefined' && globalTimeFormatBasic!=null && globalTimeFormatBasic!='') ? globalTimeFormatBasic : null, locked:false},
+		displayhiddenevents: {value:  (typeof globalDisplayHiddenEvents!='undefined' && globalDisplayHiddenEvents!=null) ? globalDisplayHiddenEvents : false, locked:false},
+		timezonesupport: {value:  (typeof globalTimeZoneSupport!='undefined' && globalTimeZoneSupport!=null) ? globalTimeZoneSupport : true, locked:false},
+		timezonesenabled: {value:  (typeof globalTimeZonesEnabled!='undefined' && globalTimeZonesEnabled!=null && globalTimeZonesEnabled!='') ? globalTimeZonesEnabled : [], locked:false},
+		showhiddenalarms: {value:  (typeof globalShowHiddenAlarms!='undefined' && globalShowHiddenAlarms!=null) ? globalShowHiddenAlarms : false, locked:false},
+		ignorecompletedorcancelledalarms: {value: (typeof globalIgnoreCompletedOrCancelledAlarms!='undefined' && globalIgnoreCompletedOrCancelledAlarms!=null) ? globalIgnoreCompletedOrCancelledAlarms : true, locked:false},
+		weekenddays: {value: (typeof globalWeekendDays!='undefined' && globalWeekendDays!=null && globalWeekendDays!='') ? globalWeekendDays : [0, 6], locked:false},
+		eventstartpastlimit: {value:  (typeof globalEventStartPastLimit!='undefined' && globalEventStartPastLimit!=null) ? globalEventStartPastLimit : 3, locked:false},
+		todopastlimit: {value:  (typeof globalTodoPastLimit!='undefined' && globalTodoPastLimit!=null) ? globalTodoPastLimit : 3, locked:false},
+		eventstartfuturelimit: {value:  (typeof globalEventStartFutureLimit!='undefined' && globalEventStartFutureLimit!=null) ? globalEventStartFutureLimit : 3, locked:false},
+		compatibility: {value: (typeof globalCompatibility!='undefined' && globalCompatibility!=null && globalCompatibility!='') ? globalCompatibility : {anniversaryOutputFormat: ['apple']}, locked:false},
+		contactstorefn: {value: (typeof globalContactStoreFN!='undefined' && globalContactStoreFN!=null && globalContactStoreFN!='') ? globalContactStoreFN : ['prefix',' last',' middle',' first',' suffix'], locked:false},
+		urihandlertel: {value: (typeof globalUriHandlerTel!='undefined' && globalUriHandlerTel!=null && globalUriHandlerTel!='') ? globalUriHandlerTel : 'tel:', locked:false},
+		urihandleremail: {value: (typeof globalUriHandlerEmail!='undefined' && globalUriHandlerEmail!=null && globalUriHandlerEmail!='') ? globalUriHandlerEmail : 'mailto:', locked:false},
+		urihandlerurl: {value: (typeof globalUriHandlerUrl!='undefined' && globalUriHandlerUrl!=null && globalUriHandlerUrl!='') ? globalUriHandlerUrl : 'http://', locked:false},
+		urihandlerprofile: {value: (typeof globalUriHandlerProfile!='undefined' && globalUriHandlerProfile!=null && globalUriHandlerProfile!='') ? globalUriHandlerProfile : {'twitter': 'http://twitter.com/%u', 'facebook': 'http://www.facebook.com/%u', 'flickr': 'http://www.flickr.com/photos/%u', 'linkedin': 'http://www.linkedin.com/in/%u', 'myspace': 'http://www.myspace.com/%u', 'sinaweibo': 'http://weibo.com/n/%u'}, locked:false},
+		addresscountryequivalence: {value: (typeof globalAddressCountryEquivalence!='undefined' && globalAddressCountryEquivalence!=null && globalAddressCountryEquivalence!='') ? globalAddressCountryEquivalence : [{country: 'de', regex: '^\\W*Deutschland\\W*$'}, {country: 'sk', regex: '^\\W*Slovensko\\W*$'}], locked:false},
+		addressbookselected: {value:  (typeof globalAddressbookSelected!='undefined' && globalAddressbookSelected!=null && globalAddressbookSelected!='') ? globalAddressbookSelected : '', locked:false},
+		collectiondisplay: {value:  (typeof globalCollectionDisplay!='undefined' && globalCollectionDisplay!=null && globalCollectionDisplay!='') ? globalCollectionDisplay : (
+			(typeof globalGroupContactsByCompanies!='undefined' && globalGroupContactsByCompanies) ?
+			[{label: '{Name}', value: {company: ['{Company}', ' [{Department}]'], personal: ['{LastName}', ' {MiddleName}', ' {FirstName}']}}, {label: '{JobTitle}', value: ['{JobTitle}']}, {label: '{Email}', value: ['{Email[:0]}']}, {label: '{Phone} 1', value: ['{Phone[:0]}']}, {label: '{Phone} 2', value: ['{Phone[:1]}']}, {label: '{NoteText}', value: ['{NoteText}']}] :
+			[{label: '{Name}', value: ['{LastName}', ' {MiddleName}', ' {FirstName}']}, {label: '{Company} [{Department}]', value: ['{Company}', ' [{Department}]']}, {label: '{JobTitle}', value: ['{JobTitle}']}, {label: '{Email}', value: ['{Email[:0]}']}, {label: '{Phone} 1', value: ['{Phone[:0]}']}, {label: '{Phone} 2', value: ['{Phone[:1]}']}, {label: '{NoteText}', value: ['{NoteText}']}]
+		), locked:false},
+		collectionsort: {value:  (typeof globalCollectionSort!='undefined' && globalCollectionSort!=null && globalCollectionSort!='') ? globalCollectionSort : '', locked:false},
+		defaultaddresscountry: {value:  (typeof globalDefaultAddressCountry!='undefined' && globalDefaultAddressCountry!=null && globalDefaultAddressCountry!='') ? globalDefaultAddressCountry :'us', locked:false},
+		addresscountryfavorites: {value:  (typeof globalAddressCountryFavorites!='undefined' && globalAddressCountryFavorites!=null && globalAddressCountryFavorites!='') ? globalAddressCountryFavorites :[], locked:false},
+		activeaddressbookcollections: {value:  (typeof globalActiveAddressbookCollections!='undefined' && globalActiveAddressbookCollections!=null) ? globalActiveAddressbookCollections : new Array(), locked:false},
+		loadedaddressbookcollections: {value:  (typeof globalLoadedAddressbookCollections!='undefined' && globalLoadedAddressbookCollections!=null) ? globalLoadedAddressbookCollections : new Array(), locked:false}
+	};
+}
+
+function transformToServer(inSettings)
+{
+	var serverSettings={};
+
+	for(var prop in inSettings)
+	{
+		serverSettings[prop]=inSettings[prop].value;
+	}
+
+	return serverSettings;
+}
 var globalWindowFocus=true;
 var globalLoginUsername='';
 var globalLoginPassword='';
@@ -111,7 +257,9 @@ var globalActiveApp='';
 var globalAvailableAppsArray=new Array();
 var globalEnableAppSwitch=true;
 var globalAppName='CalDavZAP';
-var globalVersion='0.10.0.5';
+var globalVersion='0.13.0';
+var globalBuildNo=1442412715;
+var globalXMLCache=null;
 var globalVersionCheckURL=(location.protocol=='file:' ? 'http:' : location.protocol)+'//www.inf-it.com/versioncheck/'+globalAppName+'/?v='+globalVersion;
 var globalXClientHeader=globalAppName+' '+globalVersion+' (Inf-IT CalDAV Web Client)';
 var globalResourceNumberCount=0;
@@ -127,72 +275,23 @@ var globalCacheUpdateInterval=null;
 var isIntegrated=false;
 var SVG_select='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="19px" height="19px" viewBox="0 0 19 19" overflow="visible" enable-background="new 0 0 19 19" xml:space="preserve"><defs></defs><rect x="2" fill="#585858" width="17" height="19"/><polygon fill="#FFFFFF" points="14,7 10.5,13 7,7 "/><rect fill="#FFFFFF" width="2" height="19"/></svg>';
 var SVG_select_b='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="19px" height="19px" viewBox="0 0 19 19" overflow="visible" enable-background="new 0 0 19 19" xml:space="preserve"><defs></defs><rect x="2" fill="#585858" width="17" height="19"/><polygon fill="#FFFFFF" points="14,7 10.5,13 7,7 "/><rect fill="#F0F0F0" width="2" height="19"/></svg>';
+var SVG_select_login='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="19px" height="28px" viewBox="0 0 19 28" overflow="visible" enable-background="new 0 0 19 28" xml:space="preserve"><defs></defs><rect fill="#FFFFFF" width="19" height="28"/></svg>';
 var SVG_select_dis='<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:a="http://ns.adobe.com/AdobeSVGViewerExtensions/3.0/" x="0px" y="0px" width="22px" height="19px" viewBox="0 0 22 19" overflow="visible" enable-background="new 0 0 22 19" xml:space="preserve"><defs></defs><rect fill="#FFFFFF" width="22" height="19"/></svg>';
 var globalDefinedSettings = new Array();
-var globalPreviousSupportedSettings = ['activecalendarcollections','activetodocollections', 'activeaddressbookcollections','todolistfilterselected','activeview','defaultactiveapp','calendarselected', 'todocalendarselected','addressbookselected','timezone'];
+var globalLoadedPrincipals = new Array();
+var globalEnableAllResourceSync = true;
+if(typeof isSettingsAvaible == 'undefined')
+	var globalPreviousSupportedSettings = ['activecalendarcollections','activetodocollections', 'activeaddressbookcollections','todolistfilterselected','activeview','defaultactiveapp','calendarselected', 'todocalendarselected','addressbookselected','timezone', 'loadedtodocollections', 'loadedcalendarcollections', 'loadedaddressbookcollections', 'version'];
+var globalSettingsSaving = '';
+var globalFirstHideLoader = true;
+var globalLoadedCollectionsNumber = 0;
+var globalLoadedCollectionsCount = 0;
 var ignoreServerSettings=false;
-var globalSettings={
-			resourcealphabetsorting: (typeof globalResourceAlphabetSorting!='undefined' && globalResourceAlphabetSorting!=null) ? globalResourceAlphabetSorting : true,
-			usejqueryauth: (typeof globalUseJqueryAuth!='undefined' && globalUseJqueryAuth!=null) ? globalUseJqueryAuth : false,
-			settingstype: (typeof globalSettingsType!='undefined' && globalSettingsType!=null && globalSettingsType!='') ? globalSettingsType : 'principal-URL',
-			defaultactiveapp: (typeof globalDefaultActiveApp!='undefined' && globalDefaultActiveApp!=null && globalDefaultActiveApp!='') ? globalDefaultActiveApp : null,
-			isLastdefaultactiveapp : false,
-			datepickerfirstdayofweek: (typeof globalDatepickerFirstDayOfWeek!='undefined' && globalDatepickerFirstDayOfWeek!=null) ? globalDatepickerFirstDayOfWeek : 1,
-			syncresourcesinterval:(typeof globalSyncResourcesInterval!='undefined' && globalSyncResourcesInterval!=null) ? globalSyncResourcesInterval :300000,
-			datepickerformat:(typeof globalDatepickerFormat!='undefined' && globalDatepickerFormat!=null && globalDatepickerFormat!='') ? globalDatepickerFormat : localization[globalInterfaceLanguage]._default_datepicker_format_,
-			backgroundsync:(typeof globalBackgroundSync!='undefined' && globalBackgroundSync!=null) ? globalBackgroundSync : true,
-			enablekbnavigation:(typeof globalEnableKbNavigation!='undefined' && globalEnableKbNavigation!=null) ? globalEnableKbNavigation : true,
-			rewritetimezonecomponent: (typeof globalRewriteTimezoneComponent!='undefined' && globalRewriteTimezoneComponent!=null) ? globalRewriteTimezoneComponent : true,
-			removeunknowntimezone: (typeof globalRemoveUnknownTimezone!='undefined' && globalRemoveUnknownTimezone!=null) ? globalRemoveUnknownTimezone : false,
-			mozillasupport: (typeof globalMozillaSupport!='undefined' && globalMozillaSupport!=null) ? globalMozillaSupport : false,
-			appleremindersmode: (typeof globalAppleRemindersMode!='undefined' && globalAppleRemindersMode!=null) ? globalAppleRemindersMode : false,
-			titleformatmonth: localization[globalInterfaceLanguage]._default_title_format_month_,
-			titleformatweek: localization[globalInterfaceLanguage]._default_title_format_week_,
-			titleformatday: localization[globalInterfaceLanguage]._default_title_format_day_,
-			titleformattable: localization[globalInterfaceLanguage]._default_title_format_table_,
-			columnformatagenda: localization[globalInterfaceLanguage]._default_column_format_agenda_,
-			timeformatlist: localization[globalInterfaceLanguage]._default_time_format_list_,
-			activecalendarcollections: (typeof globalActiveCalendarCollections!='undefined' && globalActiveCalendarCollections!=null) ? globalActiveCalendarCollections : null,
-			activetodocollections: (typeof globalActiveTodoCollections!='undefined' && globalActiveTodoCollections!=null) ? globalActiveTodoCollections : null,
-			loadedcalendarcollections: (typeof globalLoadedCalendarCollections!='undefined' && globalLoadedCalendarCollections!=null) ? globalLoadedCalendarCollections : null,
-			loadedtodocollections: (typeof globalLoadedTodoCollections!='undefined' && globalLoadedTodoCollections!=null) ? globalLoadedTodoCollections : null,
-			todolistfilterselected: (typeof globalTodoListFilterSelected!='undefined' && globalTodoListFilterSelected!=null && globalTodoListFilterSelected!='') ? globalTodoListFilterSelected : ['filterAction', 'filterProgress'],
-			activeview: (typeof globalActiveView!='undefined' && globalActiveView!=null && globalActiveView!='') ? globalActiveView : 'multiWeek',
-			islastactiveview : true,
-			calendarselected: (typeof globalCalendarSelected!='undefined' && globalCalendarSelected!=null && globalCalendarSelected!='') ? globalCalendarSelected : '',
-			todocalendarselected: (typeof globalTodoCalendarSelected!='undefined' && globalTodoCalendarSelected!=null && globalTodoCalendarSelected!='') ? globalTodoCalendarSelected : '',
-			timezone: (typeof globalTimeZone!='undefined' && globalTimeZone!=null && globalTimeZone!='') ? globalTimeZone : 'local',
-			islasttimezone:true,
-			openformmode: (typeof globalOpenFormMode!='undefined' && globalOpenFormMode!=null && globalOpenFormMode!='') ? globalOpenFormMode : 'double',
-			calendarstartofbusiness: (typeof globalCalendarStartOfBusiness!='undefined' && globalCalendarStartOfBusiness!=null) ? globalCalendarStartOfBusiness : 8,
-			calendarendofbusiness: (typeof globalCalendarEndOfBusiness!='undefined' && globalCalendarEndOfBusiness!=null) ? globalCalendarEndOfBusiness : 17,
-			ampmformat: (typeof globalAMPMFormat!='undefined' && globalAMPMFormat!=null) ? globalAMPMFormat : localization[globalInterfaceLanguage]._default_AMPM_format_,
-			timeformatagenda: (typeof globalTimeFormatAgenda!='undefined' && globalTimeFormatAgenda!=null && globalTimeFormatAgenda!='') ? globalTimeFormatAgenda : null,
-			timeformatbasic: (typeof globalTimeFormatBasic!='undefined' && globalTimeFormatBasic!=null && globalTimeFormatBasic!='') ? globalTimeFormatBasic : null,
-			displayhiddenevents: (typeof globalDisplayHiddenEvents!='undefined' && globalDisplayHiddenEvents!=null) ? globalDisplayHiddenEvents : false,
-			timezonesupport: (typeof globalTimeZoneSupport!='undefined' && globalTimeZoneSupport!=null) ? globalTimeZoneSupport : true,
-			timezonesenabled: (typeof globalTimeZonesEnabled!='undefined' && globalTimeZonesEnabled!=null && globalTimeZonesEnabled!='') ? globalTimeZonesEnabled : [],
-			showhiddenalarms: (typeof globalShowHiddenAlarms!='undefined' && globalShowHiddenAlarms!=null) ? globalShowHiddenAlarms : false,
-			ignorecompletedorcancelledalarms :(typeof globalIgnoreCompletedOrCancelledAlarms!='undefined' && globalIgnoreCompletedOrCancelledAlarms!=null) ? globalIgnoreCompletedOrCancelledAlarms : true,
-			weekenddays :(typeof globalWeekendDays!='undefined' && globalWeekendDays!=null && globalWeekendDays!='') ? globalWeekendDays : [0, 6],
-			eventstartpastlimit : (typeof globalEventStartPastLimit!='undefined' && globalEventStartPastLimit!=null) ? globalEventStartPastLimit : 3,
-			eventstartfuturelimit : (typeof globalEventStartFutureLimit!='undefined' && globalEventStartFutureLimit!=null) ? globalEventStartFutureLimit : 3,
-			compatibility:(typeof globalCompatibility!='undefined' && globalCompatibility!=null && globalCompatibility!='') ? globalCompatibility : {anniversaryOutputFormat: ['apple']},
-			contactstorefn:(typeof globalContactStoreFN!='undefined' && globalContactStoreFN!=null && globalContactStoreFN!='') ? globalContactStoreFN : {anniversaryOutputFormat: ['prefix',' last',' middle',' first',' suffix']},
-			urihandlertel:(typeof globalUriHandlerTel!='undefined' && globalUriHandlerTel!=null && globalUriHandlerTel!='') ? globalUriHandlerTel : {anniversaryOutputFormat: 'tel:'},
-			urihandleremail:(typeof globalUriHandlerEmail!='undefined' && globalUriHandlerEmail!=null && globalUriHandlerEmail!='') ? globalUriHandlerEmail : 'mailto:',
-			urihandlerurl:(typeof globalUriHandlerUrl!='undefined' && globalUriHandlerUrl!=null && globalUriHandlerUrl!='') ? globalUriHandlerUrl : 'http://',
-			urihandlerprofile:(typeof globalUriHandlerProfile!='undefined' && globalUriHandlerProfile!=null && globalUriHandlerProfile!='') ? globalUriHandlerProfile : {'twitter': 'http://twitter.com/%u', 'facebook': 'http://www.facebook.com/%u', 'flickr': 'http://www.flickr.com/photos/%u', 'linkedin': 'http://www.linkedin.com/in/%u', 'myspace': 'http://www.myspace.com/%u', 'sinaweibo': 'http://weibo.com/n/%u'},
-			addresscountryequivalence:(typeof globalAddressCountryEquivalence!='undefined' && globalAddressCountryEquivalence!=null && globalAddressCountryEquivalence!='') ? globalAddressCountryEquivalence : [{country: 'de', regex: '^\\W*Deutschland\\W*$'}, {country: 'sk', regex: '^\\W*Slovensko\\W*$'}],
-			addressbookselected: (typeof globalAddressbookSelected!='undefined' && globalAddressbookSelected!=null && globalAddressbookSelected!='') ? globalAddressbookSelected : '',
-			collectionsort: (typeof globalCollectionSort!='undefined' && globalCollectionSort!=null && globalCollectionSort!='') ? globalCollectionSort : ['last','middle','first'],
-			collectiondisplay: (typeof globalCollectionDisplay!='undefined' && globalCollectionDisplay!=null && globalCollectionDisplay!='') ? globalCollectionDisplay :['last',' middle',' first'],
-			collectiondisplayorg: (typeof globalCollectionDisplayOrg!='undefined' && globalCollectionDisplayOrg!=null) ? globalCollectionDisplayOrg :true,
-			defaultaddresscountry: (typeof globalDefaultAddressCountry!='undefined' && globalDefaultAddressCountry!=null && globalDefaultAddressCountry!='') ? globalDefaultAddressCountry :'us',
-			addresscountryfavorites: (typeof globalAddressCountryFavorites!='undefined' && globalAddressCountryFavorites!=null && globalAddressCountryFavorites!='') ? globalAddressCountryFavorites :[],
-			activeaddressbookcollections: (typeof globalActiveAddressbookCollections!='undefined' && globalActiveAddressbookCollections!=null) ? globalActiveAddressbookCollections : null,
-			loadedaddressbookcollections: (typeof globalLoadedAddressbookCollections!='undefined' && globalLoadedAddressbookCollections!=null) ? globalLoadedAddressbookCollections : null
-};
+var globalPreventLogoutSync=false;
+var globalEmailAddress='';
+var globalSettingsVersion=3;
+var globalSyncSettingsSave=false;
+
 // Timepicker hack (prevent IE to re-open the datepicker on date click + focus)
 var globalTmpTimePickerHackTime=new Object();
 
@@ -220,10 +319,52 @@ function getAccount(accountUID)
 	return resourceSettings;
 }
 
-function reloadResources(dontSaveSettings) 
+function checkForUnloadedResources()
+{
+	var rex=new RegExp('^(https?://)([^@/]+(?:@[^@/]+)?)@([^/]+)(.*/)', 'i');
+
+	for(var i=globalLoadedPrincipals.length-1; i>=0;i--)
+	{
+		var resourceCounter = 0;
+		if(isAvaible('CardDavMATE'))
+			for(var j=0; j<globalResourceCardDAVList.collections.length;j++)
+				if(globalResourceCardDAVList.collections[j].uid!=undefined&&globalResourceCardDAVList.collections[j].makeLoaded)
+				{
+					var tmp=globalResourceCardDAVList.collections[j].accountUID.match(rex);
+					var resourceCalDAV_href=tmp[1]+tmp[3]+tmp[4];
+					if(globalLoadedPrincipals[i]==resourceCalDAV_href)
+						resourceCounter++;
+				}
+
+		if(isAvaible('CalDavZAP'))
+		{
+			for(var j=0; j<globalResourceCalDAVList.collections.length;j++)
+				if(globalResourceCalDAVList.collections[j].uid!=undefined&&globalResourceCalDAVList.collections[j].makeLoaded)
+				{
+					var tmp=globalResourceCalDAVList.collections[j].accountUID.match(rex);
+					var resourceCalDAV_href=tmp[1]+tmp[3]+tmp[4];
+					if(globalLoadedPrincipals[i]==resourceCalDAV_href)
+						resourceCounter++;
+				}
+
+			for(var j=0; j<globalResourceCalDAVList.TodoCollections.length;j++)
+				if(globalResourceCalDAVList.TodoCollections[j].uid!=undefined&&globalResourceCalDAVList.TodoCollections[j].makeLoaded)
+				{
+					var tmp=globalResourceCalDAVList.TodoCollections[j].accountUID.match(rex);
+					var resourceCalDAV_href=tmp[1]+tmp[3]+tmp[4];
+					if(globalLoadedPrincipals[i]==resourceCalDAV_href)
+						resourceCounter++;
+				}
+		}
+		if(resourceCounter==0)
+			globalLoadedPrincipals.splice(i,1);
+	}
+}
+
+function reloadResources(dontSaveSettings, loadArray)
 {
 	if((isAvaible('CardDavMATE')&&(globalCardDAVInitLoad||globalCardDAVResourceSync)) || (isAvaible('CalDavZAP')&&(globalCalDAVInitLoad||globalCalDAVResourceSync))
-	|| (isAvaible('Projects')&&!isProjectsLoaded) || (isAvaible('Settings')&&(!isSettingsLoaded || (globalSettingsSaving&&!dontSaveSettings))) || (isAvaible('CalDavZAP')&&(globalLimitLoading!='' || globalLimitTodoLoading!='')))
+	|| (isAvaible('Projects')&&!isProjectsLoaded) || (isAvaible('Settings')&&(!isSettingsLoaded || (globalSettingsSaving!=''&&!dontSaveSettings))) || (isAvaible('CalDavZAP')&&(globalLimitLoading!='' || globalLimitTodoLoading!='')))
 		return false;
 	if(globalWindowFocus==false)
 		return false;
@@ -234,20 +375,20 @@ function reloadResources(dontSaveSettings)
 		globalCalDAVResourceSync = true;
 		globalToday.setHours(0);
 		globalToday.setMinutes(0);
-		globalToday.setSeconds(0); 
+		globalToday.setSeconds(0);
 		globalToday.setMilliseconds(0);
 
 		var currentToday=new Date();
 		currentToday.setHours(0);
 		currentToday.setMinutes(0);
-		currentToday.setSeconds(0); 
+		currentToday.setSeconds(0);
 		currentToday.setMilliseconds(0);
 		if(currentToday.getTime()!=globalToday.getTime())
 		{
 			if(isAvaible('CalDavZAP'))
 				$('.date').datepicker('refresh');
 			if(isAvaible('CardDavMATE'))
-				$('#vCardEditor').find('[data-type^="date_"]').datepicker('refresh');
+				$('#vCardEditor').find('input[data-type^="date_"]').datepicker('refresh');
 			if(isAvaible('Projects'))
 				$('.project_date').datepicker('refresh');
 			$('#calendar').fullCalendar('updateToday');
@@ -266,9 +407,11 @@ function reloadResources(dontSaveSettings)
 			globalToday=currentToday;
 		}
 	}
-	netFindResource(globalAccountSettings[0], 0, false, 0);
-	if(!dontSaveSettings)
-		checkBeforeClose(false);
+	checkForUnloadedResources();
+	if(!globalEnableAllResourceSync&&(typeof loadArray=='undefined' || loadArray==null))
+		netFindResource(globalAccountSettings[0], 0, false, 0, globalLoadedPrincipals);
+	else
+		netFindResource(globalAccountSettings[0], 0, false, 0, loadArray);
 }
 function ifLoadCollections()
 {
@@ -292,10 +435,111 @@ function ifLoadCollections()
 				changeCounter++;
 	}
 
-	if(changeCounter>0)
-	{
+	if(changeCounter>0 || globalSettingsSaving!='')
 		loadNextApplication(false);
-	}
+}
+
+function bindColorPickerClick(newElement)
+{
+	newElement.click(function(event){
+		var collectionType=null;
+		var resourceSelectedClass=null;
+		var resourceItems=null;
+
+		if(newElement.parent().hasClass('resourceCalDAV_item'))
+		{
+			if(globalEventCollectionsLoading)
+				return false;
+			collectionType='event';
+			resourceSelectedClass='resourceCalDAV_item_selected';
+			resourceItems=newElement.parent().siblings('.resourceCalDAV_item_selected');
+		}
+		else if(newElement.parent().hasClass('resourceCalDAVTODO_item'))
+		{
+			if(globalTodoCollectionsLoading)
+				return false;
+			collectionType='todo';
+			resourceSelectedClass='resourceCalDAV_item_selected';
+			resourceItems=newElement.parent().siblings('.resourceCalDAV_item_selected');
+		}
+		else if(newElement.hasClass('resourceCardDAVColor'))
+		{
+			if(globalAddressbookCollectionsLoading)
+				return false;
+			collectionType='addressbook';
+			resourceSelectedClass='resourceCardDAV_selected';
+			resourceItems=newElement.parent().parent().siblings().find('.resourceCardDAV_selected');
+		}
+
+		var showInput = event.shiftKey;
+		var colorpicker=$(this).siblings('.colorPicker');
+
+		if(!$(this).hasClass('hasColorpicker'))
+		{
+			$(this).addClass('hasColorpicker');
+			colorpicker.spectrum({
+				chooseText: localization[globalInterfaceLanguage].buttonSave,
+				cancelText: localization[globalInterfaceLanguage].buttonCancel,
+				color: newElement.css('background-color'),
+				showInput: showInput,
+				preferredFormat: 'hex6',
+				move: function(color)
+				{
+					newElement.css('background', color);
+				},
+				hide: function(color)
+				{
+					if(newElement.css('background-color') != colorpicker.spectrum('get').toRgbString())
+						newElement.css('background', colorpicker.spectrum('get').toRgbString());
+				},
+				change: function(color)
+				{
+					newElement.css('background', color);
+					if(collectionType=='event')
+					{
+						var coll = globalResourceCalDAVList.getEventCollectionByUID($(this).parent().attr('data-id'));
+						netSaveProperty(coll, (typeof globalCalendarColorPropertyXmlns!='undefined'&&globalCalendarColorPropertyXmlns!=null&&globalCalendarColorPropertyXmlns!='' ? globalCalendarColorPropertyXmlns : 'http://apple.com/ns/ical/'), 'calendar-color', color.toHexString())
+					}
+					else if(collectionType=='todo')
+					{
+						var coll = globalResourceCalDAVList.getTodoCollectionByUID($(this).parent().attr('data-id'));
+						netSaveProperty(coll, (typeof globalCalendarColorPropertyXmlns!='undefined'&&globalCalendarColorPropertyXmlns!=null&&globalCalendarColorPropertyXmlns!='' ? globalCalendarColorPropertyXmlns : 'http://apple.com/ns/ical/'), 'calendar-color', color.toHexString())
+					}
+					else if(collectionType=='addressbook')
+					{
+						var coll = globalResourceCardDAVList.getCollectionByUID($(this).parent().attr('data-id'));
+						netSaveProperty(coll, (typeof globalAddrColorPropertyXmlns!='undefined'&&globalAddrColorPropertyXmlns!=null&&globalAddrColorPropertyXmlns!='' ? globalAddrColorPropertyXmlns : 'http://inf-it.com/ns/ab/'),  'addressbook-color', color.toHexString())
+					}
+				}
+			});
+		}
+		else if(showInput!=colorpicker.spectrum('option', 'showInput'))
+			colorpicker.spectrum('option', 'showInput',showInput);
+
+		var container = colorpicker.spectrum('container');
+		if(container.is(':visible')) {
+			colorpicker.spectrum('hide');
+		}
+		else {
+			var offset=$(this).offset();
+			colorpicker.spectrum('show');
+
+			if(event.pageY<$(window).height()/2) {
+				offset.top+=$(this).outerHeight();
+				container.removeClass('sp-inverse');
+			}
+			else {
+				offset.top-=container.outerHeight();
+				container.addClass('sp-inverse');
+			}
+			container.offset(offset);
+		}
+
+		resourceItems.removeClass(resourceSelectedClass);
+		newElement.parent().addClass(resourceSelectedClass);
+
+		return false;
+	});
 }
 
 function loadNextApplication(forceLoad)
@@ -330,13 +574,25 @@ function loadNextApplication(forceLoad)
 			loadNextApplication(false);
 		}
 	}
+	else if(isAvaible('Reports') && !globalReportsSync && !isReportsLoaded && getLoggedUser()!=null)
+	{
+		$('#MainLoaderInner').html('Loading Reports');
+		globalReportsSync=true;
+		if(typeof globalCRMSettings != 'undefined')
+			netLoadReportList(globalCRMSettings);
+		else
+		{
+			console.log("Error: globalCRMSettings is not defined");
+			loadNextApplication(false);
+		}
+	}
 	else if(isAvaible('Settings') && !globalSettingsSync && !isSettingsLoaded && getLoggedUser()!=null)
 	{
 		globalSettingsSync = true;
 		if(!isSettingsLoaded)
 			loadNextApplication(false);
 		if($('#ResourceSettingsList').children('.resourceSettings_item').length)
-			$('#ResourceSettingsList').children().eq(0).children().trigger('click');
+			$('#ResourceSettingsList').children().eq(0).trigger('click');
 	}
 	else
 	{
@@ -358,6 +614,11 @@ function loadNextApplication(forceLoad)
 		{
 			globalProjectSync=false;
 			isProjectsLoaded = true;
+		}
+		if(isAvaible('Reports'))
+		{
+			globalReportsSync=false;
+			isReportsLoaded = true;
 		}
 		if(isAvaible('Settings'))
 		{
@@ -410,8 +671,19 @@ function login()
 	});
 }
 
-function logout()
+function logout(forceLogout)
 {
+	if((typeof forceLogout=='undefined' || forceLogout==null ) && (
+		(isAvaible('CardDavMATE') && (!isCardDAVLoaded || globalCardDAVResourceSync)) || 
+		(isAvaible('CalDavZAP') && (!isCalDAVLoaded || globalCalDAVResourceSync)) || 
+		(isAvaible('Projects') && !isProjectsLoaded) || 
+		(isAvaible('Settings') && (!isSettingsLoaded || (globalSettingsSaving!='' && !dontSaveSettings))) || 
+		(isAvaible('CalDavZAP') && (globalLimitLoading!='' || globalLimitTodoLoading!=''))
+	))
+	{
+		globalPreventLogoutSync=true;
+		return false;
+	}
 	clearInterval(globalResourceIntervalID);
 	if(globalFirstLoadNextApp)
 		globalFirstLoadNextApp=false;
@@ -422,8 +694,20 @@ function logout()
 	globalResourceIntervalID=null;
 	globalLoginUsername='';
 	globalLoginPassword='';
+	globalXMLCache=null;
 	globalResourceNumber=0;
 	globalResourceNumberCount=0;
+	globalLoadedPrincipals=new Array();
+	globalEmailAddress='';
+	globalPreventLogoutSync=false;
+	globalSyncSettingsSave=false;
+
+	$(document.documentElement).unbind();
+	// reset page title
+	var tmpMatch = document.title.match('^(.*) \\[.*\\]$');
+	if(tmpMatch!=null)
+		document.title = tmpMatch[1];
+
 	$('#LoginPage').fadeTo(2000, 1, function(){
 		if(typeof isCalDAVLoaded!='undefined' && isCalDAVLoaded)
 		{
@@ -440,6 +724,11 @@ function logout()
 		{
 			logoutProjects();
 			isProjectsLoaded = false;
+		}
+		if(typeof isReportsLoaded!='undefined' && isReportsLoaded)
+		{
+			logoutReports();
+			isReportsLoaded = false;
 		}
 		if(typeof isSettingsLoaded!='undefined' && isSettingsLoaded)
 		{
@@ -461,7 +750,7 @@ function logout()
 
 		isUserLogged=false;
 
-		if(globalSettings.defaultactiveapp==null)
+		if(globalSettings.defaultactiveapp.value==null)
 		{
 			if(isAvaible('CalDavZAP'))
 				globalActiveApp='CalDavZAP';
@@ -469,16 +758,20 @@ function logout()
 				globalActiveApp='CardDavMATE';
 		}
 		else
-			globalActiveApp=globalSettings.defaultactiveapp;
+			globalActiveApp=globalSettings.defaultactiveapp.value;
 
+		resetSettings();
 		if(isAvaible('CardDavMATE'))
 			mainCardDAV();
 		if(isAvaible('CalDavZAP'))
 			mainCalDAV();
-		if(isAvaible('Settings')) 
+		if(isAvaible('Settings'))
 			mainSettings();
-		if(isAvaible('Projects')) 
+		if(isAvaible('Projects'))
 			mainProjects();
+		if(isAvaible('Reports'))
+			mainReports();
+		init();
 	});
 }
 
@@ -486,7 +779,7 @@ function init()
 {
 	// browser check
 	if(($.browser.msie && parseInt($.browser.version, 10)<9) || $.browser.opera)
-		$('#login_message').css('display','').find('td').text(localization[globalInterfaceLanguage].unsupportedBrowser);
+		$('#login_message').css('display','').text(localization[globalInterfaceLanguage].unsupportedBrowser);
 
 	if(typeof globalDemoMode!='undefined')
 	{
@@ -496,9 +789,6 @@ function init()
 			$('[data-type="system_password"]').val(globalDemoMode.userPassword).change();
 	}
 
-	if(globalAvailableAppsArray.length==2 && isAvaible('CalDavZAP'))
-		setLogoCalDAV();
-
 	loadConfig();
 }
 
@@ -506,7 +796,7 @@ function run()
 {
 	isUserLogged=true;
 	window.onfocus=function(){globalWindowFocus=true;}
-	window.onblur=function(){if(globalSettings.backgroundsync==false) globalWindowFocus=false;}
+	window.onblur=function(){if(globalSettings.backgroundsync.value==false) globalWindowFocus=false;}
 	$('#LoginPage').fadeOut(2000);
 
 	if(typeof globalAccountSettings=='undefined')
@@ -518,6 +808,7 @@ function run()
 	if(typeof globalNewVersionNotifyUsers=='undefined' || globalNewVersionNotifyUsers!=null)
 		netVersionCheck();
 
+	document.title+=' ['+globalAccountSettings[0].userAuth.userName+']';
 	// Automatically detect crossDomain settings
 	var detectedHref=location.protocol+'//'+location.hostname+(location.port ? ':'+location.port : '');
 	for(var i=0;i<globalAccountSettings.length;i++)
@@ -529,32 +820,32 @@ function run()
 			else
 				globalAccountSettings[i].crossDomain=true;
 
-			console.log("Info: [account: '"+globalAccountSettings[i].href.replace('\/\/', '//'+globalAccountSettings[i].userAuth.userName+'@')+"'] crossDomain set to: '"+(globalAccountSettings[i].crossDomain==true ? 'true' : 'false')+"'");
+			console.log("Info: [userAccount: '"+globalAccountSettings[i].href.replace('\/\/', '//'+globalAccountSettings[i].userAuth.userName+'@')+"']: crossDomain set to: '"+(globalAccountSettings[i].crossDomain==true ? 'true' : 'false')+"'");
 		}
 	}
 
-	if(typeof globalAvailableAppsArray!='undefined' && globalAvailableAppsArray!=null && globalAvailableAppsArray.length>1)
-	{
+	if(typeof globalAvailableAppsArray!='undefined' && globalAvailableAppsArray!=null && globalAvailableAppsArray.length>1) {
+		// show integration banner
 		$('.integration_d').css('display', 'block');
-		if(globalAvailableAppsArray.indexOf('CalDavZAP')!=-1) {
-			$('#intCaldav').attr({'alt':localization[globalInterfaceLanguage].txtCalendar, 'title':localization[globalInterfaceLanguage].txtCalendar});
-			$('#intCaldav').css('display', 'block');
-		}
-		if(globalAvailableAppsArray.indexOf('CalDavTODO')!=-1) {
-			$('#intCaldavTodo').attr({'alt':localization[globalInterfaceLanguage].txtTodo, 'title':localization[globalInterfaceLanguage].txtTodo});
-			$('#intCaldavTodo').css('display', 'block');
-		}
-		if(globalAvailableAppsArray.indexOf('CardDavMATE')!=-1) {
-			$('#intCarddav').attr({'alt':localization[globalInterfaceLanguage].txtAddressbook, 'title':localization[globalInterfaceLanguage].txtAddressbook});
-			$('#intCarddav').css('display', 'block');
-		}
-		if(globalAvailableAppsArray.indexOf('Projects')!=-1) {
-			$('#intProjects').attr({'alt':localization[globalInterfaceLanguage].txtProjects, 'title':localization[globalInterfaceLanguage].txtProjects});
-			$('#intProjects').css('display', 'block');
-		}
-		if(globalAvailableAppsArray.indexOf('Settings')!=-1) {
-			$('#intSettings').attr({'alt':localization[globalInterfaceLanguage].txtSettings, 'title':localization[globalInterfaceLanguage].txtSettings});
-			$('#intSettings').css('display', 'block');
+
+		// show app buttons for available apps only
+		if(globalAvailableAppsArray.indexOf('CalDavZAP')!=-1)
+			$('#intCaldav').attr('title',localization[globalInterfaceLanguage].txtCalendars).css('display', 'block').find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+		if(globalAvailableAppsArray.indexOf('CalDavTODO')!=-1)
+			$('#intCaldavTodo').attr('title',localization[globalInterfaceLanguage].txtTodos).css('display', 'block').find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+		if(globalAvailableAppsArray.indexOf('CardDavMATE')!=-1)
+			$('#intCarddav').attr('title',localization[globalInterfaceLanguage].txtContacts).css('display', 'block').find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+		if(globalAvailableAppsArray.indexOf('Projects')!=-1)
+			$('#intProjects').attr('title',localization[globalInterfaceLanguage].txtProjects).css('display', 'block').find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+		if(globalAvailableAppsArray.indexOf('Reports')!=-1)
+			$('#intReports').attr('title',localization[globalInterfaceLanguage].txtReports).css('display', 'block').find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+		if(globalAvailableAppsArray.indexOf('Settings')!=-1)
+			$('#intSettings').attr('title',localization[globalInterfaceLanguage].txtSettings).css('display', 'block').find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+
+		// show the refresh button
+		if(typeof globalEnableRefresh==='boolean' && globalEnableRefresh && (globalAvailableAppsArray.indexOf('CalDavZAP')!=-1 || globalAvailableAppsArray.indexOf('CalDavTODO')!=-1 || globalAvailableAppsArray.indexOf('CardDavMATE')!=-1)) {
+			$('#intRefresh').attr('title',localization[globalInterfaceLanguage].txtRefresh).find('.int_error').attr('alt',localization[globalInterfaceLanguage].txtError);
+			$('#intRefresh').prev().addBack().css('display', 'block');
 		}
 	}
 
@@ -589,21 +880,17 @@ function loadConfig()
 				else
 					globalNetworkCheckSettings.crossDomain=true;
 
-				console.log("Info: [globalNetworkCheckSettings: '"+globalNetworkCheckSettings.href+"'] crossDomain set to: '"+(globalNetworkCheckSettings.crossDomain==true ? 'true' : 'false')+"'");
+				console.log("Info: [globalNetworkCheckSettings: '"+globalNetworkCheckSettings.href+"']: crossDomain set to: '"+(globalNetworkCheckSettings.crossDomain==true ? 'true' : 'false')+"'");
 			}
 
 // !!!! preco sa riesi s logout buttonom prave tu?
 			// show the logout button
-			if(typeof globalAvailableAppsArray!='undefined' && globalAvailableAppsArray!=null && globalAvailableAppsArray.length>1)
-			{
-				$('#intLogout').css('display', 'block');
-				$('#intLogout').attr({'alt':localization[globalInterfaceLanguage].altLogout, 'title':localization[globalInterfaceLanguage].altLogout});
+			if(typeof globalAvailableAppsArray!='undefined' && globalAvailableAppsArray!=null && globalAvailableAppsArray.length>1) {
+				$('#intLogout').prev().addBack().css('display', 'block');
+				$('#intLogout').attr('title',localization[globalInterfaceLanguage].altLogout);
 			}
-			else
-			{
+			else {
 				$('#Logout').css('display', 'block');
-				$('#logoutShower').css('display', 'block');
-				$('#logoutSettings').css('display', 'block');
 			}
 
 			netCheckAndCreateConfiguration(globalNetworkCheckSettings);
@@ -629,21 +916,18 @@ function loadConfig()
 				else
 					globalNetworkAccountSettings.crossDomain=true;
 
-				console.log("Info: [globalNetworkAccountSettings: '"+globalNetworkAccountSettings.href+"'] crossDomain set to: '"+(globalNetworkAccountSettings.crossDomain==true ? 'true' : 'false')+"'");
+				console.log("Info: [globalNetworkAccountSettings: '"+globalNetworkAccountSettings.href+"']: crossDomain set to: '"+(globalNetworkAccountSettings.crossDomain==true ? 'true' : 'false')+"'");
 			}
 // !!!! preco sa riesi s logout buttonom prave tu?
 			// show the logout button
-			if(typeof globalAvailableAppsArray!='undefined' && globalAvailableAppsArray!=null && globalAvailableAppsArray.length>1)
-			{
-				$('#intLogout').css('display', 'block');
-				$('#intLogout').attr({'alt':localization[globalInterfaceLanguage].altLogout, 'title':localization[globalInterfaceLanguage].altLogout});
+			if(typeof globalAvailableAppsArray!='undefined' && globalAvailableAppsArray!=null && globalAvailableAppsArray.length>1) {
+				$('#intLogout').prev().addBack().css('display', 'block');
+				$('#intLogout').attr('title',localization[globalInterfaceLanguage].altLogout);
 			}
-			else
-			{
+			else {
 				$('#Logout').css('display', 'block');
-				$('#logoutShower').css('display', 'block');
-				$('#logoutSettings').css('display', 'block');
 			}
+
 			netLoadConfiguration(globalNetworkAccountSettings);
 			return true;
 		}
@@ -702,6 +986,8 @@ function globalMain()
 			globalAvailableAppsArray[globalAvailableAppsArray.length]='Settings';
 		if(typeof isProjectsAvaible!='undefined' && isProjectsAvaible!=null && isProjectsAvaible)
 			globalAvailableAppsArray[globalAvailableAppsArray.length]='Projects';
+		if(typeof isReportsAvaible!='undefined' && isReportsAvaible!=null && isReportsAvaible)
+			globalAvailableAppsArray[globalAvailableAppsArray.length]='Reports';
 	}
 	else
 	{
@@ -716,12 +1002,14 @@ function globalMain()
 			globalAvailableAppsArray[globalAvailableAppsArray.length]='Settings';
 		if(typeof isProjectsAvaible!='undefined' && isProjectsAvaible!=null && isProjectsAvaible && globalEnabledApps.indexOf('Projects')!=-1)
 			globalAvailableAppsArray[globalAvailableAppsArray.length]='Projects';
+		if(typeof isReportsAvaible!='undefined' && isReportsAvaible!=null && isReportsAvaible)
+			globalAvailableAppsArray[globalAvailableAppsArray.length]='Reports';
 	}
 
 	if(globalAvailableAppsArray.length>1)
 		isIntegrated=true;
 
-	if(globalSettings.defaultactiveapp==null)
+	if(globalSettings.defaultactiveapp.value==null)
 	{
 		if(isAvaible('CardDavMATE'))
 			globalActiveApp='CardDavMATE';
@@ -729,7 +1017,7 @@ function globalMain()
 			globalActiveApp='CalDavZAP';
 	}
 	else
-		globalActiveApp=globalSettings.defaultactiveapp;
+		globalActiveApp=globalSettings.defaultactiveapp.value;
 
 	if(isAvaible('CardDavMATE'))
 	{
@@ -749,16 +1037,16 @@ function globalMain()
 	{
 		if(navigator.platform.toLowerCase().indexOf('win')==0)	/* Windows version */
 		{
-			$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #SettingsTemplate').find('input').css('text-indent', '2px');
-			$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #SettingsTemplate').find('select').css({'padding-left': '0px', 'padding-right': '13px'});
+			$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #EditorBoxSettings').find('input').css('text-indent', '2px');
+			$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #EditorBoxSettings').find('select').css({'padding-left': '0px', 'padding-right': '13px'});
 		}
 		else	/* non-Windows version */
-			$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #SettingsTemplate').find('input').css('text-indent', '1px');
+			$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #EditorBoxSettings').find('input').css('text-indent', '1px');
 	}
 	else if($.browser.safari)
 	{
-		$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #SettingsTemplate').find('textarea').addClass('safari_hack');
-		$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #SettingsTemplate').find('input').addClass('safari_hack');
+		$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #EditorBoxSettings').find('textarea').addClass('safari_hack');
+		$('#LoginPage, #vCardTemplate, #event_details_template, #todo_details_template, #EditorBoxSettings').find('input').addClass('safari_hack');
 	}
 	else if($.browser.msie)	/* IE */
 	{
@@ -770,13 +1058,13 @@ function globalMain()
 		}
 
 		// ADD SVG to login screen
-		var newSVG=$(SVG_select).attr('data-type', 'select_icon').css({'pointer-events': 'none', 'z-index': '1', 'display': 'inline', 'margin-left': '-19px', 'vertical-align': 'top', 'background-color': '#ffffff'});	// background-color = stupid IE9 bug
+		var newSVG=$(SVG_select_login).attr('data-type', 'select_icon').css({'pointer-events': 'none', 'z-index': '1', 'display': 'inline', 'margin-left': '-19px', 'vertical-align': 'top', 'background-color': '#ffffff'});	// background-color = stupid IE9 bug
 		$('#Login').find('select[data-type="language"]').after($($('<div>').append($(newSVG).clone()).html()));
 	}
 	else if($.browser.mozilla)
 	{
 		// ADD SVG to login screen
-		var newSVG=$(SVG_select).attr('data-type', 'select_icon').css({'pointer-events': 'none', 'z-index': '1', 'display': 'inline', 'margin-left': '-19px', 'vertical-align': 'top', 'background-color': '#ffffff'});	// background-color = stupid IE9 bug
+		var newSVG=$(SVG_select_login).attr('data-type', 'select_icon').css({'pointer-events': 'none', 'z-index': '1', 'display': 'inline', 'margin-left': '-19px', 'vertical-align': 'top', 'background-color': '#ffffff'});	// background-color = stupid IE9 bug
 		$('#Login').find('select[data-type="language"]').after($($('<div>').append($(newSVG).clone()).html()));
 	}
 	/*************************** END OF BAD HACKS SECTION ***************************/
@@ -811,12 +1099,33 @@ function globalMain()
 	// select the globalInterfaceLanguage in the interface
 	$('[data-type="language"]').find('[data-type='+globalInterfaceLanguage+']').prop('selected',true);
 
+	// set login screen logo
+	if(isAvaible('CalDavZAP') && !isAvaible('CardDavMATE'))
+	{
+		$('[data-size="login_logo"]').find('img').attr('src', "images/cdz_logo.svg");
+		$('#LoginPage').find('.footer').text('CalDavZAP - the open source CalDAV web client');
+	}
+	else if(isAvaible('CardDavMATE') && !isAvaible('CalDavZAP'))
+	{
+		$('[data-size="login_logo"]').find('img').attr('src', "carddavmate/images/cdm_logo.svg");
+		$('#LoginPage').find('.footer').text('CardDavMATE - the open source CardDAV web client');
+	}
+	else
+	{
+		$('#Login').css('margin-top', '41px');
+		$('[data-size="login_logo"]').find('img').attr('src', "images/infcloud_logo.svg");
+		$('#LoginPage').find('.footer').text('InfCloud - the open source CalDAV/CardDAV web client');
+	}
+	$('#LoginPage').find('.footer').attr('title', globalVersion);
+
 	if(isAvaible('CardDavMATE'))
 		globalMainCardDAV();
 	if(isAvaible('CalDavZAP'))
 		globalMainCalDAV();
 	if(isAvaible('Projects'))
 		globalMainProjects();
+	if(isAvaible('Reports'))
+		globalMainReports();
 	if(isAvaible('Settings'))
 		globalMainSettings();
 
@@ -824,141 +1133,84 @@ function globalMain()
 		mainCardDAV();
 	if(isAvaible('CalDavZAP'))
 		mainCalDAV();
-	if(isAvaible('Settings')) 
-		mainSettings();
-	if(isAvaible('Projects')) 
+	if(isAvaible('Projects'))
 		mainProjects();
-}
+	if(isAvaible('Reports'))
+		mainReports();
+	if(isAvaible('Settings'))
+		mainSettings();
 
-function resetSettings()
-{
-	globalSettings={};
-	globalSettings={
-			resourcealphabetsorting: (typeof globalResourceAlphabetSorting!='undefined' && globalResourceAlphabetSorting!=null) ? globalResourceAlphabetSorting : true,
-			usejqueryauth: (typeof globalUseJqueryAuth!='undefined' && globalUseJqueryAuth!=null) ? globalUseJqueryAuth : false,
-			settingstype: (typeof globalSettingsType!='undefined' && globalSettingsType!=null && globalSettingsType!='') ? globalSettingsType : 'principal-URL',
-			defaultactiveapp: (typeof globalDefaultActiveApp!='undefined' && globalDefaultActiveApp!=null && globalDefaultActiveApp!='') ? globalDefaultActiveApp : null,
-			isLastdefaultactiveapp : false,
-			datepickerfirstdayofweek: (typeof globalDatepickerFirstDayOfWeek!='undefined' && globalDatepickerFirstDayOfWeek!=null) ? globalDatepickerFirstDayOfWeek : 1,
-			syncresourcesinterval:(typeof globalSyncResourcesInterval!='undefined' && globalSyncResourcesInterval!=null) ? globalSyncResourcesInterval :300000 ,
-			datepickerformat:(typeof globalDatepickerFormat!='undefined' && globalDatepickerFormat!=null && globalDatepickerFormat!='') ? globalDatepickerFormat : localization[globalInterfaceLanguage]._default_datepicker_format_ ,
-			backgroundsync:(typeof globalBackgroundSync!='undefined' && globalBackgroundSync!=null) ? globalBackgroundSync : true ,
-			enablekbnavigation:(typeof globalEnableKbNavigation!='undefined' && globalEnableKbNavigation!=null) ? globalEnableKbNavigation : true ,
-			rewritetimezonecomponent: (typeof globalRewriteTimezoneComponent!='undefined' && globalRewriteTimezoneComponent!=null) ? globalRewriteTimezoneComponent : true,
-			removeunknowntimezone: (typeof globalRemoveUnknownTimezone!='undefined' && globalRemoveUnknownTimezone!=null) ? globalRemoveUnknownTimezone : false,
-			mozillasupport: (typeof globalMozillaSupport!='undefined' && globalMozillaSupport!=null) ? globalMozillaSupport : false,
-			appleremindersmode: (typeof globalAppleRemindersMode!='undefined' && globalAppleRemindersMode!=null) ? globalAppleRemindersMode : false,
-			titleformatmonth: localization[globalInterfaceLanguage]._default_title_format_month_,
-			titleformatweek: localization[globalInterfaceLanguage]._default_title_format_week_,
-			titleformatday: localization[globalInterfaceLanguage]._default_title_format_day_,
-			titleformattable: localization[globalInterfaceLanguage]._default_title_format_table_,
-			columnformatagenda: localization[globalInterfaceLanguage]._default_column_format_agenda_,
-			timeformatlist: localization[globalInterfaceLanguage]._default_time_format_list_,
-			activecalendarcollections: (typeof globalActiveCalendarCollections!='undefined' && globalActiveCalendarCollections!=null) ? globalActiveCalendarCollections : null,
-			activetodocollections: (typeof globalActiveTodoCollections!='undefined' && globalActiveTodoCollections!=null) ? globalActiveTodoCollections : null,
-			loadedcalendarcollections: (typeof globalLoadedCalendarCollections!='undefined' && globalLoadedCalendarCollections!=null) ? globalLoadedCalendarCollections : null,
-			loadedtodocollections: (typeof globalLoadedTodoCollections!='undefined' && globalLoadedTodoCollections!=null) ? globalLoadedTodoCollections : null,
-			todolistfilterselected: (typeof globalTodoListFilterSelected!='undefined' && globalTodoListFilterSelected!=null && globalTodoListFilterSelected!='') ? globalTodoListFilterSelected : ['filterAction', 'filterProgress'],
-			activeview: (typeof globalActiveView!='undefined' && globalActiveView!=null && globalActiveView!='') ? globalActiveView : 'multiWeek',
-			islastactiveview : true,
-			calendarselected: (typeof globalCalendarSelected!='undefined' && globalCalendarSelected!=null && globalCalendarSelected!='') ? globalCalendarSelected : '',
-			todocalendarselected: (typeof globalTodoCalendarSelected!='undefined' && globalTodoCalendarSelected!=null && globalTodoCalendarSelected!='') ? globalTodoCalendarSelected : '',
-			timezone: (typeof globalTimeZone!='undefined' && globalTimeZone!=null && globalTimeZone!='') ? globalTimeZone : 'local',
-			islasttimezone:true,
-			openformmode: (typeof globalOpenFormMode!='undefined' && globalOpenFormMode!=null && globalOpenFormMode!='') ? globalOpenFormMode : 'double',
-			calendarstartofbusiness: (typeof globalCalendarStartOfBusiness!='undefined' && globalCalendarStartOfBusiness!=null) ? globalCalendarStartOfBusiness : 8,
-			calendarendofbusiness: (typeof globalCalendarEndOfBusiness!='undefined' && globalCalendarEndOfBusiness!=null) ? globalCalendarEndOfBusiness : 17,
-			ampmformat: (typeof globalAMPMFormat!='undefined' && globalAMPMFormat!=null) ? globalAMPMFormat : localization[globalInterfaceLanguage]._default_AMPM_format_,
-			timeformatagenda: (typeof globalTimeFormatAgenda!='undefined' && globalTimeFormatAgenda!=null && globalTimeFormatAgenda!='') ? globalTimeFormatAgenda : null,
-			timeformatbasic: (typeof globalTimeFormatBasic!='undefined' && globalTimeFormatBasic!=null && globalTimeFormatBasic!='') ? globalTimeFormatBasic : null,
-			displayhiddenevents: (typeof globalDisplayHiddenEvents!='undefined' && globalDisplayHiddenEvents!=null) ? globalDisplayHiddenEvents : false,
-			timezonesupport: (typeof globalTimeZoneSupport!='undefined' && globalTimeZoneSupport!=null) ? globalTimeZoneSupport : true,
-			timezonesenabled: (typeof globalTimeZonesEnabled!='undefined' && globalTimeZonesEnabled!=null && globalTimeZonesEnabled!='') ? globalTimeZonesEnabled : [],
-			showhiddenalarms: (typeof globalShowHiddenAlarms!='undefined' && globalShowHiddenAlarms!=null) ? globalShowHiddenAlarms : false,
-			ignorecompletedorcancelledalarms :(typeof globalIgnoreCompletedOrCancelledAlarms!='undefined' && globalIgnoreCompletedOrCancelledAlarms!=null) ? globalIgnoreCompletedOrCancelledAlarms : true,
-			weekenddays :(typeof globalWeekendDays!='undefined' && globalWeekendDays!=null && globalWeekendDays!='') ? globalWeekendDays : [0, 6],
-			eventstartpastlimit : (typeof globalEventStartPastLimit!='undefined' && globalEventStartPastLimit!=null) ? globalEventStartPastLimit : 3,
-			eventstartfuturelimit : (typeof globalEventStartFutureLimit!='undefined' && globalEventStartFutureLimit!=null) ? globalEventStartFutureLimit : 3,
-			compatibility:(typeof globalCompatibility!='undefined' && globalCompatibility!=null && globalCompatibility!='') ? globalCompatibility : {anniversaryOutputFormat: ['apple']},
-			contactstorefn:(typeof globalContactStoreFN!='undefined' && globalContactStoreFN!=null && globalContactStoreFN!='') ? globalContactStoreFN : {anniversaryOutputFormat: ['prefix',' last',' middle',' first',' suffix']},
-			urihandlertel:(typeof globalUriHandlerTel!='undefined' && globalUriHandlerTel!=null && globalUriHandlerTel!='') ? globalUriHandlerTel : {anniversaryOutputFormat: 'tel:'},
-			urihandleremail:(typeof globalUriHandlerEmail!='undefined' && globalUriHandlerEmail!=null && globalUriHandlerEmail!='') ? globalUriHandlerEmail : 'mailto:',
-			urihandlerurl:(typeof globalUriHandlerUrl!='undefined' && globalUriHandlerUrl!=null && globalUriHandlerUrl!='') ? globalUriHandlerUrl : 'http://',
-			urihandlerprofile:(typeof globalUriHandlerProfile!='undefined' && globalUriHandlerProfile!=null && globalUriHandlerProfile!='') ? globalUriHandlerProfile : {'twitter': 'http://twitter.com/%u', 'facebook': 'http://www.facebook.com/%u', 'flickr': 'http://www.flickr.com/photos/%u', 'linkedin': 'http://www.linkedin.com/in/%u', 'myspace': 'http://www.myspace.com/%u', 'sinaweibo': 'http://weibo.com/n/%u'},
-			addresscountryequivalence:(typeof globalAddressCountryEquivalence!='undefined' && globalAddressCountryEquivalence!=null && globalAddressCountryEquivalence!='') ? globalAddressCountryEquivalence : [{country: 'de', regex: '^\\W*Deutschland\\W*$'}, {country: 'sk', regex: '^\\W*Slovensko\\W*$'}],
-			addressbookselected: (typeof globalAddressbookSelected!='undefined' && globalAddressbookSelected!=null && globalAddressbookSelected!='') ? globalAddressbookSelected : '',
-			collectionsort: (typeof globalCollectionSort!='undefined' && globalCollectionSort!=null && globalCollectionSort!='') ? globalCollectionSort : ['last','middle','first'],
-			collectiondisplay: (typeof globalCollectionDisplay!='undefined' && globalCollectionDisplay!=null && globalCollectionDisplay!='') ? globalCollectionDisplay :['last',' middle',' first'],
-			collectiondisplayorg: (typeof globalCollectionDisplayOrg!='undefined' && globalCollectionDisplayOrg!=null) ? globalCollectionDisplayOrg :true,
-			defaultaddresscountry: (typeof globalDefaultAddressCountry!='undefined' && globalDefaultAddressCountry!=null && globalDefaultAddressCountry!='') ? globalDefaultAddressCountry :'us',
-			addresscountryfavorites: (typeof globalAddressCountryFavorites!='undefined' && globalAddressCountryFavorites!=null && globalAddressCountryFavorites!='') ? globalAddressCountryFavorites :[],
-			activeaddressbookcollections: (typeof globalActiveAddressbookCollections!='undefined' && globalActiveAddressbookCollections!=null) ? globalActiveAddressbookCollections : null,
-			loadedaddressbookcollections: (typeof globalLoadedAddressbookCollections!='undefined' && globalLoadedAddressbookCollections!=null) ? globalLoadedAddressbookCollections : null
-	};
+	init();
 }
 
 function saveSettings(isFormSave)
 {
-	globalSettings.activeaddressbookcollections.splice(0, globalSettings.activeaddressbookcollections.length);
-	globalSettings.activecalendarcollections.splice(0, globalSettings.activecalendarcollections.length);
-	globalSettings.activetodocollections.splice(0, globalSettings.activetodocollections.length);
-	globalSettings.todolistfilterselected.splice(0, globalSettings.todolistfilterselected.length);
 
-	if(globalSettings.isLastdefaultactiveapp)
-		globalSettings.defaultactiveapp=globalActiveApp;
+	if(globalSettings.islastdefaultactiveapp.value)
+		globalSettings.defaultactiveapp.value=globalActiveApp;
+
+	globalSettings.version.value=globalSettingsVersion;
 
 	var rex = new RegExp('^(https?://)([^@/]+(?:@[^@/]+)?)@(.*)');
 	if(isAvaible('CalDavZAP'))
 	{
+		globalSettings.activecalendarcollections.value.splice(0, globalSettings.activecalendarcollections.value.length);
+		globalSettings.activetodocollections.value.splice(0, globalSettings.activetodocollections.value.length);
+		globalSettings.todolistfilterselected.value.splice(0, globalSettings.todolistfilterselected.value.length);
+
 		for(var i=0;i<globalVisibleCalDAVCollections.length;i++)
 		{
 			var uidParts=globalVisibleCalDAVCollections[i].match(rex)
-			globalSettings.activecalendarcollections.splice(globalSettings.activecalendarcollections.length , 0, uidParts[1]+uidParts[3]);
+			globalSettings.activecalendarcollections.value.splice(globalSettings.activecalendarcollections.value.length , 0, uidParts[1]+uidParts[3]);
 		}
 
 		for(var i=0;i<globalVisibleCalDAVTODOCollections.length;i++)
 		{
 			var uidParts=globalVisibleCalDAVTODOCollections[i].match(rex);
-			globalSettings.activetodocollections.splice(globalSettings.activetodocollections.length , 0, uidParts[1]+uidParts[3]);
+			globalSettings.activetodocollections.value.splice(globalSettings.activetodocollections.value.length , 0, uidParts[1]+uidParts[3]);
 		}
-		if(globalSettings.islastactiveview)
+		if(globalSettings.islastactiveview.value)
 		{
 			var view= $('#calendar').fullCalendar('getView');
-			globalSettings.activeview=view.name;
+			globalSettings.activeview.value=view.name;
 		}
 
-		if(globalSettings.islasttimezone)
-			globalSettings.timezone=globalSessionTimeZone;
-		
+		if(globalSettings.islasttimezone.value)
+			globalSettings.timezone.value=globalSessionTimeZone;
+
 		var uidSelected=$('#ResourceCalDAVList').find('.resourceCalDAV_item_selected').attr('data-id');
 		if(uidSelected!=undefined && uidSelected!='')
 		{
 			var par=uidSelected.split('/');
-			globalSettings.calendarselected=par[par.length-3]+'/'+par[par.length-2]+'/';
+			globalSettings.calendarselected.value=par[par.length-3]+'/'+par[par.length-2]+'/';
 		}
 
 		uidSelected=$('#ResourceCalDAVTODOList').find('.resourceCalDAV_item_selected').attr('data-id');
 		if(uidSelected!=undefined && uidSelected!='')
 		{
 			var par=uidSelected.split('/');
-			globalSettings.todocalendarselected=par[par.length-3]+'/'+par[par.length-2]+'/';
+			globalSettings.todocalendarselected.value=par[par.length-3]+'/'+par[par.length-2]+'/';
 		}
 
 		var filterArray = $('.fc-filter-option-selected');
 		for(var i=0; i<filterArray.length; i++)
-			globalSettings.todolistfilterselected.splice(globalSettings.todolistfilterselected.length,0,$($('.fc-filter-option-selected')[i]).attr('data-type'));
+			globalSettings.todolistfilterselected.value.splice(globalSettings.todolistfilterselected.value.length,0,$($('.fc-filter-option-selected')[i]).attr('data-type'));
 	}
 
 	if(isAvaible('CardDavMATE'))
 	{
+		globalSettings.activeaddressbookcollections.value.splice(0, globalSettings.activeaddressbookcollections.value.length);
 		var visAddrs = dataGetChecked('#ResourceCardDAVList');
 		for(var i=0;i<visAddrs.length;i++)
 		{
-			var uidPart=visAddrs[i].match(RegExp('^(https?://)(.*)', 'i'))[1];
-			var uidPart2= visAddrs[i].match(RegExp('^(https?://)(.*)', 'i'))[2].split('@')[2];
-			globalSettings.activeaddressbookcollections.splice(globalSettings.activeaddressbookcollections.length , 0, uidPart+uidPart2);
+			if(visAddrs[i]!='undefined')
+			{
+				var uidPart=visAddrs[i].match(RegExp('^(https?://)(.*)', 'i'))[1];
+				var uidPart2= visAddrs[i].match(RegExp('^(https?://)(.*)', 'i'))[2].split('@')[2];
+				globalSettings.activeaddressbookcollections.value.splice(globalSettings.activeaddressbookcollections.value.length , 0, uidPart+uidPart2);
+			}
 		}
-		
+
 		if($('#ResourceCardDAVList').find('.group.resourceCardDAV_selected').length>0)
 			var uidASelected=$('#ResourceCardDAVList').find('.group.resourceCardDAV_selected').attr('data-id');
 		else if($('#ResourceCardDAVList').find('.resourceCardDAV_selected').length>0)
@@ -966,10 +1218,10 @@ function saveSettings(isFormSave)
 		else
 			var uidASelected='';
 		if(uidASelected!=undefined && uidASelected!='')
-			globalSettings.addressbookselected=uidASelected;
+			globalSettings.addressbookselected.value=uidASelected;
 	}
 	if(isAvaible('Settings') && isFormSave)
-		return applyFormSettings($.extend({},globalSettings));
+		return applyFormSettings();
 	else
 		return globalSettings;
 }
@@ -980,47 +1232,56 @@ function loadXMLSetings(settingsXML)
 	function(ind,elm)
 	{
 		var type = $(elm).attr('type');
+		var locked = typeof $(elm).attr('locked')!='undefined'&&$(elm).attr('locked')!=null&&$(elm).attr('locked')=='true' ? true : false;
+		if(typeof globalSettings[$(elm).prop('tagName').toLowerCase()] == 'undefined')
+			return true;
+		if(locked)
+			globalSettings[$(elm).prop('tagName').toLowerCase()].locked=true;
+
 		if($(elm).children().length>0)
 		{
-			globalSettings[$(elm).prop('tagName').toLowerCase()] = new Array();
+			globalSettings[$(elm).prop('tagName').toLowerCase()].value = new Array();
 			$(elm).children().each(function(pind,pelm)
 			{
 				if($(elm).prop('tagName').toLowerCase() == 'urihandlerprofile')
 				{
-					globalSettings[$(elm).prop('tagName').toLowerCase()] = {};
-					globalSettings[$(elm).prop('tagName').toLowerCase()][$(pelm).prop('tagName').toLowerCase()] = $(pelm).attr('url');
+					globalSettings[$(elm).prop('tagName').toLowerCase()].value = {};
+					globalSettings[$(elm).prop('tagName').toLowerCase()].value[$(pelm).text().toLowerCase()] = $(pelm).attr('url');
 				}
 				else if($(elm).prop('tagName').toLowerCase() == 'addresscountryequivalence')
 				{
 					var eqObject = {};
-					eqObject['country'] = $(pelm).attr('name'); 
-					eqObject['regex'] = $(pelm).attr('regex'); 
-					globalSettings[$(elm).prop('tagName').toLowerCase()].push(eqObject);
+					eqObject['country'] = $(pelm).attr('name');
+					eqObject['regex'] = $(pelm).attr('regex');
+					globalSettings[$(elm).prop('tagName').toLowerCase()].value.push(eqObject);
 				}
 				else if($(elm).prop('tagName').toLowerCase() == 'compatibility')
 				{
-					globalSettings[$(elm).prop('tagName').toLowerCase()] = {};
-					globalSettings[$(elm).prop('tagName').toLowerCase()][$(pelm).prop('tagName').toLowerCase()] = new Array();
+					globalSettings[$(elm).prop('tagName').toLowerCase()].value = {};
+					globalSettings[$(elm).prop('tagName').toLowerCase()].value[$(pelm).attr('name')] = new Array();
 					$(pelm).children().each(function(rind,relm)
 					{
-						globalSettings[$(elm).prop('tagName').toLowerCase()][$(pelm).prop('tagName').toLowerCase()].push($(relm).text());
+						globalSettings[$(elm).prop('tagName').toLowerCase()].value[$(pelm).attr('name')].push($(relm).text());
 					});
 				}
 				else if($(pelm).text()!='')
 				{
 					switch(type)
 					{
-						case 'number':
-							globalSettings[$(elm).prop('tagName').toLowerCase()].push(parseInt($(pelm).text(),10));
+						case 'integer':
+							globalSettings[$(elm).prop('tagName').toLowerCase()].value.push(parseInt($(pelm).text(),10));
 							break;
 						case 'string':
-							globalSettings[$(elm).prop('tagName').toLowerCase()].push($(pelm).text());
+							if($(pelm).text()!='null')
+								globalSettings[$(elm).prop('tagName').toLowerCase()].value.push($(pelm).text());
+							else
+								globalSettings[$(elm).prop('tagName').toLowerCase()].value.push(null);
 							break;
 						case 'boolean':
 							if($(pelm).text() == 'true')
-								globalSettings[$(elm).prop('tagName').toLowerCase()].push(true);
+								globalSettings[$(elm).prop('tagName').toLowerCase()].value.push(true);
 							else
-								globalSettings[$(elm).prop('tagName').toLowerCase()].push(false);
+								globalSettings[$(elm).prop('tagName').toLowerCase()].value.push(false);
 							break;
 						default:
 							break;
@@ -1032,17 +1293,20 @@ function loadXMLSetings(settingsXML)
 		{
 			switch(type)
 			{
-				case 'number':
-					globalSettings[$(elm).prop('tagName').toLowerCase()] = parseInt($(elm).text(),10);
+				case 'integer':
+					globalSettings[$(elm).prop('tagName').toLowerCase()].value = parseInt($(elm).text(),10);
 					break;
 				case 'string':
-					globalSettings[$(elm).prop('tagName').toLowerCase()] = $(elm).text();
+					if($(elm).text()!='null')
+						globalSettings[$(elm).prop('tagName').toLowerCase()].value = $(elm).text();
+					else
+						globalSettings[$(elm).prop('tagName').toLowerCase()].value = null;
 					break;
 				case 'boolean':
 					if($(elm).text() == 'true')
-						globalSettings[$(elm).prop('tagName').toLowerCase()] = true;
-					else
-						globalSettings[$(elm).prop('tagName').toLowerCase()] = false;
+						globalSettings[$(elm).prop('tagName').toLowerCase()].value = true;
+					else if($(elm).text() == 'false')
+						globalSettings[$(elm).prop('tagName').toLowerCase()].value = false;
 					break;
 				default:
 					break;
@@ -1051,108 +1315,184 @@ function loadXMLSetings(settingsXML)
 	});
 }
 
-function loadSettings(strobj)
+function applyServerSettings(inputSettings)
 {
-	if(settingsLoaded)
+	if(typeof inputSettings.activecalendarcollections == 'undefined' || inputSettings.activecalendarcollections==null)
+		inputSettings.activecalendarcollections = new Array();
+
+	if(typeof inputSettings.activetodocollections == 'undefined' || inputSettings.activetodocollections==null)
+		inputSettings.activetodocollections = new Array();
+
+	if(typeof inputSettings.loadedcalendarcollections == 'undefined' || inputSettings.loadedcalendarcollections==null)
+	{
+		inputSettings.loadedcalendarcollections = new Array();
+		if(isAvaible('CalDavZAP'))
+			$('#showUnloadedCalendars').css('display','none');
+	}
+
+	if(typeof inputSettings.loadedtodocollections == 'undefined' || inputSettings.loadedtodocollections==null)
+	{
+		inputSettings.loadedtodocollections = new Array();
+		if(isAvaible('CalDavZAP'))
+			$('#showUnloadedCalendarsTODO').css('display','none');
+	}
+	if(typeof inputSettings.activeaddressbookcollections == 'undefined' || inputSettings.activeaddressbookcollections==null)
+		inputSettings.activeaddressbookcollections = new Array();
+
+	if(typeof inputSettings.loadedaddressbookcollections == 'undefined' || inputSettings.loadedaddressbookcollections==null)
+	{
+		inputSettings.loadedaddressbookcollections = new Array();
+		if(isAvaible('CardDavMATE'))
+			$('#showUnloadedAddressbooks').css('display','none');
+	}
+
+	transformSettings(inputSettings);
+
+	for(var prop in inputSettings)
+	{
+		if(globalDefinedSettings.indexOf(prop)==-1 || (typeof globalPreviousSupportedSettings !='undefined' && globalPreviousSupportedSettings.indexOf(prop)==-1))
+		{
+			if(globalDefinedSettings.indexOf(prop)==-1)
+				console.log('Warning: Unsupported property: \''+prop+'\' (you can safely ignore this message)');
+			continue;
+		}
+		if(typeof globalSettings[prop] !='undefined' && !globalSettings[prop].locked)
+			globalSettings[prop].value=inputSettings[prop];
+	}
+}
+
+function transformSettings(settings) {
+	if(!settings.version) {
+		settings.version = 1;
+	}
+
+	while(settings.version<globalSettingsVersion) {
+		console.log('Warning: Detected outdated server settings (version ' + settings.version++ +') - transforming to version ' + settings.version);
+
+		switch(settings.version) {
+			case 2:
+				if(typeof globalActiveCalendarCollections!='undefined' && globalActiveCalendarCollections!=null)
+					settings.activecalendarcollections=globalActiveCalendarCollections.slice();
+				else
+					settings.activecalendarcollections.splice(0, settings.activecalendarcollections.length);
+
+				if(typeof globalActiveTodoCollections!='undefined' && globalActiveTodoCollections!=null)
+					settings.activetodocollections=globalActiveTodoCollections.slice();
+				else
+					settings.activetodocollections.splice(0, settings.activetodocollections.length);
+
+				if(typeof globalLoadedCalendarCollections!='undefined' && globalLoadedCalendarCollections!=null)
+					settings.loadedcalendarcollections=globalLoadedCalendarCollections.slice();
+				else
+					settings.loadedcalendarcollections.splice(0, settings.loadedcalendarcollections.length);
+
+				if(typeof globalLoadedTodoCollections!='undefined' && globalLoadedTodoCollections!=null)
+					settings.loadedtodocollections=globalLoadedTodoCollections.slice();
+				else
+					settings.loadedtodocollections.splice(0, settings.loadedtodocollections.length);
+
+				if(typeof globalActiveAddressbookCollections!='undefined' && globalActiveAddressbookCollections!=null)
+					settings.activeaddressbookcollections=globalActiveAddressbookCollections.slice();
+				else
+					settings.activeaddressbookcollections.splice(0, settings.activeaddressbookcollections.length);
+
+				if(typeof globalLoadedAddressbookCollections!='undefined' && globalLoadedAddressbookCollections!=null)
+					settings.loadedaddressbookcollections=globalLoadedAddressbookCollections.slice();
+				else
+					settings.loadedaddressbookcollections.splice(0, settings.loadedaddressbookcollections.length);
+
+				if(typeof globalContactStoreFN!='undefined' && globalContactStoreFN!=null)
+					settings.contactstorefn=globalContactStoreFN.slice();
+				else
+					settings.contactstorefn=['prefix', ' last', ' middle', ' first', ' suffix'];
+				break;
+			case 3:
+				settings.collectiondisplay=(typeof globalCollectionDisplay!='undefined' && globalCollectionDisplay!=null && globalCollectionDisplay!='') ? globalCollectionDisplay : (
+					(typeof globalGroupContactsByCompanies!='undefined' && globalGroupContactsByCompanies) ?
+					[{label: '{Name}', value: {company: ['{Company}', ' [{Department}]'], personal: ['{LastName}', ' {MiddleName}', ' {FirstName}']}}, {label: '{JobTitle}', value: ['{JobTitle}']}, {label: '{Email}', value: ['{Email[:0]}']}, {label: '{Phone} 1', value: ['{Phone[:0]}']}, {label: '{Phone} 2', value: ['{Phone[:1]}']}, {label: '{NoteText}', value: ['{NoteText}']}] :
+					[{label: '{Name}', value: ['{LastName}', ' {MiddleName}', ' {FirstName}']}, {label: '{Company} [{Department}]', value: ['{Company}', ' [{Department}]']}, {label: '{JobTitle}', value: ['{JobTitle}']}, {label: '{Email}', value: ['{Email[:0]}']}, {label: '{Phone} 1', value: ['{Phone[:0]}']}, {label: '{Phone} 2', value: ['{Phone[:1]}']}, {label: '{NoteText}', value: ['{NoteText}']}]
+				);
+
+				settings.collectionsort=(typeof globalCollectionSort!='undefined' && globalCollectionSort!=null && globalCollectionSort!='') ? globalCollectionSort : '';
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+function loadSettings(strobj, fromServer, syncMode)
+{
+	if(settingsLoaded && !syncMode)
 		return false;
-	try 
+	try
 	{
 		objNew = jQuery.parseJSON(strobj);
 		if(typeof objNew=='object')
 		{
-			for(var prop in objNew)
-				if(globalDefinedSettings.indexOf(prop)==-1 || (typeof globalPreviousSupportedSettings !='undefined' && globalPreviousSupportedSettings.indexOf(prop)==-1))
-				{
-					if(globalDefinedSettings.indexOf(prop)==-1)
-						console.log('Warning: Unsupported property: \''+prop+'\' (you can safely ignore this message)');
-					delete objNew[prop];
-				}
-
-			if(typeof objNew.activecalendarcollections == 'undefined' || objNew.activecalendarcollections==null)
-			{
-				globalDefaultCalendarCollectionActiveAll = true;
-				objNew.activecalendarcollections = new Array();
-			}
-			if(typeof objNew.activetodocollections == 'undefined' || objNew.activetodocollections==null)
-			{
-				globalDefaultTodoCalendarCollectionActiveAll = true;
-				objNew.activetodocollections = new Array();
-			}
-			if(typeof objNew.loadedcalendarcollections == 'undefined' || objNew.loadedcalendarcollections==null)
-			{
-				globalDefaultCalendarCollectionLoadAll = true;
-				objNew.loadedcalendarcollections = new Array();
-			}
-			if(typeof objNew.loadedtodocollections == 'undefined' || objNew.loadedtodocollections==null)
-			{
-				globalDefaultTodoCalendarCollectionLoadAll = true;
-				objNew.loadedtodocollections = new Array();
-			}
-			if(typeof objNew.activeaddressbookcollections == 'undefined' || objNew.activeaddressbookcollections==null)
-			{
-				globalDefaultAddressbookCollectionActiveAll = true;
-				objNew.activeaddressbookcollections = new Array();
-			}
-			if(typeof objNew.loadedaddressbookcollections == 'undefined' || objNew.loadedaddressbookcollections==null)
-			{
-				globalDefaultAddrCollectionLoadAll = true;
-				objNew.loadedaddressbookcollections = new Array();
-			}
-			$.extend(globalSettings,objNew);
+			if(!syncMode && typeof globalSettingsXML!='undefined' && globalSettingsXML!=null && globalSettingsXML!='')
+				loadXMLSetings($(globalSettingsXML));
+			if(fromServer)
+				applyServerSettings(objNew);
+//			$.extend(globalSettings,objNew);
 		}
 	}
 	catch(err)
 	{
 		console.log('load settings - JSON parsing error: '+err);
-		loadSettings(JSON.stringify(globalSettings));
+		delete globalSettings.version.value;
+		loadSettings(JSON.stringify(globalSettings), false, false);
 		return false;
 	}
-
+	if(syncMode)
+		return false;
 	if(isAvaible('CalDavZAP'))
 	{
-		$('#ResourceCalDAVList, #ResourceCalDAVTODOList').css('bottom',(globalSettings.timezonesupport ? 20 : 0));
-		$('#alertBox').css('left', ($(window).width()/2)-($('#alertBox').width()/2));
+		for(var i=0;i<globalSettings.timezonesenabled.value.length;i++)
+			if(timeZonesEnabled.indexOf(globalSettings.timezonesenabled.value[i])==-1)
+				timeZonesEnabled.push(globalSettings.timezonesenabled.value[i]);
 
-		for(var i=0;i<globalSettings.timezonesenabled.length;i++)
-			if(timeZonesEnabled.indexOf(globalSettings.timezonesenabled[i])==-1)
-				timeZonesEnabled.push(globalSettings.timezonesenabled[i]);
-
-		if(globalSettings.timezonesupport)
+		if(globalSettings.timezonesupport.value)
 		{
-			globalSessionTimeZone=globalSettings.timezone;
+			globalSessionTimeZone=globalSettings.timezone.value;
 				if(globalSessionTimeZone != null && timeZonesEnabled.indexOf(globalSessionTimeZone)==-1)
 					timeZonesEnabled.push(globalSessionTimeZone);
 		}
 		else
+		{
 			globalSessionTimeZone = 'local';
-
-		if(globalSettings.timeformatagenda==null)
-		{
-			if(globalSettings.ampmformat)
-				globalSettings.timeformatagenda='h:mm TT{ - h:mm TT}';
-			else
-				globalSettings.timeformatagenda='H:mm{ - H:mm}';
+			timeZonesEnabled.push('local');
 		}
 
-		if(globalSettings.timeformatbasic==null)
+		initTimepicker(globalSettings.ampmformat.value);
+
+		if(globalSettings.timeformatagenda.value==null)
 		{
-			if(globalSettings.ampmformat)
-				globalSettings.timeformatbasic = 'h:mmT{-h:mmT}';
+			if(globalSettings.ampmformat.value)
+				globalSettings.timeformatagenda.value='h:mm TT{ - h:mm TT}';
 			else
-				globalSettings.timeformatbasic = 'H:mm{-H:mm}';
+				globalSettings.timeformatagenda.value='H:mm{ - H:mm}';
 		}
 
-		if(globalSettings.appleremindersmode)
+		if(globalSettings.timeformatbasic.value==null)
 		{
-			if(globalSettings.todolistfilterselected.indexOf('filterAction')==-1 && globalSettings.todolistfilterselected.indexOf('filterCompleted')==-1)
+			if(globalSettings.ampmformat.value)
+				globalSettings.timeformatbasic.value = 'h:mmT{-h:mmT}';
+			else
+				globalSettings.timeformatbasic.value = 'H:mm{-H:mm}';
+		}
+
+		if(globalSettings.appleremindersmode.value)
+		{
+			if(globalSettings.todolistfilterselected.value.indexOf('filterAction')==-1 && globalSettings.todolistfilterselected.value.indexOf('filterCompleted')==-1)
 			{
-				if(globalSettings.todolistfilterselected.indexOf('filterProgress')!=-1)
-					globalSettings.todolistfilterselected[globalSettings.todolistfilterselected.indexOf('filterProgress')] = 'filterAction';
-				if(globalSettings.todolistfilterselected.indexOf('filterCanceled')!=-1)
-					globalSettings.todolistfilterselected[globalSettings.todolistfilterselected.indexOf('filterCanceled')] = 'filterAction';
+				if(globalSettings.todolistfilterselected.value.indexOf('filterProgress')!=-1)
+					globalSettings.todolistfilterselected.value[globalSettings.todolistfilterselected.value.indexOf('filterProgress')] = 'filterAction';
+				if(globalSettings.todolistfilterselected.value.indexOf('filterCanceled')!=-1)
+					globalSettings.todolistfilterselected.value[globalSettings.todolistfilterselected.value.indexOf('filterCanceled')] = 'filterAction';
 			}
 		}
-		if(globalSettings.eventstartfuturelimit == null)
+		if(globalSettings.eventstartfuturelimit.value == null)
 		{
 			var now=new Date();
 			globalToLoadedLimit = new Date(now.getFullYear(), now.getMonth()+12, 1, 0, 0, 0);
@@ -1162,52 +1502,186 @@ function loadSettings(strobj)
 			globalToLoadedLimitTodo = new Date(now.getFullYear(), now.getMonth()+12, 1, 0, 0, 0);
 			globalToLoadedLimitTodo.setMilliseconds(0);
 		}
-		if(globalSettings.enablekbnavigation!==false)
+		if(globalSettings.enablekbnavigation.value!==false)
 			initKbTodoNavigation();
 		initFullCalendar();
 		initTodoList();
+
+		$('#SystemCalDavZAP .fc-header-title').css('width', $('#main_h_placeholder').width()-$('#SystemCalDavZAP .fc-header-left').outerWidth()-$('#SystemCalDavZAP .fc-header-right').outerWidth());
+		$('#ResourceCalDAVList, #ResourceCalDAVTODOList').css('bottom',(globalSettings.timezonesupport.value ? 20 : 0));
+		$('#alertBox').css('left', ($(window).width()/2)-($('#alertBox').width()/2));
 	}
 	if(isAvaible('CardDavMATE'))
-		if(globalSettings.enablekbnavigation!==false)
+	{
+		// set ABListTableLayout
+		globalRefAbListTableHeader = $('#ABListTable').find('.ablist_table_header');
+		var colgroups = $('#ABListTable').find('colgroup');
+
+		for(var i=0; i<getDataColumnCount(); i++) {
+			globalRefAbListTableHeader.append('<th>');
+			colgroups.append('<col>');
+		}
+
+		globalRefAbListTableHeader.children().slice(globalFixedContactDataColumnsCount).each(function(ind) {
+			$(this).text(getDataColumnLabelAtIndex(ind));
+		});
+
+		globalRefABListTableCols=$('#ABListTable').find('colgroup').first().children();
+		globalRefABListInnerTableCols=$('#ABListTableInner').find('colgroup').children();
+		$('#ABListTable').find('.ablist_table_container').children().attr('colspan', getDataColumnCount()+globalFixedContactDataColumnsCount);
+		globalRefABListTable.children('.ablist_header').children().attr('colspan', getDataColumnCount()+globalFixedContactDataColumnsCount);
+
+		if(!globalOrigABListHeader) {
+			globalOrigABListHeader=globalRefABListTable.children('.ablist_header').remove();
+		}
+		if(!globalOrigABListItem) {
+			globalOrigABListItem=globalRefABListTable.children('.ablist_item').remove();
+		}
+
+		if(globalSettings.enablekbnavigation.value!==false)
 			initKbAddrNavigation();
+
+		applyAddrSettings(globalTranslVcardTemplate);
+		applyAddrSettings($('#vCardEditor'));
+	}
 	if(isAvaible('Projects'))
-		if(globalSettings.enablekbnavigation!==false)
+		if(globalSettings.enablekbnavigation.value!==false)
 			initKbProjectNavigation();
 	settingsLoaded=true;
-	if(!isAvaible(globalSettings.defaultactiveapp))
+	if(!isAvaible(globalSettings.defaultactiveapp.value))
 		globalActiveApp = globalAvailableAppsArray[0];
 	else
-		globalActiveApp = globalSettings.defaultactiveapp;
-	checkForApplication(globalActiveApp);
+		globalActiveApp = globalSettings.defaultactiveapp.value;
+}
+
+function checkForLoadedCollections(inputSettings)
+{
+	var val='', triggerSync=true;
+	globalLoadedCollectionsNumber=0;
+	globalLoadedCollectionsCount=0;
+	if(globalSettingsSaving=='event')
+	{
+		hideUnloadedCollections('event');
+		val = inputSettings.loadedcalendarcollections.value;
+		if(val.length>0)
+			globalLoadedCollectionsNumber+=$(val).not(globalSettings.loadedcalendarcollections.value).length;
+		else
+			globalLoadedCollectionsNumber++;
+		if($(globalSettings.loadedcalendarcollections.value).not(val).length>0)
+		{
+			if(globalLoadedCollectionsNumber==0)
+			{
+				triggerSync=false;
+				globalFirstHideLoader=false;
+			}
+			var unloadArray = $(globalSettings.loadedcalendarcollections.value).not(val);
+			unloadCalDAVCollection(unloadArray.toArray(),true);
+		}
+		if(triggerSync)
+			addLoadCalDAVCollection(val, true);
+		globalSettings.loadedcalendarcollections.value = val;
+	}
+	else if(globalSettingsSaving=='todo')
+	{
+		hideUnloadedCollections('todo');
+		val = inputSettings.loadedtodocollections.value;
+		if(val.length>0)
+			globalLoadedCollectionsNumber+=$(val).not(globalSettings.loadedtodocollections.value).length;
+		else
+			globalLoadedCollectionsNumber++;
+		if($(globalSettings.loadedtodocollections.value).not(val).length>0)
+		{
+			if(globalLoadedCollectionsNumber==0)
+			{
+				triggerSync=false;
+				globalFirstHideLoader=false;
+			}
+			var unloadArray = $(globalSettings.loadedtodocollections.value).not(val);
+			unloadCalDAVCollection(unloadArray.toArray(),false);
+		}
+		if(triggerSync)
+			addLoadCalDAVCollection(val, false);
+		globalSettings.loadedtodocollections.value = val;
+	}
+	else if(globalSettingsSaving=='addressbook')
+	{
+		hideUnloadedCardDAVCollections();
+		val = inputSettings.loadedaddressbookcollections.value;
+		if(val.length>0)
+			globalLoadedCollectionsNumber+=$(val).not(globalSettings.loadedaddressbookcollections.value).length;
+		else
+			globalLoadedCollectionsNumber++;
+		if($(globalSettings.loadedaddressbookcollections.value).not(val).length>0)
+		{
+			if(globalLoadedCollectionsNumber==0)
+			{
+				triggerSync=false;
+				globalFirstHideLoader=false;
+			}
+			var unloadArray = $(globalSettings.loadedaddressbookcollections.value).not(val);
+			unloadCardDAVCollection(unloadArray.toArray());
+		}
+		if(triggerSync)
+			addLoadCardDAVCollection(val)
+		globalSettings.loadedaddressbookcollections.value = val;
+	}
+	if(triggerSync)
+		ifLoadCollections();
 }
 
 function checkBeforeClose(isFormSave)
 {
 	if((isAvaible('CalDavZAP') && globalCalDAVInitLoad) || (isAvaible('CardDavMATE') && globalCardDAVInitLoad))
 		return false;
+	var old_settings=JSON.stringify(globalSettings);
 	var settings=saveSettings(isFormSave);
+	var new_settings = JSON.stringify(settings);
+	if(old_settings == new_settings)
+		return false;
 	for(var i=0;i<globalAccountSettings.length;i++)
 		if(globalAccountSettings[i].href.indexOf(globalLoginUsername)!=-1 && globalAccountSettings[i].settingsAccount)
 		{
-			netSaveSettings(globalAccountSettings[i], settings, isFormSave);
+			netSaveSettings(globalAccountSettings[i], settings, isFormSave,false);
 			break;
 		}
 }
 
+function isEachResourceLoaded()
+{
+	var loaded = true;
+	for(var i=0; i< globalAccountSettings.length; i++)
+		if(typeof globalAccountSettings[i].errorLoaded!='undefined' && globalAccountSettings[i].errorLoaded!=null && globalAccountSettings[i].errorLoaded===true)
+			loaded=false;
+	return loaded;
+}
+
 window.onload=globalMain;
 
-function GlobalTODOlist()
+window.onkeydown=function(event)
 {
-	this.todos=new Array();
-	this.reset=function()
-	{
-		this.todos.splice(0, this.todos.length);
-		this.todos=new Array();
+	switch(event.which) {
+		case 13:
+			if(!isUserLogged)
+				$('#Login').find('[data-type="system_login"]').trigger('click');
+			break;
+		case 27:
+			if(globalActiveApp=='CalDavZAP' && $('#CAEvent').is(':visible') && $('#EventDisabler').is(':hidden'))
+				$('#closeButton').trigger('click');
+			if(globalActiveApp=='Projects' && $('#ProjectEventForm').is(':visible') && $('#ProjectsDisabler').is(':hidden'))
+				$('#cancelActivity').trigger('click');
+			if($('.sp-container').is(':visible'))
+				$('html').trigger('click');
+			break;
+		default:
+			break;
 	}
-}
+};
+
 
 function logoutCalDAV()
 {
+	globalTodolistStatusArray={};
+	globalTodoCheckTimeout=null;
 	globalVisibleCalDAVCollections.splice(0, globalVisibleCalDAVCollections.length);
 	globalVisibleCalDAVTODOCollections.splice(0, globalVisibleCalDAVTODOCollections.length);
 	processedTimezones.splice(0, processedTimezones.length);
@@ -1231,7 +1705,6 @@ function logoutCalDAV()
 	globalAllowFcRerender=true;
 	globalEventList.reset();
 	globalResourceCalDAVList.reset();
-	globalTODOlist.reset();
 	timeZonesEnabled.splice(0,timeZonesEnabled.length);
 	if(globalEventIntervalID!=null)
 		clearInterval(globalEventIntervalID);
@@ -1256,7 +1729,7 @@ function logoutCalDAV()
 function mainCalDAV()
 {
 	localizeCalDAV();
-	init();
+	// init();
 }
 
 function localizeCalDAV()
@@ -1267,30 +1740,24 @@ function localizeCalDAV()
 	$('#CAEvent').html(origVcalendarTemplate);
 	$('#CATodo').html(origVtodoTemplate);
 	$('#todoLoader').html(origVtodoLoaderTemplate);
-	resetSettings();
 	translate();
-	initTimepicker(globalSettings.ampmformat);
 	$('input[placeholder],textarea[placeholder]').placeholder();
 	cleanResourceCalDAVListTemplate=$('#ResourceCalDAVListTemplate').clone().wrap('<div>').parent().html();
 	cleanResourceCalDAVTODOListTemplate=$('#ResourceCalDAVTODOListTemplate').clone().wrap('<div>').parent().html();
 	cleanVcalendarTemplate=$('#CAEvent .saveLoader').clone().wrap('<div>').parent().html() + $('#repeatConfirmBox').clone().wrap('<div>').parent().html() + $('#event_details_template').clone().wrap('<div>').parent().html();
 	cleanVtodoTemplate=$('#repeatConfirmBoxTODO').clone().wrap('<div>').parent().html() + $('#todo_details_template').clone().wrap('<div>').parent().html();
 	$('#searchInput, #searchInputTODO').val('');
-	globalSettings.titleformatmonth = localization[globalInterfaceLanguage]._default_title_format_month_;
-	globalSettings.titleformatweek = localization[globalInterfaceLanguage]._default_title_format_week_;
-	globalSettings.titleformatday = localization[globalInterfaceLanguage]._default_title_format_day_;
-	globalSettings.titleformattable = localization[globalInterfaceLanguage]._default_title_format_table_;
-	globalSettings.columnformatagenda = localization[globalInterfaceLanguage]._default_column_format_agenda_;
-	globalSettings.timeformatlist = localization[globalInterfaceLanguage]._default_time_format_list_;
+	globalSettings.titleformatmonth.value = localization[globalInterfaceLanguage]._default_title_format_month_;
+	globalSettings.titleformatweek.value = localization[globalInterfaceLanguage]._default_title_format_week_;
+	globalSettings.titleformatday.value = localization[globalInterfaceLanguage]._default_title_format_day_;
+	globalSettings.titleformattable.value = localization[globalInterfaceLanguage]._default_title_format_table_;
+	globalSettings.columnformatagenda.value = localization[globalInterfaceLanguage]._default_column_format_agenda_;
 }
 
 function runCalDAV()
 {
 	if(!isUserLogged)
 		run();
-	var filerArray = $('.fc-filter-option-selected');
-	for(var i=0; i<filerArray.length; i++)
-		$($('.fc-filter-option-selected')[i]).removeClass('fc-filter-option-selected');
 
 	globalResourceRefreshNumber=0;
 	globalResourceRefreshNumberTodo=0;
@@ -1302,7 +1769,6 @@ function runCalDAV()
 	{
 		globalAccountSettings[globalAccountSettings.length]=$.extend({},globalAccountSettings[0]);
 		globalAccountSettings[globalAccountSettings.length-1].hrefLabel = globalSubscribedCalendars.hrefLabel;
-		globalAccountSettings[globalAccountSettings.length-1].showHeader = globalSubscribedCalendars.showHeader;
 		globalAccountSettings[globalAccountSettings.length-1].calendars = globalSubscribedCalendars.calendars;
 		globalAccountSettings[globalAccountSettings.length-1].ignoreAlarms = '';
 	}
@@ -1314,23 +1780,23 @@ function globalMainCalDAV()
 		if(evt.target!=window)
 			return;
 
-		if(typeof globalCalDAVInitLoad!='undefined' && !globalCalDAVInitLoad && !globalResourceRefreshNumber && $('#main').width()!=globalCalWidth) {
-			$('#ResizeLoader').show();
-		}
+		if(typeof globalCalDAVInitLoad!='undefined' && !globalCalDAVInitLoad && !globalResourceRefreshNumber && $('#main').width()!=globalCalWidth)
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].resizeLoader).parent().css('display','block');
 
-		$('#SystemCalDavZAP .fc-header-title').css('width', $('#main_h_placeholder').width()-$('#SystemCalDavZAP .fc-header-left').width()-$('#SystemCalDavZAP .fc-header-right').width()-20);
-		$('#ResourceCalDAVList, #ResourceCalDAVTODOList').css('bottom',(globalSettings.timezonesupport ? 20 : 0));
+		$('#SystemCalDavZAP .fc-header-title').css('width', $('#main_h_placeholder').width()-$('#SystemCalDavZAP .fc-header-left').outerWidth()-$('#SystemCalDavZAP .fc-header-right').outerWidth());
+		$('#ResourceCalDAVList, #ResourceCalDAVTODOList').css('bottom',(globalSettings.timezonesupport.value ? 20 : 0));
 		$('#alertBox').css('left', ($(window).width()/2)-($('#alertBox').width()/2));
 		$('#calendar').fullCalendar('option', 'contentHeight', $('#main').height() - 14);
 		$('#todoList').fullCalendar('allowSelectEvent',false);
 		$('#todoList').fullCalendar('option', 'contentHeight', $('#mainTODO').height() - 14);
 		$('#todoList').fullCalendar('allowSelectEvent',true);
 		$('#todoList').fullCalendar('selectEvent', null, true);
-		if(globalCalDAVQs!=null)
-			globalCalDAVQs.cache();
-		if(globalCalDAVTODOQs!=null)
-			globalCalDAVTODOQs.cache();
-		if(globalSettings.displayhiddenevents)
+
+		if($('#CATodo').is(':visible')) {
+			checkTodoFormScrollBar();
+		}
+
+		if(globalSettings.displayhiddenevents.value)
 		{
 			hideEventCalendars();
 			hideTodoCalendars();
@@ -1338,9 +1804,9 @@ function globalMainCalDAV()
 		globalCalWidth = $('#main').width();
 	});
 
-	$('#ResourceCalDAVToggle').click(function(evt){
+	$('#ResourceCalDAVToggle').click(function(){
 		var transSpeedResource=70;
-		var isResourceVisible=$('#ResourceCalDAVList').width()>0;
+		var isResourceVisible=$('#ResourceCalDAVList').width()>1;
 		var col0=isResourceVisible? 0:218;
 		var col1=isResourceVisible? 0:224;
 		var col2=isResourceVisible? 0:224;
@@ -1353,27 +1819,26 @@ function globalMainCalDAV()
 		}
 
 		if(typeof globalCalDAVInitLoad!='undefined' && !globalCalDAVInitLoad && !globalResourceRefreshNumber)
-			$('#ResizeLoader').show();
+			$('#CalendarLoader').children('.loaderInfo').text(localization[globalInterfaceLanguage].resizeLoader).parent().css('display','block');
 
-		if(globalSettings.timezonesupport)
+		if(globalSettings.timezonesupport.value)
 			$('#timezoneWrapper').animate({width: col0}, transSpeedResource);
 
 		$('#resourceCalDAV_h, #ResourceCalDAVList').animate({width: col1}, transSpeedResource);
-		$('#CalendarLoader, #ResizeLoader').animate({left: col3}, transSpeedResource);
+		$('#CalendarLoader').animate({left: col3}, transSpeedResource);
 		$('#main_h, #searchForm, #main').animate({left: col2}, transSpeedResource).promise().done(function(){
 			$('#SystemCalDavZAP .fc-header-title').width($('#main_h_placeholder').width()-$('#SystemCalDavZAP .fc-header-left').width()-$('#SystemCalDavZAP .fc-header-right').width()-20);
 			$(window).resize();
 		});
 	});
 
-	$('#ResourceCalDAVTODOToggle').click(function(evt){
+	$('#ResourceCalDAVTODOToggle').click(function(){
 		var transSpeedResource=70;
-		var isResourceVisible=$('#ResourceCalDAVTODOList').width()>0;
+		var isResourceVisible=$('#ResourceCalDAVTODOList').width()>1;
 		var col0=isResourceVisible? 0:218;
 		var col1=isResourceVisible? 0:224;
 		var col2=isResourceVisible? 0:224;
 		var col3=isResourceVisible? 0:225;
-		var colx=isResourceVisible? 225:0;
 
 		if(isIntegrated)
 		{
@@ -1381,13 +1846,13 @@ function globalMainCalDAV()
 			col3+=50;
 		}
 
-		if(globalSettings.timezonesupport)
+		if(globalSettings.timezonesupport.value)
 			$('#timezoneWrapperTODO').animate({width: col0}, transSpeedResource);
 
 		$('#resourceCalDAVTODO_h, #ResourceCalDAVTODOList').animate({width: col1}, transSpeedResource);
 		$('#CalendarLoaderTODO').animate({left: col3}, transSpeedResource);
-		$('#main_h_TODO, #searchFormTODO').animate({left: col2, width: 418+colx}, transSpeedResource);
-		$('#mainTODO').animate({left: col2, width: 404+colx}, transSpeedResource, function(){
+		$('#main_h_TODO, #searchFormTODO').animate({left: col2}, transSpeedResource);
+		$('#mainTODO').animate({left: col2}, transSpeedResource, function(){
 			$('#todoList').fullCalendar('allowSelectEvent',false);
 			$(window).resize();
 			$('#todoList').fullCalendar('allowSelectEvent',true);
@@ -1396,28 +1861,11 @@ function globalMainCalDAV()
 	});
 
 	$('#eventFormShowerTODO').click(function(){
-			if($('#ResourceCalDAVTODOList .resourceCalDAVTODO_item:visible').not('.resourceCalDAV_item_ro').length==0)
-				return false;
-
-			$('#timezonePickerTODO').prop('disabled', true);
-			$('#TodoDisabler').fadeIn(globalEditorFadeAnimation);
-			showTodoForm(null, 'new');
-			$('#todoInEdit').val('true');
-			$('#nameTODO').focus();
+			showNewEvent('TODO');
 	});
 
 	$('#eventFormShower').click(function(){
-		if($('#ResourceCalDAVList .resourceCalDAV_item:visible').not('.resourceCalDAV_item_ro').length==0)
-			return false;
-
-		$('#show').val('');
-		$('#CAEvent').hide();
-
-		$('#timezonePicker').prop('disabled', true);
-		$('#EventDisabler').fadeIn(globalEditorFadeAnimation, function(){
-			showEventForm(new Date(), true, null, null, 'new', '');
-			$('#name').focus();
-		});
+		showNewEvent('');
 	});
 
 	$('#searchInput').bind('keyup change', function(){
@@ -1425,7 +1873,6 @@ function globalMainCalDAV()
 			$('#reserButton').css('visibility', 'visible');
 		else
 			$('#reserButton').css('visibility', 'hidden');
-
 	});
 
 	$('#searchInputTODO').bind('keyup change', function(){
@@ -1433,8 +1880,8 @@ function globalMainCalDAV()
 			$('#resetButtonTODO').css('visibility', 'visible');
 		else
 			$('#resetButtonTODO').css('visibility', 'hidden');
-
 	});
+
 	$('#timezonePicker, #timezonePickerTODO').change(function(){
 		var previousTimezone=globalSessionTimeZone;
 		globalSessionTimeZone=$(this).val();
@@ -1461,18 +1908,7 @@ function globalMainCalDAV()
 	origVtodoTemplate = $('#repeatConfirmBoxTODO').clone().wrap('<div>').parent().html() + $('#todo_details_template').clone().wrap('<div>').parent().html();
 	origVtodoLoaderTemplate=$('#todoLoader .saveLoader').clone().wrap('<div>').parent().html();
 
-	for(var i in timezones)
-		timezoneKeys.push(i);
-
-	timezoneKeys.push('0local');
-	timezoneKeys.push('1UTC');
-
-	timezoneKeys.sort();
-
-	timezoneKeys[0] = timezoneKeys[0].substring(1);
-	timezoneKeys[1] = timezoneKeys[1].substring(1);
-
-	jQuery.extend(timezones,{'UTC':{}});
+	populateTimezoneKeys();
 }
 
 function setCalendarNumber(initSearch)
@@ -1484,7 +1920,7 @@ function setCalendarNumber(initSearch)
 	if(initSearch)
 		initSearchEngine();
 
-	globalCalendarNumber=0
+	globalCalendarNumber=0;
 	globalOnlyCalendarNumber=0;
 	globalTodoCalendarNumber=0;
 	for(var i=0; i<globalResourceCalDAVList.collections.length;i++)
@@ -1499,9 +1935,4 @@ function setCalendarNumber(initSearch)
 			globalCalendarNumber++;
 			globalTodoCalendarNumber++;
 		}
-}
-
-function setLogoCalDAV()
-{
-	$('img[data-type="system_logo"]').attr('src', 'images/logo_cdz_' + new Date().getDate().pad(2) + '.svg');
 }

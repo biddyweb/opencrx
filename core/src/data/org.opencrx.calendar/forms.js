@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -135,12 +135,12 @@ function setTodoPosition(jsEvent)
 
 function showTimezones(selTimezone, todoSelector)
 {
-	if(!globalSettings.timezonesupport)
+	if(!globalSettings.timezonesupport.value)
 		return false;
 
 	var select=$('#timezone'+todoSelector);
 	select.empty();
-
+	var isFirst=false;
 	for(var izone in timezoneKeys)
 	{
 		if(timeZonesEnabled.indexOf(timezoneKeys[izone])==-1)
@@ -148,24 +148,27 @@ function showTimezones(selTimezone, todoSelector)
 		if(!isNaN(izone))
 		{
 			var tmp=null;
+			if(!isFirst)
+			{
+				tmp=$('<option>');
+				tmp.attr('data-type','local');
+				isFirst=true;
+				if(!(selTimezone in timezones) && selTimezone!= '' && selTimezone!= 'local' && (globalSettings.removeunknowntimezone.value == null || !globalSettings.removeunknowntimezone.value))
+				{
+					tmp.text(localization[globalInterfaceLanguage].customTimezone);
+					tmp.attr('value','custom');
+					if((todoSelector=='PickerTODO' || todoSelector=='Picker') && globalSettings.timezone.value != null)
+						tmp.attr('value',globalSettings.timezone.value);
+					select.append(tmp);
+				}
+			}
 			tmp=$('<option>');
 			tmp.attr('data-type',timezoneKeys[izone]);
 			if(izone==0)
 			{
 				tmp.text(localization[globalInterfaceLanguage].localTime);
 				tmp.attr('value','local');
-//				if((todoSelector=='PickerTODO' || todoSelector=='Picker') && typeof globalSettings.timezone != 'undefined' && globalSettings.timezone != null)
-//					tmp.attr('value',globalSettings.timezone);
 				select.append(tmp);
-
-				if(!(selTimezone in timezones) && selTimezone!= '' && selTimezone!= 'local' && (globalSettings.removeunknowntimezone == null || !globalSettings.removeunknowntimezone))
-				{
-					tmp.text(localization[globalInterfaceLanguage].customTimezone);
-					tmp.attr('value','custom');
-					if((todoSelector=='PickerTODO' || todoSelector=='Picker') && globalSettings.timezone != null)
-						tmp.attr('value',globalSettings.timezone);
-					select.append(tmp);
-				}
 			}
 			else
 			{
@@ -181,11 +184,11 @@ function showTimezones(selTimezone, todoSelector)
 
 	if(selTimezone in timezones)
 		select.val(selTimezone);
-	else 
+	else
 	{
-		if((globalSettings.removeunknowntimezone != null && globalSettings.removeunknowntimezone) || selTimezone == 'local')
+		if((globalSettings.removeunknowntimezone.value != null && globalSettings.removeunknowntimezone.value) || selTimezone == 'local')
 			select.val('local');
-		else 
+		else
 			select.val('custom');
 	}
 }
@@ -198,7 +201,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 	setFirstDayTodo();
 	bindTodoForm();
 
-	$('#noteTODO').autosize({defaultStyles: {height: '64', overflow: '', 'overflow-y': '', 'word-wrap': '', resize: 'none'}});
+	$('#noteTODO').autosize({defaultStyles: {height: '64', overflow: '', 'overflow-y': '', 'word-wrap': '', resize: 'none'}, callback: function(){checkTodoFormScrollBar();}});
 	$("#showTODO").val('');
 	$("#uidTODO").val('');
 	$("#etagTODO").val('');
@@ -211,10 +214,10 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 	{
 		var activeCollection = $('#ResourceCalDAVTODOList').find('.resourceCalDAVTODO_item.resourceCalDAV_item_selected');
 		if(activeCollection.length>0 && !globalResourceCalDAVList.getTodoCollectionByUID(activeCollection.attr('data-id')).permissions.read_only)
-			color=rgb2hex(activeCollection.children('.resourceCalDAVColor').css('background-color'));
+			color=rgbToHex(activeCollection.children('.resourceCalDAVColor').css('background-color'));
 	}
 	else
-		color=todo.color;
+		color=globalResourceCalDAVList.getTodoCollectionByUID(todo.res_id).ecolor;
 
 	if(confirmRepeat)
 	{
@@ -222,7 +225,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		$('#repeatTodo').val(true);
 		$('#CATodo').show();
 		$('#repeatConfirmBoxTODO').css('visibility', 'visible');
-		if(todo.repeatCount!='' && todo.repeatCount == 1)
+		if(todo.repeatCount!='' && todo.repeatCount == 1 || globalSettings.appleremindersmode.value)
 		{
 			$('#editFutureTODO').css('display','none');
 			if($('#editFutureTODO').next('br').length>0)
@@ -251,13 +254,14 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				$('#AlertDisabler').fadeOut(globalEditorFadeAnimation);
 			}
 		});
-		
+
 		$('#repeatConfirmBoxContentTODO').html('<b>'+todo.title+"</b> "+localization[globalInterfaceLanguage].repeatBoxContentTODO);
 		$('#repeatConfirmBoxQuestionTODO').html(localization[globalInterfaceLanguage].repeatBoxQuestionTODO);
 		$('#todo_details_template').css('visibility', 'hidden');
 		globalObjectLoading=false;
 		$('#CATodo').show(200, function(){
 			$('#todoColor').css('background-color',color);
+			checkTodoFormScrollBar();
 			$('#todoForm').scrollTop(0);
 		});
 		return true;
@@ -270,50 +274,45 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		else if(todo.end!=null)
 			$('#futureStartTODO').val(todo.realRepeatCount+';'+todo.end);
 	}
-	
+
 	if(mod=='show')
 	{
 		var checkDataStart='';
 		if(todo.start)
 			checkDataStart=$.fullCalendar.formatDate(todo.start, "yyyyMMdd'T'HHmmss'Z'");
-		if($('.fc-event-selected').attr("data-start") != checkDataStart)
-		{
-			 $('.fc-view-todo .fc-table-dateinfo, .fc-view-todo .fc-table-datepicker').css('opacity','0.5')
-		}
+		if($('.fc-event-selected').length>0 && $('.fc-event-selected').attr("data-start")!=checkDataStart)
+			$('.fc-view-todo').addClass('fc-view-trans');
 		else
-		{
-			 $('.fc-view-todo .fc-table-dateinfo, .fc-view-todo .fc-table-datepicker').css('opacity','1')
-		}
+			$('.fc-view-todo').removeClass('fc-view-trans');
 	}
-	
+
 	if(repeatOne=='editOnly')
 		if(todo!=null && (todo.type || todo.rec_id))
 		{
 			var eventsSorted=jQuery.grep(globalEventList.displayTodosArray[todo.res_id],function(e){if(e.id==todo.id)return true}).sort(repeatStartCompare);
-			
 			if(eventsSorted.indexOf(todo)!=-1)
 			{
 				if(eventsSorted.indexOf(todo)<(eventsSorted.length-1))
 					showTodoNextNav();
 				if(eventsSorted.indexOf(todo)!=0)
 					showTodoPrevNav();
-				
+
 				var uncomplete=0;
 				for(var ij=(eventsSorted.indexOf(todo)+1); ij<eventsSorted.length; ij++)
 					if(eventsSorted[ij].status!='COMPLETED')
 						uncomplete++;
 				if(uncomplete>0 && eventsSorted.indexOf(todo)<(eventsSorted.length-1))
 					showTodoNextNav(true);
-				
+
 				var uncomplete=0;
 				for(var ij=(eventsSorted.indexOf(todo)-1); ij>=0; ij--)
 					if(eventsSorted[ij].status!='COMPLETED')
 						uncomplete++;
 				if(uncomplete>0 && eventsSorted.indexOf(todo)!=0)
 					showTodoPrevNav(true);
-			}		
+			}
 		}
-	
+
 	if(todo!=null)
 	{
 		var prior=parseInt(todo.priority,10);
@@ -332,33 +331,35 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		else
 			$('#priority_TODO').val(0);
 	}
-	
+
 	if(todo!=null)
 		var sliderValue=todo.percent;
 	else
 		sliderValue=0;
 
-		var cals=globalResourceCalDAVList.sortedTodoCollections;
-		var todoCalendarObj = $('#todo_calendar');
-		var calSelected = $('.resourceCalDAVTODO_item.resourceCalDAV_item_selected').attr('data-id');
-		for(var i=0;i<cals.length;i++)
+	var cals=globalResourceCalDAVList.sortedTodoCollections;
+	var todoCalendarObj = $('#todo_calendar');
+	var calSelected = $('.resourceCalDAVTODO_item.resourceCalDAV_item_selected').attr('data-id');
+	for(var i=0;i<cals.length;i++)
+	{
+		if( cals[i].uid!=undefined && ((todo!=null && todo.res_id==cals[i].uid) || (cals[i].makeLoaded && !cals[i].permissions_read_only)))
 		{
-			if( cals[i].uid!=undefined && ((todo!=null && todo.res_id==cals[i].uid) || (cals[i].makeLoaded && !cals[i].permissions_read_only && (globalVisibleCalDAVTODOCollections.indexOf(cals[i].uid)!=-1 || calSelected==cals[i].uid))))
-			{
-				todoCalendarObj.append(new Option(cals[i].displayValue,cals[i].uid));
-			}
+			todoCalendarObj.append(new Option(cals[i].displayValue,cals[i].uid));
 		}
+	}
 
 	if(mod!='new')
-		fullVcalendarToTodoData(todo);
+		fullVcalendarToTodoData(todo,true);
 	else
-		CalDAVeditor_cleanup();
+		CalDAVeditor_cleanup('form');
 
 	if(mod=='new')
 	{
+		$('#todoInEdit').val('true');
 		$('#deleteTODO').hide();
 		$('#resetTODO').hide();
 		$('#editTODO').hide();
+		$('#duplicateTODO').hide();
 		$('#editOptionsButtonTODO').hide();
 		$('#showTODO').val('');
 
@@ -373,10 +374,10 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 	}
 	$('#CATodo').show();
 	$('#todo_details_template').show();
-	if(globalSettings.appleremindersmode)
+	if(globalSettings.appleremindersmode.value)
 	{
 		$('[data-type="todo_type_start"], [data-type="todo_type_both"]').remove();
-		if(typeof globalSettings.appleremindersmode == 'string' && globalSettings.appleremindersmode.toLowerCase()=='ios6')
+		if(typeof globalSettings.appleremindersmode.value == 'string' && globalSettings.appleremindersmode.value.toLowerCase()=='ios6')
 		{
 			$('#url_trTODO').hide();
 			$('#location_row_TODO').hide();
@@ -387,12 +388,12 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 	{
 		$('#showTODO').val(todo.id);
 		$('#todoDetailsTable :input[type!="button"]').prop('disabled', true);
-		
+
 			if(todo.timeZone)
 				showTimezones(todo.timeZone,'TODO');
 			else
 				showTimezones('local','TODO');
-		
+
 		if(todo.etag!='')
 			$('#todo_calendar').val(todo.res_id);
 
@@ -402,13 +403,13 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 
 		if(todo.start!=null || todo.end!=null)
 		{
-			if((!globalSettings.appleremindersmode) && ((todo.start!=null && todo.end!=null && repeatOne!='') || (!todo.type && todo.realStart!='' && todo.realEnd!='' && repeatOne=='') || (todo.type && todo.repeatStart!='' && todo.repeatEnd!='' && repeatOne=='')))
+			if((!globalSettings.appleremindersmode.value) && ((todo.start!=null && todo.end!=null && repeatOne!='') || (!todo.type && todo.realStart!='' && todo.realEnd!='' && repeatOne=='') || (todo.type && todo.repeatStart!='' && todo.repeatEnd!='' && repeatOne=='')))
 				$('#todo_type').val('both');
-			else if((!globalSettings.appleremindersmode) && ((todo.start!=null && todo.end==null && repeatOne!='') || (!todo.type && todo.realStart!='' && todo.realEnd=='' && repeatOne=='') || (todo.type && todo.repeatStart!='' && todo.repeatEnd=='' && repeatOne=='')))
+			else if((!globalSettings.appleremindersmode.value) && ((todo.start!=null && todo.end==null && repeatOne!='') || (!todo.type && todo.realStart!='' && todo.realEnd=='' && repeatOne=='') || (todo.type && todo.repeatStart!='' && todo.repeatEnd=='' && repeatOne=='')))
 				$('#todo_type').val('start');
 			else
 				$('#todo_type').val('due');
-			if(globalSettings.timezonesupport)
+			if(globalSettings.timezonesupport.value)
 			$('.timezone_rowTODO').show();
 		}
 		else
@@ -424,27 +425,27 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 			day,
 			hour,
 			minute;
-			
+
 			if(todo.realStart)
 				date=$.fullCalendar.parseDate(todo.realStart);
 			else
 				date=$.fullCalendar.parseDate(todo.start);
-			
+
 			if($('#showTODO').val()!='' && todo.repeatStart!='' && repeatOne=='')
 				date=todo.repeatStart;
 			else if($('#showTODO').val()!='' && todo.repeatStart=='' && repeatOne=='' && todo.type)
 				date='';
-			
+
 			if(date)
 			{
 				(date.getHours())<10 ? (hour='0'+(date.getHours())) : (hour=date.getHours());
 				(date.getMinutes())<10 ? (minute='0'+(date.getMinutes())) : (minute=date.getMinutes());
-			
-				var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+
+				var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 				$('#date_fromTODO').val(formattedDate);
 				if($('#todo_type').val=='both')
 					globalPrevDate = new Date(date.getTime());
-				$('#time_fromTODO').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+				$('#time_fromTODO').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			}
 		}
 		if(todo.end!='' && todo.end!=null)
@@ -453,20 +454,20 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				date=$.fullCalendar.parseDate(todo.realEnd);
 			else
 				date=$.fullCalendar.parseDate(todo.end);
-			
+
 			if($('#showTODO').val()!='' && todo.repeatEnd!='' && repeatOne=='')
 				date=todo.repeatEnd;
 			else if($('#showTODO').val()!='' && todo.repeatEnd=='' && repeatOne=='' && todo.type)
 				date='';
-			
+
 			if(date)
 			{
 				(date.getHours())<10 ? (hour='0'+(date.getHours())) : (hour=date.getHours());
 				(date.getMinutes())<10 ? (minute='0'+(date.getMinutes())) : (minute=date.getMinutes());
 
-				var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+				var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 				$('#date_toTODO').val(formattedDate_to);
-				$('#time_toTODO').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+				$('#time_toTODO').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			}
 		}
 		if(repeatOne=='editOnly' && todo.rec_id=='')
@@ -494,10 +495,10 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 			var savedEvs=jQuery.grep(globalEventList.displayTodosArray[todo.res_id],function(e){if(e.id==todo.id && (e.repeatCount<2 || !e.repeatCount))return true});
 			if(savedEvs.length>1 || (repeatOne=='futureOnly' && todo.repeatCount>1) || (repeatOne=='editOnly' && todo.type!=''))
 			{
-				$('#deleteTODO').attr('onclick',"updateEventFormDimensions(true);$('#todoLoader').show();saveTodo(true);");
+				$('#deleteTODO').attr('onclick',"$('#todoInEdit').val('false');updateEventFormDimensions(true);$('#todoLoader').show();saveTodo(true);");
 			}
 		}
-		
+
 		if(todo.completedOn!='' && todo.completedOn!=null)
 		{
 			var date,
@@ -506,7 +507,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 			day,
 			hour,
 			minute;
-			
+
 
 		//	(todo.completedOn.getHours())<10 ? (hour='0'+(todo.completedOn.getHours())) : (hour=todo.completedOn.getHours());
 		//	(todo.completedOn.getMinutes())<10 ? (minute='0'+(todo.completedOn.getMinutes())) : (minute=todo.completedOn.getMinutes());
@@ -514,13 +515,13 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				date = $.fullCalendar.parseDate(todo.completedOn);
 			else if(typeof todo.completedOn=='object')
 				date=new Date(todo.completedOn.getTime());
-				
-			var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+
+			var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 			$('#completedOnDate').val(formattedDate);
-			$('#completedOnTime').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('#completedOnTime').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('.completedOnTr').show();
 		}
-		
+
 		var alarmDate='';
 		var alarmIterator=0;
 
@@ -582,10 +583,10 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				(alarmDate.getMinutes())<10 ? (minute='0'+(alarmDate.getMinutes())) : (minute=alarmDate.getMinutes());
 
 				$(".alert_message_detailsTODO[data-id="+(alarmIterator+1)+"]").val('on_date');
-				var formattedAlarmDate=$.datepicker.formatDate(globalSettings.datepickerformat, alarmDate);
+				var formattedAlarmDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, alarmDate);
 
 				$(".message_date_inputTODO[data-id="+(alarmIterator+1)+"]").val(formattedAlarmDate);
-				$(".message_time_inputTODO[data-id="+(alarmIterator+1)+"]").val($.fullCalendar.formatDate(alarmDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+				$(".message_time_inputTODO[data-id="+(alarmIterator+1)+"]").val($.fullCalendar.formatDate(alarmDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 
 				$('.alert_detailsTODO[data-id="'+(alarmIterator+1)+'"]').show();
 				$('.alert_message_dateTODO[data-id="'+(alarmIterator+1)+'"]').show();
@@ -594,13 +595,13 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 
 		if(alarmIterator>0)
 			todo_alert_add(alarmIterator);
-		if(todo.type!='' && repeatOne!='editOnly')
+		if(todo.type!='' && repeatOne!='editOnly' && todo.ruleString.match(vCalendar.re['recurCaldav'])!=null)
 		{
 			var ruleString=todo.vcalendar.match(vCalendar.pre['contentline_RRULE2'])[0].match(vCalendar.pre['contentline_parse'])[4];
 			if(ruleString.indexOf('BYMONTH=')!=-1 || ruleString.indexOf('BYMONTHDAY=')!=-1 || ruleString.indexOf('BYDAY=')!=-1)
 			{
 				var pars=ruleString.split(';');
-				
+
 				if(pars.indexElementOf('BYMONTH=')!=-1 && pars.indexElementOf('BYMONTHDAY=')==-1 && pars.indexElementOf('BYDAY=')==-1)
 					pars[pars.length] = "BYMONTHDAY="+todo.start.getDate();
 				if(todo.type=="DAILY")
@@ -612,7 +613,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				{
 					$("#repeat_TODO option[value='CUSTOM_WEEKLY']").prop('selected', true);
 					$('#repeat_interval_TODO [data-type="txt_interval"]').text(localization[globalInterfaceLanguage].repeatWeeks);
-					
+
 					for(var ri=0;ri<pars.length;ri++)
 					{
 						if(pars[ri].indexOf("BYDAY=")!=-1)
@@ -632,8 +633,8 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				{
 					$("#repeat_TODO option[value='CUSTOM_MONTHLY']").prop('selected', true).change();
 					$('#repeat_interval_TODO [data-type="txt_interval"]').text(localization[globalInterfaceLanguage].repeatMonths);
-					
-							
+
+
 					for(var ri=0;ri<pars.length;ri++)
 					{
 						if(pars[ri].indexOf("BYDAY=")!=-1)
@@ -685,7 +686,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 								{
 									$('#repeat_month_custom_select_TODO').val('last').change();
 									$('#repeat_month_custom_select2_TODO').val("DAY");
-									
+
 								}
 								else
 									$('#month_custom2_TODO .customTable td[data-type="'+(parseInt(byMonthDay[rj],10))+'"]').addClass('selected');
@@ -749,7 +750,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 								{
 									$('#repeat_year_custom_select1_TODO').val('last').change();
 									$('#repeat_year_custom_select2_TODO').val("DAY");
-									
+
 								}
 								else
 									$('#year_custom1_TODO .customTable td[data-type="'+(parseInt(byMonthDay[rj],10))+'"]').addClass('selected');
@@ -765,7 +766,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 						}
 					}
 				}
-				
+
 				if(todo.after=='' && todo.untilDate=='')
 					$("#repeat_end_details_TODO option[value='never']").prop('selected', true);
 				else if(todo.after!='')
@@ -777,7 +778,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				{
 					date=$.fullCalendar.parseDate(todo.untilDate);
 					$("#repeat_end_details_TODO option[value='on_date']").prop('selected', true);
-					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 					$('#repeat_end_date_TODO').val(formattedRepeatDate);
 				}
 
@@ -787,9 +788,9 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				if(todo.byDay.length>0)
 				{
 					var businessArray=new Array();
-					if(globalSettings.weekenddays.length>0)
+					if(globalSettings.weekenddays.value.length>0)
 						for(var i=0;i<7;i++)
-							if(globalSettings.weekenddays.indexOf(i)==-1)
+							if(globalSettings.weekenddays.value.indexOf(i)==-1)
 								businessArray[businessArray.length]=i+'';
 					var businessCount=0;
 					var weekendCount=0;
@@ -797,7 +798,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 					{
 						if(businessArray.indexOf(byDay[i])!=-1)
 							businessCount++;
-						if(globalSettings.weekenddays.indexOf(parseInt(byDay[i],10))!=-1)
+						if(globalSettings.weekenddays.value.indexOf(parseInt(byDay[i],10))!=-1)
 							weekendCount++;
 					}
 
@@ -807,7 +808,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 						$('#repeat_interval_TODO').hide();
 						$('#week_custom_TODO').hide();
 					}
-					else if(globalSettings.weekenddays.length>0 && globalSettings.weekenddays.length==weekendCount)
+					else if(globalSettings.weekenddays.value.length>0 && globalSettings.weekenddays.value.length==weekendCount)
 					{
 						$("#repeat_TODO option[value='WEEKEND']").prop('selected', true);
 						$('#repeat_interval_TODO').hide();
@@ -849,7 +850,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				{
 					date=$.fullCalendar.parseDate(todo.untilDate);
 					$("#repeat_end_details_TODO option[value='on_date']").prop('selected', true);
-					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 					$('#repeat_end_date_TODO').val(formattedRepeatDate);
 				}
 
@@ -858,12 +859,18 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 				$('#repeatTodo').val(true);
 			}
 		}
+		else if(todo.type!='' && repeatOne!='editOnly')
+		{
+			var cu_opt = new Option(localization[globalInterfaceLanguage].customRepeat, todo.ruleString, false, true);
+			cu_opt.attr('data-type','custom_repeat');
+			$('#repeat_TODO').append(cu_opt);
+		}
 		else
 			$('#repeatTodo').val(false);
-			
+
 		if(todo.start!=null || todo.end!=null)
 		{
-			if(globalSettings.timezonesupport)
+			if(globalSettings.timezonesupport.value)
 				$('.timezone_rowTODO').show()
 		}
 		else
@@ -874,20 +881,20 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 			$('#statusTODO').find('option[value='+todo.status+']').prop('selected', true);
 
 		$('#noteTODO').val(todo.note).trigger('autosize.resize');
-		
+
 		if(todo.classType!='')
 			$('#typeTODO').val(todo.classType.toLowerCase());
-		else 
+		else
 			$('#typeTODO').val('public');
-		
+
 		if(todo!=null && mod!='new')
 		{
 			var uidArray = todo.id.match(vCalendar.pre['uidParts']);
-			
+
 			if(decodeURIComponent(uidArray[4]).indexOf(uidArray[2])==-1)
 				$('.row_typeTODO').css('display','none');
 		}
-					
+
 		$('#uidTODO').val(todo.id);
 		$('#url_TODO').val(todo.url);
 		$('#location_TODO').val(todo.location);
@@ -901,13 +908,13 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		if(stringUIDcurrent)
 			$('#vcalendarUIDTODO').val(stringUIDcurrent);
 	}
-	
-	
+
+
 	if($('#todo_type').val()=='start')
 	{
 		$('.dateTrFromTODO').show();
 		$('.dateTrToTODO').hide();
-	}	
+	}
 	else if($('#todo_type').val()=='due')
 	{
 		$('.dateTrToTODO').show();
@@ -923,9 +930,9 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		$('.dateTrToTODO').hide();
 		$('.dateTrFromTODO').hide();
 		$('#repeat_row_TODO').hide();
-	}		
-	
-	if($('#repeat_TODO option:selected').attr('data-type')!="repeat_no-repeat")
+	}
+
+	if($('#repeat_TODO option:selected').attr('data-type')!="repeat_no-repeat" && $('#repeat_TODO option:selected').attr('data-type')!="custom_repeat")
 		$('#repeat_details_TODO').show();
 
 	if($('#repeat_end_details_TODO option:selected').attr('data-type')=="repeat_details_on_date")
@@ -945,13 +952,14 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		$('#repeat_end_after_TODO').hide();
 		$('#repeat_end_date_TODO').hide();
 	}
-	
+
 
 	if(mod=='show')
 	{
-		if($('#ResourceCalDAVList').find('[data-id="'+todo.res_id+'"]').hasClass("resourceCalDAV_item_ro"))
+		if($('#ResourceCalDAVTODOList').find('[data-id="'+todo.res_id+'"]').hasClass("resourceCalDAV_item_ro"))
 		{
 			$('#editTODO').hide();
+			$('#duplicateTODO').hide();
 			$('#editOptionsButtonTODO').hide();
 		}
 
@@ -961,9 +969,9 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		$('#todoDetailsTable :input[type!="button"]').prop('disabled', true);
 		$('#todoDetailsTable :input[type="text"]').prop('readonly', true);
 		$('#todoDetailsTable textarea').prop('readonly', true);
-		
+
 		$('#percentageSlider').slider({disabled: true});
-		
+
 		/*************************** BAD HACKS SECTION ***************************/
 		// here we fix the cross OS/cross broser problems (unfixable in pure CSS)
 		if($.browser.webkit && !!window.chrome)	/* Chrome */
@@ -1009,12 +1017,12 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		$('#year_custom3_TODO').css('display', 'none');
 		$('#repeat_details_TODO').css('display', 'none');
 	}
-	if(todo==null || todo.type=='' || (globalSettings.appleremindersmode && (todo.status=='COMPLETED' || todo.status== 'CANCELLED')) ||
-		(globalSettings.appleremindersmode && typeof globalAppleSupport.nextDates[todo.id] == 'undefined'))
+	if(todo==null || todo.type=='' || (globalSettings.appleremindersmode.value && (todo.status=='COMPLETED' || todo.status== 'CANCELLED')) ||
+		(globalSettings.appleremindersmode.value && typeof globalAppleSupport.nextDates[todo.id] == 'undefined'))
 		$('#editOptionsButtonTODO').hide();
 	else
 		$('#editOptionsButtonTODO').click(function(){
-		showTodoForm(globalCalTodo, 'show', '', true);
+			showTodoForm(globalCalTodo, 'show', '', true);
 		});
 
 	if(repeatOne=='editOnly' || repeatOne=='futureOnly' || $('#recurrenceIDTODO').val())
@@ -1022,7 +1030,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 
 	if(todo && todo.after && repeatOne=='futureOnly')
 			$('#repeat_end_after_TODO').val(todo.after - todo.realRepeatCount + 1);
-			
+
 	$('#percenteCompleteValue').val(sliderValue);
 
 	$('#percentageSlider').slider({
@@ -1044,9 +1052,11 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		change: function(event, ui) {
 			var status;
 
-			if (ui.value > 99)
+			if (ui.value>99 && $('#statusTODO').val()==='CANCELLED')
+				status='CANCELLED';
+			else if(ui.value>99)
 				status='COMPLETED';
-			else if(ui.value > 0 && !globalSettings.appleremindersmode)
+			else if(ui.value>0 && !globalSettings.appleremindersmode.value)
 				status='IN-PROCESS';
 			else
 				status='NEEDS-ACTION';
@@ -1056,7 +1066,7 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 		}
 	});
 
-	if(!globalSettings.timezonesupport)
+	if(!globalSettings.timezonesupport.value)
 		$('.timezone_rowTODO').css('display', 'none');
 
 	//updateTodoFormDimensions();
@@ -1067,22 +1077,13 @@ function showTodoForm(todo, mod, repeatOne, confirmRepeat)
 	//	setTodoPosition(event);
 
 	if($('#todo_type').val()=='none')
-	{
-		$('.alert_message_detailsTODO').each(function(){
-			if($(this).val()=='on_date')
-				$(this).find('option').not(':selected').remove();
-			else
-			{
-				var dataID=$(this).parent().parent().attr('data-id');
-				$('#todo_details_template').find('tr[data-id="'+dataID+'"]').remove();
-			}
-		});
-	}
+		stripTodoAlerts();
 	if(mod!='new')
 		$('#closeTODO').hide();
 	globalObjectLoading=false;
 	$('#CATodo').show(200, function(){
 		$('#todoColor').css('background-color',color);
+		checkTodoFormScrollBar();
 		$('#todoForm').scrollTop(0);
 	});
 }
@@ -1101,35 +1102,25 @@ function bindTodoForm()
 			myDate.setDate(myDate.getDate()+7);
 
 			if($('.dateTrToTODO').is(':visible') && $('.dateTrToTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_toTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_toTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to +$("#time_toTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('.dateTrFromTODO').is(':visible') && $('.dateTrFromTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_fromTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_fromTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to +$("#time_fromTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 
-			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
+			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
 			$('.message_date_inputTODO[data-id="'+data_id+'"]').show();
-			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('.message_time_inputTODO[data-id="'+data_id+'"]').show();
 			$('.before_after_inputTODO[data-id="'+data_id+'"]').hide();
 		}
-
-		if(($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_afterTODO"))
+		else
 		{
 			$('.message_date_inputTODO[data-id="'+data_id+'"]').hide();
 			$('.message_time_inputTODO[data-id="'+data_id+'"]').hide();
@@ -1162,39 +1153,26 @@ function bindTodoForm()
 		{
 			$('.alert_detailsTODO[data-id="'+data_id+'"]').show();
 			$('.alert_message_dateTODO[data-id="'+data_id+'"]').show();
-			if($('#todo_type').val()!='none' && $('.alert_message_detailsTODO option[value="weeks_before"]').length==0)
-			{
-				if($('#todo_type').val()!='start' || !globalSettings.appleremindersmode)
-				$('.alert_message_detailsTODO').append('<option data-type="weeks_beforeTODO" class="todoTimeOptions" value="weeks_before">weeks before</option>'+
-			'<option data-type="days_beforeTODO" class="todoTimeOptions" value="days_before">days before</option>'+
-			'<option data-type="hours_beforeTODO" class="todoTimeOptions" value="hours_before">hours before</option>'+
-			'<option data-type="minutes_beforeTODO" class="todoTimeOptions" value="minutes_before">minutes before</option>'+
-			'<option data-type="seconds_beforeTODO" class="todoTimeOptions" value="seconds_before">seconds before</option>'+
-			'<option data-type="weeks_afterTODO" class="todoTimeOptions" value="weeks_after">weeks after</option>'+
-			'<option data-type="days_afterTODO" class="todoTimeOptions" value="days_after">days after</option>'+
-			'<option data-type="hours_afterTODO" class="todoTimeOptions" value="hours_after">hours after</option>'+
-			'<option data-type="minutes_afterTODO" class="todoTimeOptions"value="minutes_after">minutes after</option>'+
-			'<option data-type="seconds_afterTODO" class="todoTimeOptions" value="seconds_after">seconds after</option>');
-			translateAlerts();
-			}
+			if($('#todo_type').val()!='none')
+				expandTodoAlerts();
 			var myDate=new Date();
 			myDate.setDate(myDate.getDate()+7);
 
 			if($('.dateTrToTODO').is(':visible') && $('.dateTrToTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_toTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_toTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to +$("#time_toTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('.dateTrFromTODO').is(':visible') && $('.dateTrFromTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_fromTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_fromTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to +$("#time_fromTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 
-			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
-			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
+			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			todo_alert_add(data_id);
 		}
 		else
@@ -1205,6 +1183,7 @@ function bindTodoForm()
 			var data_id=$(this).attr("data-id");
 			$('#todo_details_template tr[data-id="'+data_id+'"]').remove();
 		}
+		checkTodoFormScrollBar();
 	});
 
 	$('#repeat_end_after_TODO, #repeat_interval_detail_TODO').bind('keyup change',function(){
@@ -1236,7 +1215,7 @@ function bindTodoForm()
 			$('#month_custom2_TODO').hide();
 			$('#repeat_month_custom_select2_TODO').parent().show();
 		}
-		//checkEventFormScrollBar();
+		checkTodoFormScrollBar();
 	});
 
 	$('#repeat_year_custom_select1_TODO').change(function(){
@@ -1250,7 +1229,7 @@ function bindTodoForm()
 			$('#year_custom1_TODO').hide();
 			$('#repeat_year_custom_select2_TODO').parent().show();
 		}
-		//checkEventFormScrollBar();
+		checkTodoFormScrollBar();
 	});
 
 	$('#repeat_end_details_TODO').change(function(){
@@ -1264,7 +1243,7 @@ function bindTodoForm()
 			var today;
 			if($('#date_fromTODO').val()!='')
 			{
-				today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val());
+				today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val());
 				if(today==null)
 					today=new Date();
 			}
@@ -1272,7 +1251,7 @@ function bindTodoForm()
 				today=new Date();
 
 			var date=new Date(today.getFullYear(), today.getMonth(), today.getDate()+2);
-			$('#repeat_end_date_TODO').val($.datepicker.formatDate(globalSettings.datepickerformat, date));
+			$('#repeat_end_date_TODO').val($.datepicker.formatDate(globalSettings.datepickerformat.value, date));
 		}
 
 		if($('#repeat_end_details_TODO option:selected').attr('data-type')=="repeat_details_after")
@@ -1288,7 +1267,7 @@ function bindTodoForm()
 			$('#repeat_end_date_TODO').hide();
 		}
 
-		//checkEventFormScrollBar();
+		checkTodoFormScrollBar();
 	});
 
 	$('#todo_details_template .customTable td').click(function(){
@@ -1309,7 +1288,7 @@ function bindTodoForm()
 			var calUID=uid.substring(0, uid.lastIndexOf('/')+1);
 			var color=$('#ResourceCalDAVTODOList').find("[data-id='"+calUID+"']").find('.resourceCalDAVColor').css('background-color');
 
-			$('.event_item[data-id="'+uid+'"]').children('.fc-event-handle').css({'background-color': color, 'border-color': color});
+			$('.event_item[data-id="'+uid+'"]').children('.fc-event-handle').css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
 		}
 
 		$('#TodoDisabler').fadeOut(globalEditorFadeAnimation, function(){
@@ -1332,11 +1311,11 @@ function bindTodoForm()
 			var calUID=uid.substring(0, uid.lastIndexOf('/')+1);
 			var color=$('#ResourceCalDAVTODOList').find("[data-id='"+calUID+"']").find('.resourceCalDAVColor').css('background-color');
 
-			$('.event_item[data-id="'+uid+'"]').children('.fc-event-handle').css({'background-color': color, 'border-color': color});
+			$('.event_item[data-id="'+uid+'"]').children('.fc-event-handle').css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
 
 			if($('#recurrenceIDTODO').val()!='')
 				showTodoForm(globalCalTodo, 'show','editOnly');
-			else 
+			else
 				showTodoForm(globalCalTodo, 'show');
 			startEditModeTodo();
 		}
@@ -1345,7 +1324,7 @@ function bindTodoForm()
 	$('#todo_calendar').change(function(){
 		var color = '';
 		if($(this).val()=='choose')
-			color = 'rgb(240, 240, 240)';
+			color = 'rgb(240,240,240)';
 		else
 			color=$('#ResourceCalDAVTODOList').find("[data-id='"+$(this).val()+"']").find('.resourceCalDAVColor').css('background-color');
 
@@ -1354,11 +1333,11 @@ function bindTodoForm()
 			uid=$('#uidTODO').val();
 
 		$('#todoColor').css('background-color',color);
-		$('.event_item[data-id="'+uid+'"]').find('.fc-event-handle').css({'background-color': color, 'border-color': color});
+		$('.event_item[data-id="'+uid+'"]').find('.fc-event-handle').css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
 	});
 
 	$('#repeat_TODO').change(function(){
-		if($('#repeat_TODO option:selected').attr('data-type')=='repeat_no-repeat')
+		if($('#repeat_TODO option:selected').attr('data-type')=='repeat_no-repeat' || $('#repeat_TODO option:selected').attr('data-type')=="custom_repeat")
 		{
 			$('#repeat_details_TODO').hide();
 			$('#repeat_interval_TODO').hide();
@@ -1433,7 +1412,7 @@ function bindTodoForm()
 			var today;
 			if($('#date_fromTODO').val()!='')
 			{
-				today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_fromTODO').val());
+				today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_fromTODO').val());
 				if(today==null)
 					today=new Date();
 			}
@@ -1441,29 +1420,42 @@ function bindTodoForm()
 				today=new Date();
 
 			var date=new Date(today.getFullYear(),today.getMonth(),today.getDate()+2);
-			$('#repeat_end_date_TODO').val($.datepicker.formatDate(globalSettings.datepickerformat, date));
+			$('#repeat_end_date_TODO').val($.datepicker.formatDate(globalSettings.datepickerformat.value, date));
 		}
-		//checkEventFormScrollBar();
+		checkTodoFormScrollBar();
 	});
 
 	$('#statusTODO').change(function(){
 		var status = $(this).val();
 
-		if(status=='NEEDS-ACTION')
-		{
-			$('#percenteCompleteValue').val(0);
-			$('#percentageSlider').slider({value: 0});
+		switch(status) {
+			case 'NEEDS-ACTION':
+				$('#percenteCompleteValue').val(0);
+				$('#percentageSlider').slider({value: 0});
+				$('#nameTODO').removeClass('title_cancelled');
+				break;
+			case 'IN-PROCESS':
+				var value = 50;
+				var id = $('.fc-event-selected').attr('data-repeat-hash');
+				if(typeof globalTodolistStatusArray[id]!='undefined' && typeof globalTodolistStatusArray[id].percent!='undefined')
+					value=globalTodolistStatusArray[id].percent;
+				$('#percenteCompleteValue').val(value);
+				$('#percentageSlider').slider({value: value});
+				$('#nameTODO').removeClass('title_cancelled');
+				break;
+			case 'CANCELLED':
+				$('#percenteCompleteValue').val(100);
+				$('#percentageSlider').slider({value: 100});
+				$('#nameTODO').addClass('title_cancelled');
+				break;
+			case 'COMPLETED':
+				$('#percenteCompleteValue').val(100);
+				$('#percentageSlider').slider({value: 100});
+				$('#nameTODO').removeClass('title_cancelled');
+				break;
+			default:
+				break;
 		}
-		else if(status=='COMPLETED')
-		{
-			$('#percenteCompleteValue').val(100);
-			$('#percentageSlider').slider({value: 100});
-		}
-
-		if(status=='CANCELLED')
-			$('#nameTODO').addClass('title_cancelled');
-		else
-			$('#nameTODO').removeClass('title_cancelled');
 
 		todoStatusChanged(status);
 	});
@@ -1475,58 +1467,38 @@ function bindTodoForm()
 			$('#repeat_row_TODO').hide();
 			$('#date_fromTODO, #time_fromTODO, #date_toTODO, #time_toTODO').parent().find('img').css('display','none');
 			$('.dateTrFromTODO, .dateTrToTODO, .timezone_rowTODO').hide();
-
-			$('.alert_message_detailsTODO').each(function(){
-				if($(this).val()=='on_date')
-					$(this).find('option').not(':selected').remove();
-				else
-				{
-					var dataID = $(this).parent().parent().attr('data-id');
-					$('#todo_details_template').find('tr[data-id="'+dataID+'"]').remove();
-				}
-			});
+			stripTodoAlerts();
 		}
 		else if($(this).val()=='start')
 		{
 			var myDate=new Date();
-			$('#date_fromTODO').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
-			$('#time_fromTODO').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('#date_fromTODO').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
+			$('#time_fromTODO').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('#repeat_row_TODO').show();
 			$('#date_toTODO, #time_toTODO').parent().find('img').css('display','none');
 			$('.dateTrToTODO').hide();
 
 			$('.dateTrFromTODO').show();
-			if(globalSettings.timezonesupport)
+			if(globalSettings.timezonesupport.value)
 			{
 				$('.timezone_rowTODO').show();
 				$('#timezoneTODO').val(globalSessionTimeZone);
 			}
 			$('#date_fromTODO, #time_fromTODO').trigger('change');
-			
-			if(globalSettings.appleremindersmode)
-				$('.alert_message_detailsTODO').each(function(){
-					if($(this).val()=='on_date')
-						$(this).find('option').not(':selected').remove();
-					else
-					{
-						var dataID = $(this).parent().parent().attr('data-id');
-						$('#todo_details_template').find('tr[data-id="'+dataID+'"]').remove();
-					}
-				});
 		}
 		else if($(this).val()=='due')
 		{
 			var myDate=new Date($('#todoList').fullCalendar('getView').start.getTime());
-			myDate.setHours(globalSettings.calendarendofbusiness);
-			myDate.setMinutes((globalSettings.calendarendofbusiness%1)*60);
-			$('#date_toTODO').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
-			$('#time_toTODO').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			myDate.setHours(globalSettings.calendarendofbusiness.value);
+			myDate.setMinutes((globalSettings.calendarendofbusiness.value%1)*60);
+			$('#date_toTODO').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
+			$('#time_toTODO').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('#repeat_row_TODO').show();
 			$('#date_fromTODO, #time_fromTODO').parent().find('img').css('display','none');
 			$('.dateTrFromTODO').hide();
 
 			$('.dateTrToTODO').show();
-			if(globalSettings.timezonesupport)
+			if(globalSettings.timezonesupport.value)
 			{
 				$('.timezone_rowTODO').show();
 				$('#timezoneTODO').val(globalSessionTimeZone);
@@ -1539,7 +1511,7 @@ function bindTodoForm()
 			var myDateStart= new Date();
 			if($('#date_toTODO').val()!='')
 			{
-				var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_toTODO').val());
+				var dateFrom=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_toTODO').val());
 				var datetime_to=$.fullCalendar.formatDate(dateFrom, 'yyyy-MM-dd');
 				var aDate=new Date(Date.parse("01/02/1990, "+$('#time_toTODO').val()));
 				var time_from=$.fullCalendar.formatDate(aDate, 'HH:mm:ss');
@@ -1549,46 +1521,34 @@ function bindTodoForm()
 			{
 				myDate=new Date($('#todoList').fullCalendar('getView').start.getTime());
 				$('#repeat_row_TODO').show();
-				myDate.setHours(globalSettings.calendarendofbusiness);
-				myDate.setMinutes((globalSettings.calendarendofbusiness%1)*60);
+				myDate.setHours(globalSettings.calendarendofbusiness.value);
+				myDate.setMinutes((globalSettings.calendarendofbusiness.value%1)*60);
 				if($('#date_toTODO').val()=='')
-					$('#date_toTODO').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
+					$('#date_toTODO').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
 				if($('#time_toTODO').val()=='')
-					$('#time_toTODO').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+					$('#time_toTODO').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			}
 
 			if(myDateStart>myDate)
 				myDateStart= new Date(myDate.getTime());
 			globalPrevDate = new Date(myDateStart.getTime());
 			if($('#date_fromTODO').val()=='')
-				$('#date_fromTODO').val($.datepicker.formatDate(globalSettings.datepickerformat, myDateStart));
+				$('#date_fromTODO').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDateStart));
 
 			if($('#time_fromTODO').val()=='')
-				$('#time_fromTODO').val($.fullCalendar.formatDate(myDateStart, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+				$('#time_fromTODO').val($.fullCalendar.formatDate(myDateStart, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 
 			$('.dateTrFromTODO, .dateTrToTODO').show();
-			if(globalSettings.timezonesupport)
+			if(globalSettings.timezonesupport.value)
 			{
 				$('.timezone_rowTODO').show();
 				$('#timezoneTODO').val(globalSessionTimeZone);
 			}
 			$('#date_fromTODO, #time_fromTODO, #date_toTODO, #time_toTODO').trigger('change');
 		}
-		if($('#todo_type').val()!='none' && ($('#todo_type').val()!='start' || !globalSettings.appleremindersmode))
-		{
-			$('.alert_message_detailsTODO').html('<option data-type="on_dateTODO" class="todoTimeOptions" value="on_date">On date</option>'+
-			'<option data-type="weeks_beforeTODO" class="todoTimeOptions" value="weeks_before">weeks before</option>'+
-			'<option data-type="days_beforeTODO" class="todoTimeOptions" value="days_before">days before</option>'+
-			'<option data-type="hours_beforeTODO" class="todoTimeOptions" value="hours_before">hours before</option>'+
-			'<option data-type="minutes_beforeTODO" class="todoTimeOptions" value="minutes_before">minutes before</option>'+
-			'<option data-type="seconds_beforeTODO" class="todoTimeOptions" value="seconds_before">seconds before</option>'+
-			'<option data-type="weeks_afterTODO" class="todoTimeOptions" value="weeks_after">weeks after</option>'+
-			'<option data-type="days_afterTODO" class="todoTimeOptions" value="days_after">days after</option>'+
-			'<option data-type="hours_afterTODO" class="todoTimeOptions" value="hours_after">hours after</option>'+
-			'<option data-type="minutes_afterTODO" class="todoTimeOptions"value="minutes_after">minutes after</option>'+
-			'<option data-type="seconds_afterTODO" class="todoTimeOptions" value="seconds_after">seconds after</option>');
-			translateAlerts();
-		}
+		if($('#todo_type').val()!='none')
+			expandTodoAlerts();
+		checkTodoFormScrollBar();
 	});
 
 	$('#percenteCompleteValue').bind('keyup change',function(){
@@ -1632,10 +1592,10 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 	{
 		var activeCollection = $('#ResourceCalDAVList').find('.resourceCalDAV_item.resourceCalDAV_item_selected');
 		if(activeCollection.length>0 && !globalResourceCalDAVList.getEventCollectionByUID(activeCollection.attr('data-id')).permissions.read_only)
-			color=rgb2hex(activeCollection.children('.resourceCalDAVColor').css('background-color'));
+			color=rgbToHex(activeCollection.children('.resourceCalDAVColor').css('background-color'));
 	}
 	else
-		color=calEvent.color;
+		color=globalResourceCalDAVList.getEventCollectionByUID(calEvent.res_id).ecolor;
 
 	if(confirmRepeat)
 	{
@@ -1708,7 +1668,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 	var calSelected = $('.resourceCalDAV_item.resourceCalDAV_item_selected').attr('data-id');
 		for(var i=0;i<cals.length;i++)
 		{
-			if(cals[i].uid!=undefined && ((calEvent!=null && calEvent.res_id==cals[i].uid) || (cals[i].makeLoaded && !cals[i].permissions_read_only && (globalVisibleCalDAVCollections.indexOf(cals[i].uid)!=-1 || calSelected==cals[i].uid))))
+			if(cals[i].uid!=undefined && ((calEvent!=null && calEvent.res_id==cals[i].uid) || (cals[i].makeLoaded && !cals[i].permissions_read_only )))
 			{
 				calendarObj.append(new Option(cals[i].displayValue,cals[i].uid));
 			}
@@ -1718,6 +1678,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 	{
 		$('#show').val('');
 		$('#editButton').hide();
+		$('#duplicateButton').hide();
 		$('#editOptionsButton').hide();
 		$('#resetButton').hide();
 		$('#deleteButton').hide();
@@ -1737,8 +1698,9 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 	if(mod=='new')
 	{
 		//$('[data-type="name"]').attr('placeholder', localization[globalInterfaceLanguage].pholderNewEvent);
-		var date_to=null;
-		if(calEvent!=null)
+		var date_to = null;
+
+		if(calEvent!==null)
 		{
 			if(calEvent.realStart)
 				date=calEvent.realStart;
@@ -1746,16 +1708,27 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				date=calEvent.start;
 
 			if(calEvent.realEnd)
-				date_to=calEvent.realEnd;
+				date_to=new Date(calEvent.realEnd.getTime());
 			else
-				date_to=calEvent.end;
+				date_to=new Date(calEvent.end.getTime());
 		}
 
-		if(!allDay && ((date_to==null) || ((date_to-date)==0)))
-			date_to=new Date(date.getFullYear(),date.getMonth(), date.getDate(),date.getHours()+1,date.getMinutes(),date.getSeconds());
+		if(!allDay && ((date_to==null) || ((date_to-date)==0))) {
+			date_to = new Date(date.getTime());
+
+			if(globalSettings.defaulteventduration.value!==null)
+				date_to.setMinutes(date_to.getMinutes()+globalSettings.defaulteventduration.value);
+			else {
+				date_to.setHours(globalSettings.calendarendofbusiness.value);
+				date_to.setMinutes((globalSettings.calendarendofbusiness.value%1)*60);
+			}
+
+			if(date_to.getTime()<date.getTime())
+				date_to.setDate(date_to.getDate()+1);
+		}
 
 		var beforeScroll = $('#main').width()-$('#calendar').width();
-		$('#calendar').fullCalendar('renderEvent', new items('', date, date_to, localization[globalInterfaceLanguage].pholderNewEvent, allDay, 'fooUID',color, '', '', '', '', '', '', '', '', '', '', '', '', '','', '', '', '', '', '', '', '', '',''));
+		$('#calendar').fullCalendar('renderEvent', $.extend(new items('',date,date_to,localization[globalInterfaceLanguage].pholderNewEvent, allDay, 'fooUID', '', '', '', '', '', '', '', '', '', '', '', '', '','', '', '', '', '', '', '', '', '','', '', '', '', '', '', '', ''),{backgroundColor:hexToRgba(color,0.9),borderColor:color,textColor:checkFontColor(color)}));
 		var afterScroll = $('#main').width()-$('#calendar').width();
 		rerenderCalendar(beforeScroll!=afterScroll);
 
@@ -1787,33 +1760,33 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 
 		if(calEvent.end)
 			if(calEvent.realEnd && (mod!='drop'  || repeatOne!='editOnly'))
-				date_to=calEvent.realEnd;
+				date_to=new Date(calEvent.realEnd.getTime());
 			else
-				date_to=calEvent.end;
+				date_to=new Date(calEvent.end.getTime());
 
 		$('#note').val(calEvent.note).trigger('autosize.resize');
 		if(typeof calEvent.classType!='undefined' && calEvent.classType!=null && calEvent.classType!='')
 			$('#type').val(calEvent.classType.toLowerCase());
-		else 
+		else
 			$('#type').val('public');
-		
+
 		if(calEvent.status!='')
 			$('#status').val(calEvent.status);
-		else 
+		else
 			$('#status').val('NONE');
-		
+
 		if(calEvent!=null && mod!='new')
 		{
 			var uidArray = calEvent.id.match(vCalendar.pre['uidParts']);
 			if(decodeURIComponent(uidArray[4]).indexOf(uidArray[2])==-1)
 				$('.row_type').css('display','none');
 		}
-		
+
 		if(calEvent.avail == 'OPAQUE')
 			$('#avail').val('busy');
 		else
 			$('#avail').val('free');
-		
+
 		if(calEvent!=null)
 		{
 			var prior=parseInt(calEvent.priority,10);
@@ -1832,7 +1805,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 			else
 				$('#priority').val(0);
 		}
-		
+
 		$('#uid').val(calEvent.id);
 		$('#url_EVENT').val(calEvent.hrefUrl+'');
 		$('#vcalendarHash').val(hex_sha256(calEvent.vcalendar));
@@ -1903,10 +1876,10 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				(alarmDate.getMinutes())<10 ? (minute='0'+(alarmDate.getMinutes())) : (minute=alarmDate.getMinutes());
 
 				$(".alert_message_details[data-id="+(alarmIterator+1)+"]").val('on_date');
-				var formattedAlarmDate=$.datepicker.formatDate(globalSettings.datepickerformat, alarmDate);
+				var formattedAlarmDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, alarmDate);
 
 				$(".message_date_input[data-id="+(alarmIterator+1)+"]").val(formattedAlarmDate);
-				$(".message_time_input[data-id="+(alarmIterator+1)+"]").val($.fullCalendar.formatDate(alarmDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+				$(".message_time_input[data-id="+(alarmIterator+1)+"]").val($.fullCalendar.formatDate(alarmDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 
 				$('.alert_details[data-id="'+(alarmIterator+1)+'"]').show();
 				$('.alert_message_date[data-id="'+(alarmIterator+1)+'"]').show();
@@ -1916,13 +1889,13 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 		if(alarmIterator>0)
 			event_alert_add(alarmIterator+2);
 
-		if(calEvent.type!='' && repeatOne!='editOnly')
+		if(calEvent.type!='' && repeatOne!='editOnly' && calEvent.ruleString.match(vCalendar.re['recurCaldav'])!=null)
 		{
 			var ruleString=calEvent.vcalendar.match(vCalendar.pre['contentline_RRULE2'])[0].match(vCalendar.pre['contentline_parse'])[4];
 			if(ruleString.indexOf('BYMONTH=')!=-1 || ruleString.indexOf('BYMONTHDAY=')!=-1 || ruleString.indexOf('BYDAY=')!=-1)
 			{
-				pars=ruleString.split(';');
-				
+				var pars=ruleString.split(';');
+
 				if(pars.indexElementOf('BYMONTH=')!=-1 && pars.indexElementOf('BYMONTHDAY=')==-1 && pars.indexElementOf('BYDAY=')==-1)
 					pars[pars.length] = "BYMONTHDAY="+calEvent.start.getDate();
 				if(calEvent.type=="DAILY")
@@ -1934,7 +1907,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				{
 					$("#repeat option[value='CUSTOM_WEEKLY']").prop('selected', true);
 					$('#repeat_interval [data-type="txt_interval"]').text(localization[globalInterfaceLanguage].repeatWeeks);
-					
+
 					for(var ri=0;ri<pars.length;ri++)
 					{
 						if(pars[ri].indexOf("BYDAY=")!=-1)
@@ -1954,8 +1927,8 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				{
 					$("#repeat option[value='CUSTOM_MONTHLY']").prop('selected', true).change();
 					$('#repeat_interval [data-type="txt_interval"]').text(localization[globalInterfaceLanguage].repeatMonths);
-					
-							
+
+
 					for(var ri=0;ri<pars.length;ri++)
 					{
 						if(pars[ri].indexOf("BYDAY=")!=-1)
@@ -2007,7 +1980,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 								{
 									$('#repeat_month_custom_select').val('last').change();
 									$('#repeat_month_custom_select2').val("DAY");
-									
+
 								}
 								else
 									$('#month_custom2 .customTable td[data-type="'+(parseInt(byMonthDay[rj],10))+'"]').addClass('selected');
@@ -2071,7 +2044,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 								{
 									$('#repeat_year_custom_select1').val('last').change();
 									$('#repeat_year_custom_select2').val("DAY");
-									
+
 								}
 								else
 									$('#year_custom1 .customTable td[data-type="'+(parseInt(byMonthDay[rj],10))+'"]').addClass('selected');
@@ -2087,7 +2060,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 						}
 					}
 				}
-				
+
 				if(calEvent.after=='' && calEvent.untilDate=='')
 					$("#repeat_end_details option[value='never']").prop('selected', true);
 				else if(calEvent.after!='')
@@ -2099,7 +2072,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				{
 					date=$.fullCalendar.parseDate(calEvent.untilDate);
 					$("#repeat_end_details option[value='on_date']").prop('selected', true);
-					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 					$('#repeat_end_date').val(formattedRepeatDate);
 				}
 
@@ -2109,9 +2082,9 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				if(calEvent.byDay.length>0)
 				{
 					var businessArray=new Array();
-					if(globalSettings.weekenddays.length>0)
+					if(globalSettings.weekenddays.value.length>0)
 						for(var i=0;i<7;i++)
-							if(globalSettings.weekenddays.indexOf(i)==-1)
+							if(globalSettings.weekenddays.value.indexOf(i)==-1)
 								businessArray[businessArray.length]=i+'';
 					var businessCount=0;
 					var weekendCount=0;
@@ -2119,18 +2092,18 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 					{
 						if(businessArray.indexOf(byDay[i])!=-1)
 							businessCount++;
-						if(globalSettings.weekenddays.indexOf(parseInt(byDay[i],10))!=-1)
+						if(globalSettings.weekenddays.value.indexOf(parseInt(byDay[i],10))!=-1)
 							weekendCount++;
-					
+
 					}
-					
+
 					if(businessArray.length>0 && businessArray.length==businessCount)
 					{
 						$("#repeat option[value='BUSINESS']").prop('selected', true);
 						$('#repeat_interval').hide();
 						$('#week_custom').hide();
 					}
-					else if(globalSettings.weekenddays.length>0 && globalSettings.weekenddays.length==weekendCount)
+					else if(globalSettings.weekenddays.value.length>0 && globalSettings.weekenddays.value.length==weekendCount)
 					{
 						$("#repeat option[value='WEEKEND']").prop('selected', true);
 						$('#repeat_interval').hide();
@@ -2173,7 +2146,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				{
 					date=$.fullCalendar.parseDate(calEvent.untilDate);
 					$("#repeat_end_details option[value='on_date']").prop('selected', true);
-					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
+					var formattedRepeatDate=$.datepicker.formatDate(globalSettings.datepickerformat.value, date);
 					$('#repeat_end_date').val(formattedRepeatDate);
 				}
 
@@ -2195,6 +2168,12 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 				}
 			$('#repeatEvent').val(true);
 			}
+		}
+		else if(calEvent.type!='' && repeatOne!='editOnly')
+		{
+			var cu_opt = new Option(localization[globalInterfaceLanguage].customRepeat, calEvent.ruleString, false, true);
+			$(cu_opt).attr('data-type','custom_repeat');
+			$('#repeat').append(cu_opt);
 		}
 		else
 			$('#repeatEvent').val(false);
@@ -2223,9 +2202,10 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 		if($('#show').val())
 		{
 			if(calEvent.repeatStart && repeatOne=='')
-				date=calEvent.repeatStart;
+				date=new Date(calEvent.repeatStart.getTime());
 			if(calEvent.repeatEnd && repeatOne=='')
-				date_to=calEvent.repeatEnd;
+				date_to=new Date(calEvent.repeatEnd.getTime());
+
 		}
 		if(repeatOne=='editOnly')
 		{
@@ -2255,41 +2235,64 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 		}
 	}
 
-	var formattedDate=$.datepicker.formatDate(globalSettings.datepickerformat, date);
-	$('#date_from').val(formattedDate);	
-	if(!allDay)
-	{
-		$('#time_from').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
-		globalPrevDate=new Date(date.getTime());
-	}
-	else
-	{
-		var startDateB = new Date(date.getTime())
-		startDateB.setHours(globalSettings.calendarstartofbusiness);
-		startDateB.setMinutes((globalSettings.calendarstartofbusiness%1)*60);
-		$('#time_from').val($.fullCalendar.formatDate(startDateB, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
-		globalPrevDate=new Date(startDateB.getTime());
-	}
 
-	if(date_to==null)
-		date_to=date;
+	var today = new Date();
+	var todayClear = new Date(today.getTime());
+	todayClear.setHours(0);
+	todayClear.setMinutes(0);
+	todayClear.setSeconds(0);
+	todayClear.setMilliseconds(0);
+	var dateClear = new Date(date.getTime());
+	dateClear.setHours(0);
+	dateClear.setMinutes(0);
+	dateClear.setSeconds(0);
+	dateClear.setMilliseconds(0);
 
-	(date_to.getHours())<10 ? (hour='0'+(date_to.getHours())): (hour=date_to.getHours());
-	(date_to.getMinutes())<10 ? (minute='0'+(date_to.getMinutes())): (minute=date_to.getMinutes());
-	var formattedDate_to=$.datepicker.formatDate(globalSettings.datepickerformat, date_to);
-	$('#date_to').val(formattedDate_to);
-
-	if(!allDay)
-		$('#time_to').val($.fullCalendar.formatDate(date_to, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
-	else
+	if(allDay)
 	{
-		var endDateB = new Date(date.getTime())
-		endDateB.setHours(globalSettings.calendarendofbusiness);
-		endDateB.setMinutes((globalSettings.calendarendofbusiness%1)*60);
-		$('#time_to').val($.fullCalendar.formatDate(endDateB, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+		if(globalSettings.defaulteventduration.value!==null && todayClear.getTime()===dateClear.getTime())
+		{
+			if(today.getMinutes()>0) {
+				date.setHours(today.getHours()+1);
+				date.setMinutes(0);
+			}
+			else {
+				date.setHours(today.getHours());
+				date.setMinutes(today.setMinutes());
+			}
+		}
+		else {
+			date.setHours(globalSettings.calendarstartofbusiness.value);
+			date.setMinutes((globalSettings.calendarstartofbusiness.value%1)*60);
+		}
 	}
 
-	if($('#repeat option:selected').attr('data-type')!="repeat_no-repeat")
+	$('#date_from').val($.datepicker.formatDate(globalSettings.datepickerformat.value, date));
+	$('#time_from').val($.fullCalendar.formatDate(date, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
+	globalPrevDate=new Date(date.getTime());
+
+	if(typeof date_to==='undefined' || date_to===null)
+		date_to = new Date(date.getTime());
+
+	if(allDay) {
+		if(globalSettings.defaulteventduration.value!==null)
+		{
+			date_to.setHours(date.getHours());
+			date_to.setMinutes(date.getMinutes()+globalSettings.defaulteventduration.value);
+		}
+		else {
+			date_to.setHours(globalSettings.calendarendofbusiness.value);
+			date_to.setMinutes((globalSettings.calendarendofbusiness.value%1)*60);
+		}
+	}
+
+	if(date_to.getTime()<date.getTime())
+		date_to.setDate(date_to.getDate()+1);
+
+	$('#date_to').val($.datepicker.formatDate(globalSettings.datepickerformat.value, date_to));
+	$('#time_to').val($.fullCalendar.formatDate(date_to, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
+
+	if($('#repeat option:selected').attr('data-type')!="repeat_no-repeat" && $('#repeat option:selected').attr('data-type')!="custom_repeat")
 		$('#repeat_details').show();
 
 	if($('#repeat_end_details option:selected').attr('data-type')=="repeat_details_on_date")
@@ -2318,6 +2321,7 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 		if($('#ResourceCalDAVList').find('[data-id="'+calEvent.res_id+'"]').hasClass("resourceCalDAV_item_ro"))
 		{
 			$('#editButton').hide();
+			$('#duplicateButton').hide();
 			$('#editOptionsButton').hide();
 		}
 		$('#eventDetailsTable :input[type!="button"]').prop('disabled', true);
@@ -2385,8 +2389,11 @@ function showEventForm(date, allDay, calEvent, jsEvent, mod, repeatOne, confirmR
 	if(calEvent && calEvent.after && repeatOne=='futureOnly')
 			$('#repeat_end_after').val(calEvent.after - calEvent.realRepeatCount + 1);
 
-	if(!globalSettings.timezonesupport)
+	if(!globalSettings.timezonesupport.value)
 		$('.timezone_row').css('display', 'none');
+
+	if($('#allday').prop('checked'))
+		stripEventAlerts();
 
 	if(mod!='drop')
 	{
@@ -2413,36 +2420,26 @@ function bindEventForm()
 		{
 			var myDate=new Date();
 			myDate.setDate(myDate.getDate()+7);
-			
+
 			if($('#date_from').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_from").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_from").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_from").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('#date_to').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_to").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_to").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_to").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
-			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
+			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
 			$('.message_date_input[data-id="'+data_id+'"]').show();
-			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('.message_time_input[data-id="'+data_id+'"]').show();
 			$('.before_after_input[data-id="'+data_id+'"]').hide();
 		}
-
-		if(($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_after"))
+		else
 		{
 			$('.message_date_input[data-id="'+data_id+'"]').hide();
 			$('.message_time_input[data-id="'+data_id+'"]').hide();
@@ -2477,21 +2474,21 @@ function bindEventForm()
 			$('.alert_message_date[data-id="'+data_id+'"]').show();
 			var myDate=new Date();
 			myDate.setDate(myDate.getDate()+7);
-			
+
 			if($('#date_from').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_from").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_from").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_from").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('#date_to').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_to").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_to").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_to").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
-			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
-			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
+			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			event_alert_add(data_id);
 		}
 		else
@@ -2562,7 +2559,7 @@ function bindEventForm()
 			var today;
 			if($('#date_from').val()!='')
 			{
-				today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val());
+				today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val());
 				if(today==null)
 					today=new Date();
 			}
@@ -2570,7 +2567,7 @@ function bindEventForm()
 				today=new Date();
 
 			var date=new Date(today.getFullYear(), today.getMonth(), today.getDate()+2);
-			$('#repeat_end_date').val($.datepicker.formatDate(globalSettings.datepickerformat, date));
+			$('#repeat_end_date').val($.datepicker.formatDate(globalSettings.datepickerformat.value, date));
 		}
 
 		if($('#repeat_end_details option:selected').attr('data-type')=="repeat_details_after")
@@ -2600,12 +2597,12 @@ function bindEventForm()
 			$.each(events, function(index, event){
 				if(event.nodeName.toLowerCase()!='tr')
 				{
-					$(event).find('.fc-event-inner, .fc-event-head').addBack().css({'background-color': color, 'border-color': color});
-					$(event).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color',checkFontColor(rgb2hex(color)));
+					$(event).find('.fc-event-inner, .fc-event-head').addBack().css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
+					$(event).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color',checkFontColor(rgbToHex(color)));
 				}
 				else
 				{
-					$(event).children('.fc-event-handle').css({'background-color': color, 'border-color': color})
+					$(event).children('.fc-event-handle').css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
 				}
 			});
 		}
@@ -2628,7 +2625,7 @@ function bindEventForm()
 	$('#resetButton').click(function(){
 		$('#event_details_template').find('img[data-type=invalidSmall]').css('display','none');
 		var uid=$('#uid').val();
-			
+
 		if(uid!='')
 		{
 			var calUID=uid.substring(0, uid.lastIndexOf('/')+1);
@@ -2638,19 +2635,19 @@ function bindEventForm()
 			$.each(events, function(index, event){
 				if(event.nodeName.toLowerCase()!='tr')
 				{
-					$(event).find('.fc-event-inner, .fc-event-head').addBack().css({'background-color': color, 'border-color': color});
-					$(event).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color',checkFontColor(rgb2hex(color)));
+					$(event).find('.fc-event-inner, .fc-event-head').addBack().css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
+					$(event).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color',checkFontColor(rgbToHex(color)));
 				}
 				else
 				{
-					$(event).children('.fc-event-handle').css({'background-color': color, 'border-color': color})
+					$(event).children('.fc-event-handle').css({'background-color': rgbToRgba(color,0.9), 'border-color': color})
 				}
 			});
 			if($('#recurrenceID').val()!='' && $('#repeatCount').val()!='')
 				showEventForm(null, globalCalEvent.allDay, globalCalEvent, globalJsEvent, 'show', 'editOnly');
 			else if($('#futureStart').val()!='')
 				showEventForm(null, globalCalEvent.allDay, globalCalEvent, globalJsEvent, 'show', 'futureOnly');
-			else 
+			else
 				showEventForm(null, globalCalEvent.allDay, globalCalEvent, globalJsEvent, 'show', '');
 			startEditModeEvent();
 		}
@@ -2665,6 +2662,7 @@ function bindEventForm()
 			$('#time_to_cell').find('img').css('display','none');
 			$('#time_from_cell').find('img').css('display','none');
 			$('.timezone_row').css('display', 'none');
+			stripEventAlerts();
 		}
 		else
 		{
@@ -2672,11 +2670,12 @@ function bindEventForm()
 			$('#time_to_cell').css('visibility','visible');
 			$('#time_from').trigger('change');
 			$('#time_to').trigger('change');
-			if(globalSettings.timezonesupport)
+			if(globalSettings.timezonesupport.value)
 			{
 				$('.timezone_row').show();
 				$('#timezone').val(globalSessionTimeZone);
 			}
+			expandEventAlerts();
 		}
 		checkEventFormScrollBar();
 	});
@@ -2693,7 +2692,7 @@ function bindEventForm()
 	$('#event_calendar').change(function(){
 		var color = '';
 		if($(this).val()=='choose')
-			color = 'rgb(240, 240, 240)';
+			color = 'rgb(240,240,240)';
 		else
 			color=$('#ResourceCalDAVList').find("[data-id='"+$(this).val()+"']").find('.resourceCalDAVColor').css('background-color');
 
@@ -2706,18 +2705,18 @@ function bindEventForm()
 		$.each(events, function(index, event){
 			if(event.nodeName.toLowerCase()!='tr')
 			{
-				$(event).find('.fc-event-inner, .fc-event-head').addBack().css({'background-color': color, 'border-color': color});
-				$(event).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color', checkFontColor(rgb2hex(color)));
+				$(event).find('.fc-event-inner, .fc-event-head').addBack().css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
+				$(event).find('.fc-event-title, .fc-event-title-strict, .fc-event-time').css('color', checkFontColor(rgbToHex(color)));
 			}
 			else
 			{
-				$(event).find('.fc-event-handle').css({'background-color': color, 'border-color': color});
+				$(event).find('.fc-event-handle').css({'background-color': rgbToRgba(color,0.9), 'border-color': color});
 			}
 		});
 	});
 
 	$('#repeat').change(function(){
-		if($('#repeat option:selected').attr('data-type')=='repeat_no-repeat')
+		if($('#repeat option:selected').attr('data-type')=='repeat_no-repeat' || $('#repeat option:selected').attr('data-type')=="custom_repeat")
 		{
 			$('#repeat_details').hide();
 			$('#repeat_interval').hide();
@@ -2792,7 +2791,7 @@ function bindEventForm()
 			var today;
 			if($('#date_from').val()!='')
 			{
-				today=$.datepicker.parseDate(globalSettings.datepickerformat, $('#date_from').val());
+				today=$.datepicker.parseDate(globalSettings.datepickerformat.value, $('#date_from').val());
 				if(today==null)
 					today=new Date();
 			}
@@ -2800,7 +2799,7 @@ function bindEventForm()
 				today=new Date();
 
 			var date=new Date(today.getFullYear(),today.getMonth(),today.getDate()+2);
-			$('#repeat_end_date').val($.datepicker.formatDate(globalSettings.datepickerformat, date));
+			$('#repeat_end_date').val($.datepicker.formatDate(globalSettings.datepickerformat.value, date));
 		}
 		checkEventFormScrollBar();
 	});
@@ -2824,6 +2823,7 @@ function startEditModeEvent()
 	$('#CAEvent .formNav').css('display', 'none');
 	$('#CAEvent textarea.header').removeClass('leftspace rightspace');
 	$('#editButton').hide();
+	$('#duplicateButton').hide();
 	$('#editOptionsButton').hide();
 	$('#saveButton').show();
 	$('#resetButton').show();
@@ -2852,6 +2852,7 @@ function startEditModeTodo()
 	$('#CATodo .formNav').css('display', 'none');
 	$('#CATodo textarea.header').removeClass('leftspace rightspace');
 	$('#editTODO').hide();
+	$('#duplicateTODO').hide();
 	$('#editOptionsButtonTODO').hide();
 	$('#closeTODO').show();
 	$('#saveTODO').show();
@@ -2879,7 +2880,6 @@ function startEditModeTodo()
 function todo_alert_add(data_id)
 {
 	data_id++;
-
 	var newTr1,
 	newTr2,
 	newTr3;
@@ -2898,16 +2898,16 @@ function todo_alert_add(data_id)
 		'<td data-size="full" colspan="2">'+
 		'<select class="long alert_message_detailsTODO" name="alert_detailsTODO" data-id="'+data_id+'">'+
 		'<option data-type="on_dateTODO" class="todoTimeOptions" value="on_date">On date</option>'+
-		($('#todo_type').val()=='none' ? '' : '<option data-type="weeks_beforeTODO" class="todoTimeOptions" value="weeks_before">weeks before</option>'+
-		'<option data-type="days_beforeTODO" class="todoTimeOptions" value="days_before">days before</option>'+
-		'<option data-type="hours_beforeTODO" class="todoTimeOptions" value="hours_before">hours before</option>'+
-		'<option data-type="minutes_beforeTODO" class="todoTimeOptions" value="minutes_before">minutes before</option>'+
-		'<option data-type="seconds_beforeTODO" class="todoTimeOptions" value="seconds_before">seconds before</option>'+
-		'<option data-type="weeks_afterTODO" class="todoTimeOptions" value="weeks_after">weeks after</option>'+
-		'<option data-type="days_afterTODO" class="todoTimeOptions" value="days_after">days after</option>'+
-		'<option data-type="hours_afterTODO" class="todoTimeOptions" value="hours_after">hours after</option>'+
-		'<option data-type="minutes_afterTODO" class="todoTimeOptions"value="minutes_after">minutes after</option>'+
-		'<option data-type="seconds_afterTODO" class="todoTimeOptions" value="seconds_after">seconds after</option>')+
+		($('#todo_type').val()=='none' ? '' : '<option data-type="weeks_beforeTODO" value="weeks_before">weeks before</option>'+
+		'<option data-type="days_beforeTODO" value="days_before">days before</option>'+
+		'<option data-type="hours_beforeTODO" value="hours_before">hours before</option>'+
+		'<option data-type="minutes_beforeTODO" value="minutes_before">minutes before</option>'+
+		'<option data-type="seconds_beforeTODO" value="seconds_before">seconds before</option>'+
+		'<option data-type="weeks_afterTODO" value="weeks_after">weeks after</option>'+
+		'<option data-type="days_afterTODO" value="days_after">days after</option>'+
+		'<option data-type="hours_afterTODO" value="hours_after">hours after</option>'+
+		'<option data-type="minutes_afterTODO" value="minutes_after">minutes after</option>'+
+		'<option data-type="seconds_afterTODO" value="seconds_after">seconds after</option>')+
 		'</select>'+
 		'</td>'+
 		'</tr>';
@@ -2921,7 +2921,7 @@ function todo_alert_add(data_id)
 	$('#url_trTODO').before(newTr1);
 	$('#url_trTODO').before(newTr2);
 	$('#url_trTODO').before(newTr3);
-	translateAlerts();
+	translateTodoAlerts();
 	$('#todo_details_template').find('input[placeholder],textarea[placeholder]').placeholder();
 
 	$('#todo_details_template .alert_message_detailsTODO[data-id="'+data_id+'"]').change(function(){
@@ -2933,35 +2933,25 @@ function todo_alert_add(data_id)
 			myDate.setDate(myDate.getDate()+7);
 
 			if($('.dateTrToTODO').is(':visible') && $('.dateTrToTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_toTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_toTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
-				myDate=new Date(Date.parse(datetime_to +$("#time_toTODO").val()));						
+				myDate=new Date(Date.parse(datetime_to +$("#time_toTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('.dateTrFromTODO').is(':visible') && $('.dateTrFromTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_fromTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_fromTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
-				myDate=new Date(Date.parse(datetime_to +$("#time_fromTODO").val()));						
+				myDate=new Date(Date.parse(datetime_to +$("#time_fromTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 
-			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
+			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
 			$('.message_date_inputTODO[data-id="'+data_id+'"]').show();
-			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('.message_time_inputTODO[data-id="'+data_id+'"]').show();
 			$('.before_after_inputTODO[data-id="'+data_id+'"]').hide();
 		}
-
-		if(($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_beforeTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_afterTODO")
-			|| ($('.alert_message_detailsTODO[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_afterTODO"))
+		else
 		{
 			$('.message_date_inputTODO[data-id="'+data_id+'"]').hide();
 			$('.message_time_inputTODO[data-id="'+data_id+'"]').hide();
@@ -2988,44 +2978,30 @@ function todo_alert_add(data_id)
 	});
 	$('#todo_details_template .alertTODO[data-id="'+data_id+'"]').change(function(){
 		var data_id=$(this).attr("data-id");
-
 		if($(this).val()!='none')
 		{
 			$('.alert_detailsTODO[data-id="'+data_id+'"]').show();
 			$('.alert_message_dateTODO[data-id="'+data_id+'"]').show();
-			if($('#todo_type').val()!='none' && $('.alert_message_detailsTODO option[value="weeks_before"]').length==0)
-			{
-				if($('#todo_type').val()!='start' || !globalSettings.appleremindersmode)
-				$('.alert_message_detailsTODO').append('<option data-type="weeks_beforeTODO" class="todoTimeOptions" value="weeks_before">weeks before</option>'+
-			'<option data-type="days_beforeTODO" class="todoTimeOptions" value="days_before">days before</option>'+
-			'<option data-type="hours_beforeTODO" class="todoTimeOptions" value="hours_before">hours before</option>'+
-			'<option data-type="minutes_beforeTODO" class="todoTimeOptions" value="minutes_before">minutes before</option>'+
-			'<option data-type="seconds_beforeTODO" class="todoTimeOptions" value="seconds_before">seconds before</option>'+
-			'<option data-type="weeks_afterTODO" class="todoTimeOptions" value="weeks_after">weeks after</option>'+
-			'<option data-type="days_afterTODO" class="todoTimeOptions" value="days_after">days after</option>'+
-			'<option data-type="hours_afterTODO" class="todoTimeOptions" value="hours_after">hours after</option>'+
-			'<option data-type="minutes_afterTODO" class="todoTimeOptions"value="minutes_after">minutes after</option>'+
-			'<option data-type="seconds_afterTODO" class="todoTimeOptions" value="seconds_after">seconds after</option>');
-			translateAlerts();
-			}
+			if($('#todo_type').val()!='none')
+				expandTodoAlerts();
 			var myDate=new Date();
 			myDate.setDate(myDate.getDate()+7);
-			
+
 			if($('.dateTrToTODO').is(':visible') && $('.dateTrToTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_toTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_toTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to +$("#time_toTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('.dateTrFromTODO').is(':visible') && $('.dateTrFromTODO img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_fromTODO").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_fromTODO").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to +$("#time_fromTODO").val()));
 				myDate.setHours(myDate.getHours()-1);
 			}
-			
-			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
-			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+
+			$('.message_date_inputTODO[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
+			$('.message_time_inputTODO[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			todo_alert_add(data_id);
 		}
 		else
@@ -3036,6 +3012,7 @@ function todo_alert_add(data_id)
 			var data_id=$(this).attr("data-id");
 			$('#todo_details_template tr[data-id="'+data_id+'"]').remove();
 		}
+		checkTodoFormScrollBar();
 	});
 	initCalDavDatepicker($('#todo_details_template .alert_message_dateTODO[data-id="'+data_id+'"]'));
 	initCalDavTimepicker($('#todo_details_template .alert_message_dateTODO[data-id="'+data_id+'"]'));
@@ -3104,15 +3081,15 @@ function event_alert_add(data_id)
 		'<select class="long alert_message_details" name="alert_details" data-id="'+data_id+'">'+
 		'<option data-type="on_date" value="on_date">On date</option>'+
 		($('#allday').prop('checked') ? '' : '<option data-type="weeks_before" value="weeks_before">weeks before</option>'+
-			'<option data-type="days_before" value="days_before">days before</option>'+
-			'<option data-type="hours_before" value="hours_before">hours before</option>'+
-			'<option data-type="minutes_before" value="minutes_before">minutes before</option>'+
-			'<option data-type="seconds_before" value="seconds_before">seconds before</option>'+
-			'<option data-type="weeks_after" value="weeks_after">weeks after</option>'+
-			'<option data-type="days_after" value="days_after">days after</option>'+
-			'<option data-type="hours_after" value="hours_after">hours after</option>'+
-			'<option data-type="minutes_after" value="minutes_after">minutes after</option>'+
-			'<option data-type="seconds_after" value="seconds_after">seconds after</option>')
+		'<option data-type="days_before" value="days_before">days before</option>'+
+		'<option data-type="hours_before" value="hours_before">hours before</option>'+
+		'<option data-type="minutes_before" value="minutes_before">minutes before</option>'+
+		'<option data-type="seconds_before" value="seconds_before">seconds before</option>'+
+		'<option data-type="weeks_after" value="weeks_after">weeks after</option>'+
+		'<option data-type="days_after" value="days_after">days after</option>'+
+		'<option data-type="hours_after" value="hours_after">hours after</option>'+
+		'<option data-type="minutes_after" value="minutes_after">minutes after</option>'+
+		'<option data-type="seconds_after" value="seconds_after">seconds after</option>')
 		+
 		'</select>'+
 		'</td>'+
@@ -3128,7 +3105,7 @@ function event_alert_add(data_id)
 	$('#url_tr').before(newTr2);
 	$('#url_tr').before(newTr3);
 
-	translateAlerts();
+	translateEventAlerts();
 	$('#event_details_template').find('input[placeholder],textarea[placeholder]').placeholder();
 
 	$('#event_details_template .before_after_input[data-id="'+data_id+'"]').bind('keyup change', function(){
@@ -3154,23 +3131,25 @@ function event_alert_add(data_id)
 		{
 			$('.alert_details[data-id="'+data_id+'"]').show();
 			$('.alert_message_date[data-id="'+data_id+'"]').show();
+			if(!$('#allday').prop('checked'))
+				expandEventAlerts();
 			var myDate=new Date();
 			myDate.setDate(myDate.getDate()+7);
-			
+
 			if($('#date_from').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_from").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_from").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
-				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_from").val():'')));						
+				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_from").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('#date_to').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_to").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_to").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
-				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_to").val():'')));						
+				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_to").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
-			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
-			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
+			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			event_alert_add(data_id);
 		}
 		else
@@ -3190,36 +3169,26 @@ function event_alert_add(data_id)
 		{
 			var myDate=new Date();
 			myDate.setDate(myDate.getDate()+7);
-			
+
 			if($('#date_from').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_from").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_from").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_from").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
 			else if($('#date_to').parent().parent().find('img:visible').length==0) {
-				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat,$("#date_to").val());
+				var dateTo=$.datepicker.parseDate(globalSettings.datepickerformat.value,$("#date_to").val());
 				var datetime_to=$.fullCalendar.formatDate(dateTo, 'MM/dd/yyyy, ');
 				myDate=new Date(Date.parse(datetime_to + (!$("#allday").prop('checked')?$("#time_to").val():'')));
 				myDate.setHours(myDate.getHours()-1);
 			}
-			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat, myDate));
+			$('.message_date_input[data-id="'+data_id+'"]').val($.datepicker.formatDate(globalSettings.datepickerformat.value, myDate));
 			$('.message_date_input[data-id="'+data_id+'"]').show();
-			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat ? 'hh:mm TT' : 'HH:mm')));
+			$('.message_time_input[data-id="'+data_id+'"]').val($.fullCalendar.formatDate(myDate, (globalSettings.ampmformat.value ? 'hh:mm TT' : 'HH:mm')));
 			$('.message_time_input[data-id="'+data_id+'"]').show();
 			$('.before_after_input[data-id="'+data_id+'"]').hide();
 		}
-
-		if(($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_before")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="minutes_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="hours_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="days_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="weeks_after")
-			|| ($('.alert_message_details[data-id="'+data_id+'"] option:selected').attr('data-type')=="seconds_after"))
+		else
 		{
 			$('.message_date_input[data-id="'+data_id+'"]').hide();
 			$('.message_time_input[data-id="'+data_id+'"]').hide();
@@ -3269,4 +3238,70 @@ function event_alert_add(data_id)
 		$('#event_details_template tr[data-id="'+data_id+'"]').find('svg[data-type="select_icon"]').replaceWith($('<div>').append($(newSVG).clone()).html());
 	}
 	/*************************** END OF BAD HACKS SECTION ***************************/
+}
+
+function stripEventAlerts()
+{
+	$('.alert_message_details').each(function(){
+		if($(this).val()=='on_date')
+			$(this).find('option').not(':selected').remove();
+		else
+		{
+			var dataID=$(this).parent().parent().attr('data-id');
+			$('#event_details_template').find('tr[data-id="'+dataID+'"]').remove();
+		}
+	});
+}
+
+function expandEventAlerts()
+{
+	$('.alert_message_details').each(function(){
+		var value=$(this).val();
+		$(this).html('<option data-type="on_date" value="on_date">on date</option>'+
+		'<option data-type="weeks_before" value="weeks_before">weeks before</option>'+
+		'<option data-type="days_before" value="days_before">days before</option>'+
+		'<option data-type="hours_before" value="hours_before">hours before</option>'+
+		'<option data-type="minutes_before" value="minutes_before">minutes before</option>'+
+		'<option data-type="seconds_before" value="seconds_before">seconds before</option>'+
+		'<option data-type="weeks_after" value="weeks_after">weeks after</option>'+
+		'<option data-type="days_after" value="days_after">days after</option>'+
+		'<option data-type="hours_after" value="hours_after">hours after</option>'+
+		'<option data-type="minutes_after" value="minutes_after">minutes after</option>'+
+		'<option data-type="seconds_after" value="seconds_after">seconds after</option>');
+		$(this).val(value);
+	});
+	translateEventAlerts();
+}
+
+function stripTodoAlerts()
+{
+	$('.alert_message_detailsTODO').each(function(){
+		if($(this).val()=='on_date')
+			$(this).find('option').not(':selected').remove();
+		else
+		{
+			var dataID=$(this).parent().parent().attr('data-id');
+			$('#todo_details_template').find('tr[data-id="'+dataID+'"]').remove();
+		}
+	});
+}
+
+function expandTodoAlerts()
+{
+	$('.alert_message_detailsTODO').each(function(){
+		var value=$(this).val();
+		$(this).html('<option data-type="on_dateTODO" value="on_date">On date</option>'+
+		'<option data-type="weeks_beforeTODO" value="weeks_before">weeks before</option>'+
+		'<option data-type="days_beforeTODO" value="days_before">days before</option>'+
+		'<option data-type="hours_beforeTODO" value="hours_before">hours before</option>'+
+		'<option data-type="minutes_beforeTODO" value="minutes_before">minutes before</option>'+
+		'<option data-type="seconds_beforeTODO" value="seconds_before">seconds before</option>'+
+		'<option data-type="weeks_afterTODO" value="weeks_after">weeks after</option>'+
+		'<option data-type="days_afterTODO" value="days_after">days after</option>'+
+		'<option data-type="hours_afterTODO" value="hours_after">hours after</option>'+
+		'<option data-type="minutes_afterTODO" value="minutes_after">minutes after</option>'+
+		'<option data-type="seconds_afterTODO" value="seconds_after">seconds after</option>');
+		$(this).val(value);
+	});
+	translateTodoAlerts();
 }

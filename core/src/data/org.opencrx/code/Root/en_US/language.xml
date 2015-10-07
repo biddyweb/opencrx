@@ -25,6 +25,9 @@
 										</_object>
 										<_content>
 											<entry>
+<!--
+sources: https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+-->											
 												<org.opencrx.kernel.code1.CodeValueEntry code="000" _operation="set">
 													<_object>
 														<shortText>
@@ -69,6 +72,17 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="100" _operation="set">
+													<_object>
+														<shortText>
+															<_item>dan</_item>
+														</shortText>
+														<longText>
+															<_item>Danish [da/dan]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
 												<org.opencrx.kernel.code1.CodeValueEntry code="102" _operation="set">
 													<_object>
 														<shortText>
@@ -87,6 +101,17 @@
 														</shortText>
 														<longText>
 															<_item>English [en/eng]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="114" _operation="set">
+													<_object>
+														<shortText>
+															<_item>est</_item>
+														</shortText>
+														<longText>
+															<_item>Estonian [et/est]</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -146,6 +171,28 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="190" _operation="set">
+													<_object>
+														<shortText>
+															<_item>lav</_item>
+														</shortText>
+														<longText>
+															<_item>Latvian [lv/lav]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="195" _operation="set">
+													<_object>
+														<shortText>
+															<_item>lit</_item>
+														</shortText>
+														<longText>
+															<_item>Lithuanian [lt/lit]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
 												<org.opencrx.kernel.code1.CodeValueEntry code="311" _operation="set">
 													<_object>
 														<shortText>
@@ -153,6 +200,17 @@
 														</shortText>
 														<longText>
 															<_item>Farsi/Persian [fa/per]</_item>
+														</longText>
+													</_object>
+													<_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="312" _operation="set">
+													<_object>
+														<shortText>
+															<_item>fin</_item>
+														</shortText>
+														<longText>
+															<_item>Finnish [fi/fin]</_item>
 														</longText>
 													</_object>
 													<_content/>
@@ -201,17 +259,17 @@
 													</_object>
 													<_content/>
 												</org.opencrx.kernel.code1.CodeValueEntry>
-                        <org.opencrx.kernel.code1.CodeValueEntry code="352" _operation="set">
-                          <_object>
-                            <shortText>
-                              <_item>slo</_item>
-                            </shortText>
-                            <longText>
-                              <_item>Slovak [sk/slo]</_item>
-                            </longText>
-                          </_object>
-                          <_content/>
-                        </org.opencrx.kernel.code1.CodeValueEntry>
+												<org.opencrx.kernel.code1.CodeValueEntry code="352" _operation="set">
+												  <_object>
+													<shortText>
+													  <_item>slo</_item>
+													</shortText>
+													<longText>
+													  <_item>Slovak [sk/slo]</_item>
+													</longText>
+												  </_object>
+												  <_content/>
+												</org.opencrx.kernel.code1.CodeValueEntry>
 												<org.opencrx.kernel.code1.CodeValueEntry code="361" _operation="set">
 													<_object>
 														<shortText>

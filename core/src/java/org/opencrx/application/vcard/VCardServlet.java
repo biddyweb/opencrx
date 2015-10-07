@@ -67,9 +67,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.opencrx.application.carddav.AccountResource;
+import org.opencrx.application.uses.ezvcard.Ezvcard;
+import org.opencrx.application.uses.ezvcard.VCardVersion;
 import org.opencrx.kernel.account1.cci2.AccountQuery;
 import org.opencrx.kernel.account1.jmi1.Account;
-import org.opencrx.kernel.account1.jmi1.Contact;
 import org.opencrx.kernel.admin1.jmi1.ComponentConfiguration;
 import org.opencrx.kernel.backend.Base;
 import org.opencrx.kernel.backend.VCard;
@@ -228,20 +230,23 @@ public class VCardServlet extends HttpServlet {
 	                for(Account account: accountsHelper.getFilteredAccounts(accountQuery)) {
 	                    String vcard = account.getVcard();
 	                    if((vcard != null) && (vcard.indexOf("BEGIN:VCARD") >= 0)) {
-	                        int start = vcard.indexOf("BEGIN:VCARD");
-	                        int end = vcard.indexOf("END:VCARD");
-	                        p.write(vcard.substring(start, end));
-	                        if(vcard.indexOf("URL:") < 0) {
-	                        	String url = Base.getInstance().getAccessUrl(req, "-vcard-", account);
-	                            p.write("URL:" + url + "\n");
+	                    	org.opencrx.application.uses.ezvcard.VCard vCard = Ezvcard.parse(vcard).first();
+	                    	if(vCard.getUrls().isEmpty()) {
+	                        	String url = null;
+	                        	try {
+	                        		url = Base.getInstance().getAccessUrl(req, "-carddav-", account);
+	                        		vCard.addUrl(url);
+	                        	} catch(Exception e) {}
+	                    	}
+	                    	if(vCard.getPhotos().isEmpty()) {
+	                    		org.opencrx.application.uses.ezvcard.property.Photo photo = AccountResource.getPhoto(account);
+	                    		if(photo != null) {
+	                    			vCard.addPhoto(photo);
+	                    		}
 	                        }
-	                        else if(vcard.indexOf("PHOTO:") < 0 && account instanceof Contact) {
-	                        	VCard.getInstance().writePhotoTag(
-	                        		p, 
-	                        		(Contact)account
-	                        	);
-	                        }
-	                        p.write("END:VCARD\n");
+	                    	try {
+	                    		Ezvcard.write(vCard).version(VCardVersion.V3_0).go(p);
+	                    	} catch(Exception ignore) {}
 	                    }
 	                    n++;
 	                    if(n % 50 == 0) pm.evictAll();                

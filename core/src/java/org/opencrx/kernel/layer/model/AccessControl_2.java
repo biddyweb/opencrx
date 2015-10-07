@@ -533,6 +533,40 @@ public class AccessControl_2 extends AbstractRestPort {
         }
 
         /**
+         * Get security action for given object request.
+         * 
+         * @param ispec
+         * @param object
+         * @return
+         */
+        protected Action getAccessControlAction(
+        	RestInteractionSpec ispec,
+        	Object_2Facade object
+        ) {
+        	switch(ispec.getFunction()) {
+        		case GET: return Action.READ;
+        		case DELETE: return Action.DELETE;
+        		case PUT: {
+        			// Handle object touch (modifiedAt, modifiedBy) as operation invocation on object
+        			if(object.getValue().size() == 2) {
+        				if(
+        					// Operation invocations on activity creator require only read permission
+        					object.getPath().isLike(ACTIVITY_CREATOR_IDENTITY_PATTERN) 
+        				) {
+        					return Action.READ;
+        				} else {
+        					return Action.UPDATE;
+        				}
+        			} else {
+        				return Action.UPDATE;
+        			}
+        		}
+        		case POST: return Action.UPDATE;
+        	}
+        	return Action.UPDATE;
+        }
+
+        /**
          * Get permissions for given principal and access level.
          * 
          * @param request
@@ -738,19 +772,16 @@ public class AccessControl_2 extends AbstractRestPort {
 	        	} else if(action == Action.READ) {
 	            	// READ
 	                Set<String> permissions = new HashSet<String>();
-	                if(parent.attributeValuesAsList("accessLevelBrowse").isEmpty()) {
-	                	SysLog.error("Missing value for attribute 'accessLevelBrowse'", parent);
-	                } else {
-	                    permissions = this.getPermissions(
-	                        principal,
-	                        userIdentity,
-	                        parent == null ? 
-		                    	SecurityKeys.ACCESS_LEVEL_GLOBAL : 
-		                    	((Number)parent.attributeValue("accessLevelBrowse")).shortValue(),                        
-	                        action,
-	                        pm
-	                    );
-	                }
+	                short accessLevelBrowse = parent == null || parent.attributeValuesAsList("accessLevelBrowse").isEmpty()
+	                	? ((Number)secureObject.attributeValue("accessLevelBrowse")).shortValue()
+	                	: ((Number)parent.attributeValue("accessLevelBrowse")).shortValue();
+                    permissions = this.getPermissions(
+                        principal,
+                        userIdentity,
+	                    accessLevelBrowse,                        
+                        action,
+                        pm
+                    );
 	                if(permissions != null) {
 	                	if(grantedPermissions != null) {
 	                		grantedPermissions.addAll(permissions);
@@ -917,7 +948,7 @@ public class AccessControl_2 extends AbstractRestPort {
             		}
             	}
             	if(ownerFilterProperty != null) {
-            		memberships.retainAll(
+            		memberships.removeAll(
             			ownerFilterProperty.values()
             		);
             	}
@@ -944,13 +975,15 @@ public class AccessControl_2 extends AbstractRestPort {
 
         //-----------------------------------------------------------------------
         // Variables
-        //-----------------------------------------------------------------------    
+        //-----------------------------------------------------------------------
+        protected final Path ACTIVITY_CREATOR_IDENTITY_PATTERN = new Path("xri://@openmdx*org.opencrx.kernel.activity1/provider/:*/segment/:*/activityCreator/:*");
+        
         private final Path realmIdentity;        
         private Map<String,CachedPrincipal> cachedPrincipals = new ConcurrentHashMap<String,CachedPrincipal>();
         private boolean isActive = true;
         private long cachedPrincipalsTTL = 120000;        
     }
-    
+
     /**
      * Get user identity for given principal.
      * 
@@ -1395,7 +1428,7 @@ public class AccessControl_2 extends AbstractRestPort {
 			        		null, // parent 
 			        		principal, 
 			        		userIdentity, 
-			        		Action.UPDATE, 
+			        		realm.getAccessControlAction(ispec, parentFacade), 
 			        		null, // grantedPermissions
 			        		p,
 			        		pm
@@ -1645,7 +1678,7 @@ public class AccessControl_2 extends AbstractRestPort {
 				        		parentFacade, 
 				        		principal, 
 				        		userIdentity,
-				        		Action.READ,
+				        		realm.getAccessControlAction(ispec, parentFacade),
 				        		null, // grantedPermissions
 				        		p,
 				        		pm
@@ -1659,7 +1692,7 @@ public class AccessControl_2 extends AbstractRestPort {
 				            			"No permission to access requested object.",
 				        				BasicException.newEmbeddedExceptionStack(
 				    	                    OpenCrxException.DOMAIN,
-				    	                    OpenCrxException.AUTHORIZATION_FAILURE_DELETE, 
+				    	                    OpenCrxException.AUTHORIZATION_FAILURE_READ, 
 				                            new BasicException.Parameter("object", path),
 				                            new BasicException.Parameter("param0", path.toXRI()),
 				                            new BasicException.Parameter("param1", principal.getIdentity().getSegment(6).toClassicRepresentation() + ":" +  principal.getIdentity().getLastSegment().toClassicRepresentation()),                            
@@ -1711,7 +1744,7 @@ public class AccessControl_2 extends AbstractRestPort {
 		            	null, // parent
 		            	principal, 
 		            	userIdentity, 
-		            	Action.DELETE,
+		            	realm.getAccessControlAction(ispec, objectFacade),
 		            	null, // grantedPermissions
 		            	p,
 		            	pm
@@ -1779,7 +1812,7 @@ public class AccessControl_2 extends AbstractRestPort {
 			            	null, // parent
 			            	principal, 
 			            	userIdentity, 
-			            	Action.UPDATE,
+			            	realm.getAccessControlAction(ispec, replacementFacade),
 			            	null, // grantedPermissions
 			            	p,
 			            	pm

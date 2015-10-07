@@ -66,6 +66,28 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:establishedAt" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Gründung</_item>
+											</toolTip>
+											<label>
+												<_item>Gründung</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:dissolvedAt" _operation="create">
+										<_object>
+											<toolTip>
+												<_item>Liquidation</_item>
+											</toolTip>
+											<label>
+												<_item>Liquidation</_item>
+											</label>
+										</_object>
+										<_content/>
+									</org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:account1:LegalEntity:organizationalUnit" _operation="create">
                     <_object>
                       <label>

@@ -186,7 +186,7 @@ public class CreateCampaignWizardController extends org.openmdx.portal.servlet.A
 	 */
 	public Map<Short,String> getLocaleCodes(
 	) throws ServiceException {
-		final Map<Short,String> locales = this.getCodes().getLongTextByCode("locale", (short)0, true);
+		final Map<Short,String> locales = this.getCodes().getLongTextByCode("locale", (short)0, false);
 		Map<Short,String> sortedLocales = new TreeMap<Short,String>(
 			new Comparator<Short>(){
 				@Override

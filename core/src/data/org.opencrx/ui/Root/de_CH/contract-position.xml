@@ -933,39 +933,120 @@
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:Pane:Attr:Tab:0:Group:0" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Lieferinformation</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Lieferinformation</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
-                  <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped" _operation="create">
-                    <_object>
-                      <label>
-                        <_item>Menge geliefert</_item>
-                      </label>
-                      <toolTip>
-                        <_item>Menge geliefert</_item>
-                      </toolTip>
-                    </_object>
-                    <_content/>
-                  </org.openmdx.ui1.ElementDefinition>
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:actualDeliveryOn" _operation="create">
                     <_object>
                       <label>
-                        <_item>Effektives Lieferdatum</_item>
+                        <_item>Effektiver Lieferzeitpunkt</_item>
                       </label>
                       <toolTip>
-                        <_item>Effektives Lieferdatum</_item>
+                        <_item>Effektiver Lieferzeitpunkt</_item>
                       </toolTip>
                     </_object>
                     <_content/>
                   </org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:actualStartAt" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Lieferung Start</_item>
+							</toolTip>
+							<label>
+								<_item>Lieferung Start</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:actualEndAt" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Lieferung Ende</_item>
+							</toolTip>
+							<label>
+								<_item>Lieferung Ende</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Liefermenge</_item>
+							</toolTip>
+							<label>
+								<_item>Liefermenge</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityShipped2" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Liefermenge (alt.)</_item>
+							</toolTip>
+							<label>
+								<_item>Liefermenge (alt.)</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:quantityBeforeDelivery" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Menge vor Lieferung</_item>
+							</toolTip>
+							<label>
+								<_item>Menge vor Lieferung</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:uomQuantityShipped" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Einheit (Liefermenge)</_item>
+							</toolTip>
+							<label>
+								<_item>Einheit (Liefermenge)</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:uomQuantityShipped2" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Einheit (Liefermenge alt.)</_item>
+							</toolTip>
+							<label>
+								<_item>Einheit (Liefermenge alt.)</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:uomQuantityBeforeDelivery" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Einheit (Füllstand)</_item>
+							</toolTip>
+							<label>
+								<_item>Einheit (Füllstand)</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+
+					<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryInformation:feedback" _operation="create">
+						<_object>
+							<toolTip>
+								<_item>Rückmeldung</_item>
+							</toolTip>
+							<label>
+								<_item>Rückmeldung</_item>
+							</label>
+						</_object>
+						<_content/>
+					</org.openmdx.ui1.ElementDefinition>
+
+
                   <org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:ProductApplication" _operation="create">
                     <_object>
                       <label>

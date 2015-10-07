@@ -46,14 +46,14 @@
 									</org.openmdx.ui1.ElementDefinition>
 									<!--Tab Definition-->
 									<!--FieldGroups in General Tab-->
-									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequest:Pane:Attr:Tab:0:Group:10">
+									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequest:Pane:Attr:Tab:0:Group:20">
 										<_object>
 											<active>true</active>
 											<toolTip>
-												<_item>Comments</_item>
+												<_item>Delivery</_item>
 											</toolTip>
 											<label>
-												<_item>Comments</_item>
+												<_item>Delivery</_item>
 											</label>
 										</_object>
 										<_content/>
@@ -111,6 +111,7 @@
 										</_object>
 										<_content/>
 									</org.openmdx.ui1.ElementDefinition>
+
 									<org.openmdx.ui1.ElementDefinition name="org:opencrx:kernel:contract1:DeliveryRequest:comment">
 										<_object>
 											<active>true</active>

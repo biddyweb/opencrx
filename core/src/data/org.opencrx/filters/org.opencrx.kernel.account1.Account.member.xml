@@ -18,7 +18,7 @@
 			</array>
 		</void>
 		<void property="filter">
-			<array class="org.openmdx.portal.servlet.Filter" length="2">
+			<array class="org.openmdx.portal.servlet.Filter" length="3">
 				<void index="0">
 					<object class="org.openmdx.portal.servlet.Filter">
 						<void property="name">
@@ -90,6 +90,64 @@
 						</void>
 						<void property="groupName">
 							<string>~</string>
+						</void>
+					</object>
+				</void>
+
+				<void index="2">
+					<object class="org.openmdx.portal.servlet.Filter">
+						<void property="name">
+							<string>+ Members with non-unique account reference (</string>
+						</void>
+						<void property="iconKey">
+							<string>ActivityCategory.gif</string>
+						</void>
+						<void property="label">
+							<array class="java.lang.String" length="2">
+								<void index="0">
+									<string>+ Members with non-unique account references (duplicates)</string>
+								</void>
+								<void index="1">
+									<string>+ Mitglieder mit nicht einzigartiger Kontakt-Referenz (Duplikate)</string>
+								</void>
+							</array>
+						</void>
+						<void property="orderSpecifier">
+							<array class="org.openmdx.base.query.OrderSpecifier" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.query.OrderSpecifier">
+										<void property="feature">
+											<string>account</string>
+										</void>
+										<void property="order">
+											<short>1</short>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="extension">
+							<array class="org.openmdx.base.persistence.spi.QueryExtension" length="1">
+								<void index="0">
+									<object class="org.openmdx.base.persistence.spi.QueryExtension">
+										<void property="clause">
+											<string>EXISTS (
+											  select 0 from oocke1_accountassignment acctass
+											  where v.p$$parent = acctass.p$$parent
+											  and v.account = acctass.account
+											  and v.object_id &lt;&gt; acctass.object_id
+											  and ( /* current entry disabled or (both current and duplicate enabled) */
+											    v.disabled = '1' OR
+											    ((v.disabled is null OR v.disabled = '0') and (acctass.disabled is null OR acctass.disabled = '0'))
+											  )
+										)</string>
+										</void>
+									</object>
+								</void>
+							</array>
+						</void>
+						<void property="groupName">
+							<string>Standard</string>
 						</void>
 					</object>
 				</void>

@@ -1196,17 +1196,17 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
      * @return
      * @throws ServiceException
      */
-    public boolean readAccountRecord(
+    public void readAccountRecord(
     	Row row,
     	int nRow,
     	int maxCell,
     	AccountRecord record,
-    	Writer importReport
+    	Writer importReport,
+    	List<String> errors
     ) throws ServiceException, IOException {
 		importReport.append("<tr class=\"gridTableRowFull\">");
 		importReport.append("<td>" + DECIMAL_FORMAT_4.format(nRow) + "</td>");
 		AccountRecordDefinition recordDefinition = record.getRecordDefinition();
-		boolean isNok = false;
 		Iterator<Cell> cells = row.cellIterator();
 		int idxCell = 0;
 		while(cells.hasNext()) {
@@ -1327,9 +1327,10 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 						"r" + DECIMAL_FORMAT_4.format(nRow) + ":c" + DECIMAL_FORMAT_4.format(idxCell) + ": cell type '" + cell.getCellType() + "' not supported<br>"
 					);
 				}
-			} catch (Exception ec) {
-				new ServiceException(ec).log();
-				isNok = true;
+			} catch (Exception e) {
+				ServiceException e0 = new ServiceException(e);
+				e0.log();
+				errors.add(e0.getMessage());
 				record.appendImportStatus(
 					idxCell, 
 					AccountRecord.ImportStatusElement.ATTR_CLASS, 
@@ -1342,7 +1343,6 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 				);
 			}
 		}
-		return isNok;
     }
 
     /**
@@ -2623,17 +2623,19 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
      * @param app
      * @throws ServiceException
      */
-    public boolean updateAccount(
+    public void updateAccount(
     	AccountRecord accountRecord,
     	Account account,
     	Integer nRow,
     	Codes codes,
-    	ApplicationContext app
+    	ApplicationContext app,
+    	List<String> errors
     ) throws ServiceException {
     	PersistenceManager pm = JDOHelper.getPersistenceManager(account);
-    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, account.refGetPath().get(2), account.refGetPath().get(4));
+    	String providerName = account.refGetPath().getSegment(2).toClassicRepresentation();
+    	String segmentName = account.refGetPath().getSegment(4).toClassicRepresentation();
+    	org.opencrx.kernel.account1.jmi1.Segment accountSegment = Accounts.getInstance().getAccountSegment(pm, providerName, segmentName);
     	MapFieldContext mapFieldContext = new MapFieldContext();
-    	boolean hasErrors = false;
 		for(Map.Entry<Integer,String> column: accountRecord.getRecordDefinition().getColumns().entrySet()) {
 			int fieldIndex = column.getKey();
 			String fieldName = column.getValue();
@@ -2670,13 +2672,12 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 					mapFieldContext
 				);
 			} catch (Exception e) {
+				ServiceException e0 = new ServiceException(e);
+				e0.log();
+				errors.add(e0.getMessage());
 				mapFieldContext.setIsOk(false);
 			}
-			if(Boolean.FALSE.equals(mapFieldContext.getIsOk())) {
-				hasErrors = true;
-			}
 		}
-		return hasErrors;
     }
 
 	/**
@@ -2901,12 +2902,14 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							accountRecord.setXriExplicitlySet(false);
 							accountRecord.setAccountType(AccountType.Contact);
 							row = (Row) rows.next();
-							boolean hasErrors = this.readAccountRecord(
+							List<String> errors = new ArrayList<String>();
+							this.readAccountRecord(
 								row, 
 								nRow, 
 								maxCell, 
 								accountRecord,
-								importReport
+								importReport,
+								errors
 							);
 							String accountHref = "";
 							// Import Members
@@ -2970,8 +2973,9 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 											);
 											pm.currentTransaction().commit();
 										} catch (Exception e) {
-											hasErrors = true;
-											account = null;
+											ServiceException e0 = new ServiceException(e);
+											e0.log();
+											errors.add(e0.getMessage());
 											try {
 												pm.currentTransaction().rollback();
 											} catch(Exception e1) {}
@@ -3155,7 +3159,6 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 												account = contact;
 											} catch (Exception e) {
 												new ServiceException(e).log();
-												account = null;
 												try {
 													pm.currentTransaction().rollback();
 												} catch(Exception e1) {}
@@ -3175,17 +3178,19 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 										try {
 											Contact contact = (Contact)account;
 											pm.currentTransaction().begin();
-											hasErrors = this.updateAccount(
+											this.updateAccount(
 												accountRecord,
 												contact,
 												nRow,
 												codes,
-												app
+												app,
+												errors
 											);
 											pm.currentTransaction().commit();
 										} catch (Exception e) {
-											hasErrors = true;
-											account = null;
+											ServiceException e0 = new ServiceException(e);
+											e0.log();
+											errors.add(e0.getMessage());
 											try {
 												pm.currentTransaction().rollback();
 											} catch(Exception e1) {}
@@ -3284,7 +3289,6 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 												pm.currentTransaction().commit();
 											} catch (Exception e) {
 												new ServiceException(e).log();
-												account = null;
 												try {
 													pm.currentTransaction().rollback();
 												} catch(Exception e1) {}
@@ -3308,21 +3312,21 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 										accountHref = this.getSelectObjectHref(account);
 										try {
 											pm.currentTransaction().begin();
-											hasErrors = this.updateAccount(
+											this.updateAccount(
 												accountRecord,
 												account,
 												nRow,
 												codes,
-												app
+												app,
+												errors
 											);
 											pm.currentTransaction().commit();
 										} catch (Exception e) {
-											new ServiceException(e).log();
-											hasErrors = true;
+											ServiceException e0 = new ServiceException(e).log();
+											errors.add(e0.getMessage());
 											try {
 												pm.currentTransaction().rollback();
 											} catch(Exception e1) {}
-											account = null;
 										}
 									}
 								}
@@ -3334,8 +3338,8 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							}
 							if(isImportMembershipMode) {
 								importReport.append("<tr class='gridTableRowFull'>");
-								importReport.append("<td class=\"" + (hasErrors ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
-								importReport.append("MEMBER " + (hasErrors ? "FAILED" : "OK") + ":");
+								importReport.append("<td class=\"" + (!errors.isEmpty() ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
+								importReport.append("MEMBER " + (!errors.isEmpty() ? "FAILED [Reason: " + errors.toString() + "]" : "OK") + ":");
 								if(groupMember != null) {
 									String memberHref = this.getSelectObjectHref(groupMember);
 									importReport.append("<a href=\"" + memberHref + "\" target=\"_blank\"><b>" + (new ObjectReference(groupMember, app)).getTitle() + "</b> [" + groupMember.refMofId() + "]</a>");
@@ -3347,8 +3351,8 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 							} else {
 								if(isCreation) {
 									importReport.append("<tr class='gridTableRowFull'>");
-									importReport.append("<td class=\"" + (hasErrors ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
-									importReport.append("CREATE " + (hasErrors ? "FAILED" : "OK") + "[<b>" + accountRecord.getAccountType() + "</b>]: <a href=\"" + accountHref + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b> [" + account.refMofId() + "]</a>");
+									importReport.append("<td class=\"" + (!errors.isEmpty() ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
+									importReport.append("CREATE " + (!errors.isEmpty() ? "FAILED [Reason: " + errors.toString() + "]" : "OK") + "[<b>" + accountRecord.getAccountType() + "</b>]: <a href=\"" + accountHref + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b> [" + account.refMofId() + "]</a>");
 									importReport.append("</td>");
 									importReport.append("</tr>");
 								}
@@ -3361,8 +3365,8 @@ public class ImportAccountsFromXlsController extends AbstractWizardController {
 										importReport.append("</tr>");
 									} else {
 										importReport.append("<tr class='gridTableRowFull'>");
-										importReport.append("<td class=\"" + (hasErrors ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
-										importReport.append("UPDATE " + (hasErrors ? "FAILED" : "OK") + " [<b>" + accountRecord.getAccountType() + "</b>]: <a href=\"" + accountHref + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b> [" + account.refMofId() + "]</a>");
+										importReport.append("<td class=\"" + (!errors.isEmpty() ? "err" : "match") + "\" colspan=\"" + (maxCell+2) + "\">");
+										importReport.append("UPDATE " + (!errors.isEmpty() ? "FAILED [Reason is:" + errors.toString() + "]" : "OK") + " [<b>" + accountRecord.getAccountType() + "</b>]: <a href=\"" + accountHref + "\" target=\"_blank\"><b>" + (new ObjectReference(account, app)).getTitle() + "</b> [" + account.refMofId() + "]</a>");
 										importReport.append("</td>");
 										importReport.append("</tr>");
 									}

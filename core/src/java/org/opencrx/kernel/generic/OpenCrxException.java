@@ -61,6 +61,7 @@ public class OpenCrxException {
     public static final int AUTHORIZATION_FAILURE_DELETE = 1001;
     public static final int AUTHORIZATION_FAILURE_CREATE = 1002;
     public static final int AUTHORIZATION_FAILURE_MISSING_PRINCIPAL = 1003;    
+    public static final int AUTHORIZATION_FAILURE_READ = 1004;    
     
     // openCRX kernel: Activities
     public static final int INCIDENT_USER_DOES_NOT_MATCH_CONTACT = 1100;
@@ -137,7 +138,8 @@ public class OpenCrxException {
     public static final int PRODUCT_OPERATION_NOT_ALLOWED_FOR_BASEDON_PRICE_LEVEL = 1254;
     public static final int PRODUCT_OPERATION_NOT_ALLOWED_FOR_PRICE_LEVEL_HAVING_PRICES = 1255;
     public static final int PRODUCT_OPERATION_NOT_ALLOWED_FOR_BASIC_PRICE_LEVEL = 1256;
-    
+    public static final int PRODUCT_GET_PRICELEVEL_SCRIPT_ERROR = 1257;
+
     // openCRX kernel: Common
     public static final int ASSERTION_FAILURE = 10000;
     public static final int MEDIA_ACCESS_FAILURE = 10001;

@@ -1,6 +1,6 @@
 /*
 CalDavZAP - the open source CalDAV Web Client
-Copyright (C) 2011-2014
+Copyright (C) 2011-2015
     Jan Mate <jan.mate@inf-it.com>
     Andrej Lezo <andrej.lezo@inf-it.com>
     Matej Mihalik <matej.mihalik@inf-it.com>
@@ -19,18 +19,19 @@ You should have received a copy of the GNU Affero General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-function CalDAVcleanupRegexEnvironment()
+function CalDAVcleanupRegexEnvironment(repeatHash)
 {
-	for(var element in vCalendar.tplM)
-		if(element=='unprocessedTODO')
+	if(typeof repeatHash!='undefined')
+	{
+		for(var element in vCalendar.tplM)
+			if(element.indexOf('VT')==0 && typeof vCalendar.tplM[element][repeatHash]!='undefined')
+				delete vCalendar.tplM[element][repeatHash];
+	}
+	else
+		for(var element in vCalendar.tplM)
+		 if(element=='unprocessed' || element=='unprocessedVTIMEZONE')
 			vCalendar.tplM[element]='';
-		else if(element=='unprocessed')
-			vCalendar.tplM[element]='';
-		else if(element=='unprocessedVTIMEZONE')
-			vCalendar.tplM['unprocessedVTIMEZONE']='';
-		else if(element=='VTunprocessedVTIMEZONE')
-			vCalendar.tplM['VTunprocessedVTIMEZONE']='';
-		else
+		else if(element.indexOf('VT')!=0)
 			vCalendar.tplM[element]=new Array();
 }
 
@@ -53,6 +54,24 @@ vCalendar.re['DQUOTE']='\u0022';
 vCalendar.re['HTAB']='\u0009';
 vCalendar.re['SP']='\u0020';
 vCalendar.re['WSP']='(?:'+vCalendar.re['SP']+'|'+vCalendar.re['HTAB']+')';
+
+//language parameter
+vCalendar.re['ALPHANUM'] = '(?:'+vCalendar.re['ALPHA']+'|'+vCalendar.re['DIGIT']+')';
+vCalendar.re['regular'] = '(?:art-lojban|cel-gaulish|no-bok|no-nyn|zh-guoyu|zh-hakka|zh-min|zh-min-nan|zh-xiang)';
+vCalendar.re['irregular'] = '(?:en-GB-oed|i-ami|i-bnn|i-default|i-enochian|i-hak|i-klingon|i-lux|i-mingo|i-navajo|i-pwn|i-tao|i-tay|i-tsu|sgn-BE-FR|sgn-BE-NL|sgn-CH-DE)';
+vCalendar.re['grandfathered'] = '(?:'+vCalendar.re['irregular']+'|'+vCalendar.re['regular']+')';
+vCalendar.re['privateuse'] = '(?:x(-('+vCalendar.re['ALPHANUM']+'){3}){1,3})';
+vCalendar.re['singleton'] = '(?:'+vCalendar.re['DIGIT']+'|[A-WY-Za-wy-z])';
+vCalendar.re['extension'] = '(?:'+vCalendar.re['singleton']+'(-'+vCalendar.re['ALPHANUM']+'{2,8}){1,})';
+vCalendar.re['variant'] = '(?:'+vCalendar.re['ALPHANUM']+'{5,8}|('+vCalendar.re['DIGIT']+''+vCalendar.re['ALPHANUM']+'{3}))';
+vCalendar.re['region'] = '(?:'+vCalendar.re['ALPHA']+'{2}|'+vCalendar.re['DIGIT']+'{3})';
+vCalendar.re['script'] = '(?:'+vCalendar.re['ALPHA']+'{4})';
+vCalendar.re['extlang'] = '(?:'+vCalendar.re['ALPHA']+'{3}(-'+vCalendar.re['ALPHA']+'{3}){0,2})';
+vCalendar.re['language'] = '(?:('+vCalendar.re['ALPHA']+'{2,3}(-'+vCalendar.re['extlang']+')?)|'+vCalendar.re['ALPHA']+'{4}|'+vCalendar.re['ALPHA']+'{5,8})';
+vCalendar.re['langtag'] = '(?:'+vCalendar.re['language']+'(-'+vCalendar.re['script']+')?(-'+vCalendar.re['region']+')?(-'+vCalendar.re['variant']+')*(-'+vCalendar.re['extension']+')*(-'+vCalendar.re['privateuse']+')?)';
+vCalendar.re['Language-Tag'] = '(?:'+vCalendar.re['langtag']+'|'+vCalendar.re['privateuse']+'|'+vCalendar.re['grandfathered']+')';
+
+
 // unused because vCard.re['VALUE-CHAR'] was replaced by much simpler version (we allow any character in the value field except \r and \n)
 //vCalendar.re['VCHAR']='[\u0021-\u007e]';	// ASCII Visible characters
 //vCalendar.re['VCHAR']='[\u0021-\u007e\u00a0-\u00ac\u00ae-\u0377\u037a-\u037e\u0384-\u038a\u038c\u038e-\u03a1\u03a3-\u0523\u0531-\u0556\u0559-\u055f\u0561-\u0587\u0589\u0591-\u05c7\u05d0-\u05ea\u05f0-\u05f4\u0606-\u061b\u061e\u0621-\u065e\u0660-\u06dc\u06de-\u070d\u0710-\u074a\u074d-\u07b1\u07c0-\u07fa\u0901-\u0939\u093c-\u094d\u0950-\u0954\u0958-\u0972\u097b-\u097f\u0981-\u0983\u0985-\u098c\u098f\u0993-\u09a8\u09aa-\u09b0\u09b2\u09b6-\u09b9\u09bc-\u09c4\u09c7\u09cb-\u09ce\u09d7\u09dc\u09df-\u09e3\u09e6-\u09fa\u0a01-\u0a03\u0a05-\u0a0a\u0a0f\u0a13-\u0a28\u0a2a-\u0a30\u0a32\u0a35-\u0a36\u0a38\u0a3c\u0a3e-\u0a42\u0a47\u0a4b-\u0a4d\u0a51\u0a59-\u0a5c\u0a5e\u0a66-\u0a75\u0a81-\u0a83\u0a85-\u0a8d\u0a8f-\u0a91\u0a93-\u0aa8\u0aaa-\u0ab0\u0ab2\u0ab5-\u0ab9\u0abc-\u0ac5\u0ac7-\u0ac9\u0acb-\u0acd\u0ad0\u0ae0-\u0ae3\u0ae6-\u0aef\u0af1\u0b01-\u0b03\u0b05-\u0b0c\u0b0f\u0b13-\u0b28\u0b2a-\u0b30\u0b32\u0b35-\u0b39\u0b3c-\u0b44\u0b47\u0b4b-\u0b4d\u0b56\u0b5c-\u0b5d\u0b5f-\u0b63\u0b66-\u0b71\u0b82\u0b85-\u0b8a\u0b8e-\u0b90\u0b92-\u0b95\u0b99\u0b9c\u0b9e-\u0b9f\u0ba3\u0ba8-\u0baa\u0bae-\u0bb9\u0bbe-\u0bc2\u0bc6-\u0bc8\u0bca-\u0bcd\u0bd0\u0bd7\u0be6-\u0bfa\u0c01-\u0c03\u0c05-\u0c0c\u0c0e-\u0c10\u0c12-\u0c28\u0c2a-\u0c33\u0c35-\u0c39\u0c3d-\u0c44\u0c46-\u0c48\u0c4a-\u0c4d\u0c55\u0c58-\u0c59\u0c60-\u0c63\u0c66-\u0c6f\u0c78-\u0c7f\u0c82\u0c85-\u0c8c\u0c8e-\u0c90\u0c92-\u0ca8\u0caa-\u0cb3\u0cb5-\u0cb9\u0cbc-\u0cc4\u0cc6-\u0cc8\u0cca-\u0ccd\u0cd5\u0cde\u0ce0-\u0ce3\u0ce6-\u0cef\u0cf1\u0d02-\u0d03\u0d05-\u0d0c\u0d0e-\u0d10\u0d12-\u0d28\u0d2a-\u0d39\u0d3d-\u0d44\u0d46-\u0d48\u0d4a-\u0d4d\u0d57\u0d60-\u0d63\u0d66-\u0d75\u0d79-\u0d7f\u0d82\u0d85-\u0d96\u0d9a-\u0db1\u0db3-\u0dbb\u0dbd\u0dc0-\u0dc6\u0dca\u0dcf-\u0dd4\u0dd6\u0dd8-\u0ddf\u0df2-\u0df4\u0e01-\u0e3a\u0e3f-\u0e5b\u0e81\u0e84\u0e87-\u0e88\u0e8a\u0e8d\u0e94-\u0e97\u0e99-\u0e9f\u0ea1-\u0ea3\u0ea5\u0ea7\u0eaa\u0ead-\u0eb9\u0ebb-\u0ebd\u0ec0-\u0ec4\u0ec6\u0ec8-\u0ecd\u0ed0-\u0ed9\u0edc\u0f00-\u0f47\u0f49-\u0f6c\u0f71-\u0f8b\u0f90-\u0f97\u0f99-\u0fbc\u0fbe-\u0fcc\u0fce-\u0fd4\u1000-\u1099\u109e-\u10c5\u10d0-\u10fc\u1100-\u1159\u115f-\u11a2\u11a8-\u11f9\u1200-\u1248\u124a-\u124d\u1250-\u1256\u1258\u125a-\u125d\u1260-\u1288\u128a-\u128d\u1290-\u12b0\u12b2-\u12b5\u12b8-\u12be\u12c0\u12c2-\u12c5\u12c8-\u12d6\u12d8-\u1310\u1312-\u1315\u1318-\u135a\u135f-\u137c\u1380-\u1399\u13a0-\u13f4\u1401-\u1676\u1680-\u169c\u16a0-\u16f0\u1700-\u170c\u170e-\u1714\u1720-\u1736\u1740-\u1753\u1760-\u176c\u176e-\u1770\u1772\u1780-\u17b3\u17b6-\u17dd\u17e0-\u17e9\u17f0-\u17f9\u1800-\u180e\u1810-\u1819\u1820-\u1877\u1880-\u18aa\u1900-\u191c\u1920-\u192b\u1930-\u193b\u1940\u1944-\u196d\u1970-\u1974\u1980-\u19a9\u19b0-\u19c9\u19d0-\u19d9\u19de-\u1a1b\u1a1e\u1b00-\u1b4b\u1b50-\u1b7c\u1b80-\u1baa\u1bae-\u1bb9\u1c00-\u1c37\u1c3b-\u1c49\u1c4d-\u1c7f\u1d00-\u1de6\u1dfe-\u1f15\u1f18-\u1f1d\u1f20-\u1f45\u1f48-\u1f4d\u1f50-\u1f57\u1f59\u1f5b\u1f5d\u1f5f-\u1f7d\u1f80-\u1fb4\u1fb6-\u1fc4\u1fc6-\u1fd3\u1fd6-\u1fdb\u1fdd-\u1fef\u1ff2-\u1ff4\u1ff6-\u1ffe\u2000-\u200a\u2010-\u2027\u202f-\u205f\u2070\u2074-\u208e\u2090-\u2094\u20a0-\u20b5\u20d0-\u20f0\u2100-\u214f\u2153-\u2188\u2190-\u23e7\u2400-\u2426\u2440-\u244a\u2460-\u269d\u26a0-\u26bc\u26c0-\u26c3\u2701-\u2704\u2706-\u2709\u270c-\u2727\u2729-\u274b\u274d\u274f-\u2752\u2756\u2758-\u275e\u2761-\u2794\u2798-\u27af\u27b1-\u27be\u27c0-\u27ca\u27cc\u27d0-\u2b4c\u2b50-\u2b54\u2c00-\u2c2e\u2c30-\u2c5e\u2c60-\u2c6f\u2c71-\u2c7d\u2c80-\u2cea\u2cf9-\u2d25\u2d30-\u2d65\u2d6f\u2d80-\u2d96\u2da0-\u2da6\u2da8-\u2dae\u2db0-\u2db6\u2db8-\u2dbe\u2dc0-\u2dc6\u2dc8-\u2dce\u2dd0-\u2dd6\u2dd8-\u2dde\u2de0-\u2e30\u2e80-\u2e99\u2e9b-\u2ef3\u2f00-\u2fd5\u2ff0-\u2ffb\u3000-\u303f\u3041-\u3096\u3099-\u30ff\u3105-\u312d\u3131-\u318e\u3190-\u31b7\u31c0-\u31e3\u31f0-\u321e\u3220-\u3243\u3250-\u32fe\u3300-\u3400\u4db5\u4dc0-\u4e00\u9fc3\ua000-\ua48c\ua490-\ua4c6\ua500-\ua62b\ua640-\ua65f\ua662-\ua673\ua67c-\ua697\ua700-\ua78c\ua7fb-\ua82b\ua840-\ua877\ua880-\ua8c4\ua8ce-\ua8d9\ua900-\ua953\ua95f\uaa00-\uaa36\uaa40-\uaa4d\uaa50-\uaa59\uaa5c-\uaa5f\uac00\ud7a3\ue000\uf8ff-\ufa2d\ufa30-\ufa6a\ufa70-\ufad9\ufb00-\ufb06\ufb13-\ufb17\ufb1d-\ufb36\ufb38-\ufb3c\ufb3e\ufb40\ufb43-\ufb44\ufb46-\ufbb1\ufbd3-\ufd3f\ufd50-\ufd8f\ufd92-\ufdc7\ufdf0-\ufdfd\ufe00-\ufe19\ufe20-\ufe26\ufe30-\ufe52\ufe54-\ufe66\ufe68-\ufe6b\ufe70-\ufe74\ufe76-\ufefc\uff01-\uffbe\uffc2-\uffc7\uffca-\uffcf\uffd2-\uffd7\uffda-\uffdc\uffe0-\uffe6\uffe8-\uffee\ufffc\ufffd]';	// UTF-8 Visible characters (Print characters except \u0020 - space)
@@ -105,8 +124,8 @@ vCalendar.pre['tzone']=RegExp(vCalendar.re['tzone']);
 vCalendar.re['vcalendar-entity']='(?:'+vCalendar.re['vcalendar']+')+';
 
 // vCalendar Definition (full RFC specification, internal revision 1.0)
-vCalendar.re['langval']='(?:aa|aar|ab|abk|ace|ach|ada|af|afa|afh|afr|ajm|aka|akk|alb/sqi|ale|alg|am|amh|ang|apa|ar|ara|arc|arm/hye|arn|arp|art|arw|as|asm|ath|ava|ave|awa|ay|aym|az|aze|ba|bad|bai|bak|bal|bam|ban|baq/eus|bas|bat|be|bej|bel|bem|ben|ber|bg|bh|bho|bi|bih|bik|bin|bis|bla|bn|bo|bod/tib|br|bra|bre|bug|bul|bur/mya|ca|cad|cai|car|cat|cau|ceb|cel|ces/cze|cha|chb|che|chg|chi/zho|chn|cho|chr|chu|chv|chy|co|cop|cor|cos|cpe|cpf|cpp|cre|crp|cs|cus|cy|cym/wel|cze/ces|da|dak|dan|de|del|deu/ger|din|doi|dra|dua|dum|dut/nld|dyu|dz|dzo|efi|egy|eka|el|ell/gre|elx|en|en-cokney|eng|enm|eo|epo|es|esk|esl/spa|est|et|eth|eu|eus/baq|ewe|ewo|fa|fan|fao|fas/per|fat|fi|fij|fin|fiu|fj|fo|fon|fr|fra/fre|fre/fra|frm|fro|fry|ful|fy|ga|gaa|gae/gdh|gai/iri|gay|gd|gdh/gae|gem|geo/kat|ger/deu|gil|gl|glg|gmh|gn|goh|gon|got|grb|grc|gre/ell|grn|gu|guj|ha|hai|hau|haw|he|heb|her|hi|hil|him|hin|hmo|hr|hu|hun|hup|hy|hye/arm|i-sami-no|ia|iba|ibo|ice/isl|id|ie|ijo|ik|iku|ile|ilo|in|ina|inc|ind|ine|ipk|ira|iri/gai|iro|is|isl/ice||it|ita|iu|iw|ja|jav/jaw|jaw/jav|ji|jpn|jpr|jrb|jw|ka|kaa|kab|kac|kal|kam|kan|kar|kas|kat/geo|kau|kaw|kaz|kha|khi|khm|kho|kik|kin|kir|kk|kl|km|kn|ko|kok|kon|kor|kpe|kro|kru|ks|ku|kua|kur|kus|kut|ky|la|lad|lah|lam|lao|lap|lat|lav|lin|lit|ln|lo|lol|loz|lt|lub|lug|lui|lun|luo|lv|mac/mke|mad|mag|mah|mai|mak|mal|man|mao/mri|map|mar|mas|max|may/msa|men|mg|mi|mic|min|mis|mk|mke/mac|mkh|ml|mlg|mlt|mn|mni|mno|mo|moh|mol|mon|mos|mr|mri/mao|ms|msa/may|mt|mul|mun|mus|mwr|my|mya/bur|myn|na|nah|nai|nau|nav|nde|ndo|ne|nep|new|nic|niu|nl|nld/dut|no|no-bok|no-nyn|non|nor|nso|nub|nya|nym|nyn|nyo|nzi|oc|oci|oji|om|or|ori|orm|osa|oss|ota|oto|pa|paa|pag|pal|pam|pan|pap|pau|peo|per/fas|pl|pli|pol|pon|por|pra|pro|ps|pt|pus|qu|que|raj|rar|rm|rn|ro|roa|roh|rom|ron/rum|ru|rum/ron|run|rus|rw|sa|sad|sag|sai|sal|sam|san|sco|scr|sd|sel|sem|sg|sh|shn|si|sid|sin|sio|sit|sk|sl|sla|slk/slo|slo/slk|slv|sm|smo|sn|sna|snd|so|sog|som|son|sot|spa/esl|sq|sqi/alb|sr|srr|ss|ssa|ssw|st|su|suk|sun|sus|sux|sv|sve/swe|sw|swa|swe/sve|syr|ta|tah|tam|tat|te|tel|tem|ter|tg|tgk|tgl|th|tha|ti|tib/bod|tig|tir|tiv|tk|tl|tli|tn|to|tog|ton|tr|tru|ts|tsi|tsn|tso|tt|tuk|tum|tur|tut|tw|twi|ug|uga|uig|uk|ukr|umb|und|ur|urd|uz|uzb|vai|ven|vi|vie|vo|vol|vot|wak|wal|war|was|wel/cym|wen|wo|wo|wol|x-klingon|xh|xh|xho|yao|yap|yi|yid|yo|yo|yor|za|zap|zen|zh|zha|zho/chi|zu|zul|zun)';
-vCalendar.re['text-param']='(?:VALUE=ptext|LANGUAGE='+vCalendar.re['langval']+'|'+vCalendar.re['x-name']+'='+vCalendar.re['param-value']+')';
+//vCalendar.re['langval']='(?:aa|aar|ab|abk|ace|ach|ada|af|afa|afh|afr|ajm|aka|akk|alb/sqi|ale|alg|am|amh|ang|apa|ar|ara|arc|arm/hye|arn|arp|art|arw|as|asm|ath|ava|ave|awa|ay|aym|az|aze|ba|bad|bai|bak|bal|bam|ban|baq/eus|bas|bat|be|bej|bel|bem|ben|ber|bg|bh|bho|bi|bih|bik|bin|bis|bla|bn|bo|bod/tib|br|bra|bre|bug|bul|bur/mya|ca|cad|cai|car|cat|cau|ceb|cel|ces/cze|cha|chb|che|chg|chi/zho|chn|cho|chr|chu|chv|chy|co|cop|cor|cos|cpe|cpf|cpp|cre|crp|cs|cus|cy|cym/wel|cze/ces|da|dak|dan|de|del|deu/ger|din|doi|dra|dua|dum|dut/nld|dyu|dz|dzo|efi|egy|eka|el|ell/gre|elx|en|en-cokney|eng|enm|eo|epo|es|esk|esl/spa|est|et|eth|eu|eus/baq|ewe|ewo|fa|fan|fao|fas/per|fat|fi|fij|fin|fiu|fj|fo|fon|fr|fra/fre|fre/fra|frm|fro|fry|ful|fy|ga|gaa|gae/gdh|gai/iri|gay|gd|gdh/gae|gem|geo/kat|ger/deu|gil|gl|glg|gmh|gn|goh|gon|got|grb|grc|gre/ell|grn|gu|guj|ha|hai|hau|haw|he|heb|her|hi|hil|him|hin|hmo|hr|hu|hun|hup|hy|hye/arm|i-sami-no|ia|iba|ibo|ice/isl|id|ie|ijo|ik|iku|ile|ilo|in|ina|inc|ind|ine|ipk|ira|iri/gai|iro|is|isl/ice||it|ita|iu|iw|ja|jav/jaw|jaw/jav|ji|jpn|jpr|jrb|jw|ka|kaa|kab|kac|kal|kam|kan|kar|kas|kat/geo|kau|kaw|kaz|kha|khi|khm|kho|kik|kin|kir|kk|kl|km|kn|ko|kok|kon|kor|kpe|kro|kru|ks|ku|kua|kur|kus|kut|ky|la|lad|lah|lam|lao|lap|lat|lav|lin|lit|ln|lo|lol|loz|lt|lub|lug|lui|lun|luo|lv|mac/mke|mad|mag|mah|mai|mak|mal|man|mao/mri|map|mar|mas|max|may/msa|men|mg|mi|mic|min|mis|mk|mke/mac|mkh|ml|mlg|mlt|mn|mni|mno|mo|moh|mol|mon|mos|mr|mri/mao|ms|msa/may|mt|mul|mun|mus|mwr|my|mya/bur|myn|na|nah|nai|nau|nav|nde|ndo|ne|nep|new|nic|niu|nl|nld/dut|no|no-bok|no-nyn|non|nor|nso|nub|nya|nym|nyn|nyo|nzi|oc|oci|oji|om|or|ori|orm|osa|oss|ota|oto|pa|paa|pag|pal|pam|pan|pap|pau|peo|per/fas|pl|pli|pol|pon|por|pra|pro|ps|pt|pus|qu|que|raj|rar|rm|rn|ro|roa|roh|rom|ron/rum|ru|rum/ron|run|rus|rw|sa|sad|sag|sai|sal|sam|san|sco|scr|sd|sel|sem|sg|sh|shn|si|sid|sin|sio|sit|sk|sl|sla|slk/slo|slo/slk|slv|sm|smo|sn|sna|snd|so|sog|som|son|sot|spa/esl|sq|sqi/alb|sr|srr|ss|ssa|ssw|st|su|suk|sun|sus|sux|sv|sve/swe|sw|swa|swe/sve|syr|ta|tah|tam|tat|te|tel|tem|ter|tg|tgk|tgl|th|tha|ti|tib/bod|tig|tir|tiv|tk|tl|tli|tn|to|tog|ton|tr|tru|ts|tsi|tsn|tso|tt|tuk|tum|tur|tut|tw|twi|ug|uga|uig|uk|ukr|umb|und|ur|urd|uz|uzb|vai|ven|vi|vie|vo|vol|vot|wak|wal|war|was|wel/cym|wen|wo|wo|wol|x-klingon|xh|xh|xho|yao|yap|yi|yid|yo|yo|yor|za|zap|zen|zh|zha|zho/chi|zu|zul|zun)';
+vCalendar.re['text-param']='(?:VALUE=ptext|LANGUAGE='+vCalendar.re['Language-Tag']+'|'+vCalendar.re['x-name']+'='+vCalendar.re['param-value']+')';
 vCalendar.re['text-value']='(?:'+vCalendar.re['SAFE-CHAR']+'|[:"]|'+vCalendar.re['ESCAPED-CHAR']+')*';
 vCalendar.re['text-value-list']=vCalendar.re['text-value']+'(?:,'+vCalendar.re['text-value']+')*';
 //vCalendar.re['img-inline-value']='(?:[A-Za-z+/]{4})*(?:(?:[A-Za-z+/]{4})|(?:[A-Za-z+/]{3}=)|(?:[A-Za-z+/]{2}==))';	// RFC 4648 -> TODO: "BASE64:" prefix (is it RFC compiant?)
@@ -142,6 +161,7 @@ vCalendar.re['bymolist']=vCalendar.re['monthnum']+'(?:,'+vCalendar.re['monthnum'
 vCalendar.re['bysplist']=vCalendar.re['yeardaynum']+'(?:,'+vCalendar.re['yeardaynum']+')*';
 vCalendar.re['dtstval']='(?:'+vCalendar.re['date-value']+'|'+vCalendar.re['date-time-value']+')';
 vCalendar.re['recur']='(?:FREQ='+vCalendar.re['freq']+'|;UNTIL='+vCalendar.re['dtstval']+'|;COUNT='+vCalendar.re['DIGIT']+'+|;INTERVAL='+vCalendar.re['DIGIT']+'+|;BYSECOND='+vCalendar.re['byseclist_byminlist']+'|;BYMINUTE='+vCalendar.re['byseclist_byminlist']+'|;BYHOUR='+vCalendar.re['byhrlist']+'|;BYDAY='+vCalendar.re['bywdaylist']+'|;BYMONTHDAY='+vCalendar.re['bymodaylist']+'|;BYYEARDAY='+vCalendar.re['byyrdaylist']+'|;BYWEEKNO='+vCalendar.re['bywknolist']+'|;BYMONTH='+vCalendar.re['bymolist']+'|;BYSETPOS='+vCalendar.re['bysplist']+'|;WKST='+vCalendar.re['weekday']+'|;'+vCalendar.re['x-name']+'='+vCalendar.re['text-value']+')*';
+vCalendar.re['recurCaldav']='^(?:FREQ='+vCalendar.re['freq']+'|;UNTIL='+vCalendar.re['dtstval']+'|;COUNT='+vCalendar.re['DIGIT']+'+|;INTERVAL='+vCalendar.re['DIGIT']+'+|;BYDAY='+vCalendar.re['bywdaylist']+'|;BYMONTHDAY='+vCalendar.re['bymodaylist']+'|;BYMONTH='+vCalendar.re['bymolist']+'|;WKST='+vCalendar.re['weekday']+')*$';
 
 vCalendar.re['contentline_SUMMARY']='(?:'+vCalendar.re['group']+'\\.)?SUMMARY(?:;'+vCalendar.re['text-param']+')*:'+vCalendar.re['text-value']+vCalendar.re['CRLF'];
 vCalendar.pre['contentline_SUMMARY']=RegExp('\r\n'+vCalendar.re['contentline_SUMMARY'],'mi');
@@ -399,119 +419,120 @@ vCalendar.tplM['unprocessedVALARM']=new Array();
 
 //---------------------------------VTODO----------------------------
 vCalendar.tplC['VTbegin']='##:::##group_wd##:::##BEGIN:VCALENDAR\r\n';
-vCalendar.tplM['VTbegin']=null;
+vCalendar.tplM['VTbegin']={};
 vCalendar.tplC['VTbeginTZONE']='##:::##group_wd##:::##BEGIN:VTIMEZONE\r\n';
-vCalendar.tplM['VTbeginTZONE']=null;
+vCalendar.tplM['VTbeginTZONE']={};
 vCalendar.tplC['VTbeginDAYLIGHT']='##:::##group_wd##:::##BEGIN:DAYLIGHT\r\n';
-vCalendar.tplM['VTbeginDAYLIGHT']=null;
+vCalendar.tplM['VTbeginDAYLIGHT']={};
 vCalendar.tplC['VTbeginST']='##:::##group_wd##:::##BEGIN:STANDARD\r\n';
-vCalendar.tplM['VTbeginST']=null;
+vCalendar.tplM['VTbeginST']={};
 vCalendar.tplC['VTbeginVALARM']='##:::##group_wd##:::##BEGIN:VALARM\r\n';
-vCalendar.tplM['VTbeginVALARM']=null
+vCalendar.tplM['VTbeginVALARM']={}
 vCalendar.tplC['VTbeginVTODO']='##:::##group_wd##:::##BEGIN:VTODO\r\n';
-vCalendar.tplM['VTbeginVTODO']=null
+vCalendar.tplM['VTbeginVTODO']={}
 
 vCalendar.tplC['VTcontentline_VERSION']='##:::##group_wd##:::##VERSION:##:::##version##:::##\r\n';
-vCalendar.tplM['VTcontentline_VERSION']=null;
+vCalendar.tplM['VTcontentline_VERSION']={};
 vCalendar.tplC['VTcontentline_CALSCALE']='##:::##group_wd##:::##CALSCALE:##:::##calscale##:::##\r\n';
-vCalendar.tplM['VTcontentline_CALSCALE']=null;
+vCalendar.tplM['VTcontentline_CALSCALE']={};
 vCalendar.tplC['VTcontentline_UID']='##:::##group_wd##:::##UID##:::##params_wsc##:::##:##:::##uid##:::##\r\n';
-vCalendar.tplM['VTcontentline_UID']=new Array();
+vCalendar.tplM['VTcontentline_UID']={};
 
 vCalendar.tplC['VTcontentline_URL']='##:::##group_wd##:::##URL##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_URL']=new Array();
+vCalendar.tplM['VTcontentline_URL']={};
 vCalendar.tplC['VTcontentline_LOCATION']='##:::##group_wd##:::##LOCATION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_LOCATION']=new Array();
+vCalendar.tplM['VTcontentline_LOCATION']={};
 
 vCalendar.tplC['VTcontentline_TZID']='##:::##group_wd##:::##TZID##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_TZID']=new Array();
+vCalendar.tplM['VTcontentline_TZID']={};
 vCalendar.tplC['VTcontentline_X-LIC-LOCATION']='##:::##group_wd##:::##X-LIC-LOCATION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_X-LIC-LOCATION']=new Array();
+vCalendar.tplM['VTcontentline_X-LIC-LOCATION']={};
 vCalendar.tplC['VTcontentline_LOCATION']='##:::##group_wd##:::##LOCATION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_LOCATION']=new Array();
+vCalendar.tplM['VTcontentline_LOCATION']={};
 vCalendar.tplC['VTcontentline_NOTE']='##:::##group_wd##:::##DESCRIPTION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_NOTE']=new Array();
+vCalendar.tplM['VTcontentline_NOTE']={};
 vCalendar.tplC['VTcontentline_VANOTE']='##:::##group_wd##:::##DESCRIPTION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_VANOTE']=null;
+vCalendar.tplM['VTcontentline_VANOTE']={};
 vCalendar.tplC['VTcontentline_SUMMARY']='##:::##group_wd##:::##SUMMARY##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_SUMMARY']=new Array();
+vCalendar.tplM['VTcontentline_SUMMARY']={};
 vCalendar.tplC['VTcontentline_RRULE']='##:::##group_wd##:::##RRULE##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_RRULE']=new Array();
+vCalendar.tplM['VTcontentline_RRULE']={};
 vCalendar.tplC['VTcontentline_RRULE2']='##:::##group_wd##:::##RRULE##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_RRULE2']=new Array();
+vCalendar.tplM['VTcontentline_RRULE2']={};
 vCalendar.tplC['VTcontentline_REC_ID']='##:::##group_wd##:::##RECURRENCE-ID##:::##AllDay##:::####:::##TZID##:::####:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_REC_ID']=new Array();
+vCalendar.tplM['VTcontentline_REC_ID']={};
 vCalendar.tplC['VTcontentline_EXDATE']='##:::##group_wd##:::##EXDATE##:::##AllDay##:::####:::##TZID##:::####:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_EXDATE']=new Array();
+vCalendar.tplM['VTcontentline_EXDATE']={};
 vCalendar.tplC['VTcontentline_RRULE3']='##:::##group_wd##:::##RRULE##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_RRULE3']=new Array();
+vCalendar.tplM['VTcontentline_RRULE3']={};
 vCalendar.tplC['VTcontentline_PRODID']='##:::##group_wd##:::##PRODID##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_PRODID']=new Array();
+vCalendar.tplM['VTcontentline_PRODID']={};
 vCalendar.tplC['VTcontentline_TZOFFSETFROM']='##:::##group_wd##:::##TZOFFSETFROM##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_TZOFFSETFROM']=new Array();
+vCalendar.tplM['VTcontentline_TZOFFSETFROM']={};
 vCalendar.tplC['VTcontentline_TZOFFSETTO']='##:::##group_wd##:::##TZOFFSETTO##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_TZOFFSETTO']=new Array();
+vCalendar.tplM['VTcontentline_TZOFFSETTO']={};
 vCalendar.tplC['VTcontentline_TZNAME']='##:::##group_wd##:::##TZNAME##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_TZNAME']=new Array();
+vCalendar.tplM['VTcontentline_TZNAME']={};
 
 vCalendar.tplC['VTcontentline_STATUS']='##:::##group_wd##:::##STATUS##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_STATUS']=new Array();
+vCalendar.tplM['VTcontentline_STATUS']={};
 
 vCalendar.tplC['VTcontentline_PERCENT-COMPLETE']='##:::##group_wd##:::##PERCENT-COMPLETE##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_PERCENT-COMPLETE']=new Array();
+vCalendar.tplM['VTcontentline_PERCENT-COMPLETE']={};
 
 vCalendar.tplC['VTcontentline_PRIORITY']='##:::##group_wd##:::##PRIORITY##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_PRIORITY']=new Array();
+vCalendar.tplM['VTcontentline_PRIORITY']={};
 
 
 vCalendar.tplC['VTcontentline_TRIGGER']='##:::##group_wd##:::##TRIGGER##:::##VALUE=DURATION##:::####:::##VALUE=DATE-TIME##:::####:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_TRIGGER']=null;
+vCalendar.tplM['VTcontentline_TRIGGER']={};
 
 
 
 vCalendar.tplC['VTcontentline_REPEAT']='##:::##group_wd##:::##REPEAT##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_REPEAT']=new Array();
+vCalendar.tplM['VTcontentline_REPEAT']={};
 vCalendar.tplC['VTcontentline_ACTION']='##:::##group_wd##:::##ACTION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_ACTION']=null;
+vCalendar.tplM['VTcontentline_ACTION']={};
 vCalendar.tplC['VTcontentline_DURATION']='##:::##group_wd##:::##DURATION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_DURATION']=new Array();
+vCalendar.tplM['VTcontentline_DURATION']={};
 vCalendar.tplC['VTcontentline_DESCRIPTION']='##:::##group_wd##:::##DESCRIPTION##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_DESCRIPTION']=new Array();
+vCalendar.tplM['VTcontentline_DESCRIPTION']={};
 vCalendar.tplC['VTcontentline_CLASS']='##:::##group_wd##:::##CLASS##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_CLASS']=new Array();
+vCalendar.tplM['VTcontentline_CLASS']={};
 
 vCalendar.tplC['VTcontentline_DTSTART']='##:::##group_wd##:::##DTSTART##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_DTSTART']=new Array();
+vCalendar.tplM['VTcontentline_DTSTART']={};
 vCalendar.tplC['VTcontentline_CREATED']='##:::##group_wd##:::##CREATED##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_CREATED']=new Array();
+vCalendar.tplM['VTcontentline_CREATED']={};
 
 vCalendar.tplC['VTcontentline_COMPLETED']='##:::##group_wd##:::##COMPLETED##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_COMPLETED']=new Array();
+vCalendar.tplM['VTcontentline_COMPLETED']={};
 
 vCalendar.tplC['VTcontentline_LM']='##:::##group_wd##:::##LAST-MODIFIED##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_LM']=new Array();
+vCalendar.tplM['VTcontentline_LM']={};
 vCalendar.tplC['VTcontentline_DTSTAMP']='##:::##group_wd##:::##DTSTAMP##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_DTSTAMP']=new Array();
+vCalendar.tplM['VTcontentline_DTSTAMP']={};
 vCalendar.tplC['VTcontentline_E_DTSTART']='##:::##group_wd##:::##DTSTART##:::##AllDay##:::####:::##TZID##:::####:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_E_DTSTART']=new Array();
+vCalendar.tplM['VTcontentline_E_DTSTART']={};
 vCalendar.tplC['VTcontentline_DUE']='##:::##group_wd##:::##DUE##:::##AllDay##:::####:::##TZID##:::####:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_DUE']=new Array();
+vCalendar.tplM['VTcontentline_DUE']={};
 vCalendar.tplC['VTcontentline_TRANSP']='##:::##group_wd##:::##TRANSP##:::##params_wsc##:::##:##:::##value##:::##\r\n';
-vCalendar.tplM['VTcontentline_TRANSP']=new Array();
+vCalendar.tplM['VTcontentline_TRANSP']={};
 
 vCalendar.tplC['VTendVTODO']='##:::##group_wd##:::##END:VTODO\r\n';
-vCalendar.tplM['VTendVTODO']=null;
+vCalendar.tplM['VTendVTODO']={};
+vCalendar.tplM['VTalarm_STRING'] = {};
 vCalendar.tplC['VTendVALARM']='##:::##group_wd##:::##END:VALARM\r\n';
-vCalendar.tplM['VTendVALARM']=null;
+vCalendar.tplM['VTendVALARM']={};
 vCalendar.tplC['VTendTZONE']='##:::##group_wd##:::##END:VTIMEZONE\r\n';
-vCalendar.tplM['VTendTZONE']=null;
+vCalendar.tplM['VTendTZONE']={};
 vCalendar.tplC['VTendST']='##:::##group_wd##:::##END:STANDARD\r\n';
-vCalendar.tplM['VTendST']=null;
+vCalendar.tplM['VTendST']={};
 vCalendar.tplC['VTendDAYLIGHT']='##:::##group_wd##:::##END:DAYLIGHT\r\n';
-vCalendar.tplM['VTendDAYLIGHT']=null;
+vCalendar.tplM['VTendDAYLIGHT']={};
 vCalendar.tplC['VTend']='##:::##group_wd##:::##END:VCALENDAR\r\n';
-vCalendar.tplM['VTend']=null;
-vCalendar.tplM['VTunprocessed']='';
-vCalendar.tplM['VTunprocessedVALARM']=new Array();
-vCalendar.tplM['VTunprocessedVTODO']='';
-vCalendar.tplM['VTunprocessedVTIMEZONE']='';
+vCalendar.tplM['VTend']={};
+vCalendar.tplM['VTunprocessed']={};
+vCalendar.tplM['VTunprocessedVALARM']={};
+vCalendar.tplM['VTunprocessedVTODO']={};
+vCalendar.tplM['VTunprocessedVTIMEZONE']={};

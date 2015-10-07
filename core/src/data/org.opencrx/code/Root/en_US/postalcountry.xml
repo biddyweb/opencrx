@@ -2388,10 +2388,10 @@ sources: http://www.nationsonline.org/oneworld/country_code_list.htm
 														<validTo>2011-08-16T00:00:00.000Z</validTo>
 														<!-- this country was split into 728 and 729 -->
 														<shortText>
-															<_item>SD</_item>
+															<_item>SD (disabled on 16-AUG-2011)</_item>
 														</shortText>
 														<longText>
-															<_item>Sudan</_item>
+															<_item>Sudan (disabled on 16-AUG-2011)</_item>
 														</longText>
 													</_object>
 													<_content/>
