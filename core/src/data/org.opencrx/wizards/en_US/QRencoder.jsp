@@ -96,8 +96,9 @@ org.openmdx.kernel.id.*
 	if(wc.getDownloadFileAction() != null) {
 		Action downloadFileAction = wc.getDownloadFileAction();
 %>
-		<br />
+		<img src="<%= downloadFileAction.getEncodedHRef(wc.getRequestId()) %>" />
 		<a href="<%= downloadFileAction.getEncodedHRef(wc.getRequestId()) %>"><%= downloadFileAction.getTitle() %></a>		
+		<br />
 		<br />
 <%
 	} else {

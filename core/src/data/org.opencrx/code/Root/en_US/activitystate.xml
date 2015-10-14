@@ -3,7 +3,7 @@
 	<_object/>
 	<_content>
 		<provider>
-			<org.openmdx.base.Provider qualifiedName="OB" _operation="null">
+			<org.openmdx.base.Provider qualifiedName="CRX" _operation="null">
 				<_object/>
 				<_content>
 					<segment>
